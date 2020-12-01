@@ -1,0 +1,179 @@
+.container {
+   background-color: #D25627;
+   width: 100%;
+   top: 0;
+   height: 4rem;
+   filter: drop-shadow(0px 2px 4px #00000042);
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   position: sticky;
+}
+
+.logo {
+   height: 3rem;
+   width: auto;
+   margin-left: 1rem;
+}
+
+.logo:hover {
+   cursor: pointer;
+}
+
+.navcontainer {
+   margin-right: 1rem;
+   height: 100%;
+   display: flex;
+   align-items: center;
+}
+
+.nav {
+   display: flex;
+   align-items: center;
+   height: 100%;
+   margin-right: 1rem;
+}
+
+.navoption {
+   color: white;
+   opacity: 0.7;
+   margin: 0 0.6rem;
+   font-size: 1rem;
+   display: flex;
+   height: 100%;
+   align-items: center;
+}
+
+.navoption:hover {
+   opacity: 1;
+   color: white;
+   cursor: pointer;
+}
+
+.navoptionname {
+   display: inline-block;
+   vertical-align: middle;
+}
+
+.navoptionicon {
+   display: inline-block;
+   vertical-align: middle;
+   height: 1.4rem;
+   margin-right: 0.3rem;
+}
+
+.borderCircle {
+   border-radius: 9999px;
+   height: 2.5rem;
+   display: inline-block;
+   vertical-align: middle;
+}
+
+.borderCircle:hover {
+   cursor: pointer;
+}
+
+.searchicon {
+   height: 1.9rem;
+   display: inline-block;
+   vertical-align: middle;
+   margin-right: 0.25rem;
+   opacity: 0.8;
+   transition: transform .1s;
+}
+
+.searchicon:hover {
+   opacity: 1;
+   cursor: pointer;
+   transform: scale(1.1);
+}
+
+.searchiconactive {
+   height: 2.09rem;
+   opacity: 1;
+}
+
+.searchbar {
+   background: transparent;
+   height: 2.2rem;
+   width: 0;
+   border: none;
+   font-size: 1.1rem;
+   outline: none;
+   color: white;
+   transition: width 0.2s ease-in;
+}
+
+.searchexpand {
+   width: calc(60% - 2rem);
+}
+
+.searchbar::placeholder {
+   color: white;
+   opacity: 0.6;
+}
+
+.searchcontainer {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   width: 100%;
+}
+
+.cancelsearch {
+   color: white;
+   font-size: 1.2rem;
+   height: 2rem;
+   width: 1.8rem;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   opacity: 0.8;
+}
+
+.cancelsearch:hover {
+   cursor: pointer;
+   opacity: 1;
+}
+
+@media only screen and (max-width: 1026px) { 
+   .navoptionname { 
+     display: none; 
+   } 
+}
+
+@media only screen and (max-width: 558px) { 
+   .logo { 
+     height: 2.1rem;
+   }
+}
+
+@media only screen and (max-width: 420px) {
+   .logo { 
+      height: 1.4rem;
+    }
+ 
+    .navoption {
+       margin-right: 0.2rem;
+    }
+ 
+    .navcontainer {
+       margin-right: 0.5rem;
+    }
+ 
+    .nav {
+       margin-right: 0.5rem;
+    }
+ 
+    .navoptionicon {
+       height: 1rem;
+    }
+ 
+    .borderCircle {
+       height: 1.75rem;
+    }
+ 
+    .searchicon {
+       height: 1.4rem;
+    }
+}
