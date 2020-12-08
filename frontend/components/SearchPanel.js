@@ -5,7 +5,7 @@ import styles from '../styles/searchpanel.module.css'
 import SearchTypeSelector from './SearchPanelComponents/SearchTypeSelector';
 import StandardSearch from './SearchPanelComponents/StandardSearch';
 
-export default function SearchPanel() {
+export default function SearchPanel(props) {
    const [show, setShow] = useState("");
    const [selectedType, setSelectedType] = useState("Standard Search");
    useEffect(() => {
@@ -14,7 +14,7 @@ export default function SearchPanel() {
    var searchResults = null;
    switch(selectedType) {
       case "Standard Search":
-         searchResults = <StandardSearch />
+         searchResults = <StandardSearch query={props.query}/>
    }
    return (
       <div className={styles.container + ' ' + show}>

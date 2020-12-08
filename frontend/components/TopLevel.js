@@ -16,10 +16,10 @@ export default function TopLevel(props)
             <title>SynBioHub</title>
             <link rel="icon" href="/favicon.ico" />
          </Head>
-         <Navbar searching={searching} setSearching={setSearching} setQuery={setQuery} />
+         <Navbar searching={searching} setSearching={setSearching} query={query} setQuery={setQuery} />
          <div className={styles.container}>
             {props.searchingComponent ? <props.searchingComponent setSearching={setSearching}/> : props.children}
-            {searching ? <SearchPanel /> : null}
+            {searching ? <SearchPanel query={query} /> : null}
          </div>
          <Footer />
       </div>

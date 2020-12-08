@@ -45,7 +45,7 @@ export default function Navbar(props) {
                   src="/images/search.svg"
                   className={styles.searchiconactive}
                />
-               <SearchBar />
+               <SearchBar setQuery={props.setQuery} query={props.query} />
                <div className={styles.cancelsearch}
                onClick={() => {
                   props.setSearching(false);
