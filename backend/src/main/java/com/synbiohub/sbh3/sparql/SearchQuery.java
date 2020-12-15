@@ -6,7 +6,7 @@ import org.springframework.core.io.Resource;
 /**
  * Creates a SPARQL query from multiple criterion
  */
-public class Search {
+public class SearchQuery implements SPARQLQuery {
     private String from;
     private String criteria;
     private String limit;
@@ -15,7 +15,7 @@ public class Search {
     @Value("classpath:data/config.json")
     private Resource config;
 
-    public Search() {
+    public SearchQuery() {
         from = "";
         criteria = "";
         limit = "";
