@@ -1,25 +1,37 @@
 package com.synbiohub.sbh3.sparql;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.Resource;
+import com.fasterxml.jackson.databind.JsonNode;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
  * Creates a SPARQL query from multiple criterion
  */
-public class SearchQuery implements SPARQLQuery {
+public class SearchQuery {
     private String from;
     private String criteria;
     private String limit;
     private String offset;
+    private String query;
 
-    @Value("classpath:data/config.json")
-    private Resource config;
 
     public SearchQuery() {
+        // Set default graph as public graph
         from = "";
         criteria = "";
         limit = "";
         offset = "";
+
+        // Read in SPARQL file
+        try {
+            query = Files.readString(Path.of("src/main/java/com/synbiohub/sbh3/sparql/search.sparql"));
+        } catch(IOException e) {
+            System.err.println(e + "\nError: SPARQL file not found.");
+        }
     }
 
     public void setFrom(String from) {
@@ -39,41 +51,11 @@ public class SearchQuery implements SPARQLQuery {
     }
 
     public String getSparql() {
-        String query = "PREFIX sbol2: <http://sbols.org/v2#>\n" +
-                "PREFIX dcterms: <http://purl.org/dc/terms/>\n" +
-                "PREFIX ncbi: <http://www.ncbi.nlm.nih.gov#>\n" +
-                "PREFIX synbiohub: <http://synbiohub.org#>\n" +
-                "PREFIX sbh: <http://wiki.synbiohub.org/wiki/Terms/synbiohub#>\n" +
-                "PREFIX igem: <http://wiki.synbiohub.org/wiki/Terms/igem#>\n" +
-                "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n" +
-                "PREFIX prov: <http://www.w3.org/ns/prov#>\n" +
-                "PREFIX dc: <http://purl.org/dc/elements/1.1/>\n" +
-                "PREFIX cello: <http://cellocad.org/Terms/cello#>\n" +
-                "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
-                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
-                "PREFIX purl: <http://purl.obolibrary.org/obo/>\n" +
-                "\n" +
-                "SELECT DISTINCT\n" +
-                "    ?subject\n" +
-                "    ?displayId\n" +
-                "    ?version\n" +
-                "    ?name\n" +
-                "    ?description\n" +
-                "    ?type\n" +
-                "%s\n" +
-                "WHERE {\n" +
-                "    %s\n" +
-                "\n" +
-                "    ?subject a ?type .\n" +
-                "    ?subject sbh:topLevel ?subject\n" +
-                "    OPTIONAL { ?subject sbol2:displayId ?displayId . }\n" +
-                "    OPTIONAL { ?subject sbol2:version ?version . }\n" +
-                "    OPTIONAL { ?subject dcterms:title ?name . }\n" +
-                "    OPTIONAL { ?subject dcterms:description ?description . }\n" +
-                "} \n" +
-                "\n" +
-                "%s\n" +
-                "%s";
-        return String.format(query, from, criteria, limit, offset);
+        String modifiedQuery = query;
+        modifiedQuery = modifiedQuery.replace("$from", from);
+        modifiedQuery = modifiedQuery.replace("$criteria", criteria);
+        modifiedQuery = modifiedQuery.replace("$limit", limit);
+        modifiedQuery = modifiedQuery.replace("$offset", offset);
+        return modifiedQuery;
     }
 }

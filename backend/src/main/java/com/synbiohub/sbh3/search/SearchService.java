@@ -1,9 +1,13 @@
 package com.synbiohub.sbh3.search;
 
-import com.synbiohub.sbh3.sparql.SearchQuery;
-import org.springframework.stereotype.Service;
+ import com.fasterxml.jackson.databind.JsonNode;
+ import com.synbiohub.sbh3.sparql.SPARQLQuery;
+ import com.synbiohub.sbh3.sparql.SearchQuery;
+ import org.springframework.beans.factory.annotation.Autowired;
+ import org.springframework.stereotype.Service;
 
-import java.util.Map;
+ import java.util.HashMap;
+ import java.util.Map;
 
 /**
  * Handles the business logic (parsing keys, formatting SPARQL, etc)
@@ -12,6 +16,9 @@ import java.util.Map;
 @Service
 public class SearchService {
 
+    @Autowired
+    JsonNode config;
+
     /**
      * Returns the metadata for the object from the specified search query
      * @param allParams Key/Value pairs of the query
@@ -19,8 +26,9 @@ public class SearchService {
      * @see SearchController#getResults(Map)
      */
     public String getMetadataQuery(Map<String,String> allParams) {
-        SearchQuery searchQuery = new SearchQuery();
-
+        SPARQLQuery searchQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/search.sparql");
+        HashMap<String, String> sparqlArgs = new HashMap<String, String>
+                (Map.of("from", "", "criteria", "", "limit", "", "offset", ""));
         String criteriaString = "";
 
         // Process search parameters
@@ -97,8 +105,8 @@ public class SearchService {
             }
         }
 
-        searchQuery.setCriteria(criteriaString);
-        return searchQuery.getSparql();
+        sparqlArgs.replace("criteria", criteriaString);
+        return searchQuery.loadTemplate(sparqlArgs);
     }
 
 }
