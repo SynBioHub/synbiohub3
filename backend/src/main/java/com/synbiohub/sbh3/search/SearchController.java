@@ -22,8 +22,6 @@ public class SearchController {
     @Autowired
     JsonNode config;
 
-    private String baseUri = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
-
     /**
      * Search Metadata endpoint
      * @param allParams Key/value pairs of all parameters
@@ -51,6 +49,8 @@ public class SearchController {
 
         String keyword = requestURL.split("/search/")[1];
 
+        String baseUri = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
+
         return new RedirectView(baseUri + "/search?" + keyword);
     }
 
@@ -64,7 +64,7 @@ public class SearchController {
     public String getSPARQL(@RequestParam String query) throws UnsupportedEncodingException {
         RestTemplate restTemplate = new RestTemplate();
         // Passing in query with brackets - need to do this or Spring Boot will complain about chars in the query
-        String url = config.get("triplestore").get("sparqlEndpoint") + "?default-graph-uri=&query={query}&format=json&";
+        String url = config.get("triplestore").get("sparqlEndpoint").asText() + "?default-graph-uri=&query={query}&format=json&";
         return restTemplate.getForObject(url, String.class, query);
     }
 }
