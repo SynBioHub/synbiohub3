@@ -68,7 +68,7 @@ public class SearchService {
 
             // search keyword
             else if (param.getValue().equals("")) {
-                String[] searchTerms = param.getValue().split("/[ ]+/");
+                String[] searchTerms = param.getKey().split("/[ ]+/");
                 criteriaString += "FILTER (";
                 boolean andMode = true;
                 boolean notMode = false;
@@ -94,7 +94,7 @@ public class SearchService {
                     if (notMode) {
                         criteriaString += " !";
                     }
-                    String criteria = "(CONTAINS(lcase(?displayId), lcase(%s))||CONTAINS(lcase(?name), lcase(%s))||CONTAINS(lcase(?description), lcase(%s)))";
+                    String criteria = "(CONTAINS(lcase(?displayId), lcase(\'%s\'))||CONTAINS(lcase(?name), lcase(\'%s\'))||CONTAINS(lcase(?description), lcase(\'%s\')))";
                     criteriaString += String.format(criteria, searchTerms[i], searchTerms[i], searchTerms[i]).replace("/''/g", "'\\\''");;
                 }
                 criteriaString += ')';

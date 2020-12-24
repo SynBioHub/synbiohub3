@@ -31,6 +31,7 @@ public class SearchController {
     @ResponseBody
     public String getResults(@RequestParam Map<String,String> allParams) throws UnsupportedEncodingException{
         String sparqlQuery = searchService.getMetadataQuery(allParams);
+        System.out.println(sparqlQuery);
         return getSPARQL(sparqlQuery);
     }
 
