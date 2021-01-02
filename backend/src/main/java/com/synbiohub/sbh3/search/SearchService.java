@@ -1,11 +1,14 @@
 package com.synbiohub.sbh3.search;
 
+ import com.fasterxml.jackson.core.JsonProcessingException;
  import com.fasterxml.jackson.databind.JsonNode;
+ import com.fasterxml.jackson.databind.ObjectMapper;
+ import com.fasterxml.jackson.databind.node.ObjectNode;
  import com.synbiohub.sbh3.sparql.SPARQLQuery;
- import com.synbiohub.sbh3.sparql.SearchQuery;
  import org.springframework.beans.factory.annotation.Autowired;
  import org.springframework.stereotype.Service;
 
+ import java.util.ArrayList;
  import java.util.HashMap;
  import java.util.Map;
 
@@ -33,6 +36,17 @@ public class SearchService {
 
         // Process search parameters
         for (Map.Entry<String, String> param : allParams.entrySet()) {
+            // Set offset and limit of query
+            if (param.getKey().equals("offset")) {
+                sparqlArgs.replace("offset", "OFFSET " + param.getValue());
+                continue;
+            }
+
+            else if (param.getKey().equals("limit")) {
+                sparqlArgs.replace("limit", "LIMIT " + param.getValue());
+                continue;
+            }
+
             // A tag in the dcterms namespace to search for
             if (param.getKey().contains(":")) {
                 criteriaString += "   ?subject " + param.getKey() + " " + param.getValue() + " . ";
@@ -107,6 +121,24 @@ public class SearchService {
 
         sparqlArgs.replace("criteria", criteriaString);
         return searchQuery.loadTemplate(sparqlArgs);
+    }
+
+    public String rawJSONToOutput(String rawJSON) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode rawTree = mapper.readTree(rawJSON);
+        ArrayList<ObjectNode> listOfParts = new ArrayList<>();
+        for(JsonNode node : rawTree.get("results").get("bindings")) {
+            ObjectNode part = mapper.createObjectNode();
+            // Check to see if each field exists; otherwise represent as null
+            part.put("type", (node.has("type") ? node.get("type").get("value").asText() : ""));
+            part.put("uri", (node.has("uri") ? node.get("uri").get("value").asText() : ""));
+            part.put("name", (node.has("name") ? node.get("name").get("value").asText() : ""));
+            part.put("description", (node.has("description") ? node.get("description").get("value").asText() : ""));
+            part.put("displayId", (node.has("displayId") ? node.get("displayId").get("value").asText() : ""));
+            part.put("version", (node.has("version") ? node.get("version").get("value").asText() : ""));
+            listOfParts.add(part);
+        }
+        return listOfParts.toString();
     }
 
 }

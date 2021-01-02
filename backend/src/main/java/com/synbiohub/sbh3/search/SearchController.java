@@ -1,15 +1,16 @@
 package com.synbiohub.sbh3.search;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.Map;
 
 @RestController
@@ -29,15 +30,15 @@ public class SearchController {
      */
     @GetMapping(value = "/search")
     @ResponseBody
-    public String getResults(@RequestParam Map<String,String> allParams) throws UnsupportedEncodingException{
+    public String getResults(@RequestParam Map<String,String> allParams) throws UnsupportedEncodingException, JsonProcessingException {
         String sparqlQuery = searchService.getMetadataQuery(allParams);
         System.out.println(sparqlQuery);
-        return getSPARQL(sparqlQuery);
+        return searchService.rawJSONToOutput(getSPARQL(sparqlQuery));
     }
 
 
     /**
-     * Redirects from the old search API to a standardized URI
+     * Redirects from the old search URI to a standardized URI
      * <p> Use {@link SearchController#getResults(Map)} instead.
      * @deprecated
      * @param request The incoming request
@@ -48,11 +49,18 @@ public class SearchController {
 
         String requestURL = request.getRequestURL().toString();
 
+        String limitAndOffset = request.getQueryString();
+
+        if (limitAndOffset != null)
+            requestURL = requestURL.substring(0, requestURL.length() - 1) + "&" + limitAndOffset;
+
         String keyword = requestURL.split("/search/")[1];
 
         String baseUri = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
 
-        return new RedirectView(baseUri + "/search?" + keyword);
+        String finalUri = URLDecoder.decode(baseUri + "/search?" + keyword);
+
+        return new RedirectView(finalUri);
     }
 
     /**
