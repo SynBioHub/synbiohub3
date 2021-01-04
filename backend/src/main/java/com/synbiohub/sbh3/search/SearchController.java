@@ -62,6 +62,41 @@ public class SearchController {
 
         return new RedirectView(finalUri);
     }
+    
+    /**
+     * Search Count endpoint
+     * @param allParams Key/value pairs of all parameters
+     * @return Count for the number of results
+     */
+    @GetMapping(value = "/searchCount")
+    @ResponseBody
+    public String getSearchCount(@RequestParam Map<String,String> allParams) throws UnsupportedEncodingException, JsonProcessingException {
+        String sparqlQuery = searchService.getSearchCount(allParams);
+        System.out.println(sparqlQuery);
+        return searchService.JSONToCount(getSPARQL(sparqlQuery));
+    }
+
+
+    /**
+     * Redirects from the old search count URI to a standardized URI
+     * <p> Use {@link SearchController#getSearchCount(Map)} instead.
+     * @deprecated
+     * @param request The incoming query to count
+     * @return Redirect to search count controller
+     */
+    @GetMapping("/searchCount/**")
+    public RedirectView redirectOldSearchCount(HttpServletRequest request) {
+
+        String requestURL = request.getRequestURL().toString();
+
+        String keyword = requestURL.split("/searchCount/")[1];
+
+        String baseUri = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
+
+        String finalUri = URLDecoder.decode(baseUri + "/searchCount?" + keyword);
+
+        return new RedirectView(finalUri);
+    }
 
     /**
      * Queries Virtuoso

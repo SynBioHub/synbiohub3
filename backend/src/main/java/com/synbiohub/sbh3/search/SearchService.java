@@ -10,6 +10,7 @@ package com.synbiohub.sbh3.search;
 
  import java.util.ArrayList;
  import java.util.HashMap;
+ import java.util.List;
  import java.util.Map;
 
 /**
@@ -32,7 +33,8 @@ public class SearchService {
         SPARQLQuery searchQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/search.sparql");
         HashMap<String, String> sparqlArgs = new HashMap<String, String>
                 (Map.of("from", "", "criteria", "", "limit", "", "offset", ""));
-        String criteriaString = "";
+        String criteriaString = getCriteriaString(allParams);
+        sparqlArgs.replace("criteria", criteriaString);
 
         // Process search parameters
         for (Map.Entry<String, String> param : allParams.entrySet()) {
@@ -46,6 +48,13 @@ public class SearchService {
                 sparqlArgs.replace("limit", "LIMIT " + param.getValue());
                 continue;
             }
+        }
+        return searchQuery.loadTemplate(sparqlArgs);
+    }
+
+    private String getCriteriaString(Map<String, String> params) {
+        String criteriaString = "";
+        for (Map.Entry<String, String> param : params.entrySet()) {
 
             // A tag in the dcterms namespace to search for
             if (param.getKey().contains(":")) {
@@ -54,29 +63,19 @@ public class SearchService {
             // Type of object to search for
             else if (param.getKey().equals("objectType")) {
                 if (param.getValue().contains(":")) {
-                    criteriaString += "   ?subject a " +param.getValue() + " . ";
+                    criteriaString += "   ?subject a " + param.getValue() + " . ";
                 } else {
                     criteriaString += "   ?subject a sbol2:" + param.getValue() + " . ";
                 }
-            }
-
-            else if (param.getKey().equals("collection")) {
+            } else if (param.getKey().equals("collection")) {
                 criteriaString += "   ?collection a sbol2:Collection .   " + param.getValue() + " sbol2:member ?subject .";
-            }
-
-            else if (param.getKey().equals("createdBefore")) {
+            } else if (param.getKey().equals("createdBefore")) {
                 criteriaString += "   FILTER (xsd:dateTime(?cdate) <= \"" + param.getValue() + "T23:59:59Z\"^^xsd:dateTime) ";
-            }
-
-            else if (param.getKey().equals("createdAfter")) {
+            } else if (param.getKey().equals("createdAfter")) {
                 criteriaString += "   FILTER (xsd:dateTime(?cdate) >= \"" + param.getValue() + "T00:00:00Z\"^^xsd:dateTime) ";
-            }
-
-            else if (param.getKey().equals("modifiedBefore")) {
+            } else if (param.getKey().equals("modifiedBefore")) {
                 criteriaString += "   FILTER (xsd:dateTime(?mdate) <= \"" + param.getValue() + "T23:59:59Z\"^^xsd:dateTime) ";
-            }
-
-            else if (param.getKey().equals("modifiedAfter")) {
+            } else if (param.getKey().equals("modifiedAfter")) {
                 criteriaString += "   FILTER (xsd:dateTime(?mdate) >= \"" + param.getValue() + "T00:00:00Z\"^^xsd:dateTime) ";
             }
 
@@ -109,16 +108,21 @@ public class SearchService {
                         criteriaString += " !";
                     }
                     String criteria = "(CONTAINS(lcase(?displayId), lcase(\'%s\'))||CONTAINS(lcase(?name), lcase(\'%s\'))||CONTAINS(lcase(?description), lcase(\'%s\')))";
-                    criteriaString += String.format(criteria, searchTerms[i], searchTerms[i], searchTerms[i]).replace("/''/g", "'\\\''");;
+                    criteriaString += String.format(criteria, searchTerms[i], searchTerms[i], searchTerms[i]).replace("/''/g", "'\\\''");
                 }
                 criteriaString += ')';
-            }
-
-            else {
+            } else {
                 criteriaString += "   ?subject sbol2:" + param.getKey() + " " + param.getValue() + " . ";
             }
         }
+        return criteriaString;
+    }
 
+    public String getSearchCount(Map<String,String> allParams) {
+        SPARQLQuery searchQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/searchCount.sparql");
+        HashMap<String, String> sparqlArgs = new HashMap<String, String>
+                (Map.of("from", "", "criteria", ""));
+        String criteriaString = getCriteriaString(allParams);
         sparqlArgs.replace("criteria", criteriaString);
         return searchQuery.loadTemplate(sparqlArgs);
     }
@@ -141,4 +145,14 @@ public class SearchService {
         return listOfParts.toString();
     }
 
+    public String JSONToCount(String rawJSON) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode rawData = mapper.readTree(rawJSON);
+        String value = "";
+
+        for(JsonNode node : rawData.get("results").get("bindings")) {
+            value = node.get("count").get("value").asText();
+        }
+        return value;
+    }
 }
