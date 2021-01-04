@@ -127,6 +127,13 @@ public class SearchService {
         return searchQuery.loadTemplate(sparqlArgs);
     }
 
+    public String getTypeCount(Map<String, String> allParams) {
+        SPARQLQuery searchQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/Count.sparql");
+        HashMap<String, String> sparqlArgs = new HashMap<String, String>
+                (Map.of("type", ""));
+        return searchQuery.loadTemplate(sparqlArgs);
+    }
+
     public String rawJSONToOutput(String rawJSON) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode rawTree = mapper.readTree(rawJSON);

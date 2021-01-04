@@ -99,6 +99,26 @@ public class SearchController {
     }
 
     /**
+     * Redirects from the old search count URI to a standardized URI
+     * <p> Use {@link SearchController#getSearchCount(Map)} instead.
+     * @deprecated
+     * @param request The incoming query to count
+     * @return Redirect to search count controller
+     */
+    @GetMapping("/{type}/count")
+    public String getTypeCount(HttpServletRequest request) {
+
+        String type = request.getPathInfo();
+
+        String baseUri = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
+
+
+        return "";
+    }
+
+
+
+    /**
      * Queries Virtuoso
      * @param query SPARQL Query
      * @return Results from Virtuoso
