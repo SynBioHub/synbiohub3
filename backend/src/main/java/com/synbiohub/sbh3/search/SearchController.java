@@ -20,6 +20,7 @@ public class SearchController {
     @Autowired
     private SearchService searchService;
 
+    // Singleton config file object
     @Autowired
     JsonNode config;
 
@@ -31,7 +32,7 @@ public class SearchController {
     @GetMapping(value = "/search")
     @ResponseBody
     public String getResults(@RequestParam Map<String,String> allParams) throws UnsupportedEncodingException, JsonProcessingException {
-        String sparqlQuery = searchService.getMetadataQuery(allParams);
+        String sparqlQuery = searchService.getMetadataQuerySPARQL(allParams);
         System.out.println(sparqlQuery);
         return searchService.rawJSONToOutput(getSPARQL(sparqlQuery));
     }
@@ -71,7 +72,7 @@ public class SearchController {
     @GetMapping(value = "/searchCount")
     @ResponseBody
     public String getSearchCount(@RequestParam Map<String,String> allParams) throws UnsupportedEncodingException, JsonProcessingException {
-        String sparqlQuery = searchService.getSearchCount(allParams);
+        String sparqlQuery = searchService.getSearchCountSPARQL(allParams);
         System.out.println(sparqlQuery);
         return searchService.JSONToCount(getSPARQL(sparqlQuery));
     }
@@ -99,33 +100,44 @@ public class SearchController {
     }
 
     /**
-     * Redirects from the old search count URI to a standardized URI
-     * <p> Use {@link SearchController#getSearchCount(Map)} instead.
-     * @deprecated
-     * @param request The incoming query to count
-     * @return Redirect to search count controller
+     * Gets the count of a type
+     * @param request The incoming type to count
+     * @return A count in plaintext
      */
-    @GetMapping("/{type}/count")
-    public String getTypeCount(HttpServletRequest request) {
+    @GetMapping("/{type:.+}/count")
+    public String getTypeCount(@PathVariable("type") String type, HttpServletRequest request) throws JsonProcessingException {
 
-        String type = request.getPathInfo();
+        String sparqlQuery = searchService.getTypeCountSPARQL(type);
+        return searchService.JSONToCount(getSPARQL(sparqlQuery));
+    }
 
-        String baseUri = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
+    /**
+     * Gets the uses of a part
+     * @param
+     * @return JSON containing all parts that use that part
+     */
+    @GetMapping("/{visibility:.+}/{collectionID:.+}/{displayID:.+}/{version:.+}/uses")
+    public String getUses(@PathVariable("visibility") String visibility, @PathVariable("collectionID") String collectionID,
+                          @PathVariable("displayID") String displayID, @PathVariable("version") String version,
+                          HttpServletRequest request) throws JsonProcessingException {
+
+        String collectionInfo = String.format("%s/%s/%s/%s", visibility, collectionID, displayID, version);
 
 
-        return "";
+        String sparqlQuery = searchService.getUsesSPARQL(collectionInfo);
+        return searchService.rawJSONToOutput(getSPARQL(sparqlQuery));
     }
 
 
 
     /**
-     * Queries Virtuoso
+     * Queries Virtuoso via SPARQL
      * @param query SPARQL Query
      * @return Results from Virtuoso
      */
     @RequestMapping(value = "/sparql", headers = "Accept=application/json")
     @ResponseBody
-    public String getSPARQL(@RequestParam String query) throws UnsupportedEncodingException {
+    public String getSPARQL(@RequestParam String query) {
         RestTemplate restTemplate = new RestTemplate();
         // Passing in query with brackets - need to do this or Spring Boot will complain about chars in the query
         String url = config.get("triplestore").get("sparqlEndpoint").asText() + "?default-graph-uri=&query={query}&format=json&";

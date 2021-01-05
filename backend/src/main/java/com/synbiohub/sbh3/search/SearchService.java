@@ -29,7 +29,7 @@ public class SearchService {
      * @return String containing SPARQL query
      * @see SearchController#getResults(Map)
      */
-    public String getMetadataQuery(Map<String,String> allParams) {
+    public String getMetadataQuerySPARQL(Map<String,String> allParams) {
         SPARQLQuery searchQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/search.sparql");
         HashMap<String, String> sparqlArgs = new HashMap<String, String>
                 (Map.of("from", "", "criteria", "", "limit", "", "offset", ""));
@@ -52,6 +52,11 @@ public class SearchService {
         return searchQuery.loadTemplate(sparqlArgs);
     }
 
+    /**
+     * Gets the criteria string for a SPARQL query
+     * @param params Key/value pairs from GET request
+     * @return SPARQL-compatible criteria string
+     */
     private String getCriteriaString(Map<String, String> params) {
         String criteriaString = "";
         for (Map.Entry<String, String> param : params.entrySet()) {
@@ -118,7 +123,12 @@ public class SearchService {
         return criteriaString;
     }
 
-    public String getSearchCount(Map<String,String> allParams) {
+    /**
+     * Gets the count of a part
+     * @param allParams Key/value pairs from GET request
+     * @return Count of a part
+     */
+    public String getSearchCountSPARQL(Map<String,String> allParams) {
         SPARQLQuery searchQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/searchCount.sparql");
         HashMap<String, String> sparqlArgs = new HashMap<String, String>
                 (Map.of("from", "", "criteria", ""));
@@ -127,13 +137,38 @@ public class SearchService {
         return searchQuery.loadTemplate(sparqlArgs);
     }
 
-    public String getTypeCount(Map<String, String> allParams) {
+    /**
+     * Gets the count of a type
+     * @param type Type to get count of
+     * @return Count of a type
+     */
+    public String getTypeCountSPARQL(String type) {
         SPARQLQuery searchQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/Count.sparql");
         HashMap<String, String> sparqlArgs = new HashMap<String, String>
-                (Map.of("type", ""));
+                (Map.of("type", type));
         return searchQuery.loadTemplate(sparqlArgs);
     }
 
+    public String getUsesSPARQL(String collectionInfo) {
+        SPARQLQuery searchQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/search.sparql");
+        HashMap<String, String> sparqlArgs = new HashMap<String, String>
+                (Map.of("from", "", "criteria", "", "limit", "", "offset", ""));
+
+        String URI = config.get("databasePrefix").asText() + collectionInfo;
+
+        sparqlArgs.replace("criteria", " { ?subject ?p <" + URI + "> } UNION { ?subject ?p ?use . ?use ?useP <" + URI + "> } ." +
+                " FILTER(?useP != <http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel>) " +
+                "# USES");
+
+        return searchQuery.loadTemplate(sparqlArgs);
+    }
+
+    /**
+     * Converts JSON from a SPARQL query to the API-specified JSON format
+     * @param rawJSON JSON from a SPARQL query
+     * @return JSON as specified by the API
+     * @throws JsonProcessingException
+     */
     public String rawJSONToOutput(String rawJSON) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode rawTree = mapper.readTree(rawJSON);
@@ -152,6 +187,12 @@ public class SearchService {
         return listOfParts.toString();
     }
 
+    /**
+     * Converts JSON from a SPARQL query to a single string containing the count of a part/type
+     * @param rawJSON JSON from a SPARQL query
+     * @return A single number specifying the count
+     * @throws JsonProcessingException
+     */
     public String JSONToCount(String rawJSON) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode rawData = mapper.readTree(rawJSON);
