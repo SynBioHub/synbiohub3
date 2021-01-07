@@ -25,7 +25,7 @@ public class SearchController {
     JsonNode config;
 
     /**
-     * Search Metadata endpoint
+     * Returns the metadata for the object from the specified search query.
      * @param allParams Key/value pairs of all parameters
      * @return Metadata for the object from the specified search query in JSON format
      */
@@ -65,7 +65,7 @@ public class SearchController {
     }
     
     /**
-     * Search Count endpoint
+     * Returns the number of items matching the search result.
      * @param allParams Key/value pairs of all parameters
      * @return Count for the number of results
      */
@@ -100,7 +100,7 @@ public class SearchController {
     }
 
     /**
-     * Gets the count of a type
+     * Returns the number of objects with a specified object type.
      * @param request The incoming type to count
      * @return A count in plaintext
      */
@@ -112,7 +112,25 @@ public class SearchController {
     }
 
     /**
-     * Gets the uses of a part
+     * Returns other components that have the same sequence.
+     * @param
+     * @return JSON containing all twins
+     */
+    @GetMapping("/{visibility:.+}/{collectionID:.+}/{displayID:.+}/{version:.+}/twins")
+    public String getTwins(@PathVariable("visibility") String visibility, @PathVariable("collectionID") String collectionID,
+                          @PathVariable("displayID") String displayID, @PathVariable("version") String version,
+                          HttpServletRequest request) throws JsonProcessingException {
+
+        String collectionInfo = String.format("%s/%s/%s/%s", visibility, collectionID, displayID, version);
+
+
+        String sparqlQuery = searchService.getURISPARQL(collectionInfo, "twins");
+        return searchService.rawJSONToOutput(getSPARQL(sparqlQuery));
+    }
+
+    /**
+     * Returns any other object that refers to this object.
+     * For example, if the object is a component, it will return all other components that use this as a sub-component.
      * @param
      * @return JSON containing all parts that use that part
      */
@@ -124,14 +142,14 @@ public class SearchController {
         String collectionInfo = String.format("%s/%s/%s/%s", visibility, collectionID, displayID, version);
 
 
-        String sparqlQuery = searchService.getUsesSPARQL(collectionInfo);
+        String sparqlQuery = searchService.getURISPARQL(collectionInfo, "uses");
         return searchService.rawJSONToOutput(getSPARQL(sparqlQuery));
     }
 
 
 
     /**
-     * Queries Virtuoso via SPARQL
+     * Returns the results of the SPARQL query in JSON format.
      * @param query SPARQL Query
      * @return Results from Virtuoso
      */

@@ -149,7 +149,38 @@ public class SearchService {
         return searchQuery.loadTemplate(sparqlArgs);
     }
 
-    public String getUsesSPARQL(String collectionInfo) {
+    // TODO: Make sure this method (and others) are compatible with user authentication in the future
+    public String getURISPARQL(String collectionInfo, String endpoint) {
+        // Initialize arguments to be parsed into SPARQL template
+        SPARQLQuery searchQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/search.sparql");
+        HashMap<String, String> sparqlArgs = new HashMap<String, String>
+                (Map.of("from", "", "criteria", "", "limit", "", "offset", ""));
+
+        String URI = config.get("databasePrefix").asText() + collectionInfo;
+
+        if (endpoint.equalsIgnoreCase("uses")) {
+            sparqlArgs.replace("criteria", " { ?subject ?p <" + URI + "> } UNION { ?subject ?p ?use . ?use ?useP <" + URI + "> } ." +
+                    " FILTER(?useP != <http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel>) " +
+                    "# USES");
+        }
+
+        else if (endpoint.equalsIgnoreCase("similar")) {
+            // Make sure explorer is enabled
+            if (config.get("useSBOLExplorer").asBoolean()) {
+
+            }
+        }
+
+        else if (endpoint.equalsIgnoreCase("twins")) {
+            sparqlArgs.replace("criteria", "   ?subject sbol2:sequence ?seq . ?seq sbol2:elements ?elements . <" + URI
+                    + "> a sbol2:ComponentDefinition . <" + URI + "> sbol2:sequence ?seq2 . ?seq2 sbol2:elements ?elements2 . " +
+                    "FILTER(?subject != <" + URI + "> && ?elements = ?elements2) # TWINS");
+        }
+
+        return searchQuery.loadTemplate(sparqlArgs);
+    }
+
+    public String getTwinsSPARQL(String collectionInfo) {
         SPARQLQuery searchQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/search.sparql");
         HashMap<String, String> sparqlArgs = new HashMap<String, String>
                 (Map.of("from", "", "criteria", "", "limit", "", "offset", ""));
