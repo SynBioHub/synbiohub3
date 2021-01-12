@@ -23,6 +23,8 @@ public class SearchService {
     @Autowired
     JsonNode config;
 
+    ObjectMapper mapper = new ObjectMapper();
+
     /**
      * Returns the metadata for the object from the specified search query
      * @param allParams Key/Value pairs of the query
@@ -194,6 +196,21 @@ public class SearchService {
         return searchQuery.loadTemplate(sparqlArgs);
     }
 
+    public String getRootCollectionsSPARQL() {
+        SPARQLQuery searchQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/RootCollectionMetadata.sparql");
+        return searchQuery.getQuery();
+    }
+
+    public String getSubCollectionsSPARQL(String collectionInfo) {
+        SPARQLQuery searchQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/SubCollectionMetadata.sparql");
+        String IRI = "<" + collectionInfo + ">";
+
+        HashMap<String, String> sparqlArgs = new HashMap<String, String>
+                (Map.of("parentCollection", IRI));
+
+        return searchQuery.loadTemplate(sparqlArgs);
+    }
+
     /**
      * Converts JSON from a SPARQL query to the API-specified JSON format
      * @param rawJSON JSON from a SPARQL query
@@ -201,7 +218,6 @@ public class SearchService {
      * @throws JsonProcessingException
      */
     public String rawJSONToOutput(String rawJSON) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
         JsonNode rawTree = mapper.readTree(rawJSON);
         ArrayList<ObjectNode> listOfParts = new ArrayList<>();
         for(JsonNode node : rawTree.get("results").get("bindings")) {
@@ -218,6 +234,22 @@ public class SearchService {
         return listOfParts.toString();
     }
 
+    public String collectionToOutput(String rawJSON) throws JsonProcessingException{
+        JsonNode rawTree = mapper.readTree(rawJSON);
+        ArrayList<ObjectNode> listOfParts = new ArrayList<>();
+        for(JsonNode node : rawTree.get("results").get("bindings")) {
+            ObjectNode part = mapper.createObjectNode();
+
+            part.set("uri", node.get("Collection").get("value"));
+            part.set("name", node.get("name").get("value"));
+            part.set("description", node.get("description").get("value"));
+            part.set("displayId", node.get("displayId").get("value"));
+            part.set("version", node.get("version").get("value"));
+            listOfParts.add(part);
+        }
+        return listOfParts.toString();
+    }
+
     /**
      * Converts JSON from a SPARQL query to a single string containing the count of a part/type
      * @param rawJSON JSON from a SPARQL query
@@ -225,7 +257,6 @@ public class SearchService {
      * @throws JsonProcessingException
      */
     public String JSONToCount(String rawJSON) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
         JsonNode rawData = mapper.readTree(rawJSON);
         String value = "";
 

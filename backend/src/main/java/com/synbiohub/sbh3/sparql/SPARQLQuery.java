@@ -36,4 +36,14 @@ public class SPARQLQuery {
         }
         return query;
     }
+
+    public String getQuery() {
+        String query = "";
+        try {
+            query = Files.readString(Path.of(filename));
+        } catch(IOException e) {
+            System.err.println(e + "\nError: SPARQL file not found.");
+        }
+        return query;
+    }
 }

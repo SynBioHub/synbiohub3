@@ -100,6 +100,35 @@ public class SearchController {
     }
 
     /**
+     * Returns all root collections.
+     * @return All root collections
+     */
+    @GetMapping("/rootCollections")
+    public String getRootCollections() throws JsonProcessingException{
+
+        String sparqlQuery = searchService.getRootCollectionsSPARQL();
+        return searchService.collectionToOutput(getSPARQL(sparqlQuery));
+    }
+
+
+    /**
+     * Returns the collections that are members of another collection.
+     * @param
+     * @return JSON containing all sub collections
+     */
+    @GetMapping("/{visibility:.+}/{collectionID:.+}/{displayID:.+}/{version:.+}/subCollections")
+    public String getSubCollections(@PathVariable("visibility") String visibility, @PathVariable("collectionID") String collectionID,
+                           @PathVariable("displayID") String displayID, @PathVariable("version") String version,
+                           HttpServletRequest request) throws JsonProcessingException {
+
+        String collectionInfo = String.format("%s/%s/%s/%s", visibility, collectionID, displayID, version);
+
+
+        String sparqlQuery = searchService.getSubCollectionsSPARQL(collectionInfo);
+        return searchService.collectionToOutput(getSPARQL(sparqlQuery));
+    }
+
+    /**
      * Returns the number of objects with a specified object type.
      * @param request The incoming type to count
      * @return A count in plaintext
