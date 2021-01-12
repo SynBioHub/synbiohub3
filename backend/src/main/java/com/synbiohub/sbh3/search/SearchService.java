@@ -240,11 +240,11 @@ public class SearchService {
         for(JsonNode node : rawTree.get("results").get("bindings")) {
             ObjectNode part = mapper.createObjectNode();
 
-            part.set("uri", node.get("Collection").get("value"));
-            part.set("name", node.get("name").get("value"));
-            part.set("description", node.get("description").get("value"));
-            part.set("displayId", node.get("displayId").get("value"));
-            part.set("version", node.get("version").get("value"));
+            part.put("uri", (node.has("Collection") ? node.get("Collection").get("value").asText() : ""));
+            part.put("name", (node.has("name") ? node.get("name").get("value").asText() : ""));
+            part.put("description", (node.has("description") ? node.get("description").get("value").asText() : ""));
+            part.put("displayId", (node.has("displayId") ? node.get("displayId").get("value").asText() : ""));
+            part.put("version", (node.has("version") ? node.get("version").get("value").asText() : ""));
             listOfParts.add(part);
         }
         return listOfParts.toString();
