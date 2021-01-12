@@ -203,7 +203,7 @@ public class SearchService {
 
     public String getSubCollectionsSPARQL(String collectionInfo) {
         SPARQLQuery searchQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/SubCollectionMetadata.sparql");
-        String IRI = "<" + collectionInfo + ">";
+        String IRI = "<" + config.get("databasePrefix").asText() + collectionInfo + ">";
 
         HashMap<String, String> sparqlArgs = new HashMap<String, String>
                 (Map.of("parentCollection", IRI));
