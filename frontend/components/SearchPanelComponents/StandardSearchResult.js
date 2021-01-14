@@ -5,7 +5,6 @@ export default function StandardSearchResult(props) {
    const [type, setType] = useState("");
    useEffect(() => {
       var potential_type = props.result.type.toLowerCase();
-      console.log(potential_type);
       if (potential_type.includes("component"))
          setType("Component");
       if (potential_type.includes("sequence"))
