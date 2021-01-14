@@ -179,15 +179,19 @@ public class SearchController {
 
     /**
      * Returns the results of the SPARQL query in JSON format.
+     * Use SBOLExplorer if it is enabled in the config, else send query directly to Virtuoso.
      * @param query SPARQL Query
-     * @return Results from Virtuoso
+     * @return JSON containing parts
      */
     @RequestMapping(value = "/sparql", headers = "Accept=application/json")
     @ResponseBody
     public String getSPARQL(@RequestParam String query) {
         RestTemplate restTemplate = new RestTemplate();
-        // Passing in query with brackets - need to do this or Spring Boot will complain about chars in the query
-        String url = config.get("triplestore").get("sparqlEndpoint").asText() + "?default-graph-uri=&query={query}&format=json&";
+        String url = "";
+
+        if (config.get("useSBOLExplorer").asBoolean()) url = config.get("SBOLExplorerEndpoint").asText() + "?query={query}";
+        else url = config.get("triplestore").get("sparqlEndpoint").asText() + "?default-graph-uri=&query={query}&format=json&";
+
         return restTemplate.getForObject(url, String.class, query);
     }
 }
