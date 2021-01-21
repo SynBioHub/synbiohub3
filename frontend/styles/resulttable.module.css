@@ -40,6 +40,16 @@
    filter: drop-shadow(0px 0px 2px #D25627);
 }
 
+.centerheader {
+   display: flex;
+   flex-direction: row;
+   align-items: center;
+}
+
+.headertext {
+   margin-right: 0.15rem;
+}
+
 .tablebuttons {
    display: flex;
    position: fixed;

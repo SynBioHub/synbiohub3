@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import styles from "../../styles/resulttable.module.css"
 import ResultRow from "./ResultRow";
+import Image from 'next/image'
 
 export default function ResultTable(props) {
    var checklist = new Map();
@@ -49,11 +50,52 @@ export default function ResultTable(props) {
                            setSelectAll(e.target.checked);
                      }} />
                   </th>
-                  <th>Name</th>
-                  <th>Display ID</th>
-                  <th>Description</th>
-                  <th>Type</th>
-                  <th>Version</th>
+                  <th>
+                     <div className={styles.centerheader}>
+                     <span className={styles.headertext}>Name</span>
+                     <Image 
+                     src='/images/updown.svg'
+                     alt='view basket'
+                     width={20}
+                     height={20}/>
+                     </div>
+                  </th>
+                  <th>
+                  <div className={styles.centerheader}>
+                     <span className={styles.headertext}>Display ID</span>
+                     <Image 
+                     src='/images/updown.svg'
+                     alt='view basket'
+                     width={20}
+                     height={20}/>
+                  </div>
+                  </th>
+                  <th>
+                  <div className={styles.centerheader}>
+                     <span className={styles.headertext}>Description</span>
+                     <Image 
+                     src='/images/updown.svg'
+                     alt='view basket'
+                     width={20}
+                     height={20}/>
+                  </div>
+                  </th>
+                  <th>
+                  <div className={styles.centerheader}>
+                     <span className={styles.headertext}>Type</span>
+                     
+                  </div>
+                  </th>
+                  <th>
+                  <div className={styles.centerheader}>
+                     <span className={styles.headertext}>Version</span>
+                     <Image 
+                     src='/images/updown.svg'
+                     alt='view basket'
+                     width={20}
+                     height={20}/>
+                  </div>
+                  </th>
                </tr>
             </thead>
             <tbody>
