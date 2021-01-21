@@ -47,7 +47,7 @@ export default function StandardSearch(props) {
             <div className={searchnavcontainer}>
                <span className={searchnav} >Previous</span> <span className={searchnav}>Next</span>
             </div>
-            <ResultTable data={data} />
+            <ResultTable data={data} basketItems={props.basketItems} setBasketItems={props.setBasketItems} />
          </div>
       );
    }

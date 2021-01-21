@@ -2,8 +2,9 @@ import Image from 'next/image'
 import { useState } from 'react';
 import styles from '../styles/basket.module.css'
 
-export default function Basket() {
+export default function Basket(props) {
    const [showBasket, setShowBasket] = useState(false);
+   console.log(props.basketItems);
    if (!showBasket)
    {
       return (

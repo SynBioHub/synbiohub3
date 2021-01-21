@@ -32,7 +32,10 @@ export default function ResultTable(props) {
       <div className={styles.tablecontainer}>
          <div className={styles.tablebuttons}>
             <div className={`${styles.tablebutton} ${styles.enabled}`}>Edit Columns</div>
-            <div className={`${styles.tablebutton} ${buttonClass}`}>Add to Basket</div>
+            <div className={`${styles.tablebutton} ${buttonClass}`}
+            onClick={() => {
+               addItemsToBasket(selected, props.data, props.basketItems, props.setBasketItems);
+            }}>Add to Basket</div>
             <div className={`${styles.tablebutton} ${buttonClass}`}>Download</div>
          </div>
          <table className={styles.table} id={styles.results}>
@@ -59,4 +62,14 @@ export default function ResultTable(props) {
          </table>
       </div>
    );
+}
+
+
+const addItemsToBasket = (selected, rows, originalBasket, setBasketItems) => {
+   const newBasket = [...originalBasket];
+   rows.forEach(row => {
+      if (selected.get(row.displayId))
+         newBasket.push(row);
+   });
+   setBasketItems(newBasket);
 }
