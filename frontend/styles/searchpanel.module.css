@@ -15,7 +15,6 @@
 .categories {
    margin-left: 1rem;
    margin-top: 1rem;
-   margin-bottom: 1rem;
 }
 
 .categoryheader {
@@ -116,7 +115,8 @@
 }
 
 .count {
-   color: #494949;
+   color: #000000;
+   font-weight: 550;
    margin-bottom: 0.5rem;
 }
 
@@ -129,6 +129,8 @@
    display: inline;
    cursor: pointer;
    margin-right: 0.5rem;
+   margin-bottom: 0;
+   font-weight: 550;
 }
 
 .searchnav:hover {

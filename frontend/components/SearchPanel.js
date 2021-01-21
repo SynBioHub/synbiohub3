@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import styles from '../styles/searchpanel.module.css'
 import SearchTypeSelector from './SearchPanelComponents/SearchTypeSelector';
 import StandardSearch from './SearchPanelComponents/StandardSearch';
+import Basket from './Basket';
 
 export default function SearchPanel(props) {
    const [show, setShow] = useState("");
@@ -25,6 +26,7 @@ export default function SearchPanel(props) {
             <SearchTypeSelector name="SPARQL" selectedType={selectedType} setSelectedType={setSelectedType}/>
          </div>
          {searchResults}
+         <Basket />
       </div>
    )
 }

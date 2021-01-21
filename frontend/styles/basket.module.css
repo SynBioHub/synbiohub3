@@ -1,0 +1,55 @@
+.basketcontainer {
+   position: absolute;
+   bottom: 6rem;
+   right: 2%;
+   padding: 1rem;
+   border-radius: 100%;
+   background-color: white;
+   filter: drop-shadow(0px 0px 2px #D25627);
+   cursor: pointer;
+   display: flex;
+}
+
+.basketcontainer:hover {
+   transform: scale(1.1);
+   transition: transform 0.2s;
+}
+
+.basketcontent {
+   position: absolute;
+   bottom: 12rem;
+   right: 2%;
+   height: calc(80% - 10rem);
+   background: aqua;
+   border-radius: 1rem;
+   width: 20rem;
+   padding: 1rem;
+   background-color: white;
+   filter: drop-shadow(0px 0px 2px #888888);
+   overflow: scroll;
+}
+
+.basketlabel {
+   font-size: 1.2rem;
+   color: #D25627;
+   margin-bottom: 0.6rem;
+}
+
+.addfolder {
+   width: 100%;
+   background-color: #d2552734;
+   padding: 0.8rem;
+   border-radius: 0.5rem;
+   cursor: pointer;
+   display: flex;
+   align-items: center;
+}
+
+.addfoldertitle {
+   margin-left: 0.5rem;
+}
+
+.addfolder:hover {
+   background-color: #D25627;
+   color: white;
+}

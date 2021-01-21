@@ -6,6 +6,7 @@ import Loader from 'react-loader-spinner';
 import useSWR from 'swr';
 import axios from 'axios'
 import { useEffect, useState } from 'react';
+import ResultTable from './ResultTable';
 
 export default function StandardSearch(props) {
    const [results, setResults] = useState([]);
@@ -38,6 +39,7 @@ export default function StandardSearch(props) {
          </div>
       </div>
    );
+   if (data.length == 0) return <div className={standarderror}>No results found</div>
    else {
       return (
          <div className={standardcontainer}>
@@ -45,13 +47,17 @@ export default function StandardSearch(props) {
             <div className={searchnavcontainer}>
                <span className={searchnav} >Previous</span> <span className={searchnav}>Next</span>
             </div>
-            <div className={standardresults}>
-               {results}
-            </div>
+            <ResultTable data={data} />
          </div>
       );
    }
 }
+
+/*
+<div className={standardresults}>
+               {results}
+            </div>
+*/
 
 const fetcher = url => axios.get(url, {
    headers: {
