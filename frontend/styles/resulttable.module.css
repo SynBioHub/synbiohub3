@@ -1,5 +1,6 @@
 .tablecontainer {
-   width: 95%;
+   width: 100%;
+   padding: 0 1rem 1rem 1rem;
    max-height: calc(100vh - 15rem);
    overflow: scroll;
 }
@@ -8,9 +9,9 @@
    min-width: 100%;
    text-align: left;
    overflow: scroll;
-   margin-top: 0;
    border-spacing: 0;
    border: 1px solid #D25627;
+   font-size: 0.95rem;
 }
 
 #results tr:nth-child(even) {
@@ -19,7 +20,13 @@
 
 .table td {
    padding: 0.75rem;
+   cursor: pointer;
 }
+
+.table tr:hover {
+   background-color: #D25627 !important;
+   color: white;
+} 
 
 .table th {
    padding: 0.75rem;

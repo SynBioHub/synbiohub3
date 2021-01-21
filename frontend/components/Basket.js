@@ -27,7 +27,7 @@ export default function Basket() {
                width={20}
                height={20}
                />
-               <span className={styles.addfoldertitle}>New Folder</span>
+               <span className={styles.addfoldertitle}>Create Collection</span>
             </div>
          </div>
          <div className={styles.basketcontainer} onClick={() => setShowBasket(false)}>

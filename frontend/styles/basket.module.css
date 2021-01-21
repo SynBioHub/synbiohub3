@@ -1,7 +1,7 @@
 .basketcontainer {
    position: absolute;
-   bottom: 6rem;
-   right: 2%;
+   top: 1.1rem;
+   right: 1rem;
    padding: 1rem;
    border-radius: 100%;
    background-color: white;
@@ -17,8 +17,8 @@
 
 .basketcontent {
    position: absolute;
-   bottom: 12rem;
-   right: 2%;
+   top: 6.5rem;
+   right: 1.1rem;
    height: calc(80% - 10rem);
    background: aqua;
    border-radius: 1rem;
