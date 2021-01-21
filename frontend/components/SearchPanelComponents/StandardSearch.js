@@ -11,8 +11,8 @@ import ResultTable from './ResultTable';
 export default function StandardSearch(props) {
    const [results, setResults] = useState([]);
    const [offset, setOffset] = useState(0);
-   const { data, error } = useSWR(`http://localhost:7777/search/${props.query}`, fetcher);
-   const { dataCount, dataCountError } = useSWR(`http://localhost:7777/searchCount/${props.query}`, countFetcher);
+   const { data, error } = useSWR(`http://localhost:7777/search/${props.query}?offset=${offset}`, fetcher);
+   const { dataCount, dataCountError } = useSWR(`http://localhost:7777/searchCount/${props.query}?offset=${offset}`, countFetcher);
    var key = 0;
    useEffect(() => {
       if (data) {
@@ -53,12 +53,6 @@ export default function StandardSearch(props) {
    }
 }
 
-/*
-<div className={standardresults}>
-               {results}
-            </div>
-*/
-
 const fetcher = url => axios.get(url, {
    headers: {
       "Content-Type": "application/json",
@@ -68,6 +62,7 @@ const fetcher = url => axios.get(url, {
 
 const countFetcher = url => axios.get(url, {
    headers: {
+      "Content-Type": "text/plain",
       "Accept": "text/plain"
    }
 }).then(res => res.data);

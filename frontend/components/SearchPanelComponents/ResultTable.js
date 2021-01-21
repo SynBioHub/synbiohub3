@@ -7,14 +7,21 @@ export default function ResultTable(props) {
    props.data.forEach(row => checklist.set(row.displayId, false));
    const [selected, setSelected] = useState(checklist);
    const [selectAll, setSelectAll] = useState(false);
+   const [buttonClass, setButtonClass] = useState(styles.disabled);
    useEffect(() => {
+      var allSelected = true;
+      var oneSelected = false;
       for (const checked of selected.values()) {
-         if (!checked) {
-            setSelectAll(false);
-            return;
-         }
+         if (!checked)
+            allSelected = false;
+         else
+            oneSelected = true;
       }
-      setSelectAll(true);
+      setSelectAll(allSelected);
+      if (oneSelected)
+         setButtonClass(styles.enabled);
+      else
+         setButtonClass(styles.disabled);
    }, [selected]);
    const rows = props.data.map((row) => {
       return <ResultRow selected={selected} setSelected={setSelected}
@@ -23,23 +30,20 @@ export default function ResultTable(props) {
    });
    return (
       <div className={styles.tablecontainer}>
+         <div className={styles.tablebuttons}>
+            <div className={`${styles.tablebutton} ${styles.enabled}`}>Edit Columns</div>
+            <div className={`${styles.tablebutton} ${buttonClass}`}>Add to Basket</div>
+            <div className={`${styles.tablebutton} ${buttonClass}`}>Download</div>
+         </div>
          <table className={styles.table} id={styles.results}>
             <thead>
                <tr>
                   <th>
                      <input type="checkbox" checked={selectAll} onChange={(e) => {
-                        if (e.target.checked) {
                            checklist = new Map();
-                           props.data.forEach(row => checklist.set(row.displayId, true));
+                           props.data.forEach(row => checklist.set(row.displayId, e.target.checked));
                            setSelected(checklist);
-                           setSelectAll(true);
-                        }
-                        else {
-                           checklist = new Map();
-                           props.data.forEach(row => checklist.set(row.displayId, false));
-                           setSelected(checklist);
-                           setSelectAll(false);
-                        }
+                           setSelectAll(e.target.checked);
                      }} />
                   </th>
                   <th>Name</th>

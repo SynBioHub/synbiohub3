@@ -27,6 +27,7 @@
    background-color: white;
    filter: drop-shadow(0px 0px 2px #888888);
    overflow: scroll;
+   z-index: 10;
 }
 
 .basketlabel {
