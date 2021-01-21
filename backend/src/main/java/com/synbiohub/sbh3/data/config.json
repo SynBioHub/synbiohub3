@@ -1,0 +1,38 @@
+{
+  "revision": "fb078b03",
+  "instanceName": "SynBioHub",
+  "sessionSecret": "2fa52968-8c57-469b-bfab-27feba85e35c",
+  "shareLinkSalt": "69159d06-8f91-4881-ba0d-5d6cb90fce3d",
+  "passwordSalt": "4e1f13f0-eb41-4bbe-850f-b34618015eaa",
+  "instanceUrl": "http://localhost:7777/",
+  "webOfRegistries": {
+    "https://synbiohub.org": "http://localhost:7777",
+    "https://synbiohub.programmingbiology.org": "https://synbiohub.programmingbiology.org",
+    "https://synbiohub.utah.edu": "https://synbiohub.utah.edu",
+    "http://sevahub.es": "http://sevahub.es"
+  },
+  "databasePrefix": "https://synbiohub.org/",
+  "themeParameters": {
+    "default": {}
+  },
+  "frontPageText": "<a href=\"/About\">SynBioHub</a> is a <i>design repository</i> for people designing biological constructs. It enables DNA and protein designs to be uploaded, then provides a shareable link to allow others to view them. SynBioHub also facilitates searching for information about existing useful parts and designs by combining data from a variety of sources.            ",
+  "allowPublicSignup": true,
+  "triplestore": {
+    "sparqlEndpoint": "http://localhost:8890/sparql",
+    "graphStoreEndpoint": "http://localhost:8890/sparql-graph-crud-auth/",
+    "defaultGraph": "https://synbiohub.org/public",
+    "graphPrefix": "https://synbiohub.org/",
+    "username": "dba",
+    "password": "dba",
+    "virtuosoINI": "/etc/virtuoso-opensource-7/virtuoso.ini",
+    "virtuosoDB": "/var/lib/virtuoso-opensource-7/db",
+    "isql": "isql-vt"
+  },
+  "firstLaunch": false,
+  "SBOLExplorerEndpoint": "http://localhost:13162/",
+  "useSBOLExplorer": true,
+  "use_cron": false,
+  "cronDay": "4",
+  "cronHour": "5",
+  "showModuleInteractions": false
+}
