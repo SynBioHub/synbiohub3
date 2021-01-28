@@ -2,6 +2,6 @@
 
 module.exports = {
    env: {
-       backendUrl: 'http://localhost:7777'
+       backendUrl: 'http://localhost:8080'
    }
 }

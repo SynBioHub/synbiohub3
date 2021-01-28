@@ -21,7 +21,7 @@ export default function StandardSearch(props) {
       .then(res => res.json()).then(data => setCount(data));
 
    }, [props.query]);
-   const { data, error } = useSWR(`${process.env.backendUrl}/search/${props.query}?offset=${offset}`, fetcher);
+   const { data, error } = useSWR(`${process.env.backendUrl}/search/${props.query}/?offset=${offset}`, fetcher);
    if (error) return <div className={standarderror}>Errors were encountered while fetching the data</div>
    if (!data) return (
       <div className={standardcontainer}>
@@ -30,6 +30,7 @@ export default function StandardSearch(props) {
          </div>
       </div>
    );
+
    if (data.length == 0) return <div className={standarderror}>No results found</div>
    else {
       return (

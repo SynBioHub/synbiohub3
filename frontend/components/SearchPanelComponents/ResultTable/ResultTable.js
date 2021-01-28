@@ -7,7 +7,7 @@ import Navigation from "./Navigation";
 export default function ResultTable(props) {
    var checklist = new Map();
    props.data.forEach(row => checklist.set(row.displayId, false));
-   
+   console.log(props.data);
    const [selected, setSelected] = useState(checklist);
    const [selectAll, setSelectAll] = useState(false);
    const [buttonClass, setButtonClass] = useState(styles.disabled);
