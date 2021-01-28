@@ -83,7 +83,11 @@ export default function ResultTable(props) {
                   <th>
                   <div className={styles.centerheader}>
                      <span className={styles.headertext}>Type</span>
-                     
+                     <Image 
+                     src='/images/updown.svg'
+                     alt='view basket'
+                     width={20}
+                     height={20}/>
                   </div>
                   </th>
                   <th>

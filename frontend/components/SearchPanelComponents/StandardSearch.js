@@ -11,8 +11,8 @@ import ResultTable from './ResultTable';
 export default function StandardSearch(props) {
    const [results, setResults] = useState([]);
    const [offset, setOffset] = useState(0);
-   const { data, error } = useSWR(`http://localhost:7777/search/${props.query}?offset=${offset}`, fetcher);
-   const { dataCount, dataCountError } = useSWR(`http://localhost:7777/searchCount/${props.query}?offset=${offset}`, countFetcher);
+   const { data, error } = useSWR(`${process.env.backendUrl}/search/${props.query}?offset=${offset}`, fetcher);
+   const { dataCount, dataCountError } = useSWR(`${process.env.backendUrl}/searchCount/${props.query}?offset=${offset}`, countFetcher);
    var key = 0;
    useEffect(() => {
       if (data) {
