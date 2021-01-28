@@ -11,6 +11,7 @@ export default function StandardSearch(props) {
    const [offset, setOffset] = useState(0);
    const [count, setCount] = useState(undefined);
    useEffect(() => {
+      setOffset(0);
       setCount(
       <div className={countloadercontainer}>
           <Loader type="ThreeDots" color="#D25627" width={25} height={10} className={countloader}/>

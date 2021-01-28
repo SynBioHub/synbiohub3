@@ -4,7 +4,7 @@ import styles from '../styles/basket.module.css'
 
 export default function Basket(props) {
    const [showBasket, setShowBasket] = useState(false);
-   console.log(props.basketItems);
+   //console.log(props.basketItems);
    if (!showBasket)
    {
       return (
