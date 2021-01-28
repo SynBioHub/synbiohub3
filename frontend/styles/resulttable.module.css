@@ -1,8 +1,12 @@
+.resultcontainer {
+   min-width: 100%;
+}
+
 .tablecontainer {
    width: 100%;
-   padding: 0 1rem 0 1rem;
-   max-height: calc(100vh - 15rem);
    overflow: scroll;
+   max-height: calc(100vh - 13rem);
+   padding: 0 1rem 0 1rem;
 }
 
 .table {
@@ -14,6 +18,10 @@
    font-size: 0.95rem;
 }
 
+.table tr {
+   width: 100%;
+}
+
 #results tr:nth-child(even) {
    background-color: #d2552728;
  }
@@ -23,7 +31,7 @@
    cursor: pointer;
 }
 
-.table tr:hover {
+.table tbody tr:hover {
    background-color: #D25627 !important;
    color: white;
    transform: scale(1.01);
@@ -54,8 +62,19 @@
 
 .tablebuttons {
    display: flex;
-   position: fixed;
-   top: 11rem;
+   justify-content: space-between;
+   padding: 0 1rem 0 1rem;
+}
+
+.actions {
+   display: flex;
+   flex-direction: row;
+}
+
+.navigation {
+   display: flex;
+   flex-direction: row;
+   align-items: center;
 }
 
 .tablebutton {
@@ -80,4 +99,25 @@
 .disabled {
    cursor: not-allowed;
    opacity: 0.5;
+}
+
+
+
+.count {
+   color: #000000;
+   font-weight: 550;
+   margin-right: 0.5rem;
+}
+
+.searchnav {
+   color: #D25627;
+   display: inline;
+   cursor: pointer;
+   margin-right: 0.5rem;
+   margin-bottom: 0;
+   font-weight: 550;
+}
+
+.searchnav:hover {
+   text-decoration: underline;
 }

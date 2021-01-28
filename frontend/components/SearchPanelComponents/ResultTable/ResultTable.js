@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import styles from "../../styles/resulttable.module.css"
+import styles from "../../../styles/resulttable.module.css"
 import ResultRow from "./ResultRow";
 import Image from 'next/image'
 
@@ -30,15 +30,23 @@ export default function ResultTable(props) {
       type={row.type} version={row.version} key={row.displayId} />
    });
    return (
-      <div className={styles.tablecontainer}>
+      <div className={styles.resultcontainer}>
          <div className={styles.tablebuttons}>
-            <div className={`${styles.tablebutton} ${styles.enabled}`}>Edit Columns</div>
-            <div className={`${styles.tablebutton} ${buttonClass}`}
-            onClick={() => {
-               addItemsToBasket(selected, props.data, props.basketItems, props.setBasketItems);
-            }}>Add to Basket</div>
-            <div className={`${styles.tablebutton} ${buttonClass}`}>Download</div>
+            <div className={styles.actions}>
+               <div className={`${styles.tablebutton} ${styles.enabled}`}>Edit Columns</div>
+               <div className={`${styles.tablebutton} ${buttonClass}`}
+               onClick={() => {
+                  addItemsToBasket(selected, props.data, props.basketItems, props.setBasketItems);
+               }}>Add to Basket</div>
+               <div className={`${styles.tablebutton} ${buttonClass}`}>Download</div>
+            </div>
+            <div className={styles.navigation}>
+               <div className={`${styles.tablebutton} ${styles.enabled}`}>«</div>
+               <div className={styles.count}>{props.offset + 1}-{props.offset + props.data.length} of {props.count} result(s)</div>
+               <div className={`${styles.tablebutton} ${styles.enabled}`}>»</div>
+            </div>
          </div>
+         <div className={styles.tablecontainer}>
          <table className={styles.table} id={styles.results}>
             <thead>
                <tr>
@@ -106,6 +114,7 @@ export default function ResultTable(props) {
             {rows}
             </tbody>
          </table>
+         </div>
       </div>
    );
 }
