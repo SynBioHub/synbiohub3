@@ -9,13 +9,14 @@ import Basket from './Basket';
 export default function SearchPanel(props) {
    const [show, setShow] = useState("");
    const [selectedType, setSelectedType] = useState("Standard Search");
+   const [basketItems, setBasketItems] = useState([]);
    useEffect(() => {
       setShow(styles.show);
    });
    var searchResults = null;
    switch(selectedType) {
       case "Standard Search":
-         searchResults = <StandardSearch query={props.query}/>
+         searchResults = <StandardSearch query={props.query} basketItems={basketItems} setBasketItems={setBasketItems}/>
    }
    return (
       <div className={styles.container + ' ' + show}>
@@ -26,7 +27,7 @@ export default function SearchPanel(props) {
             <SearchTypeSelector name="SPARQL" selectedType={selectedType} setSelectedType={setSelectedType}/>
          </div>
          {searchResults}
-         <Basket />
+         <Basket basketItems={basketItems} />
       </div>
    )
 }

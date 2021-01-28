@@ -1,36 +1,27 @@
-import { standardcontainer, standardresults, standardresultsloading, standarderror, count, searchnav, searchnavcontainer } from '../../styles/searchpanel.module.css';
-import StandardSearchResult from './StandardSearchResult';
-
-import Loader from 'react-loader-spinner';
+import { standardcontainer, standardresultsloading, standarderror, countloader, countloadercontainer } from '../../styles/searchpanel.module.css';
 
 import useSWR from 'swr';
 import axios from 'axios'
 import { useEffect, useState } from 'react';
-import ResultTable from './ResultTable';
+
+import Loader from 'react-loader-spinner';
+import ResultTable from './ResultTable/ResultTable';
 
 export default function StandardSearch(props) {
-   const [results, setResults] = useState([]);
    const [offset, setOffset] = useState(0);
-   const { data, error } = useSWR(`http://localhost:7777/search/${props.query}`, fetcher);
-   const { dataCount, dataCountError } = useSWR(`http://localhost:7777/searchCount/${props.query}`, countFetcher);
-   var key = 0;
+   const [count, setCount] = useState(undefined);
    useEffect(() => {
-      if (data) {
-         console.log(data);
-         setResults(data.map(result => {
-            return <StandardSearchResult result={result} key={key++} />
-         }));
-      }
-   }, [data]);
-   if (dataCount) {
-      console.log("count: " + dataCount);
-   }
-   if (!dataCount) {
-      console.log("no data count");
-   }
-   if(dataCountError) {
-      console.log("count error");
-   }
+      setOffset(0);
+      setCount(
+      <div className={countloadercontainer}>
+          <Loader type="ThreeDots" color="#D25627" width={25} height={10} className={countloader}/>
+      </div>);
+      const params ={headers: {"content-type" : "text/plain; charset=UTF-8"}};
+      fetch(`${process.env.backendUrl}/searchCount/${props.query}`, params)
+      .then(res => res.json()).then(data => setCount(data));
+
+   }, [props.query]);
+   const { data, error } = useSWR(`${process.env.backendUrl}/search/${props.query}?offset=${offset}`, fetcher);
    if (error) return <div className={standarderror}>Errors were encountered while fetching the data</div>
    if (!data) return (
       <div className={standardcontainer}>
@@ -43,31 +34,15 @@ export default function StandardSearch(props) {
    else {
       return (
          <div className={standardcontainer}>
-            <p className={count}>Showing {offset + 1}-{offset + results.length} of {dataCount} result(s)</p>
-            <div className={searchnavcontainer}>
-               <span className={searchnav} >Previous</span> <span className={searchnav}>Next</span>
-            </div>
-            <ResultTable data={data} />
+            <ResultTable data={data} basketItems={props.basketItems} setBasketItems={props.setBasketItems} count={count} offset={offset} setOffset={setOffset} />
          </div>
       );
    }
 }
 
-/*
-<div className={standardresults}>
-               {results}
-            </div>
-*/
-
 const fetcher = url => axios.get(url, {
    headers: {
       "Content-Type": "application/json",
-      "Accept": "text/plain"
-   }
-}).then(res => res.data);
-
-const countFetcher = url => axios.get(url, {
-   headers: {
       "Accept": "text/plain"
    }
 }).then(res => res.data);
