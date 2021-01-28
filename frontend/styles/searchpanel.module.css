@@ -13,7 +13,7 @@
 }
 
 .categories {
-   margin-left: 1rem;
+   margin-left: 0rem;
    margin-top: 1rem;
 }
 
@@ -114,25 +114,11 @@
    color: #5f5f5f;
 }
 
-.count {
-   color: #000000;
-   font-weight: 550;
-   margin-bottom: 0.5rem;
-}
-
-.searchnavcontainer {
-   margin-bottom: 1rem;
-}
-
-.searchnav {
-   color: #D25627;
+.countloadercontainer {
    display: inline;
-   cursor: pointer;
-   margin-right: 0.5rem;
-   margin-bottom: 0;
-   font-weight: 550;
 }
 
-.searchnav:hover {
-   text-decoration: underline;
+.countloader {
+   display: inline;
+   margin: 0 0.2rem;
 }
