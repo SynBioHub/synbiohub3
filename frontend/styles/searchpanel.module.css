@@ -15,7 +15,6 @@
 .categories {
    margin-left: 1rem;
    margin-top: 1rem;
-   margin-bottom: 1rem;
 }
 
 .categoryheader {
@@ -40,13 +39,16 @@
 /**STANDARD SEARCH CSS**/
 .standardcontainer {
    width: 100%;
-   max-height: calc(100vh - 10rem);
-   overflow-y: scroll;
+   display: flex;
+   flex-direction: column;
+   align-items: center;
 }
 
 .standardresults {
    width: 100%;
    align-items: center;
+   max-height: calc(100vh - 10rem);
+   overflow-y: scroll;
    display: flex;
    flex-direction: column;
    margin-bottom: 2rem;
@@ -110,4 +112,27 @@
    margin: 2rem;
    font-size: 2rem;
    color: #5f5f5f;
+}
+
+.count {
+   color: #000000;
+   font-weight: 550;
+   margin-bottom: 0.5rem;
+}
+
+.searchnavcontainer {
+   margin-bottom: 1rem;
+}
+
+.searchnav {
+   color: #D25627;
+   display: inline;
+   cursor: pointer;
+   margin-right: 0.5rem;
+   margin-bottom: 0;
+   font-weight: 550;
+}
+
+.searchnav:hover {
+   text-decoration: underline;
 }
