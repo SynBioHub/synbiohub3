@@ -30,7 +30,7 @@
   },
   "firstLaunch": false,
   "SBOLExplorerEndpoint": "http://localhost:13162/",
-  "useSBOLExplorer": true,
+  "useSBOLExplorer": false,
   "use_cron": false,
   "cronDay": "4",
   "cronHour": "5",
