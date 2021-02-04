@@ -35,22 +35,27 @@ public class SearchService {
         SPARQLQuery searchQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/search.sparql");
         HashMap<String, String> sparqlArgs = new HashMap<String, String>
                 (Map.of("from", "", "criteria", "", "limit", "", "offset", ""));
-        String criteriaString = getCriteriaString(allParams);
-        sparqlArgs.replace("criteria", criteriaString);
 
         // Process search parameters
         for (Map.Entry<String, String> param : allParams.entrySet()) {
             // Set offset and limit of query
             if (param.getKey().equals("offset")) {
                 sparqlArgs.replace("offset", "OFFSET " + param.getValue());
+                allParams.remove("offset"); // Remove this as we have already processed and it may mess up criteria string
+                sparqlArgs.replace("limit", "LIMIT 50"); // Default limit for queries without limit
                 continue;
             }
 
             else if (param.getKey().equals("limit")) {
                 sparqlArgs.replace("limit", "LIMIT " + param.getValue());
+                allParams.remove("limit");
                 continue;
             }
         }
+
+        String criteriaString = getCriteriaString(allParams);
+        sparqlArgs.replace("criteria", criteriaString);
+
         return searchQuery.loadTemplate(sparqlArgs);
     }
 
@@ -258,11 +263,11 @@ public class SearchService {
      */
     public String JSONToCount(String rawJSON) throws JsonProcessingException {
         JsonNode rawData = mapper.readTree(rawJSON);
-        String value = "";
+        int count = 0;
 
         for(JsonNode node : rawData.get("results").get("bindings")) {
-            value = node.get("count").get("value").asText();
+            count++;
         }
-        return value;
+        return Integer.toString(count);
     }
 }
