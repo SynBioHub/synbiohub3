@@ -11,6 +11,8 @@ import org.springframework.web.servlet.view.RedirectView;
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 @RestController
@@ -31,7 +33,8 @@ public class SearchController {
      */
     @GetMapping(value = "/search")
     @ResponseBody
-    public String getResults(@RequestParam Map<String,String> allParams) throws UnsupportedEncodingException, JsonProcessingException {
+    public String getResults(@RequestParam Map<String,String> allParams, HttpServletRequest request) throws UnsupportedEncodingException, JsonProcessingException {
+        String stuff = request.getQueryString();
         String sparqlQuery = searchService.getMetadataQuerySPARQL(allParams);
         System.out.println(sparqlQuery);
         return searchService.rawJSONToOutput(getSPARQL(sparqlQuery));
@@ -40,7 +43,7 @@ public class SearchController {
 
     /**
      * Redirects from the old search URI to a standardized URI
-     * <p> Use {@link SearchController#getResults(Map)} instead.
+     * <p> Use {@link SearchController#getResults(Map, HttpServletRequest)} instead.
      * @deprecated
      * @param request The incoming request
      * @return Redirect to search controller
@@ -185,12 +188,22 @@ public class SearchController {
      */
     @RequestMapping(value = "/sparql", headers = "Accept=application/json")
     @ResponseBody
-    public String getSPARQL(@RequestParam String query) {
+    public String getSPARQL(@RequestParam String query)  {
         RestTemplate restTemplate = new RestTemplate();
         String url = "";
+        String defaultGraph = "";
+        // Encoding the SPARQL query to be sent to Explorer/SPARQL
+        try {
+            query = URLEncoder.encode(query, StandardCharsets.UTF_8);
+            defaultGraph = URLEncoder.encode(config.get("triplestore").get("defaultGraph").toString(), StandardCharsets.UTF_8);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-        if (config.get("useSBOLExplorer").asBoolean()) url = config.get("SBOLExplorerEndpoint").asText() + "?query={query}";
-        else url = config.get("triplestore").get("sparqlEndpoint").asText() + "?default-graph-uri=&query={query}&format=json&";
+        if (config.get("useSBOLExplorer").asBoolean() && query.length() > 0)
+            url = config.get("SBOLExplorerEndpoint").asText()  + String.format("?default-graph-uri=%s&query=%s&", defaultGraph, query);
+        else
+            url = config.get("triplestore").get("sparqlEndpoint").asText() + String.format("?default-graph-uri=%s&query=%s&format=json&", defaultGraph, query);
 
         return restTemplate.getForObject(url, String.class, query);
     }
