@@ -263,11 +263,11 @@ public class SearchService {
      */
     public String JSONToCount(String rawJSON) throws JsonProcessingException {
         JsonNode rawData = mapper.readTree(rawJSON);
-        int count = 0;
+        String value = "";
 
-        for(JsonNode node : rawData.get("results").get("bindings")) {
-            count++;
-        }
-        return Integer.toString(count);
+            for(JsonNode node : rawData.get("results").get("bindings")) {
+                value = node.get("count").get("value").asText();
+            }
+        return value;
     }
 }
