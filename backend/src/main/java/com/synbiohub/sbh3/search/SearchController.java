@@ -57,7 +57,7 @@ public class SearchController {
         String limitAndOffset = request.getQueryString();
 
         if (limitAndOffset != null)
-            requestURL = requestURL.substring(0, requestURL.length() - 1) + "&" + limitAndOffset;
+            requestURL = requestURL + "&" + limitAndOffset;
 
         String keyword = requestURL.split("/search/")[1];
 
