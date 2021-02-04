@@ -13,6 +13,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -193,18 +194,15 @@ public class SearchController {
         String url = "";
         String defaultGraph = "";
         // Encoding the SPARQL query to be sent to Explorer/SPARQL
-        try {
-            query = URLEncoder.encode(query, StandardCharsets.UTF_8);
-            defaultGraph = URLEncoder.encode(config.get("triplestore").get("defaultGraph").toString(), StandardCharsets.UTF_8);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        HashMap<String, String> params = new HashMap<>();
+        params.put("default-graph-uri", defaultGraph);
+        params.put("query", query);
 
         if (config.get("useSBOLExplorer").asBoolean() && query.length() > 0)
-            url = config.get("SBOLExplorerEndpoint").asText()  + String.format("?default-graph-uri=%s&query=%s&", defaultGraph, query);
+            url = config.get("SBOLExplorerEndpoint").asText()  + "?default-graph-uri={defaultGraph}&query={query}&";
         else
-            url = config.get("triplestore").get("sparqlEndpoint").asText() + String.format("?default-graph-uri=%s&query=%s&format=json&", defaultGraph, query);
+            url = config.get("triplestore").get("sparqlEndpoint").asText() + "/?default-graph-uri={defaultGraph}&query={query}&format=json&" ;
 
-        return restTemplate.getForObject(url, String.class, query);
+        return restTemplate.getForObject(url, String.class, defaultGraph, query);
     }
 }
