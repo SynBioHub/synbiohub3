@@ -35,7 +35,6 @@ public class SearchController {
     @GetMapping(value = "/search")
     @ResponseBody
     public String getResults(@RequestParam Map<String,String> allParams, HttpServletRequest request) throws UnsupportedEncodingException, JsonProcessingException {
-        String stuff = request.getQueryString();
         String sparqlQuery = searchService.getMetadataQuerySPARQL(allParams);
         System.out.println(sparqlQuery);
         return searchService.rawJSONToOutput(getSPARQL(sparqlQuery));

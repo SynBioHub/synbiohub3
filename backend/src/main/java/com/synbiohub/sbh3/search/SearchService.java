@@ -8,6 +8,7 @@ package com.synbiohub.sbh3.search;
  import org.springframework.beans.factory.annotation.Autowired;
  import org.springframework.stereotype.Service;
 
+ import javax.servlet.http.HttpServletRequest;
  import java.util.ArrayList;
  import java.util.HashMap;
  import java.util.List;
@@ -23,13 +24,14 @@ public class SearchService {
     @Autowired
     JsonNode config;
 
-    ObjectMapper mapper = new ObjectMapper();
+    @Autowired
+    ObjectMapper mapper;
 
     /**
      * Returns the metadata for the object from the specified search query
      * @param allParams Key/Value pairs of the query
      * @return String containing SPARQL query
-     * @see SearchController#getResults(Map)
+     * @see SearchController#getResults(Map, HttpServletRequest)
      */
     public String getMetadataQuerySPARQL(Map<String,String> allParams) {
         SPARQLQuery searchQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/search.sparql");
