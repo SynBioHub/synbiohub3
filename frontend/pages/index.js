@@ -3,7 +3,7 @@ import Card from '../components/HomeComponents/Card'
 
 import styles from '../styles/home.module.css'
 
-function Home(props) {
+function Home() {
   return (
     <div className={styles.container}>
       <main className={styles.main}>
@@ -16,7 +16,7 @@ function Home(props) {
 
         <div className={styles.grid}>
           <Card title="Search" description="Browse SynBioHub for useful parts and designs" 
-          icon="/images/search_black.svg" setSearching={props.setSearching} />
+          icon="/images/search_black.svg" />
           <Card title="Submit A Design" description="Upload your parts and designs for safekeeping" 
           icon="/images/submit.svg" iconheight="1.5rem" iconoffset="-20%" iconright="0.75rem" />
           <Card title="Manage Submissions" description="Prepare designs for publication or collaboration"
@@ -30,5 +30,5 @@ function Home(props) {
 }
 
 export default function HomeWithProps() {
-  return <TopLevel searchingComponent={Home} />
+  return <TopLevel><Home /></TopLevel>
 }

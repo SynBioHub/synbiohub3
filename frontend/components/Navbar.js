@@ -1,12 +1,17 @@
 import Link from 'next/link'
 
 import Selector from './NavbarComponents/Selector'
+import SearchBar from './NavbarComponents/SearchBar'
+import { useDispatch, useSelector } from 'react-redux'
+import { setSearchingActive } from '../redux/actions'
 
 import styles from '../styles/navbar.module.css'
-import SearchBar from './NavbarComponents/SearchBar';
 
-export default function Navbar(props) {
-   if(!props.searching) {
+export default function Navbar() {
+   const searchingOpen = useSelector(state => state.search.active);
+   const dispatch = useDispatch();
+
+   if(!searchingOpen) {
       return (
          <header className={styles.container}>
             <Link href="/">
@@ -25,9 +30,7 @@ export default function Navbar(props) {
                <img
                   src="/images/search.svg"
                   className={styles.searchicon}
-                  onClick={() => {
-                     props.setSearching(true);
-                  }}
+                  onClick={() => dispatch(setSearchingActive(true))}
                />
                <img
                   src="/images/face.jpeg"
@@ -38,21 +41,24 @@ export default function Navbar(props) {
       );
    }
    else {
-      return (
-         <header className={styles.container}>
-            <div className={styles.searchcontainer}>
-               <img
-                  src="/images/search.svg"
-                  className={styles.searchiconactive}
-               />
-               <SearchBar setQuery={props.setQuery} query={props.query} />
-               <div className={styles.cancelsearch}
-               onClick={() => {
-                  props.setSearching(false);
-               }}
-               >{"\u2573"}</div>
-            </div>
-         </header>
-      );
+      return <NavInSearchMode />;
    }
+}
+
+function NavInSearchMode() {
+   const dispatch = useDispatch();
+   return (
+      <header className={styles.container}>
+         <div className={styles.searchcontainer}>
+            <img
+               src="/images/search.svg"
+               className={styles.searchiconactive}
+            />
+            <SearchBar />
+            <div className={styles.cancelsearch}
+            onClick={() => dispatch(setSearchingActive(false))}
+            >{"\u2573"}</div>
+         </div>
+      </header>
+   );
 }

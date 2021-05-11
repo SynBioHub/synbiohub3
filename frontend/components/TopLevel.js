@@ -4,22 +4,18 @@ import Footer from './Footer'
 import SearchPanel from './SearchPanel'
 
 import styles from '../styles/layout.module.css'
-import { useState } from 'react'
 
-export default function TopLevel(props)
-{
-   const [searching, setSearching] = useState(false);
-   const [query, setQuery] = useState("");
+export default function TopLevel(props) {
    return (
       <div>
          <Head>
             <title>SynBioHub</title>
             <link rel="icon" href="/favicon.ico" />
          </Head>
-         <Navbar searching={searching} setSearching={setSearching} query={query} setQuery={setQuery} />
+         <Navbar />
          <div className={styles.container}>
-            {props.searchingComponent ? <props.searchingComponent setSearching={setSearching}/> : props.children}
-            {searching ? <SearchPanel query={query} /> : null}
+            {props.children}
+            <SearchPanel />
          </div>
          <Footer />
       </div>

@@ -12,7 +12,11 @@
     "next": "10.0.1",
     "react": "17.0.1",
     "react-dom": "17.0.1",
-    "react-loader-spinner": "^3.1.14",
+    "react-loader-spinner": "^4.0.0",
+    "react-redux": "^7.2.4",
+    "redux": "^4.1.0",
+    "redux-devtools-extension": "^2.13.9",
+    "redux-thunk": "^2.3.0",
     "swr": "^0.3.9"
   },
   "proxy": "http://localhost:8080/"

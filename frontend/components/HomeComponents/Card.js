@@ -1,6 +1,9 @@
+import { useDispatch } from 'react-redux';
+import { setSearchingActive } from '../../redux/actions';
 import { card, cardicon, cardhead } from '../../styles/home.module.css'
 
 export default function Card(props) {
+   const dispatch = useDispatch();
    const title = props.icon ? (
       <div className={cardhead}>
          <h3>{props.title}</h3>
@@ -13,8 +16,8 @@ export default function Card(props) {
    ) : <h3>{props.title} <span style={{color: "black"}}>&rarr;</span></h3>;
    return (
       <a className={card} onClick={() => {
-         if(props.setSearching)
-            props.setSearching(true);
+         if(props.title === 'Search')
+            dispatch(setSearchingActive(true));
       }}>
          {title}
          <p>{props.description}</p>

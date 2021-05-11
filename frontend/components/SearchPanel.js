@@ -5,8 +5,10 @@ import styles from '../styles/searchpanel.module.css'
 import SearchTypeSelector from './SearchPanelComponents/SearchTypeSelector';
 import StandardSearch from './SearchPanelComponents/StandardSearch';
 import Basket from './Basket';
+import { useSelector } from 'react-redux';
 
 export default function SearchPanel(props) {
+   const showSearchPanel = useSelector(state => state.search.active);
    const [show, setShow] = useState("");
    const [selectedType, setSelectedType] = useState("Standard Search");
    const [basketItems, setBasketItems] = useState([]);
@@ -16,18 +18,22 @@ export default function SearchPanel(props) {
    var searchResults = null;
    switch(selectedType) {
       case "Standard Search":
-         searchResults = <StandardSearch query={props.query} basketItems={basketItems} setBasketItems={setBasketItems}/>
+         searchResults = <StandardSearch basketItems={basketItems} setBasketItems={setBasketItems}/>
    }
-   return (
-      <div className={styles.container + ' ' + show}>
-         <div className={styles.categories}>
-            <SearchTypeSelector name="Standard Search" selectedType={selectedType} setSelectedType={setSelectedType}/>
-            <SearchTypeSelector name="Sequence Search" selectedType={selectedType} setSelectedType={setSelectedType}/>
-            <SearchTypeSelector name="Advanced Search" selectedType={selectedType} setSelectedType={setSelectedType}/>
-            <SearchTypeSelector name="SPARQL" selectedType={selectedType} setSelectedType={setSelectedType}/>
+   if (showSearchPanel) {
+      return (
+         <div className={styles.container + ' ' + show}>
+            <div className={styles.categories}>
+               <SearchTypeSelector name="Standard Search" selectedType={selectedType} setSelectedType={setSelectedType}/>
+               <SearchTypeSelector name="Sequence Search" selectedType={selectedType} setSelectedType={setSelectedType}/>
+               <SearchTypeSelector name="Advanced Search" selectedType={selectedType} setSelectedType={setSelectedType}/>
+               <SearchTypeSelector name="SPARQL" selectedType={selectedType} setSelectedType={setSelectedType}/>
+            </div>
+            {searchResults}
+            <Basket basketItems={basketItems} />
          </div>
-         {searchResults}
-         <Basket basketItems={basketItems} />
-      </div>
-   )
+      );
+   }
+   else
+      return null;
 }

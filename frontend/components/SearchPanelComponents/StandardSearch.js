@@ -6,8 +6,10 @@ import { useEffect, useState } from 'react';
 
 import Loader from 'react-loader-spinner';
 import ResultTable from './ResultTable/ResultTable';
+import { useSelector } from 'react-redux';
 
 export default function StandardSearch(props) {
+   const query = useSelector(state => state.search.query);
    const [offset, setOffset] = useState(0);
    const [count, setCount] = useState(undefined);
    useEffect(() => {
@@ -17,11 +19,11 @@ export default function StandardSearch(props) {
           <Loader type="ThreeDots" color="#D25627" width={25} height={10} className={countloader}/>
       </div>);
       const params ={headers: {"content-type" : "text/plain; charset=UTF-8"}};
-      fetch(`${process.env.backendUrl}/searchCount/${props.query}`, params)
+      fetch(`${process.env.backendUrl}/searchCount/${query}`, params)
       .then(res => res.json()).then(data => setCount(data));
 
-   }, [props.query]);
-   const { data, error } = useSWR(`${process.env.backendUrl}/search/${props.query}?offset=${offset}`, fetcher);
+   }, [query]);
+   const { data, error } = useSWR(`${process.env.backendUrl}/search/${query}?offset=${offset}`, fetcher);
    if (error) return <div className={standarderror}>Errors were encountered while fetching the data</div>
    if (!data) return (
       <div className={standardcontainer}>
