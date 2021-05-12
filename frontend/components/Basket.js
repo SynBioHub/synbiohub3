@@ -3,6 +3,8 @@ import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import styles from '../styles/basket.module.css'
 
+import Blank from './Footer'
+
 export default function Basket() {
    const [showBasket, setShowBasket] = useState(false);
    const basketItems = useSelector(state => state.basket.basket);
