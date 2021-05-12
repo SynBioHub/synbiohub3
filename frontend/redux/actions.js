@@ -17,6 +17,13 @@ export const setSearchQuery = (query) => (dispatch) => {
    })
 }
 
+export const setOffset = (newOffset) => (dispatch) => {
+   dispatch({
+      type: types.OFFSET,
+      payload: newOffset
+   })
+}
+
 // BASKET ACTIONS
 export const addToBasket = (uriArray) => (dispatch) => {
    dispatch({

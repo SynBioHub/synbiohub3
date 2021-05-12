@@ -52,7 +52,7 @@ export default function ResultTable(props) {
                }}>Add to Basket</div>
                <div className={`${styles.tablebutton} ${buttonClass} ${styles.rightspace}`}>Download</div>
             </div>
-            <Navigation offset={props.offset} setOffset={props.setOffset} length={props.data.length} count={props.count} />
+            <Navigation length={props.data.length} count={props.count} />
          </div>
          <div className={styles.tablecontainer}>
          <table className={styles.table} id={styles.results}>

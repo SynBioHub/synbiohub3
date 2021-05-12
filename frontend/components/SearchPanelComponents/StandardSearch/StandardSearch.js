@@ -6,17 +6,21 @@ import { useEffect, useState, useRef } from 'react';
 
 import Loader from 'react-loader-spinner';
 import ResultTable from './ResultTable/ResultTable';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { setOffset } from '../../../redux/actions';
 
 export default function StandardSearch() {
    const query = useSelector(state => state.search.query);
+   const offset = useSelector(state => state.search.offset);
+   const dispatch = useDispatch();
+   const [firstQuery, setFirstQuery] = useState(true);
    const hasQueryChanged = useCompare(query);
-   const [offset, setOffset] = useState(0);
    const [count, setCount] = useState(undefined);
    const { newCount, isCountLoading, isCountError } = getSearchCount(query, offset);
    useEffect(() => {
-      if (hasQueryChanged)
-         setOffset(0);
+      if (hasQueryChanged && !firstQuery)
+         dispatch(setOffset(0));
+      setFirstQuery(false);
       if (isCountLoading)
          setCount(
             <div className={countloadercontainer}>
@@ -45,7 +49,7 @@ export default function StandardSearch() {
    else
       return (
          <div className={standardcontainer}>
-            <ResultTable data={results} count={count} offset={offset} setOffset={setOffset} />
+            <ResultTable data={results} count={count} />
          </div>
       )
 }
@@ -75,6 +79,7 @@ const fetcher = url => axios.get(url, {
    }
 }).then(res => res.data);
 
+// Used to compare new query to previous query
 function useCompare (val) {
    const prevVal = usePrevious(val)
    return prevVal !== val
