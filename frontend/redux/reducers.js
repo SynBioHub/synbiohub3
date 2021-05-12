@@ -4,8 +4,9 @@ import * as types from './types'
 // USER REDUCER
 const initialUserState = {
    username: '',
-   userToken: ''
-};
+   token: ''
+}
+
 const userReducer = (state = initialUserState, { type, payload}) => {
    switch(type) {
       case types.USERNAME:
@@ -58,10 +59,31 @@ const searchReducer = (state = initialSearchState, { type, payload }) => {
    }
 }
 
+
+// BASKET REDUCER
+const initialBasketState = {
+   basket: []
+}
+
+const basketReducer = (state = initialBasketState, {type, payload}) => {
+   switch(type) {
+      case types.ADDTOBASKET:
+         return {
+            ...state,
+            basket: payload.concat(...state.basket.filter((item) => payload.findIndex((compare) => compare.uri === item.uri) < 0))
+         }
+      default:
+         return state
+   }
+}
+
+
+
 // COMBINED REDUCERS
 const reducers = {
    user: userReducer,
-   search: searchReducer
+   search: searchReducer,
+   basket: basketReducer
 }
 
 export default combineReducers(reducers)

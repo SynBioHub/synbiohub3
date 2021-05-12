@@ -7,18 +7,17 @@ import StandardSearch from './SearchPanelComponents/StandardSearch';
 import Basket from './Basket';
 import { useSelector } from 'react-redux';
 
-export default function SearchPanel(props) {
+export default function SearchPanel() {
    const showSearchPanel = useSelector(state => state.search.active);
    const [show, setShow] = useState("");
    const [selectedType, setSelectedType] = useState("Standard Search");
-   const [basketItems, setBasketItems] = useState([]);
    useEffect(() => {
       setShow(styles.show);
    });
    var searchResults = null;
    switch(selectedType) {
       case "Standard Search":
-         searchResults = <StandardSearch basketItems={basketItems} setBasketItems={setBasketItems}/>
+         searchResults = <StandardSearch />
    }
    if (showSearchPanel) {
       return (
@@ -30,7 +29,7 @@ export default function SearchPanel(props) {
                <SearchTypeSelector name="SPARQL" selectedType={selectedType} setSelectedType={setSelectedType}/>
             </div>
             {searchResults}
-            <Basket basketItems={basketItems} />
+            <Basket />
          </div>
       );
    }

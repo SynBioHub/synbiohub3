@@ -1,10 +1,11 @@
 import Image from 'next/image'
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
 import styles from '../styles/basket.module.css'
 
-export default function Basket(props) {
+export default function Basket() {
    const [showBasket, setShowBasket] = useState(false);
-   //console.log(props.basketItems);
+   const basketItems = useSelector(state => state.basket.basket);
    if (!showBasket)
    {
       return (
@@ -17,8 +18,8 @@ export default function Basket(props) {
          </div>
       );
    }
-   const items = props.basketItems.map(item => {
-      return <span className={styles.item} key={item.displayId}>{item.name}</span>
+   const items = basketItems.map(item => {
+      return <span className={styles.item} key={item.uri}>{item.name}</span>
    })
    return (
       <div>

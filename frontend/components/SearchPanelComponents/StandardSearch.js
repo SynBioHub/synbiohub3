@@ -15,12 +15,12 @@ export default function StandardSearch(props) {
    useEffect(() => {
       setOffset(0);
       setCount(
-      <div className={countloadercontainer}>
-          <Loader type="ThreeDots" color="#D25627" width={25} height={10} className={countloader}/>
-      </div>);
-      const params ={headers: {"content-type" : "text/plain; charset=UTF-8"}};
+         <div className={countloadercontainer}>
+            <Loader type="ThreeDots" color="#D25627" width={25} height={10} className={countloader} />
+         </div>);
+      const params = { headers: { "content-type": "text/plain; charset=UTF-8" } };
       fetch(`${process.env.backendUrl}/searchCount/${query}`, params)
-      .then(res => res.json()).then(data => setCount(data));
+         .then(res => res.json()).then(data => setCount(data));
 
    }, [query]);
    const { data, error } = useSWR(`${process.env.backendUrl}/search/${query}?offset=${offset}`, fetcher);
@@ -28,7 +28,7 @@ export default function StandardSearch(props) {
    if (!data) return (
       <div className={standardcontainer}>
          <div className={standardresultsloading}>
-            <Loader type="Grid" color="#D25627"/>
+            <Loader type="Grid" color="#D25627" />
          </div>
       </div>
    );

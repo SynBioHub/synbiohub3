@@ -16,3 +16,11 @@ export const setSearchQuery = (query) => (dispatch) => {
       payload: query
    })
 }
+
+// BASKET ACTIONS
+export const addToBasket = (uriArray) => (dispatch) => {
+   dispatch({
+      type: types.ADDTOBASKET,
+      payload: uriArray
+   })
+}

@@ -3,14 +3,16 @@ import styles from "../../../styles/resulttable.module.css"
 import ResultRow from "./ResultRow";
 import ResultTableHeader from "./ResultTableHeader";
 import Navigation from "./Navigation";
+import { addToBasket } from "../../../redux/actions";
+import { useDispatch } from "react-redux";
 
 export default function ResultTable(props) {
    var checklist = new Map();
    props.data.forEach(row => checklist.set(row.displayId, false));
-   console.log(props.data);
    const [selected, setSelected] = useState(checklist);
    const [selectAll, setSelectAll] = useState(false);
    const [buttonClass, setButtonClass] = useState(styles.disabled);
+   const dispatch = useDispatch();
 
    useEffect(() => {
       var allSelected = true;
@@ -31,7 +33,7 @@ export default function ResultTable(props) {
    const rows = props.data.map((row) => {
       return <ResultRow selected={selected} setSelected={setSelected}
       name={row.name} displayId={row.displayId} description={row.description}
-      type={row.type} version={row.version} key={row.displayId} />
+      type={row.type} version={row.version} key={row.uri} />
    });
 
    return (
@@ -41,7 +43,12 @@ export default function ResultTable(props) {
                <div className={`${styles.tablebutton} ${styles.enabled} ${styles.rightspace}`}>Edit Columns</div>
                <div className={`${styles.tablebutton} ${buttonClass}  ${styles.rightspace}`}
                onClick={() => {
-                  addItemsToBasket(selected, props.data, props.basketItems, props.setBasketItems);
+                  const itemsChecked = [];
+                  props.data.forEach(result => {
+                     if (selected.get(result.displayId))
+                        itemsChecked.push({uri: result.uri, name: result.name})
+                  });
+                  dispatch(addToBasket(itemsChecked))
                }}>Add to Basket</div>
                <div className={`${styles.tablebutton} ${buttonClass} ${styles.rightspace}`}>Download</div>
             </div>
@@ -73,14 +80,4 @@ export default function ResultTable(props) {
          </div>
       </div>
    );
-}
-
-
-const addItemsToBasket = (selected, rows, originalBasket, setBasketItems) => {
-   const newBasket = [...originalBasket];
-   rows.forEach(row => {
-      if (selected.get(row.displayId))
-         newBasket.push(row);
-   });
-   setBasketItems(newBasket);
 }

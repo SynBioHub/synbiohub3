@@ -1,13 +1,6 @@
 import { useEffect, useState } from "react";
 
 export default function ResultRow(props) {
-   const [checked, setChecked] = useState(false);
-   useEffect(() => {
-      if (props.selected.get(props.displayId))
-         setChecked(true);
-      else
-         setChecked(false);
-   }, [props.selected]);
    var type = "";
    const potential_type = props.type.toLowerCase();
    if (potential_type.includes("component"))

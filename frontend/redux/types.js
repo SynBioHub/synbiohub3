@@ -10,3 +10,6 @@ export const QUERY = 'QUERY'
 export const COUNT = 'COUNT'
 export const OFFSET = 'OFFSET'
 export const SEARCHINGOPEN = 'SEARCHINGOPEN'
+
+// BASKET
+export const ADDTOBASKET = 'ADDTOBASKET'
