@@ -44,10 +44,14 @@ export default function ResultTable(props) {
                <div className={`${styles.tablebutton} ${buttonClass}  ${styles.rightspace}`}
                onClick={() => {
                   const itemsChecked = [];
+                  checklist = new Map();
                   props.data.forEach(result => {
-                     if (selected.get(result.displayId))
-                        itemsChecked.push({uri: result.uri, name: result.name})
+                     checklist.set(result.displayId, false)
+                     if (selected.get(result.displayId)) {
+                        itemsChecked.push({uri: result.uri, name: result.name});
+                     }
                   });
+                  setSelected(checklist)
                   dispatch(addToBasket(itemsChecked))
                }}>Add to Basket</div>
                <div className={`${styles.tablebutton} ${buttonClass} ${styles.rightspace}`}>Download</div>

@@ -28,7 +28,6 @@ const userReducer = (state = initialUserState, { type, payload}) => {
 const initialSearchState = {
    query: '',
    offset: 0,
-   count: 0,
    active: false
 }
 
@@ -43,11 +42,6 @@ const searchReducer = (state = initialSearchState, { type, payload }) => {
          return {
             ...state,
             offset: payload
-         }
-      case types.COUNT:
-         return {
-            ...state,
-            count: payload
          }
       case types.SEARCHINGOPEN:
          return {
