@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import styles from "../../../styles/resulttable.module.css"
+import styles from "../../../../styles/resulttable.module.css"
 
 export default function Navigation(props) {
    const [prev, setPrev] = useState(styles.disabled);

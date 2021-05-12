@@ -1,4 +1,4 @@
-import { standardcontainer, standardresultsloading, standarderror, countloader, countloadercontainer } from '../../styles/searchpanel.module.css';
+import { standardcontainer, standardresultsloading, standarderror, countloader, countloadercontainer } from '../../../styles/searchpanel.module.css';
 
 import useSWR from 'swr';
 import axios from 'axios'

@@ -1,4 +1,4 @@
-import { centerheader, headertext } from "../../../styles/resulttable.module.css";
+import { centerheader, headertext } from "../../../../styles/resulttable.module.css";
 import Image from 'next/image';
 
 export default function ResultTableHeader(props) {

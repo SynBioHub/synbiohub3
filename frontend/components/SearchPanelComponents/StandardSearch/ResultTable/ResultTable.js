@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import styles from "../../../styles/resulttable.module.css"
+import styles from "../../../../styles/resulttable.module.css"
 import ResultRow from "./ResultRow";
 import ResultTableHeader from "./ResultTableHeader";
 import Navigation from "./Navigation";
-import { addToBasket } from "../../../redux/actions";
+import { addToBasket } from "../../../../redux/actions";
 import { useDispatch } from "react-redux";
 
 export default function ResultTable(props) {

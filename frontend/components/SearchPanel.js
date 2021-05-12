@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import styles from '../styles/searchpanel.module.css'
 import SearchTypeSelector from './SearchPanelComponents/SearchTypeSelector';
-import StandardSearch from './SearchPanelComponents/StandardSearch';
+import StandardSearch from './SearchPanelComponents/StandardSearch/StandardSearch';
 import Basket from './Basket';
 import { useSelector } from 'react-redux';
 
