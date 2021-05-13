@@ -5,8 +5,7 @@ import * as types from './types';
 const initialUserState = {
   username: '',
   token: '',
-  loggedIn: false,
-  promptLogin: false
+  loggedIn: false
 };
 
 const userReducer = (state = initialUserState, { type, payload }) => {
@@ -19,17 +18,12 @@ const userReducer = (state = initialUserState, { type, payload }) => {
     case types.USERTOKEN:
       return {
         ...state,
-        userToken: payload,
+        token: payload,
       };
     case types.LOGGEDIN:
       return {
         ...state,
         loggedIn: payload,
-      }
-    case types.PROMPTLOGIN:
-      return {
-        ...state,
-        promptLogin: payload
       }
     default:
       return state;

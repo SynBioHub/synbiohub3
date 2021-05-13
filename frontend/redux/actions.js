@@ -1,11 +1,30 @@
 import * as types from './types';
+import axios from 'axios';
 // USER ACTIONS
-export const setPromptLogin = (promptLogin) => (dispatch) => {
-  dispatch({
-    type: types.PROMPTLOGIN,
-    payload: promptLogin
-  })
+export const login = (username, password) => (dispatch) => {
+  axios.post(`${process.env.backendUrl}/login`, {
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'text/plain',
+    },
+    email: username,
+    password: password
+  }).then(res => {
+    dispatch({
+      type: types.USERTOKEN,
+      payload: res.data
+    });
+    dispatch({
+      type: types.USERNAME,
+      payload: username
+    });
+    dispatch({
+      type: types.LOGGEDIN,
+      payload: true
+    })
+  }) 
 }
+
 
 // SEARCHING ACTIONS
 export const setSearchingActive = (isOpen) => (dispatch) => {
