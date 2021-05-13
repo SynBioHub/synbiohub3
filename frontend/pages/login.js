@@ -5,6 +5,9 @@ import styles from '../styles/login.module.css';
 import TopLevel from '../components/TopLevel';
 import { login } from '../redux/actions';
 
+/**
+ * This page renders the login page for sbh
+ */
 function Login() {
   const loggedIn = useSelector((state) => state.user.loggedIn);
   console.log(loggedIn);

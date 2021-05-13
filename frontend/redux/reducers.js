@@ -1,6 +1,12 @@
 import { combineReducers } from 'redux';
 import * as types from './types';
 
+/*
+This file contains the reducers that redux uses to initialize and update
+the redux state. This redux state is used by components in sbh for rendering.
+To see how these reducers are utilizes to update state, see ./actions.js
+*/
+
 // USER REDUCER
 const initialUserState = {
   username: '',
@@ -8,6 +14,10 @@ const initialUserState = {
   loggedIn: false,
 };
 
+/**
+ * This reducer initializes and allows state concering the sbh user to
+ * be updated
+ */
 const userReducer = (state = initialUserState, { type, payload }) => {
   switch (type) {
     case types.USERNAME:
@@ -37,6 +47,10 @@ const initialSearchState = {
   active: false,
 };
 
+/**
+ * This reducer initializes and allows state concering search on sbh to
+ * be updated
+ */
 const searchReducer = (state = initialSearchState, { type, payload }) => {
   switch (type) {
     case types.QUERY:
@@ -64,6 +78,10 @@ const initialBasketState = {
   basket: [],
 };
 
+/**
+ * This reducer initializes and allows state concering the basket in the search panel to
+ * be updated
+ */
 const basketReducer = (state = initialBasketState, { type, payload }) => {
   switch (type) {
     case types.ADDTOBASKET:
@@ -77,6 +95,7 @@ const basketReducer = (state = initialBasketState, { type, payload }) => {
 };
 
 // COMBINED REDUCERS
+// combine all reducers for sbh to use
 const reducers = {
   user: userReducer,
   search: searchReducer,

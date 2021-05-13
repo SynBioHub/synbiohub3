@@ -3,6 +3,9 @@ import Card from '../components/HomeComponents/Card';
 
 import styles from '../styles/home.module.css';
 
+/**
+ * This page renders the home/landing page for sbh.
+ */
 function Home() {
   return (
     <div className={styles.container}>

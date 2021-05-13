@@ -2,7 +2,7 @@ import { categoryheader, categoryname, categoryselected } from '../../styles/sea
 
 /**
  * This component is used to select what type of search the user wishes to conduct
- * (such as standard, sequence, etc) 
+ * (such as standard, sequence, etc)
  */
 export default function SearchTypeSelector(props) {
   const extraClass = props.selectedType === props.name
