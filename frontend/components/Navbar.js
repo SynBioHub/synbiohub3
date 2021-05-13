@@ -1,15 +1,15 @@
-import Link from 'next/link'
+import Link from 'next/link';
 
-import Selector from './NavbarComponents/Selector'
-import SearchBar from './NavbarComponents/SearchBar'
-import { useDispatch, useSelector } from 'react-redux'
-import { setSearchingActive } from '../redux/actions'
+import { useDispatch, useSelector } from 'react-redux';
+import Selector from './NavbarComponents/Selector';
+import SearchBar from './NavbarComponents/SearchBar';
+import { setSearchingActive } from '../redux/actions';
 
-import styles from '../styles/navbar.module.css'
+import styles from '../styles/navbar.module.css';
 
 export default function Navbar() {
-  const searchingOpen = useSelector((state) => state.search.active)
-  const dispatch = useDispatch()
+  const searchingOpen = useSelector((state) => state.search.active);
+  const dispatch = useDispatch();
 
   if (!searchingOpen) {
     return (
@@ -52,15 +52,14 @@ export default function Navbar() {
           />
         </div>
       </header>
-    )
+    );
   }
 
-  return <NavInSearchMode />
-
+  return <NavInSearchMode />;
 }
 
 function NavInSearchMode() {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   return (
     <header className={styles.container}>
@@ -75,9 +74,10 @@ function NavInSearchMode() {
         <div
           className={styles.cancelsearch}
           onClick={() => dispatch(setSearchingActive(false))}
-        >{'\u2573'}
+        >
+          {'\u2573'}
         </div>
       </div>
     </header>
-  )
+  );
 }

@@ -1,51 +1,60 @@
-import { useEffect, useState } from 'react'
-import styles from '../../../../styles/resulttable.module.css'
-import ResultRow from './ResultRow'
-import ResultTableHeader from './ResultTableHeader'
-import Navigation from './Navigation'
-import { addToBasket } from '../../../../redux/actions'
-import { useDispatch } from 'react-redux'
+import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import styles from '../../../../styles/resulttable.module.css';
+import ResultRow from './ResultRow';
+import ResultTableHeader from './ResultTableHeader';
+import Navigation from './Navigation';
+import { addToBasket } from '../../../../redux/actions';
 
 export default function ResultTable(props) {
-  let checklist = new Map()
+  let checklist = new Map();
 
-  props.data.forEach((row) => checklist.set(row.displayId, false))
+  props.data.forEach((row) => checklist.set(row.displayId, false));
   const [
     selected,
-    setSelected
-  ] = useState(checklist)
+    setSelected,
+  ] = useState(checklist);
   const [
     selectAll,
-    setSelectAll
-  ] = useState(false)
+    setSelectAll,
+  ] = useState(false);
   const [
     buttonClass,
-    setButtonClass
-  ] = useState(styles.disabled)
-  const dispatch = useDispatch()
+    setButtonClass,
+  ] = useState(styles.disabled);
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    let allSelected = true
-    let oneSelected = false
+    let allSelected = true;
+    let oneSelected = false;
 
     for (const checked of selected.values()) {
       if (!checked) {
-        allSelected = false
+        allSelected = false;
       } else {
-        oneSelected = true
+        oneSelected = true;
       }
     }
-    setSelectAll(allSelected)
+    setSelectAll(allSelected);
     if (oneSelected) {
-      setButtonClass(styles.enabled)
+      setButtonClass(styles.enabled);
     } else {
-      setButtonClass(styles.disabled)
+      setButtonClass(styles.disabled);
     }
-  }, [selected])
+  }, [selected]);
 
-  const rows = props.data.map((row) => (<ResultRow selected={selected} setSelected={setSelected}
-      name={row.name} displayId={row.displayId} description={row.description}
-      type={row.type} version={row.version} key={row.uri} />));
+  const rows = props.data.map((row) => (
+    <ResultRow
+      selected={selected}
+      setSelected={setSelected}
+      name={row.name}
+      displayId={row.displayId}
+      description={row.description}
+      type={row.type}
+      version={row.version}
+      key={row.uri}
+    />
+  ));
 
   return (
     <div className={styles.resultcontainer}>
@@ -56,20 +65,23 @@ export default function ResultTable(props) {
           <div
             className={`${styles.tablebutton} ${buttonClass}  ${styles.rightspace}`}
             onClick={() => {
-              const itemsChecked = []
+              const itemsChecked = [];
 
-              checklist = new Map()
+              checklist = new Map();
               props.data.forEach((result) => {
-                checklist.set(result.displayId, false)
+                checklist.set(result.displayId, false);
                 if (selected.get(result.displayId)) {
-                  itemsChecked.push({ uri: result.uri,
-                    name: result.name })
+                  itemsChecked.push({
+                    uri: result.uri,
+                    name: result.name,
+                  });
                 }
-              })
-              setSelected(checklist)
-              dispatch(addToBasket(itemsChecked))
+              });
+              setSelected(checklist);
+              dispatch(addToBasket(itemsChecked));
             }}
-          >Add to Basket
+          >
+            Add to Basket
           </div>
 
           <div className={`${styles.tablebutton} ${buttonClass} ${styles.rightspace}`}>Download</div>
@@ -92,10 +104,10 @@ export default function ResultTable(props) {
                 <input
                   checked={selectAll}
                   onChange={(e) => {
-                    checklist = new Map()
-                    props.data.forEach((row) => checklist.set(row.displayId, e.target.checked))
-                    setSelected(checklist)
-                    setSelectAll(e.target.checked)
+                    checklist = new Map();
+                    props.data.forEach((row) => checklist.set(row.displayId, e.target.checked));
+                    setSelected(checklist);
+                    setSelectAll(e.target.checked);
                   }}
                   type="checkbox"
                 />
@@ -119,5 +131,5 @@ export default function ResultTable(props) {
         </table>
       </div>
     </div>
-  )
+  );
 }

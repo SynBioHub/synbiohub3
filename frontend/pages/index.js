@@ -1,22 +1,26 @@
-import TopLevel from '../components/TopLevel'
-import Card from '../components/HomeComponents/Card'
+import TopLevel from '../components/TopLevel';
+import Card from '../components/HomeComponents/Card';
 
-import styles from '../styles/home.module.css'
+import styles from '../styles/home.module.css';
 
 function Home() {
   return (
     <div className={styles.container}>
       <main className={styles.main}>
         <h1 className={styles.title}>
-          Welcome to <a
+          Welcome to
+          {' '}
+          <a
             href="https://synbiohub.github.io/api-docs/#about-synbiohub"
             rel="noreferrer"
             target="_blank"
-          >SynBioHub
-                     </a>
+          >
+            SynBioHub
+          </a>
         </h1>
 
-        <p className={styles.description}>SynBioHub is a design repository for people designing biological constructs.
+        <p className={styles.description}>
+          SynBioHub is a design repository for people designing biological constructs.
           It enables DNA and protein designs to be uploaded, then provides a shareable link to allow others to view them.
           SynBioHub also facilitates searching for information about existing useful parts and designs by combining data from a variety of sources.
         </p>
@@ -57,9 +61,9 @@ function Home() {
         </div>
       </main>
     </div>
-  )
+  );
 }
 
 export default function HomeWithProps() {
-  return <TopLevel><Home /></TopLevel>
+  return <TopLevel><Home /></TopLevel>;
 }

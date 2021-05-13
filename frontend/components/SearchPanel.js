@@ -1,31 +1,29 @@
-
-
-import { useEffect, useState } from 'react'
-import styles from '../styles/searchpanel.module.css'
-import SearchTypeSelector from './SearchPanelComponents/SearchTypeSelector'
-import StandardSearch from './SearchPanelComponents/StandardSearch/StandardSearch'
-import Basket from './Basket'
-import { useSelector } from 'react-redux'
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import styles from '../styles/searchpanel.module.css';
+import SearchTypeSelector from './SearchPanelComponents/SearchTypeSelector';
+import StandardSearch from './SearchPanelComponents/StandardSearch/StandardSearch';
+import Basket from './Basket';
 
 export default function SearchPanel() {
-  const showSearchPanel = useSelector((state) => state.search.active)
+  const showSearchPanel = useSelector((state) => state.search.active);
   const [
     show,
-    setShow
-  ] = useState('')
+    setShow,
+  ] = useState('');
   const [
     selectedType,
-    setSelectedType
-  ] = useState('Standard Search')
+    setSelectedType,
+  ] = useState('Standard Search');
 
   useEffect(() => {
-    setShow(styles.show)
-  })
-  let searchResults = null
+    setShow(styles.show);
+  });
+  let searchResults = null;
 
   switch (selectedType) {
-  case 'Standard Search':
-    searchResults = <StandardSearch />
+    case 'Standard Search':
+      searchResults = <StandardSearch />;
   }
   if (showSearchPanel) {
     return (
@@ -60,8 +58,8 @@ export default function SearchPanel() {
 
         <Basket />
       </div>
-    )
+    );
   }
 
-  return null
+  return null;
 }

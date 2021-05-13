@@ -1,4 +1,4 @@
-import { navoption, navoptionicon, navoptionname } from '../../styles/navbar.module.css'
+import { navoption, navoptionicon, navoptionname } from '../../styles/navbar.module.css';
 
 export default function Selector(props) {
   return (
@@ -10,5 +10,5 @@ export default function Selector(props) {
 
       <span className={navoptionname}>{props.name}</span>
     </div>
-  )
+  );
 }

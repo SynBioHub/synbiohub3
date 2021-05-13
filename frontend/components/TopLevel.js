@@ -1,9 +1,9 @@
-import Head from 'next/head'
-import Navbar from './Navbar'
-import Footer from './Footer'
-import SearchPanel from './SearchPanel'
+import Head from 'next/head';
+import Navbar from './Navbar';
+import Footer from './Footer';
+import SearchPanel from './SearchPanel';
 
-import styles from '../styles/layout.module.css'
+import styles from '../styles/layout.module.css';
 
 export default function TopLevel(props) {
   return (
@@ -27,5 +27,5 @@ export default function TopLevel(props) {
 
       <Footer />
     </div>
-  )
+  );
 }

@@ -1,20 +1,20 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react';
 
 export default function ResultRow(props) {
-  let type = ''
-  const potential_type = props.type.toLowerCase()
+  let type = '';
+  const potential_type = props.type.toLowerCase();
 
   if (potential_type.includes('component')) {
-    type = 'Component'
+    type = 'Component';
   }
   if (potential_type.includes('sequence')) {
-    type = 'Sequence'
+    type = 'Sequence';
   }
   if (potential_type.includes('module')) {
-    type = 'Module'
+    type = 'Module';
   }
   if (potential_type.includes('collection')) {
-    type = 'Collection'
+    type = 'Collection';
   }
 
   return (
@@ -37,5 +37,5 @@ export default function ResultRow(props) {
 
       <td>{props.version}</td>
     </tr>
-  )
+  );
 }

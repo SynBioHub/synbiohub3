@@ -1,16 +1,14 @@
-import Image from 'next/image'
-import { useState } from 'react'
-import { useSelector } from 'react-redux'
-import styles from '../styles/basket.module.css'
-
-import Blank from './Footer'
+import Image from 'next/image';
+import { useState } from 'react';
+import { useSelector } from 'react-redux';
+import styles from '../styles/basket.module.css';
 
 export default function Basket() {
   const [
     showBasket,
-    setShowBasket
-  ] = useState(false)
-  const basketItems = useSelector((state) => state.basket.basket)
+    setShowBasket,
+  ] = useState(false);
+  const basketItems = useSelector((state) => state.basket.basket);
 
   if (!showBasket) {
     return (
@@ -25,10 +23,16 @@ export default function Basket() {
           width={40}
         />
       </div>
-    )
+    );
   }
-  const items = basketItems.map((item) => <span className={styles.item}
-key={item.uri}>{item.name}</span>)
+  const items = basketItems.map((item) => (
+    <span
+      className={styles.item}
+      key={item.uri}
+    >
+      {item.name}
+    </span>
+  ));
 
   return (
     <div>
@@ -65,5 +69,5 @@ key={item.uri}>{item.name}</span>)
         />
       </div>
     </div>
-  )
+  );
 }
