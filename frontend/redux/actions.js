@@ -4,30 +4,30 @@ import * as types from './types'
 
 // SEARCHING ACTIONS
 export const setSearchingActive = (isOpen) => (dispatch) => {
-   dispatch({
-      type: types.SEARCHINGOPEN,
-      payload: isOpen
-   })
+  dispatch({
+    type: types.SEARCHINGOPEN,
+    payload: isOpen
+  })
 }
 
 export const setSearchQuery = (query) => (dispatch) => {
-   dispatch({
-      type: types.QUERY,
-      payload: query
-   })
+  dispatch({
+    type: types.QUERY,
+    payload: query
+  })
 }
 
 export const setOffset = (newOffset) => (dispatch) => {
-   dispatch({
-      type: types.OFFSET,
-      payload: newOffset
-   })
+  dispatch({
+    type: types.OFFSET,
+    payload: newOffset
+  })
 }
 
 // BASKET ACTIONS
 export const addToBasket = (uriArray) => (dispatch) => {
-   dispatch({
-      type: types.ADDTOBASKET,
-      payload: uriArray
-   })
+  dispatch({
+    type: types.ADDTOBASKET,
+    payload: uriArray
+  })
 }

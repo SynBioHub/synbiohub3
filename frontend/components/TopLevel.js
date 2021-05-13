@@ -6,18 +6,26 @@ import SearchPanel from './SearchPanel'
 import styles from '../styles/layout.module.css'
 
 export default function TopLevel(props) {
-   return (
-      <div>
-         <Head>
-            <title>SynBioHub</title>
-            <link rel="icon" href="/favicon.ico" />
-         </Head>
-         <Navbar />
-         <div className={styles.container}>
-            {props.children}
-            <SearchPanel />
-         </div>
-         <Footer />
+  return (
+    <div>
+      <Head>
+        <title>SynBioHub</title>
+
+        <link
+          href="/favicon.ico"
+          rel="icon"
+        />
+      </Head>
+
+      <Navbar />
+
+      <div className={styles.container}>
+        {props.children}
+
+        <SearchPanel />
       </div>
-   )
+
+      <Footer />
+    </div>
+  )
 }
