@@ -6,6 +6,10 @@ import ResultTableHeader from './ResultTableHeader';
 import Navigation from './Navigation';
 import { addToBasket } from '../../../../redux/actions';
 
+/**
+ * This component renders the result table displayed in standard search. Uses an 'excel-like' table
+ * format
+ */
 export default function ResultTable(props) {
   let checklist = new Map();
 

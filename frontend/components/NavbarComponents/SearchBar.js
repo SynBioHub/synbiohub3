@@ -4,6 +4,10 @@ import { setSearchQuery } from '../../redux/actions';
 
 import { searchbar, searchexpand } from '../../styles/navbar.module.css';
 
+/**
+ * The search bar that users will use to search sbh. located in navigation
+ * bar at the top
+ */
 export default function SearchBar() {
   // Expand is for animating the search bar expanding when it is opened
   const [

@@ -3,10 +3,14 @@ import Link from 'next/link';
 import { useDispatch, useSelector } from 'react-redux';
 import Selector from './NavbarComponents/Selector';
 import SearchBar from './NavbarComponents/SearchBar';
-import { setPromptLogin, setSearchingActive } from '../redux/actions';
+import { setSearchingActive } from '../redux/actions';
 
 import styles from '../styles/navbar.module.css';
 
+/**
+ * This component renders the navigation bar at the top of sbh. Users use this to access
+ * submissions, shared submissions, search, profile, admin page, and possibly more
+ */
 export default function Navbar() {
   const searchingOpen = useSelector((state) => state.search.active);
   const dispatch = useDispatch();

@@ -1,5 +1,8 @@
 import styles from '../styles/footer.module.css';
 
+/**
+ * This component renders the footer in sbh
+ */
 export default function Footer() {
   return (
     <footer className={styles.footer}>

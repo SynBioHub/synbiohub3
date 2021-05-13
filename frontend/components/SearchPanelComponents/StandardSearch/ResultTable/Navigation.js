@@ -3,6 +3,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setOffset } from '../../../../redux/actions';
 import styles from '../../../../styles/resulttable.module.css';
 
+/**
+ * This component provides navigation (going through different offsets) for search
+ * results in the search result table (found in standard search)
+ */
 export default function Navigation(props) {
   const [
     prev,

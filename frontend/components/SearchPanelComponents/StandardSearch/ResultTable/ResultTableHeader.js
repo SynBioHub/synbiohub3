@@ -1,6 +1,9 @@
 import Image from 'next/image';
 import { centerheader, headertext } from '../../../../styles/resulttable.module.css';
 
+/**
+ * Header for the Results Table in Standard search. Used to identify table names
+ */
 export default function ResultTableHeader(props) {
   return (
     <th>

@@ -5,6 +5,11 @@ import SearchPanel from './SearchPanel';
 
 import styles from '../styles/layout.module.css';
 
+/**
+ * This is a 'wrapper component' which dictates the general structure
+ * of sbh. It should be used as a wrapper for all sbh pages, except in
+ * rare and special circumstances.
+ */
 export default function TopLevel(props) {
   return (
     <div>

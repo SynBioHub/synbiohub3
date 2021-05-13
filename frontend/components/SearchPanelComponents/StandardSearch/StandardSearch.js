@@ -10,6 +10,10 @@ import {
 } from '../../../styles/searchpanel.module.css';
 import { setOffset } from '../../../redux/actions';
 
+/**
+ * This component handles a basic 'string search' from users on sbh,
+ * otherwise known as a standard search
+ */
 export default function StandardSearch() {
   const query = useSelector((state) => state.search.query);
   const offset = useSelector((state) => state.search.offset);

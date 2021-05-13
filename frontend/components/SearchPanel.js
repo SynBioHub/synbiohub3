@@ -5,6 +5,12 @@ import SearchTypeSelector from './SearchPanelComponents/SearchTypeSelector';
 import StandardSearch from './SearchPanelComponents/StandardSearch/StandardSearch';
 import Basket from './Basket';
 
+/**
+ * This component renders searching options, as well as the search results,
+ * for all different search types (standard, sequence, etc). It allows users to
+ * select which type of search they'd like to conduct. This panel is overlayed upon
+ * the current sbh content
+ */
 export default function SearchPanel() {
   const showSearchPanel = useSelector((state) => state.search.active);
   const [

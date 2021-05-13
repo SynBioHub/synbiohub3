@@ -2,6 +2,10 @@ import { useDispatch } from 'react-redux';
 import { setSearchingActive } from '../../redux/actions';
 import { card, cardhead, cardicon } from '../../styles/home.module.css';
 
+/**
+ * Component for different action 'cards' that can be clicked by the user on the home page.
+ * Generic, based on props passed
+ */
 export default function Card(props) {
   const dispatch = useDispatch();
   const title = props.icon

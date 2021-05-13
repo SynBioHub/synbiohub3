@@ -1,9 +1,13 @@
 import router from 'next/router';
 
+/**
+ * This component renders a single result row in the result table in standard search
+ */
 export default function ResultRow(props) {
   let type = '';
   const potentialType = props.type.toLowerCase();
 
+  // Identify what type of object the search result is from type url
   if (potentialType.includes('component')) {
     type = 'Component';
   }

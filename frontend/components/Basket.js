@@ -3,6 +3,11 @@ import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import styles from '../styles/basket.module.css';
 
+/**
+ * This component represents the basket in the search page. It stores the uri/name/displayId of 
+ * search results users would like to store for later (whether that be to create a collection, for
+ * future reference, or for downloading)
+ */
 export default function Basket() {
   const [
     showBasket,
