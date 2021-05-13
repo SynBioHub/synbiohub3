@@ -6,6 +6,7 @@ export default function Selector(props) {
       <img
         className={navoptionicon}
         src={props.icon}
+        alt={props.name}
       />
 
       <span className={navoptionname}>{props.name}</span>

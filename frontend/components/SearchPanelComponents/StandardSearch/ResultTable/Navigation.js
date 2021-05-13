@@ -30,6 +30,7 @@ export default function Navigation(props) {
   }, [
     offset,
     props.count,
+    props.length,
   ]);
 
   return (

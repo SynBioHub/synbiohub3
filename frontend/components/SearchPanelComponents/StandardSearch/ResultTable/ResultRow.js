@@ -1,19 +1,17 @@
-import { useEffect, useState } from 'react';
-
 export default function ResultRow(props) {
   let type = '';
-  const potential_type = props.type.toLowerCase();
+  const potentialType = props.type.toLowerCase();
 
-  if (potential_type.includes('component')) {
+  if (potentialType.includes('component')) {
     type = 'Component';
   }
-  if (potential_type.includes('sequence')) {
+  if (potentialType.includes('sequence')) {
     type = 'Sequence';
   }
-  if (potential_type.includes('module')) {
+  if (potentialType.includes('module')) {
     type = 'Module';
   }
-  if (potential_type.includes('collection')) {
+  if (potentialType.includes('collection')) {
     type = 'Collection';
   }
 
