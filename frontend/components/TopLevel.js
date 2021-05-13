@@ -20,12 +20,13 @@ export default function TopLevel(props) {
       <Navbar />
 
       <div className={styles.container}>
-        {props.children}
-
+        <div className={styles.content}>
+          {props.children}
+        </div>
+        <Footer />
         <SearchPanel />
       </div>
 
-      <Footer />
     </div>
   );
 }

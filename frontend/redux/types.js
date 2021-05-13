@@ -4,6 +4,8 @@
 export const USERNAME = 'USERNAME';
 export const USERTOKEN = 'USERTOKEN';
 export const LOGIN = 'LOGIN';
+export const LOGGEDIN = 'LOGGEDIN';
+export const PROMPTLOGIN = 'PROMPTLOGIN';
 
 // SEARCH
 export const QUERY = 'QUERY';

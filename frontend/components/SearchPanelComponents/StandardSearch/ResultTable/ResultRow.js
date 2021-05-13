@@ -1,3 +1,5 @@
+import router from 'next/router';
+
 export default function ResultRow(props) {
   let type = '';
   const potentialType = props.type.toLowerCase();
@@ -16,11 +18,17 @@ export default function ResultRow(props) {
   }
 
   return (
-    <tr>
+    <tr
+    onClick={() => {
+      router.push(props.uri);
+    }}>
       <td>
         <input
           checked={props.selected.get(props.displayId)}
-          onChange={(e) => props.setSelected(new Map(props.selected.set(props.displayId, e.target.checked)))}
+          onChange={(e) => {
+            e.stopPropagation();
+            props.setSelected(new Map(props.selected.set(props.displayId, e.target.checked)));
+          }}
           type="checkbox"
         />
       </td>

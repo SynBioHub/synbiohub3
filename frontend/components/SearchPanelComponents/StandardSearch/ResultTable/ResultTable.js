@@ -52,6 +52,7 @@ export default function ResultTable(props) {
       description={row.description}
       type={row.type}
       version={row.version}
+      uri={row.uri}
       key={row.uri}
     />
   ));

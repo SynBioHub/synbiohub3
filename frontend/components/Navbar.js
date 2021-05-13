@@ -3,13 +3,14 @@ import Link from 'next/link';
 import { useDispatch, useSelector } from 'react-redux';
 import Selector from './NavbarComponents/Selector';
 import SearchBar from './NavbarComponents/SearchBar';
-import { setSearchingActive } from '../redux/actions';
+import { setPromptLogin, setSearchingActive } from '../redux/actions';
 
 import styles from '../styles/navbar.module.css';
 
 export default function Navbar() {
   const searchingOpen = useSelector((state) => state.search.active);
   const dispatch = useDispatch();
+  const loggedIn = useSelector(state => state.user.loggedIn);
 
   if (!searchingOpen) {
     return (
@@ -23,7 +24,7 @@ export default function Navbar() {
         </Link>
 
         <div className={styles.navcontainer}>
-          <nav className={styles.nav}>
+          {loggedIn && <nav className={styles.nav}>
             <Selector
               icon="/images/submit_white.svg"
               name="Submit"
@@ -38,7 +39,7 @@ export default function Navbar() {
               icon="/images/submissions_white.svg"
               name="Submissions"
             />
-          </nav>
+          </nav>}
 
           <img
             className={styles.searchicon}
@@ -46,10 +47,11 @@ export default function Navbar() {
             src="/images/search.svg"
           />
 
-          <img
+          {loggedIn && <img
             className={styles.borderCircle}
             src="/images/face.jpeg"
-          />
+          />}
+          {!loggedIn && <Selector icon="/images/login.svg" name="Log in or Register" href="login" />}
         </div>
       </header>
     );

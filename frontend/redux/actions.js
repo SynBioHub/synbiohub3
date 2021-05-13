@@ -1,5 +1,11 @@
 import * as types from './types';
 // USER ACTIONS
+export const setPromptLogin = (promptLogin) => (dispatch) => {
+  dispatch({
+    type: types.PROMPTLOGIN,
+    payload: promptLogin
+  })
+}
 
 // SEARCHING ACTIONS
 export const setSearchingActive = (isOpen) => (dispatch) => {

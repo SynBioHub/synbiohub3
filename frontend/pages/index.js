@@ -64,6 +64,6 @@ function Home() {
   );
 }
 
-export default function HomeWithProps() {
+export default function HomeWrapped() {
   return <TopLevel><Home /></TopLevel>;
 }
