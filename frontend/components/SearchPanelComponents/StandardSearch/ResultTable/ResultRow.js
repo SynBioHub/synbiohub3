@@ -19,9 +19,10 @@ export default function ResultRow(props) {
 
   return (
     <tr
-    onClick={() => {
-      router.push(props.uri);
-    }}>
+      onClick={() => {
+        router.push(props.uri);
+      }}
+    >
       <td>
         <input
           checked={props.selected.get(props.displayId)}

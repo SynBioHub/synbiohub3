@@ -5,7 +5,7 @@ import * as types from './types';
 const initialUserState = {
   username: '',
   token: '',
-  loggedIn: false
+  loggedIn: false,
 };
 
 const userReducer = (state = initialUserState, { type, payload }) => {
@@ -24,7 +24,7 @@ const userReducer = (state = initialUserState, { type, payload }) => {
       return {
         ...state,
         loggedIn: payload,
-      }
+      };
     default:
       return state;
   }
