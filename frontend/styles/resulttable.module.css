@@ -35,8 +35,10 @@
 .table tbody tr:hover {
    background-color: #D25627 !important;
    color: white;
+   /*
    transform: scale(1.01);
    transition: transform 0.3s;
+   */
 } 
 
 .table th {

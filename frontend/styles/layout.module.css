@@ -1,2 +1,8 @@
 .container {
+   position: relative;
+   min-height: 100vh;
+}
+
+ .content {
+   padding-bottom: 0px;
  }

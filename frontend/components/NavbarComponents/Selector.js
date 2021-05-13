@@ -1,13 +1,22 @@
-import { navoption, navoptionname, navoptionicon } from '../../styles/navbar.module.css'
+import Link from 'next/link';
+import { navoption, navoptionicon, navoptionname } from '../../styles/navbar.module.css';
 
+/**
+ * This component represents a link to respective page on sbh (in the navigation bar)
+ * Generic component based on props
+ */
 export default function Selector(props) {
-   return (
+  return (
+    <Link href={props.href}>
       <div className={navoption}>
-         <img
-            src={props.icon}
-            className={navoptionicon}
-         />
-         <span className={navoptionname}>{props.name}</span>
+        <img
+          className={navoptionicon}
+          src={props.icon}
+          alt={props.name}
+        />
+
+        <span className={navoptionname}>{props.name}</span>
       </div>
-   );
+    </Link>
+  );
 }

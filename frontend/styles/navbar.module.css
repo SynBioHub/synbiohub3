@@ -8,6 +8,7 @@
    align-items: center;
    justify-content: space-between;
    position: sticky;
+   z-index: 10;
 }
 
 .logo {
@@ -53,6 +54,7 @@
 .navoptionname {
    display: inline-block;
    vertical-align: middle;
+   color: white;
 }
 
 .navoptionicon {

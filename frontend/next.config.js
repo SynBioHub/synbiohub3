@@ -1,7 +1,7 @@
-//next.config.js
+// Next.config.js
 
 module.exports = {
-   env: {
-       backendUrl: 'http://localhost:8080'
-   }
-}
+  env: {
+    backendUrl: 'http://localhost:7777',
+  },
+};

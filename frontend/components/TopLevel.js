@@ -1,27 +1,37 @@
-import Head from 'next/head'
-import Navbar from './Navbar'
-import Footer from './Footer'
-import SearchPanel from './SearchPanel'
+import Head from 'next/head';
+import Navbar from './Navbar';
+import Footer from './Footer';
+import SearchPanel from './SearchPanel';
 
-import styles from '../styles/layout.module.css'
-import { useState } from 'react'
+import styles from '../styles/layout.module.css';
 
-export default function TopLevel(props)
-{
-   const [searching, setSearching] = useState(false);
-   const [query, setQuery] = useState("");
-   return (
-      <div>
-         <Head>
-            <title>SynBioHub</title>
-            <link rel="icon" href="/favicon.ico" />
-         </Head>
-         <Navbar searching={searching} setSearching={setSearching} query={query} setQuery={setQuery} />
-         <div className={styles.container}>
-            {props.searchingComponent ? <props.searchingComponent setSearching={setSearching}/> : props.children}
-            {searching ? <SearchPanel query={query} /> : null}
-         </div>
-         <Footer />
+/**
+ * This is a 'wrapper component' which dictates the general structure
+ * of sbh. It should be used as a wrapper for all sbh pages, except in
+ * rare and special circumstances.
+ */
+export default function TopLevel(props) {
+  return (
+    <div>
+      <Head>
+        <title>SynBioHub</title>
+
+        <link
+          href="/favicon.ico"
+          rel="icon"
+        />
+      </Head>
+
+      <Navbar />
+
+      <div className={styles.container}>
+        <div className={styles.content}>
+          {props.children}
+        </div>
+        <Footer />
+        <SearchPanel />
       </div>
-   )
+
+    </div>
+  );
 }
