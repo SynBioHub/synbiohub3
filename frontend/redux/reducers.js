@@ -112,7 +112,7 @@ const trackingReducer = (state = initialTrackingState, { type, payload }) => {
     case types.TRACKPAGEVISIT:
       return {
         ...state,
-        pageVisited: true
+        pageVisited: payload
       }
     default:
       return state;

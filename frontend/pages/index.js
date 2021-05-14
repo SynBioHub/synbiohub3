@@ -2,11 +2,15 @@ import TopLevel from '../components/TopLevel';
 import Card from '../components/HomeComponents/Card';
 
 import styles from '../styles/home.module.css';
+import { useDispatch } from 'react-redux';
+import { markPageVisited } from '../redux/actions';
 
 /**
  * This page renders the home/landing page for sbh.
  */
 function Home() {
+  const dispatch = useDispatch();
+  dispatch(markPageVisited(true));
   return (
     <div className={styles.container}>
       <main className={styles.main}>

@@ -9,16 +9,17 @@ import { login } from '../redux/actions';
 /**
  * This page renders the login page for sbh
  */
-function Login(props) {
+function Login() {
   const loggedIn = useSelector(state => state.user.loggedIn);
   const loginError = useSelector(state => state.user.loginError);
   const loginErrorMessage = useSelector(state => state.user.loginErrorMessage);
+  const pageVisited = useSelector(state => state.tracking.pageVisited);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const dispatch = useDispatch();
   const router = useRouter();
   if (loggedIn) {
-    if (props.previousPage)
+    if (pageVisited)
       router.back();
     else
       router.push('/');

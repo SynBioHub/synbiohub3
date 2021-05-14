@@ -81,10 +81,10 @@ export const setOffset = (newOffset) => (dispatch) => {
 };
 
 // BASKET ACTIONS
+
 /**
  * This action adds objects to the Basket that is located in the Search Panel in sbh
  * @param {Array} uriArray - the objects that will be stored in the Basket
- * @returns
  */
 export const addToBasket = (uriArray) => (dispatch) => {
   dispatch({
@@ -92,3 +92,16 @@ export const addToBasket = (uriArray) => (dispatch) => {
     payload: uriArray,
   });
 };
+
+// TRACKING ACTIONS
+
+/**
+ * This action marks that the user has visited a page in sbh
+ * @param {Boolean} pageVisited  
+ */
+export const markPageVisited = (pageVisited) => (dispatch) => {
+  dispatch({
+    type: types.TRACKPAGEVISIT,
+    payload: pageVisited
+  })
+}
