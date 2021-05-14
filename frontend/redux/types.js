@@ -11,6 +11,8 @@ and code reusability.
 export const USERNAME = 'USERNAME';
 export const USERTOKEN = 'USERTOKEN';
 export const LOGGEDIN = 'LOGGEDIN';
+export const LOGINERROR = 'LOGINERROR';
+export const LOGIN = 'LOGIN';
 
 // SEARCH
 export const QUERY = 'QUERY';

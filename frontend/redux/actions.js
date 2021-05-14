@@ -17,7 +17,7 @@ redux state.
  * @param {String} password - the password of the user
  * @returns
  */
-export const login = (username, password) => (dispatch) => {
+export const login = (username, password) => async (dispatch) => {
   const url = 'http://localhost:7777/login';
   const headers = {
     Accept: 'text/plain',
@@ -27,69 +27,23 @@ export const login = (username, password) => (dispatch) => {
   params.append('email', username);
   params.append('password', password);
 
-  fetch(url, { method: 'POST', headers, body: params })
-    .then((res) => res.text())
-    .then((token) => {
-      dispatch({
-        type: types.USERTOKEN,
-        payload: token,
-      });
-      dispatch({
-        type: types.USERNAME,
-        payload: username,
-      });
-      dispatch({
-        type: types.LOGGEDIN,
-        payload: true,
-      });
-    });
-  /*
-  axios({
-    method: 'post',
-    url: `${process.env.backendUrl}/login`,
-    data: qs.stringify({
-      email: username,
-      password: password
-    }),
-    headers: {
-      'content-type': 'application/x-www-form-urlencoded;charset=utf-8',
-      Accept: 'text/plain'
-    }
-  }).then((res) => {
+  let res = await fetch(url, { method: 'POST', headers, body: params });
+  let message = await res.text();
+  if (res.status === 200) {
     dispatch({
-      type: types.USERTOKEN,
-      payload: res.data,
+      type: types.LOGIN,
+      payload: {
+        username: username,
+        token: message
+      },
     });
+  }
+  else
     dispatch({
-      type: types.USERNAME,
-      payload: username,
-    });
-    dispatch({
-      type: types.LOGGEDIN,
-      payload: true,
-    });
-  })
-  */
-};
-
-/*
-  axios.post(`${process.env.backendUrl}/login`, {
-
-  }).then((res) => {
-    dispatch({
-      type: types.USERTOKEN,
-      payload: res.data,
-    });
-    dispatch({
-      type: types.USERNAME,
-      payload: username,
-    });
-    dispatch({
-      type: types.LOGGEDIN,
-      payload: true,
-    });
-  });
-  */
+      type: types.LOGINERROR,
+      payload: message
+    })
+}
 
 // SEARCHING ACTIONS
 

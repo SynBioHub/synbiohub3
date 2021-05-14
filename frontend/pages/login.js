@@ -10,7 +10,9 @@ import { login } from '../redux/actions';
  * This page renders the login page for sbh
  */
 function Login() {
-  const loggedIn = useSelector((state) => state.user.loggedIn);
+  const loggedIn = useSelector(state => state.user.loggedIn);
+  const loginError = useSelector(state => state.user.loginError);
+  const loginErrorMessage = useSelector(state => state.user.loginErrorMessage);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const dispatch = useDispatch();
@@ -28,6 +30,7 @@ function Login() {
           width={40}
         />
         <div className={styles.header}>Login</div>
+        {loginError && <div className={styles.warning}>{loginErrorMessage}</div>}
         <input value={username} onChange={(e) => setUsername(e.target.value)} className={styles.input} placeholder="Email or Username" type="text" />
         <input value={password} onChange={(e) => setPassword(e.target.value)} className={styles.input} placeholder="Password" type="password" />
         <div className={`${styles.info} ${styles.forgotpassword}`}>

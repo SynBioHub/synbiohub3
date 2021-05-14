@@ -12,6 +12,8 @@ const initialUserState = {
   username: '',
   token: '',
   loggedIn: false,
+  loginError: false,
+  loginErrorMessage: ''
 };
 
 /**
@@ -20,21 +22,22 @@ const initialUserState = {
  */
 const userReducer = (state = initialUserState, { type, payload }) => {
   switch (type) {
-    case types.USERNAME:
+    case types.LOGIN:
       return {
         ...state,
-        username: payload,
-      };
-    case types.USERTOKEN:
+        loggedIn: true,
+        loginError: false,
+        loginErrorMessage: '',
+        username: payload.username,
+        token: payload.token
+      }
+    case types.LOGINERROR:
       return {
         ...state,
-        token: payload,
-      };
-    case types.LOGGEDIN:
-      return {
-        ...state,
-        loggedIn: payload,
-      };
+        loggedIn: false,
+        loginError: true,
+        loginErrorMessage: payload
+      }
     default:
       return state;
   }
