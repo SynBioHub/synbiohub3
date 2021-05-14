@@ -1,6 +1,6 @@
 import axios from 'axios';
 import * as types from './types';
-
+import qs from 'qs';
 /*
 This file contains redux action functions for sbh. These are used to update
 the redux state that sbh uses to render its individual React components. The actions
@@ -18,13 +18,51 @@ redux state.
  * @returns
  */
 export const login = (username, password) => (dispatch) => {
-  axios.post(`${process.env.backendUrl}/login`, {
+  var url ='http://localhost:7777/login';
+  var headers = {
+      "Accept": "text/plain",
+  }
+
+  const params = new URLSearchParams();
+  params.append('email', 'benjamin.hat5@gmail.com');
+  params.append('password', 'Hatch7259');
+
+  fetch(url, { method: 'POST', headers: headers, body: params})
+      .then(res => res.text())
+      .then(body => console.log(body));
+  /*
+  axios({
+    method: 'post',
+    url: `${process.env.backendUrl}/login`,
+    data: qs.stringify({
+      email: username,
+      password: password
+    }),
     headers: {
-      'Content-Type': 'application/json',
-      Accept: 'text/plain',
-    },
-    email: username,
-    password,
+      'content-type': 'application/x-www-form-urlencoded;charset=utf-8',
+      Accept: 'text/plain'
+    }
+  }).then((res) => {
+    dispatch({
+      type: types.USERTOKEN,
+      payload: res.data,
+    });
+    dispatch({
+      type: types.USERNAME,
+      payload: username,
+    });
+    dispatch({
+      type: types.LOGGEDIN,
+      payload: true,
+    });
+  })
+  */
+};
+
+/*
+  axios.post(`${process.env.backendUrl}/login`, {
+    
+    
   }).then((res) => {
     dispatch({
       type: types.USERTOKEN,
@@ -39,7 +77,7 @@ export const login = (username, password) => (dispatch) => {
       payload: true,
     });
   });
-};
+  */
 
 // SEARCHING ACTIONS
 
