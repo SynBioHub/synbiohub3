@@ -24,12 +24,25 @@ export const login = (username, password) => (dispatch) => {
   }
 
   const params = new URLSearchParams();
-  params.append('email', 'benjamin.hat5@gmail.com');
-  params.append('password', 'Hatch7259');
+  params.append('email', username);
+  params.append('password', password);
 
   fetch(url, { method: 'POST', headers: headers, body: params})
       .then(res => res.text())
-      .then(body => console.log(body));
+      .then(token => {
+        dispatch({
+          type: types.USERTOKEN,
+          payload: token,
+        });
+        dispatch({
+          type: types.USERNAME,
+          payload: username,
+        });
+        dispatch({
+          type: types.LOGGEDIN,
+          payload: true,
+        });
+      });
   /*
   axios({
     method: 'post',

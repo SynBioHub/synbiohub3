@@ -33,16 +33,19 @@ export default function Navbar() {
             <Selector
               icon="/images/submit_white.svg"
               name="Submit"
+              href="/submit"
             />
 
             <Selector
               icon="/images/shared.svg"
               name="Shared With Me"
+              href='/shared'
             />
 
             <Selector
               icon="/images/submissions_white.svg"
               name="Submissions"
+              href="/submissions"
             />
           </nav>
           )}
@@ -59,7 +62,7 @@ export default function Navbar() {
             src="/images/face.jpeg"
           />
           )}
-          {!loggedIn && <Selector icon="/images/login.svg" name="Log in or Register" href="login" />}
+          {!loggedIn && <Selector icon="/images/login.svg" name="Log in or Register" href="/login" />}
         </div>
       </header>
     );

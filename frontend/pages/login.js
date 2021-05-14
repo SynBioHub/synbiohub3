@@ -4,16 +4,20 @@ import { useState } from 'react';
 import styles from '../styles/login.module.css';
 import TopLevel from '../components/TopLevel';
 import { login } from '../redux/actions';
+import { useRouter } from 'next/router';
 
 /**
  * This page renders the login page for sbh
  */
 function Login() {
   const loggedIn = useSelector((state) => state.user.loggedIn);
-  console.log(loggedIn);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const dispatch = useDispatch();
+  const router = useRouter();
+  if (loggedIn) {
+    router.back();
+  }
   return (
     <div className={styles.container}>
       <div className={styles.frame}>
