@@ -24,7 +24,6 @@ export default function ResultRow(props) {
   return (
     <tr
       onClick={(e) => {
-        console.log('clicked')
         router.push(props.uri);
       }}
     >

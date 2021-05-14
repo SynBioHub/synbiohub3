@@ -1,6 +1,6 @@
 import axios from 'axios';
-import * as types from './types';
 import qs from 'qs';
+import * as types from './types';
 /*
 This file contains redux action functions for sbh. These are used to update
 the redux state that sbh uses to render its individual React components. The actions
@@ -17,67 +17,33 @@ redux state.
  * @param {String} password - the password of the user
  * @returns
  */
-export const login = (username, password) => (dispatch) => {
-  var url ='http://localhost:7777/login';
-  var headers = {
-      "Accept": "text/plain",
-  }
+export const login = (username, password) => async (dispatch) => {
+  const url = 'http://localhost:7777/login';
+  const headers = {
+    Accept: 'text/plain',
+  };
 
   const params = new URLSearchParams();
-  params.append('email', 'benjamin.hat5@gmail.com');
-  params.append('password', 'Hatch7259');
+  params.append('email', username);
+  params.append('password', password);
 
-  fetch(url, { method: 'POST', headers: headers, body: params})
-      .then(res => res.text())
-      .then(body => console.log(body));
-  /*
-  axios({
-    method: 'post',
-    url: `${process.env.backendUrl}/login`,
-    data: qs.stringify({
-      email: username,
-      password: password
-    }),
-    headers: {
-      'content-type': 'application/x-www-form-urlencoded;charset=utf-8',
-      Accept: 'text/plain'
-    }
-  }).then((res) => {
+  const res = await fetch(url, { method: 'POST', headers, body: params });
+  const message = await res.text();
+  if (res.status === 200) {
     dispatch({
-      type: types.USERTOKEN,
-      payload: res.data,
+      type: types.LOGIN,
+      payload: {
+        username,
+        token: message,
+      },
     });
+  } else {
     dispatch({
-      type: types.USERNAME,
-      payload: username,
+      type: types.LOGINERROR,
+      payload: message,
     });
-    dispatch({
-      type: types.LOGGEDIN,
-      payload: true,
-    });
-  })
-  */
+  }
 };
-
-/*
-  axios.post(`${process.env.backendUrl}/login`, {
-    
-    
-  }).then((res) => {
-    dispatch({
-      type: types.USERTOKEN,
-      payload: res.data,
-    });
-    dispatch({
-      type: types.USERNAME,
-      payload: username,
-    });
-    dispatch({
-      type: types.LOGGEDIN,
-      payload: true,
-    });
-  });
-  */
 
 // SEARCHING ACTIONS
 
@@ -115,14 +81,27 @@ export const setOffset = (newOffset) => (dispatch) => {
 };
 
 // BASKET ACTIONS
+
 /**
  * This action adds objects to the Basket that is located in the Search Panel in sbh
  * @param {Array} uriArray - the objects that will be stored in the Basket
- * @returns
  */
 export const addToBasket = (uriArray) => (dispatch) => {
   dispatch({
     type: types.ADDTOBASKET,
     payload: uriArray,
+  });
+};
+
+// TRACKING ACTIONS
+
+/**
+ * This action marks that the user has visited a page in sbh
+ * @param {Boolean} pageVisited
+ */
+export const markPageVisited = (pageVisited) => (dispatch) => {
+  dispatch({
+    type: types.TRACKPAGEVISIT,
+    payload: pageVisited,
   });
 };

@@ -12,6 +12,8 @@ const initialUserState = {
   username: '',
   token: '',
   loggedIn: false,
+  loginError: false,
+  loginErrorMessage: '',
 };
 
 /**
@@ -20,20 +22,21 @@ const initialUserState = {
  */
 const userReducer = (state = initialUserState, { type, payload }) => {
   switch (type) {
-    case types.USERNAME:
+    case types.LOGIN:
       return {
         ...state,
-        username: payload,
+        loggedIn: true,
+        loginError: false,
+        loginErrorMessage: '',
+        username: payload.username,
+        token: payload.token,
       };
-    case types.USERTOKEN:
+    case types.LOGINERROR:
       return {
         ...state,
-        token: payload,
-      };
-    case types.LOGGEDIN:
-      return {
-        ...state,
-        loggedIn: payload,
+        loggedIn: false,
+        loginError: true,
+        loginErrorMessage: payload,
       };
     default:
       return state;
@@ -94,12 +97,34 @@ const basketReducer = (state = initialBasketState, { type, payload }) => {
   }
 };
 
+// TRACKER REDUCER
+const initialTrackingState = {
+  pageVisited: false,
+};
+
+/**
+ * This reducer is used to track basic user use so that components such as the
+ * login component can function properly
+ */
+const trackingReducer = (state = initialTrackingState, { type, payload }) => {
+  switch (type) {
+    case types.TRACKPAGEVISIT:
+      return {
+        ...state,
+        pageVisited: payload,
+      };
+    default:
+      return state;
+  }
+};
+
 // COMBINED REDUCERS
 // combine all reducers for sbh to use
 const reducers = {
   user: userReducer,
   search: searchReducer,
   basket: basketReducer,
+  tracking: trackingReducer,
 };
 
 export default combineReducers(reducers);

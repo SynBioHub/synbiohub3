@@ -71,3 +71,10 @@
    transform: scale(1.1);
    transition: transform 300ms;
 }
+
+.warning {
+   color: rgb(255, 55, 55);
+   width: 30ch;
+   text-align: center;
+   margin-bottom: 0.5rem;
+}

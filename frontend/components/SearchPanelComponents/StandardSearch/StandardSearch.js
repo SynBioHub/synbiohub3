@@ -17,6 +17,7 @@ import { setOffset } from '../../../redux/actions';
 export default function StandardSearch() {
   const query = useSelector((state) => state.search.query);
   const offset = useSelector((state) => state.search.offset);
+  const token = useSelector((state) => state.user.token);
   const dispatch = useDispatch();
   const [
     firstQuery,
@@ -58,7 +59,7 @@ export default function StandardSearch() {
     isCountError,
   ]);
 
-  const { results, isLoading, isError } = getSearchResults(query, offset);
+  const { results, isLoading, isError } = getSearchResults(query, offset, token);
 
   if (isError) {
     return <div className={standarderror}>Errors were encountered while fetching the data count</div>;
@@ -89,8 +90,8 @@ export default function StandardSearch() {
   );
 }
 
-const getSearchResults = (query, offset) => {
-  const { data, error } = useSWR(`${process.env.backendUrl}/search/${query}?offset=${offset}`, fetcher);
+const getSearchResults = (query, offset, token) => {
+  const { data, error } = useSWR([`${process.env.backendUrl}/search/${query}?offset=${offset}`, token], fetcher);
 
   return {
     results: data,
@@ -99,8 +100,8 @@ const getSearchResults = (query, offset) => {
   };
 };
 
-const getSearchCount = (query, offset) => {
-  const { data, error } = useSWR(`${process.env.backendUrl}/searchCount/${query}?offset=${offset}`, fetcher);
+const getSearchCount = (query, offset, token) => {
+  const { data, error } = useSWR([`${process.env.backendUrl}/searchCount/${query}?offset=${offset}`, token], fetcher);
 
   return {
     newCount: data,
@@ -109,10 +110,11 @@ const getSearchCount = (query, offset) => {
   };
 };
 
-const fetcher = (url) => axios.get(url, {
+const fetcher = (url, token) => axios.get(url, {
   headers: {
     'Content-Type': 'application/json',
     Accept: 'text/plain',
+    'X-authorization': token,
   },
 }).then((res) => res.data);
 

@@ -1,12 +1,16 @@
+import { useDispatch } from 'react-redux';
 import TopLevel from '../components/TopLevel';
 import Card from '../components/HomeComponents/Card';
 
 import styles from '../styles/home.module.css';
+import { markPageVisited } from '../redux/actions';
 
 /**
  * This page renders the home/landing page for sbh.
  */
 function Home() {
+  const dispatch = useDispatch();
+  dispatch(markPageVisited(true));
   return (
     <div className={styles.container}>
       <main className={styles.main}>
@@ -14,7 +18,7 @@ function Home() {
           Welcome to
           {' '}
           <a
-            href="https://synbiohub.github.io/api-docs/#about-synbiohub"
+            href="https://wiki.synbiohub.org/"
             rel="noreferrer"
             target="_blank"
           >
