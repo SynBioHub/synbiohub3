@@ -97,12 +97,35 @@ const basketReducer = (state = initialBasketState, { type, payload }) => {
   }
 };
 
+
+// TRACKER REDUCER
+const initialTrackingState = {
+  pageVisited: false
+};
+
+/**
+ * This reducer is used to track basic user use so that components such as the
+ * login component can function properly
+ */
+const trackingReducer = (state = initialTrackingState, { type, payload }) => {
+  switch (type) {
+    case types.TRACKPAGEVISIT:
+      return {
+        ...state,
+        pageVisited: true
+      }
+    default:
+      return state;
+  }
+}
+
 // COMBINED REDUCERS
 // combine all reducers for sbh to use
 const reducers = {
   user: userReducer,
   search: searchReducer,
   basket: basketReducer,
+  tracking: trackingReducer
 };
 
 export default combineReducers(reducers);

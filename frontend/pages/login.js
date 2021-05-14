@@ -9,7 +9,7 @@ import { login } from '../redux/actions';
 /**
  * This page renders the login page for sbh
  */
-function Login() {
+function Login(props) {
   const loggedIn = useSelector(state => state.user.loggedIn);
   const loginError = useSelector(state => state.user.loginError);
   const loginErrorMessage = useSelector(state => state.user.loginErrorMessage);
@@ -18,7 +18,10 @@ function Login() {
   const dispatch = useDispatch();
   const router = useRouter();
   if (loggedIn) {
-    router.back();
+    if (props.previousPage)
+      router.back();
+    else
+      router.push('/');
   }
   return (
     <div className={styles.container}>
