@@ -114,7 +114,7 @@ const fetcher = (url, token) => axios.get(url, {
   headers: {
     'Content-Type': 'application/json',
     Accept: 'text/plain',
-    'X-authorization': token
+    'X-authorization': token,
   },
 }).then((res) => res.data);
 

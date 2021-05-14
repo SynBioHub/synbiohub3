@@ -39,7 +39,7 @@ export default function Navbar() {
             <Selector
               icon="/images/shared.svg"
               name="Shared With Me"
-              href='/shared'
+              href="/shared"
             />
 
             <Selector
