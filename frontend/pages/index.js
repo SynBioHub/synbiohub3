@@ -14,7 +14,7 @@ function Home() {
           Welcome to
           {' '}
           <a
-            href="https://synbiohub.github.io/api-docs/#about-synbiohub"
+            href="https://wiki.synbiohub.org/"
             rel="noreferrer"
             target="_blank"
           >
