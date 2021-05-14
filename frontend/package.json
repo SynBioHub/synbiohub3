@@ -12,6 +12,8 @@
   "dependencies": {
     "axios": "^0.21.0",
     "next": "10.0.1",
+    "node-fetch": "^2.6.1",
+    "qs": "^6.10.1",
     "react": "17.0.1",
     "react-dom": "17.0.1",
     "react-loader-spinner": "^4.0.0",
@@ -19,7 +21,8 @@
     "redux": "^4.1.0",
     "redux-devtools-extension": "^2.13.9",
     "redux-thunk": "^2.3.0",
-    "swr": "^0.3.9"
+    "swr": "^0.3.9",
+    "url": "^0.11.0"
   },
   "proxy": "http://localhost:8080/",
   "devDependencies": {

@@ -23,7 +23,8 @@ export default function ResultRow(props) {
 
   return (
     <tr
-      onClick={() => {
+      onClick={(e) => {
+        console.log('clicked')
         router.push(props.uri);
       }}
     >
@@ -31,8 +32,10 @@ export default function ResultRow(props) {
         <input
           checked={props.selected.get(props.displayId)}
           onChange={(e) => {
-            e.stopPropagation();
             props.setSelected(new Map(props.selected.set(props.displayId, e.target.checked)));
+          }}
+          onClick={(e) => {
+            e.stopPropagation();
           }}
           type="checkbox"
         />
