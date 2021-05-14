@@ -22,9 +22,8 @@ export default function TopLevel(props) {
         />
       </Head>
 
-      <Navbar />
-
       <div className={styles.container}>
+        <Navbar />
         <div className={styles.content}>
           {props.children}
         </div>
