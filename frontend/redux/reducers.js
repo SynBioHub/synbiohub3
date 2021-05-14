@@ -13,7 +13,7 @@ const initialUserState = {
   token: '',
   loggedIn: false,
   loginError: false,
-  loginErrorMessage: ''
+  loginErrorMessage: '',
 };
 
 /**
@@ -29,15 +29,15 @@ const userReducer = (state = initialUserState, { type, payload }) => {
         loginError: false,
         loginErrorMessage: '',
         username: payload.username,
-        token: payload.token
-      }
+        token: payload.token,
+      };
     case types.LOGINERROR:
       return {
         ...state,
         loggedIn: false,
         loginError: true,
-        loginErrorMessage: payload
-      }
+        loginErrorMessage: payload,
+      };
     default:
       return state;
   }
@@ -97,10 +97,9 @@ const basketReducer = (state = initialBasketState, { type, payload }) => {
   }
 };
 
-
 // TRACKER REDUCER
 const initialTrackingState = {
-  pageVisited: false
+  pageVisited: false,
 };
 
 /**
@@ -112,12 +111,12 @@ const trackingReducer = (state = initialTrackingState, { type, payload }) => {
     case types.TRACKPAGEVISIT:
       return {
         ...state,
-        pageVisited: payload
-      }
+        pageVisited: payload,
+      };
     default:
       return state;
   }
-}
+};
 
 // COMBINED REDUCERS
 // combine all reducers for sbh to use
@@ -125,7 +124,7 @@ const reducers = {
   user: userReducer,
   search: searchReducer,
   basket: basketReducer,
-  tracking: trackingReducer
+  tracking: trackingReducer,
 };
 
 export default combineReducers(reducers);

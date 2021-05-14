@@ -1,8 +1,8 @@
+import { useDispatch } from 'react-redux';
 import TopLevel from '../components/TopLevel';
 import Card from '../components/HomeComponents/Card';
 
 import styles from '../styles/home.module.css';
-import { useDispatch } from 'react-redux';
 import { markPageVisited } from '../redux/actions';
 
 /**

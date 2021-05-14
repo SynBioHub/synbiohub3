@@ -27,23 +27,23 @@ export const login = (username, password) => async (dispatch) => {
   params.append('email', username);
   params.append('password', password);
 
-  let res = await fetch(url, { method: 'POST', headers, body: params });
-  let message = await res.text();
+  const res = await fetch(url, { method: 'POST', headers, body: params });
+  const message = await res.text();
   if (res.status === 200) {
     dispatch({
       type: types.LOGIN,
       payload: {
-        username: username,
-        token: message
+        username,
+        token: message,
       },
     });
-  }
-  else
+  } else {
     dispatch({
       type: types.LOGINERROR,
-      payload: message
-    })
-}
+      payload: message,
+    });
+  }
+};
 
 // SEARCHING ACTIONS
 
@@ -97,11 +97,11 @@ export const addToBasket = (uriArray) => (dispatch) => {
 
 /**
  * This action marks that the user has visited a page in sbh
- * @param {Boolean} pageVisited  
+ * @param {Boolean} pageVisited
  */
 export const markPageVisited = (pageVisited) => (dispatch) => {
   dispatch({
     type: types.TRACKPAGEVISIT,
-    payload: pageVisited
-  })
-}
+    payload: pageVisited,
+  });
+};

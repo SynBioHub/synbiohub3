@@ -10,19 +10,18 @@ import { login } from '../redux/actions';
  * This page renders the login page for sbh
  */
 function Login() {
-  const loggedIn = useSelector(state => state.user.loggedIn);
-  const loginError = useSelector(state => state.user.loginError);
-  const loginErrorMessage = useSelector(state => state.user.loginErrorMessage);
-  const pageVisited = useSelector(state => state.tracking.pageVisited);
+  const loggedIn = useSelector((state) => state.user.loggedIn);
+  const loginError = useSelector((state) => state.user.loginError);
+  const loginErrorMessage = useSelector((state) => state.user.loginErrorMessage);
+  const pageVisited = useSelector((state) => state.tracking.pageVisited);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const dispatch = useDispatch();
   const router = useRouter();
+
   if (loggedIn) {
-    if (pageVisited)
-      router.back();
-    else
-      router.push('/');
+    if (pageVisited) router.back();
+    else router.push('/');
   }
   return (
     <div className={styles.container}>
@@ -43,7 +42,16 @@ function Login() {
           <span className={styles.orange}>here</span>
           .
         </div>
-        <div className={styles.submitbutton} onClick={() => dispatch(login(username, password))}>Submit</div>
+        <div
+          className={styles.submitbutton}
+          onClick={() => {
+            dispatch(login(username, password));
+            setUsername('');
+            setPassword('');
+          }}
+        >
+          Submit
+        </div>
         <div className={`${styles.info} ${styles.signup}`}>
           Need an account? Sign up
           {' '}
