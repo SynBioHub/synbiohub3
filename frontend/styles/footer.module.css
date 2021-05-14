@@ -4,11 +4,12 @@
    display: flex;
    justify-content: center;
    align-items: center;
+   flex-direction: column;
    background-color: white;
    position: absolute;
-    bottom: 0;
-    width: 100%;
-    height: 70px;
+   bottom: 0;
+   width: 100%;
+   height: 80px;
  }
  
  .footer p {
@@ -18,4 +19,16 @@
  
  .footer a {
    color: #D25627;
+ }
+
+ .footer a:hover {
+   text-decoration: underline;
+ }
+
+ .footer p {
+   margin: 0;
+ }
+
+ .firstline {
+   padding-bottom: 0.2rem;
  }
