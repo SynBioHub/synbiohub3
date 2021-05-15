@@ -126,7 +126,7 @@ export default function ResultTable(props) {
 
               <ResultTableHeader title="Type" />
 
-              <ResultTableHeader title="Version" />
+              <ResultTableHeader title="Privacy" />
             </tr>
           </thead>
 
