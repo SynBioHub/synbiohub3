@@ -28,7 +28,7 @@ function Home() {
 
         <p className={styles.description}>
           SynBioHub is a design repository for people designing biological constructs.
-          It enables DNA and protein designs to be uploaded, then provides a shareable link to allow others to view them.
+          It enables DNA and protein designs to be uploaded, then facilitates sharing and viewing of such designs.
           SynBioHub also facilitates searching for information about existing useful parts and designs by combining data from a variety of sources.
         </p>
 
