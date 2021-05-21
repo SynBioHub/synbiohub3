@@ -1,4 +1,5 @@
 import { combineReducers } from 'redux';
+
 import * as types from './types';
 
 /*
@@ -13,7 +14,7 @@ const initialUserState = {
   token: '',
   loggedIn: false,
   loginError: false,
-  loginErrorMessage: '',
+  loginErrorMessage: ''
 };
 
 /**
@@ -29,14 +30,14 @@ const userReducer = (state = initialUserState, { type, payload }) => {
         loginError: false,
         loginErrorMessage: '',
         username: payload.username,
-        token: payload.token,
+        token: payload.token
       };
     case types.LOGINERROR:
       return {
         ...state,
         loggedIn: false,
         loginError: true,
-        loginErrorMessage: payload,
+        loginErrorMessage: payload
       };
     default:
       return state;
@@ -47,7 +48,7 @@ const userReducer = (state = initialUserState, { type, payload }) => {
 const initialSearchState = {
   query: '',
   offset: 0,
-  active: false,
+  active: false
 };
 
 /**
@@ -59,17 +60,17 @@ const searchReducer = (state = initialSearchState, { type, payload }) => {
     case types.QUERY:
       return {
         ...state,
-        query: payload,
+        query: payload
       };
     case types.OFFSET:
       return {
         ...state,
-        offset: payload,
+        offset: payload
       };
     case types.SEARCHINGOPEN:
       return {
         ...state,
-        active: payload,
+        active: payload
       };
     default:
       return state;
@@ -78,7 +79,7 @@ const searchReducer = (state = initialSearchState, { type, payload }) => {
 
 // BASKET REDUCER
 const initialBasketState = {
-  basket: [],
+  basket: []
 };
 
 /**
@@ -90,7 +91,11 @@ const basketReducer = (state = initialBasketState, { type, payload }) => {
     case types.ADDTOBASKET:
       return {
         ...state,
-        basket: payload.concat(...state.basket.filter((item) => payload.findIndex((compare) => compare.uri === item.uri) < 0)),
+        basket: payload.concat(
+          ...state.basket.filter(
+            item => payload.findIndex(compare => compare.uri === item.uri) < 0
+          )
+        )
       };
     default:
       return state;
@@ -99,7 +104,7 @@ const basketReducer = (state = initialBasketState, { type, payload }) => {
 
 // TRACKER REDUCER
 const initialTrackingState = {
-  pageVisited: false,
+  pageVisited: false
 };
 
 /**
@@ -111,7 +116,7 @@ const trackingReducer = (state = initialTrackingState, { type, payload }) => {
     case types.TRACKPAGEVISIT:
       return {
         ...state,
-        pageVisited: payload,
+        pageVisited: payload
       };
     default:
       return state;
@@ -124,7 +129,7 @@ const reducers = {
   user: userReducer,
   search: searchReducer,
   basket: basketReducer,
-  tracking: trackingReducer,
+  tracking: trackingReducer
 };
 
 export default combineReducers(reducers);

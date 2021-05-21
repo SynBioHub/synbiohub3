@@ -1,4 +1,5 @@
 import { useDispatch } from 'react-redux';
+
 import { setSearchingActive } from '../../redux/actions';
 import { card, cardhead, cardicon } from '../../styles/home.module.css';
 
@@ -6,46 +7,44 @@ import { card, cardhead, cardicon } from '../../styles/home.module.css';
  * Component for different action 'cards' that can be clicked by the user on the home page.
  * Generic, based on props passed
  */
-export default function Card(props) {
+export default function Card(properties) {
   const dispatch = useDispatch();
-  const title = props.icon
-    ? (
-      <div className={cardhead}>
-        <h3>{props.title}</h3>
+  const title = properties.icon ? (
+    <div className={cardhead}>
+      <h3>{properties.title}</h3>
 
-        <img
-          style={props.iconheight
+      <img
+        style={
+          properties.iconheight
             ? {
-              height: props.iconheight,
-              verticalAlign: props.iconoffset,
-              marginLeft: props.iconright,
-            }
-            : {}}
-          src={props.icon}
-          className={cardicon}
-        />
-      </div>
-    )
-    : (
-      <h3>
-        {props.title}
-        {' '}
-        <span style={{ color: 'black' }}>&rarr;</span>
-      </h3>
-    );
+                height: properties.iconheight,
+                verticalAlign: properties.iconoffset,
+                marginLeft: properties.iconright
+              }
+            : {}
+        }
+        src={properties.icon}
+        className={cardicon}
+      />
+    </div>
+  ) : (
+    <h3>
+      {properties.title} <span style={{ color: 'black' }}>&rarr;</span>
+    </h3>
+  );
 
   return (
     <a
       className={card}
       onClick={() => {
-        if (props.title === 'Search') {
+        if (properties.title === 'Search') {
           dispatch(setSearchingActive(true));
         }
       }}
     >
       {title}
 
-      <p>{props.description}</p>
+      <p>{properties.description}</p>
     </a>
   );
 }

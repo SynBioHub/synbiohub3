@@ -1,31 +1,23 @@
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
+
+import { addToBasket } from '../../../../redux/actions';
 import styles from '../../../../styles/resulttable.module.css';
+import Navigation from './Navigation';
 import ResultRow from './ResultRow';
 import ResultTableHeader from './ResultTableHeader';
-import Navigation from './Navigation';
-import { addToBasket } from '../../../../redux/actions';
 
 /**
  * This component renders the result table displayed in standard search. Uses an 'excel-like' table
  * format
  */
-export default function ResultTable(props) {
+export default function ResultTable(properties) {
   let checklist = new Map();
 
-  props.data.forEach((row) => checklist.set(row.displayId, false));
-  const [
-    selected,
-    setSelected,
-  ] = useState(checklist);
-  const [
-    selectAll,
-    setSelectAll,
-  ] = useState(false);
-  const [
-    buttonClass,
-    setButtonClass,
-  ] = useState(styles.disabled);
+  for (const row of properties.data) checklist.set(row.displayId, false);
+  const [selected, setSelected] = useState(checklist);
+  const [selectAll, setSelectAll] = useState(false);
+  const [buttonClass, setButtonClass] = useState(styles.disabled);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -47,7 +39,7 @@ export default function ResultTable(props) {
     }
   }, [selected]);
 
-  const rows = props.data.map((row) => (
+  const rows = properties.data.map(row => (
     <ResultRow
       selected={selected}
       setSelected={setSelected}
@@ -65,7 +57,11 @@ export default function ResultTable(props) {
     <div className={styles.resultcontainer}>
       <div className={styles.tablebuttons}>
         <div className={styles.actions}>
-          <div className={`${styles.tablebutton} ${styles.enabled} ${styles.rightspace}`}>Edit Columns</div>
+          <div
+            className={`${styles.tablebutton} ${styles.enabled} ${styles.rightspace}`}
+          >
+            Edit Columns
+          </div>
 
           <div
             className={`${styles.tablebutton} ${buttonClass}  ${styles.rightspace}`}
@@ -73,15 +69,15 @@ export default function ResultTable(props) {
               const itemsChecked = [];
 
               checklist = new Map();
-              props.data.forEach((result) => {
+              for (const result of properties.data) {
                 checklist.set(result.displayId, false);
                 if (selected.get(result.displayId)) {
                   itemsChecked.push({
                     uri: result.uri,
-                    name: result.name,
+                    name: result.name
                   });
                 }
-              });
+              }
               setSelected(checklist);
               dispatch(addToBasket(itemsChecked));
             }}
@@ -89,28 +85,27 @@ export default function ResultTable(props) {
             Add to Basket
           </div>
 
-          <div className={`${styles.tablebutton} ${buttonClass} ${styles.rightspace}`}>Download</div>
+          <div
+            className={`${styles.tablebutton} ${buttonClass} ${styles.rightspace}`}
+          >
+            Download
+          </div>
         </div>
 
-        <Navigation
-          count={props.count}
-          length={props.data.length}
-        />
+        <Navigation count={properties.count} length={properties.data.length} />
       </div>
 
       <div className={styles.tablecontainer}>
-        <table
-          className={styles.table}
-          id={styles.results}
-        >
+        <table className={styles.table} id={styles.results}>
           <thead>
             <tr>
               <th>
                 <input
                   checked={selectAll}
-                  onChange={(e) => {
+                  onChange={e => {
                     checklist = new Map();
-                    props.data.forEach((row) => checklist.set(row.displayId, e.target.checked));
+                    for (const row of properties.data)
+                      checklist.set(row.displayId, e.target.checked);
                     setSelected(checklist);
                     setSelectAll(e.target.checked);
                   }}
@@ -130,9 +125,7 @@ export default function ResultTable(props) {
             </tr>
           </thead>
 
-          <tbody>
-            {rows}
-          </tbody>
+          <tbody>{rows}</tbody>
         </table>
       </div>
     </div>

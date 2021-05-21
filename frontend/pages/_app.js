@@ -1,6 +1,8 @@
-import { Provider } from 'react-redux';
-import { useStore } from '../redux/store';
 import '../styles/globals.css';
+
+import { Provider } from 'react-redux';
+
+import { useStore } from '../redux/store';
 
 /**
  * This component is the starting component for the sbh app. Uses Provider

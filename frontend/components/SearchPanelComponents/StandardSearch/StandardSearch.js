@@ -1,34 +1,36 @@
-import useSWR from 'swr';
 import axios from 'axios';
 import { useEffect, useRef, useState } from 'react';
-
 import Loader from 'react-loader-spinner';
 import { useDispatch, useSelector } from 'react-redux';
-import ResultTable from './ResultTable/ResultTable';
-import {
-  countloader, countloadercontainer, standardcontainer, standarderror, standardresultsloading,
-} from '../../../styles/searchpanel.module.css';
+import useSWR from 'swr';
+
 import { setOffset } from '../../../redux/actions';
+import {
+  countloader,
+  countloadercontainer,
+  standardcontainer,
+  standarderror,
+  standardresultsloading
+} from '../../../styles/searchpanel.module.css';
+import ResultTable from './ResultTable/ResultTable';
 
 /**
  * This component handles a basic 'string search' from users on sbh,
  * otherwise known as a standard search
  */
 export default function StandardSearch() {
-  const query = useSelector((state) => state.search.query);
-  const offset = useSelector((state) => state.search.offset);
-  const token = useSelector((state) => state.user.token);
+  const query = useSelector(state => state.search.query);
+  const offset = useSelector(state => state.search.offset);
+  const token = useSelector(state => state.user.token);
   const dispatch = useDispatch();
-  const [
-    firstQuery,
-    setFirstQuery,
-  ] = useState(true);
+  const [firstQuery, setFirstQuery] = useState(true);
   const hasQueryChanged = useCompare(query);
-  const [
-    count,
-    setCount,
-  ] = useState(undefined);
-  const { newCount, isCountLoading, isCountError } = getSearchCount(query, offset, token);
+  const [count, setCount] = useState();
+  const { newCount, isCountLoading, isCountError } = getSearchCount(
+    query,
+    offset,
+    token
+  );
 
   useEffect(() => {
     if (hasQueryChanged && !firstQuery) {
@@ -36,42 +38,43 @@ export default function StandardSearch() {
     }
     setFirstQuery(false);
     if (isCountLoading) {
-      setCount(<div className={countloadercontainer}>
-        <Loader
-          className={countloader}
-          color="#D25627"
-          height={10}
-          type="ThreeDots"
-          width={25}
-        />
-      </div>);
+      setCount(
+        <div className={countloadercontainer}>
+          <Loader
+            className={countloader}
+            color="#D25627"
+            height={10}
+            type="ThreeDots"
+            width={25}
+          />
+        </div>
+      );
     }
     if (isCountError) {
       setCount('Error');
     } else {
       setCount(newCount);
     }
-  }, [
-    query,
-    hasQueryChanged,
-    newCount,
-    isCountLoading,
-    isCountError,
-  ]);
+  }, [query, hasQueryChanged, newCount, isCountLoading, isCountError]);
 
-  const { results, isLoading, isError } = getSearchResults(query, offset, token);
+  const { results, isLoading, isError } = getSearchResults(
+    query,
+    offset,
+    token
+  );
 
   if (isError) {
-    return <div className={standarderror}>Errors were encountered while fetching the data count</div>;
+    return (
+      <div className={standarderror}>
+        Errors were encountered while fetching the data count
+      </div>
+    );
   }
   if (isLoading) {
     return (
       <div className={standardcontainer}>
         <div className={standardresultsloading}>
-          <Loader
-            color="#D25627"
-            type="Grid"
-          />
+          <Loader color="#D25627" type="Grid" />
         </div>
       </div>
     );
@@ -82,56 +85,62 @@ export default function StandardSearch() {
   console.log(results);
   return (
     <div className={standardcontainer}>
-      <ResultTable
-        count={count}
-        data={results}
-      />
+      <ResultTable count={count} data={results} />
     </div>
   );
 }
 
 const getSearchResults = (query, offset, token) => {
-  const { data, error } = useSWR([`${process.env.backendUrl}/search/${query}?offset=${offset}`, token], fetcher);
+  const { data, error } = useSWR(
+    [`${process.env.backendUrl}/search/${query}?offset=${offset}`, token],
+    fetcher
+  );
 
   return {
     results: data,
     isLoading: !error && !data,
-    isError: error,
+    isError: error
   };
 };
 
 const getSearchCount = (query, offset, token) => {
-  const { data, error } = useSWR([`${process.env.backendUrl}/searchCount/${query}?offset=${offset}`, token], fetcher);
+  const { data, error } = useSWR(
+    [`${process.env.backendUrl}/searchCount/${query}?offset=${offset}`, token],
+    fetcher
+  );
 
   return {
     newCount: data,
     isCountLoading: !error && !data,
-    isCountError: error,
+    isCountError: error
   };
 };
 
-const fetcher = (url, token) => axios.get(url, {
-  headers: {
-    'Content-Type': 'application/json',
-    Accept: 'text/plain',
-    'X-authorization': token,
-  },
-}).then((res) => res.data);
+const fetcher = (url, token) =>
+  axios
+    .get(url, {
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'text/plain',
+        'X-authorization': token
+      }
+    })
+    .then(res => res.data);
 
 // Used to compare new query to previous query
-function useCompare(val) {
-  const prevVal = usePrevious(val);
+function useCompare(value) {
+  const previousValue = usePrevious(value);
 
-  return prevVal !== val;
+  return previousValue !== value;
 }
 
 // Helper hook
 function usePrevious(value) {
-  const ref = useRef();
+  const reference = useRef();
 
   useEffect(() => {
-    ref.current = value;
+    reference.current = value;
   });
 
-  return ref.current;
+  return reference.current;
 }
