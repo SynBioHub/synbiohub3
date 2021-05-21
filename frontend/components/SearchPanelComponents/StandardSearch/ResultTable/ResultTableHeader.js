@@ -9,13 +9,6 @@ export default function ResultTableHeader(props) {
     <th>
       <div className={centerheader}>
         <span className={headertext}>{props.title}</span>
-
-        <Image
-          alt="table header"
-          height={20}
-          src="/images/updown.svg"
-          width={20}
-        />
       </div>
     </th>
   );

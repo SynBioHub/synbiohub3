@@ -1,4 +1,5 @@
 import router from 'next/router';
+import Image from 'next/image';
 
 /**
  * This component renders a single result row in the result table in standard search
@@ -20,6 +21,22 @@ export default function ResultRow(props) {
   if (potentialType.includes('collection')) {
     type = 'Collection';
   }
+
+  let privacy = 
+  <Image
+    alt="unlocked (privacy)"
+    height={18}
+    src="/images/public_lock.svg"
+    width={18}
+  />;
+  if (props.uri.indexOf('/public/') === -1)
+    privacy =
+    <Image
+      alt="locked (privacy)"
+      height={17}
+      src="/images/private_lock.svg"
+      width={17}
+    />;
 
   return (
     <tr
@@ -48,7 +65,7 @@ export default function ResultRow(props) {
 
       <td>{type}</td>
 
-      <td>{props.version}</td>
+      <td>{privacy}</td>
     </tr>
   );
 }
