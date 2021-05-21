@@ -14,6 +14,7 @@ export default function Card(properties) {
       <h3>{properties.title}</h3>
 
       <img
+        alt=""
         style={
           properties.iconheight
             ? {
@@ -34,7 +35,8 @@ export default function Card(properties) {
   );
 
   return (
-    <a
+    <div
+      role="button"
       className={card}
       onClick={() => {
         if (properties.title === 'Search') {
@@ -45,6 +47,6 @@ export default function Card(properties) {
       {title}
 
       <p>{properties.description}</p>
-    </a>
+    </div>
   );
 }

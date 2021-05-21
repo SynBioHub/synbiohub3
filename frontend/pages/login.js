@@ -34,14 +34,14 @@ function Login() {
         )}
         <input
           value={username}
-          onChange={e => setUsername(e.target.value)}
+          onChange={event => setUsername(event.target.value)}
           className={styles.input}
           placeholder="Email or Username"
           type="text"
         />
         <input
           value={password}
-          onChange={e => setPassword(e.target.value)}
+          onChange={event => setPassword(event.target.value)}
           className={styles.input}
           placeholder="Password"
           type="password"
@@ -51,6 +51,7 @@ function Login() {
           <span className={styles.orange}>here</span>.
         </div>
         <div
+          role="button"
           className={styles.submitbutton}
           onClick={() => {
             dispatch(login(username, password));

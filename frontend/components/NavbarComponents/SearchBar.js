@@ -16,13 +16,13 @@ export default function SearchBar() {
 
   useEffect(() => {
     setExpand(searchexpand);
-  });
+  }, [setExpand]);
 
   return (
     <input
       autoFocus
       className={`${searchbar} ${expand}`}
-      onChange={e => dispatch(setSearchQuery(e.target.value))}
+      onChange={event => dispatch(setSearchQuery(event.target.value))}
       placeholder="Search SynBioHub"
       type="text"
       value={query}

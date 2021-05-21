@@ -16,6 +16,7 @@ export default function Basket() {
   if (!showBasket) {
     return (
       <div
+        role="button"
         className={styles.basketcontainer}
         onClick={() => setShowBasket(true)}
       >
@@ -56,6 +57,7 @@ export default function Basket() {
       </div>
 
       <div
+        role="button"
         className={styles.basketcontainer}
         onClick={() => setShowBasket(false)}
       >

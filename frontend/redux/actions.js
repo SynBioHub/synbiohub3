@@ -25,9 +25,13 @@ export const login = (username, password) => async dispatch => {
   parameters.append('email', username);
   parameters.append('password', password);
 
-  const res = await fetch(url, { method: 'POST', headers, body: parameters });
-  const message = await res.text();
-  if (res.status === 200) {
+  const response = await fetch(url, {
+    method: 'POST',
+    headers,
+    body: parameters
+  });
+  const message = await response.text();
+  if (response.status === 200) {
     dispatch({
       type: types.LOGIN,
       payload: {

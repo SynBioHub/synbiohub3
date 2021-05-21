@@ -19,13 +19,10 @@ export default function SearchPanel() {
 
   useEffect(() => {
     setShow(styles.show);
-  });
-  let searchResults = null;
+  }, [setShow]);
+  let searchResults;
 
-  switch (selectedType) {
-    case 'Standard Search':
-      searchResults = <StandardSearch />;
-  }
+  if (selectedType === 'Standard Search') searchResults = <StandardSearch />;
   if (showSearchPanel) {
     return (
       <div className={`${styles.container} ${show}`}>

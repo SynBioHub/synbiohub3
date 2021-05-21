@@ -87,19 +87,17 @@ const initialBasketState = {
  * be updated
  */
 const basketReducer = (state = initialBasketState, { type, payload }) => {
-  switch (type) {
-    case types.ADDTOBASKET:
-      return {
+  return type === types.ADDTOBASKET
+    ? {
         ...state,
-        basket: payload.concat(
+        basket: [
+          ...payload,
           ...state.basket.filter(
             item => payload.findIndex(compare => compare.uri === item.uri) < 0
           )
-        )
-      };
-    default:
-      return state;
-  }
+        ]
+      }
+    : state;
 };
 
 // TRACKER REDUCER
@@ -112,15 +110,12 @@ const initialTrackingState = {
  * login component can function properly
  */
 const trackingReducer = (state = initialTrackingState, { type, payload }) => {
-  switch (type) {
-    case types.TRACKPAGEVISIT:
-      return {
+  return type === types.TRACKPAGEVISIT
+    ? {
         ...state,
         pageVisited: payload
-      };
-    default:
-      return state;
-  }
+      }
+    : state;
 };
 
 // COMBINED REDUCERS

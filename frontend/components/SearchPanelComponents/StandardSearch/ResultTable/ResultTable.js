@@ -1,11 +1,9 @@
 import { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
 
-import { addToBasket } from '../../../../redux/actions';
 import styles from '../../../../styles/resulttable.module.css';
-import Navigation from './Navigation';
 import ResultRow from './ResultRow';
 import ResultTableHeader from './ResultTableHeader';
+import TableButtons from './TableButtons';
 
 /**
  * This component renders the result table displayed in standard search. Uses an 'excel-like' table
@@ -18,7 +16,6 @@ export default function ResultTable(properties) {
   const [selected, setSelected] = useState(checklist);
   const [selectAll, setSelectAll] = useState(false);
   const [buttonClass, setButtonClass] = useState(styles.disabled);
-  const dispatch = useDispatch();
 
   useEffect(() => {
     let allSelected = true;
@@ -55,45 +52,13 @@ export default function ResultTable(properties) {
 
   return (
     <div className={styles.resultcontainer}>
-      <div className={styles.tablebuttons}>
-        <div className={styles.actions}>
-          <div
-            className={`${styles.tablebutton} ${styles.enabled} ${styles.rightspace}`}
-          >
-            Edit Columns
-          </div>
-
-          <div
-            className={`${styles.tablebutton} ${buttonClass}  ${styles.rightspace}`}
-            onClick={() => {
-              const itemsChecked = [];
-
-              checklist = new Map();
-              for (const result of properties.data) {
-                checklist.set(result.displayId, false);
-                if (selected.get(result.displayId)) {
-                  itemsChecked.push({
-                    uri: result.uri,
-                    name: result.name
-                  });
-                }
-              }
-              setSelected(checklist);
-              dispatch(addToBasket(itemsChecked));
-            }}
-          >
-            Add to Basket
-          </div>
-
-          <div
-            className={`${styles.tablebutton} ${buttonClass} ${styles.rightspace}`}
-          >
-            Download
-          </div>
-        </div>
-
-        <Navigation count={properties.count} length={properties.data.length} />
-      </div>
+      <TableButtons
+        buttonClass={buttonClass}
+        selected={selected}
+        setSelected={setSelected}
+        data={properties.data}
+        count={properties.count}
+      />
 
       <div className={styles.tablecontainer}>
         <table className={styles.table} id={styles.results}>
@@ -102,12 +67,12 @@ export default function ResultTable(properties) {
               <th>
                 <input
                   checked={selectAll}
-                  onChange={e => {
+                  onChange={event => {
                     checklist = new Map();
                     for (const row of properties.data)
-                      checklist.set(row.displayId, e.target.checked);
+                      checklist.set(row.displayId, event.target.checked);
                     setSelected(checklist);
-                    setSelectAll(e.target.checked);
+                    setSelectAll(event.target.checked);
                   }}
                   type="checkbox"
                 />

@@ -26,7 +26,7 @@ export default function StandardSearch() {
   const [firstQuery, setFirstQuery] = useState(true);
   const hasQueryChanged = useCompare(query);
   const [count, setCount] = useState();
-  const { newCount, isCountLoading, isCountError } = getSearchCount(
+  const { newCount, isCountLoading, isCountError } = useSearchCount(
     query,
     offset,
     token
@@ -55,9 +55,17 @@ export default function StandardSearch() {
     } else {
       setCount(newCount);
     }
-  }, [query, hasQueryChanged, newCount, isCountLoading, isCountError]);
+  }, [
+    query,
+    hasQueryChanged,
+    newCount,
+    isCountLoading,
+    isCountError,
+    firstQuery,
+    dispatch
+  ]);
 
-  const { results, isLoading, isError } = getSearchResults(
+  const { results, isLoading, isError } = useSearchResults(
     query,
     offset,
     token
@@ -82,7 +90,6 @@ export default function StandardSearch() {
   if (results.length === 0) {
     return <div className={standarderror}>No results found</div>;
   }
-  console.log(results);
   return (
     <div className={standardcontainer}>
       <ResultTable count={count} data={results} />
@@ -90,7 +97,7 @@ export default function StandardSearch() {
   );
 }
 
-const getSearchResults = (query, offset, token) => {
+const useSearchResults = (query, offset, token) => {
   const { data, error } = useSWR(
     [`${process.env.backendUrl}/search/${query}?offset=${offset}`, token],
     fetcher
@@ -103,7 +110,7 @@ const getSearchResults = (query, offset, token) => {
   };
 };
 
-const getSearchCount = (query, offset, token) => {
+const useSearchCount = (query, offset, token) => {
   const { data, error } = useSWR(
     [`${process.env.backendUrl}/searchCount/${query}?offset=${offset}`, token],
     fetcher
@@ -125,7 +132,7 @@ const fetcher = (url, token) =>
         'X-authorization': token
       }
     })
-    .then(res => res.data);
+    .then(response => response.data);
 
 // Used to compare new query to previous query
 function useCompare(value) {

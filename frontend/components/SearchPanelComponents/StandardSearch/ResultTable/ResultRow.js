@@ -43,22 +43,25 @@ export default function ResultRow(properties) {
 
   return (
     <tr
-      onClick={e => {
+      onClick={() => {
         router.push(properties.uri);
       }}
     >
       <td>
         <input
           checked={properties.selected.get(properties.displayId)}
-          onChange={e => {
+          onChange={event => {
             properties.setSelected(
               new Map(
-                properties.selected.set(properties.displayId, e.target.checked)
+                properties.selected.set(
+                  properties.displayId,
+                  event.target.checked
+                )
               )
             );
           }}
-          onClick={e => {
-            e.stopPropagation();
+          onClick={event => {
+            event.stopPropagation();
           }}
           type="checkbox"
         />

@@ -50,13 +50,18 @@ export default function Navbar() {
           )}
 
           <img
+            alt="Search SynBioHub"
             className={styles.searchicon}
             onClick={() => dispatch(setSearchingActive(true))}
             src="/images/search.svg"
           />
 
           {loggedIn && (
-            <img className={styles.borderCircle} src="/images/face.jpeg" />
+            <img
+              alt="Profile"
+              className={styles.borderCircle}
+              src="/images/face.jpeg"
+            />
           )}
           {!loggedIn && (
             <Selector
@@ -79,11 +84,16 @@ function NavInSearchMode() {
   return (
     <header className={styles.container}>
       <div className={styles.searchcontainer}>
-        <img className={styles.searchiconactive} src="/images/search.svg" />
+        <img
+          className={styles.searchiconactive}
+          src="/images/search.svg"
+          alt=""
+        />
 
         <SearchBar />
 
         <div
+          role="button"
           className={styles.cancelsearch}
           onClick={() => dispatch(setSearchingActive(false))}
         >

@@ -14,6 +14,7 @@ export default function SearchTypeSelector(properties) {
 
   return (
     <div
+      role="button"
       className={categoryheader}
       onClick={() => properties.setSelectedType(properties.name)}
     >

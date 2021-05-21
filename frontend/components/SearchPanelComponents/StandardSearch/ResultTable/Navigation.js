@@ -31,6 +31,7 @@ export default function Navigation(properties) {
   return (
     <div className={styles.navigation}>
       <div
+        role="button"
         className={`${styles.tablebutton} ${previous}`}
         onClick={() => {
           if (previous !== styles.disabled) {
@@ -49,6 +50,7 @@ export default function Navigation(properties) {
       </div>
 
       <div
+        role="button"
         className={`${styles.tablebutton} ${next}`}
         onClick={() => {
           if (next !== styles.disabled) {
