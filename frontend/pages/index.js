@@ -33,7 +33,8 @@ function Home() {
         </p>
 
         <div className={styles.grid}>
-          <Card description="Browse SynBioHub for useful parts and designs" icon="/images/search_black.svg"
+          <Card description="Browse SynBioHub for useful parts and designs"
+            icon="/images/search_black.svg"
             title="Search"
           />
 
