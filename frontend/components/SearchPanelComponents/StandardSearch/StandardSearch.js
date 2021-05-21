@@ -28,7 +28,7 @@ export default function StandardSearch() {
     count,
     setCount,
   ] = useState(undefined);
-  const { newCount, isCountLoading, isCountError } = getSearchCount(query, offset);
+  const { newCount, isCountLoading, isCountError } = getSearchCount(query, offset, token);
 
   useEffect(() => {
     if (hasQueryChanged && !firstQuery) {
@@ -79,7 +79,7 @@ export default function StandardSearch() {
   if (results.length === 0) {
     return <div className={standarderror}>No results found</div>;
   }
-
+  console.log(results)
   return (
     <div className={standardcontainer}>
       <ResultTable
