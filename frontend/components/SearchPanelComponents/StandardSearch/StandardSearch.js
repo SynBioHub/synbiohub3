@@ -79,7 +79,7 @@ export default function StandardSearch() {
   if (results.length === 0) {
     return <div className={standarderror}>No results found</div>;
   }
-  console.log(results)
+  console.log(results);
   return (
     <div className={standardcontainer}>
       <ResultTable

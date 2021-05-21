@@ -22,21 +22,24 @@ export default function ResultRow(props) {
     type = 'Collection';
   }
 
-  let privacy = 
-  <Image
-    alt="unlocked (privacy)"
-    height={18}
-    src="/images/public_lock.svg"
-    width={18}
-  />;
-  if (props.uri.indexOf('/public/') === -1)
-    privacy =
+  let privacy = (
     <Image
-      alt="locked (privacy)"
-      height={17}
-      src="/images/private_lock.svg"
-      width={17}
-    />;
+      alt="unlocked (privacy)"
+      height={18}
+      src="/images/public_lock.svg"
+      width={18}
+    />
+  );
+  if (props.uri.indexOf('/public/') === -1) {
+    privacy = (
+      <Image
+        alt="locked (privacy)"
+        height={17}
+        src="/images/private_lock.svg"
+        width={17}
+      />
+    );
+  }
 
   return (
     <tr
