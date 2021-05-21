@@ -6,8 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint --ext .js ./",
-    "lint.fix": "eslint --fix --ext .js ./"
+    "lint": "eslint '*/**/*.{js,jsx}'",
+    "lint.fix": "eslint '*/**/*.{js,jsx}' --fix"
   },
   "husky": {
     "hooks": {
