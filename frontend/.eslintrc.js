@@ -35,7 +35,6 @@ module.exports = {
     'simple-import-sort/exports': 'error',
     'unicorn/filename-case': 'off',
     'unicorn/no-null': 'off',
-    'unicorn/prefer-module': 'off', // until I figure out how to ignore certain files
     'jsx-a11y/click-events-have-key-events': 'off', // turn on later for accessibility (sbh3)
     'jsx-a11y/interactive-supports-focus': 'off', // turn on later for accessibility (sbh3)
     'jsx-a11y/no-noninteractive-element-interactions': 'off', // turn on later for accessibility (sbh3)
