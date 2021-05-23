@@ -1,12 +1,12 @@
-import router from 'next/router';
 import Image from 'next/image';
+import router from 'next/router';
 
 /**
  * This component renders a single result row in the result table in standard search
  */
-export default function ResultRow(props) {
+export default function ResultRow(properties) {
   let type = '';
-  const potentialType = props.type.toLowerCase();
+  const potentialType = properties.type.toLowerCase();
 
   // Identify what type of object the search result is from type url
   if (potentialType.includes('component')) {
@@ -22,46 +22,56 @@ export default function ResultRow(props) {
     type = 'Collection';
   }
 
-  let privacy = 
-  <Image
-    alt="unlocked (privacy)"
-    height={18}
-    src="/images/public_lock.svg"
-    width={18}
-  />;
-  if (props.uri.indexOf('/public/') === -1)
-    privacy =
+  let privacy = (
     <Image
-      alt="locked (privacy)"
-      height={17}
-      src="/images/private_lock.svg"
-      width={17}
-    />;
+      alt="unlocked (privacy)"
+      height={18}
+      src="/images/public_lock.svg"
+      width={18}
+    />
+  );
+  if (!properties.uri.includes('/public/')) {
+    privacy = (
+      <Image
+        alt="locked (privacy)"
+        height={17}
+        src="/images/private_lock.svg"
+        width={17}
+      />
+    );
+  }
 
   return (
     <tr
-      onClick={(e) => {
-        router.push(props.uri);
+      onClick={() => {
+        router.push(properties.uri);
       }}
     >
       <td>
         <input
-          checked={props.selected.get(props.displayId)}
-          onChange={(e) => {
-            props.setSelected(new Map(props.selected.set(props.displayId, e.target.checked)));
+          checked={properties.selected.get(properties.displayId)}
+          onChange={event => {
+            properties.setSelected(
+              new Map(
+                properties.selected.set(
+                  properties.displayId,
+                  event.target.checked
+                )
+              )
+            );
           }}
-          onClick={(e) => {
-            e.stopPropagation();
+          onClick={event => {
+            event.stopPropagation();
           }}
           type="checkbox"
         />
       </td>
 
-      <td>{props.name}</td>
+      <td>{properties.name}</td>
 
-      <td>{props.displayId}</td>
+      <td>{properties.displayId}</td>
 
-      <td>{props.description}</td>
+      <td>{properties.description}</td>
 
       <td>{type}</td>
 

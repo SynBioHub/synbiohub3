@@ -1,5 +1,3 @@
-import axios from 'axios';
-import qs from 'qs';
 import * as types from './types';
 /*
 This file contains redux action functions for sbh. These are used to update
@@ -17,30 +15,34 @@ redux state.
  * @param {String} password - the password of the user
  * @returns
  */
-export const login = (username, password) => async (dispatch) => {
+export const login = (username, password) => async dispatch => {
   const url = 'http://localhost:7777/login';
   const headers = {
-    Accept: 'text/plain',
+    Accept: 'text/plain'
   };
 
-  const params = new URLSearchParams();
-  params.append('email', username);
-  params.append('password', password);
+  const parameters = new URLSearchParams();
+  parameters.append('email', username);
+  parameters.append('password', password);
 
-  const res = await fetch(url, { method: 'POST', headers, body: params });
-  const message = await res.text();
-  if (res.status === 200) {
+  const response = await fetch(url, {
+    method: 'POST',
+    headers,
+    body: parameters
+  });
+  const message = await response.text();
+  if (response.status === 200) {
     dispatch({
       type: types.LOGIN,
       payload: {
         username,
-        token: message,
-      },
+        token: message
+      }
     });
   } else {
     dispatch({
       type: types.LOGINERROR,
-      payload: message,
+      payload: message
     });
   }
 };
@@ -51,10 +53,10 @@ export const login = (username, password) => async (dispatch) => {
  * This action sets whether the seaarch panel should be displayed in sbh
  * @param {Boolean} isOpen - directs whether the search panel should be displayed
  */
-export const setSearchingActive = (isOpen) => (dispatch) => {
+export const setSearchingActive = isOpen => dispatch => {
   dispatch({
     type: types.SEARCHINGOPEN,
-    payload: isOpen,
+    payload: isOpen
   });
 };
 
@@ -62,10 +64,10 @@ export const setSearchingActive = (isOpen) => (dispatch) => {
  * This action sets the search query that is used to get search results
  * @param {String} query - the new search query to be used
  */
-export const setSearchQuery = (query) => (dispatch) => {
+export const setSearchQuery = query => dispatch => {
   dispatch({
     type: types.QUERY,
-    payload: query,
+    payload: query
   });
 };
 
@@ -73,10 +75,10 @@ export const setSearchQuery = (query) => (dispatch) => {
  * This action sets the number by which search results should be offset
  * @param {Number} newOffset - the new number by which search results should be offset
  */
-export const setOffset = (newOffset) => (dispatch) => {
+export const setOffset = newOffset => dispatch => {
   dispatch({
     type: types.OFFSET,
-    payload: newOffset,
+    payload: newOffset
   });
 };
 
@@ -86,10 +88,10 @@ export const setOffset = (newOffset) => (dispatch) => {
  * This action adds objects to the Basket that is located in the Search Panel in sbh
  * @param {Array} uriArray - the objects that will be stored in the Basket
  */
-export const addToBasket = (uriArray) => (dispatch) => {
+export const addToBasket = uriArray => dispatch => {
   dispatch({
     type: types.ADDTOBASKET,
-    payload: uriArray,
+    payload: uriArray
   });
 };
 
@@ -99,9 +101,9 @@ export const addToBasket = (uriArray) => (dispatch) => {
  * This action marks that the user has visited a page in sbh
  * @param {Boolean} pageVisited
  */
-export const markPageVisited = (pageVisited) => (dispatch) => {
+export const markPageVisited = pageVisited => dispatch => {
   dispatch({
     type: types.TRACKPAGEVISIT,
-    payload: pageVisited,
+    payload: pageVisited
   });
 };

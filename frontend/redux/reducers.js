@@ -1,4 +1,5 @@
 import { combineReducers } from 'redux';
+
 import * as types from './types';
 
 /*
@@ -13,7 +14,7 @@ const initialUserState = {
   token: '',
   loggedIn: false,
   loginError: false,
-  loginErrorMessage: '',
+  loginErrorMessage: ''
 };
 
 /**
@@ -29,14 +30,14 @@ const userReducer = (state = initialUserState, { type, payload }) => {
         loginError: false,
         loginErrorMessage: '',
         username: payload.username,
-        token: payload.token,
+        token: payload.token
       };
     case types.LOGINERROR:
       return {
         ...state,
         loggedIn: false,
         loginError: true,
-        loginErrorMessage: payload,
+        loginErrorMessage: payload
       };
     default:
       return state;
@@ -47,7 +48,7 @@ const userReducer = (state = initialUserState, { type, payload }) => {
 const initialSearchState = {
   query: '',
   offset: 0,
-  active: false,
+  active: false
 };
 
 /**
@@ -59,17 +60,17 @@ const searchReducer = (state = initialSearchState, { type, payload }) => {
     case types.QUERY:
       return {
         ...state,
-        query: payload,
+        query: payload
       };
     case types.OFFSET:
       return {
         ...state,
-        offset: payload,
+        offset: payload
       };
     case types.SEARCHINGOPEN:
       return {
         ...state,
-        active: payload,
+        active: payload
       };
     default:
       return state;
@@ -78,7 +79,7 @@ const searchReducer = (state = initialSearchState, { type, payload }) => {
 
 // BASKET REDUCER
 const initialBasketState = {
-  basket: [],
+  basket: []
 };
 
 /**
@@ -86,20 +87,22 @@ const initialBasketState = {
  * be updated
  */
 const basketReducer = (state = initialBasketState, { type, payload }) => {
-  switch (type) {
-    case types.ADDTOBASKET:
-      return {
+  return type === types.ADDTOBASKET
+    ? {
         ...state,
-        basket: payload.concat(...state.basket.filter((item) => payload.findIndex((compare) => compare.uri === item.uri) < 0)),
-      };
-    default:
-      return state;
-  }
+        basket: [
+          ...payload,
+          ...state.basket.filter(
+            item => payload.findIndex(compare => compare.uri === item.uri) < 0
+          )
+        ]
+      }
+    : state;
 };
 
 // TRACKER REDUCER
 const initialTrackingState = {
-  pageVisited: false,
+  pageVisited: false
 };
 
 /**
@@ -107,15 +110,12 @@ const initialTrackingState = {
  * login component can function properly
  */
 const trackingReducer = (state = initialTrackingState, { type, payload }) => {
-  switch (type) {
-    case types.TRACKPAGEVISIT:
-      return {
+  return type === types.TRACKPAGEVISIT
+    ? {
         ...state,
-        pageVisited: payload,
-      };
-    default:
-      return state;
-  }
+        pageVisited: payload
+      }
+    : state;
 };
 
 // COMBINED REDUCERS
@@ -124,7 +124,7 @@ const reducers = {
   user: userReducer,
   search: searchReducer,
   basket: basketReducer,
-  tracking: trackingReducer,
+  tracking: trackingReducer
 };
 
 export default combineReducers(reducers);

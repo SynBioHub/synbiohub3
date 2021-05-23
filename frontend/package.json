@@ -6,10 +6,21 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint --ext .js ./",
-    "lint.fix": "eslint --fix --ext .js ./"
+    "lint": "eslint '*/**/*.{js,jsx}'",
+    "lint.fix": "eslint '*/**/*.{js,jsx}' --fix"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,jsx}": [
+      "eslint '*/**/*.{js,jsx}' --fix"
+    ]
   },
   "dependencies": {
+    "D": "^1.0.0",
     "axios": "^0.21.0",
     "next": "10.0.1",
     "qs": "^6.10.1",
@@ -24,12 +35,19 @@
   },
   "proxy": "http://localhost:8080/",
   "devDependencies": {
-    "babel-eslint": "^10.1.0",
     "eslint": "^7.26.0",
     "eslint-config-airbnb": "^18.2.1",
-    "eslint-plugin-import": "^2.22.1",
+    "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-jsx-a11y": "^6.4.1",
+    "eslint-plugin-prettier": "^3.4.0",
     "eslint-plugin-react": "^7.23.2",
-    "eslint-plugin-react-hooks": "^4.2.0"
+    "eslint-plugin-react-hooks": "^4.2.0",
+    "eslint-plugin-security": "^1.4.0",
+    "eslint-plugin-simple-import-sort": "^7.0.0",
+    "eslint-plugin-sonarjs": "^0.7.0",
+    "eslint-plugin-unicorn": "^32.0.1",
+    "husky": "4.2.3",
+    "lint-staged": "^11.0.0",
+    "prettier": "^2.3.0"
   }
 }

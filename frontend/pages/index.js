@@ -1,9 +1,9 @@
 import { useDispatch } from 'react-redux';
-import TopLevel from '../components/TopLevel';
-import Card from '../components/HomeComponents/Card';
 
-import styles from '../styles/home.module.css';
+import Card from '../components/HomeComponents/Card';
+import TopLevel from '../components/TopLevel';
 import { markPageVisited } from '../redux/actions';
+import styles from '../styles/home.module.css';
 
 /**
  * This page renders the home/landing page for sbh.
@@ -15,8 +15,7 @@ function Home() {
     <div className={styles.container}>
       <main className={styles.main}>
         <h1 className={styles.title}>
-          Welcome to
-          {' '}
+          Welcome to{' '}
           <a
             href="https://wiki.synbiohub.org/"
             rel="noreferrer"
@@ -27,9 +26,11 @@ function Home() {
         </h1>
 
         <p className={styles.description}>
-          SynBioHub is a design repository for people designing biological constructs.
-          It enables DNA and protein designs to be uploaded, then facilitates sharing and viewing of such designs.
-          SynBioHub also facilitates searching for information about existing useful parts and designs by combining data from a variety of sources.
+          SynBioHub is a design repository for people designing biological
+          constructs. It enables DNA and protein designs to be uploaded, then
+          facilitates sharing and viewing of such designs. SynBioHub also
+          facilitates searching for information about existing useful parts and
+          designs by combining data from a variety of sources.
         </p>
 
         <div className={styles.grid}>
@@ -72,5 +73,9 @@ function Home() {
 }
 
 export default function HomeWrapped() {
-  return <TopLevel><Home /></TopLevel>;
+  return (
+    <TopLevel>
+      <Home />
+    </TopLevel>
+  );
 }

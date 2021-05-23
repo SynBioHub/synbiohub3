@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+
 import styles from '../styles/searchpanel.module.css';
+import Basket from './Basket';
 import SearchTypeSelector from './SearchPanelComponents/SearchTypeSelector';
 import StandardSearch from './SearchPanelComponents/StandardSearch/StandardSearch';
-import Basket from './Basket';
 
 /**
  * This component renders searching options, as well as the search results,
@@ -12,25 +13,16 @@ import Basket from './Basket';
  * the current sbh content
  */
 export default function SearchPanel() {
-  const showSearchPanel = useSelector((state) => state.search.active);
-  const [
-    show,
-    setShow,
-  ] = useState('');
-  const [
-    selectedType,
-    setSelectedType,
-  ] = useState('Standard Search');
+  const showSearchPanel = useSelector(state => state.search.active);
+  const [show, setShow] = useState('');
+  const [selectedType, setSelectedType] = useState('Standard Search');
 
   useEffect(() => {
     setShow(styles.show);
-  });
-  let searchResults = null;
+  }, [setShow]);
+  let searchResults;
 
-  switch (selectedType) {
-    case 'Standard Search':
-      searchResults = <StandardSearch />;
-  }
+  if (selectedType === 'Standard Search') searchResults = <StandardSearch />;
   if (showSearchPanel) {
     return (
       <div className={`${styles.container} ${show}`}>
