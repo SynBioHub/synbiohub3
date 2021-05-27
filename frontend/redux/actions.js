@@ -40,12 +40,23 @@ export const login = (username, password) => async dispatch => {
       }
     });
     localStorage.setItem('userToken', message); // save the token of the user locally, change to cookie later
+    localStorage.setItem('username', username); // save the username of the user locally, change to cookie later
   } else {
     dispatch({
       type: types.LOGINERROR,
       payload: message
     });
   }
+};
+
+export const restoreLogin = (username, token) => dispatch => {
+  dispatch({
+    type: types.LOGIN,
+    payload: {
+      username,
+      token
+    }
+  });
 };
 
 // SEARCHING ACTIONS
