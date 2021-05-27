@@ -39,6 +39,8 @@ const userReducer = (state = initialUserState, { type, payload }) => {
         loginError: true,
         loginErrorMessage: payload
       };
+    case types.LOGOUT:
+      return initialUserState;
     default:
       return state;
   }

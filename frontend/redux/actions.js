@@ -49,6 +49,13 @@ export const login = (username, password) => async dispatch => {
   }
 };
 
+/**
+ * This action takes in a username and token and restores
+ * the app state to show that the user is logged in
+ * @param {string} username
+ * @param {string} token
+ * @returns
+ */
 export const restoreLogin = (username, token) => dispatch => {
   dispatch({
     type: types.LOGIN,
@@ -59,10 +66,21 @@ export const restoreLogin = (username, token) => dispatch => {
   });
 };
 
+/**
+ * This action adjusts app state to sign the user out of
+ * the session they are in
+ * @returns
+ */
+export const logoutUser = () => dispatch => {
+  localStorage.removeItem('userToken');
+  localStorage.removeItem('username');
+  dispatch({ type: types.LOGOUT });
+};
+
 // SEARCHING ACTIONS
 
 /**
- * This action sets whether the seaarch panel should be displayed in sbh
+ * This action sets whether the search panel should be displayed in sbh
  * @param {Boolean} isOpen - directs whether the search panel should be displayed
  */
 export const setSearchingActive = isOpen => dispatch => {
