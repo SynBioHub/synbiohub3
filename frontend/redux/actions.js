@@ -39,6 +39,7 @@ export const login = (username, password) => async dispatch => {
         token: message
       }
     });
+    localStorage.setItem('userToken', message); // save the token of the user locally, change to cookie later
   } else {
     dispatch({
       type: types.LOGINERROR,
