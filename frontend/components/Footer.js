@@ -21,7 +21,7 @@ export default function Footer() {
         <a href="https://wiki.synbiohub.org/" target="_blank" rel="noreferrer">
           About SynBioHub
         </a>
-        {' | '}
+        {'  ·  '}
         <a
           href="https://github.com/SynBioHub/synbiohub3"
           target="_blank"
@@ -29,7 +29,7 @@ export default function Footer() {
         >
           View Source on Github
         </a>
-        {' | '}
+        {'  ·  '}
         <a
           href="https://github.com/SynBioHub/synbiohub3/issues"
           target="_blank"
