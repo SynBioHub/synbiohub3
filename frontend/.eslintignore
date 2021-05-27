@@ -1,1 +1,4 @@
 .eslintrc.js
+fileMock.js
+styleMock.js
+__tests__/*
