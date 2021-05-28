@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import TopLevel from '../components/TopLevel';
@@ -20,10 +20,15 @@ function Login() {
   const dispatch = useDispatch();
   const router = useRouter();
 
-  if (loggedIn) {
-    if (pageVisited) router.back();
-    else router.push('/');
-  }
+  const passwordInput = useRef();
+
+  useEffect(() => {
+    if (loggedIn) {
+      if (pageVisited) router.back();
+      else router.push('/');
+    }
+  }, [loggedIn, pageVisited, router]);
+
   return (
     <div className={styles.container}>
       <div className={styles.frame}>
@@ -35,13 +40,25 @@ function Login() {
         <input
           value={username}
           onChange={event => setUsername(event.target.value)}
+          onKeyPress={event => {
+            if (event.key === 'Enter') passwordInput.current.focus();
+          }}
+          autoFocus
           className={styles.input}
           placeholder="Email or Username"
           type="text"
         />
         <input
           value={password}
+          ref={passwordInput}
           onChange={event => setPassword(event.target.value)}
+          onKeyPress={event => {
+            if (event.key === 'Enter') {
+              dispatch(login(username, password));
+              setUsername('');
+              setPassword('');
+            }
+          }}
           className={styles.input}
           placeholder="Password"
           type="password"
