@@ -13,6 +13,7 @@ export const USERTOKEN = 'USERTOKEN';
 export const LOGGEDIN = 'LOGGEDIN';
 export const LOGINERROR = 'LOGINERROR';
 export const LOGIN = 'LOGIN';
+export const LOGOUT = 'LOGOUT';
 
 // SEARCH
 export const QUERY = 'QUERY';

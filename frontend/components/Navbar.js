@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { setSearchingActive } from '../redux/actions';
 import styles from '../styles/navbar.module.css';
+import Profile from './NavbarComponents/Profile';
 import SearchBar from './NavbarComponents/SearchBar';
 import Selector from './NavbarComponents/Selector';
 
@@ -56,13 +57,7 @@ export default function Navbar() {
             src="/images/search.svg"
           />
 
-          {loggedIn && (
-            <img
-              alt="Profile"
-              className={styles.borderCircle}
-              src="/images/face.jpeg"
-            />
-          )}
+          {loggedIn && <Profile />}
           {!loggedIn && (
             <Selector
               icon="/images/login.svg"
