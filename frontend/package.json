@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint '*/**/*.{js,jsx}'",
-    "lint.fix": "eslint '*/**/*.{js,jsx}' --fix"
+    "lint.fix": "eslint '*/**/*.{js,jsx}' --fix",
+    "test": "jest"
   },
   "husky": {
     "hooks": {
@@ -19,9 +20,26 @@
       "eslint '*/**/*.{js,jsx}' --fix"
     ]
   },
+  "jest": {
+    "testPathIgnorePatterns": [
+      "<rootDir>/.next/",
+      "<rootDir>/node_modules/"
+    ],
+    "transform": {
+      "^.+\\.(js|jsx|ts|tsx)$": "<rootDir>/node_modules/babel-jest"
+    },
+    "moduleNameMapper": {
+      "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/__mocks__/fileMock.js",
+      "\\.(css|less)$": "<rootDir>/__mocks__/styleMock.js"
+    },
+    "setupFiles": [
+      "<rootDir>/jest/setupTest.js"
+    ],
+    "testEnvironment": "jsdom"
+  },
   "dependencies": {
-    "D": "^1.0.0",
     "axios": "^0.21.0",
+    "D": "^1.0.0",
     "next": "10.0.1",
     "qs": "^6.10.1",
     "react": "17.0.1",
@@ -35,6 +53,10 @@
   },
   "proxy": "http://localhost:8080/",
   "devDependencies": {
+    "@testing-library/dom": "^7.31.0",
+    "@testing-library/jest-dom": "^5.12.0",
+    "@testing-library/react": "^11.2.7",
+    "babel-jest": "^27.0.1",
     "eslint": "^7.26.0",
     "eslint-config-airbnb": "^18.2.1",
     "eslint-config-prettier": "^8.3.0",
@@ -47,6 +69,7 @@
     "eslint-plugin-sonarjs": "^0.7.0",
     "eslint-plugin-unicorn": "^32.0.1",
     "husky": "4.2.3",
+    "jest": "^27.0.1",
     "lint-staged": "^11.0.0",
     "prettier": "^2.3.0"
   }
