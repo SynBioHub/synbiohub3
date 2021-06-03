@@ -53,7 +53,7 @@ export default function Navbar() {
           <img
             alt="Search SynBioHub"
             className={styles.searchicon}
-            onClick={() => dispatch(setSearchingActive(true))}
+            onClick={() => dispatch(setSearchingActive(true))} // open search panel
             src="/images/search.svg"
           />
 
