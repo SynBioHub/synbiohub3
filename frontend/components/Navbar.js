@@ -1,7 +1,9 @@
 import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { setSearchingActive } from '../redux/actions';
+import { setSearchingActive, setSearchQuery } from '../redux/actions';
 import styles from '../styles/navbar.module.css';
 import Profile from './NavbarComponents/Profile';
 import SearchBar from './NavbarComponents/SearchBar';
@@ -15,6 +17,16 @@ export default function Navbar() {
   const searchingOpen = useSelector(state => state.search.active);
   const dispatch = useDispatch();
   const loggedIn = useSelector(state => state.user.loggedIn);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (router.query.search !== undefined) {
+      dispatch(setSearchingActive(true));
+      dispatch(setSearchQuery(router.query.search));
+    } else {
+      dispatch(setSearchingActive(false));
+    }
+  }, [router.query.search]);
 
   if (!searchingOpen) {
     return (
@@ -75,6 +87,7 @@ export default function Navbar() {
 
 function NavInSearchMode() {
   const dispatch = useDispatch();
+  const router = useRouter();
 
   return (
     <header className={styles.container}>
@@ -90,7 +103,10 @@ function NavInSearchMode() {
         <div
           role="button"
           className={styles.cancelsearch}
-          onClick={() => dispatch(setSearchingActive(false))}
+          onClick={() => {
+            dispatch(setSearchingActive(false));
+            router.replace(router.pathname);
+          }}
         >
           {'\u2573'}
         </div>
