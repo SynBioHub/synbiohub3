@@ -44,7 +44,12 @@ export default function ResultRow(properties) {
   return (
     <tr
       onClick={() => {
-        router.push(properties.uri);
+        router.push(
+          properties.uri.replace(
+            'https://synbiohub.org',
+            process.env.backendUrl
+          )
+        );
       }}
     >
       <td>
