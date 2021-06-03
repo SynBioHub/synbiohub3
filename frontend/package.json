@@ -32,12 +32,14 @@
       "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/__mocks__/fileMock.js",
       "\\.(css|less)$": "<rootDir>/__mocks__/styleMock.js"
     },
-    "setupFiles": ["<rootDir>/jest/setupTest.js"],
+    "setupFiles": [
+      "<rootDir>/jest/setupTest.js"
+    ],
     "testEnvironment": "jsdom"
   },
   "dependencies": {
-    "D": "^1.0.0",
     "axios": "^0.21.0",
+    "D": "^1.0.0",
     "next": "10.0.1",
     "qs": "^6.10.1",
     "react": "17.0.1",
