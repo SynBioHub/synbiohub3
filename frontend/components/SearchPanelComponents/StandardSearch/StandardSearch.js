@@ -36,7 +36,9 @@ export default function StandardSearch() {
   );
 
   useEffect(() => {
-    router.push(`/?search=${query}`, undefined, { shallow: true });
+    router.push(`/?search=${query}&offset=${offset}`, undefined, {
+      shallow: true
+    });
     if (hasQueryChanged && !firstQuery) {
       dispatch(setOffset(0));
     }
@@ -61,6 +63,7 @@ export default function StandardSearch() {
     }
   }, [
     query,
+    offset,
     hasQueryChanged,
     newCount,
     isCountLoading,

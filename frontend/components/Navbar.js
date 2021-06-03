@@ -3,7 +3,11 @@ import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { setSearchingActive, setSearchQuery } from '../redux/actions';
+import {
+  setOffset,
+  setSearchingActive,
+  setSearchQuery
+} from '../redux/actions';
 import styles from '../styles/navbar.module.css';
 import Profile from './NavbarComponents/Profile';
 import SearchBar from './NavbarComponents/SearchBar';
@@ -23,6 +27,9 @@ export default function Navbar() {
     if (router.query.search !== undefined) {
       dispatch(setSearchingActive(true));
       dispatch(setSearchQuery(router.query.search));
+      if (router.query.offset)
+        dispatch(setOffset(Number.parseInt(router.query.offset)));
+      else dispatch(setOffset(0));
     } else {
       dispatch(setSearchingActive(false));
     }
