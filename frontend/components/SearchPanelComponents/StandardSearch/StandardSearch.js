@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
 import Loader from 'react-loader-spinner';
 import { useDispatch, useSelector } from 'react-redux';
@@ -26,6 +27,8 @@ export default function StandardSearch() {
   const [firstQuery, setFirstQuery] = useState(true);
   const hasQueryChanged = useCompare(query);
   const [count, setCount] = useState();
+  const router = useRouter();
+
   const { newCount, isCountLoading, isCountError } = useSearchCount(
     query,
     offset,
@@ -33,6 +36,9 @@ export default function StandardSearch() {
   );
 
   useEffect(() => {
+    router.push(`/?search=${query}&offset=${offset}`, undefined, {
+      shallow: true
+    });
     if (hasQueryChanged && !firstQuery) {
       dispatch(setOffset(0));
     }
@@ -57,6 +63,7 @@ export default function StandardSearch() {
     }
   }, [
     query,
+    offset,
     hasQueryChanged,
     newCount,
     isCountLoading,

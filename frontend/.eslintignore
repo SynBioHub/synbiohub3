@@ -1,3 +1,4 @@
 .eslintrc.js
 fileMock.js
 styleMock.js
+next.config.js
