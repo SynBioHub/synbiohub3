@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 
 import styles from '../styles/searchpanel.module.css';
 import Basket from './Basket';
@@ -13,7 +12,6 @@ import StandardSearch from './SearchPanelComponents/StandardSearch/StandardSearc
  * the current sbh content
  */
 export default function SearchPanel() {
-  const showSearchPanel = useSelector(state => state.search.active);
   const [show, setShow] = useState('');
   const [selectedType, setSelectedType] = useState('Standard Search');
 
@@ -23,41 +21,38 @@ export default function SearchPanel() {
   let searchResults;
 
   if (selectedType === 'Standard Search') searchResults = <StandardSearch />;
-  if (showSearchPanel) {
-    return (
-      <div className={`${styles.container} ${show}`}>
-        <div className={styles.categories}>
-          <SearchTypeSelector
-            name="Standard Search"
-            selectedType={selectedType}
-            setSelectedType={setSelectedType}
-          />
 
-          <SearchTypeSelector
-            name="Sequence Search"
-            selectedType={selectedType}
-            setSelectedType={setSelectedType}
-          />
+  return (
+    <div className={`${styles.container} ${show}`}>
+      <div className={styles.categories}>
+        <SearchTypeSelector
+          name="Standard Search"
+          selectedType={selectedType}
+          setSelectedType={setSelectedType}
+        />
 
-          <SearchTypeSelector
-            name="Advanced Search"
-            selectedType={selectedType}
-            setSelectedType={setSelectedType}
-          />
+        <SearchTypeSelector
+          name="Sequence Search"
+          selectedType={selectedType}
+          setSelectedType={setSelectedType}
+        />
 
-          <SearchTypeSelector
-            name="SPARQL"
-            selectedType={selectedType}
-            setSelectedType={setSelectedType}
-          />
-        </div>
+        <SearchTypeSelector
+          name="Advanced Search"
+          selectedType={selectedType}
+          setSelectedType={setSelectedType}
+        />
 
-        {searchResults}
-
-        <Basket />
+        <SearchTypeSelector
+          name="SPARQL"
+          selectedType={selectedType}
+          setSelectedType={setSelectedType}
+        />
       </div>
-    );
-  }
 
-  return null;
+      {searchResults}
+
+      <Basket />
+    </div>
+  );
 }

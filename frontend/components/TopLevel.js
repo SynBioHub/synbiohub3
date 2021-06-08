@@ -6,7 +6,6 @@ import { restoreLogin } from '../redux/actions';
 import styles from '../styles/layout.module.css';
 import Footer from './Footer';
 import Navbar from './Navbar';
-import SearchPanel from './SearchPanel';
 
 /**
  * This is a 'wrapper component' which dictates the general structure
@@ -37,10 +36,9 @@ export default function TopLevel(properties) {
       </Head>
 
       <div className={styles.container}>
-        <Navbar />
+        <Navbar searchMode={properties.searchMode} />
         <div className={styles.content}>{properties.children}</div>
         <Footer />
-        <SearchPanel />
       </div>
     </div>
   );
