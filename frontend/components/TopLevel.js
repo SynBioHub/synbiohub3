@@ -37,8 +37,10 @@ export default function TopLevel(properties) {
 
       <div className={styles.container}>
         <Navbar searchMode={properties.searchMode} />
-        <div className={styles.content}>{properties.children}</div>
-        <Footer />
+        <div className={!properties.hideFooter ? styles.content : ''}>
+          {properties.children}
+        </div>
+        {!properties.hideFooter && <Footer />}
       </div>
     </div>
   );

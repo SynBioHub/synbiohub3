@@ -11,7 +11,7 @@ import {
   standardcontainer,
   standarderror,
   standardresultsloading
-} from '../../../styles/searchpanel.module.css';
+} from '../../../styles/standardsearch.module.css';
 import ResultTable from './ResultTable/ResultTable';
 
 /**

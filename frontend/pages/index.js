@@ -38,6 +38,7 @@ function Home() {
             description="Browse SynBioHub for useful parts and designs"
             icon="/images/search_black.svg"
             title="Search"
+            route={'/search'}
           />
 
           <Card
@@ -47,6 +48,7 @@ function Home() {
             iconoffset="-20%"
             iconright="0.75rem"
             title="Submit A Design"
+            route={'/submit'}
           />
 
           <Card
@@ -56,6 +58,7 @@ function Home() {
             iconoffset="-35%"
             iconright="0.75rem"
             title="Manage Submissions"
+            route={'/manage'}
           />
 
           <Card
@@ -65,6 +68,7 @@ function Home() {
             iconoffset="-33%"
             iconright="0.6rem"
             title="Collaborate"
+            route={'/shared'}
           />
         </div>
       </main>

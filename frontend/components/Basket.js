@@ -22,9 +22,9 @@ export default function Basket() {
       >
         <Image
           alt="view basket"
-          height={40}
+          height={25}
           src="/images/basket.svg"
-          width={40}
+          width={25}
         />
       </div>
     );
@@ -43,7 +43,7 @@ export default function Basket() {
 
           <div className={styles.addfolder}>
             <Image
-              alt="new folder"
+              alt="create collection"
               height={20}
               src="/images/newfolder.svg"
               width={20}
@@ -62,10 +62,10 @@ export default function Basket() {
         onClick={() => setShowBasket(false)}
       >
         <Image
-          alt="view basket"
-          height={40}
+          alt="close basket"
+          height={25}
           src="/images/close.svg"
-          width={40}
+          width={25}
         />
       </div>
     </div>

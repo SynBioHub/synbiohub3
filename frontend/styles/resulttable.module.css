@@ -1,12 +1,12 @@
 .resultcontainer {
    min-width: 100%;
-   margin-top: 0.5rem;
+   margin-top: 0.3rem;
 }
 
 .tablecontainer {
    width: 100%;
    overflow: scroll;
-   max-height: calc(100vh - 13rem);
+   max-height: calc(100vh - 11rem);
    padding: 0 1rem 0 1rem;
 }
 
@@ -45,8 +45,8 @@
    padding: 0.75rem;
    background-color: #D25627;
    color: white;
-   font-size: 1.1rem;
-   font-weight: 500;
+   font-size: 1rem;
+   font-weight: 600;
    position: sticky;
    z-index: 2;
    top: 0;
@@ -85,7 +85,8 @@
 }
 
 .tablebutton {
-   padding: 0.75rem;
+   padding: 0.5rem 0.75rem;
+   font-size: 0.9rem;
    margin-bottom: 0.2rem;
    background: #d25527b4;
    border-radius: 0.2rem;

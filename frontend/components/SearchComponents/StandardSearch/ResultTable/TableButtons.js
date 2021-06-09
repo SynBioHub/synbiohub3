@@ -10,12 +10,6 @@ export default function TableButtons(properties) {
     <div className={styles.tablebuttons}>
       <div className={styles.actions}>
         <div
-          className={`${styles.tablebutton} ${styles.enabled} ${styles.rightspace}`}
-        >
-          Edit Columns
-        </div>
-
-        <div
           role="button"
           className={`${styles.tablebutton} ${properties.buttonClass}  ${styles.rightspace}`}
           onClick={() => {

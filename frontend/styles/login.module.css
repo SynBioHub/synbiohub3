@@ -2,10 +2,10 @@
    display: flex;
    flex-direction: column;
    align-items: center;
+   padding: 3rem 0;
 }
 
 .frame {
-   margin-top: 6rem;
    padding: 4rem;
    background-color: rgb(226, 226, 226);
    color: white;
@@ -44,7 +44,7 @@
 }
 
 .signup {
-   margin-top: 3rem;
+   margin-top: 2rem;
 }
 
 .orange {

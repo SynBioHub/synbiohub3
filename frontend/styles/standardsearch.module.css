@@ -1,39 +1,12 @@
 .container {
    background: white;
-   height: 100vh;
    width: 100%;
-   position: fixed;
-   top: 4rem;
    opacity: 0;
-   transition: opacity 0.1s ease-in;
+   transition: opacity 0.2s ease-in;
 }
 
 .show {
    opacity: 1;
-}
-
-.categories {
-   margin-left: 0rem;
-   margin-top: 1rem;
-}
-
-.categoryheader {
-   font-size: 1.2rem;
-   display: inline;
-   margin: 0 1rem;
-}
-
-.categoryheader:hover {
-   cursor: pointer;
-}
-
-.categoryname {
-   display: inline-block;
-   padding-bottom: 0.25rem;
-}
-
-.categoryselected {
-   border-bottom: 3px solid #D25627;
 }
 
 /**STANDARD SEARCH CSS**/

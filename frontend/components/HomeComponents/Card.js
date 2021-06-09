@@ -1,6 +1,5 @@
-import { useDispatch } from 'react-redux';
+import Link from 'next/link';
 
-import { setSearchingActive } from '../../redux/actions';
 import { card, cardhead, cardicon } from '../../styles/home.module.css';
 
 /**
@@ -8,7 +7,6 @@ import { card, cardhead, cardicon } from '../../styles/home.module.css';
  * Generic, based on props passed
  */
 export default function Card(properties) {
-  const dispatch = useDispatch();
   const title = properties.icon ? (
     <div className={cardhead}>
       <h3>{properties.title}</h3>
@@ -35,18 +33,12 @@ export default function Card(properties) {
   );
 
   return (
-    <div
-      role="button"
-      className={card}
-      onClick={() => {
-        if (properties.title === 'Search') {
-          dispatch(setSearchingActive(true));
-        }
-      }}
-    >
-      {title}
+    <Link href={properties.route}>
+      <a className={card}>
+        {title}
 
-      <p>{properties.description}</p>
-    </div>
+        <p>{properties.description}</p>
+      </a>
+    </Link>
   );
 }
