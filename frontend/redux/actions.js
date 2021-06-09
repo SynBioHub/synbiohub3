@@ -80,17 +80,6 @@ export const logoutUser = () => dispatch => {
 // SEARCHING ACTIONS
 
 /**
- * This action sets whether the search panel should be displayed in sbh
- * @param {Boolean} isOpen - directs whether the search panel should be displayed
- */
-export const setSearchingActive = isOpen => dispatch => {
-  dispatch({
-    type: types.SEARCHINGOPEN,
-    payload: isOpen
-  });
-};
-
-/**
  * This action sets the search query that is used to get search results
  * @param {String} query - the new search query to be used
  */
