@@ -12,21 +12,22 @@ export default function Navigation(properties) {
   const [previous, setPrevious] = useState(styles.disabled);
   const [next, setNext] = useState(styles.disabled);
   const offset = useSelector(state => state.search.offset);
+  const limit = useSelector(state => state.search.limit);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (offset - properties.length >= 0) {
+    if (offset - limit >= 0) {
       setPrevious(styles.enabled);
     } else {
       setPrevious(styles.disabled);
     }
 
-    if (offset + properties.length < properties.count) {
+    if (offset + limit < properties.count) {
       setNext(styles.enabled);
     } else {
       setNext(styles.disabled);
     }
-  }, [offset, properties.count, properties.length]);
+  }, [offset, properties.count, limit]);
 
   return (
     <div className={styles.navigation}>
@@ -35,7 +36,7 @@ export default function Navigation(properties) {
         className={`${styles.tablebutton} ${previous}`}
         onClick={() => {
           if (previous !== styles.disabled) {
-            dispatch(setOffset(offset - properties.length));
+            dispatch(setOffset(offset - limit));
           }
         }}
       >
@@ -44,7 +45,7 @@ export default function Navigation(properties) {
 
       <div className={styles.count}>
         <span className={styles.range}>
-          {offset + 1}-{offset + properties.length}
+          {offset + 1}-{Math.min(offset + limit, properties.count)}
         </span>{' '}
         of {properties.count} result(s)
       </div>
@@ -54,7 +55,7 @@ export default function Navigation(properties) {
         className={`${styles.tablebutton} ${next}`}
         onClick={() => {
           if (next !== styles.disabled) {
-            dispatch(setOffset(offset + properties.length));
+            dispatch(setOffset(offset + limit));
           }
         }}
       >

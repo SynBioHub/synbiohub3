@@ -39,7 +39,7 @@ export default function TableButtons(properties) {
         </div>
       </div>
 
-      <Navigation count={properties.count} length={properties.data.length} />
+      <Navigation count={properties.count} />
     </div>
   );
 }

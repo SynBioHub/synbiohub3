@@ -101,6 +101,13 @@ export const setOffset = newOffset => dispatch => {
   });
 };
 
+export const setLimit = newLimit => dispatch => {
+  dispatch({
+    type: types.LIMIT,
+    payload: newLimit
+  });
+};
+
 // BASKET ACTIONS
 
 /**

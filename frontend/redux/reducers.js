@@ -49,7 +49,8 @@ const userReducer = (state = initialUserState, { type, payload }) => {
 // SEARCH REDUCER
 const initialSearchState = {
   query: '',
-  offset: 0
+  offset: 0,
+  limit: 50
 };
 
 /**
@@ -67,6 +68,11 @@ const searchReducer = (state = initialSearchState, { type, payload }) => {
       return {
         ...state,
         offset: payload
+      };
+    case types.LIMIT:
+      return {
+        ...state,
+        limit: payload
       };
     default:
       return state;
