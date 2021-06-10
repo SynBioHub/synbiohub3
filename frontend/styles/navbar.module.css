@@ -49,33 +49,39 @@
 .navoptionname {
    display: inline-block;
    vertical-align: middle;
-   color: white;
+   color: #fff;
    opacity: 0.7;
+   transition: opacity .2s;
 }
 
-.navoption:hover .navoptionname{
+.navoption:hover .navoptionname {
    opacity: 1;
+}
+
+.navoption:hover .navoptionicon {
+   transform: translateX(0.15rem);
 }
 
 .navoptionicon {
    display: inline-block;
    vertical-align: middle;
    height: 1.4rem;
-   margin-right: 0.3rem;
+   margin-right: 0.2rem;
+   transition: transform .2s;
 }
 
 .searchicon {
-   height: 1.9rem;
+   height: 1.4rem;
    display: inline-block;
    vertical-align: middle;
-   opacity: 0.8;
    transition: transform .1s;
+   color: #fff;
+   cursor: pointer;
 }
 
 .searchicon:hover {
-   opacity: 1;
-   cursor: pointer;
    transform: scale(1.1);
+   color: #F2E86D;
 }
 
 .searchiconactive {
@@ -123,7 +129,7 @@
 .profilemenu {
    position: absolute;
    top: 2.3rem;
-   right: 0;
+   right: 0.45rem;
    border-radius: 0.5rem 0 0.5rem 0.5rem;
    overflow: hidden;
    background-color: #fff;

@@ -23,6 +23,7 @@ export default function Profile() {
           icon={faTimesCircle}
           size="2x"
           color="#7cc2fc"
+          className={styles.iconheight}
           spin
           onClick={() => setShowMenu(false)}
         />
@@ -33,6 +34,7 @@ export default function Profile() {
           icon={faUser}
           size="2x"
           color="#fff"
+          className={styles.iconheight}
           onClick={() => setShowMenu(true)}
         />
       );

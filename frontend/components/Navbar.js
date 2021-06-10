@@ -1,3 +1,10 @@
+import {
+  faAlignLeft,
+  faCloudUploadAlt,
+  faSearch,
+  faShareAlt
+} from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useSelector } from 'react-redux';
@@ -29,20 +36,12 @@ export default function Navbar() {
       <div className={styles.navcontainer}>
         {loggedIn && (
           <nav className={styles.nav}>
-            <Selector
-              icon="/images/submit_white.svg"
-              name="Submit"
-              href="/submit"
-            />
+            <Selector icon={faCloudUploadAlt} name="Submit" href="/submit" />
+
+            <Selector icon={faShareAlt} name="Shared With Me" href="/shared" />
 
             <Selector
-              icon="/images/shared.svg"
-              name="Shared With Me"
-              href="/shared"
-            />
-
-            <Selector
-              icon="/images/submissions_white.svg"
+              icon={faAlignLeft}
               name="Submissions"
               href="/submissions"
             />
@@ -50,11 +49,14 @@ export default function Navbar() {
         )}
 
         <Link href="/search">
-          <img
-            alt="Search SynBioHub"
-            className={styles.searchicon}
-            src="/images/search.svg"
-          />
+          <a>
+            <FontAwesomeIcon
+              icon={faSearch}
+              size="2x"
+              alt="Search SynBioHub"
+              className={styles.searchicon}
+            />
+          </a>
         </Link>
 
         {loggedIn && <Profile />}
