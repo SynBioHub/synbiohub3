@@ -21,9 +21,10 @@ import ResultTable from './ResultTable/ResultTable';
 export default function StandardSearch() {
   const query = useSelector(state => state.search.query);
   const offset = useSelector(state => state.search.offset);
+  const limit = useSelector(state => state.search.limit);
   const token = useSelector(state => state.user.token);
   const [count, setCount] = useState();
-  const searchUrl = constructUrl('search', query, offset);
+  const searchUrl = constructUrl('search', query, offset, limit);
   const countUrl = constructUrl('searchCount', query);
 
   const router = useRouter();
@@ -120,9 +121,11 @@ const constructUrl = (type, query, offset, limit) => {
   var baseUrl = `/${type}/${query}`;
   if (offset) {
     baseUrl += `?offset=${offset}`;
-  }
-  if (limit) {
-    baseUrl += `&limit=${limit}`;
+    if (limit !== 50) {
+      baseUrl += `&limit=${limit}`;
+    }
+  } else if (limit !== 50) {
+    baseUrl += `?limit=${limit}`;
   }
 
   return baseUrl;

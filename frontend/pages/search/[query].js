@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 import SearchHeader from '../../components/SearchComponents/SearchHeader/SearchHeader';
 import StandardSearch from '../../components/SearchComponents/StandardSearch/StandardSearch';
 import TopLevel from '../../components/TopLevel';
-import { setOffset, setSearchQuery } from '../../redux/actions';
+import { setLimit, setOffset, setSearchQuery } from '../../redux/actions';
 import styles from '../../styles/standardsearch.module.css';
 
 /**
@@ -25,6 +25,9 @@ export default function StandardSearchPage() {
     if (offset) {
       dispatch(setOffset(Number.parseInt(offset)));
     } else dispatch(setOffset(0));
+    if (limit) {
+      dispatch(setLimit(Number.parseInt(limit)));
+    } else dispatch(setLimit(50));
   }, [query, offset, limit]);
   return (
     <TopLevel searchMode={true} hideFooter={true}>
