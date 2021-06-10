@@ -18,7 +18,7 @@ export default function Card(properties) {
             icon={properties.icon}
             alt={properties.name}
             size="2x"
-            color="#000"
+            color="#00A1E4"
           />
         </div>
 
