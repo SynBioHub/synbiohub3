@@ -63,17 +63,6 @@
    margin-right: 0.3rem;
 }
 
-.borderCircle {
-   border-radius: 9999px;
-   height: 2.5rem;
-   display: inline-block;
-   vertical-align: middle;
-}
-
-.borderCircle:hover {
-   cursor: pointer;
-}
-
 .searchicon {
    height: 1.9rem;
    display: inline-block;
@@ -143,9 +132,9 @@
 
 .profilemenu {
    position: absolute;
-   top: 2.75rem;
+   top: 2.1rem;
    right: 0;
-   border-radius: 1rem;
+   border-radius: 0.5rem;
    overflow: hidden;
    background-color: #fff;
 }
@@ -161,6 +150,15 @@
 .menuoption:hover {
    background-color: #33A1FD;
    color: #fff;
+}
+
+.iconcontainer {
+   cursor: pointer;
+   transition: transform .3s;
+}
+
+.iconcontainer:hover {
+   transform: scale(1.1);
 }
 
 @media only screen and (max-width: 1026px) { 
