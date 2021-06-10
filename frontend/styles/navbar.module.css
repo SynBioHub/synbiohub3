@@ -13,6 +13,8 @@
 
 .logo {
    width: auto;
+   height: 100%;
+   display: flex;
    margin-left: 1rem;
    cursor: pointer;
    transition: transform .3s;
@@ -175,16 +177,7 @@
    } 
 }
 
-@media only screen and (max-width: 558px) { 
-   .logo { 
-     height: 2.1rem;
-   }
-}
-
 @media only screen and (max-width: 420px) {
-   .logo { 
-      height: 1.4rem;
-    }
  
     .navoption {
        margin-right: 0.2rem;
