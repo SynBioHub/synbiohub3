@@ -18,7 +18,7 @@ export const LOGOUT = 'LOGOUT';
 // SEARCH
 export const QUERY = 'QUERY';
 export const OFFSET = 'OFFSET';
-export const SEARCHINGOPEN = 'SEARCHINGOPEN';
+export const LIMIT = 'LIMIT';
 
 // BASKET
 export const ADDTOBASKET = 'ADDTOBASKET';

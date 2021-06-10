@@ -1,18 +1,16 @@
 import axios from 'axios';
-import { useRouter } from 'next/router';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Loader from 'react-loader-spinner';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import useSWR from 'swr';
 
-import { setOffset } from '../../../redux/actions';
 import {
   countloader,
   countloadercontainer,
   standardcontainer,
   standarderror,
   standardresultsloading
-} from '../../../styles/searchpanel.module.css';
+} from '../../../styles/standardsearch.module.css';
 import ResultTable from './ResultTable/ResultTable';
 
 /**
@@ -22,27 +20,18 @@ import ResultTable from './ResultTable/ResultTable';
 export default function StandardSearch() {
   const query = useSelector(state => state.search.query);
   const offset = useSelector(state => state.search.offset);
+  const limit = useSelector(state => state.search.limit);
   const token = useSelector(state => state.user.token);
-  const dispatch = useDispatch();
-  const [firstQuery, setFirstQuery] = useState(true);
-  const hasQueryChanged = useCompare(query);
   const [count, setCount] = useState();
-  const router = useRouter();
 
+  // get search count
   const { newCount, isCountLoading, isCountError } = useSearchCount(
     query,
-    offset,
     token
   );
 
+  // update search count display
   useEffect(() => {
-    router.push(`/?search=${query}&offset=${offset}`, undefined, {
-      shallow: true
-    });
-    if (hasQueryChanged && !firstQuery) {
-      dispatch(setOffset(0));
-    }
-    setFirstQuery(false);
     if (isCountLoading) {
       setCount(
         <div className={countloadercontainer}>
@@ -61,20 +50,13 @@ export default function StandardSearch() {
     } else {
       setCount(newCount);
     }
-  }, [
-    query,
-    offset,
-    hasQueryChanged,
-    newCount,
-    isCountLoading,
-    isCountError,
-    firstQuery,
-    dispatch
-  ]);
+  }, [isCountLoading, isCountError, query]);
 
+  // get search results
   const { results, isLoading, isError } = useSearchResults(
     query,
     offset,
+    limit,
     token
   );
 
@@ -104,9 +86,12 @@ export default function StandardSearch() {
   );
 }
 
-const useSearchResults = (query, offset, token) => {
+const useSearchResults = (query, offset, limit, token) => {
   const { data, error } = useSWR(
-    [`${process.env.backendUrl}/search/${query}?offset=${offset}`, token],
+    [
+      `${process.env.backendUrl}/search/${query}?offset=${offset}&limit=${limit}`,
+      token
+    ],
     fetcher
   );
 
@@ -117,9 +102,9 @@ const useSearchResults = (query, offset, token) => {
   };
 };
 
-const useSearchCount = (query, offset, token) => {
+const useSearchCount = (query, token) => {
   const { data, error } = useSWR(
-    [`${process.env.backendUrl}/searchCount/${query}?offset=${offset}`, token],
+    [`${process.env.backendUrl}/searchCount/${query}`, token],
     fetcher
   );
 
@@ -140,21 +125,3 @@ const fetcher = (url, token) =>
       }
     })
     .then(response => response.data);
-
-// Used to compare new query to previous query
-function useCompare(value) {
-  const previousValue = usePrevious(value);
-
-  return previousValue !== value;
-}
-
-// Helper hook
-function usePrevious(value) {
-  const reference = useRef();
-
-  useEffect(() => {
-    reference.current = value;
-  });
-
-  return reference.current;
-}

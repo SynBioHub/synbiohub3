@@ -1,12 +1,11 @@
 import Head from 'next/head';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { restoreLogin } from '../redux/actions';
 import styles from '../styles/layout.module.css';
 import Footer from './Footer';
 import Navbar from './Navbar';
-import SearchPanel from './SearchPanel';
 
 /**
  * This is a 'wrapper component' which dictates the general structure
@@ -16,6 +15,7 @@ import SearchPanel from './SearchPanel';
 export default function TopLevel(properties) {
   const dispatch = useDispatch();
   const loggedIn = useSelector(state => state.user.loggedIn);
+  const [navbar, setNavbar] = useState(<Navbar />);
 
   useEffect(() => {
     if (!loggedIn) {
@@ -28,6 +28,10 @@ export default function TopLevel(properties) {
     }
   }, [loggedIn, dispatch]);
 
+  useEffect(() => {
+    if (properties.navbar) setNavbar(properties.navbar);
+  }, [properties.navbar]);
+
   return (
     <div>
       <Head>
@@ -37,10 +41,11 @@ export default function TopLevel(properties) {
       </Head>
 
       <div className={styles.container}>
-        <Navbar />
-        <div className={styles.content}>{properties.children}</div>
-        <Footer />
-        <SearchPanel />
+        {navbar}
+        <div className={!properties.hideFooter ? styles.content : ''}>
+          {properties.children}
+        </div>
+        {!properties.hideFooter && <Footer />}
       </div>
     </div>
   );

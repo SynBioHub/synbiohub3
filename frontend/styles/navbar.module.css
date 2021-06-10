@@ -95,23 +95,19 @@
 }
 
 .searchbar {
-   background: transparent;
-   height: 2.2rem;
+   background-color: #fff;
    width: 0;
    border: none;
-   font-size: 1.1rem;
+   border-radius: 0.5rem;
+   font-size: 1rem;
+   padding: 0.6rem;
    outline: none;
-   color: white;
+   color: #000;
    transition: width 0.2s ease-in;
 }
 
 .searchexpand {
    width: calc(60% - 2rem);
-}
-
-.searchbar::placeholder {
-   color: white;
-   opacity: 0.6;
 }
 
 .searchcontainer {
@@ -122,19 +118,13 @@
 }
 
 .cancelsearch {
-   color: white;
-   font-size: 1.2rem;
-   height: 2rem;
-   width: 1.8rem;
-   display: flex;
-   align-items: center;
-   justify-content: center;
-   opacity: 0.8;
+   margin-left: 0.35rem;
+   cursor: pointer;
+   transition: transform .3s;
 }
 
 .cancelsearch:hover {
-   cursor: pointer;
-   opacity: 1;
+   transform: scale(1.1);
 }
 
 .profilecontainer {

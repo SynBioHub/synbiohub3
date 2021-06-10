@@ -50,7 +50,7 @@ const userReducer = (state = initialUserState, { type, payload }) => {
 const initialSearchState = {
   query: '',
   offset: 0,
-  active: false
+  limit: 50
 };
 
 /**
@@ -69,10 +69,10 @@ const searchReducer = (state = initialSearchState, { type, payload }) => {
         ...state,
         offset: payload
       };
-    case types.SEARCHINGOPEN:
+    case types.LIMIT:
       return {
         ...state,
-        active: payload
+        limit: payload
       };
     default:
       return state;

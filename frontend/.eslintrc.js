@@ -37,6 +37,8 @@ module.exports = {
     'unicorn/filename-case': 'off',
     'unicorn/no-null': 'off',
     'unicorn/consistent-function-scoping': 'off',
+    'jsx-a11y/anchor-is-valid': 'off',
+    'react-hooks/exhaustive-deps': 'off',
     'jsx-a11y/click-events-have-key-events': 'off', // turn on later for accessibility (sbh3)
     'jsx-a11y/interactive-supports-focus': 'off', // turn on later for accessibility (sbh3)
     'jsx-a11y/no-noninteractive-element-interactions': 'off', // turn on later for accessibility (sbh3)
