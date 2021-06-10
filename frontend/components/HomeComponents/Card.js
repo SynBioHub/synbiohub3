@@ -1,3 +1,4 @@
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Link from 'next/link';
 
 import { card, cardhead, cardicon } from '../../styles/home.module.css';
@@ -7,35 +8,19 @@ import { card, cardhead, cardicon } from '../../styles/home.module.css';
  * Generic, based on props passed
  */
 export default function Card(properties) {
-  const title = properties.icon ? (
-    <div className={cardhead}>
-      <h3>{properties.title}</h3>
-
-      <img
-        alt=""
-        style={
-          properties.iconheight
-            ? {
-                height: properties.iconheight,
-                verticalAlign: properties.iconoffset,
-                marginLeft: properties.iconright
-              }
-            : {}
-        }
-        src={properties.icon}
-        className={cardicon}
-      />
-    </div>
-  ) : (
-    <h3>
-      {properties.title} <span style={{ color: 'black' }}>&rarr;</span>
-    </h3>
-  );
-
   return (
     <Link href={properties.route}>
       <a className={card}>
-        {title}
+        <div className={cardhead}>
+          <h3>{properties.title}</h3>
+          <FontAwesomeIcon
+            className={cardicon}
+            icon={properties.icon}
+            alt={properties.name}
+            size="2x"
+            color="#000"
+          />
+        </div>
 
         <p>{properties.description}</p>
       </a>
