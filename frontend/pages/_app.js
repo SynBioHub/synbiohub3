@@ -1,11 +1,8 @@
 import '../styles/globals.css';
 
-import { config } from '@fortawesome/fontawesome-svg-core';
 import { Provider } from 'react-redux';
 
 import { useStore } from '../redux/store';
-
-config.autoAddCss = false;
 
 /**
  * This component is the starting component for the sbh app. Uses Provider

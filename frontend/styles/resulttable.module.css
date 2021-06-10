@@ -91,6 +91,12 @@
    background: #d25527b4;
    border-radius: 0.2rem;
    cursor: pointer;
+   display: flex;
+   align-items: center;
+}
+
+.buttonicon {
+   margin-right: 0.3rem;
 }
 
 .enabled {

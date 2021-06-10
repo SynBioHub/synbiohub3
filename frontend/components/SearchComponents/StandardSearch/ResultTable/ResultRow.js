@@ -26,7 +26,7 @@ export default function ResultRow(properties) {
     <Image
       alt="unlocked (privacy)"
       height={18}
-      src="/images/public_lock.svg"
+      src="/images/public.svg"
       width={18}
     />
   );
