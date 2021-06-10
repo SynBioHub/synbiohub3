@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import { useSelector } from 'react-redux';
 
@@ -15,11 +16,14 @@ export default function Navbar() {
   return (
     <header className={styles.container}>
       <Link href="/">
-        <img
-          alt="logo"
-          className={styles.logo}
-          src="/images/logo_uploaded.svg"
-        />
+        <a className={styles.logo}>
+          <Image
+            alt="logo"
+            width={80}
+            height={80}
+            src="/images/logo_uploaded.svg"
+          />
+        </a>
       </Link>
 
       <div className={styles.navcontainer}>

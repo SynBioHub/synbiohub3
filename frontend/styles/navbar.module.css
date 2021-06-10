@@ -12,13 +12,14 @@
 }
 
 .logo {
-   height: 3rem;
    width: auto;
    margin-left: 1rem;
+   cursor: pointer;
+   transition: transform .3s;
 }
 
 .logo:hover {
-   cursor: pointer;
+   transform: scale(1.1);
 }
 
 .navcontainer {
