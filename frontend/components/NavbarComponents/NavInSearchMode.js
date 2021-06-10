@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { useRouter } from 'next/router';
 
 import styles from '../../styles/navbar.module.css';
@@ -17,12 +18,14 @@ export default function NavInSearchMode() {
 
         <SearchBar />
 
-        <div
-          role="button"
-          className={styles.cancelsearch}
-          onClick={() => router.push('/')}
-        >
-          {'\u2573'}
+        <div className={styles.cancelsearch}>
+          <Image
+            role="button"
+            src="/images/closesearch.svg"
+            width={20}
+            height={20}
+            onClick={() => router.push('/')}
+          />
         </div>
       </div>
     </header>
