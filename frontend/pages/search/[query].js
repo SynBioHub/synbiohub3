@@ -2,19 +2,13 @@ import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
-import SearchHeader from '../../components/SearchComponents/SearchHeader/SearchHeader';
-import StandardSearch from '../../components/SearchComponents/StandardSearch/StandardSearch';
-import TopLevel from '../../components/TopLevel';
 import { setLimit, setOffset, setSearchQuery } from '../../redux/actions';
-import styles from '../../styles/standardsearch.module.css';
 
 /**
- * This component renders searching options, as well as the search results,
- * for all different search types (standard, sequence, etc). It allows users to
- * select which type of search they'd like to conduct. This panel is overlayed upon
- * the current sbh content
+ * This component redirects to the search route, updating
+ * query, offset, and limit state based on url path
  */
-export default function StandardSearchPage() {
+export default function RedirectToSearch() {
   const dispatch = useDispatch();
   const router = useRouter();
   const { query, offset, limit } = router.query;
@@ -28,13 +22,7 @@ export default function StandardSearchPage() {
     if (limit) {
       dispatch(setLimit(Number.parseInt(limit)));
     } else dispatch(setLimit(50));
+    router.push('/search');
   }, [query, offset, limit]);
-  return (
-    <TopLevel searchMode={true} hideFooter={true}>
-      <div className={styles.container}>
-        <SearchHeader selected="Standard Search" />
-        <StandardSearch />
-      </div>
-    </TopLevel>
-  );
+  return null;
 }

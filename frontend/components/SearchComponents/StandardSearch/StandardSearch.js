@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import Loader from 'react-loader-spinner';
 import { useSelector } from 'react-redux';
@@ -24,19 +23,10 @@ export default function StandardSearch() {
   const limit = useSelector(state => state.search.limit);
   const token = useSelector(state => state.user.token);
   const [count, setCount] = useState();
-  const searchUrl = constructUrl('search', query, offset, limit);
-  const countUrl = constructUrl('searchCount', query);
-
-  const router = useRouter();
-
-  // push url to browser history when search changes
-  useEffect(() => {
-    router.push(searchUrl, undefined, { shallow: true });
-  }, [searchUrl]);
 
   // get search count
   const { newCount, isCountLoading, isCountError } = useSearchCount(
-    countUrl,
+    query,
     token
   );
 
@@ -63,7 +53,12 @@ export default function StandardSearch() {
   }, [isCountLoading, isCountError, query]);
 
   // get search results
-  const { results, isLoading, isError } = useSearchResults(searchUrl, token);
+  const { results, isLoading, isError } = useSearchResults(
+    query,
+    offset,
+    limit,
+    token
+  );
 
   if (isError) {
     return (
@@ -91,9 +86,12 @@ export default function StandardSearch() {
   );
 }
 
-const useSearchResults = (url, token) => {
+const useSearchResults = (query, offset, limit, token) => {
   const { data, error } = useSWR(
-    [`${process.env.backendUrl}${url}`, token],
+    [
+      `${process.env.backendUrl}/search/${query}?offset=${offset}&limit=${limit}`,
+      token
+    ],
     fetcher
   );
 
@@ -104,9 +102,9 @@ const useSearchResults = (url, token) => {
   };
 };
 
-const useSearchCount = (url, token) => {
+const useSearchCount = (query, token) => {
   const { data, error } = useSWR(
-    [`${process.env.backendUrl}${url}`, token],
+    [`${process.env.backendUrl}/searchCount/${query}`, token],
     fetcher
   );
 
@@ -115,20 +113,6 @@ const useSearchCount = (url, token) => {
     isCountLoading: !error && !data,
     isCountError: error
   };
-};
-
-const constructUrl = (type, query, offset, limit) => {
-  var baseUrl = `/${type}/${query}`;
-  if (offset) {
-    baseUrl += `?offset=${offset}`;
-    if (limit !== 50) {
-      baseUrl += `&limit=${limit}`;
-    }
-  } else if (limit !== 50) {
-    baseUrl += `?limit=${limit}`;
-  }
-
-  return baseUrl;
 };
 
 const fetcher = (url, token) =>
