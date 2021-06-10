@@ -68,7 +68,6 @@
    height: 1.9rem;
    display: inline-block;
    vertical-align: middle;
-   margin-right: 0.25rem;
    opacity: 0.8;
    transition: transform .1s;
 }
@@ -123,9 +122,9 @@
 
 .profilemenu {
    position: absolute;
-   top: 2.1rem;
+   top: 2.3rem;
    right: 0;
-   border-radius: 0.5rem;
+   border-radius: 0.5rem 0 0.5rem 0.5rem;
    overflow: hidden;
    background-color: #fff;
 }
@@ -139,13 +138,25 @@
 }
 
 .menuoption:hover {
-   background-color: #33A1FD;
-   color: #fff;
+   background-color: #7cc2fc;
+   
+}
+
+.menuoption:hover .profilemenuicon {
+   transform: translateX(5px);
+}
+
+.profilemenuicon {
+   width: 30px;
+   display: inline-block;
+   transition: transform .3s;
 }
 
 .iconcontainer {
    cursor: pointer;
    transition: transform .3s;
+   width: 2.5rem;
+   text-align: center;
 }
 
 .iconcontainer:hover {
