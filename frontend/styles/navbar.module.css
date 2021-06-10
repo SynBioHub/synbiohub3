@@ -97,16 +97,12 @@
 .searchbar {
    background: transparent;
    height: 2.2rem;
-   width: 0;
+   width: calc(60% - 2rem);
    border: none;
    font-size: 1.1rem;
    outline: none;
    color: white;
    transition: width 0.2s ease-in;
-}
-
-.searchexpand {
-   width: calc(60% - 2rem);
 }
 
 .searchbar::placeholder {

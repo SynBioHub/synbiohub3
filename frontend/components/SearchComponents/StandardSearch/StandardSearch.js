@@ -30,7 +30,7 @@ export default function StandardSearch() {
 
   // push url to browser history when search changes
   useEffect(() => {
-    if (query || offset) router.push(searchUrl, undefined, { shallow: true });
+    router.push(searchUrl, undefined, { shallow: true });
   }, [searchUrl]);
 
   // get search count
