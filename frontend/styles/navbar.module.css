@@ -96,7 +96,7 @@
 
 .searchbar {
    background-color: #fff;
-   width: calc(60% - 2rem);
+   width: 0;
    border: none;
    border-radius: 0.5rem;
    font-size: 1rem;
@@ -104,6 +104,10 @@
    outline: none;
    color: #000;
    transition: width 0.2s ease-in;
+}
+
+.searchexpand {
+   width: calc(60% - 2rem);
 }
 
 .searchcontainer {

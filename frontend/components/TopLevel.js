@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { restoreLogin } from '../redux/actions';
@@ -15,6 +15,7 @@ import Navbar from './Navbar';
 export default function TopLevel(properties) {
   const dispatch = useDispatch();
   const loggedIn = useSelector(state => state.user.loggedIn);
+  const [navbar, setNavbar] = useState(<Navbar />);
 
   useEffect(() => {
     if (!loggedIn) {
@@ -27,6 +28,10 @@ export default function TopLevel(properties) {
     }
   }, [loggedIn, dispatch]);
 
+  useEffect(() => {
+    if (properties.navbar) setNavbar(properties.navbar);
+  }, [properties.navbar]);
+
   return (
     <div>
       <Head>
@@ -36,7 +41,7 @@ export default function TopLevel(properties) {
       </Head>
 
       <div className={styles.container}>
-        <Navbar searchMode={properties.searchMode} />
+        {navbar}
         <div className={!properties.hideFooter ? styles.content : ''}>
           {properties.children}
         </div>

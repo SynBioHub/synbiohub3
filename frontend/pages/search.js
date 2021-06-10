@@ -1,3 +1,4 @@
+import NavbarSearch from '../components/SearchComponents/NavbarSearch/NavbarSearch';
 import SearchHeader from '../components/SearchComponents/SearchHeader/SearchHeader';
 import StandardSearch from '../components/SearchComponents/StandardSearch/StandardSearch';
 import TopLevel from '../components/TopLevel';
@@ -8,7 +9,7 @@ import styles from '../styles/standardsearch.module.css';
  */
 export default function SearchDefault() {
   return (
-    <TopLevel searchMode={true} hideFooter={true}>
+    <TopLevel navbar={<NavbarSearch />} hideFooter={true}>
       <div className={styles.container}>
         <SearchHeader selected="Standard Search" />
         <StandardSearch />
