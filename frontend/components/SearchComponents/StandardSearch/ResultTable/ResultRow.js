@@ -1,4 +1,5 @@
-import Image from 'next/image';
+import { faGlobeAmericas, faUserLock } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import router from 'next/router';
 
 /**
@@ -23,23 +24,10 @@ export default function ResultRow(properties) {
   }
 
   let privacy = (
-    <Image
-      alt="unlocked (privacy)"
-      height={18}
-      src="/images/public.svg"
-      width={18}
-    />
+    <FontAwesomeIcon icon={faGlobeAmericas} color="#000000" size="1x" />
   );
-  if (!properties.uri.includes('/public/')) {
-    privacy = (
-      <Image
-        alt="locked (privacy)"
-        height={17}
-        src="/images/private_lock.svg"
-        width={17}
-      />
-    );
-  }
+  if (!properties.uri.includes('/public/'))
+    privacy = <FontAwesomeIcon icon={faUserLock} color="#ff0000" size="1x" />;
 
   return (
     <tr
