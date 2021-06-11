@@ -87,24 +87,23 @@
 }
 
 .searchiconactive {
-   height: 2.09rem;
-   opacity: 1;
+   height: 1.4rem;
 }
 
 .searchbar {
-   background-color: #fff;
+   background-color: #171D26;
    width: 0;
    border: none;
    border-radius: 0.5rem;
    font-size: 1rem;
-   padding: 0.6rem;
+   padding: 0.6rem 1rem;
    outline: none;
-   color: #000;
+   color: #fff;
    transition: width 0.2s ease-in;
 }
 
 .searchexpand {
-   width: calc(60% - 2rem);
+   width: calc(50% - 2rem);
 }
 
 .searchcontainer {
@@ -115,7 +114,8 @@
 }
 
 .cancelsearch {
-   margin-left: 0.35rem;
+   margin-left: 0.3rem;
+   height: 1.9rem;
    cursor: pointer;
    transition: transform .3s;
 }

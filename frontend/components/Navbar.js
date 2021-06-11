@@ -2,11 +2,13 @@ import {
   faAlignLeft,
   faCloudUploadAlt,
   faSearch,
-  faShareAlt
+  faShareAlt,
+  faSignInAlt
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import styles from '../styles/navbar.module.css';
@@ -19,6 +21,17 @@ import Selector from './NavbarComponents/Selector';
  */
 export default function Navbar() {
   const loggedIn = useSelector(state => state.user.loggedIn);
+  const [profileControl, setProfileControl] = useState(
+    <Selector icon={faSignInAlt} name="Log in or Register" href="/login" />
+  );
+
+  useEffect(() => {
+    if (loggedIn) setProfileControl(<Profile />);
+    else
+      setProfileControl(
+        <Selector icon={faSignInAlt} name="Log in or Register" href="/login" />
+      );
+  }, [loggedIn]);
 
   return (
     <header className={styles.container}>
@@ -59,14 +72,7 @@ export default function Navbar() {
           </a>
         </Link>
 
-        {loggedIn && <Profile />}
-        {!loggedIn && (
-          <Selector
-            icon="/images/login.svg"
-            name="Log in or Register"
-            href="/login"
-          />
-        )}
+        {profileControl}
       </div>
     </header>
   );

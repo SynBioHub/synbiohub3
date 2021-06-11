@@ -25,7 +25,7 @@ export default function TopLevel(properties) {
         dispatch(restoreLogin(username, token));
       }
     }
-  }, [loggedIn, dispatch]);
+  }, [loggedIn]);
 
   return (
     <div>

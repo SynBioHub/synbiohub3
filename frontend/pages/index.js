@@ -50,7 +50,7 @@ function Home() {
           <Card
             description="Upload your parts and designs for safekeeping"
             icon={faCloudUploadAlt}
-            title="Submit A Design"
+            title="Submit Designs"
             route={'/submit'}
           />
 
