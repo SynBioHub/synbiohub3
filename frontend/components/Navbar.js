@@ -29,7 +29,7 @@ export default function Navbar() {
     if (loggedIn) setProfileControl(<Profile />);
     else
       setProfileControl(
-        <Selector icon={faSignInAlt} name="Log in or Register" href="/login" />
+        <Selector icon={faSignInAlt} name="Sign In" href="/login" />
       );
   }, [loggedIn]);
 

@@ -1,5 +1,4 @@
-import { faWindowClose } from '@fortawesome/free-regular-svg-icons';
-import { faSearch } from '@fortawesome/free-solid-svg-icons';
+import { faBackward, faSearch } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
@@ -24,7 +23,7 @@ export default function NavbarSearch() {
         <SearchBar />
 
         <FontAwesomeIcon
-          icon={faWindowClose}
+          icon={faBackward}
           size="2x"
           color="#F2E86D"
           className={styles.cancelsearch}

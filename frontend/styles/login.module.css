@@ -6,21 +6,22 @@
 }
 
 .frame {
-   padding: 4rem;
-   background-color: rgb(226, 226, 226);
-   color: white;
    display: flex;
    flex-direction: column;
    align-items: center;
    border-radius: 1rem;
-   box-shadow: 0px 0px 5px #888;
-   color: #000;
 }
 
 .header {
-   font-size: 1.5rem;
-   margin-bottom: 1rem;
+   color: #171D26;
+   font-size: 1.7rem;
+   margin-bottom: 0.5rem;
    margin-top: 0.5rem;
+}
+
+.intro {
+   color: #575757;
+   margin-bottom: 2rem;
 }
 
 .input {
@@ -29,47 +30,54 @@
    font-size: 1.1rem;
    margin: 0.5rem;
    width: 30ch;
-   border: 2px solid #D25627;
-   border-radius: 0.4rem;
-   color: #000;
+   border: 2px solid #00A1E4;
+   color: #171D26;
+}
+
+.input::placeholder {
+   color: #465775;
+}
+
+.infocontainer {
+   margin-top: 0.5rem;
+   text-align: center;
 }
 
 .info {
    font-size: 1rem;
-   color: rgb(116, 116, 116);
+   color: #575757;
+   margin: 1.5rem;
 }
 
-.forgotpassword {
-   margin: 0.6rem;
-}
-
-.signup {
-   margin-top: 2rem;
-}
-
-.orange {
-   color: #D25627;
+.blue {
+   color: #00A1E4;
    cursor: pointer;
    font-weight: 600;
 }
 
-.orange:hover {
+.blue:hover {
    text-decoration: underline;
 }
 
 .submitbutton {
    margin-top: 0.7rem;
-   font-size: 1.2rem;
    padding: 0.75rem;
-   background-color: #D25627;
-   border-radius: 1rem;
+   background-color: #465775;
+   width: 29.25ch;
+   text-align: center;
    color: #fff;
    cursor: pointer;
+   transition: transform .3s;
 }
 
-.submitbutton:hover {
-   transform: scale(1.1);
-   transition: transform 300ms;
+.submitbutton:hover .submiticon {
+   transform: translateX(0.3rem);
+}
+
+.submiticon {
+   margin-right: 0.35rem;
+   transition: transform .3s;
+   color: #84DCCF;
 }
 
 .warning {
