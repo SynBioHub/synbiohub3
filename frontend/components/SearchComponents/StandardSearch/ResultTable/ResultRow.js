@@ -23,9 +23,7 @@ export default function ResultRow(properties) {
     type = 'Collection';
   }
 
-  let privacy = (
-    <FontAwesomeIcon icon={faGlobeAmericas} color="#000000" size="1x" />
-  );
+  let privacy = <FontAwesomeIcon icon={faGlobeAmericas} size="1x" />;
   if (!properties.uri.includes('/public/'))
     privacy = <FontAwesomeIcon icon={faUserLock} color="#ff0000" size="1x" />;
 
