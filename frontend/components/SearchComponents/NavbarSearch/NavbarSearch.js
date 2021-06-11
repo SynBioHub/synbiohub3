@@ -1,5 +1,4 @@
-import { faTimesCircle } from '@fortawesome/free-regular-svg-icons';
-import { faSearch } from '@fortawesome/free-solid-svg-icons';
+import { faSearch, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
@@ -26,7 +25,7 @@ export default function NavbarSearch() {
         <SearchBar />
 
         <FontAwesomeIcon
-          icon={faTimesCircle}
+          icon={faTimes}
           size="2x"
           color="#F2E86D"
           spin={hoveringClose}
