@@ -1,3 +1,8 @@
+import {
+  faShoppingBasket,
+  faTimesCircle
+} from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Image from 'next/image';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -15,18 +20,13 @@ export default function Basket() {
 
   if (!showBasket) {
     return (
-      <div
-        role="button"
-        className={styles.basketcontainer}
+      <FontAwesomeIcon
+        icon={faShoppingBasket}
+        size="2x"
+        color="#D25627"
+        className={styles.basketicon}
         onClick={() => setShowBasket(true)}
-      >
-        <Image
-          alt="view basket"
-          height={25}
-          src="/images/basket.svg"
-          width={25}
-        />
-      </div>
+      />
     );
   }
   const items = basketItems.map(item => (
@@ -56,18 +56,14 @@ export default function Basket() {
         <div className={styles.itemscontainer}>{items}</div>
       </div>
 
-      <div
-        role="button"
-        className={styles.basketcontainer}
+      <FontAwesomeIcon
+        icon={faTimesCircle}
+        size="2x"
+        color="#D25627"
+        spin
+        className={styles.basketicon}
         onClick={() => setShowBasket(false)}
-      >
-        <Image
-          alt="close basket"
-          height={25}
-          src="/images/close.svg"
-          width={25}
-        />
-      </div>
+      />
     </div>
   );
 }

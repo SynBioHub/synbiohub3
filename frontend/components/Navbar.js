@@ -37,12 +37,7 @@ export default function Navbar() {
     <header className={styles.container}>
       <Link href="/">
         <a className={styles.logo}>
-          <Image
-            alt="logo"
-            width={80}
-            height={80}
-            src="/images/logo_uploaded.svg"
-          />
+          <Image alt="logo" width={80} height={80} src="/images/logo.svg" />
         </a>
       </Link>
 
