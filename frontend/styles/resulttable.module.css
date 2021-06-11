@@ -19,6 +19,10 @@
    font-size: 0.95rem;
 }
 
+.name {
+   font-weight: 600;
+}
+
 .table tr {
    width: 100%;
 }
@@ -30,6 +34,7 @@
 .table td {
    padding: 0.75rem;
    cursor: pointer;
+   border-top: 1px solid #ced1d4;
 }
 
 .table tbody tr:hover {

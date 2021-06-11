@@ -2,6 +2,8 @@ import { faGlobeAmericas, faUserLock } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import router from 'next/router';
 
+import styles from '../../../../styles/resulttable.module.css';
+
 /**
  * This component renders a single result row in the result table in standard search
  */
@@ -58,7 +60,7 @@ export default function ResultRow(properties) {
         />
       </td>
 
-      <td>{properties.name}</td>
+      <td className={styles.name}>{properties.name}</td>
 
       <td>{properties.displayId}</td>
 
