@@ -1,3 +1,5 @@
+import { faSignInAlt } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
@@ -32,8 +34,16 @@ function Login() {
   return (
     <div className={styles.container}>
       <div className={styles.frame}>
-        <Image alt="login icon" height={40} src="/images/lock.svg" width={40} />
-        <div className={styles.header}>Login</div>
+        <Image
+          alt="logo"
+          src="/images/logo_secondary.svg"
+          width={80}
+          height={80}
+        />
+        <div className={styles.header}>Welcome Back</div>
+        <div className={styles.intro}>
+          Sign in to view, submit, and share thousands of genetic designs.
+        </div>
         {loginError && (
           <div className={styles.warning}>{loginErrorMessage}</div>
         )}
@@ -63,10 +73,6 @@ function Login() {
           placeholder="Password"
           type="password"
         />
-        <div className={`${styles.info} ${styles.forgotpassword}`}>
-          Forgot your passsword? Reset it{' '}
-          <span className={styles.orange}>here</span>.
-        </div>
         <div
           role="button"
           className={styles.submitbutton}
@@ -76,10 +82,20 @@ function Login() {
             setPassword('');
           }}
         >
-          Submit
+          <FontAwesomeIcon
+            icon={faSignInAlt}
+            size="1x"
+            className={styles.submiticon}
+          />{' '}
+          Sign in
         </div>
-        <div className={`${styles.info} ${styles.signup}`}>
-          Need an account? Sign up <span className={styles.orange}>here</span>.
+        <div className={styles.infocontainer}>
+          <div className={styles.info}>
+            <span className={styles.blue}>Forgot password?</span>
+          </div>
+          <div className={styles.info}>
+            New to SynBioHub? <span className={styles.blue}>Join now</span>
+          </div>
         </div>
       </div>
     </div>

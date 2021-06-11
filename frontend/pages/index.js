@@ -1,3 +1,9 @@
+import {
+  faAlignLeft,
+  faCloudUploadAlt,
+  faSearch,
+  faShareAlt
+} from '@fortawesome/free-solid-svg-icons';
 import { useDispatch } from 'react-redux';
 
 import Card from '../components/HomeComponents/Card';
@@ -36,37 +42,28 @@ function Home() {
         <div className={styles.grid}>
           <Card
             description="Browse SynBioHub for useful parts and designs"
-            icon="/images/search_black.svg"
+            icon={faSearch}
             title="Search"
             route={'/search'}
           />
 
           <Card
             description="Upload your parts and designs for safekeeping"
-            icon="/images/submit.svg"
-            iconheight="1.5rem"
-            iconoffset="-20%"
-            iconright="0.75rem"
-            title="Submit A Design"
+            icon={faCloudUploadAlt}
+            title="Submit Designs"
             route={'/submit'}
           />
 
           <Card
             description="Prepare designs for publication or collaboration"
-            icon="/images/submissions.svg"
-            iconheight="1.7rem"
-            iconoffset="-35%"
-            iconright="0.75rem"
+            icon={faAlignLeft}
             title="Manage Submissions"
             route={'/manage'}
           />
 
           <Card
             description="View parts and designs that have been shared with me"
-            icon="/images/shared_black.svg"
-            iconheight="1.6rem"
-            iconoffset="-33%"
-            iconright="0.6rem"
+            icon={faShareAlt}
             title="Collaborate"
             route={'/shared'}
           />

@@ -1,5 +1,8 @@
-import Image from 'next/image';
+import { faGlobeAmericas, faUserLock } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import router from 'next/router';
+
+import styles from '../../../../styles/resulttable.module.css';
 
 /**
  * This component renders a single result row in the result table in standard search
@@ -22,24 +25,9 @@ export default function ResultRow(properties) {
     type = 'Collection';
   }
 
-  let privacy = (
-    <Image
-      alt="unlocked (privacy)"
-      height={18}
-      src="/images/public_lock.svg"
-      width={18}
-    />
-  );
-  if (!properties.uri.includes('/public/')) {
-    privacy = (
-      <Image
-        alt="locked (privacy)"
-        height={17}
-        src="/images/private_lock.svg"
-        width={17}
-      />
-    );
-  }
+  let privacy = <FontAwesomeIcon icon={faGlobeAmericas} size="1x" />;
+  if (!properties.uri.includes('/public/'))
+    privacy = <FontAwesomeIcon icon={faUserLock} color="#ff0000" size="1x" />;
 
   return (
     <tr
@@ -72,7 +60,7 @@ export default function ResultRow(properties) {
         />
       </td>
 
-      <td>{properties.name}</td>
+      <td className={styles.name}>{properties.name}</td>
 
       <td>{properties.displayId}</td>
 

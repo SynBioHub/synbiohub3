@@ -1,5 +1,5 @@
 .container {
-   background-color: #D25627;
+   background-color: #465775;
    width: 100%;
    top: 0;
    height: 4rem;
@@ -12,13 +12,16 @@
 }
 
 .logo {
-   height: 3rem;
    width: auto;
+   height: 100%;
+   display: flex;
    margin-left: 1rem;
+   cursor: pointer;
+   transition: transform .3s;
 }
 
 .logo:hover {
-   cursor: pointer;
+   transform: scale(1.1);
 }
 
 .navcontainer {
@@ -48,55 +51,62 @@
 .navoptionname {
    display: inline-block;
    vertical-align: middle;
-   color: white;
+   color: #fff;
    opacity: 0.7;
+   transition: opacity .2s;
 }
 
-.navoption:hover .navoptionname{
+.navoption:hover .navoptionname {
    opacity: 1;
+}
+
+.navoption:hover .navoptionicon {
+   transform: translateX(0.15rem);
 }
 
 .navoptionicon {
    display: inline-block;
    vertical-align: middle;
    height: 1.4rem;
-   margin-right: 0.3rem;
+   margin-right: 0.2rem;
+   transition: transform .2s;
 }
 
 .searchicon {
-   height: 1.9rem;
+   height: 1.4rem;
    display: inline-block;
    vertical-align: middle;
-   margin-right: 0.25rem;
-   opacity: 0.8;
    transition: transform .1s;
+   color: #fff;
+   cursor: pointer;
 }
 
 .searchicon:hover {
-   opacity: 1;
-   cursor: pointer;
    transform: scale(1.1);
+   color: #F2E86D;
 }
 
 .searchiconactive {
-   height: 2.09rem;
-   opacity: 1;
+   height: 1.4rem;
 }
 
 .searchbar {
    background-color: #fff;
    width: 0;
-   border: none;
-   border-radius: 0.5rem;
+   border-top: none;
+   border-bottom: none;
+   border-left: 5px solid #F2E86D;
+   border-right: 5px solid #F2E86D;
+   border-radius: 0.2rem;
    font-size: 1rem;
-   padding: 0.6rem;
+   padding: 0.6rem 1rem;
    outline: none;
    color: #000;
    transition: width 0.2s ease-in;
 }
 
 .searchexpand {
-   width: calc(60% - 2rem);
+   width: calc(50% - 2rem);
 }
 
 .searchcontainer {
@@ -107,13 +117,14 @@
 }
 
 .cancelsearch {
-   margin-left: 0.35rem;
+   margin-left: 0.3rem;
+   height: 1.9rem;
    cursor: pointer;
-   transition: transform .3s;
+   transition: transform .2s;
 }
 
 .cancelsearch:hover {
-   transform: scale(1.1);
+   transform: translateX(-5px);
 }
 
 .profilecontainer {
@@ -122,9 +133,9 @@
 
 .profilemenu {
    position: absolute;
-   top: 2.1rem;
-   right: 0;
-   border-radius: 0.5rem;
+   top: 2.3rem;
+   right: 0.45rem;
+   border-radius: 0.5rem 0 0.5rem 0.5rem;
    overflow: hidden;
    background-color: #fff;
 }
@@ -138,13 +149,25 @@
 }
 
 .menuoption:hover {
-   background-color: #33A1FD;
-   color: #fff;
+   background-color: #7cc2fc;
+   
+}
+
+.menuoption:hover .profilemenuicon {
+   transform: translateX(5px);
+}
+
+.profilemenuicon {
+   width: 30px;
+   display: inline-block;
+   transition: transform .3s;
 }
 
 .iconcontainer {
    cursor: pointer;
    transition: transform .3s;
+   width: 2.5rem;
+   text-align: center;
 }
 
 .iconcontainer:hover {
@@ -157,16 +180,7 @@
    } 
 }
 
-@media only screen and (max-width: 558px) { 
-   .logo { 
-     height: 2.1rem;
-   }
-}
-
 @media only screen and (max-width: 420px) {
-   .logo { 
-      height: 1.4rem;
-    }
  
     .navoption {
        margin-right: 0.2rem;

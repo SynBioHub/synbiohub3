@@ -1,4 +1,5 @@
-import Image from 'next/image';
+import { faBackward, faSearch } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
 
@@ -12,26 +13,25 @@ export default function NavbarSearch() {
   return (
     <header className={styles.container}>
       <div className={styles.searchcontainer}>
-        <img
+        <FontAwesomeIcon
+          icon={faSearch}
           className={styles.searchiconactive}
-          src="/images/search.svg"
-          alt=""
+          color="#fff"
+          size="2x"
         />
 
         <SearchBar />
 
-        <div className={styles.cancelsearch}>
-          <Image
-            role="button"
-            src="/images/closesearch.svg"
-            width={20}
-            height={20}
-            onClick={() => {
-              if (pageVisited) router.back();
-              else router.push('/');
-            }}
-          />
-        </div>
+        <FontAwesomeIcon
+          icon={faBackward}
+          size="2x"
+          color="#F2E86D"
+          className={styles.cancelsearch}
+          onClick={() => {
+            if (pageVisited) router.back();
+            else router.push('/');
+          }}
+        />
       </div>
     </header>
   );

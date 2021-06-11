@@ -14,7 +14,7 @@
 }
 
 .title a {
-  color: #D25627;
+  color: #00A1E4;
   text-decoration: none;
 }
 
@@ -71,9 +71,13 @@
   filter: drop-shadow(0px 2px 4px #0000001a);
 }
 
+.card:hover .cardicon {
+  transform: translateX(5px);
+}
 
 .card h3 {
   margin: 0;
+  padding: 0;
   font-size: 1.5rem;
   display: inline;
 }
@@ -86,14 +90,15 @@
 
 .cardicon {
   display: inline;
-  vertical-align: -50%;
-  margin-left: 0.2rem;
-  height: 2rem;
+  vertical-align: middle;
+  margin-left: 0.25rem;
+  height: 1.3rem;
+  transition: transform .3s;
 }
 
 .cardhead {
-  height: 2rem;
-  display: inline-block;
+  display: flex;
+  align-items: center;
 }
 
 .logo {

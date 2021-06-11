@@ -1,3 +1,4 @@
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Link from 'next/link';
 
 import {
@@ -14,10 +15,12 @@ export default function Selector(properties) {
   return (
     <Link href={properties.href}>
       <div className={navoption}>
-        <img
+        <FontAwesomeIcon
           className={navoptionicon}
-          src={properties.icon}
+          icon={properties.icon}
           alt={properties.name}
+          size="2x"
+          color="#F2E86D"
         />
 
         <span className={navoptionname}>{properties.name}</span>

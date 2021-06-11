@@ -1,4 +1,14 @@
+import {
+  faAlignLeft,
+  faCloudUploadAlt,
+  faSearch,
+  faShareAlt,
+  faSignInAlt
+} from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import Image from 'next/image';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import styles from '../styles/navbar.module.css';
@@ -11,34 +21,35 @@ import Selector from './NavbarComponents/Selector';
  */
 export default function Navbar() {
   const loggedIn = useSelector(state => state.user.loggedIn);
+  const [profileControl, setProfileControl] = useState(
+    <Selector icon={faSignInAlt} name="Log in or Register" href="/login" />
+  );
+
+  useEffect(() => {
+    if (loggedIn) setProfileControl(<Profile />);
+    else
+      setProfileControl(
+        <Selector icon={faSignInAlt} name="Sign In" href="/login" />
+      );
+  }, [loggedIn]);
 
   return (
     <header className={styles.container}>
       <Link href="/">
-        <img
-          alt="logo"
-          className={styles.logo}
-          src="/images/logo_uploaded.svg"
-        />
+        <a className={styles.logo}>
+          <Image alt="logo" width={80} height={80} src="/images/logo.svg" />
+        </a>
       </Link>
 
       <div className={styles.navcontainer}>
         {loggedIn && (
           <nav className={styles.nav}>
-            <Selector
-              icon="/images/submit_white.svg"
-              name="Submit"
-              href="/submit"
-            />
+            <Selector icon={faCloudUploadAlt} name="Submit" href="/submit" />
+
+            <Selector icon={faShareAlt} name="Shared With Me" href="/shared" />
 
             <Selector
-              icon="/images/shared.svg"
-              name="Shared With Me"
-              href="/shared"
-            />
-
-            <Selector
-              icon="/images/submissions_white.svg"
+              icon={faAlignLeft}
               name="Submissions"
               href="/submissions"
             />
@@ -46,21 +57,17 @@ export default function Navbar() {
         )}
 
         <Link href="/search">
-          <img
-            alt="Search SynBioHub"
-            className={styles.searchicon}
-            src="/images/search.svg"
-          />
+          <a>
+            <FontAwesomeIcon
+              icon={faSearch}
+              size="2x"
+              alt="Search SynBioHub"
+              className={styles.searchicon}
+            />
+          </a>
         </Link>
 
-        {loggedIn && <Profile />}
-        {!loggedIn && (
-          <Selector
-            icon="/images/login.svg"
-            name="Log in or Register"
-            href="/login"
-          />
-        )}
+        {profileControl}
       </div>
     </header>
   );

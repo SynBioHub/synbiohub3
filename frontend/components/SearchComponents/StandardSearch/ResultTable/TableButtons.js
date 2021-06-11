@@ -1,3 +1,5 @@
+import { faDownload, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useDispatch } from 'react-redux';
 
 import { addToBasket } from '../../../../redux/actions';
@@ -29,12 +31,18 @@ export default function TableButtons(properties) {
             dispatch(addToBasket(itemsChecked));
           }}
         >
+          <span className={styles.buttonicon}>
+            <FontAwesomeIcon icon={faPlus} color="#00000" size="1x" />
+          </span>
           Add to Basket
         </div>
 
         <div
           className={`${styles.tablebutton} ${properties.buttonClass} ${styles.rightspace}`}
         >
+          <span className={styles.buttonicon}>
+            <FontAwesomeIcon icon={faDownload} color="#00000" size="1x" />
+          </span>
           Download
         </div>
       </div>
