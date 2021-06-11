@@ -1,35 +1,42 @@
 .footer {
    width: 100%;
-   border-top: 1px solid #eaeaea;
    display: flex;
-   justify-content: center;
-   align-items: center;
-   flex-direction: column;
+   justify-content: space-evenly;
+   flex-direction: row;
    background-color: #171D26;
    position: absolute;
    bottom: 0;
    width: 100%;
-   height: 80px;
-   color: #949494;
+   height: 150px;
+   color: #d3d3d3;
+   font-size: 0.8rem;
  }
  
- .footer p {
-   width: 100%;
-   text-align: center;
+ .copyrightcontainer {
+   display: flex;
+   align-items: center;
  }
- 
+
+ .copyright {
+   margin-left: 0.5rem;
+   max-width: 13rem;
+ }
+
+ .sbhinfo {
+   display: flex;
+   flex-direction: column;
+   margin-top: 45px;
+ }
+
+ .institution {
+  display: inline-block !important;
+ }
+
  .footer a {
-   color: #949494;
+   display: block;
  }
 
  .footer a:hover {
+    color: #84DCCF;
    text-decoration: underline;
- }
-
- .footer p {
-   margin: 0;
- }
-
- .firstline {
-   padding-bottom: 0.2rem;
  }

@@ -1,8 +1,9 @@
 .container {
   position: relative;
   min-height: 100vh;
+  background-color: #fff;
 }
 
  .content {
-  padding-bottom: 80px;
+  padding-bottom: 150px;
  }

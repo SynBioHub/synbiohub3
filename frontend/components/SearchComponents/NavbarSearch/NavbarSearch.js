@@ -1,7 +1,7 @@
-import { faSearch, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faWindowClose } from '@fortawesome/free-regular-svg-icons';
+import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import styles from '../../../styles/navbar.module.css';
@@ -9,7 +9,6 @@ import SearchBar from './SearchBar';
 
 export default function NavbarSearch() {
   const router = useRouter();
-  const [hoveringClose, setHoveringClose] = useState(false);
   const pageVisited = useSelector(state => state.tracking.pageVisited);
 
   return (
@@ -18,24 +17,21 @@ export default function NavbarSearch() {
         <FontAwesomeIcon
           icon={faSearch}
           className={styles.searchiconactive}
-          color="#F2E86D"
+          color="#fff"
           size="2x"
         />
 
         <SearchBar />
 
         <FontAwesomeIcon
-          icon={faTimes}
+          icon={faWindowClose}
           size="2x"
           color="#F2E86D"
-          spin={hoveringClose}
           className={styles.cancelsearch}
           onClick={() => {
             if (pageVisited) router.back();
             else router.push('/');
           }}
-          onMouseEnter={() => setHoveringClose(true)}
-          onMouseLeave={() => setHoveringClose(false)}
         />
       </div>
     </header>
