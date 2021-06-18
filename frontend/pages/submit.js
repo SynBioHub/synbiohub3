@@ -1,24 +1,30 @@
 import { faCloudUploadAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useEffect, useState } from 'react';
 
 import TopLevel from '../components/TopLevel';
 import styles from '../styles/submit.module.css';
 
 function Submit() {
+  const [animateSubmitIconClass, setAnimateSubmitIconClass] = useState('');
+  useEffect(() => {
+    setAnimateSubmitIconClass(styles.animatesubmit);
+  });
   return (
     <div className={styles.container}>
-      <FontAwesomeIcon
-        icon={faCloudUploadAlt}
-        size="3x"
-        color="#171D26"
-        className={styles.submiticon}
-      />
-      <div className={styles.introcontainer}>
-        <h2 className={styles.introtitle}>Submit to a Collection</h2>
-        <p className={styles.introexplanation}>
-          SynBioHub organizes your uploads into collections. Parts can be
-          uploaded into a new or existing collection.
-        </p>
+      <div className={styles.submitpanel}>
+        <div className={styles.introcontainer}>
+          <FontAwesomeIcon
+            icon={faCloudUploadAlt}
+            size="3x"
+            color="#00A1E4"
+            className={`${styles.submiticon} ${animateSubmitIconClass}`}
+          />
+          <h2 className={styles.introtitle}>Submit</h2>
+          <p className={styles.introexplanation}>
+            Upload your parts into a new or existing collection.
+          </p>
+        </div>
       </div>
     </div>
   );

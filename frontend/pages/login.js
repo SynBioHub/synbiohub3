@@ -42,7 +42,7 @@ function Login() {
           width={80}
           height={80}
         />
-        <div className={styles.header}>Welcome Back</div>
+        <h1 className={styles.header}>Welcome Back</h1>
         <div className={styles.intro}>
           Sign in to view, submit, and share thousands of genetic designs.
         </div>
