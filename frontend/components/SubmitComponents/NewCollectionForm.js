@@ -22,7 +22,7 @@ export default function NewCollectionForm() {
           type="text"
           name="collection name"
           className={styles.submitinput}
-          placeholder="A short title htmlFor your collection"
+          placeholder="A short title for your collection"
         />
       </div>
       <div>

@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import CollectionTypeSelector from '../components/SubmitComponents/CollectionTypeSelector';
 import FileDropzone from '../components/SubmitComponents/FileDropzone';
 import NewCollectionForm from '../components/SubmitComponents/NewCollectionForm';
+import SelectedFileView from '../components/SubmitComponents/SelectedFileView';
 import TopLevel from '../components/TopLevel';
 import styles from '../styles/submit.module.css';
 
@@ -15,17 +16,9 @@ function Submit() {
   const [collectionType, setCollectionType] = useState('New Collection');
   const [animateSubmitIconClass, setAnimateSubmitIconClass] = useState('');
   const [files, setFiles] = useState([]);
-  const [fileDisplay, setFileDisplay] = useState(null);
   useEffect(() => {
     setAnimateSubmitIconClass(styles.animatesubmit);
   });
-  useEffect(() => {
-    setFileDisplay(
-      files.map(file => {
-        return <p key={file.path}>{file.name}</p>;
-      })
-    );
-  }, [files]);
   return (
     <div className={styles.container}>
       <div className={styles.submitpanel}>
@@ -74,7 +67,7 @@ function Submit() {
             (Optional)
           </label>
           <FileDropzone setFiles={setFiles} />
-          {fileDisplay}
+          <SelectedFileView files={files} />
         </div>
       </div>
     </div>

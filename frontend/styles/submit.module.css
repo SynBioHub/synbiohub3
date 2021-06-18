@@ -169,6 +169,27 @@
    margin-right: 0.3rem;
 }
 
+.selectedfilescontainer {
+   margin: 1rem 0;
+}
+
+.selectedfilecontainer {
+   display: flex;
+   justify-content: space-between;
+   padding: 0.6rem;
+   border-radius: 0.4rem;
+   background-color: #ECF0F1;
+}
+
+.noselection {
+   margin: 0;
+   color: #00A1E4;
+}
+
+.filename {
+   margin-left: 0.4rem;
+}
+
 @media (max-width: 40rem) {
    .submitpanel {
      width: 90%;

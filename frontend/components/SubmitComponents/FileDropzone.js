@@ -10,7 +10,7 @@ const baseStyle = {
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  padding: '3rem 0',
+  padding: '2.5rem 0',
   borderWidth: 2,
   borderRadius: 2,
   borderColor: '#00A1E4',
