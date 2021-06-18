@@ -4,6 +4,7 @@
    align-items: center;
    padding: 3rem 0;
    font-size: 1rem;
+   font-weight: 500;
 }
 
 .submitpanel {
@@ -39,7 +40,7 @@
 }
 
 .dropzonecontainer {
-   margin-top: 1rem;
+   margin-top: 0.2rem;
    display: flex;
 }
 
@@ -73,6 +74,99 @@
 
 .dropzonebrowsefiles:hover {
    background-color: #00A1E4;
+}
+
+.collectiontypecontainer {
+   margin-top: 1rem;
+   border-bottom:2px solid #BCAD10;
+   display: flex;
+   align-items: flex-end;
+   justify-content: space-between;
+}
+
+.collectionsubmitto {
+   padding: 0.5rem 0;
+   color: #00A1E4;
+}
+
+.collectiontypes {
+   display: flex;
+   flex-direction: row;
+}
+
+.collectiontypebutton {
+   margin: 0 0.5rem 0 0;
+   padding: 0.5rem;
+   border-radius: 0.3rem 0.3rem 0 0;
+   color: #D25627;
+   transition: background-color .3s;
+}
+
+.notselectedcollectiontype:hover {
+   background-color: #ECF0F1;
+   cursor: pointer;
+}
+
+.selectedcollectiontype {
+   color: #171D26;
+   background-color: #F2E86D;
+   cursor: not-allowed;
+}
+
+.newcollectioncontainer {
+   margin-top: 1rem;
+}
+
+.submitlabel {
+   display: block;
+   margin-top: 0.8rem;
+   font-size: 0.9rem;
+   color: #D25627;
+}
+
+.submitlabeloptional {
+   color: #888;
+}
+
+.submitinput {
+   width: 100%;
+   border: none;
+   margin-top: 0.2rem;
+   padding: 0.6rem;
+   font-size: 1rem;
+   background-color: #ECF0F1;
+   color: #171D26;
+   border-radius: 0.4rem;
+   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+}
+
+.submitinput::placeholder {
+   color: #465775b7;
+}
+
+.idinput {
+   width: 28rem;
+   margin-right: 2rem;
+}
+
+.inlineinputcontainer {
+   display: inline-block;
+}
+
+.versioninput {
+   max-width: 5rem;
+   text-align: center;
+}
+
+.sectionlabel {
+   color: #00A1E4;
+   margin-top: 1rem;
+   display: block;
+}
+
+.submitinfoicon {
+   margin-right: 0.3rem;
 }
 
 @media (max-width: 40rem) {

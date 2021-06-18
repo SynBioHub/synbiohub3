@@ -45,13 +45,12 @@ export default function Navbar() {
         {loggedIn && (
           <nav className={styles.nav}>
             <Selector icon={faCloudUploadAlt} name="Submit" href="/submit" />
+            <Selector icon={faShareAlt} name="Shared With Me" href="/shared" />
             <Selector
               icon={faAlignLeft}
               name="Submissions"
               href="/submissions"
             />
-            x
-            <Selector icon={faShareAlt} name="Shared With Me" href="/shared" />
           </nav>
         )}
 

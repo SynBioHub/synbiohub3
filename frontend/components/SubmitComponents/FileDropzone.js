@@ -1,6 +1,6 @@
 import { faFolderOpen } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useDropzone } from 'react-dropzone';
 
 import styles from '../../styles/submit.module.css';
@@ -20,35 +20,26 @@ const baseStyle = {
   transition: 'border .24s ease-in-out'
 };
 
-const activeStyle = {
-  borderColor: '#00A1E4'
-};
-
 const acceptStyle = {
   borderColor: '#00e676'
 };
 
-const rejectStyle = {
-  borderColor: '#000'
-};
+export default function FileDropzone(properties) {
+  const onDrop = useCallback(acceptedFiles => {
+    properties.setFiles(acceptedFiles);
+  }, []);
 
-export default function FileDropzone() {
-  const {
-    getRootProps,
-    getInputProps,
-    isDragActive,
-    isDragAccept,
-    isDragReject
-  } = useDropzone({ accept: '.xml' });
+  const { getRootProps, getInputProps, isDragAccept } = useDropzone({
+    maxFiles: 1,
+    onDrop
+  });
 
   const style = useMemo(
     () => ({
       ...baseStyle,
-      ...(isDragActive ? activeStyle : {}),
-      ...(isDragAccept ? acceptStyle : {}),
-      ...(isDragReject ? rejectStyle : {})
+      ...(isDragAccept ? acceptStyle : {})
     }),
-    [isDragActive, isDragReject, isDragAccept]
+    [isDragAccept]
   );
 
   return (
