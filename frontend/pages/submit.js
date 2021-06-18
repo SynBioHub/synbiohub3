@@ -2,6 +2,7 @@ import { faCloudUploadAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
 
+import FileDropzone from '../components/SubmitComponents/FileDropzone';
 import TopLevel from '../components/TopLevel';
 import styles from '../styles/submit.module.css';
 
@@ -22,8 +23,11 @@ function Submit() {
           />
           <h2 className={styles.introtitle}>Submit</h2>
           <p className={styles.introexplanation}>
-            Upload your parts into a new or existing collection.
+            Upload your part into a new or existing collection
           </p>
+        </div>
+        <div className={styles.uploadcontainer}>
+          <FileDropzone />
         </div>
       </div>
     </div>

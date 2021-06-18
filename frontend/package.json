@@ -49,6 +49,7 @@
     "qs": "^6.10.1",
     "react": "17.0.1",
     "react-dom": "17.0.1",
+    "react-dropzone": "^11.3.2",
     "react-loader-spinner": "^4.0.0",
     "react-redux": "^7.2.4",
     "redux": "^4.1.0",

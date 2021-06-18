@@ -37,3 +37,46 @@
    font-size: 1rem;
    color: #575757
 }
+
+.dropzonecontainer {
+   margin-top: 1rem;
+   display: flex;
+}
+
+.dropzoneinner {
+   text-align: center;
+}
+
+.dropzonedirection {
+   font-weight: 500;
+   color: #171D26;
+   padding: 0;
+   margin: 1rem 0;
+}
+
+.dropzoneor {
+   display: block;
+   padding: 0;
+   margin-bottom: 1rem;
+   color: #575757;
+}
+
+.dropzonebrowsefiles {
+   display: inline-block;
+   width: fit-content;
+   padding: 0.8rem;
+   color: #fff;
+   background-color: #465775;
+   border-radius: 0.3rem;
+   cursor: pointer;
+}
+
+.dropzonebrowsefiles:hover {
+   background-color: #00A1E4;
+}
+
+@media (max-width: 40rem) {
+   .submitpanel {
+     width: 90%;
+   }
+ }
