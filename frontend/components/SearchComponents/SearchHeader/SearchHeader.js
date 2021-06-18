@@ -16,19 +16,19 @@ export default function SearchHeader(properties) {
 
         <SearchTypeButton
           name="Sequence Search"
-          route=""
+          route="sequence-search"
           selected={properties.selected}
         />
 
         <SearchTypeButton
           name="Advanced Search"
-          route=""
+          route="advanced-search"
           selected={properties.selected}
         />
 
         <SearchTypeButton
           name="SPARQL"
-          route=""
+          route="sparql"
           selected={properties.selected}
         />
       </div>
