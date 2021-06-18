@@ -1,4 +1,5 @@
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -13,7 +14,9 @@ import Navbar from './Navbar';
  * rare and special circumstances.
  */
 export default function TopLevel(properties) {
+  const protectRoute = properties.publicPage ? false : true;
   const dispatch = useDispatch();
+  const router = useRouter();
   const loggedIn = useSelector(state => state.user.loggedIn);
 
   useEffect(() => {
@@ -23,25 +26,29 @@ export default function TopLevel(properties) {
 
       if (username && token) {
         dispatch(restoreLogin(username, token));
+      } else if (protectRoute) {
+        router.replace(`/login?next=${router.pathname}`);
       }
     }
   }, [loggedIn]);
 
-  return (
-    <div>
-      <Head>
-        <title>SynBioHub</title>
+  if (!protectRoute | loggedIn)
+    return (
+      <div>
+        <Head>
+          <title>SynBioHub</title>
 
-        <link href="/favicon.ico" rel="icon" />
-      </Head>
+          <link href="/favicon.ico" rel="icon" />
+        </Head>
 
-      <div className={styles.container}>
-        <div className={!properties.hideFooter ? styles.content : ''}>
-          {properties.navbar ? properties.navbar : <Navbar />}
-          {properties.children}
+        <div className={styles.container}>
+          <div className={!properties.hideFooter ? styles.content : ''}>
+            {properties.navbar ? properties.navbar : <Navbar />}
+            {properties.children}
+          </div>
+          {!properties.hideFooter && <Footer />}
         </div>
-        {!properties.hideFooter && <Footer />}
       </div>
-    </div>
-  );
+    );
+  return null;
 }

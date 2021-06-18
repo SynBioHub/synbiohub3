@@ -45,6 +45,7 @@ function Home() {
             icon={faSearch}
             title="Search"
             route={'/search'}
+            redirect={false}
           />
 
           <Card
@@ -52,6 +53,7 @@ function Home() {
             icon={faCloudUploadAlt}
             title="Submit Designs"
             route={'/submit'}
+            redirect={true}
           />
 
           <Card
@@ -59,6 +61,7 @@ function Home() {
             icon={faAlignLeft}
             title="Manage Submissions"
             route={'/manage'}
+            redirect={true}
           />
 
           <Card
@@ -66,6 +69,7 @@ function Home() {
             icon={faShareAlt}
             title="Collaborate"
             route={'/shared'}
+            redirect={true}
           />
         </div>
       </main>
@@ -75,7 +79,7 @@ function Home() {
 
 export default function HomeWrapped() {
   return (
-    <TopLevel>
+    <TopLevel publicPage={true}>
       <Home />
     </TopLevel>
   );

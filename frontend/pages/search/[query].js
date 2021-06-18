@@ -22,7 +22,7 @@ export default function RedirectToSearch() {
     if (limit) {
       dispatch(setLimit(Number.parseInt(limit)));
     } else dispatch(setLimit(50));
-    router.push('/search');
+    router.replace('/search');
   }, [query, offset, limit]);
   return null;
 }

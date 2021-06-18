@@ -22,11 +22,13 @@ function Login() {
   const dispatch = useDispatch();
   const router = useRouter();
 
+  const next = router.query.next;
+
   const passwordInput = useRef();
 
   useEffect(() => {
     if (loggedIn) {
-      if (pageVisited) router.back();
+      if (pageVisited) next ? router.replace(next) : router.back();
       else router.push('/');
     }
   }, [loggedIn, pageVisited, router]);
@@ -104,7 +106,7 @@ function Login() {
 
 export default function LoginWrapped() {
   return (
-    <TopLevel>
+    <TopLevel publicPage={true}>
       <Login />
     </TopLevel>
   );
