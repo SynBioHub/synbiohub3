@@ -69,6 +69,15 @@ function Submit() {
           <FileDropzone setFiles={setFiles} />
           <SelectedFileView files={files} />
         </div>
+        <div className={styles.submitbuttoncontainer}>
+          <FontAwesomeIcon
+            icon={faCloudUploadAlt}
+            size="1x"
+            color="#F2E86D"
+            className={styles.submitbuttonicon}
+          />
+          Submit
+        </div>
       </div>
     </div>
   );

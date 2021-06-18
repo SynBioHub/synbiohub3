@@ -199,6 +199,30 @@
    transform: scale(1.1);
 }
 
+.submitbuttoncontainer {
+   color: #fff;
+   background-color: #465775;
+   text-align: center;
+   padding: 0.8rem;
+   font-size: 1.1rem;
+   border-radius: 0.4rem;
+   cursor: pointer;
+}
+
+.submitbuttoncontainer:hover {
+   background-color: #00A1E4;
+}
+
+.submitbuttoncontainer:hover .submitbuttonicon {
+   transform: translateX(0.4rem);
+}
+
+.submitbuttonicon {
+   position: relative;
+   right: 0.6rem;
+   transition: transform .3s;
+}
+
 @media (max-width: 40rem) {
    .submitpanel {
      width: 90%;
