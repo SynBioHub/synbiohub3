@@ -25,7 +25,12 @@ export function SelectedFile(properties) {
         <FontAwesomeIcon icon={faFile} size="1x" color="#00A1E4" />
         <span className={styles.filename}>{properties.file.name}</span>
       </div>
-      <FontAwesomeIcon icon={faTrashAlt} size="1x" color="#D25627" />
+      <FontAwesomeIcon
+        icon={faTrashAlt}
+        size="1x"
+        color="#D25627"
+        className={styles.enlargeicononhover}
+      />
     </div>
   );
 }

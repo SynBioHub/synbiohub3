@@ -56,7 +56,7 @@ function Submit() {
             <FontAwesomeIcon
               icon={faInfoCircle}
               size="1x"
-              className={styles.submitinfoicon}
+              className={`${styles.submitinfoicon} ${styles.enlargeicononhover}`}
             />
             Upload Design File
           </label>

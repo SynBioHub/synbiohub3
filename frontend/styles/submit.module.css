@@ -190,6 +190,15 @@
    margin-left: 0.4rem;
 }
 
+.enlargeicononhover {
+   cursor: pointer;
+   transition: transform 0.15s;
+}
+
+.enlargeicononhover:hover {
+   transform: scale(1.1);
+}
+
 @media (max-width: 40rem) {
    .submitpanel {
      width: 90%;

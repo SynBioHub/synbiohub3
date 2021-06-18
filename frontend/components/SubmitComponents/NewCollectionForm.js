@@ -10,7 +10,7 @@ export default function NewCollectionForm() {
         <FontAwesomeIcon
           icon={faInfoCircle}
           size="1x"
-          className={styles.submitinfoicon}
+          className={`${styles.submitinfoicon} ${styles.enlargeicononhover}`}
         />
         New Collection Information
       </label>
