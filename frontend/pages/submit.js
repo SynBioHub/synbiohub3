@@ -21,9 +21,10 @@ function Submit() {
             color="#00A1E4"
             className={`${styles.submiticon} ${animateSubmitIconClass}`}
           />
-          <h2 className={styles.introtitle}>Submit</h2>
+          <h2 className={styles.introtitle}>Tell us about your submission</h2>
           <p className={styles.introexplanation}>
-            Upload your part into a new or existing collection
+            SynBioHub organizes your uploads into collections. Parts can be
+            uploaded into a new or existing collection.
           </p>
         </div>
         <div className={styles.uploadcontainer}>

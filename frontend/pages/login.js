@@ -44,7 +44,7 @@ function Login() {
         />
         <h1 className={styles.header}>Welcome Back</h1>
         <div className={styles.intro}>
-          Sign in to view, submit, and share thousands of genetic designs.
+          Sign in to view, submit, and share your genetic designs.
         </div>
         {loginError && (
           <div className={styles.warning}>{loginErrorMessage}</div>
