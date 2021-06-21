@@ -20,6 +20,13 @@ export const QUERY = 'QUERY';
 export const OFFSET = 'OFFSET';
 export const LIMIT = 'LIMIT';
 
+// SUBMIT
+export const SUBMITTING = 'SUBMITTING';
+export const SUBMITERRORMESSAGES = 'ERRORMESSAGES';
+export const SUBMITSUCCESS = 'SUBMITSUCCESS';
+export const SUBMITRESET = 'SUBMITRESET';
+export const WASSUBMITSUCCESS = 'WASSUBMITSUCCESS';
+
 // BASKET
 export const ADDTOBASKET = 'ADDTOBASKET';
 

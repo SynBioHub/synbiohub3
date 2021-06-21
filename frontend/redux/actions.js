@@ -16,7 +16,7 @@ redux state.
  * @returns
  */
 export const login = (username, password) => async dispatch => {
-  const url = 'http://localhost:7777/login';
+  const url = `${process.env.backendUrl}/login`;
   const headers = {
     Accept: 'text/plain'
   };
@@ -30,7 +30,7 @@ export const login = (username, password) => async dispatch => {
     headers,
     body: parameters
   });
-  const message = await response.text();
+  const message = await response.json();
   if (response.status === 200) {
     dispatch({
       type: types.LOGIN,
@@ -107,6 +107,55 @@ export const setLimit = newLimit => dispatch => {
     payload: newLimit
   });
 };
+
+// SUBMIT ACTIONS
+
+export const submit =
+  (id, version, name, description, citations) => async (dispatch, getState) => {
+    dispatch({
+      type: types.SUBMITRESET,
+      payload: true // sets submitting state to true
+    });
+
+    const url = `${process.env.backendUrl}/submit`;
+    var headers = {
+      Accept: 'text/plain; charset=UTF-8',
+      'X-authorization': getState().user.token
+    };
+
+    const form = new FormData();
+    form.append('id', id);
+    form.append('version', version);
+    form.append('name', name);
+    form.append('description', description);
+    form.append('citations', citations);
+    form.append('overwrite_merge', '0');
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers,
+      body: form
+    });
+
+    if (response.status === 200) {
+      dispatch({
+        type: types.WASSUBMITSUCCESS,
+        payload: {
+          submitSuccess: true,
+          errorMessages: []
+        }
+      });
+    } else {
+      const messages = await response.json();
+      dispatch({
+        type: types.WASSUBMITSUCCESS,
+        payload: {
+          submitSuccess: false,
+          errorMessages: messages
+        }
+      });
+    }
+  };
 
 // BASKET ACTIONS
 

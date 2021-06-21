@@ -4,12 +4,14 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 
 import CollectionTypeSelector from '../components/SubmitComponents/CollectionTypeSelector';
 import FileDropzone from '../components/SubmitComponents/FileDropzone';
 import NewCollectionForm from '../components/SubmitComponents/NewCollectionForm';
 import SelectedFileView from '../components/SubmitComponents/SelectedFileView';
 import TopLevel from '../components/TopLevel';
+import { submit } from '../redux/actions';
 import styles from '../styles/submit.module.css';
 
 function Submit() {
@@ -24,6 +26,8 @@ function Submit() {
   useEffect(() => {
     setAnimateSubmitIconClass(styles.animatesubmit);
   });
+
+  const dispatch = useDispatch();
   return (
     <div className={styles.container}>
       <div className={styles.submitpanel}>
@@ -91,7 +95,21 @@ function Submit() {
           <FileDropzone setFiles={setFiles} />
           <SelectedFileView files={files} />
         </div>
-        <div className={styles.submitbuttoncontainer}>
+        <div
+          className={styles.submitbuttoncontainer}
+          role="button"
+          onClick={() => {
+            dispatch(
+              submit(
+                collectionID,
+                collectionVersion,
+                collectionName,
+                collectionDescription,
+                collectionCitations
+              )
+            );
+          }}
+        >
           <FontAwesomeIcon
             icon={faCloudUploadAlt}
             size="1x"

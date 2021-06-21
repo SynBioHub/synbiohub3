@@ -79,13 +79,60 @@ const searchReducer = (state = initialSearchState, { type, payload }) => {
   }
 };
 
+// SUBMIT REDUCER
+const initialSubmitState = {
+  submitting: false,
+  errorMessages: [],
+  submitSuccess: false
+};
+
+/**
+ * This reducer initializes and allows state concerning design submission to be
+ * updated
+ */
+const submitReducer = (state = initialSubmitState, { type, payload }) => {
+  switch (type) {
+    case types.WASSUBMITSUCCESS:
+      return {
+        ...state,
+        submitting: false,
+        submitSuccess: payload.submitSuccess,
+        errorMessages: payload.errorMessages
+      };
+    case types.SUBMITRESET:
+      return {
+        ...state,
+        submitting: payload,
+        errorMessages: [],
+        submitSuccess: false
+      };
+    case types.SUBMITTING:
+      return {
+        ...state,
+        submitting: payload
+      };
+    case types.SUBMITERRORMESSAGES:
+      return {
+        ...state,
+        errorMessages: payload
+      };
+    case types.SUBMITSUCCESS:
+      return {
+        ...state,
+        submitSuccess: payload
+      };
+    default:
+      return state;
+  }
+};
+
 // BASKET REDUCER
 const initialBasketState = {
   basket: []
 };
 
 /**
- * This reducer initializes and allows state concering the basket in the search panel to
+ * This reducer initializes and allows state concerning the basket in the search panel to
  * be updated
  */
 const basketReducer = (state = initialBasketState, { type, payload }) => {
@@ -125,6 +172,7 @@ const trackingReducer = (state = initialTrackingState, { type, payload }) => {
 const reducers = {
   user: userReducer,
   search: searchReducer,
+  submit: submitReducer,
   basket: basketReducer,
   tracking: trackingReducer
 };
