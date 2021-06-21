@@ -2,8 +2,9 @@ import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import styles from '../../styles/submit.module.css';
+import RequiredLabel from './RequiredLabel';
 
-export default function NewCollectionForm() {
+export default function NewCollectionForm(properties) {
   return (
     <div className={styles.newcollectioncontainer}>
       <label className={styles.sectionlabel}>
@@ -15,42 +16,64 @@ export default function NewCollectionForm() {
         New Collection Information
       </label>
       <div>
-        <label className={styles.submitlabel} htmlFor="collection name">
-          Name
-        </label>
+        <RequiredLabel
+          text="Name"
+          for="collection name"
+          value={properties.collectionName}
+        />
         <input
           type="text"
           name="collection name"
+          value={properties.collectionName}
+          onChange={event => properties.setCollectionName(event.target.value)}
           className={styles.submitinput}
           placeholder="A short title for your collection"
         />
       </div>
       <div>
-        <label className={styles.submitlabel} htmlFor="collection description">
-          Description
-        </label>
+        <RequiredLabel
+          text="Description"
+          for="collection description"
+          value={properties.collectionDescription}
+        />
         <textarea
           name="collection description"
+          value={properties.collectionDescription}
+          onChange={event =>
+            properties.setCollectionDescription(event.target.value)
+          }
           className={styles.submitinput}
           placeholder="The more you say, the easier it will be to find your design"
         />
       </div>
       <div className={styles.inlineinputcontainer}>
-        <label className={styles.submitlabel} htmlFor="collection ID">
-          ID
-        </label>
+        <RequiredLabel
+          text="ID"
+          for="collection ID"
+          value={properties.collectionID}
+        />
         <input
           type="text"
           name="collection ID"
+          value={properties.collectionID}
+          onChange={event => properties.setCollectionID(event.target.value)}
           className={`${styles.submitinput} ${styles.idinput}`}
           placeholder="Alphanumeric and underscore characters only"
         />
       </div>
       <div className={styles.inlineinputcontainer} htmlFor="collection version">
-        <label className={styles.submitlabel}>Version</label>
+        <RequiredLabel
+          text="Version"
+          for="collection version"
+          value={properties.collectionVersion}
+        />
         <input
           type="text"
           name="collection version"
+          value={properties.collectionVersion}
+          onChange={event =>
+            properties.setCollectionVersion(event.target.value)
+          }
           className={`${styles.submitinput} ${styles.versioninput}`}
           placeholder="Version"
         />
@@ -65,6 +88,8 @@ export default function NewCollectionForm() {
         <input
           type="text"
           name="collection citations"
+          value={properties.collectionCitations}
+          onChange={event => properties.setCollectionCitations(event.value)}
           className={styles.submitinput}
           placeholder="Pubmed IDs separated by commas, we'll do the rest!"
         />

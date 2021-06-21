@@ -118,14 +118,29 @@
 }
 
 .submitlabel {
-   display: block;
+   display: flex;
+   align-items: center;
    margin-top: 0.8rem;
    font-size: 0.9rem;
    color: #D25627;
 }
 
+.submitlabelverified {
+   color: #549F93;
+}
+
 .submitlabeloptional {
    color: #888;
+}
+
+.inputstatus {
+   transition: opacity 0.4s;
+   margin-left: 0.2rem;
+   opacity: 0;
+}
+
+.inputstatusshow {
+   opacity: 1;
 }
 
 .submitinput {

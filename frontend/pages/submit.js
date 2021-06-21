@@ -13,8 +13,13 @@ import TopLevel from '../components/TopLevel';
 import styles from '../styles/submit.module.css';
 
 function Submit() {
-  const [collectionType, setCollectionType] = useState('New Collection');
   const [animateSubmitIconClass, setAnimateSubmitIconClass] = useState('');
+  const [collectionType, setCollectionType] = useState('New Collection');
+  const [collectionName, setCollectionName] = useState('');
+  const [collectionDescription, setCollectionDescription] = useState('');
+  const [collectionID, setCollectionID] = useState('');
+  const [collectionVersion, setCollectionVersion] = useState('1');
+  const [collectionCitations, setCollectionCitations] = useState('');
   const [files, setFiles] = useState([]);
   useEffect(() => {
     setAnimateSubmitIconClass(styles.animatesubmit);
@@ -50,7 +55,18 @@ function Submit() {
             />
           </div>
         </div>
-        <NewCollectionForm />
+        <NewCollectionForm
+          collectionName={collectionName}
+          setCollectionName={setCollectionName}
+          collectionDescription={collectionDescription}
+          setCollectionDescription={setCollectionDescription}
+          collectionID={collectionID}
+          setCollectionID={setCollectionID}
+          collectionVersion={collectionVersion}
+          setCollectionVersion={setCollectionVersion}
+          collectionCitations={collectionCitations}
+          setCollectionCitations={setCollectionCitations}
+        />
         <div className={styles.uploadcontainer}>
           <label className={styles.sectionlabel}>
             <FontAwesomeIcon
