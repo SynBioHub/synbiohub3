@@ -8,11 +8,17 @@ export default function NewCollectionForm(properties) {
   return (
     <div className={styles.newcollectioncontainer}>
       <label className={styles.sectionlabel}>
-        <FontAwesomeIcon
-          icon={faInfoCircle}
-          size="1x"
-          className={`${styles.submitinfoicon} ${styles.enlargeicononhover}`}
-        />
+        <a
+          href="https://wiki.synbiohub.org/userdocumentation/managingsubmitting/"
+          target="_blank"
+          rel="noreferrer"
+        >
+          <FontAwesomeIcon
+            icon={faInfoCircle}
+            size="1x"
+            className={`${styles.submitinfoicon} ${styles.enlargeicononhover}`}
+          />
+        </a>
         New Collection Information
       </label>
       <div>

@@ -69,11 +69,17 @@ function Submit() {
         />
         <div className={styles.uploadcontainer}>
           <label className={styles.sectionlabel}>
-            <FontAwesomeIcon
-              icon={faInfoCircle}
-              size="1x"
-              className={`${styles.submitinfoicon} ${styles.enlargeicononhover}`}
-            />
+            <a
+              href="https://wiki.synbiohub.org/userdocumentation/managingsubmitting/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <FontAwesomeIcon
+                icon={faInfoCircle}
+                size="1x"
+                className={`${styles.submitinfoicon} ${styles.enlargeicononhover}`}
+              />
+            </a>
             Upload Design File
           </label>
           <label
