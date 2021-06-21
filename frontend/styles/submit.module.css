@@ -238,6 +238,20 @@
    transition: transform .3s;
 }
 
+.errormessage {
+   padding: 0.4rem;
+   background-color: #ffdcd0;
+   color: #D25627;
+   margin: 0.5rem 0;
+   border-radius: 0.4rem;
+   display: flex;
+}
+
+.errormessageicon {
+   margin-right: 0.4rem;
+}
+
+
 @media (max-width: 40rem) {
    .submitpanel {
      width: 90%;

@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import CollectionTypeSelector from '../components/SubmitComponents/CollectionTypeSelector';
+import ErrorLogger from '../components/SubmitComponents/ErrorLogger';
 import FileDropzone from '../components/SubmitComponents/FileDropzone';
 import NewCollectionForm from '../components/SubmitComponents/NewCollectionForm';
 import SelectedFileView from '../components/SubmitComponents/SelectedFileView';
@@ -59,6 +60,7 @@ function Submit() {
             />
           </div>
         </div>
+        <ErrorLogger />
         <NewCollectionForm
           collectionName={collectionName}
           setCollectionName={setCollectionName}
