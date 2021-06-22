@@ -4,15 +4,14 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
 
 import CollectionTypeSelector from '../components/SubmitComponents/CollectionTypeSelector';
 import ErrorLogger from '../components/SubmitComponents/ErrorLogger';
 import FileDropzone from '../components/SubmitComponents/FileDropzone';
 import NewCollectionForm from '../components/SubmitComponents/NewCollectionForm';
 import SelectedFileView from '../components/SubmitComponents/SelectedFileView';
+import SubmitButton from '../components/SubmitComponents/SubmitButton';
 import TopLevel from '../components/TopLevel';
-import { submit } from '../redux/actions';
 import styles from '../styles/submit.module.css';
 
 function Submit() {
@@ -28,7 +27,6 @@ function Submit() {
     setAnimateSubmitIconClass(styles.animatesubmit);
   });
 
-  const dispatch = useDispatch();
   return (
     <div className={styles.container}>
       <div className={styles.submitpanel}>
@@ -97,29 +95,13 @@ function Submit() {
           <FileDropzone setFiles={setFiles} />
           <SelectedFileView files={files} />
         </div>
-        <div
-          className={styles.submitbuttoncontainer}
-          role="button"
-          onClick={() => {
-            dispatch(
-              submit(
-                collectionID,
-                collectionVersion,
-                collectionName,
-                collectionDescription,
-                collectionCitations
-              )
-            );
-          }}
-        >
-          <FontAwesomeIcon
-            icon={faCloudUploadAlt}
-            size="1x"
-            color="#F2E86D"
-            className={styles.submitbuttonicon}
-          />
-          Submit
-        </div>
+        <SubmitButton
+          collectionName={collectionName}
+          collectionDescription={collectionDescription}
+          collectionID={collectionID}
+          collectionVersion={collectionVersion}
+          collectionCitations={collectionCitations}
+        />
       </div>
     </div>
   );
