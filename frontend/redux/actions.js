@@ -30,7 +30,7 @@ export const login = (username, password) => async dispatch => {
     headers,
     body: parameters
   });
-  const message = await response.json();
+  const message = await response.text();
   if (response.status === 200) {
     dispatch({
       type: types.LOGIN,

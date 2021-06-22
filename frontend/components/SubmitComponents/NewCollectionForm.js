@@ -110,12 +110,18 @@ export default function NewCollectionForm(properties) {
 }
 
 const convertToAlphaNumeric = string => {
-  var regexExpr = /^\w*$/;
+  var regexExpr = /^[A-z]\w*$/;
   if (!regexExpr.test(string)) string = formatString(string);
   return string;
 };
 
 const formatString = string => {
+  for (var index = 0; index < string.length; index++) {
+    if (!/\d/.test(string.charAt(index))) {
+      string = string.slice(Math.max(0, index));
+      break;
+    }
+  }
   string = string.replace(/ /g, '_');
   string = string.replace(/\W+/g, '');
   return string;
