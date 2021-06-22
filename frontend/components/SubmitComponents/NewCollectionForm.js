@@ -34,7 +34,7 @@ export default function NewCollectionForm(properties) {
           onChange={event => {
             properties.setCollectionName(event.target.value);
             properties.setCollectionID(
-              convertToAlphaNumeric(event.target.value)
+              convertToAlphanumeric(event.target.value)
             );
           }}
           className={styles.submitinput}
@@ -67,7 +67,11 @@ export default function NewCollectionForm(properties) {
           type="text"
           name="collection ID"
           value={properties.collectionID}
-          onChange={event => properties.setCollectionID(event.target.value)}
+          onChange={event =>
+            properties.setCollectionID(
+              convertToAlphanumeric(event.target.value)
+            )
+          }
           className={`${styles.submitinput} ${styles.idinput}`}
           placeholder="Alphanumeric and underscore characters only"
         />
@@ -109,19 +113,14 @@ export default function NewCollectionForm(properties) {
   );
 }
 
-const convertToAlphaNumeric = string => {
+const convertToAlphanumeric = string => {
   var regexExpr = /^[A-z]\w*$/;
   if (!regexExpr.test(string)) string = formatString(string);
   return string;
 };
 
 const formatString = string => {
-  for (var index = 0; index < string.length; index++) {
-    if (!/\d/.test(string.charAt(index))) {
-      string = string.slice(Math.max(0, index));
-      break;
-    }
-  }
+  if (string.length > 0 && /\d/.test(string.charAt(0))) string = '_' + string;
   string = string.replace(/ /g, '_');
   string = string.replace(/\W+/g, '');
   return string;
