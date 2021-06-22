@@ -228,6 +228,11 @@
    background-color: #00A1E4;
 }
 
+.disabledsubmitbutton {
+   cursor: not-allowed;
+   opacity: 0.5;
+}
+
 .submitbuttoncontainer:hover .submitbuttonicon {
    transform: translateX(0.4rem);
 }

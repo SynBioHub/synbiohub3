@@ -18,10 +18,17 @@ export default function SubmitButton(properties) {
     ) {
       setCanSubmit(false); // input isn't verified
     } else setCanSubmit(true);
-  }, [properties.required]);
+  }, [
+    properties.collectionID,
+    properties.collectionVersion,
+    properties.collectionName,
+    properties.collectionDescription
+  ]);
   return (
     <div
-      className={styles.submitbuttoncontainer}
+      className={`${styles.submitbuttoncontainer} ${
+        !canSubmit && styles.disabledsubmitbutton
+      }`}
       role="button"
       onClick={() => {
         if (!canSubmit)
