@@ -31,7 +31,12 @@ export default function NewCollectionForm(properties) {
           type="text"
           name="collection name"
           value={properties.collectionName}
-          onChange={event => properties.setCollectionName(event.target.value)}
+          onChange={event => {
+            properties.setCollectionName(event.target.value);
+            properties.setCollectionID(
+              convertToAlphaNumeric(event.target.value)
+            );
+          }}
           className={styles.submitinput}
           placeholder="A short title for your collection"
         />
@@ -103,3 +108,15 @@ export default function NewCollectionForm(properties) {
     </div>
   );
 }
+
+const convertToAlphaNumeric = string => {
+  var regexExpr = /^\w*$/;
+  if (!regexExpr.test(string)) string = formatString(string);
+  return string;
+};
+
+const formatString = string => {
+  string = string.replace(/ /g, '_');
+  string = string.replace(/\W+/g, '');
+  return string;
+};
