@@ -101,6 +101,7 @@ function Submit() {
           collectionID={collectionID}
           collectionVersion={collectionVersion}
           collectionCitations={collectionCitations}
+          files={files}
         />
       </div>
     </div>

@@ -111,7 +111,8 @@ export const setLimit = newLimit => dispatch => {
 // SUBMIT ACTIONS
 
 export const submit =
-  (id, version, name, description, citations) => async (dispatch, getState) => {
+  (id, version, name, description, citations, files) =>
+  async (dispatch, getState) => {
     dispatch({
       type: types.SUBMITRESET,
       payload: true // sets submitting state to true
@@ -130,6 +131,7 @@ export const submit =
     form.append('description', description);
     form.append('citations', citations);
     form.append('overwrite_merge', '0');
+    if (files.length > 0) form.append('file', files[0]);
 
     const response = await fetch(url, {
       method: 'POST',

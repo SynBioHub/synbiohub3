@@ -42,7 +42,8 @@ export default function SubmitButton(properties) {
               properties.collectionVersion,
               properties.collectionName,
               properties.collectionDescription,
-              properties.collectionCitations
+              properties.collectionCitations,
+              properties.files
             )
           );
       }}
