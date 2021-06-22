@@ -146,7 +146,8 @@ export const submit =
         }
       });
     } else {
-      const messages = await response.json();
+      var messages = await response.text();
+      messages = messages.charAt(0) !== '[' ? [messages] : JSON.parse(messages);
       dispatch({
         type: types.WASSUBMITSUCCESS,
         payload: {
