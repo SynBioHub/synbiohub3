@@ -1,10 +1,23 @@
-import styles from '../../styles/submit.module.css';
-import MajorLabel from './MajorLabel';
-import SubmitLabel from './SubmitLabel';
+import { useState } from 'react';
 
-export default function NewCollectionForm(properties) {
+import styles from '../../styles/submit.module.css';
+import ErrorLogger from './ErrorLogger';
+import MajorLabel from './MajorLabel';
+import SubmitButton from './SubmitButton';
+import SubmitLabel from './SubmitLabel';
+import UploadFile from './UploadFile';
+
+export default function NewCollectionForm() {
+  const [collectionName, setCollectionName] = useState('');
+  const [collectionDescription, setCollectionDescription] = useState('');
+  const [collectionID, setCollectionID] = useState('');
+  const [collectionVersion, setCollectionVersion] = useState('1');
+  const [collectionCitations, setCollectionCitations] = useState('');
+  const [files, setFiles] = useState([]);
+
   return (
     <div className={styles.newcollectioncontainer}>
+      <ErrorLogger />
       <MajorLabel
         text="New Collection Information"
         link="https://wiki.synbiohub.org/userdocumentation/managingsubmitting/"
@@ -13,18 +26,16 @@ export default function NewCollectionForm(properties) {
         <SubmitLabel
           text="Name"
           for="collection name"
-          value={properties.collectionName}
+          value={collectionName}
           required={true}
         />
         <input
           type="text"
           name="collection name"
-          value={properties.collectionName}
+          value={collectionName}
           onChange={event => {
-            properties.setCollectionName(event.target.value);
-            properties.setCollectionID(
-              convertToAlphanumeric(event.target.value)
-            );
+            setCollectionName(event.target.value);
+            setCollectionID(convertToAlphanumeric(event.target.value));
           }}
           className={styles.submitinput}
           placeholder="A short title for your collection"
@@ -34,15 +45,13 @@ export default function NewCollectionForm(properties) {
         <SubmitLabel
           text="Description"
           for="collection description"
-          value={properties.collectionDescription}
+          value={collectionDescription}
           required={true}
         />
         <textarea
           name="collection description"
-          value={properties.collectionDescription}
-          onChange={event =>
-            properties.setCollectionDescription(event.target.value)
-          }
+          value={collectionDescription}
+          onChange={event => setCollectionDescription(event.target.value)}
           className={styles.submitinput}
           placeholder="The more you say, the easier it will be to find your design"
         />
@@ -51,17 +60,15 @@ export default function NewCollectionForm(properties) {
         <SubmitLabel
           text="ID"
           for="collection ID"
-          value={properties.collectionID}
+          value={collectionID}
           required={true}
         />
         <input
           type="text"
           name="collection ID"
-          value={properties.collectionID}
+          value={collectionID}
           onChange={event =>
-            properties.setCollectionID(
-              convertToAlphanumeric(event.target.value)
-            )
+            setCollectionID(convertToAlphanumeric(event.target.value))
           }
           className={`${styles.submitinput} ${styles.idinput}`}
           placeholder="Alphanumeric and underscore characters only"
@@ -71,16 +78,14 @@ export default function NewCollectionForm(properties) {
         <SubmitLabel
           text="Version"
           for="collection version"
-          value={properties.collectionVersion}
+          value={collectionVersion}
           required={true}
         />
         <input
           type="text"
           name="collection version"
-          value={properties.collectionVersion}
-          onChange={event =>
-            properties.setCollectionVersion(event.target.value)
-          }
+          value={collectionVersion}
+          onChange={event => setCollectionVersion(event.target.value)}
           className={`${styles.submitinput} ${styles.versioninput}`}
           placeholder="Version"
         />
@@ -94,12 +99,21 @@ export default function NewCollectionForm(properties) {
         <input
           type="text"
           name="collection citations"
-          value={properties.collectionCitations}
-          onChange={event => properties.setCollectionCitations(event.value)}
+          value={collectionCitations}
+          onChange={event => setCollectionCitations(event.value)}
           className={styles.submitinput}
           placeholder="Pubmed IDs separated by commas, we'll do the rest!"
         />
       </div>
+      <UploadFile files={files} setFiles={setFiles} fileRequired={false} />
+      <SubmitButton
+        collectionName={collectionName}
+        collectionDescription={collectionDescription}
+        collectionID={collectionID}
+        collectionVersion={collectionVersion}
+        collectionCitations={collectionCitations}
+        files={files}
+      />
     </div>
   );
 }
