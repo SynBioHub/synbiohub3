@@ -191,9 +191,9 @@
 .selectedfilecontainer {
    display: flex;
    justify-content: space-between;
-   padding: 0.6rem;
+   padding: 0.7rem;
    border-radius: 0.4rem;
-   background-color: #ECF0F1;
+   background-color: #F2E86D;
 }
 
 .noselection {
@@ -211,7 +211,7 @@
 }
 
 .enlargeicononhover:hover {
-   transform: scale(1.1);
+   transform: scale(1.15);
 }
 
 .submitbuttoncontainer {
@@ -254,6 +254,12 @@
 
 .errormessageicon {
    margin-right: 0.4rem;
+}
+
+.loadercontainer {
+   display: flex;
+   justify-content: center;
+   margin-top: 1rem;
 }
 
 

@@ -83,6 +83,7 @@ const searchReducer = (state = initialSearchState, { type, payload }) => {
 const initialSubmitState = {
   submitting: false,
   errorMessages: [],
+  filesUploading: [],
   submitSuccess: false
 };
 
@@ -104,17 +105,13 @@ const submitReducer = (state = initialSubmitState, { type, payload }) => {
         ...state,
         submitting: payload,
         errorMessages: [],
+        filesUploading: [],
         submitSuccess: false
       };
     case types.SUBMITTING:
       return {
         ...state,
         submitting: payload
-      };
-    case types.SUBMITERRORMESSAGES:
-      return {
-        ...state,
-        errorMessages: payload
       };
     case types.SUBMITSUCCESS:
       return {

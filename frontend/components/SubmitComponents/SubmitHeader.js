@@ -1,5 +1,3 @@
-import { faCloudUploadAlt } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
 
 import styles from '../../styles/submit.module.css';
@@ -13,12 +11,9 @@ export default function SubmitHeader(properties) {
 
   return (
     <div className={styles.introcontainer}>
-      <FontAwesomeIcon
-        icon={faCloudUploadAlt}
-        size="3x"
-        color="#00A1E4"
-        className={`${styles.submiticon} ${animateSubmitIconClass}`}
-      />
+      <div className={`${styles.submiticon} ${animateSubmitIconClass}`}>
+        {properties.icon}
+      </div>
       <h2 className={styles.introtitle}>{properties.title}</h2>
       <p className={styles.introexplanation}>{properties.description}</p>
     </div>

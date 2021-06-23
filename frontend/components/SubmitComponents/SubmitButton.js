@@ -22,7 +22,7 @@ export default function SubmitButton(properties) {
       onClick={() => {
         if (!canSubmit)
           alert(
-            'You must fill out all required input fields before you can submit!'
+            'You must fill out all required input fields before you can submit.'
           );
         else
           dispatch(

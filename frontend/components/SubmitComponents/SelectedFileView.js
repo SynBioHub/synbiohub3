@@ -22,13 +22,13 @@ export function SelectedFile(properties) {
   return (
     <div className={styles.selectedfilecontainer}>
       <div>
-        <FontAwesomeIcon icon={faFile} size="1x" color="#00A1E4" />
+        <FontAwesomeIcon icon={faFile} size="1x" color="#A99C0F" />
         <span className={styles.filename}>{properties.file.name}</span>
       </div>
       <FontAwesomeIcon
         icon={faTrashAlt}
         size="1x"
-        color="#D25627"
+        color="#00A1E4"
         className={styles.enlargeicononhover}
       />
     </div>
