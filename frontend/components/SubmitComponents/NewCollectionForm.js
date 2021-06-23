@@ -2,10 +2,10 @@ import { useState } from 'react';
 
 import styles from '../../styles/submit.module.css';
 import ErrorLogger from './ErrorLogger';
+import InputField from './InputField';
 import MajorLabel from './MajorLabel';
 import SubmitButton from './SubmitButton';
-import SubmitLabel from './SubmitLabel';
-import UploadFile from './UploadFile';
+import UploadFileSection from './UploadFileSection';
 
 export default function NewCollectionForm() {
   const [collectionName, setCollectionName] = useState('');
@@ -15,6 +15,8 @@ export default function NewCollectionForm() {
   const [collectionCitations, setCollectionCitations] = useState('');
   const [files, setFiles] = useState([]);
 
+  const [needsVerification, setNeedsVerification] = useState('');
+
   return (
     <div className={styles.newcollectioncontainer}>
       <ErrorLogger />
@@ -22,90 +24,64 @@ export default function NewCollectionForm() {
         text="New Collection Information"
         link="https://wiki.synbiohub.org/userdocumentation/managingsubmitting/"
       />
-      <div>
-        <SubmitLabel
-          text="Name"
-          for="collection name"
-          value={collectionName}
-          required={true}
-        />
-        <input
-          type="text"
-          name="collection name"
-          value={collectionName}
-          onChange={event => {
-            setCollectionName(event.target.value);
-            setCollectionID(convertToAlphanumeric(event.target.value));
-          }}
-          className={styles.submitinput}
-          placeholder="A short title for your collection"
-        />
-      </div>
-      <div>
-        <SubmitLabel
-          text="Description"
-          for="collection description"
-          value={collectionDescription}
-          required={true}
-        />
-        <textarea
-          name="collection description"
-          value={collectionDescription}
-          onChange={event => setCollectionDescription(event.target.value)}
-          className={styles.submitinput}
-          placeholder="The more you say, the easier it will be to find your design"
-        />
-      </div>
-      <div className={styles.inlineinputcontainer}>
-        <SubmitLabel
-          text="ID"
-          for="collection ID"
-          value={collectionID}
-          required={true}
-        />
-        <input
-          type="text"
-          name="collection ID"
-          value={collectionID}
-          onChange={event =>
-            setCollectionID(convertToAlphanumeric(event.target.value))
-          }
-          className={`${styles.submitinput} ${styles.idinput}`}
-          placeholder="Alphanumeric and underscore characters only"
-        />
-      </div>
-      <div className={styles.inlineinputcontainer} htmlFor="collection version">
-        <SubmitLabel
-          text="Version"
-          for="collection version"
-          value={collectionVersion}
-          required={true}
-        />
-        <input
-          type="text"
-          name="collection version"
-          value={collectionVersion}
-          onChange={event => setCollectionVersion(event.target.value)}
-          className={`${styles.submitinput} ${styles.versioninput}`}
-          placeholder="Version"
-        />
-      </div>
-      <div>
-        <SubmitLabel
-          text="Citations (Optional)"
-          for="collection citations"
-          required={false}
-        />
-        <input
-          type="text"
-          name="collection citations"
-          value={collectionCitations}
-          onChange={event => setCollectionCitations(event.value)}
-          className={styles.submitinput}
-          placeholder="Pubmed IDs separated by commas, we'll do the rest!"
-        />
-      </div>
-      <UploadFile files={files} setFiles={setFiles} fileRequired={false} />
+      <InputField
+        labelText="Name"
+        inputName="collection name"
+        placeholder="A short title for your collection"
+        value={collectionName}
+        needsVerification={needsVerification}
+        setNeedsVerification={setNeedsVerification}
+        onChange={event => {
+          setCollectionName(event.target.value);
+          setCollectionID(convertToAlphanumeric(event.target.value));
+        }}
+      />
+      <InputField
+        labelText="Description"
+        inputName="collection description"
+        placeholder="The more you say, the easier it will be to find your design"
+        value={collectionDescription}
+        needsVerification={needsVerification}
+        setNeedsVerification={setNeedsVerification}
+        onChange={event => setCollectionDescription(event.target.value)}
+        customInput="textarea"
+      />
+      <InputField
+        labelText="ID"
+        inputName="collection ID"
+        placeholder="Alphanumeric and underscore characters only"
+        value={collectionID}
+        needsVerification={needsVerification}
+        setNeedsVerification={setNeedsVerification}
+        onChange={event =>
+          setCollectionID(convertToAlphanumeric(event.target.value))
+        }
+        containerStyling={styles.inlineinputcontainer}
+        customStyling={styles.idinput}
+      />
+      <InputField
+        labelText="Version"
+        inputName="collection version"
+        placeholder="Version"
+        value={collectionVersion}
+        needsVerification={needsVerification}
+        setNeedsVerification={setNeedsVerification}
+        onChange={event => setCollectionVersion(event.target.value)}
+        containerStyling={styles.inlineinputcontainer}
+        customStyling={styles.versioninput}
+      />
+      <InputField
+        labelText="Citations (Optional)"
+        inputName="collection citations"
+        placeholder="Pubmed IDs separated by commas, we'll do the rest!"
+        value={collectionCitations}
+        onChange={event => setCollectionCitations(event.value)}
+      />
+      <UploadFileSection
+        files={files}
+        setFiles={setFiles}
+        fileRequired={false}
+      />
       <SubmitButton
         collectionName={collectionName}
         collectionDescription={collectionDescription}
@@ -113,6 +89,7 @@ export default function NewCollectionForm() {
         collectionVersion={collectionVersion}
         collectionCitations={collectionCitations}
         files={files}
+        needsVerification={needsVerification}
       />
     </div>
   );

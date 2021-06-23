@@ -1,17 +1,9 @@
 import { faCheckCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useEffect, useState } from 'react';
 
 import styles from '../../styles/submit.module.css';
 
 export default function SubmitLabel(properties) {
-  const [verified, setVerified] = useState(false);
-
-  useEffect(() => {
-    if (properties.verifier) properties.verifier(properties.value);
-    else setVerified(properties.value ? true : false);
-  });
-
   if (!properties.required)
     return (
       <label
@@ -24,7 +16,7 @@ export default function SubmitLabel(properties) {
   return (
     <label
       className={`${styles.submitlabel} ${
-        verified && styles.submitlabelverified
+        properties.verified && styles.submitlabelverified
       }`}
       htmlFor={properties.for}
     >
@@ -33,7 +25,7 @@ export default function SubmitLabel(properties) {
         icon={faCheckCircle}
         size="1x"
         className={`${styles.inputstatus} ${
-          verified && styles.inputstatusshow
+          properties.verified && styles.inputstatusshow
         }`}
         color="#549F93"
       />

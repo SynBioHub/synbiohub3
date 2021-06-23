@@ -10,20 +10,9 @@ export default function SubmitButton(properties) {
   const dispatch = useDispatch();
   const [canSubmit, setCanSubmit] = useState(false);
   useEffect(() => {
-    if (
-      !properties.collectionID ||
-      !properties.collectionVersion ||
-      !properties.collectionName ||
-      !properties.collectionDescription
-    ) {
-      setCanSubmit(false); // input isn't verified
-    } else setCanSubmit(true);
-  }, [
-    properties.collectionID,
-    properties.collectionVersion,
-    properties.collectionName,
-    properties.collectionDescription
-  ]);
+    setCanSubmit(properties.needsVerification ? false : true);
+  }, [properties.needsVerification]);
+
   return (
     <div
       className={`${styles.submitbuttoncontainer} ${
