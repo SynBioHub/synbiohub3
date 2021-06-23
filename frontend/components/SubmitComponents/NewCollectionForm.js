@@ -1,31 +1,20 @@
-import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
 import styles from '../../styles/submit.module.css';
-import RequiredLabel from './RequiredLabel';
+import MajorLabel from './MajorLabel';
+import SubmitLabel from './SubmitLabel';
 
 export default function NewCollectionForm(properties) {
   return (
     <div className={styles.newcollectioncontainer}>
-      <label className={styles.sectionlabel}>
-        <a
-          href="https://wiki.synbiohub.org/userdocumentation/managingsubmitting/"
-          target="_blank"
-          rel="noreferrer"
-        >
-          <FontAwesomeIcon
-            icon={faInfoCircle}
-            size="1x"
-            className={`${styles.submitinfoicon} ${styles.enlargeicononhover}`}
-          />
-        </a>
-        New Collection Information
-      </label>
+      <MajorLabel
+        text="New Collection Information"
+        link="https://wiki.synbiohub.org/userdocumentation/managingsubmitting/"
+      />
       <div>
-        <RequiredLabel
+        <SubmitLabel
           text="Name"
           for="collection name"
           value={properties.collectionName}
+          required={true}
         />
         <input
           type="text"
@@ -42,10 +31,11 @@ export default function NewCollectionForm(properties) {
         />
       </div>
       <div>
-        <RequiredLabel
+        <SubmitLabel
           text="Description"
           for="collection description"
           value={properties.collectionDescription}
+          required={true}
         />
         <textarea
           name="collection description"
@@ -58,10 +48,11 @@ export default function NewCollectionForm(properties) {
         />
       </div>
       <div className={styles.inlineinputcontainer}>
-        <RequiredLabel
+        <SubmitLabel
           text="ID"
           for="collection ID"
           value={properties.collectionID}
+          required={true}
         />
         <input
           type="text"
@@ -77,10 +68,11 @@ export default function NewCollectionForm(properties) {
         />
       </div>
       <div className={styles.inlineinputcontainer} htmlFor="collection version">
-        <RequiredLabel
+        <SubmitLabel
           text="Version"
           for="collection version"
           value={properties.collectionVersion}
+          required={true}
         />
         <input
           type="text"
@@ -94,12 +86,11 @@ export default function NewCollectionForm(properties) {
         />
       </div>
       <div>
-        <label
-          className={`${styles.submitlabel} ${styles.submitlabeloptional}`}
-          htmlFor="collection citations"
-        >
-          Citations (Optional)
-        </label>
+        <SubmitLabel
+          text="Citations (Optional)"
+          for="collection citations"
+          required={false}
+        />
         <input
           type="text"
           name="collection citations"
