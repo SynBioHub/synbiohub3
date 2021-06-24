@@ -12,18 +12,14 @@ import styles from '../../styles/submit.module.css';
 
 export default function FilesUploading() {
   const filesUploading = useSelector(state => state.submit.filesUploading);
-  const [filesUploadingDisplay, setFilesUploadingDisplay] = useState(null);
-  useEffect(() => {
-    setFilesUploadingDisplay(
-      filesUploading.map(file => (
-        <FileUploadDisplay
-          name={file.name}
-          key={file.name}
-          status={file.status}
-        />
-      ))
-    );
-  }, [filesUploading]);
+  const filesUploadingDisplay = filesUploading.map(file => (
+    <FileUploadDisplay
+      name={file.name}
+      key={file.name}
+      status={file.status}
+      errors={file.errors}
+    />
+  ));
   return (
     <div className={styles.selectedfilescontainer}>{filesUploadingDisplay}</div>
   );
@@ -31,15 +27,22 @@ export default function FilesUploading() {
 
 function FileUploadDisplay(properties) {
   const [icon, setIcon] = useState(null);
+  const [showErrors, setShowErrors] = useState(false);
   useEffect(() => {
     switch (properties.status) {
       case 'failed': {
         setIcon(
-          <FontAwesomeIcon
-            icon={faExclamationTriangle}
-            size="1x"
-            color="#D25627"
-          />
+          <div
+            className={styles.enlargeicononhover}
+            role="button"
+            onClick={() => setShowErrors(!showErrors)}
+          >
+            <FontAwesomeIcon
+              icon={faExclamationTriangle}
+              size="1x"
+              color="#D25627"
+            />
+          </div>
         );
         break;
       }
@@ -57,14 +60,27 @@ function FileUploadDisplay(properties) {
         setIcon(null);
       }
     }
-  }, [properties.status]);
+  }, [properties.status, showErrors]);
   return (
-    <div className={styles.selectedfilecontainer}>
-      <div>
-        <FontAwesomeIcon icon={faFile} size="1x" color="#A99C0F" />
-        <span className={styles.filename}>{properties.name}</span>
+    <div>
+      <div className={styles.selectedfilecontainer}>
+        <div>
+          <FontAwesomeIcon icon={faFile} size="1x" color="#A99C0F" />
+          <span className={styles.filename}>{properties.name}</span>
+        </div>
+        {icon}
       </div>
-      {icon}
+      {showErrors && (
+        <div className={styles.errormessage}>
+          <FontAwesomeIcon
+            icon={faExclamationTriangle}
+            size="1x"
+            color="#D25627"
+            className={styles.errormessageicon}
+          />
+          {properties.errors}
+        </div>
+      )}
     </div>
   );
 }

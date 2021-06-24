@@ -1,20 +1,24 @@
 import {
   faArrowCircleLeft,
   faBookOpen,
-  faCloudUploadAlt
+  faCloudUploadAlt,
+  faExclamationTriangle
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
 import Loader from 'react-loader-spinner';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
+import { resetSubmit } from '../../redux/actions';
 import styles from '../../styles/submit.module.css';
 import FilesUploading from './FilesUploading';
 import SubmitHeader from './SubmitHeader';
 
 export default function SubmissionStatusPanel() {
+  const fileFailed = useSelector(state => state.submit.fileFailed);
   const submitting = useSelector(state => state.submit.submitting);
   const [header, setHeader] = useState(null);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (submitting)
@@ -25,7 +29,21 @@ export default function SubmissionStatusPanel() {
           description="Please wait while your submission uploads to SynBioHub. You can view other pages while waiting; just don't close or refresh the app."
         />
       );
-    else {
+    else if (fileFailed) {
+      setHeader(
+        <SubmitHeader
+          icon={
+            <FontAwesomeIcon
+              icon={faExclamationTriangle}
+              size="3x"
+              color="#D25627"
+            />
+          }
+          title="Some files failed to upload"
+          description="Click on a file's warning icon to see why it failed to be uploaded."
+        />
+      );
+    } else {
       setHeader(
         <SubmitHeader
           icon={
@@ -48,7 +66,11 @@ export default function SubmissionStatusPanel() {
         {header}
         {!submitting && (
           <div className={styles.aftersubmitbuttonscontainer}>
-            <div className={styles.aftersubmitbutton}>
+            <div
+              className={styles.aftersubmitbutton}
+              role="button"
+              onClick={() => dispatch(resetSubmit())}
+            >
               <FontAwesomeIcon
                 className={`${styles.aftersubmitbuttonicon} ${styles.aftersubmitbuttoniconleft}`}
                 icon={faArrowCircleLeft}
@@ -57,12 +79,12 @@ export default function SubmissionStatusPanel() {
               Back to Submit
             </div>
             <div className={styles.aftersubmitbutton}>
+              View Submission
               <FontAwesomeIcon
                 className={`${styles.aftersubmitbuttonicon} ${styles.aftersubmitbuttoniconright}`}
                 icon={faBookOpen}
                 size="1x"
               />
-              View Submission
             </div>
           </div>
         )}

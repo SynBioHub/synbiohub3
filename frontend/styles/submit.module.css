@@ -291,9 +291,16 @@
    transform: translateX(-0.5rem);
 }
 
+.aftersubmitbuttoniconleft {
+   margin-right: 0.5rem;
+}
+
+.aftersubmitbuttoniconright {
+   margin-left: 0.5rem;
+}
+
 .aftersubmitbuttonicon {
    transition: transform .2s;
-   margin-right: 0.8rem;
    color: #00A1E4;
 }
 

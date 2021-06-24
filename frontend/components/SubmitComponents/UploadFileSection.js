@@ -39,7 +39,7 @@ export default function UploadFile(properties) {
   return (
     <div className={styles.uploadcontainer}>
       <MajorLabel
-        text="Upload Design File"
+        text="Upload Design Files"
         link="https://wiki.synbiohub.org/userdocumentation/managingsubmitting/"
       />
       {fileUploadLabel}

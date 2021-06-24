@@ -153,7 +153,7 @@ export const submit =
     }
 
     if (files) {
-      uploadFiles(
+      await uploadFiles(
         dispatch,
         files,
         token,
@@ -190,11 +190,11 @@ async function uploadFiles(
 
   // upload all files
   for (var fileIndex = 0; fileIndex < filesUploading.length; fileIndex++) {
-    filesUploading[fileIndex].status = 'uploading';
-    const file = filesUploading[fileIndex].file;
+    const newFilesUploading = [...filesUploading]; //to trigger state update
+    newFilesUploading[fileIndex].status = 'uploading';
     dispatch({
       type: types.FILESUPLOADING,
-      payload: filesUploading
+      payload: newFilesUploading
     });
     const response = await buildAndSendSubmitRequest(
       token,
@@ -204,23 +204,24 @@ async function uploadFiles(
       description,
       citations,
       2,
-      file
+      newFilesUploading[fileIndex].file
     );
 
     if (response.status === 200) {
-      filesUploading[fileIndex].status = 'successful';
+      newFilesUploading[fileIndex].status = 'successful';
     } else {
       var fileErrorMessages = await response.text();
       fileErrorMessages =
         fileErrorMessages.charAt(0) !== '['
           ? [fileErrorMessages]
           : JSON.parse(fileErrorMessages);
-      filesUploading[fileIndex].status = 'failed';
-      filesUploading[fileIndex].errors = fileErrorMessages;
+      newFilesUploading[fileIndex].status = 'failed';
+      newFilesUploading[fileIndex].errors = fileErrorMessages;
+      dispatch({ type: types.FILEFAILED, payload: true });
     }
     dispatch({
       type: types.FILESUPLOADING,
-      payload: filesUploading
+      payload: [...newFilesUploading]
     });
   }
 }
@@ -256,6 +257,11 @@ async function buildAndSendSubmitRequest(
     body: form
   });
 }
+
+export const resetSubmit = () => dispatch => {
+  dispatch({ type: types.SHOWSUBMITPROGRESS, payload: false });
+  dispatch({ type: types.SUBMITRESET, payload: false });
+};
 
 // BASKET ACTIONS
 
