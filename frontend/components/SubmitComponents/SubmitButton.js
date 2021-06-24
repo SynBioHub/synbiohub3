@@ -27,6 +27,7 @@ export default function SubmitButton(properties) {
         else
           dispatch(
             submit(
+              properties.newCollection,
               properties.collectionID,
               properties.collectionVersion,
               properties.collectionName,

@@ -111,54 +111,151 @@ export const setLimit = newLimit => dispatch => {
 // SUBMIT ACTIONS
 
 export const submit =
-  (id, version, name, description, citations, files) =>
+  (newCollection, id, version, name, description, citations, files) =>
   async (dispatch, getState) => {
     dispatch({
       type: types.SUBMITRESET,
       payload: true // sets submitting state to true
     });
 
-    const url = `${process.env.backendUrl}/submit`;
-    var headers = {
-      Accept: 'text/plain; charset=UTF-8',
-      'X-authorization': getState().user.token
-    };
-
-    const form = new FormData();
-    form.append('id', id);
-    form.append('version', version);
-    form.append('name', name);
-    form.append('description', description);
-    form.append('citations', citations);
-    form.append('overwrite_merge', '0');
-    if (files.length > 0) form.append('file', files[0]);
-
-    const response = await fetch(url, {
-      method: 'POST',
-      headers,
-      body: form
+    dispatch({
+      type: types.SHOWSUBMITPROGRESS,
+      payload: true
     });
 
-    if (response.status === 200) {
-      dispatch({
-        type: types.WASSUBMITSUCCESS,
-        payload: {
-          submitSuccess: true,
-          errorMessages: []
-        }
-      });
-    } else {
-      var messages = await response.text();
-      messages = messages.charAt(0) !== '[' ? [messages] : JSON.parse(messages);
-      dispatch({
-        type: types.WASSUBMITSUCCESS,
-        payload: {
-          submitSuccess: false,
-          errorMessages: messages
-        }
-      });
+    const token = getState().user.token;
+
+    if (newCollection) {
+      // create new collection
+      const response = await buildAndSendSubmitRequest(
+        token,
+        id,
+        version,
+        name,
+        description,
+        citations,
+        0
+      );
+      if (response.status !== 200) {
+        var messages = await response.text();
+        messages =
+          messages.charAt(0) !== '[' ? [messages] : JSON.parse(messages);
+        dispatch({
+          type: types.ERRORMESSAGES,
+          payload: messages
+        });
+        dispatch({
+          type: types.SHOWSUBMITPROGRESS,
+          payload: false
+        });
+        return;
+      }
     }
+
+    if (files) {
+      uploadFiles(
+        dispatch,
+        files,
+        token,
+        id,
+        version,
+        name,
+        description,
+        citations
+      );
+    }
+    dispatch({
+      type: types.SUBMITTING,
+      payload: false
+    });
   };
+
+async function uploadFiles(
+  dispatch,
+  files,
+  token,
+  id,
+  version,
+  name,
+  description,
+  citations
+) {
+  const filesUploading = files.map(file => {
+    return { file: file, name: file.name, status: 'pending', errors: [] };
+  });
+  dispatch({
+    type: types.FILESUPLOADING,
+    payload: filesUploading
+  });
+
+  // upload all files
+  for (var fileIndex = 0; fileIndex < filesUploading.length; fileIndex++) {
+    filesUploading[fileIndex].status = 'uploading';
+    const file = filesUploading[fileIndex].file;
+    dispatch({
+      type: types.FILESUPLOADING,
+      payload: filesUploading
+    });
+    const response = await buildAndSendSubmitRequest(
+      token,
+      id,
+      version,
+      name,
+      description,
+      citations,
+      2,
+      file
+    );
+
+    if (response.status === 200) {
+      filesUploading[fileIndex].status = 'successful';
+    } else {
+      var fileErrorMessages = await response.text();
+      fileErrorMessages =
+        fileErrorMessages.charAt(0) !== '['
+          ? [fileErrorMessages]
+          : JSON.parse(fileErrorMessages);
+      filesUploading[fileIndex].status = 'failed';
+      filesUploading[fileIndex].errors = fileErrorMessages;
+    }
+    dispatch({
+      type: types.FILESUPLOADING,
+      payload: filesUploading
+    });
+  }
+}
+
+async function buildAndSendSubmitRequest(
+  token,
+  id,
+  version,
+  name,
+  description,
+  citations,
+  overwrite_merge,
+  file
+) {
+  const url = `${process.env.backendUrl}/submit`;
+  var headers = {
+    Accept: 'text/plain; charset=UTF-8',
+    'X-authorization': token
+  };
+
+  const form = new FormData();
+  form.append('id', id);
+  form.append('version', version);
+  form.append('name', name);
+  form.append('description', description);
+  form.append('citations', citations);
+  form.append('overwrite_merge', `${overwrite_merge}`);
+  if (file) form.append('file', file);
+
+  return await fetch(url, {
+    method: 'POST',
+    headers,
+    body: form
+  });
+}
 
 // BASKET ACTIONS
 

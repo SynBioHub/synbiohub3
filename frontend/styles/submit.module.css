@@ -191,9 +191,11 @@
 .selectedfilecontainer {
    display: flex;
    justify-content: space-between;
+   align-items: center;
    padding: 0.7rem;
    border-radius: 0.4rem;
    background-color: #F2E86D;
+   margin: 0.3rem 0;
 }
 
 .noselection {
@@ -260,6 +262,39 @@
    display: flex;
    justify-content: center;
    margin-top: 1rem;
+}
+
+.aftersubmitbuttonscontainer {
+   margin-top: 1rem;
+   display: flex;
+   justify-content: center;
+}
+
+.aftersubmitbutton {
+   padding: 0.7rem;
+   margin: 0 0.5rem;
+   min-width: 13rem;
+   border-radius: 0.4rem;
+   text-align: center;
+   cursor: pointer;
+}
+
+.aftersubmitbutton:hover {
+   background-color: #ECF0F1;
+}
+
+.aftersubmitbutton:hover .aftersubmitbuttoniconright {
+   transform: translateX(0.5rem);
+}
+
+.aftersubmitbutton:hover .aftersubmitbuttoniconleft {
+   transform: translateX(-0.5rem);
+}
+
+.aftersubmitbuttonicon {
+   transition: transform .2s;
+   margin-right: 0.8rem;
+   color: #00A1E4;
 }
 
 

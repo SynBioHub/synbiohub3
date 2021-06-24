@@ -82,9 +82,9 @@ const searchReducer = (state = initialSearchState, { type, payload }) => {
 // SUBMIT REDUCER
 const initialSubmitState = {
   submitting: false,
+  showSubmitProgress: false,
   errorMessages: [],
-  filesUploading: [],
-  submitSuccess: false
+  filesUploading: []
 };
 
 /**
@@ -93,30 +93,32 @@ const initialSubmitState = {
  */
 const submitReducer = (state = initialSubmitState, { type, payload }) => {
   switch (type) {
-    case types.WASSUBMITSUCCESS:
-      return {
-        ...state,
-        submitting: false,
-        submitSuccess: payload.submitSuccess,
-        errorMessages: payload.errorMessages
-      };
     case types.SUBMITRESET:
       return {
         ...state,
         submitting: payload,
         errorMessages: [],
-        filesUploading: [],
-        submitSuccess: false
+        filesUploading: []
       };
     case types.SUBMITTING:
       return {
         ...state,
         submitting: payload
       };
-    case types.SUBMITSUCCESS:
+    case types.SHOWSUBMITPROGRESS:
       return {
         ...state,
-        submitSuccess: payload
+        showSubmitProgress: payload
+      };
+    case types.ERRORMESSAGES:
+      return {
+        ...state,
+        errorMessages: payload
+      };
+    case types.FILESUPLOADING:
+      return {
+        ...state,
+        filesUploading: payload
       };
     default:
       return state;

@@ -15,9 +15,11 @@ const NEW_COLLECTION = 'New Collection';
 function Submit() {
   const [collectionType, setCollectionType] = useState(NEW_COLLECTION);
 
-  const submitting = useSelector(state => state.submit.submitting);
+  const showSubmitProgress = useSelector(
+    state => state.submit.showSubmitProgress
+  );
 
-  if (submitting) {
+  if (showSubmitProgress) {
     return <SubmissionStatusPanel />;
   }
   return (

@@ -29,10 +29,7 @@ export default function FileDropzone(properties) {
     properties.setFiles(acceptedFiles);
   }, []);
 
-  const { getRootProps, getInputProps, isDragAccept } = useDropzone({
-    maxFiles: 1,
-    onDrop
-  });
+  const { getRootProps, getInputProps, isDragAccept } = useDropzone({ onDrop });
 
   const style = useMemo(
     () => ({

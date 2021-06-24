@@ -83,6 +83,7 @@ export default function NewCollectionForm() {
         fileRequired={false}
       />
       <SubmitButton
+        newCollection={true}
         collectionName={collectionName}
         collectionDescription={collectionDescription}
         collectionID={collectionID}
