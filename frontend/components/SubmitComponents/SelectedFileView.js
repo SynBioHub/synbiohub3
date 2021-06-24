@@ -15,7 +15,13 @@ export default function SelectedFileView(properties) {
       );
     } else setFileDisplay(null);
   }, [properties.files]);
-  return <div className={styles.selectedfilescontainer}>{fileDisplay}</div>;
+  return (
+    <div
+      className={`${styles.selectedfilescontainer} ${styles.concatenatefiles}`}
+    >
+      {fileDisplay}
+    </div>
+  );
 }
 
 export function SelectedFile(properties) {

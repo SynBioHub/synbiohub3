@@ -304,6 +304,10 @@
    color: #00A1E4;
 }
 
+.concatenatefiles {
+   max-height: 15rem;
+   overflow: scroll;
+}
 
 @media (max-width: 40rem) {
    .submitpanel {
