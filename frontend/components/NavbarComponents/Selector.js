@@ -15,13 +15,17 @@ export default function Selector(properties) {
   return (
     <Link href={properties.href}>
       <div className={navoption}>
-        <FontAwesomeIcon
-          className={navoptionicon}
-          icon={properties.icon}
-          alt={properties.name}
-          size="2x"
-          color="#F2E86D"
-        />
+        {!properties.customIcon ? (
+          <FontAwesomeIcon
+            className={navoptionicon}
+            icon={properties.icon}
+            alt={properties.name}
+            size="2x"
+            color="#F2E86D"
+          />
+        ) : (
+          properties.customIcon
+        )}
 
         <span className={navoptionname}>{properties.name}</span>
       </div>
