@@ -89,6 +89,7 @@
    margin: 0;
    width: 100%;
    border-radius: 0;
+   cursor: default;
 }
 
 .newcollectionbuttonactive .createcollectionbuttonicon {
@@ -124,8 +125,9 @@
    margin-top: 1rem;
    width: 100%;
    overflow: scroll;
-   max-height: 20rem;
+   height: 20rem;
    color: #171D26;
+   border: 2px solid #465775;
 }
 
 .table {

@@ -31,6 +31,7 @@ export default function NewCollectionButtons(properties) {
             alert(
               'You must fill out all required input fields (marked by orange labels) before you can create the collection.'
             );
+          else properties.createCollection();
         }}
       >
         Create

@@ -7,6 +7,14 @@
    font-weight: 500;
 }
 
+.creatingcollectionloadercontainer {
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   height: 15rem;
+   justify-content: center;
+}
+
 .submitpanel {
    width: 35rem;
 }

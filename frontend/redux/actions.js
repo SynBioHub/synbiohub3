@@ -226,7 +226,7 @@ async function uploadFiles(
   }
 }
 
-async function buildAndSendSubmitRequest(
+export async function buildAndSendSubmitRequest(
   token,
   id,
   version,

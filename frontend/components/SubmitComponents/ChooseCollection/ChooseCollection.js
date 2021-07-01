@@ -23,7 +23,11 @@ export default function ChooseCollection(properties) {
           className={`${styles.collectionfilter} ${
             createCollection ? styles.collpasefilter : ''
           }`}
-          placeholder="Filter by name, ID, description, or version"
+          placeholder={
+            properties.selectedCollection.name
+              ? `${properties.selectedCollection.name}, version ${properties.selectedCollection.version}`
+              : 'Filter by name, ID, description, or version'
+          }
           onChange={event => setFilter(event.target.value)}
         />
         <div
@@ -31,7 +35,10 @@ export default function ChooseCollection(properties) {
             createCollection ? styles.newcollectionbuttonactive : ''
           }`}
           role="button"
-          onClick={() => setCreateCollection(!createCollection)}
+          onClick={() => {
+            setFilter('');
+            setCreateCollection(true);
+          }}
         >
           <FontAwesomeIcon
             icon={!createCollection ? faPlus : faInfoCircle}

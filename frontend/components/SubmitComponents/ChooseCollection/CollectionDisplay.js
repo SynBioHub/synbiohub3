@@ -10,7 +10,7 @@ export default function CollectionDisplay(properties) {
   for (const collection of canSubmitTo) {
     collections.push(
       <CollectionSelector
-        key={collection.displayId}
+        key={collection.displayId + collection.name + collection.version}
         filter={properties.filter}
         selected={properties.selectedCollection}
         setSelected={properties.setSelectedCollection}

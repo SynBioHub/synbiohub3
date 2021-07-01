@@ -1,27 +1,63 @@
 import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
+import {
+  buildAndSendSubmitRequest,
+  getCanSubmitTo
+} from '../../../redux/actions';
 import styles from '../../../styles/submit.module.css';
-import ErrorLogger from '../ErrorLogger';
 import InputField from '../InputField';
+import CreatingCollectionLoader from './CreatingCollectionLoader';
+import ErrorLogger from './ErrorLogger';
 import NewCollectionButtons from './NewCollectionButtons';
 
 export default function NewCollectionForm(properties) {
-  const [collectionName, setCollectionName] = useState('');
-  const [collectionDescription, setCollectionDescription] = useState('');
-  const [collectionID, setCollectionID] = useState('');
-  const [collectionVersion, setCollectionVersion] = useState('1');
-  const [collectionCitations, setCollectionCitations] = useState('');
+  const dispatch = useDispatch();
+  const token = useSelector(state => state.user.token);
+  const [name, setCollectionName] = useState('');
+  const [description, setCollectionDescription] = useState('');
+  const [id, setCollectionID] = useState('');
+  const [version, setCollectionVersion] = useState('1');
+  const [citations, setCollectionCitations] = useState('');
 
   const [needsVerification, setNeedsVerification] = useState('');
 
+  const [creatingCollection, setCreatingCollection] = useState(false);
+
+  const [errors, setErrors] = useState([]);
+
+  const createCollection = async () => {
+    setCreatingCollection(true);
+    const response = await buildAndSendSubmitRequest(
+      token,
+      id,
+      version,
+      name,
+      description,
+      citations,
+      0
+    );
+    if (response.status !== 200) {
+      var messages = await response.text();
+      messages = messages.charAt(0) !== '[' ? [messages] : JSON.parse(messages);
+      setErrors(messages);
+    } else {
+      setErrors([]);
+      dispatch(getCanSubmitTo());
+      properties.setCreateCollection(false);
+    }
+    setCreatingCollection(false);
+  };
+
+  if (creatingCollection) return <CreatingCollectionLoader />;
   return (
     <div className={styles.newcollectioncontainer}>
-      <ErrorLogger />
+      <ErrorLogger errors={errors} />
       <InputField
         labelText="Name"
         inputName="collection name"
         placeholder="A short title for your collection"
-        value={collectionName}
+        value={name}
         needsVerification={needsVerification}
         setNeedsVerification={setNeedsVerification}
         onChange={event => {
@@ -33,7 +69,7 @@ export default function NewCollectionForm(properties) {
         labelText="Description"
         inputName="collection description"
         placeholder="The more you say, the easier it will be to find your design"
-        value={collectionDescription}
+        value={description}
         needsVerification={needsVerification}
         setNeedsVerification={setNeedsVerification}
         onChange={event => setCollectionDescription(event.target.value)}
@@ -43,7 +79,7 @@ export default function NewCollectionForm(properties) {
         labelText="Display ID"
         inputName="collection ID"
         placeholder="Alphanumeric and underscore characters only"
-        value={collectionID}
+        value={id}
         needsVerification={needsVerification}
         setNeedsVerification={setNeedsVerification}
         onChange={event =>
@@ -56,7 +92,7 @@ export default function NewCollectionForm(properties) {
         labelText="Version"
         inputName="collection version"
         placeholder="Version"
-        value={collectionVersion}
+        value={version}
         needsVerification={needsVerification}
         setNeedsVerification={setNeedsVerification}
         onChange={event => setCollectionVersion(event.target.value)}
@@ -67,17 +103,13 @@ export default function NewCollectionForm(properties) {
         labelText="Citations (Optional)"
         inputName="collection citations"
         placeholder="Pubmed IDs separated by commas, we'll do the rest!"
-        value={collectionCitations}
+        value={citations}
         onChange={event => setCollectionCitations(event.value)}
       />
       <NewCollectionButtons
         setCreateCollection={properties.setCreateCollection}
-        collectionName={collectionName}
-        collectionDescription={collectionDescription}
-        collectionID={collectionID}
-        collectionVersion={collectionVersion}
-        collectionCitations={collectionCitations}
         needsVerification={needsVerification}
+        createCollection={createCollection}
       />
     </div>
   );
