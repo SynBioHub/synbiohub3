@@ -4,11 +4,68 @@
    margin-top: 1rem;
 }
 
+.createcollectionbuttons {
+   display: flex;
+   margin-top: 1rem;
+   justify-content: center;
+}
+
+.createcollectionbutton {
+   margin: 0;
+   padding: 0.7rem;
+   min-width: 10rem;
+   text-align: center;
+   cursor: pointer;
+   border-radius: 0.4rem;
+   
+}
+
+.createcollectionbuttons {
+   margin-bottom: 1rem;
+}
+
+.createcollectionbutton {
+   color: #888;
+}
+
+.createcollectionbutton:hover {
+   background-color: #ECF0F1;
+}
+
+.createbutton {
+   cursor: not-allowed;
+}
+
+/*color: #549F93;*/
+
+.createbuttonicon {
+   margin-left: 1rem;
+   transition: transform .3s;
+}
+
+.createbutton:hover .createbuttonicon {
+   transform: translateX(1rem);
+}
+
+.cancelbutton:hover {
+   color: #D25627;
+}
+
+.cancelbuttonicon {
+   margin-right: 1rem;
+   transition: transform .3s;
+}
+
+.cancelbutton:hover .cancelbuttonicon {
+   transform: translateX(-1rem);
+}
+
 .newcollectionbutton {
    white-space: nowrap;
    display: flex;
    align-items: center;
-   background-color: #00A1E4;
+   justify-content: center;
+   background-color: #465775;
    color: #fff;
    padding: 0.7rem;
    border-radius: 0.4rem;
@@ -17,7 +74,21 @@
    cursor: pointer;
 }
 
+.newcollectionbutton:hover {
+   background-color: #00A1E4;
+}
+
 .newcollectionbutton:hover .createcollectionbuttonicon {
+   transform: translateX(-0.25rem);
+}
+
+.newcollectionbuttonactive {
+   background-color: #00A1E4;
+   margin: 0;
+   width: 100%;
+}
+
+.newcollectionbuttonactive .createcollectionbuttonicon {
    transform: translateX(-0.25rem);
 }
 
@@ -34,9 +105,16 @@
    font-size: 1rem;
    background-color: #ECF0F1;
    color: #171D26;
-   border-radius: 0rem;
+   border-radius: 0.4rem;
    font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+   transition: width .35s;
+}
+
+.collpasefilter {
+   opacity: 0;
+   width: 0%;
+   padding: 0;
 }
 
 .tablecontainer {
@@ -69,7 +147,6 @@
 .table td {
    padding: 0.75rem;
    cursor: pointer;
-   border-top: 1px solid #ced1d4;
 }
 
 .table tbody tr:hover {

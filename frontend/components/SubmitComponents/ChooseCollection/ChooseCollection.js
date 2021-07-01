@@ -1,13 +1,20 @@
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import {
+  faArrowCircleLeft,
+  faFolderPlus,
+  faInfoCircle,
+  faPlus
+} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
 
 import styles from '../../../styles/choosecollection.module.css';
 import MajorLabel from '../MajorLabel';
+import NewCollectionForm from '../NewCollectionForm';
 import CollectionDisplay from './CollectionDisplay';
 
 export default function ChooseCollection(properties) {
   const [filter, setFilter] = useState('');
+  const [createCollection, setCreateCollection] = useState(false);
 
   return (
     <div>
@@ -18,24 +25,64 @@ export default function ChooseCollection(properties) {
       <div className={styles.inputandcreatecontainer}>
         <input
           type="text"
-          className={styles.collectionfilter}
+          className={`${styles.collectionfilter} ${
+            createCollection ? styles.collpasefilter : ''
+          }`}
           placeholder="Filter by name, ID, description, or version"
           onChange={event => setFilter(event.target.value)}
         />
-        <div className={styles.newcollectionbutton}>
+        <div
+          className={`${styles.newcollectionbutton} ${
+            createCollection ? styles.newcollectionbuttonactive : ''
+          }`}
+          role="button"
+          onClick={() => setCreateCollection(!createCollection)}
+        >
           <FontAwesomeIcon
-            icon={faPlus}
+            icon={!createCollection ? faPlus : faInfoCircle}
             size="1x"
             className={styles.createcollectionbuttonicon}
           />
-          New Collection
+          {!createCollection
+            ? 'New Collection'
+            : 'Tell us about your collection'}
         </div>
       </div>
-      <CollectionDisplay
-        filter={filter}
-        selectedCollection={properties.selectedCollection}
-        setSelectedCollection={properties.setSelectedCollection}
-      />
+      {!createCollection ? (
+        <CollectionDisplay
+          filter={filter}
+          selectedCollection={properties.selectedCollection}
+          setSelectedCollection={properties.setSelectedCollection}
+        />
+      ) : (
+        <div>
+          <NewCollectionForm />
+          <div className={styles.createcollectionbuttons}>
+            <div
+              className={`${styles.createcollectionbutton} ${styles.cancelbutton}`}
+              role="button"
+              onClick={() => setCreateCollection(false)}
+            >
+              <FontAwesomeIcon
+                icon={faArrowCircleLeft}
+                size="1x"
+                className={styles.cancelbuttonicon}
+              />
+              Cancel
+            </div>
+            <div
+              className={`${styles.createcollectionbutton} ${styles.createbutton}`}
+            >
+              Create
+              <FontAwesomeIcon
+                icon={faFolderPlus}
+                size="1x"
+                className={styles.createbuttonicon}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

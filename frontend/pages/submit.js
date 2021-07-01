@@ -6,6 +6,7 @@ import { useDispatch } from 'react-redux';
 
 import ChooseCollection from '../components/SubmitComponents/ChooseCollection/ChooseCollection';
 import SubmissionStatusPanel from '../components/SubmitComponents/SubmissionStatusPanel';
+import SubmitButton from '../components/SubmitComponents/SubmitButton';
 import SubmitHeader from '../components/SubmitComponents/SubmitHeader';
 import UploadFileSection from '../components/SubmitComponents/UploadFileSection';
 import TopLevel from '../components/TopLevel';
@@ -14,7 +15,7 @@ import styles from '../styles/submit.module.css';
 
 function Submit() {
   const [files, setFiles] = useState([]);
-  const [selectedCollection, setSelectedCollection] = useState();
+  const [selectedCollection, setSelectedCollection] = useState({});
 
   const showSubmitProgress = useSelector(
     state => state.submit.showSubmitProgress
@@ -39,12 +40,22 @@ function Submit() {
           }
           title="Tell us about your submission"
           description="SynBioHub organizes your uploads into collections. Parts can be
-            uploaded into a new or existing collection."
+            uploaded into an existing or new collection."
         />
         <UploadFileSection files={files} setFiles={setFiles} />
         <ChooseCollection
           selectedCollection={selectedCollection}
           setSelectedCollection={setSelectedCollection}
+        />
+        <SubmitButton
+          newCollection={true}
+          collectionName={selectedCollection.name}
+          collectionDescription={selectedCollection.description}
+          collectionID={selectedCollection.displayId}
+          collectionVersion={selectedCollection.version}
+          collectionCitations={selectedCollection.citations}
+          files={files}
+          needsVerification={false}
         />
       </div>
     </div>

@@ -224,6 +224,7 @@
    font-size: 1.1rem;
    border-radius: 0.4rem;
    cursor: pointer;
+   margin-top: 2rem;
 }
 
 .submitbuttoncontainer:hover {
