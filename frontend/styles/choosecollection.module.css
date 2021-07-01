@@ -17,7 +17,6 @@
    text-align: center;
    cursor: pointer;
    border-radius: 0.4rem;
-   
 }
 
 .createcollectionbuttons {
@@ -36,11 +35,14 @@
    cursor: not-allowed;
 }
 
-/*color: #549F93;*/
-
 .createbuttonicon {
    margin-left: 1rem;
    transition: transform .3s;
+}
+
+.createbuttonenabled {
+   cursor: pointer;
+   color: #549F93;
 }
 
 .createbutton:hover .createbuttonicon {
@@ -86,6 +88,7 @@
    background-color: #00A1E4;
    margin: 0;
    width: 100%;
+   border-radius: 0;
 }
 
 .newcollectionbuttonactive .createcollectionbuttonicon {
@@ -122,6 +125,7 @@
    width: 100%;
    overflow: scroll;
    max-height: 20rem;
+   color: #171D26;
 }
 
 .table {
@@ -157,7 +161,7 @@
 .table th {
    padding: 0.5rem;
    background-color: #465775;
-   color: white;
+   color: #fff;
    font-size: 1rem;
    font-weight: 400;
    position: sticky;

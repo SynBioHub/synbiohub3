@@ -1,15 +1,10 @@
-import {
-  faArrowCircleLeft,
-  faFolderPlus,
-  faInfoCircle,
-  faPlus
-} from '@fortawesome/free-solid-svg-icons';
+import { faInfoCircle, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
 
 import styles from '../../../styles/choosecollection.module.css';
 import MajorLabel from '../MajorLabel';
-import NewCollectionForm from '../NewCollectionForm';
+import NewCollectionForm from '../NewCollection/NewCollectionForm';
 import CollectionDisplay from './CollectionDisplay';
 
 export default function ChooseCollection(properties) {
@@ -55,33 +50,7 @@ export default function ChooseCollection(properties) {
           setSelectedCollection={properties.setSelectedCollection}
         />
       ) : (
-        <div>
-          <NewCollectionForm />
-          <div className={styles.createcollectionbuttons}>
-            <div
-              className={`${styles.createcollectionbutton} ${styles.cancelbutton}`}
-              role="button"
-              onClick={() => setCreateCollection(false)}
-            >
-              <FontAwesomeIcon
-                icon={faArrowCircleLeft}
-                size="1x"
-                className={styles.cancelbuttonicon}
-              />
-              Cancel
-            </div>
-            <div
-              className={`${styles.createcollectionbutton} ${styles.createbutton}`}
-            >
-              Create
-              <FontAwesomeIcon
-                icon={faFolderPlus}
-                size="1x"
-                className={styles.createbuttonicon}
-              />
-            </div>
-          </div>
-        </div>
+        <NewCollectionForm setCreateCollection={setCreateCollection} />
       )}
     </div>
   );

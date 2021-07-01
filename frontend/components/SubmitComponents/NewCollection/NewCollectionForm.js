@@ -1,10 +1,11 @@
 import { useState } from 'react';
 
-import styles from '../../styles/submit.module.css';
-import ErrorLogger from './ErrorLogger';
-import InputField from './InputField';
+import styles from '../../../styles/submit.module.css';
+import ErrorLogger from '../ErrorLogger';
+import InputField from '../InputField';
+import NewCollectionButtons from './NewCollectionButtons';
 
-export default function NewCollectionForm() {
+export default function NewCollectionForm(properties) {
   const [collectionName, setCollectionName] = useState('');
   const [collectionDescription, setCollectionDescription] = useState('');
   const [collectionID, setCollectionID] = useState('');
@@ -68,6 +69,15 @@ export default function NewCollectionForm() {
         placeholder="Pubmed IDs separated by commas, we'll do the rest!"
         value={collectionCitations}
         onChange={event => setCollectionCitations(event.value)}
+      />
+      <NewCollectionButtons
+        setCreateCollection={properties.setCreateCollection}
+        collectionName={collectionName}
+        collectionDescription={collectionDescription}
+        collectionID={collectionID}
+        collectionVersion={collectionVersion}
+        collectionCitations={collectionCitations}
+        needsVerification={needsVerification}
       />
     </div>
   );

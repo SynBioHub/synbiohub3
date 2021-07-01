@@ -10,7 +10,7 @@ export default function SubmitButton(properties) {
   const dispatch = useDispatch();
   const [canSubmit, setCanSubmit] = useState(false);
   useEffect(() => {
-    setCanSubmit(properties.needsVerification ? false : true);
+    setCanSubmit(!properties.needsVerification);
   }, [properties.needsVerification]);
 
   return (
