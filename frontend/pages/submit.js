@@ -2,20 +2,26 @@ import { faCloudUploadAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 import ChooseCollection from '../components/SubmitComponents/ChooseCollection/ChooseCollection';
 import SubmissionStatusPanel from '../components/SubmitComponents/SubmissionStatusPanel';
 import SubmitHeader from '../components/SubmitComponents/SubmitHeader';
 import UploadFileSection from '../components/SubmitComponents/UploadFileSection';
 import TopLevel from '../components/TopLevel';
+import { getCanSubmitTo } from '../redux/actions';
 import styles from '../styles/submit.module.css';
 
 function Submit() {
   const [files, setFiles] = useState([]);
+  const [selectedCollection, setSelectedCollection] = useState();
 
   const showSubmitProgress = useSelector(
     state => state.submit.showSubmitProgress
   );
+
+  const dispatch = useDispatch();
+  dispatch(getCanSubmitTo());
 
   if (showSubmitProgress) {
     return <SubmissionStatusPanel />;
@@ -36,7 +42,10 @@ function Submit() {
             uploaded into a new or existing collection."
         />
         <UploadFileSection files={files} setFiles={setFiles} />
-        <ChooseCollection />
+        <ChooseCollection
+          selectedCollection={selectedCollection}
+          setSelectedCollection={setSelectedCollection}
+        />
       </div>
     </div>
   );
