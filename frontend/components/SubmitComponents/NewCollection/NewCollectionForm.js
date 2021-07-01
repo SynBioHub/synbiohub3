@@ -6,7 +6,7 @@ import {
   getCanSubmitTo
 } from '../../../redux/actions';
 import styles from '../../../styles/submit.module.css';
-import InputField from '../InputField';
+import InputField from '../ReusableComponents/InputField';
 import CreatingCollectionLoader from './CreatingCollectionLoader';
 import ErrorLogger from './ErrorLogger';
 import NewCollectionButtons from './NewCollectionButtons';

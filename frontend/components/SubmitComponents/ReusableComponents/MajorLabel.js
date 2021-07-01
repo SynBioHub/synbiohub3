@@ -1,7 +1,7 @@
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import styles from '../../styles/submit.module.css';
+import styles from '../../../styles/submit.module.css';
 
 export default function MajorLabel(properties) {
   return (

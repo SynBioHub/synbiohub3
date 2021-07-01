@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react';
 import Loader from 'react-loader-spinner';
 import { useSelector } from 'react-redux';
 
-import styles from '../../styles/submit.module.css';
+import styles from '../../../styles/submit.module.css';
 
 export default function FilesUploading() {
   const filesUploading = useSelector(state => state.submit.filesUploading);

@@ -11,8 +11,8 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { resetSubmit } from '../../redux/actions';
 import styles from '../../styles/submit.module.css';
-import FilesUploading from './FilesUploading';
-import SubmitHeader from './SubmitHeader';
+import FilesUploading from './FileComponents/FilesUploading';
+import SubmitHeader from './ReusableComponents/SubmitHeader';
 
 export default function SubmissionStatusPanel() {
   const fileFailed = useSelector(state => state.submit.fileFailed);

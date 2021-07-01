@@ -3,8 +3,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
 
 import styles from '../../../styles/choosecollection.module.css';
-import MajorLabel from '../MajorLabel';
 import NewCollectionForm from '../NewCollection/NewCollectionForm';
+import MajorLabel from '../ReusableComponents/MajorLabel';
 import CollectionDisplay from './CollectionDisplay';
 
 export default function ChooseCollection(properties) {
@@ -28,7 +28,7 @@ export default function ChooseCollection(properties) {
           placeholder={
             properties.selectedCollection.name
               ? `${properties.selectedCollection.name}, version ${properties.selectedCollection.version}`
-              : 'Filter by name, ID, description, or version'
+              : 'Filter by name, display ID, description, or version'
           }
           onChange={event => setFilter(event.target.value)}
         />

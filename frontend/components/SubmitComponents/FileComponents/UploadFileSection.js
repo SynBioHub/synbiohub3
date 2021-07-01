@@ -1,8 +1,8 @@
-import styles from '../../styles/submit.module.css';
+import styles from '../../../styles/submit.module.css';
+import MajorLabel from '../ReusableComponents/MajorLabel';
+import SubmitLabel from '../ReusableComponents/SubmitLabel';
 import FileDropzone from './FileDropzone';
-import MajorLabel from './MajorLabel';
 import SelectedFileView from './SelectedFileView';
-import SubmitLabel from './SubmitLabel';
 
 export default function UploadFileSection(properties) {
   return (

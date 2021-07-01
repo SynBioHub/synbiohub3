@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useCallback, useMemo } from 'react';
 import { useDropzone } from 'react-dropzone';
 
-import styles from '../../styles/submit.module.css';
+import styles from '../../../styles/submit.module.css';
 
 const baseStyle = {
   flex: 1,

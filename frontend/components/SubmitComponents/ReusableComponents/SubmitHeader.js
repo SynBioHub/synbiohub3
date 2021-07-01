@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import styles from '../../styles/submit.module.css';
+import styles from '../../../styles/submit.module.css';
 
 export default function SubmitHeader(properties) {
   const [animateSubmitIconClass, setAnimateSubmitIconClass] = useState('');

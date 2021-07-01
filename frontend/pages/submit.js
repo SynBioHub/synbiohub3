@@ -5,10 +5,10 @@ import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 
 import ChooseCollection from '../components/SubmitComponents/ChooseCollection/ChooseCollection';
+import UploadFileSection from '../components/SubmitComponents/FileComponents/UploadFileSection';
+import SubmitHeader from '../components/SubmitComponents/ReusableComponents/SubmitHeader';
 import SubmissionStatusPanel from '../components/SubmitComponents/SubmissionStatusPanel';
 import SubmitButton from '../components/SubmitComponents/SubmitButton';
-import SubmitHeader from '../components/SubmitComponents/SubmitHeader';
-import UploadFileSection from '../components/SubmitComponents/UploadFileSection';
 import TopLevel from '../components/TopLevel';
 import { getCanSubmitTo } from '../redux/actions';
 import styles from '../styles/submit.module.css';

@@ -2,7 +2,7 @@ import { faFile, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
 
-import styles from '../../styles/submit.module.css';
+import styles from '../../../styles/submit.module.css';
 
 export default function SelectedFileView(properties) {
   const [fileDisplay, setFileDisplay] = useState(null);
