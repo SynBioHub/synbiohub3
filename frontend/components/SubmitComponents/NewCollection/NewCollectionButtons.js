@@ -12,7 +12,10 @@ export default function NewCollectionButtons(properties) {
       <div
         className={`${styles.createcollectionbutton} ${styles.cancelbutton}`}
         role="button"
-        onClick={() => properties.setCreateCollection(false)}
+        onClick={() => {
+          properties.setCreateCollection(false);
+          properties.setCreateCollectionButtonText('New Collection');
+        }}
       >
         <FontAwesomeIcon
           icon={faArrowCircleLeft}

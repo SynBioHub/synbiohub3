@@ -27,6 +27,7 @@ export default function NewCollectionForm(properties) {
   const [errors, setErrors] = useState([]);
 
   const createCollection = async () => {
+    properties.setCreateCollectionButtonText('Creating Collection');
     setCreatingCollection(true);
     const response = await buildAndSendSubmitRequest(
       token,
@@ -44,6 +45,7 @@ export default function NewCollectionForm(properties) {
     } else {
       setErrors([]);
       dispatch(getCanSubmitTo());
+      properties.setCreateCollectionButtonText('New Collection');
       properties.setCreateCollection(false);
     }
     setCreatingCollection(false);
@@ -108,6 +110,7 @@ export default function NewCollectionForm(properties) {
       />
       <NewCollectionButtons
         setCreateCollection={properties.setCreateCollection}
+        setCreateCollectionButtonText={properties.setCreateCollectionButtonText}
         needsVerification={needsVerification}
         createCollection={createCollection}
       />
