@@ -263,6 +263,41 @@ export const resetSubmit = () => dispatch => {
   dispatch({ type: types.SUBMITRESET, payload: false });
 };
 
+// MANAGE SUBMISSION ACTIONS
+export const getCanSubmitTo = () => async (dispatch, getState) => {
+  dispatch({ type: types.GETTINGCANSUBMITTO, payload: true });
+
+  const token = getState().user.token;
+  var url = `${process.env.backendUrl}/manage`;
+  var headers = {
+    Accept: 'text/plain; charset=UTF-8',
+    'X-authorization': token
+  };
+
+  var data = await fetch(url, {
+    method: 'GET',
+    headers
+  });
+
+  const submissions = await data.json();
+
+  url = `${process.env.backendUrl}/shared`;
+
+  data = await fetch(url, {
+    method: 'GET',
+    headers
+  });
+
+  const sharedSubmissions = await data.json();
+
+  dispatch({
+    type: types.CANSUBMITTO,
+    payload: [...submissions, ...sharedSubmissions]
+  });
+
+  dispatch({ type: types.GETTINGCANSUBMITTO, payload: false });
+};
+
 // BASKET ACTIONS
 
 /**

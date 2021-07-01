@@ -3,17 +3,15 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 
-import CollectionTypeSelector from '../components/SubmitComponents/CollectionTypeSelector';
-import NewCollectionForm from '../components/SubmitComponents/NewCollectionForm';
+import ChooseCollection from '../components/SubmitComponents/ChooseCollection/ChooseCollection';
 import SubmissionStatusPanel from '../components/SubmitComponents/SubmissionStatusPanel';
 import SubmitHeader from '../components/SubmitComponents/SubmitHeader';
+import UploadFileSection from '../components/SubmitComponents/UploadFileSection';
 import TopLevel from '../components/TopLevel';
 import styles from '../styles/submit.module.css';
 
-const NEW_COLLECTION = 'New Collection';
-
 function Submit() {
-  const [collectionType, setCollectionType] = useState(NEW_COLLECTION);
+  const [files, setFiles] = useState([]);
 
   const showSubmitProgress = useSelector(
     state => state.submit.showSubmitProgress
@@ -37,11 +35,8 @@ function Submit() {
           description="SynBioHub organizes your uploads into collections. Parts can be
             uploaded into a new or existing collection."
         />
-        <CollectionTypeSelector
-          collectionType={collectionType}
-          setCollectionType={setCollectionType}
-        />
-        {collectionType === NEW_COLLECTION && <NewCollectionForm />}
+        <UploadFileSection files={files} setFiles={setFiles} />
+        <ChooseCollection />
       </div>
     </div>
   );

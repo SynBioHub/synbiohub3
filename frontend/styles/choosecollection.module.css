@@ -1,0 +1,154 @@
+.collectionoptionscontainer {
+   margin-top: 1rem;
+}
+
+.selectdestinationcontainer {
+   filter: drop-shadow(0 0 2px #e1e6ee);
+}
+
+.selectdestinationbutton {
+   display: flex;
+   justify-content: space-between;
+   background-color: #fff;
+   border: 2px solid #e1e6ee;
+   padding: 0.5rem;
+   color: #171D26;
+   width: 100%;
+   font-size: 1rem;
+   border-radius: 0.4rem;
+   cursor: pointer;
+}
+
+.selectdestinationbuttonactive {
+   border-radius: 0.4rem 0.4rem 0 0;
+   border-bottom: 1px solid #fff;
+   position: relative;
+   z-index: 2;
+}
+
+.selectdestinationbuttonactive .selectdestinationbuttoniconcontainer {
+   color: #00A1E4;
+}
+
+.selectdestinationbuttoninactive {
+   color: #888;
+}
+
+.selectdestinationbuttonfilled {
+   color: #549F93;
+}
+
+.selectdestinationbuttontext {
+   white-space: nowrap;
+   overflow: hidden;
+   margin-right: 0.2rem;
+}
+
+.selectdestinationbuttoniconcontainer {
+   color: #465775;
+   transition: transform .2s;
+}
+
+.selectdestinationbutton:hover .selectdestinationbuttoniconcontainer {
+   color: #00A1E4;
+}
+
+.selectdestinationbuttoniconopen {
+   transform: rotate(-90deg);
+}
+
+.absolutepositionofdropdown {
+   position: relative;
+}
+
+.collectionselect {
+   border-radius: 0 0.4rem 0.4rem 0.4rem;
+   border: 2px solid #e1e6ee;
+   width: 100%;
+   background-color: #fff;
+   padding: 0.5rem;
+   position: absolute;
+   top: -2px;
+   z-index: 1;
+}
+
+.collectionfilter {
+   width: 100%;
+   border: none;
+   margin-top: 0.2rem;
+   padding: 0.6rem;
+   font-size: 1rem;
+   background-color: #ECF0F1;
+   color: #171D26;
+   border-radius: 0.4rem 0.4rem 0 0;
+   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+}
+
+.selectedcollection {
+   background-color: #00A1E4 !important;
+   color: #fff;
+}
+
+.nocollections {
+   text-align: center;
+   color: #465775;
+   margin: 1rem;
+}
+
+.tablecontainer {
+   width: 100%;
+   overflow: scroll;
+   max-height: 20rem;
+}
+
+.table {
+   min-width: 100%;
+   text-align: left;
+   border-spacing: 0;
+   font-size: 0.95rem;
+   font-weight: 400;
+}
+
+.name {
+   font-weight: 600;
+}
+
+.table tr {
+   width: 100%;
+}
+
+#results tr:nth-child(even) {
+   background-color: #e1e6ee;
+ }
+
+.table td {
+   padding: 0.75rem;
+   cursor: pointer;
+}
+
+.table tbody tr:hover {
+   background-color: #00A1E4 !important;
+   color: #fff;
+}
+
+.table th {
+   padding: 0.5rem;
+   background-color: #465775;
+   color: white;
+   font-size: 1rem;
+   font-weight: 400;
+   position: sticky;
+   z-index: 2;
+   top: 0;
+}
+
+.centerheader {
+   display: flex;
+   flex-direction: row;
+   align-items: center;
+}
+
+.headertext {
+   margin-right: 0.15rem;
+}
