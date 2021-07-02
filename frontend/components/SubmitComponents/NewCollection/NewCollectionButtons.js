@@ -5,7 +5,7 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useDispatch } from 'react-redux';
 
-import { setPromptNewCollection } from '../../../redux/actions';
+import { getCanSubmitTo, setPromptNewCollection } from '../../../redux/actions';
 import styles from '../../../styles/choosecollection.module.css';
 
 export default function NewCollectionButtons(properties) {
@@ -15,7 +15,10 @@ export default function NewCollectionButtons(properties) {
       <div
         className={`${styles.createcollectionbutton} ${styles.cancelbutton}`}
         role="button"
-        onClick={() => dispatch(setPromptNewCollection(false))}
+        onClick={() => {
+          dispatch(getCanSubmitTo());
+          dispatch(setPromptNewCollection(false));
+        }}
       >
         <FontAwesomeIcon
           icon={faArrowCircleLeft}
