@@ -110,76 +110,28 @@ export const setLimit = newLimit => dispatch => {
 
 // SUBMIT ACTIONS
 
-export const submit =
-  (newCollection, id, version, name, description, citations, files) =>
-  async (dispatch, getState) => {
-    dispatch({
-      type: types.SUBMITRESET,
-      payload: true // sets submitting state to true
-    });
+export const submit = (uri, files) => async (dispatch, getState) => {
+  dispatch({
+    type: types.SUBMITRESET,
+    payload: true // sets submitting state to true
+  });
 
-    dispatch({
-      type: types.SHOWSUBMITPROGRESS,
-      payload: true
-    });
+  dispatch({
+    type: types.SHOWSUBMITPROGRESS,
+    payload: true
+  });
 
-    const token = getState().user.token;
+  const token = getState().user.token;
 
-    if (newCollection) {
-      // create new collection
-      const response = await buildAndSendSubmitRequest(
-        token,
-        id,
-        version,
-        name,
-        description,
-        citations,
-        0
-      );
-      if (response.status !== 200) {
-        var messages = await response.text();
-        messages =
-          messages.charAt(0) !== '[' ? [messages] : JSON.parse(messages);
-        dispatch({
-          type: types.ERRORMESSAGES,
-          payload: messages
-        });
-        dispatch({
-          type: types.SHOWSUBMITPROGRESS,
-          payload: false
-        });
-        return;
-      }
-    }
+  await uploadFiles(dispatch, token, uri, files);
 
-    if (files) {
-      await uploadFiles(
-        dispatch,
-        files,
-        token,
-        id,
-        version,
-        name,
-        description,
-        citations
-      );
-    }
-    dispatch({
-      type: types.SUBMITTING,
-      payload: false
-    });
-  };
+  dispatch({
+    type: types.SUBMITTING,
+    payload: false
+  });
+};
 
-async function uploadFiles(
-  dispatch,
-  files,
-  token,
-  id,
-  version,
-  name,
-  description,
-  citations
-) {
+async function uploadFiles(dispatch, token, uri, files) {
   const filesUploading = files.map(file => {
     return { file: file, name: file.name, status: 'pending', errors: [] };
   });
@@ -196,16 +148,23 @@ async function uploadFiles(
       type: types.FILESUPLOADING,
       payload: newFilesUploading
     });
-    const response = await buildAndSendSubmitRequest(
-      token,
-      id,
-      version,
-      name,
-      description,
-      citations,
-      2,
-      newFilesUploading[fileIndex].file
-    );
+
+    const url = `${process.env.backendUrl}/submit`;
+    var headers = {
+      Accept: 'text/plain; charset=UTF-8',
+      'X-authorization': token
+    };
+
+    const form = new FormData();
+    form.append('rootCollections', uri);
+    form.append('file', newFilesUploading[fileIndex].file);
+    form.append('overwrite_merge', 2);
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers,
+      body: form
+    });
 
     if (response.status === 200) {
       newFilesUploading[fileIndex].status = 'successful';
@@ -224,38 +183,6 @@ async function uploadFiles(
       payload: [...newFilesUploading]
     });
   }
-}
-
-export async function buildAndSendSubmitRequest(
-  token,
-  id,
-  version,
-  name,
-  description,
-  citations,
-  overwrite_merge,
-  file
-) {
-  const url = `${process.env.backendUrl}/submit`;
-  var headers = {
-    Accept: 'text/plain; charset=UTF-8',
-    'X-authorization': token
-  };
-
-  const form = new FormData();
-  form.append('id', id);
-  form.append('version', version);
-  form.append('name', name);
-  form.append('description', description);
-  form.append('citations', citations);
-  form.append('overwrite_merge', `${overwrite_merge}`);
-  if (file) form.append('file', file);
-
-  return await fetch(url, {
-    method: 'POST',
-    headers,
-    body: form
-  });
 }
 
 export const resetSubmit = () => dispatch => {

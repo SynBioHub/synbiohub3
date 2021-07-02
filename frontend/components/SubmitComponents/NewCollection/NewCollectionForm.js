@@ -1,10 +1,7 @@
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import {
-  buildAndSendSubmitRequest,
-  getCanSubmitTo
-} from '../../../redux/actions';
+import { getCanSubmitTo } from '../../../redux/actions';
 import styles from '../../../styles/submit.module.css';
 import InputField from '../ReusableComponents/InputField';
 import CreatingCollectionLoader from './CreatingCollectionLoader';
@@ -29,7 +26,7 @@ export default function NewCollectionForm(properties) {
   const createCollection = async () => {
     properties.setCreateCollectionButtonText('Creating Collection');
     setCreatingCollection(true);
-    const response = await buildAndSendSubmitRequest(
+    const response = await postCollection(
       token,
       id,
       version,
@@ -129,4 +126,34 @@ const formatString = string => {
   string = string.replace(/ /g, '_');
   string = string.replace(/\W+/g, '');
   return string;
+};
+
+const postCollection = async (
+  token,
+  id,
+  version,
+  name,
+  description,
+  citations,
+  overwrite_merge
+) => {
+  const url = `${process.env.backendUrl}/submit`;
+  var headers = {
+    Accept: 'text/plain; charset=UTF-8',
+    'X-authorization': token
+  };
+
+  const form = new FormData();
+  form.append('id', id);
+  form.append('version', version);
+  form.append('name', name);
+  form.append('description', description);
+  form.append('citations', citations);
+  form.append('overwrite_merge', `${overwrite_merge}`);
+
+  return await fetch(url, {
+    method: 'POST',
+    headers,
+    body: form
+  });
 };
