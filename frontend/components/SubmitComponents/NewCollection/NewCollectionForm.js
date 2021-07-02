@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { createCollection as createNewCollection } from '../../../redux/actions';
+import { createCollection } from '../../../redux/actions';
 import styles from '../../../styles/submit.module.css';
 import InputField from '../ReusableComponents/InputField';
 import CreatingCollectionLoader from './CreatingCollectionLoader';
@@ -22,18 +22,17 @@ export default function NewCollectionForm(properties) {
     state => state.collectionCreate.creatingCollection
   );
 
-  const createCollection = () => {
+  const postCollection = () => {
     properties.setCreateCollectionButtonText('Creating Collection');
     dispatch(
-      createNewCollection(
+      createCollection(
         id,
         version,
         name,
         description,
         citations,
         0,
-        properties.setCreateCollectionButtonText,
-        properties.setCreateCollection
+        properties.setCreateCollectionButtonText
       )
     );
   };
@@ -96,10 +95,9 @@ export default function NewCollectionForm(properties) {
         onChange={event => setCollectionCitations(event.value)}
       />
       <NewCollectionButtons
-        setCreateCollection={properties.setCreateCollection}
         setCreateCollectionButtonText={properties.setCreateCollectionButtonText}
         needsVerification={needsVerification}
-        createCollection={createCollection}
+        postCollection={postCollection}
       />
     </div>
   );

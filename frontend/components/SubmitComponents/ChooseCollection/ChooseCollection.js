@@ -1,17 +1,23 @@
 import { faInfoCircle, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
+import { setPromptNewCollection } from '../../../redux/actions';
 import styles from '../../../styles/choosecollection.module.css';
 import NewCollectionForm from '../NewCollection/NewCollectionForm';
 import MajorLabel from '../ReusableComponents/MajorLabel';
 import CollectionDisplay from './CollectionDisplay';
 
 export default function ChooseCollection(properties) {
+  const dispatch = useDispatch();
   const [filter, setFilter] = useState('');
-  const [createCollection, setCreateCollection] = useState(false);
   const [createCollectionButtonText, setCreateCollectionButtonText] =
     useState('New Collection');
+
+  const promptNewCollection = useSelector(
+    state => state.collectionCreate.promptNewCollection
+  );
 
   return (
     <div>
@@ -23,7 +29,7 @@ export default function ChooseCollection(properties) {
         <input
           type="text"
           className={`${styles.collectionfilter} ${
-            createCollection ? styles.collpasefilter : ''
+            promptNewCollection ? styles.collpasefilter : ''
           }`}
           placeholder={
             properties.selectedCollection
@@ -34,25 +40,25 @@ export default function ChooseCollection(properties) {
         />
         <div
           className={`${styles.newcollectionbutton} ${
-            createCollection ? styles.newcollectionbuttonactive : ''
+            promptNewCollection ? styles.newcollectionbuttonactive : ''
           }`}
           role="button"
           onClick={() => {
             setFilter('');
             setCreateCollectionButtonText('Tell us about your collection');
-            setCreateCollection(true);
+            dispatch(setPromptNewCollection(true));
             properties.setSelectedCollection();
           }}
         >
           <FontAwesomeIcon
-            icon={!createCollection ? faPlus : faInfoCircle}
+            icon={!promptNewCollection ? faPlus : faInfoCircle}
             size="1x"
             className={styles.createcollectionbuttonicon}
           />
           {createCollectionButtonText}
         </div>
       </div>
-      {!createCollection ? (
+      {!promptNewCollection ? (
         <CollectionDisplay
           filter={filter}
           selectedCollection={properties.selectedCollection}
@@ -60,7 +66,6 @@ export default function ChooseCollection(properties) {
         />
       ) : (
         <NewCollectionForm
-          setCreateCollection={setCreateCollection}
           setCreateCollectionButtonText={setCreateCollectionButtonText}
         />
       )}

@@ -269,8 +269,7 @@ export const createCollection =
     description,
     citations,
     overwrite_merge,
-    setCreateCollectionButtonText,
-    setCreateCollection
+    setCreateCollectionButtonText
   ) =>
   async (dispatch, getState) => {
     dispatch({ type: types.CREATINGCOLLECTION, payload: true });
@@ -303,10 +302,14 @@ export const createCollection =
       dispatch({ type: types.CREATINGCOLLECTIONERRORS, payload: [] });
       dispatch(getCanSubmitTo());
       setCreateCollectionButtonText('New Collection');
-      setCreateCollection(false);
+      dispatch(setPromptNewCollection(false));
     }
     dispatch({ type: types.CREATINGCOLLECTION, payload: false });
   };
+
+export const setPromptNewCollection = promptNewCollection => dispatch => {
+  dispatch({ type: types.PROMPTNEWCOLLECTION, payload: promptNewCollection });
+};
 
 export const resetSubmit = () => dispatch => {
   dispatch({ type: types.SHOWSUBMITPROGRESS, payload: false });

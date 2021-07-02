@@ -3,17 +3,20 @@ import {
   faFolderPlus
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useDispatch } from 'react-redux';
 
+import { setPromptNewCollection } from '../../../redux/actions';
 import styles from '../../../styles/choosecollection.module.css';
 
 export default function NewCollectionButtons(properties) {
+  const dispatch = useDispatch();
   return (
     <div className={styles.createcollectionbuttons}>
       <div
         className={`${styles.createcollectionbutton} ${styles.cancelbutton}`}
         role="button"
         onClick={() => {
-          properties.setCreateCollection(false);
+          dispatch(setPromptNewCollection(false));
           properties.setCreateCollectionButtonText('New Collection');
         }}
       >
@@ -34,7 +37,7 @@ export default function NewCollectionButtons(properties) {
             alert(
               'You must fill out all required input fields (marked by orange labels) before you can create the collection.'
             );
-          else properties.createCollection();
+          else properties.postCollection();
         }}
       >
         Create

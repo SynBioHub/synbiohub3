@@ -145,6 +145,7 @@ const submitReducer = (state = initialSubmitState, { type, payload }) => {
 
 // COLLECTION REDUCER
 const initialCollectionCreateState = {
+  promptNewCollection: false,
   creatingCollection: false,
   creatingCollectionErrors: []
 };
@@ -154,6 +155,11 @@ const collectionCreateReducer = (
   { type, payload }
 ) => {
   switch (type) {
+    case types.PROMPTNEWCOLLECTION:
+      return {
+        ...state,
+        promptNewCollection: payload
+      };
     case types.CREATINGCOLLECTION:
       return {
         ...state,
