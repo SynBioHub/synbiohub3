@@ -12,16 +12,18 @@ import styles from '../../../styles/submit.module.css';
 
 export default function FilesUploading() {
   const filesUploading = useSelector(state => state.submit.filesUploading);
-  const filesUploadingDisplay = filesUploading.map(file => (
-    <FileUploadDisplay
-      name={file.name}
-      key={file.name}
-      status={file.status}
-      errors={file.errors}
-    />
-  ));
+  const attachmentsUploading = useSelector(
+    state => state.submit.attachmentsUploading
+  );
+
+  const filesUploadingDisplay = createFileDisplay(filesUploading);
+  const attachmentsUploadingDisplay = createFileDisplay(attachmentsUploading);
+
   return (
-    <div className={styles.selectedfilescontainer}>{filesUploadingDisplay}</div>
+    <div className={styles.selectedfilescontainer}>
+      {attachmentsUploadingDisplay}
+      {filesUploadingDisplay}
+    </div>
   );
 }
 
@@ -84,3 +86,14 @@ function FileUploadDisplay(properties) {
     </div>
   );
 }
+
+const createFileDisplay = files => {
+  return files.map(file => (
+    <FileUploadDisplay
+      name={file.name}
+      key={file.name}
+      status={file.status}
+      errors={file.errors}
+    />
+  ));
+};

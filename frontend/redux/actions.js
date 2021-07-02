@@ -1,4 +1,7 @@
 import * as types from './types';
+
+/* eslint sonarjs/no-duplicate-string: "off" */
+
 /*
 This file contains redux action functions for sbh. These are used to update
 the redux state that sbh uses to render its individual React components. The actions
@@ -132,13 +135,33 @@ export const submit = (uri, files) => async (dispatch, getState) => {
 };
 
 async function uploadFiles(dispatch, token, uri, files) {
-  const filesUploading = files.map(file => {
-    return { file: file, name: file.name, status: 'pending', errors: [] };
-  });
+  const filesUploading = [];
+  const attachmentsUploading = [];
+
+  for (const file of files) {
+    const fileObject = {
+      file: file,
+      name: file.name,
+      status: 'pending',
+      errors: []
+    };
+    if (file.type.match('text.*') || file.type.match('application/zip'))
+      filesUploading.push(fileObject);
+    else
+      attachmentsUploading.push({
+        file: file,
+        name: file.name,
+        status: 'pending',
+        errors: []
+      });
+  }
+
   dispatch({
     type: types.FILESUPLOADING,
     payload: filesUploading
   });
+
+  uploadAttachments(dispatch, token, uri, attachmentsUploading);
 
   // upload all files
   for (var fileIndex = 0; fileIndex < filesUploading.length; fileIndex++) {
@@ -184,6 +207,60 @@ async function uploadFiles(dispatch, token, uri, files) {
   }
 }
 
+const uploadAttachments = async (
+  dispatch,
+  token,
+  uri,
+  attachmentsUploading
+) => {
+  // upload all attachments
+  for (
+    var fileIndex = 0;
+    fileIndex < attachmentsUploading.length;
+    fileIndex++
+  ) {
+    attachmentsUploading[fileIndex].status = 'uploading';
+    dispatch({
+      type: types.ATTACHMENTSUPLOADING,
+      payload: [...attachmentsUploading]
+    });
+
+    const url = `${process.env.backendUrl}/submit`;
+    var headers = {
+      Accept: 'text/plain; charset=UTF-8',
+      'X-authorization': token
+    };
+
+    const form = new FormData();
+    form.append('rootCollections', uri);
+    form.append('file', attachmentsUploading[fileIndex].file);
+    form.append('overwrite_merge', 2);
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers,
+      body: form
+    });
+
+    if (response.status === 200) {
+      attachmentsUploading[fileIndex].status = 'successful';
+    } else {
+      var fileErrorMessages = await response.text();
+      fileErrorMessages =
+        fileErrorMessages.charAt(0) !== '['
+          ? [fileErrorMessages]
+          : JSON.parse(fileErrorMessages);
+      attachmentsUploading[fileIndex].status = 'failed';
+      attachmentsUploading[fileIndex].errors = fileErrorMessages;
+      dispatch({ type: types.FILEFAILED, payload: true });
+    }
+    dispatch({
+      type: types.ATTACHMENTSUPLOADING,
+      payload: [...attachmentsUploading]
+    });
+  }
+};
+
 export const resetSubmit = () => dispatch => {
   dispatch({ type: types.SHOWSUBMITPROGRESS, payload: false });
   dispatch({ type: types.SUBMITRESET, payload: false });
@@ -218,7 +295,9 @@ export const getCanSubmitTo = () => async (dispatch, getState) => {
 
   dispatch({
     type: types.CANSUBMITTO,
-    payload: [...submissions, ...sharedSubmissions]
+    payload: [...submissions, ...sharedSubmissions].filter(
+      submission => submission.triplestore !== 'public'
+    )
   });
 
   dispatch({ type: types.GETTINGCANSUBMITTO, payload: false });
