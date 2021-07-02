@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { getCanSubmitTo } from '../../../redux/actions';
+import { createCollection as createNewCollection } from '../../../redux/actions';
 import styles from '../../../styles/submit.module.css';
 import InputField from '../ReusableComponents/InputField';
 import CreatingCollectionLoader from './CreatingCollectionLoader';
@@ -10,7 +10,6 @@ import NewCollectionButtons from './NewCollectionButtons';
 
 export default function NewCollectionForm(properties) {
   const dispatch = useDispatch();
-  const token = useSelector(state => state.user.token);
   const [name, setCollectionName] = useState('');
   const [description, setCollectionDescription] = useState('');
   const [id, setCollectionID] = useState('');
@@ -19,39 +18,30 @@ export default function NewCollectionForm(properties) {
 
   const [needsVerification, setNeedsVerification] = useState('');
 
-  const [creatingCollection, setCreatingCollection] = useState(false);
+  const creatingCollection = useSelector(
+    state => state.collectionCreate.creatingCollection
+  );
 
-  const [errors, setErrors] = useState([]);
-
-  const createCollection = async () => {
+  const createCollection = () => {
     properties.setCreateCollectionButtonText('Creating Collection');
-    setCreatingCollection(true);
-    const response = await postCollection(
-      token,
-      id,
-      version,
-      name,
-      description,
-      citations,
-      0
+    dispatch(
+      createNewCollection(
+        id,
+        version,
+        name,
+        description,
+        citations,
+        0,
+        properties.setCreateCollectionButtonText,
+        properties.setCreateCollection
+      )
     );
-    if (response.status !== 200) {
-      var messages = await response.text();
-      messages = messages.charAt(0) !== '[' ? [messages] : JSON.parse(messages);
-      setErrors(messages);
-    } else {
-      setErrors([]);
-      dispatch(getCanSubmitTo());
-      properties.setCreateCollectionButtonText('New Collection');
-      properties.setCreateCollection(false);
-    }
-    setCreatingCollection(false);
   };
 
   if (creatingCollection) return <CreatingCollectionLoader />;
   return (
     <div className={styles.newcollectioncontainer}>
-      <ErrorLogger errors={errors} />
+      <ErrorLogger />
       <InputField
         labelText="Name"
         inputName="collection name"
@@ -126,34 +116,4 @@ const formatString = string => {
   string = string.replace(/ /g, '_');
   string = string.replace(/\W+/g, '');
   return string;
-};
-
-const postCollection = async (
-  token,
-  id,
-  version,
-  name,
-  description,
-  citations,
-  overwrite_merge
-) => {
-  const url = `${process.env.backendUrl}/submit`;
-  var headers = {
-    Accept: 'text/plain; charset=UTF-8',
-    'X-authorization': token
-  };
-
-  const form = new FormData();
-  form.append('id', id);
-  form.append('version', version);
-  form.append('name', name);
-  form.append('description', description);
-  form.append('citations', citations);
-  form.append('overwrite_merge', `${overwrite_merge}`);
-
-  return await fetch(url, {
-    method: 'POST',
-    headers,
-    body: form
-  });
 };

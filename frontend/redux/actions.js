@@ -261,6 +261,53 @@ const uploadAttachments = async (
   }
 };
 
+export const createCollection =
+  (
+    id,
+    version,
+    name,
+    description,
+    citations,
+    overwrite_merge,
+    setCreateCollectionButtonText,
+    setCreateCollection
+  ) =>
+  async (dispatch, getState) => {
+    dispatch({ type: types.CREATINGCOLLECTION, payload: true });
+    const token = getState().user.token;
+    const url = `${process.env.backendUrl}/submit`;
+    var headers = {
+      Accept: 'text/plain; charset=UTF-8',
+      'X-authorization': token
+    };
+
+    const form = new FormData();
+    form.append('id', id);
+    form.append('version', version);
+    form.append('name', name);
+    form.append('description', description);
+    form.append('citations', citations);
+    form.append('overwrite_merge', `${overwrite_merge}`);
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers,
+      body: form
+    });
+
+    if (response.status !== 200) {
+      var messages = await response.text();
+      messages = messages.charAt(0) !== '[' ? [messages] : JSON.parse(messages);
+      dispatch({ type: types.CREATINGCOLLECTIONERRORS, payload: messages });
+    } else {
+      dispatch({ type: types.CREATINGCOLLECTIONERRORS, payload: [] });
+      dispatch(getCanSubmitTo());
+      setCreateCollectionButtonText('New Collection');
+      setCreateCollection(false);
+    }
+    dispatch({ type: types.CREATINGCOLLECTION, payload: false });
+  };
+
 export const resetSubmit = () => dispatch => {
   dispatch({ type: types.SHOWSUBMITPROGRESS, payload: false });
   dispatch({ type: types.SUBMITRESET, payload: false });

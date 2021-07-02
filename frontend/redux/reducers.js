@@ -143,6 +143,32 @@ const submitReducer = (state = initialSubmitState, { type, payload }) => {
   }
 };
 
+// COLLECTION REDUCER
+const initialCollectionCreateState = {
+  creatingCollection: false,
+  creatingCollectionErrors: []
+};
+
+const collectionCreateReducer = (
+  state = initialCollectionCreateState,
+  { type, payload }
+) => {
+  switch (type) {
+    case types.CREATINGCOLLECTION:
+      return {
+        ...state,
+        creatingCollection: payload
+      };
+    case types.CREATINGCOLLECTIONERRORS:
+      return {
+        ...state,
+        creatingCollectionErrors: payload
+      };
+    default:
+      return state;
+  }
+};
+
 // BASKET REDUCER
 const initialBasketState = {
   basket: []
@@ -190,6 +216,7 @@ const reducers = {
   user: userReducer,
   search: searchReducer,
   submit: submitReducer,
+  collectionCreate: collectionCreateReducer,
   basket: basketReducer,
   tracking: trackingReducer
 };
