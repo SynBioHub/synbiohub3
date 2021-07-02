@@ -142,11 +142,10 @@ async function uploadFiles(dispatch, token, uri, files) {
 
   // upload all files
   for (var fileIndex = 0; fileIndex < filesUploading.length; fileIndex++) {
-    const newFilesUploading = [...filesUploading]; //to trigger state update
-    newFilesUploading[fileIndex].status = 'uploading';
+    filesUploading[fileIndex].status = 'uploading';
     dispatch({
       type: types.FILESUPLOADING,
-      payload: newFilesUploading
+      payload: [...filesUploading]
     });
 
     const url = `${process.env.backendUrl}/submit`;
@@ -157,7 +156,7 @@ async function uploadFiles(dispatch, token, uri, files) {
 
     const form = new FormData();
     form.append('rootCollections', uri);
-    form.append('file', newFilesUploading[fileIndex].file);
+    form.append('file', filesUploading[fileIndex].file);
     form.append('overwrite_merge', 2);
 
     const response = await fetch(url, {
@@ -167,20 +166,20 @@ async function uploadFiles(dispatch, token, uri, files) {
     });
 
     if (response.status === 200) {
-      newFilesUploading[fileIndex].status = 'successful';
+      filesUploading[fileIndex].status = 'successful';
     } else {
       var fileErrorMessages = await response.text();
       fileErrorMessages =
         fileErrorMessages.charAt(0) !== '['
           ? [fileErrorMessages]
           : JSON.parse(fileErrorMessages);
-      newFilesUploading[fileIndex].status = 'failed';
-      newFilesUploading[fileIndex].errors = fileErrorMessages;
+      filesUploading[fileIndex].status = 'failed';
+      filesUploading[fileIndex].errors = fileErrorMessages;
       dispatch({ type: types.FILEFAILED, payload: true });
     }
     dispatch({
       type: types.FILESUPLOADING,
-      payload: [...newFilesUploading]
+      payload: [...filesUploading]
     });
   }
 }
