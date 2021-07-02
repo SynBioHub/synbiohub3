@@ -58,7 +58,7 @@ export default function SubmissionStatusPanel() {
         />
       );
     }
-  }, [submitting]);
+  }, [submitting, fileFailed]);
 
   return (
     <div className={styles.container}>

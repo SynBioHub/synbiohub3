@@ -264,6 +264,7 @@ const uploadAttachments = async (
 export const createCollection =
   (id, version, name, description, citations, overwrite_merge) =>
   async (dispatch, getState) => {
+    dispatch({ type: types.CREATINGCOLLECTIONERRORS, payload: [] });
     dispatch({ type: types.CREATINGCOLLECTION, payload: true });
     dispatch({
       type: types.CREATINGCOLLECTIONBUTTONTEXT,

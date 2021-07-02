@@ -22,7 +22,7 @@ export default function SubmitButton(properties) {
       onClick={() => {
         if (!canSubmit)
           alert(
-            'You must fill out all required input fields before you can submit.'
+            'You must select one or more files and a destination collection before you can submit.'
           );
         else dispatch(submit(properties.collection.uri, properties.files));
       }}
