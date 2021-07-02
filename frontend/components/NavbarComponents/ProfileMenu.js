@@ -4,6 +4,7 @@ import {
   faUser
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
 
 import { logoutUser } from '../../redux/actions';
@@ -11,6 +12,7 @@ import styles from '../../styles/navbar.module.css';
 
 export default function ProfileMenu() {
   const dispatch = useDispatch();
+  const router = useRouter();
   return (
     <div className={styles.profilemenu}>
       <div className={styles.menuoption}>
@@ -28,7 +30,10 @@ export default function ProfileMenu() {
       <div
         className={styles.menuoption}
         role="button"
-        onClick={() => dispatch(logoutUser())}
+        onClick={() => {
+          dispatch(logoutUser());
+          router.push('/');
+        }}
       >
         <div className={styles.profilemenuicon}>
           <FontAwesomeIcon icon={faSignOutAlt} size="1x" />

@@ -22,11 +22,13 @@ function Login() {
   const dispatch = useDispatch();
   const router = useRouter();
 
+  const next = router.query.next;
+
   const passwordInput = useRef();
 
   useEffect(() => {
     if (loggedIn) {
-      if (pageVisited) router.back();
+      if (pageVisited) next ? router.replace(next) : router.back();
       else router.push('/');
     }
   }, [loggedIn, pageVisited, router]);
@@ -40,9 +42,9 @@ function Login() {
           width={80}
           height={80}
         />
-        <div className={styles.header}>Welcome Back</div>
+        <h1 className={styles.header}>Welcome Back</h1>
         <div className={styles.intro}>
-          Sign in to view, submit, and share thousands of genetic designs.
+          Sign in to view, submit, and share your genetic designs.
         </div>
         {loginError && (
           <div className={styles.warning}>{loginErrorMessage}</div>
@@ -104,7 +106,7 @@ function Login() {
 
 export default function LoginWrapped() {
   return (
-    <TopLevel>
+    <TopLevel publicPage={true}>
       <Login />
     </TopLevel>
   );

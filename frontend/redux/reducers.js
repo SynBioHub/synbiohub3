@@ -79,13 +79,115 @@ const searchReducer = (state = initialSearchState, { type, payload }) => {
   }
 };
 
+// SUBMIT REDUCER
+const initialSubmitState = {
+  submitting: false,
+  showSubmitProgress: false,
+  filesUploading: [],
+  attachmentsUploading: [],
+  fileFailed: false,
+  canSubmitTo: [],
+  gettingCanSubmitTo: false
+};
+
+/**
+ * This reducer initializes and allows state concerning design submission to be
+ * updated
+ */
+const submitReducer = (state = initialSubmitState, { type, payload }) => {
+  switch (type) {
+    case types.SUBMITRESET:
+      return {
+        ...state,
+        submitting: payload,
+        filesUploading: [],
+        fileFailed: false
+      };
+    case types.SUBMITTING:
+      return {
+        ...state,
+        submitting: payload
+      };
+    case types.SHOWSUBMITPROGRESS:
+      return {
+        ...state,
+        showSubmitProgress: payload
+      };
+    case types.FILESUPLOADING:
+      return {
+        ...state,
+        filesUploading: payload
+      };
+    case types.ATTACHMENTSUPLOADING:
+      return {
+        ...state,
+        attachmentsUploading: payload
+      };
+    case types.FILEFAILED:
+      return {
+        ...state,
+        fileFailed: payload
+      };
+    case types.CANSUBMITTO:
+      return {
+        ...state,
+        canSubmitTo: payload
+      };
+    case types.GETTINGCANSUBMITTO:
+      return {
+        ...state,
+        gettingCanSubmitTo: payload
+      };
+    default:
+      return state;
+  }
+};
+
+// COLLECTION REDUCER
+const initialCollectionCreateState = {
+  promptNewCollection: false,
+  creatingCollection: false,
+  creatingCollectionErrors: [],
+  buttonText: 'New Collection'
+};
+
+const collectionCreateReducer = (
+  state = initialCollectionCreateState,
+  { type, payload }
+) => {
+  switch (type) {
+    case types.PROMPTNEWCOLLECTION:
+      return {
+        ...state,
+        promptNewCollection: payload
+      };
+    case types.CREATINGCOLLECTION:
+      return {
+        ...state,
+        creatingCollection: payload
+      };
+    case types.CREATINGCOLLECTIONERRORS:
+      return {
+        ...state,
+        creatingCollectionErrors: payload
+      };
+    case types.CREATINGCOLLECTIONBUTTONTEXT:
+      return {
+        ...state,
+        buttonText: payload
+      };
+    default:
+      return state;
+  }
+};
+
 // BASKET REDUCER
 const initialBasketState = {
   basket: []
 };
 
 /**
- * This reducer initializes and allows state concering the basket in the search panel to
+ * This reducer initializes and allows state concerning the basket in the search panel to
  * be updated
  */
 const basketReducer = (state = initialBasketState, { type, payload }) => {
@@ -125,6 +227,8 @@ const trackingReducer = (state = initialTrackingState, { type, payload }) => {
 const reducers = {
   user: userReducer,
   search: searchReducer,
+  submit: submitReducer,
+  collectionCreate: collectionCreateReducer,
   basket: basketReducer,
   tracking: trackingReducer
 };

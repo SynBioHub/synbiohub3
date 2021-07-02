@@ -13,15 +13,6 @@ export default function Footer() {
         <div className={styles.copyright}>
           ©2018{' '}
           <a
-            href="https://ncl.ac.uk/"
-            target="_blank"
-            rel="noreferrer"
-            className={styles.institution}
-          >
-            Newcastle University
-          </a>
-          {'  ·  '}
-          <a
             href="https://www.utah.edu/"
             target="_blank"
             rel="noreferrer"
@@ -29,8 +20,8 @@ export default function Footer() {
           >
             University of Utah
           </a>
-          {'  ·  '}
-          other collaborators
+          {'  &  '}
+          Other Collaborators
         </div>
       </div>
       <div className={styles.sbhinfo}>

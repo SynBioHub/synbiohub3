@@ -1,0 +1,325 @@
+.container {
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   padding: 3rem 0;
+   font-size: 1rem;
+   font-weight: 500;
+}
+
+.creatingcollectionloadercontainer {
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   height: 15rem;
+   justify-content: center;
+}
+
+.submitpanel {
+   width: 35rem;
+}
+
+.submiticon {
+   margin: 0;
+   transform: translateY(20px);
+   transition: transform .6s;
+}
+
+.animatesubmit {
+   transform: translateY(-10px);
+}
+
+.introcontainer {
+   text-align: center;
+}
+
+.introtitle {
+   margin: 0.7rem 0 0.5rem 0;
+   color: #171D26;
+   font-size: 1.7rem;
+   font-weight: 400;
+}
+
+.introexplanation {
+   margin: 0.5rem 0 0 0;
+   padding: 0;
+   font-size: 1rem;
+   color: #575757
+}
+
+.dropzonecontainer {
+   margin-top: 0.2rem;
+   display: flex;
+}
+
+.dropzoneinner {
+   text-align: center;
+}
+
+.dropzonedirection {
+   font-weight: 500;
+   color: #171D26;
+   padding: 0;
+   margin: 1rem 0;
+}
+
+.dropzoneor {
+   display: block;
+   padding: 0;
+   margin-bottom: 1rem;
+   color: #575757;
+}
+
+.dropzonebrowsefiles {
+   display: inline-block;
+   width: fit-content;
+   padding: 0.8rem;
+   color: #fff;
+   background-color: #465775;
+   border-radius: 0.3rem;
+   cursor: pointer;
+}
+
+.dropzonebrowsefiles:hover {
+   background-color: #00A1E4;
+}
+
+.collectiontypecontainer {
+   margin-top: 1rem;
+   border-bottom:2px solid #BCAD10;
+   display: flex;
+   align-items: flex-end;
+   justify-content: space-between;
+}
+
+.collectionsubmitto {
+   padding: 0.5rem 0;
+   color: #00A1E4;
+}
+
+.collectiontypes {
+   display: flex;
+   flex-direction: row;
+}
+
+.collectiontypebutton {
+   margin: 0 0.5rem 0 0;
+   padding: 0.5rem;
+   border-radius: 0.3rem 0.3rem 0 0;
+   color: #D25627;
+   transition: background-color .3s;
+}
+
+.notselectedcollectiontype:hover {
+   background-color: #ECF0F1;
+   cursor: pointer;
+}
+
+.selectedcollectiontype {
+   color: #171D26;
+   background-color: #F2E86D;
+   cursor: not-allowed;
+}
+
+.newcollectioncontainer {
+   margin-top: 1rem;
+}
+
+.submitlabel {
+   display: flex;
+   align-items: center;
+   margin-top: 0.8rem;
+   font-size: 0.9rem;
+   color: #D25627;
+}
+
+.submitlabelverified {
+   color: #549F93;
+}
+
+.submitlabeloptional {
+   color: #888;
+}
+
+.inputstatus {
+   transition: opacity 0.4s;
+   margin-left: 0.2rem;
+   opacity: 0;
+}
+
+.inputstatusshow {
+   opacity: 1;
+}
+
+.submitinput {
+   width: 100%;
+   border: none;
+   margin-top: 0.2rem;
+   padding: 0.6rem;
+   font-size: 1rem;
+   background-color: #ECF0F1;
+   color: #171D26;
+   border-radius: 0.4rem;
+   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+}
+
+.submitinput::placeholder {
+   color: #465775b7;
+}
+
+.idinput {
+   width: 28rem;
+   margin-right: 2rem;
+}
+
+.inlineinputcontainer {
+   display: inline-block;
+}
+
+.versioninput {
+   max-width: 5rem;
+   text-align: center;
+}
+
+.sectionlabel {
+   color: #00A1E4;
+   margin-top: 1rem;
+   display: block;
+}
+
+.submitinfoicon {
+   margin-right: 0.3rem;
+}
+
+.selectedfilescontainer {
+   margin: 1rem 0;
+}
+
+.selectedfilecontainer {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   padding: 0.7rem;
+   border-radius: 0.4rem;
+   background-color: #F2E86D;
+   margin: 0.3rem 0;
+}
+
+.noselection {
+   margin: 0;
+   color: #00A1E4;
+}
+
+.filename {
+   margin-left: 0.4rem;
+}
+
+.enlargeicononhover {
+   cursor: pointer;
+   transition: transform 0.15s;
+}
+
+.enlargeicononhover:hover {
+   transform: scale(1.15);
+}
+
+.submitbuttoncontainer {
+   color: #fff;
+   background-color: #465775;
+   text-align: center;
+   padding: 0.8rem;
+   font-size: 1.1rem;
+   border-radius: 0.4rem;
+   cursor: pointer;
+   margin-top: 2rem;
+}
+
+.submitbuttoncontainer:hover {
+   background-color: #00A1E4;
+}
+
+.disabledsubmitbutton {
+   cursor: not-allowed;
+   opacity: 0.5;
+}
+
+.submitbuttoncontainer:hover .submitbuttonicon {
+   transform: translateX(0.4rem);
+}
+
+.submitbuttonicon {
+   position: relative;
+   right: 0.6rem;
+   transition: transform .3s;
+}
+
+.errormessage {
+   padding: 0.4rem;
+   background-color: #ffdcd0;
+   color: #D25627;
+   margin: 0.5rem 0;
+   border-radius: 0.4rem;
+   display: flex;
+}
+
+.errormessageicon {
+   margin-right: 0.4rem;
+}
+
+.loadercontainer {
+   display: flex;
+   justify-content: center;
+   margin-top: 1rem;
+}
+
+.aftersubmitbuttonscontainer {
+   margin-top: 1rem;
+   display: flex;
+   justify-content: center;
+}
+
+.aftersubmitbutton {
+   padding: 0.7rem;
+   margin: 0 0.5rem;
+   min-width: 13rem;
+   border-radius: 0.4rem;
+   text-align: center;
+   cursor: pointer;
+}
+
+.aftersubmitbutton:hover {
+   background-color: #ECF0F1;
+}
+
+.aftersubmitbutton:hover .aftersubmitbuttoniconright {
+   transform: translateX(0.5rem);
+}
+
+.aftersubmitbutton:hover .aftersubmitbuttoniconleft {
+   transform: translateX(-0.5rem);
+}
+
+.aftersubmitbuttoniconleft {
+   margin-right: 0.5rem;
+}
+
+.aftersubmitbuttoniconright {
+   margin-left: 0.5rem;
+}
+
+.aftersubmitbuttonicon {
+   transition: transform .2s;
+   color: #00A1E4;
+}
+
+.concatenatefiles {
+   max-height: 15rem;
+   overflow: scroll;
+}
+
+@media (max-width: 40rem) {
+   .submitpanel {
+     width: 90%;
+   }
+ }

@@ -9,7 +9,7 @@ import styles from '../styles/standardsearch.module.css';
  */
 export default function SearchDefault() {
   return (
-    <TopLevel navbar={<NavbarSearch />} hideFooter={true}>
+    <TopLevel navbar={<NavbarSearch />} hideFooter={true} publicPage={true}>
       <div className={styles.container}>
         <SearchHeader selected="Standard Search" />
         <StandardSearch />

@@ -22,16 +22,18 @@ export default function NavbarSearch() {
 
         <SearchBar />
 
-        <FontAwesomeIcon
-          icon={faBackward}
-          size="2x"
-          color="#F2E86D"
-          className={styles.cancelsearch}
-          onClick={() => {
-            if (pageVisited) router.back();
-            else router.push('/');
-          }}
-        />
+        <div className={styles.cancelsearchcontainer}>
+          <FontAwesomeIcon
+            icon={faBackward}
+            size="2x"
+            color="#F2E86D"
+            className={styles.cancelsearch}
+            onClick={() => {
+              if (pageVisited) router.back();
+              else router.push('/');
+            }}
+          />
+        </div>
       </div>
     </header>
   );
