@@ -8,7 +8,7 @@ import CreatingCollectionLoader from './CreatingCollectionLoader';
 import ErrorLogger from './ErrorLogger';
 import NewCollectionButtons from './NewCollectionButtons';
 
-export default function NewCollectionForm(properties) {
+export default function NewCollectionForm() {
   const dispatch = useDispatch();
   const [name, setCollectionName] = useState('');
   const [description, setCollectionDescription] = useState('');
@@ -23,18 +23,7 @@ export default function NewCollectionForm(properties) {
   );
 
   const postCollection = () => {
-    properties.setCreateCollectionButtonText('Creating Collection');
-    dispatch(
-      createCollection(
-        id,
-        version,
-        name,
-        description,
-        citations,
-        0,
-        properties.setCreateCollectionButtonText
-      )
-    );
+    dispatch(createCollection(id, version, name, description, citations, 0));
   };
 
   if (creatingCollection) return <CreatingCollectionLoader />;
@@ -95,7 +84,6 @@ export default function NewCollectionForm(properties) {
         onChange={event => setCollectionCitations(event.value)}
       />
       <NewCollectionButtons
-        setCreateCollectionButtonText={properties.setCreateCollectionButtonText}
         needsVerification={needsVerification}
         postCollection={postCollection}
       />

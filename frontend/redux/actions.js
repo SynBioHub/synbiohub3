@@ -262,17 +262,13 @@ const uploadAttachments = async (
 };
 
 export const createCollection =
-  (
-    id,
-    version,
-    name,
-    description,
-    citations,
-    overwrite_merge,
-    setCreateCollectionButtonText
-  ) =>
+  (id, version, name, description, citations, overwrite_merge) =>
   async (dispatch, getState) => {
     dispatch({ type: types.CREATINGCOLLECTION, payload: true });
+    dispatch({
+      type: types.CREATINGCOLLECTIONBUTTONTEXT,
+      payload: 'Creating Collection'
+    });
     const token = getState().user.token;
     const url = `${process.env.backendUrl}/submit`;
     var headers = {
@@ -301,7 +297,6 @@ export const createCollection =
     } else {
       dispatch({ type: types.CREATINGCOLLECTIONERRORS, payload: [] });
       dispatch(getCanSubmitTo());
-      setCreateCollectionButtonText('New Collection');
       dispatch(setPromptNewCollection(false));
     }
     dispatch({ type: types.CREATINGCOLLECTION, payload: false });
@@ -309,6 +304,16 @@ export const createCollection =
 
 export const setPromptNewCollection = promptNewCollection => dispatch => {
   dispatch({ type: types.PROMPTNEWCOLLECTION, payload: promptNewCollection });
+  if (promptNewCollection)
+    dispatch({
+      type: types.CREATINGCOLLECTIONBUTTONTEXT,
+      payload: 'Tell us about your collection'
+    });
+  else
+    dispatch({
+      type: types.CREATINGCOLLECTIONBUTTONTEXT,
+      payload: 'New Collection'
+    });
 };
 
 export const resetSubmit = () => dispatch => {

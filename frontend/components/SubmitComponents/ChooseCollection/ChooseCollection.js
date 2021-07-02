@@ -12,8 +12,9 @@ import CollectionDisplay from './CollectionDisplay';
 export default function ChooseCollection(properties) {
   const dispatch = useDispatch();
   const [filter, setFilter] = useState('');
-  const [createCollectionButtonText, setCreateCollectionButtonText] =
-    useState('New Collection');
+  const createCollectionButtonText = useSelector(
+    state => state.collectionCreate.buttonText
+  );
 
   const promptNewCollection = useSelector(
     state => state.collectionCreate.promptNewCollection
@@ -45,7 +46,6 @@ export default function ChooseCollection(properties) {
           role="button"
           onClick={() => {
             setFilter('');
-            setCreateCollectionButtonText('Tell us about your collection');
             dispatch(setPromptNewCollection(true));
             properties.setSelectedCollection();
           }}
@@ -65,9 +65,7 @@ export default function ChooseCollection(properties) {
           setSelectedCollection={properties.setSelectedCollection}
         />
       ) : (
-        <NewCollectionForm
-          setCreateCollectionButtonText={setCreateCollectionButtonText}
-        />
+        <NewCollectionForm />
       )}
     </div>
   );
