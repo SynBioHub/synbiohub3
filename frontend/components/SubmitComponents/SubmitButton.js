@@ -27,12 +27,12 @@ export default function SubmitButton(properties) {
         else
           dispatch(
             submit(
-              properties.newCollection,
-              properties.collectionID,
-              properties.collectionVersion,
-              properties.collectionName,
-              properties.collectionDescription,
-              properties.collectionCitations,
+              false,
+              properties.collection.displayId,
+              properties.collection.version,
+              properties.collection.name,
+              properties.collection.description,
+              '',
               properties.files
             )
           );

@@ -15,7 +15,7 @@ import styles from '../styles/submit.module.css';
 
 function Submit() {
   const [files, setFiles] = useState([]);
-  const [selectedCollection, setSelectedCollection] = useState({});
+  const [selectedCollection, setSelectedCollection] = useState();
 
   const showSubmitProgress = useSelector(
     state => state.submit.showSubmitProgress
@@ -48,14 +48,9 @@ function Submit() {
           setSelectedCollection={setSelectedCollection}
         />
         <SubmitButton
-          newCollection={true}
-          collectionName={selectedCollection.name}
-          collectionDescription={selectedCollection.description}
-          collectionID={selectedCollection.displayId}
-          collectionVersion={selectedCollection.version}
-          collectionCitations={selectedCollection.citations}
+          collection={selectedCollection}
           files={files}
-          needsVerification={false}
+          needsVerification={files.length === 0 || !selectedCollection}
         />
       </div>
     </div>

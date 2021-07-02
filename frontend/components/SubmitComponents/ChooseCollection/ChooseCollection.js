@@ -26,7 +26,7 @@ export default function ChooseCollection(properties) {
             createCollection ? styles.collpasefilter : ''
           }`}
           placeholder={
-            properties.selectedCollection.name
+            properties.selectedCollection
               ? `${properties.selectedCollection.name}, version ${properties.selectedCollection.version}`
               : 'Filter by name, display ID, description, or version'
           }
@@ -41,6 +41,7 @@ export default function ChooseCollection(properties) {
             setFilter('');
             setCreateCollectionButtonText('Tell us about your collection');
             setCreateCollection(true);
+            properties.setSelectedCollection();
           }}
         >
           <FontAwesomeIcon

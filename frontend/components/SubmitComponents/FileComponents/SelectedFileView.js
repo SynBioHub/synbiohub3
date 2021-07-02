@@ -10,7 +10,14 @@ export default function SelectedFileView(properties) {
     if (properties.files.length > 0) {
       setFileDisplay(
         properties.files.map(file => {
-          return <SelectedFile key={file.path} file={file} />;
+          return (
+            <SelectedFile
+              key={file.path}
+              file={file}
+              setFiles={properties.setFiles}
+              files={properties.files}
+            />
+          );
         })
       );
     } else setFileDisplay(null);
@@ -36,6 +43,14 @@ export function SelectedFile(properties) {
         size="1x"
         color="#00A1E4"
         className={styles.enlargeicononhover}
+        role="button"
+        onClick={() => {
+          properties.setFiles([
+            ...properties.files.filter(file => {
+              return !Object.is(file, properties.file);
+            })
+          ]);
+        }}
       />
     </div>
   );

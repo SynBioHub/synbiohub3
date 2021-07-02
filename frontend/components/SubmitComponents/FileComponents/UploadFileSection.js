@@ -18,7 +18,10 @@ export default function UploadFileSection(properties) {
         required={true}
       />
       <FileDropzone setFiles={properties.setFiles} />
-      <SelectedFileView files={properties.files} />
+      <SelectedFileView
+        files={properties.files}
+        setFiles={properties.setFiles}
+      />
     </div>
   );
 }
