@@ -21,4 +21,4 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
     - name: Push the image to Docker Hub
       run: |
-        docker push synbiohub/plugin-download-test-js:snapshot
+        docker push synbiohub/sbh3frontend:snapshot
