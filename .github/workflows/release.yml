@@ -14,7 +14,7 @@ jobs:
       name: Checkout source code
     - name: Build the Docker image
       run: |
-        docker build . --tag synbiohub/sbh3frontend:snapshot
+        docker build ./frontend --tag synbiohub/sbh3frontend:snapshot
     - uses: azure/docker-login@v1
       with:
           username: ${{ secrets.DOCKER_USERNAME }}
