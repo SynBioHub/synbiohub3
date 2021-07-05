@@ -1,6 +1,6 @@
 .basketicon {
    position: absolute;
-   top: 5rem;
+   top: 4.6rem;
    right: 1rem;
    cursor: pointer;
    transition: transform 0.2s;
@@ -12,7 +12,7 @@
 
 .basketcontent {
    position: absolute;
-   top: 7.5rem;
+   top: 7rem;
    right: 1.1rem;
    height: calc(80% - 10rem);
    background: aqua;

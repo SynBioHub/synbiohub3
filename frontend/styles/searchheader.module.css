@@ -1,25 +1,41 @@
 .categories {
-   margin: 0 0 0 1rem;
+   margin: 0.6rem 1rem 0.6rem 1rem;
    display: flex;
    justify-content: flex-start;
-   align-items: center;
+   align-items: flex-end;
+   border-bottom: 2px solid #A99C0F;
 }
 
 .categoryheader {
+   display: flex;
+   align-items: center;
    font-size: 1rem;
-   display: inline;
-   margin: 0 1.6rem 0 0;
+   margin: 0 0.2rem 0 0;
+   padding: 0.6rem;
+   border-radius: 0.4rem 0.4rem 0 0;
 }
-
-.categoryheader:hover {
-   cursor: pointer;
-}
+   
 
 .categoryname {
-   display: inline-block;
-   padding-bottom: 0.25rem;
+   padding: 0;
+   margin: 0;
 }
 
 .categoryselected {
-   border-bottom: 3px solid #D25627;
+   background-color: #F2E86D;
+   cursor: not-allowed !important;
+}
+
+.notselected {
+   color: #00A1E4;
+}
+
+.notselected:hover {
+   background-color: #ECF0F1;
+   cursor: pointer;
+}
+
+.icon {
+   margin-right: 0.25rem;
+   color: #A99C0F;
 }
