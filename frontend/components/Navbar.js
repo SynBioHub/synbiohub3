@@ -2,7 +2,6 @@ import {
   faAlignLeft,
   faCloudUploadAlt,
   faSearch,
-  faShareAlt,
   faSignInAlt
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -62,7 +61,6 @@ export default function Navbar() {
               name="Submit"
               href="/submit"
             />
-            <Selector icon={faShareAlt} name="Shared With Me" href="/shared" />
             <Selector
               icon={faAlignLeft}
               name="Submissions"
