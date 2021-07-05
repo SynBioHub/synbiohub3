@@ -12,11 +12,11 @@
 
 .basketcontent {
    position: absolute;
-   top: 7rem;
-   right: 1.1rem;
+   top: 6.9rem;
+   right: 1rem;
    height: calc(80% - 10rem);
    background: aqua;
-   border-radius: 0.5rem 0 0.5rem 0.5rem;
+   border-radius: 0.4rem;
    width: 20rem;
    padding: 0 1rem 1rem 1rem;
    background-color: white;

@@ -39,3 +39,11 @@
    margin-right: 0.25rem;
    color: #A99C0F;
 }
+
+@media (max-width: 600px) {
+   .categoryheader {
+     margin: 0;
+     padding: 0.4rem;
+     font-size: 0.8rem;
+   }
+ }
