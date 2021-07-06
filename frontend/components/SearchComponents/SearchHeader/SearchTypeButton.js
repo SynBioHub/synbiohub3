@@ -1,5 +1,6 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 
 import styles from '../../../styles/searchheader.module.css';
 
@@ -8,23 +9,31 @@ import styles from '../../../styles/searchheader.module.css';
  * (such as standard, sequence, etc)
  */
 export default function SearchTypeSelector(properties) {
+  const router = useRouter();
+
+  useEffect(() => {
+    router.prefetch(`/${properties.route}`);
+  }, []);
+
   const extraClass =
     properties.selected === properties.name
       ? styles.categoryselected
       : styles.notselected;
 
   return (
-    <Link href={`/${properties.route}`}>
-      <a className={`${styles.categoryheader} ${extraClass}`}>
-        {properties.icon ? (
-          <FontAwesomeIcon
-            icon={properties.icon}
-            size="1x"
-            className={styles.icon}
-          />
-        ) : null}
-        <p className={styles.categoryname}>{properties.name}</p>
-      </a>
-    </Link>
+    <div
+      className={`${styles.categoryheader} ${extraClass}`}
+      role="button"
+      onClick={() => router.replace(`/${properties.route}`)}
+    >
+      {properties.icon ? (
+        <FontAwesomeIcon
+          icon={properties.icon}
+          size="1x"
+          className={styles.icon}
+        />
+      ) : null}
+      <p className={styles.categoryname}>{properties.name}</p>
+    </div>
   );
 }

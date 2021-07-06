@@ -28,7 +28,11 @@ export default function RootCollections({ data }) {
     >
       <div className={styles.container}>
         <SearchHeader selected="Root Collections" data={data} />
-        <ResultTable count={data.length} data={data} />
+        <ResultTable
+          count={data.length}
+          data={data}
+          overrideType="Collection"
+        />
       </div>
     </TopLevel>
   );

@@ -68,7 +68,7 @@ function Home() {
             description="View design collections made available to the public"
             icon={faBoxOpen}
             title="View Collections"
-            route={'/shared'}
+            route={'/root-collections'}
             redirect={true}
           />
         </div>
