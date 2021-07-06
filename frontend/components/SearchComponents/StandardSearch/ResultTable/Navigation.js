@@ -45,7 +45,8 @@ export default function Navigation(properties) {
 
       <div className={styles.count}>
         <span className={styles.range}>
-          {offset + 1}-{Math.min(offset + limit, properties.count)}
+          {Math.min(properties.count, offset + 1)}-
+          {Math.min(offset + limit, properties.count)}
         </span>{' '}
         of {properties.count} result(s)
       </div>

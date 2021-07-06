@@ -43,7 +43,7 @@ export default function ResultTable(properties) {
       name={row.name}
       displayId={row.displayId}
       description={row.description}
-      type={row.type}
+      type={properties.overrideType ? properties.overrideType : row.type}
       version={row.version}
       uri={row.uri}
       key={row.uri}

@@ -1,8 +1,8 @@
 import {
   faAlignLeft,
+  faBoxOpen,
   faCloudUploadAlt,
-  faSearch,
-  faShareAlt
+  faSearch
 } from '@fortawesome/free-solid-svg-icons';
 import { useDispatch } from 'react-redux';
 
@@ -65,10 +65,10 @@ function Home() {
           />
 
           <Card
-            description="View parts and designs that have been shared with me"
-            icon={faShareAlt}
-            title="Collaborate"
-            route={'/shared'}
+            description="View design collections made available to the public"
+            icon={faBoxOpen}
+            title="View Collections"
+            route={'/root-collections'}
             redirect={true}
           />
         </div>
