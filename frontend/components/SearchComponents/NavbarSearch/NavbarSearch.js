@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux';
 import styles from '../../../styles/navbar.module.css';
 import SearchBar from './SearchBar';
 
-export default function NavbarSearch() {
+export default function NavbarSearch(properties) {
   const router = useRouter();
   const pageVisited = useSelector(state => state.tracking.pageVisited);
 
@@ -20,7 +20,11 @@ export default function NavbarSearch() {
           size="2x"
         />
 
-        <SearchBar />
+        <SearchBar
+          value={properties.value}
+          placeholder={properties.placeholder}
+          onChange={properties.onChange}
+        />
 
         <div className={styles.cancelsearchcontainer}>
           <FontAwesomeIcon
