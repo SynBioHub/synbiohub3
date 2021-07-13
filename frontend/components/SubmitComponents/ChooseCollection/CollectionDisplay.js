@@ -42,7 +42,10 @@ function CollectionSelector(properties) {
     setIsSelected(Object.is(properties.selected, properties.collection));
   }, [properties.selected]);
 
-  if (!checkCollectionPassesFilter(properties.filter, properties.collection))
+  if (
+    !properties.collection ||
+    !checkCollectionPassesFilter(properties.filter, properties.collection)
+  )
     return null;
 
   return (
