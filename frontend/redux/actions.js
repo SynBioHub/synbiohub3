@@ -136,32 +136,21 @@ export const submit = (uri, files) => async (dispatch, getState) => {
 
 async function uploadFiles(dispatch, token, uri, files) {
   const filesUploading = [];
-  const attachmentsUploading = [];
+  const failedFiles = [];
 
   for (const file of files) {
-    const fileObject = {
+    filesUploading.push({
       file: file,
       name: file.name,
       status: 'pending',
       errors: []
-    };
-    if (file.type.match('text.*') || file.type.match('application/zip'))
-      filesUploading.push(fileObject);
-    else
-      attachmentsUploading.push({
-        file: file,
-        name: file.name,
-        status: 'pending',
-        errors: []
-      });
+    });
   }
 
   dispatch({
     type: types.FILESUPLOADING,
     payload: filesUploading
   });
-
-  uploadAttachments(dispatch, token, uri, attachmentsUploading);
 
   // upload all files
   for (var fileIndex = 0; fileIndex < filesUploading.length; fileIndex++) {
@@ -198,7 +187,18 @@ async function uploadFiles(dispatch, token, uri, files) {
           : JSON.parse(fileErrorMessages);
       filesUploading[fileIndex].status = 'failed';
       filesUploading[fileIndex].errors = fileErrorMessages;
+      failedFiles.push(filesUploading[fileIndex]);
+      filesUploading.splice(fileIndex, 1);
+      fileIndex -= 1;
       dispatch({ type: types.FILEFAILED, payload: true });
+      dispatch({
+        type: types.FAILEDFILES,
+        payload: [...failedFiles]
+      });
+      dispatch({
+        type: types.FILESUPLOADING,
+        payload: [...filesUploading]
+      });
     }
     dispatch({
       type: types.FILESUPLOADING,
@@ -206,60 +206,6 @@ async function uploadFiles(dispatch, token, uri, files) {
     });
   }
 }
-
-const uploadAttachments = async (
-  dispatch,
-  token,
-  uri,
-  attachmentsUploading
-) => {
-  // upload all attachments
-  for (
-    var fileIndex = 0;
-    fileIndex < attachmentsUploading.length;
-    fileIndex++
-  ) {
-    attachmentsUploading[fileIndex].status = 'uploading';
-    dispatch({
-      type: types.ATTACHMENTSUPLOADING,
-      payload: [...attachmentsUploading]
-    });
-
-    const url = `${process.env.backendUrl}/submit`;
-    var headers = {
-      Accept: 'text/plain; charset=UTF-8',
-      'X-authorization': token
-    };
-
-    const form = new FormData();
-    form.append('rootCollections', uri);
-    form.append('file', attachmentsUploading[fileIndex].file);
-    form.append('overwrite_merge', 2);
-
-    const response = await fetch(url, {
-      method: 'POST',
-      headers,
-      body: form
-    });
-
-    if (response.status === 200) {
-      attachmentsUploading[fileIndex].status = 'successful';
-    } else {
-      var fileErrorMessages = await response.text();
-      fileErrorMessages =
-        fileErrorMessages.charAt(0) !== '['
-          ? [fileErrorMessages]
-          : JSON.parse(fileErrorMessages);
-      attachmentsUploading[fileIndex].status = 'failed';
-      attachmentsUploading[fileIndex].errors = fileErrorMessages;
-      dispatch({ type: types.FILEFAILED, payload: true });
-    }
-    dispatch({
-      type: types.ATTACHMENTSUPLOADING,
-      payload: [...attachmentsUploading]
-    });
-  }
-};
 
 export const createCollection =
   (id, version, name, description, citations, overwrite_merge) =>

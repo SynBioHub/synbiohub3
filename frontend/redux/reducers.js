@@ -84,7 +84,7 @@ const initialSubmitState = {
   submitting: false,
   showSubmitProgress: false,
   filesUploading: [],
-  attachmentsUploading: [],
+  failedFiles: [],
   fileFailed: false,
   canSubmitTo: [],
   gettingCanSubmitTo: false
@@ -118,7 +118,7 @@ const submitReducer = (state = initialSubmitState, { type, payload }) => {
         ...state,
         filesUploading: payload
       };
-    case types.ATTACHMENTSUPLOADING:
+    case types.FAILEDFILES:
       return {
         ...state,
         attachmentsUploading: payload
