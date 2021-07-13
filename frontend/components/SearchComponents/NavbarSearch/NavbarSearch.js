@@ -1,5 +1,7 @@
 import { faBackward, faSearch } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import Image from 'next/image';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
 
@@ -12,6 +14,11 @@ export default function NavbarSearch(properties) {
 
   return (
     <header className={styles.container}>
+      <Link href="/">
+        <a className={styles.logo}>
+          <Image alt="logo" width={86} height={86} src="/images/logo.svg" />
+        </a>
+      </Link>
       <div className={styles.searchcontainer}>
         <FontAwesomeIcon
           icon={faSearch}
