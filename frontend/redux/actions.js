@@ -113,6 +113,12 @@ export const setLimit = newLimit => dispatch => {
 
 // SUBMIT ACTIONS
 
+/**
+ * This action handles the submitting of design files to sbh
+ * @param {string} uri - the uri of the collection
+ * @param {array} files - the files to submit
+ * @returns
+ */
 export const submit = (uri, files) => async (dispatch, getState) => {
   dispatch({
     type: types.SUBMITRESET,
@@ -134,6 +140,13 @@ export const submit = (uri, files) => async (dispatch, getState) => {
   });
 };
 
+/**
+ * Helper function called by the submit action
+ * @param {*} dispatch
+ * @param {string} token - the authorization token of the current user
+ * @param {string} uri - the collection uri
+ * @param {array} files - the files to uplod to sbh
+ */
 async function uploadFiles(dispatch, token, uri, files) {
   const filesUploading = [];
   const failedFiles = [];
