@@ -193,7 +193,7 @@
 }
 
 .selectedfilescontainer {
-   margin: 1rem 0;
+   margin: 1rem 0 0.5rem 0;
 }
 
 .selectedfilecontainer {
@@ -316,6 +316,32 @@
 .concatenatefiles {
    max-height: 15rem;
    overflow: scroll;
+}
+
+.clearfilesbuttoncontainer {
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+}
+
+.clearfilesbutton {
+   background-color: #ECF0F1;
+   padding: 1rem;
+   border-radius: 100%;
+   display: flex;
+   cursor: pointer;
+   transition: transform .2s;
+   width: fit-content;
+}
+
+.clearfilesbutton:hover {
+   transform: scale(1.1);
+}
+
+.clearfilesbuttonlabel {
+   font-size: 0.7rem;
+   margin-top: 0.1rem;
+   color: #888;
 }
 
 @media (max-width: 40rem) {

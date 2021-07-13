@@ -5,8 +5,22 @@ import FileUploadDisplay from './FileUploadDisplay';
 
 export default function FilesUploading() {
   const filesUploading = useSelector(state => state.submit.filesUploading);
+  const failedFiles = useSelector(state => state.submit.failedFiles);
 
-  const filesUploadingDisplay = filesUploading.map(file => (
+  const failedFilesDisplay = createFileDisplay(failedFiles);
+
+  const filesUploadingDisplay = createFileDisplay(filesUploading);
+
+  return (
+    <div className={styles.selectedfilescontainer}>
+      {failedFilesDisplay}
+      {filesUploadingDisplay}
+    </div>
+  );
+}
+
+const createFileDisplay = files => {
+  return files.map(file => (
     <FileUploadDisplay
       name={file.name}
       key={file.name}
@@ -14,8 +28,4 @@ export default function FilesUploading() {
       errors={file.errors}
     />
   ));
-
-  return (
-    <div className={styles.selectedfilescontainer}>{filesUploadingDisplay}</div>
-  );
-}
+};
