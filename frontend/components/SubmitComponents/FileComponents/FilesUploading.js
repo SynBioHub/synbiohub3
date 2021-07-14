@@ -21,11 +21,6 @@ export default function FilesUploading() {
 
 const createFileDisplay = files => {
   return files.map(file => (
-    <FileUploadDisplay
-      name={file.name}
-      key={file.name}
-      status={file.status}
-      errors={file.errors}
-    />
+    <FileUploadDisplay file={file} checkable={false} key={file.name} />
   ));
 };

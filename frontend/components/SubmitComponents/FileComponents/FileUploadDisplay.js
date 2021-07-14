@@ -12,8 +12,9 @@ import styles from '../../../styles/submit.module.css';
 export default function FileUploadDisplay(properties) {
   const [icon, setIcon] = useState(null);
   const [showErrors, setShowErrors] = useState(false);
+  const [checked, setChecked] = useState(true);
   useEffect(() => {
-    switch (properties.status) {
+    switch (properties.file.status) {
       case 'failed': {
         setIcon(
           <div
@@ -45,18 +46,34 @@ export default function FileUploadDisplay(properties) {
       }
     }
   }, [properties.status, showErrors]);
+
+  useEffect(() => {
+    if (properties.checkable) {
+      setChecked(properties.selectedFiles[properties.file.name] ? true : false);
+    }
+  }, [properties.selectedFiles, properties.file, properties.checkable]);
+
   return (
     <div className={styles.fileuploadingcontainer}>
       {properties.checkable && (
         <div className={styles.attachmentcheckbox}>
-          <input type="checkbox" checked={properties.checked} />
+          <input
+            type="checkbox"
+            checked={checked}
+            onChange={() => {
+              const newSelectedFiles = { ...properties.selectedFiles };
+              if (checked) delete newSelectedFiles[properties.file.name];
+              else newSelectedFiles[properties.file.name] = properties.file;
+              properties.setSelectedFiles(newSelectedFiles);
+            }}
+          />
         </div>
       )}
       <div className={styles.fileinfocontainer}>
         <div className={styles.selectedfilecontainer}>
           <div>
             <FontAwesomeIcon icon={faFile} size="1x" color="#A99C0F" />
-            <span className={styles.filename}>{properties.name}</span>
+            <span className={styles.filename}>{properties.file.name}</span>
           </div>
           {icon}
         </div>
@@ -69,7 +86,7 @@ export default function FileUploadDisplay(properties) {
                 color="#D25627"
                 className={styles.errormessageicon}
               />
-              {properties.errors}
+              {properties.file.errors}
             </div>
           </div>
         )}

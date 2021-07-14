@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import FileUploadDisplay from './FileUploadDisplay';
@@ -5,15 +6,23 @@ import FileUploadDisplay from './FileUploadDisplay';
 export default function FailedFilesDisplay() {
   const failedFiles = useSelector(state => state.submit.failedFiles);
   const submitting = useSelector(state => state.submit.submitting);
+  const [selectedFiles, setSelectedFiles] = useState({});
+
+  useEffect(() => {
+    const initialSelectedFiles = {};
+    for (const file of failedFiles) {
+      initialSelectedFiles[file.name] = file;
+    }
+    setSelectedFiles(initialSelectedFiles);
+  }, [failedFiles]);
 
   const failedFilesDisplay = failedFiles.map(file => (
     <FileUploadDisplay
-      name={file.name}
       key={file.name}
-      status={file.status}
-      errors={file.errors}
+      file={file}
       checkable={!submitting}
-      checked={true}
+      selectedFiles={selectedFiles}
+      setSelectedFiles={setSelectedFiles}
     />
   ));
 
