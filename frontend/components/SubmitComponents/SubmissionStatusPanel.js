@@ -40,7 +40,7 @@ export default function SubmissionStatusPanel() {
             />
           }
           title="Some files failed to upload"
-          description="Click on a file's warning icon to see why it failed to be uploaded."
+          description="Click on a file's warning icon to see why it failed to be uploaded. You can also submit these files as collection attachments."
         />
       );
     } else {

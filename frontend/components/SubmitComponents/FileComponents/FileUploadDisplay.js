@@ -46,25 +46,34 @@ export default function FileUploadDisplay(properties) {
     }
   }, [properties.status, showErrors]);
   return (
-    <div>
-      <div className={styles.selectedfilecontainer}>
-        <div>
-          <FontAwesomeIcon icon={faFile} size="1x" color="#A99C0F" />
-          <span className={styles.filename}>{properties.name}</span>
-        </div>
-        {icon}
-      </div>
-      {showErrors && (
-        <div className={styles.errormessage}>
-          <FontAwesomeIcon
-            icon={faExclamationTriangle}
-            size="1x"
-            color="#D25627"
-            className={styles.errormessageicon}
-          />
-          {properties.errors}
+    <div className={styles.fileuploadingcontainer}>
+      {properties.checkable && (
+        <div className={styles.attachmentcheckbox}>
+          <input type="checkbox" checked={properties.checked} />
         </div>
       )}
+      <div className={styles.fileinfocontainer}>
+        <div className={styles.selectedfilecontainer}>
+          <div>
+            <FontAwesomeIcon icon={faFile} size="1x" color="#A99C0F" />
+            <span className={styles.filename}>{properties.name}</span>
+          </div>
+          {icon}
+        </div>
+        {showErrors && (
+          <div className={styles.errormessagecontainer}>
+            <div className={styles.errormessage}>
+              <FontAwesomeIcon
+                icon={faExclamationTriangle}
+                size="1x"
+                color="#D25627"
+                className={styles.errormessageicon}
+              />
+              {properties.errors}
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

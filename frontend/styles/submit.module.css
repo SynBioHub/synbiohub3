@@ -203,7 +203,7 @@
    padding: 0.7rem;
    border-radius: 0.4rem;
    background-color: #F2E86D;
-   margin: 0.3rem 0;
+   margin: 0.2rem 0;
 }
 
 .noselection {
@@ -252,6 +252,14 @@
    position: relative;
    right: 0.6rem;
    transition: transform .3s;
+}
+
+.errormessagecontainer {
+   padding: 0 0.5rem;
+   border: 3px solid #F2E86D;
+   border-top: none;
+   border-bottom: none;
+   background-color: #f2e76d3d;
 }
 
 .errormessage {
@@ -342,6 +350,27 @@
    font-size: 0.7rem;
    margin-top: 0.1rem;
    color: #888;
+}
+
+.fileuploadingcontainer {
+   display: flex;
+   align-items: center;
+   margin: 0;
+   padding: 0;
+}
+
+.attachmentcheckbox {
+   margin-right: 0.5rem;
+}
+
+.designfilescontainer {
+   margin-top: 0.5rem;
+}
+
+.fileinfocontainer {
+   display: flex;
+   flex-direction: column;
+   width: 100%;
 }
 
 @media (max-width: 40rem) {

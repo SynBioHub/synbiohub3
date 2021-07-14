@@ -1,7 +1,8 @@
 import { useSelector } from 'react-redux';
 
 import styles from '../../../styles/submit.module.css';
-import AttachmentUploadDisplay from './AttachmentUploadDisplay';
+import MajorLabel from '../ReusableComponents/MajorLabel';
+import FailedFilesDisplay from './FailedFilesDisplay';
 import FileUploadDisplay from './FileUploadDisplay';
 
 export default function FilesUploading() {
@@ -11,8 +12,9 @@ export default function FilesUploading() {
 
   return (
     <div className={styles.selectedfilescontainer}>
-      <AttachmentUploadDisplay />
-      {filesUploadingDisplay}
+      <FailedFilesDisplay />
+      <MajorLabel text="Design Files" />
+      <div className={styles.designfilescontainer}>{filesUploadingDisplay}</div>
     </div>
   );
 }
