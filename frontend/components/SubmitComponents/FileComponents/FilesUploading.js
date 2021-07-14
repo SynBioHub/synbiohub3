@@ -1,19 +1,17 @@
 import { useSelector } from 'react-redux';
 
 import styles from '../../../styles/submit.module.css';
+import AttachmentUploadDisplay from './AttachmentUploadDisplay';
 import FileUploadDisplay from './FileUploadDisplay';
 
 export default function FilesUploading() {
   const filesUploading = useSelector(state => state.submit.filesUploading);
-  const failedFiles = useSelector(state => state.submit.failedFiles);
-
-  const failedFilesDisplay = createFileDisplay(failedFiles);
 
   const filesUploadingDisplay = createFileDisplay(filesUploading);
 
   return (
     <div className={styles.selectedfilescontainer}>
-      {failedFilesDisplay}
+      <AttachmentUploadDisplay />
       {filesUploadingDisplay}
     </div>
   );
