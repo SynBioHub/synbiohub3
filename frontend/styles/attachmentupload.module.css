@@ -2,6 +2,7 @@
 .selectallcontainer {
    display: flex;
    align-items: center;
+   margin-top: 0.7rem;
    margin-bottom: 0.2rem;
 }
 
@@ -9,4 +10,28 @@
    margin-left: 0.5rem;
    color: #D25627;
    font-weight: 600;
+}
+
+.submitattachmentsbutton {
+   background-color: #D25627;
+   margin-top: 0.5rem;
+   padding: 0.6rem;
+   text-align: center;
+   border-radius: 0.4rem;
+   color: #F2E86D;
+   cursor: pointer;
+}
+
+.submitattachmentsicon {
+   margin-right: 0.5rem;
+   transition: transform 0.3s;
+}
+
+.submitattachmentsbutton:hover .submitattachmentsicon {
+   transform: translateX(0.3rem);
+}
+
+.submitattachmentsdisabled {
+   opacity: 0.5;
+   cursor: not-allowed;
 }
