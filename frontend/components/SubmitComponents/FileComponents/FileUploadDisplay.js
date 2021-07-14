@@ -45,7 +45,7 @@ export default function FileUploadDisplay(properties) {
         setIcon(null);
       }
     }
-  }, [properties.status, showErrors]);
+  }, [properties.file.status, showErrors]);
 
   useEffect(() => {
     if (properties.checkable) {

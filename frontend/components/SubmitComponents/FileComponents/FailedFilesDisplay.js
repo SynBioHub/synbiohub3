@@ -49,33 +49,42 @@ export default function FailedFilesDisplay() {
   if (failedFiles.length === 0) return null;
   return (
     <div>
-      <MajorLabel text="Failed submissons" />
-      <div className={styles.selectallcontainer}>
-        <input
-          type="checkbox"
-          checked={allFilesChecked}
-          onChange={() => {
-            if (allFilesChecked) setSelectedFiles({});
-            else checkAllFiles(setSelectedFiles, failedFiles);
-          }}
+      <div className={styles.majorlabel}>
+        <MajorLabel
+          text="Failed submissons"
+          link="https://wiki.synbiohub.org/userdocumentation/managingsubmitting/"
         />
-        <div className={styles.selectallinstruction}>Select All</div>
       </div>
+      {!submitting && (
+        <div className={styles.selectallcontainer}>
+          <input
+            type="checkbox"
+            checked={allFilesChecked}
+            onChange={() => {
+              if (allFilesChecked) setSelectedFiles({});
+              else checkAllFiles(setSelectedFiles, failedFiles);
+            }}
+          />
+          <div className={styles.selectallinstruction}>Select All</div>
+        </div>
+      )}
 
       {failedFilesDisplay}
 
-      <div
-        className={`${styles.submitattachmentsbutton} ${submitAttachmentsButtonClass}`}
-      >
-        <FontAwesomeIcon
-          icon={faCloudUploadAlt}
-          size="1x"
-          className={styles.submitattachmentsicon}
-        />
-        {`Upload as ${
-          multipleAttachmentsSelected ? 'Attachments' : 'Attachment'
-        }`}
-      </div>
+      {!submitting && (
+        <div
+          className={`${styles.submitattachmentsbutton} ${submitAttachmentsButtonClass}`}
+        >
+          <FontAwesomeIcon
+            icon={faCloudUploadAlt}
+            size="1x"
+            className={styles.submitattachmentsicon}
+          />
+          {`Upload as ${
+            multipleAttachmentsSelected ? 'Attachments' : 'Attachment'
+          }`}
+        </div>
+      )}
     </div>
   );
 }
