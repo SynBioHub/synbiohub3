@@ -7,7 +7,6 @@ import FileUploadDisplay from './FileUploadDisplay';
 
 export default function FilesUploading() {
   const filesUploading = useSelector(state => state.submit.filesUploading);
-
   const filesUploadingDisplay = createFileDisplay(filesUploading);
 
   return (

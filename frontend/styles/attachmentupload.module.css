@@ -1,0 +1,12 @@
+
+.selectallcontainer {
+   display: flex;
+   align-items: center;
+   margin-bottom: 0.2rem;
+}
+
+.selectallinstruction {
+   margin-left: 0.5rem;
+   color: #D25627;
+   font-weight: 600;
+}
