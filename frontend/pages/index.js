@@ -27,7 +27,7 @@ function Home() {
             rel="noreferrer"
             target="_blank"
           >
-            SynBioHub
+            SynBio<span className={styles.hubtitle}>Hub</span>
           </a>
         </h1>
 
