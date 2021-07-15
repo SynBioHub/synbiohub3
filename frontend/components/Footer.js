@@ -20,7 +20,16 @@ export default function Footer() {
           >
             University of Utah
           </a>
-          {'  &  '}
+          ,
+          <a
+            href="https://www.colorado.edu/"
+            target="_blank"
+            rel="noreferrer"
+            className={styles.institution}
+          >
+            University of Colorado Boulder
+          </a>
+          ,{'  &  '}
           Other Collaborators
         </div>
       </div>
