@@ -15,18 +15,22 @@ export default function ProfileMenu() {
   const router = useRouter();
   return (
     <div className={styles.profilemenu}>
-      <div className={styles.menuoption}>
-        <div className={styles.profilemenuicon}>
-          <FontAwesomeIcon icon={faUser} size="1x" />
+      <a href={`${process.env.backendUrl}/profile`}>
+        <div className={styles.menuoption}>
+          <div className={styles.profilemenuicon}>
+            <FontAwesomeIcon icon={faUser} size="1x" />
+          </div>
+          Profile
         </div>
-        Profile
-      </div>
-      <div className={styles.menuoption}>
-        <div className={styles.profilemenuicon}>
-          <FontAwesomeIcon icon={faCogs} size="1x" />
+      </a>
+      <a href={`${process.env.backendUrl}/admin`}>
+        <div className={styles.menuoption}>
+          <div className={styles.profilemenuicon}>
+            <FontAwesomeIcon icon={faCogs} size="1x" />
+          </div>
+          Admin
         </div>
-        Admin
-      </div>
+      </a>
       <div
         className={styles.menuoption}
         role="button"
