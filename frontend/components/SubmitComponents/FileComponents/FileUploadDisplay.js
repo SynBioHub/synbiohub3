@@ -1,7 +1,8 @@
 import {
   faCheckCircle,
   faExclamationTriangle,
-  faFile
+  faFile,
+  faFileMedical
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
@@ -72,7 +73,11 @@ export default function FileUploadDisplay(properties) {
       <div className={styles.fileinfocontainer}>
         <div className={styles.selectedfilecontainer}>
           <div>
-            <FontAwesomeIcon icon={faFile} size="1x" color="#A99C0F" />
+            <FontAwesomeIcon
+              icon={!properties.isAttachment ? faFile : faFileMedical}
+              size="1x"
+              color="#A99C0F"
+            />
             <span className={styles.filename}>{properties.file.name}</span>
           </div>
           {icon}

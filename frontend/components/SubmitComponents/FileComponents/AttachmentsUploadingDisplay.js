@@ -32,6 +32,11 @@ export default function AttachmentsUploading() {
 
 const createFileDisplay = files => {
   return files.map(file => (
-    <FileUploadDisplay file={file} checkable={false} key={file.name} />
+    <FileUploadDisplay
+      file={file}
+      checkable={false}
+      key={file.name}
+      isAttachment={true}
+    />
   ));
 };
