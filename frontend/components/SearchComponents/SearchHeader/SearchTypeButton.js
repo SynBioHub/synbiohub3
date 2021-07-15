@@ -24,7 +24,10 @@ export default function SearchTypeSelector(properties) {
     <div
       className={`${styles.categoryheader} ${extraClass}`}
       role="button"
-      onClick={() => router.replace(`/${properties.route}`)}
+      onClick={() => {
+        if (!properties.external) router.replace(`/${properties.route}`);
+        else router.push(`${process.env.backendUrl}/${properties.route}`);
+      }}
     >
       {properties.icon ? (
         <FontAwesomeIcon

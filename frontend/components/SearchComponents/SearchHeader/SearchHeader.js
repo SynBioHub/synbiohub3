@@ -31,14 +31,16 @@ export default function SearchHeader(properties) {
 
         <SearchTypeButton
           name="Sequence Search"
-          route="sequence-search"
+          route="sbsearch"
+          external={true}
           selected={properties.selected}
           icon={faDna}
         />
 
         <SearchTypeButton
           name="Advanced Search"
-          route="advanced-search"
+          route="advancedSearch"
+          external={true}
           selected={properties.selected}
           icon={faHatWizard}
         />
@@ -46,6 +48,7 @@ export default function SearchHeader(properties) {
         <SearchTypeButton
           name="SPARQL"
           route="sparql"
+          external={true}
           selected={properties.selected}
           icon={faDatabase}
         />
