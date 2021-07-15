@@ -25,7 +25,7 @@ function Submit() {
   dispatch(getCanSubmitTo());
 
   if (showSubmitProgress) {
-    return <SubmissionStatusPanel />;
+    return <SubmissionStatusPanel selectedCollection={selectedCollection} />;
   }
   return (
     <div className={styles.container}>

@@ -23,10 +23,24 @@ export default function SelectedFileView(properties) {
     } else setFileDisplay(null);
   }, [properties.files]);
   return (
-    <div
-      className={`${styles.selectedfilescontainer} ${styles.concatenatefiles}`}
-    >
-      {fileDisplay}
+    <div>
+      <div
+        className={`${styles.selectedfilescontainer} ${styles.concatenatefiles}`}
+      >
+        {fileDisplay}
+      </div>
+      {properties.files.length > 0 ? (
+        <div className={styles.clearfilesbuttoncontainer}>
+          <div
+            className={styles.clearfilesbutton}
+            role="button"
+            onClick={() => properties.setFiles([])}
+          >
+            <FontAwesomeIcon icon={faTrashAlt} size="1x" color="#D25627" />
+          </div>
+          <div className={styles.clearfilesbuttonlabel}>Clear All</div>
+        </div>
+      ) : null}
     </div>
   );
 }

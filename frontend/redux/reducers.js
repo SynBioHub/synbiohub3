@@ -84,8 +84,9 @@ const initialSubmitState = {
   submitting: false,
   showSubmitProgress: false,
   filesUploading: [],
-  attachmentsUploading: [],
+  failedFiles: [],
   fileFailed: false,
+  attachmentsUploading: [],
   canSubmitTo: [],
   gettingCanSubmitTo: false
 };
@@ -101,7 +102,9 @@ const submitReducer = (state = initialSubmitState, { type, payload }) => {
         ...state,
         submitting: payload,
         filesUploading: [],
-        fileFailed: false
+        failedFiles: [],
+        fileFailed: false,
+        attachmentsUploading: []
       };
     case types.SUBMITTING:
       return {
@@ -118,15 +121,20 @@ const submitReducer = (state = initialSubmitState, { type, payload }) => {
         ...state,
         filesUploading: payload
       };
-    case types.ATTACHMENTSUPLOADING:
+    case types.FAILEDFILES:
       return {
         ...state,
-        attachmentsUploading: payload
+        failedFiles: payload
       };
     case types.FILEFAILED:
       return {
         ...state,
         fileFailed: payload
+      };
+    case types.ATTACHMENTSUPLOADING:
+      return {
+        ...state,
+        attachmentsUploading: payload
       };
     case types.CANSUBMITTO:
       return {

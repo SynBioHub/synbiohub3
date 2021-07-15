@@ -1,3 +1,5 @@
+import JSZip from 'jszip';
+
 import * as types from './types';
 
 /* eslint sonarjs/no-duplicate-string: "off" */
@@ -113,6 +115,12 @@ export const setLimit = newLimit => dispatch => {
 
 // SUBMIT ACTIONS
 
+/**
+ * This action handles the submitting of design files to sbh
+ * @param {string} uri - the uri of the collection
+ * @param {array} files - the files to submit
+ * @returns
+ */
 export const submit = (uri, files) => async (dispatch, getState) => {
   dispatch({
     type: types.SUBMITRESET,
@@ -134,26 +142,24 @@ export const submit = (uri, files) => async (dispatch, getState) => {
   });
 };
 
+/**
+ * Helper function called by the submit action
+ * @param {*} dispatch
+ * @param {string} token - the authorization token of the current user
+ * @param {string} uri - the collection uri
+ * @param {array} files - the files to uplod to sbh
+ */
 async function uploadFiles(dispatch, token, uri, files) {
   const filesUploading = [];
-  const attachmentsUploading = [];
+  const failedFiles = [];
 
   for (const file of files) {
-    const fileObject = {
+    filesUploading.push({
       file: file,
       name: file.name,
       status: 'pending',
       errors: []
-    };
-    if (file.type.match('text.*') || file.type.match('application/zip'))
-      filesUploading.push(fileObject);
-    else
-      attachmentsUploading.push({
-        file: file,
-        name: file.name,
-        status: 'pending',
-        errors: []
-      });
+    });
   }
 
   dispatch({
@@ -161,7 +167,11 @@ async function uploadFiles(dispatch, token, uri, files) {
     payload: filesUploading
   });
 
-  uploadAttachments(dispatch, token, uri, attachmentsUploading);
+  const url = `${process.env.backendUrl}/submit`;
+  const headers = {
+    Accept: 'text/plain; charset=UTF-8',
+    'X-authorization': token
+  };
 
   // upload all files
   for (var fileIndex = 0; fileIndex < filesUploading.length; fileIndex++) {
@@ -170,12 +180,6 @@ async function uploadFiles(dispatch, token, uri, files) {
       type: types.FILESUPLOADING,
       payload: [...filesUploading]
     });
-
-    const url = `${process.env.backendUrl}/submit`;
-    var headers = {
-      Accept: 'text/plain; charset=UTF-8',
-      'X-authorization': token
-    };
 
     const form = new FormData();
     form.append('rootCollections', uri);
@@ -198,7 +202,14 @@ async function uploadFiles(dispatch, token, uri, files) {
           : JSON.parse(fileErrorMessages);
       filesUploading[fileIndex].status = 'failed';
       filesUploading[fileIndex].errors = fileErrorMessages;
+      failedFiles.push(filesUploading[fileIndex]);
+      filesUploading.splice(fileIndex, 1);
+      fileIndex -= 1;
       dispatch({ type: types.FILEFAILED, payload: true });
+      dispatch({
+        type: types.FAILEDFILES,
+        payload: [...failedFiles]
+      });
     }
     dispatch({
       type: types.FILESUPLOADING,
@@ -207,58 +218,81 @@ async function uploadFiles(dispatch, token, uri, files) {
   }
 }
 
-const uploadAttachments = async (
-  dispatch,
-  token,
-  uri,
-  attachmentsUploading
-) => {
-  // upload all attachments
-  for (
-    var fileIndex = 0;
-    fileIndex < attachmentsUploading.length;
-    fileIndex++
-  ) {
-    attachmentsUploading[fileIndex].status = 'uploading';
-    dispatch({
-      type: types.ATTACHMENTSUPLOADING,
-      payload: [...attachmentsUploading]
-    });
+export const addAttachments = (files, uri) => async (dispatch, getState) => {
+  var newFailedFiles = getState().submit.failedFiles;
+  for (const file of files) {
+    newFailedFiles = newFailedFiles.filter(failedFile => failedFile !== file);
+    file.status = 'uploading';
+    file.errors = [];
+  }
+  dispatch({ type: types.FAILEDFILES, payload: newFailedFiles });
+  dispatch({
+    type: types.ATTACHMENTSUPLOADING,
+    payload: [...getState().submit.attachmentsUploading, ...files]
+  });
 
-    const url = `${process.env.backendUrl}/submit`;
-    var headers = {
-      Accept: 'text/plain; charset=UTF-8',
-      'X-authorization': token
-    };
+  dispatch({ type: types.SUBMITTING, payload: true });
 
-    const form = new FormData();
-    form.append('rootCollections', uri);
-    form.append('file', attachmentsUploading[fileIndex].file);
-    form.append('overwrite_merge', 2);
+  var zip = new JSZip();
+  for (const file of files) {
+    zip.file(file.file.name, file.file);
+  }
+  const zipped = await zip.generateAsync({ type: 'base64' });
 
-    const response = await fetch(url, {
-      method: 'POST',
-      headers,
-      body: form
-    });
+  const token = getState().user.token;
 
-    if (response.status === 200) {
-      attachmentsUploading[fileIndex].status = 'successful';
-    } else {
-      var fileErrorMessages = await response.text();
-      fileErrorMessages =
-        fileErrorMessages.charAt(0) !== '['
-          ? [fileErrorMessages]
-          : JSON.parse(fileErrorMessages);
-      attachmentsUploading[fileIndex].status = 'failed';
-      attachmentsUploading[fileIndex].errors = fileErrorMessages;
-      dispatch({ type: types.FILEFAILED, payload: true });
+  const url = `${process.env.backendUrl}/submit`;
+  const headers = {
+    Accept: 'text/plain; charset=UTF-8',
+    'X-authorization': token
+  };
+
+  const form = new FormData();
+  form.append('rootCollections', uri);
+  form.append('file', zipped);
+  form.append('overwrite_merge', 2);
+
+  const response = await fetch(url, {
+    method: 'POST',
+    headers,
+    body: form
+  });
+
+  if (response.status === 200) {
+    for (var index = 0; index < files.length; index++)
+      files[index].status = 'successful';
+  } else {
+    var fileErrorMessages = await response.text();
+    fileErrorMessages =
+      fileErrorMessages.charAt(0) !== '['
+        ? [fileErrorMessages]
+        : JSON.parse(fileErrorMessages);
+    const newFailedFiles = getState().submit.failedFiles;
+    for (var fileIndex = 0; fileIndex < files.length; fileIndex++) {
+      const file = files[fileIndex];
+      file.status = 'failed';
+      file.errors = fileErrorMessages;
+      newFailedFiles.push(file);
+      files.splice(fileIndex, 1);
+      fileIndex -= 1;
     }
+    dispatch({ type: types.FILEFAILED, payload: true });
     dispatch({
-      type: types.ATTACHMENTSUPLOADING,
-      payload: [...attachmentsUploading]
+      type: types.FAILEDFILES,
+      payload: [...newFailedFiles]
     });
   }
+
+  dispatch({
+    type: types.ATTACHMENTSUPLOADING,
+    payload: [...getState().submit.attachmentsUploading]
+  });
+  if (getState().submit.failedFiles.length === 0)
+    dispatch({ type: types.FILEFAILED, payload: false });
+  dispatch({
+    type: types.SUBMITTING,
+    payload: false
+  });
 };
 
 export const createCollection =

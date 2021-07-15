@@ -14,7 +14,7 @@ import styles from '../../styles/submit.module.css';
 import FilesUploading from './FileComponents/FilesUploading';
 import SubmitHeader from './ReusableComponents/SubmitHeader';
 
-export default function SubmissionStatusPanel() {
+export default function SubmissionStatusPanel(properties) {
   const fileFailed = useSelector(state => state.submit.fileFailed);
   const submitting = useSelector(state => state.submit.submitting);
   const [header, setHeader] = useState(null);
@@ -40,7 +40,7 @@ export default function SubmissionStatusPanel() {
             />
           }
           title="Some files failed to upload"
-          description="Click on a file's warning icon to see why it failed to be uploaded."
+          description="Click on a file's warning icon to see why it failed to be uploaded. You can also submit these files as collection attachments."
         />
       );
     } else {
@@ -88,7 +88,7 @@ export default function SubmissionStatusPanel() {
             </div>
           </div>
         )}
-        <FilesUploading />
+        <FilesUploading selectedCollection={properties.selectedCollection} />
       </div>
     </div>
   );
