@@ -1,13 +1,14 @@
 import { faCloudUploadAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
+import { addAttachments } from '../../../redux/actions';
 import styles from '../../../styles/attachmentupload.module.css';
 import MajorLabel from '../ReusableComponents/MajorLabel';
 import FileUploadDisplay from './FileUploadDisplay';
 
-export default function FailedFilesDisplay() {
+export default function FailedFilesDisplay(properties) {
   const failedFiles = useSelector(state => state.submit.failedFiles);
   const submitting = useSelector(state => state.submit.submitting);
   const [selectedFiles, setSelectedFiles] = useState({});
@@ -16,6 +17,8 @@ export default function FailedFilesDisplay() {
     useState('');
   const [multipleAttachmentsSelected, setMultipleAttachmentsSelected] =
     useState(true);
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     setAllFilesChecked(
@@ -74,6 +77,18 @@ export default function FailedFilesDisplay() {
       {!submitting && (
         <div
           className={`${styles.submitattachmentsbutton} ${submitAttachmentsButtonClass}`}
+          role="button"
+          onClick={() => {
+            if (
+              submitAttachmentsButtonClass !== styles.submitattachmentsdisabled
+            )
+              dispatch(
+                addAttachments(
+                  Object.values(selectedFiles),
+                  properties.selectedCollection.uri
+                )
+              );
+          }}
         >
           <FontAwesomeIcon
             icon={faCloudUploadAlt}

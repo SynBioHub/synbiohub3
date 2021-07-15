@@ -14,7 +14,7 @@ import styles from '../../styles/submit.module.css';
 import FilesUploading from './FileComponents/FilesUploading';
 import SubmitHeader from './ReusableComponents/SubmitHeader';
 
-export default function SubmissionStatusPanel() {
+export default function SubmissionStatusPanel(properties) {
   const fileFailed = useSelector(state => state.submit.fileFailed);
   const submitting = useSelector(state => state.submit.submitting);
   const [header, setHeader] = useState(null);
@@ -88,7 +88,7 @@ export default function SubmissionStatusPanel() {
             </div>
           </div>
         )}
-        <FilesUploading />
+        <FilesUploading selectedCollection={properties.selectedCollection} />
       </div>
     </div>
   );

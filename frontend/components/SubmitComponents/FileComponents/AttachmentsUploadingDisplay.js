@@ -16,6 +16,7 @@ export default function AttachmentsUploading() {
     setAttachmentsUploadingDisplay(createFileDisplay(attachmentsUploading));
   }, [attachmentsUploading]);
 
+  if (attachmentsUploading.length === 0) return null;
   return (
     <div className={styles.selectedfilescontainer}>
       <MajorLabel

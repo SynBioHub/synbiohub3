@@ -3,10 +3,11 @@ import { useSelector } from 'react-redux';
 
 import styles from '../../../styles/submit.module.css';
 import MajorLabel from '../ReusableComponents/MajorLabel';
+import AttachmentsUploadingDisplay from './AttachmentsUploadingDisplay';
 import FailedFilesDisplay from './FailedFilesDisplay';
 import FileUploadDisplay from './FileUploadDisplay';
 
-export default function FilesUploading() {
+export default function FilesUploading(properties) {
   const filesUploading = useSelector(state => state.submit.filesUploading);
   const [filesUploadingDisplay, setFilesUploadingDisplay] = useState(
     createFileDisplay(filesUploading)
@@ -18,11 +19,14 @@ export default function FilesUploading() {
 
   return (
     <div className={styles.selectedfilescontainer}>
-      <FailedFilesDisplay />
-      <MajorLabel
-        text="Design Files"
-        link="https://wiki.synbiohub.org/userdocumentation/managingsubmitting/"
-      />
+      <FailedFilesDisplay selectedCollection={properties.selectedCollection} />
+      <AttachmentsUploadingDisplay />
+      {filesUploading.length > 0 && (
+        <MajorLabel
+          text="Design Files"
+          link="https://wiki.synbiohub.org/userdocumentation/managingsubmitting/"
+        />
+      )}
       <div className={styles.designfilescontainer}>{filesUploadingDisplay}</div>
     </div>
   );
