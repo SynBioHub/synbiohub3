@@ -27,7 +27,7 @@ function Home() {
             rel="noreferrer"
             target="_blank"
           >
-            SynBioHub
+            SynBio<span className={styles.hubtitle}>Hub</span>
           </a>
         </h1>
 
@@ -60,7 +60,7 @@ function Home() {
             description="Prepare designs for publication or collaboration"
             icon={faAlignLeft}
             title="Manage Submissions"
-            route={'/manage'}
+            route={'/submissions'}
             redirect={true}
           />
 

@@ -1,5 +1,11 @@
-import { faDownload, faPlus } from '@fortawesome/free-solid-svg-icons';
+import {
+  faDownload,
+  faGlobeAmericas,
+  faPlus,
+  faTrashAlt
+} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React from 'react';
 import { useDispatch } from 'react-redux';
 
 import { addToBasket } from '../../../../redux/actions';
@@ -45,6 +51,30 @@ export default function TableButtons(properties) {
           </span>
           Download
         </div>
+        {properties.submissionsPage ? (
+          <React.Fragment>
+            <div
+              className={`${styles.tablebutton} ${properties.buttonClass} ${styles.rightspace}`}
+            >
+              <span className={styles.buttonicon}>
+                <FontAwesomeIcon
+                  icon={faGlobeAmericas}
+                  color="#00000"
+                  size="1x"
+                />
+              </span>
+              Make Public
+            </div>
+            <div
+              className={`${styles.tablebutton} ${properties.buttonClass} ${styles.rightspace}`}
+            >
+              <span className={styles.buttonicon}>
+                <FontAwesomeIcon icon={faTrashAlt} color="#00000" size="1x" />
+              </span>
+              Remove Collection
+            </div>
+          </React.Fragment>
+        ) : null}
       </div>
 
       <Navigation count={properties.count} />
