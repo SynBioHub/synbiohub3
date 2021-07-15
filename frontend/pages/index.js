@@ -60,7 +60,7 @@ function Home() {
             description="Prepare designs for publication or collaboration"
             icon={faAlignLeft}
             title="Manage Submissions"
-            route={'/manage'}
+            route={'/submissions'}
             redirect={true}
           />
 

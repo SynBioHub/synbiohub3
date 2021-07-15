@@ -14,9 +14,11 @@ export default function Submissions() {
   const token = useSelector(state => state.user.token);
   const { submissions, isMySubmissionsLoading, isMySubmissionsError } =
     useMySubmissions(token);
+  const { shared, isSharedLoading, isSharedError } =
+    useSharedSubmissions(token);
 
   var content = null;
-  if (isMySubmissionsLoading) {
+  if (isMySubmissionsLoading || isSharedLoading) {
     content = (
       <div className={styles.loadercontainer}>
         <div className={styles.loaderanimation}>
@@ -24,7 +26,7 @@ export default function Submissions() {
         </div>
       </div>
     );
-  } else if (isMySubmissionsError) {
+  } else if (isMySubmissionsError || isSharedError) {
     content = (
       <div className={styles.error}>
         Errors were encountered while fetching your submissions
@@ -34,8 +36,9 @@ export default function Submissions() {
     content = (
       <ResultTable
         count={submissions.length}
-        data={submissions}
+        data={[...submissions, ...shared]}
         overrideType="Collection"
+        submissionsPage={true}
       />
     );
   }
@@ -63,6 +66,19 @@ const useMySubmissions = token => {
     submissions: data,
     isMySubmissionsLoading: !error && !data,
     isMySubmissionsError: error
+  };
+};
+
+const useSharedSubmissions = token => {
+  const { data, error } = useSWR(
+    [`${process.env.backendUrl}/shared`, token],
+    fetcher
+  );
+
+  return {
+    shared: data,
+    isSharedLoading: !error && !data,
+    isSharedError: error
   };
 };
 

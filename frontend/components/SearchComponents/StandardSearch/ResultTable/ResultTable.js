@@ -58,6 +58,7 @@ export default function ResultTable(properties) {
         setSelected={setSelected}
         data={properties.data}
         count={properties.count}
+        submissionsPage={properties.submissionsPage}
       />
 
       <div className={styles.tablecontainer}>
