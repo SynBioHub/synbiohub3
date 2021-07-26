@@ -50,3 +50,14 @@
 .message {
    margin-left: 1rem;
 }
+
+.showmessageinputcontainer {
+   display: flex;
+   align-items: center;
+   margin-top: 1rem;
+   color: #888;
+}
+
+.showmessageinput {
+   margin: 0 0.7rem 0 0;
+}
