@@ -17,6 +17,7 @@ import styles from '../styles/submit.module.css';
 function Submit() {
   const [files, setFiles] = useState([]);
   const [selectedCollection, setSelectedCollection] = useState();
+  const [overwriteCollection, setOverwriteCollection] = useState(false);
 
   const showSubmitProgress = useSelector(
     state => state.submit.showSubmitProgress
@@ -48,11 +49,15 @@ function Submit() {
           selectedCollection={selectedCollection}
           setSelectedCollection={setSelectedCollection}
         />
-        <OverwriteObjects />
+        <OverwriteObjects
+          checked={overwriteCollection}
+          setChecked={setOverwriteCollection}
+        />
         <SubmitButton
           collection={selectedCollection}
           files={files}
           needsVerification={files.length === 0 || !selectedCollection}
+          overwriteCollection={overwriteCollection}
         />
       </div>
     </div>
