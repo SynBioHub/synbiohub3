@@ -27,7 +27,7 @@ export default function Footer() {
             rel="noreferrer"
             className={styles.institution}
           >
-            University at Colorado Boulder
+            University of Colorado Boulder
           </a>
           ,{'  &  '}
           Other Collaborators
