@@ -96,7 +96,10 @@ function Login() {
             <span className={styles.blue}>Forgot password?</span>
           </div>
           <div className={styles.info}>
-            New to SynBioHub? <span className={styles.blue}>Join now</span>
+            New to SynBioHub?{' '}
+            <a className={styles.blue} href="https://dev.synbiohub.org/login">
+              Join now
+            </a>
           </div>
         </div>
       </div>
