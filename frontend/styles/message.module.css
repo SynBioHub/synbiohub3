@@ -8,14 +8,14 @@
    display: flex;
    justify-content: center;
    align-items: center;
-   background-color: rgba(136, 136, 136, 0.26);
+   background-color: rgba(136, 136, 136, 0.63);
 }
 
 .content {
    background-color: #fff;
    padding: 1.5rem;
    border-radius: 0.4rem;
-   max-width: 36rem;
+   max-width: 32rem;
 }
 
 .button {

@@ -39,7 +39,7 @@ export default function OverwriteObjects() {
       </div>
       {warnUser ? (
         <Message
-          message="Are you sure you want to overwrite existing objects in the collection? All objects currently existing in the collection will be lost"
+          message="Are you sure you want to overwrite existing objects in the collection? All objects currently existing in the collection will be lost."
           buttontext="Confirm"
           close={() => {
             setChecked(false);
