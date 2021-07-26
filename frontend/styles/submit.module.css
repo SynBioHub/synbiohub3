@@ -232,7 +232,7 @@
    font-size: 1.1rem;
    border-radius: 0.4rem;
    cursor: pointer;
-   margin-top: 2rem;
+   margin-top: 1.5rem;
 }
 
 .submitbuttoncontainer:hover {
@@ -371,6 +371,29 @@
    display: flex;
    flex-direction: column;
    width: 100%;
+}
+
+.overwritecontainer {
+   background-color: #ECF0F1;
+   margin-top: 1rem;
+   display: flex;
+   padding: 0.7rem;
+   border-radius: 0.4rem;
+   flex-direction: row;
+   justify-content: space-between;
+   align-items: center;
+}
+
+.overwriteinputcontainer {
+   display: flex;
+   flex-direction: row;
+   align-items: center;
+}
+
+.overwritemessage {
+   margin-left: 0.7rem;
+   color: #465775;
+   font-size: 0.9rem;
 }
 
 @media (max-width: 40rem) {
