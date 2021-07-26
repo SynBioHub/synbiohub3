@@ -20,9 +20,9 @@
 }
 
 .button {
-   padding: 0.4rem;
+   padding: 0.35rem 0.6rem;
    border-radius: 0.4rem;
-   margin-right: 0.7rem;
+   margin-right: 1rem;
    cursor: pointer;  
 }
 
@@ -59,5 +59,5 @@
 }
 
 .showmessageinput {
-   margin: 0 0.7rem 0 0;
+   margin: 0 0.6rem 0 0;
 }

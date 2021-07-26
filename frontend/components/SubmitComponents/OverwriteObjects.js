@@ -7,11 +7,10 @@ import Message from '../Message';
 
 export default function OverwriteObjects(properties) {
   const [warnUser, setWarnUser] = useState(false);
-  const [enablePrompt, setEnablePrompt] = useState(
-    localStorage.getItem('PromptOverwrite') === 'true'
-  );
+  const [enablePrompt, setEnablePrompt] = useState(true);
+
   useEffect(() => {
-    localStorage.setItem('PromptOverwrite', enablePrompt);
+    if (!enablePrompt) localStorage.setItem('PromptOverwrite', enablePrompt);
   }, [enablePrompt]);
 
   useEffect(() => {
@@ -27,7 +26,7 @@ export default function OverwriteObjects(properties) {
         setEnablePrompt(true);
         break;
     }
-  });
+  }, []);
 
   return (
     <div className={styles.overwritecontainer}>
