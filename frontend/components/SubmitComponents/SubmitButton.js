@@ -24,7 +24,14 @@ export default function SubmitButton(properties) {
           alert(
             'You must select one or more files and a destination collection before you can submit.'
           );
-        else dispatch(submit(properties.collection.uri, properties.files));
+        else
+          dispatch(
+            submit(
+              properties.collection.uri,
+              properties.files,
+              properties.overwriteCollection ? 1 : 0
+            )
+          );
       }}
     >
       <FontAwesomeIcon

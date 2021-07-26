@@ -5,18 +5,17 @@ import { useState } from 'react';
 import styles from '../../styles/submit.module.css';
 import Message from '../Message';
 
-export default function OverwriteObjects() {
+export default function OverwriteObjects(properties) {
   const [warnUser, setWarnUser] = useState(false);
-  const [checked, setChecked] = useState(false);
   return (
     <div className={styles.overwritecontainer}>
       <div className={styles.overwriteinputcontainer}>
         <input
           type="checkbox"
-          checked={checked}
+          checked={properties.checked}
           onChange={event => {
             if (event.target.checked) setWarnUser(true);
-            else setChecked(false);
+            else properties.setChecked(false);
           }}
         />
         <div className={styles.overwritemessage}>
@@ -42,11 +41,11 @@ export default function OverwriteObjects() {
           message="Are you sure you want to overwrite existing objects in the collection? All objects currently existing in the collection will be lost."
           buttontext="Confirm"
           close={() => {
-            setChecked(false);
+            properties.setChecked(false);
             setWarnUser(false);
           }}
           action={() => {
-            setChecked(true);
+            properties.setChecked(true);
             setWarnUser(false);
           }}
         />

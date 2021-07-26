@@ -121,26 +121,28 @@ export const setLimit = newLimit => dispatch => {
  * @param {array} files - the files to submit
  * @returns
  */
-export const submit = (uri, files) => async (dispatch, getState) => {
-  dispatch({
-    type: types.SUBMITRESET,
-    payload: true // sets submitting state to true
-  });
+export const submit =
+  (uri, files, overwriteIncrement = 0) =>
+  async (dispatch, getState) => {
+    dispatch({
+      type: types.SUBMITRESET,
+      payload: true // sets submitting state to true
+    });
 
-  dispatch({
-    type: types.SHOWSUBMITPROGRESS,
-    payload: true
-  });
+    dispatch({
+      type: types.SHOWSUBMITPROGRESS,
+      payload: true
+    });
 
-  const token = getState().user.token;
+    const token = getState().user.token;
 
-  await uploadFiles(dispatch, token, uri, files);
+    await uploadFiles(dispatch, token, uri, files, overwriteIncrement);
 
-  dispatch({
-    type: types.SUBMITTING,
-    payload: false
-  });
-};
+    dispatch({
+      type: types.SUBMITTING,
+      payload: false
+    });
+  };
 
 /**
  * Helper function called by the submit action
@@ -149,7 +151,13 @@ export const submit = (uri, files) => async (dispatch, getState) => {
  * @param {string} uri - the collection uri
  * @param {array} files - the files to uplod to sbh
  */
-async function uploadFiles(dispatch, token, uri, files) {
+async function uploadFiles(
+  dispatch,
+  token,
+  uri,
+  files,
+  overwriteIncrement = 0
+) {
   const filesUploading = [];
   const failedFiles = [];
 
@@ -184,7 +192,7 @@ async function uploadFiles(dispatch, token, uri, files) {
     const form = new FormData();
     form.append('rootCollections', uri);
     form.append('file', filesUploading[fileIndex].file);
-    form.append('overwrite_merge', 2);
+    form.append('overwrite_merge', 2 + overwriteIncrement);
 
     const response = await fetch(url, {
       method: 'POST',
