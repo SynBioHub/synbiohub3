@@ -7,13 +7,16 @@ import Message from '../Message';
 
 export default function OverwriteObjects() {
   const [warnUser, setWarnUser] = useState(false);
+  const [checked, setChecked] = useState(false);
   return (
     <div className={styles.overwritecontainer}>
       <div className={styles.overwriteinputcontainer}>
         <input
           type="checkbox"
+          checked={checked}
           onChange={event => {
             if (event.target.checked) setWarnUser(true);
+            else setChecked(false);
           }}
         />
         <div className={styles.overwritemessage}>
@@ -35,7 +38,18 @@ export default function OverwriteObjects() {
         </a>
       </div>
       {warnUser ? (
-        <Message message="Are you sure you want to overwrite existing objects in the collection? All objects currently existing in the collection will be lost" />
+        <Message
+          message="Are you sure you want to overwrite existing objects in the collection? All objects currently existing in the collection will be lost"
+          buttontext="Confirm"
+          close={() => {
+            setChecked(false);
+            setWarnUser(false);
+          }}
+          action={() => {
+            setChecked(true);
+            setWarnUser(false);
+          }}
+        />
       ) : null}
     </div>
   );

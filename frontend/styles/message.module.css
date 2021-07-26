@@ -1,3 +1,51 @@
 .container {
-   
+   position: fixed;
+   top: 0;
+   bottom: 0;
+   left: 0;
+   right: 0;
+   z-index: 1000;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   background-color: rgba(136, 136, 136, 0.26);
+}
+
+.content {
+   background-color: #fff;
+   padding: 1.5rem;
+   border-radius: 0.4rem;
+   max-width: 36rem;
+}
+
+.button {
+   padding: 0.4rem;
+   border-radius: 0.4rem;
+   margin-right: 0.7rem;
+   cursor: pointer;  
+}
+
+.buttoncontainer {
+   margin-top: 1.5rem;
+   display: flex;
+   flex-direction: row;
+   justify-content: center;
+}
+
+.cancel {
+   border: 2px solid #D25627;
+   color: #D25627;
+}
+
+.actionbutton {
+   background-color: #D25627;
+   color: #fff;
+}
+
+.messagecontainer {
+   display: flex;
+}
+
+.message {
+   margin-left: 1rem;
 }
