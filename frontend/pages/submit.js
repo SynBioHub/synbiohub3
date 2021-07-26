@@ -6,6 +6,7 @@ import { useDispatch } from 'react-redux';
 
 import ChooseCollection from '../components/SubmitComponents/ChooseCollection/ChooseCollection';
 import UploadFileSection from '../components/SubmitComponents/FileComponents/UploadFileSection';
+import OverwriteObjects from '../components/SubmitComponents/OverwriteObjects';
 import SubmitHeader from '../components/SubmitComponents/ReusableComponents/SubmitHeader';
 import SubmissionStatusPanel from '../components/SubmitComponents/SubmissionStatusPanel';
 import SubmitButton from '../components/SubmitComponents/SubmitButton';
@@ -47,6 +48,7 @@ function Submit() {
           selectedCollection={selectedCollection}
           setSelectedCollection={setSelectedCollection}
         />
+        <OverwriteObjects />
         <SubmitButton
           collection={selectedCollection}
           files={files}
