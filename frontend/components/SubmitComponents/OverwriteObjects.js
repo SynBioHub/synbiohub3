@@ -1,13 +1,21 @@
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useState } from 'react';
 
 import styles from '../../styles/submit.module.css';
+import Message from '../Message';
 
 export default function OverwriteObjects() {
+  const [warnUser, setWarnUser] = useState(false);
   return (
     <div className={styles.overwritecontainer}>
       <div className={styles.overwriteinputcontainer}>
-        <input type="checkbox" />
+        <input
+          type="checkbox"
+          onChange={event => {
+            if (event.target.checked) setWarnUser(true);
+          }}
+        />
         <div className={styles.overwritemessage}>
           Overwrite Existing Collection
         </div>
@@ -26,6 +34,9 @@ export default function OverwriteObjects() {
           />
         </a>
       </div>
+      {warnUser ? (
+        <Message message="Are you sure you want to overwrite existing objects in the collection? All objects currently existing in the collection will be lost" />
+      ) : null}
     </div>
   );
 }

@@ -232,7 +232,7 @@
    font-size: 1.1rem;
    border-radius: 0.4rem;
    cursor: pointer;
-   margin-top: 1.5rem;
+   margin-top: 2rem;
 }
 
 .submitbuttoncontainer:hover {
@@ -392,8 +392,7 @@
 
 .overwritemessage {
    margin-left: 0.7rem;
-   color: #465775;
-   font-size: 0.9rem;
+   font-size: 1rem;
 }
 
 @media (max-width: 40rem) {
