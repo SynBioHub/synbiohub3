@@ -83,6 +83,7 @@ const searchReducer = (state = initialSearchState, { type, payload }) => {
 const initialSubmitState = {
   submitting: false,
   showSubmitProgress: false,
+  selectedCollection: undefined,
   filesUploading: [],
   failedFiles: [],
   fileFailed: false,
@@ -115,6 +116,11 @@ const submitReducer = (state = initialSubmitState, { type, payload }) => {
       return {
         ...state,
         showSubmitProgress: payload
+      };
+    case types.SELECTEDCOLLECTION:
+      return {
+        ...state,
+        selectedCollection: payload
       };
     case types.FILESUPLOADING:
       return {

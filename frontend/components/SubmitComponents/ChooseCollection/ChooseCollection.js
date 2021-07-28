@@ -47,7 +47,6 @@ export default function ChooseCollection(properties) {
           onClick={() => {
             setFilter('');
             dispatch(setPromptNewCollection(true));
-            properties.setSelectedCollection();
           }}
         >
           <FontAwesomeIcon
