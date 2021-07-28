@@ -1,6 +1,7 @@
 import { faSignInAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -97,9 +98,9 @@ function Login() {
           </div>
           <div className={styles.info}>
             New to SynBioHub?{' '}
-            <a className={styles.blue} href="https://dev.synbiohub.org/login">
-              Join now
-            </a>
+            <Link href="/register">
+              <a className={styles.blue}>Join now</a>
+            </Link>
           </div>
         </div>
       </div>
