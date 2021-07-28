@@ -9,11 +9,15 @@ import NewCollectionForm from '../NewCollection/NewCollectionForm';
 import MajorLabel from '../ReusableComponents/MajorLabel';
 import CollectionDisplay from './CollectionDisplay';
 
-export default function ChooseCollection(properties) {
+export default function ChooseCollection() {
   const dispatch = useDispatch();
   const [filter, setFilter] = useState('');
   const createCollectionButtonText = useSelector(
     state => state.collectionCreate.buttonText
+  );
+
+  const selectedCollection = useSelector(
+    state => state.submit.selectedCollection
   );
 
   const promptNewCollection = useSelector(
@@ -33,8 +37,8 @@ export default function ChooseCollection(properties) {
             promptNewCollection ? styles.collpasefilter : ''
           }`}
           placeholder={
-            properties.selectedCollection
-              ? `${properties.selectedCollection.name}, version ${properties.selectedCollection.version}`
+            selectedCollection
+              ? `${selectedCollection.name}, version ${selectedCollection.version}`
               : 'Filter by name, display ID, description, or version'
           }
           onChange={event => setFilter(event.target.value)}
@@ -58,11 +62,7 @@ export default function ChooseCollection(properties) {
         </div>
       </div>
       {!promptNewCollection ? (
-        <CollectionDisplay
-          filter={filter}
-          selectedCollection={properties.selectedCollection}
-          setSelectedCollection={properties.setSelectedCollection}
-        />
+        <CollectionDisplay filter={filter} setFilter={setFilter} />
       ) : (
         <NewCollectionForm />
       )}

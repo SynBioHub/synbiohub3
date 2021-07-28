@@ -115,6 +115,10 @@
    transition: width .35s;
 }
 
+.collectionfilter::placeholder {
+   color: #D25627;
+}
+
 .collpasefilter {
    opacity: 0;
    width: 0%;

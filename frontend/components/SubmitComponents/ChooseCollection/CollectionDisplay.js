@@ -45,7 +45,7 @@ function CollectionSelector(properties) {
 
   useEffect(() => {
     setIsSelected(Object.is(selectedCollection, properties.collection));
-  }, [properties.selected]);
+  }, [selectedCollection]);
 
   if (
     !properties.collection ||
