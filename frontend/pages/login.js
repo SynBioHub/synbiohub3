@@ -6,6 +6,7 @@ import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
+import InputField from '../components/LoginComponents/InputField';
 import TopLevel from '../components/TopLevel';
 import { login } from '../redux/actions';
 import styles from '../styles/login.module.css';
@@ -50,18 +51,16 @@ function Login() {
         {loginError && (
           <div className={styles.warning}>{loginErrorMessage}</div>
         )}
-        <input
+        <InputField
           value={username}
           onChange={event => setUsername(event.target.value)}
           onKeyPress={event => {
             if (event.key === 'Enter') passwordInput.current.focus();
           }}
-          autoFocus
-          className={styles.input}
-          placeholder="Email or Username"
+          placeholder="Username or Email"
           type="text"
         />
-        <input
+        <InputField
           value={password}
           ref={passwordInput}
           onChange={event => setPassword(event.target.value)}
@@ -72,7 +71,6 @@ function Login() {
               setPassword('');
             }
           }}
-          className={styles.input}
           placeholder="Password"
           type="password"
         />
