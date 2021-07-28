@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
+import { setSelectedCollection } from '../../../redux/actions';
 import styles from '../../../styles/choosecollection.module.css';
 
 export default function CollectionDisplay(properties) {
@@ -12,8 +13,6 @@ export default function CollectionDisplay(properties) {
       <CollectionSelector
         key={collection.displayId + collection.name + collection.version}
         filter={properties.filter}
-        selected={properties.selectedCollection}
-        setSelected={properties.setSelectedCollection}
         collection={collection}
       />
     );
@@ -36,10 +35,16 @@ export default function CollectionDisplay(properties) {
 }
 
 function CollectionSelector(properties) {
+  const dispatch = useDispatch();
+
+  const selectedCollection = useSelector(
+    state => state.submit.selectedCollection
+  );
+
   const [isSelected, setIsSelected] = useState(false);
 
   useEffect(() => {
-    setIsSelected(Object.is(properties.selected, properties.collection));
+    setIsSelected(Object.is(selectedCollection, properties.collection));
   }, [properties.selected]);
 
   if (
@@ -53,7 +58,7 @@ function CollectionSelector(properties) {
       className={isSelected ? styles.selectedcollection : undefined}
       key={properties.collection.displayId}
       onClick={() => {
-        properties.setSelected(properties.collection);
+        dispatch(setSelectedCollection(properties.collection));
       }}
     >
       <td className={styles.headertext}>{properties.collection.name}</td>

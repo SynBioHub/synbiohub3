@@ -83,7 +83,7 @@ const searchReducer = (state = initialSearchState, { type, payload }) => {
 const initialSubmitState = {
   submitting: false,
   showSubmitProgress: false,
-  selectedCollection: undefined,
+  selectedCollection: {},
   filesUploading: [],
   failedFiles: [],
   fileFailed: false,

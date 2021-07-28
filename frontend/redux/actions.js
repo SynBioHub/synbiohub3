@@ -339,11 +339,26 @@ export const createCollection =
       dispatch({ type: types.CREATINGCOLLECTIONERRORS, payload: messages });
     } else {
       dispatch({ type: types.CREATINGCOLLECTIONERRORS, payload: [] });
-      dispatch(getCanSubmitTo());
+      await dispatch(getCanSubmitTo());
+      const collections = getState().submit.canSubmitTo;
+      for (const collection of collections) {
+        if (
+          collection.displayId === id + '_collection' &&
+          collection.version === version &&
+          collection.name === name
+        ) {
+          dispatch(setSelectedCollection(collection));
+          break;
+        }
+      }
       dispatch(setPromptNewCollection(false));
     }
     dispatch({ type: types.CREATINGCOLLECTION, payload: false });
   };
+
+export const setSelectedCollection = collection => dispatch => {
+  dispatch({ type: types.SELECTEDCOLLECTION, payload: collection });
+};
 
 export const setPromptNewCollection = promptNewCollection => dispatch => {
   dispatch({ type: types.PROMPTNEWCOLLECTION, payload: promptNewCollection });
