@@ -13,6 +13,7 @@ export default function CollectionDisplay(properties) {
       <CollectionSelector
         key={collection.displayId + collection.name + collection.version}
         filter={properties.filter}
+        setFilter={properties.setFilter}
         collection={collection}
       />
     );
@@ -59,6 +60,7 @@ function CollectionSelector(properties) {
       key={properties.collection.displayId}
       onClick={() => {
         dispatch(setSelectedCollection(properties.collection));
+        properties.setFilter('');
       }}
     >
       <td className={styles.headertext}>{properties.collection.name}</td>

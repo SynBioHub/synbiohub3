@@ -33,6 +33,7 @@ export default function ChooseCollection() {
       <div className={styles.inputandcreatecontainer}>
         <input
           type="text"
+          value={filter}
           className={`${styles.collectionfilter} ${
             promptNewCollection ? styles.collpasefilter : ''
           }`}
