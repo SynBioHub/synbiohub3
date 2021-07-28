@@ -1,4 +1,4 @@
-import { faSignInAlt } from '@fortawesome/free-solid-svg-icons';
+import { faLock, faSignInAlt, faUser } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -59,6 +59,7 @@ function Login() {
           }}
           placeholder="Username or Email"
           type="text"
+          icon={faUser}
         />
         <InputField
           value={password}
@@ -73,6 +74,7 @@ function Login() {
           }}
           placeholder="Password"
           type="password"
+          icon={faLock}
         />
         <div
           role="button"
