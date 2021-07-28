@@ -97,7 +97,10 @@ function Login() {
           </div>
           <div className={styles.info}>
             New to SynBioHub?{' '}
-            <a className={styles.blue} href="https://dev.synbiohub.org/login">
+            <a
+              className={styles.blue}
+              href="https://dev.synbiohub.org/register"
+            >
               Join now
             </a>
           </div>

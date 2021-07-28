@@ -16,7 +16,6 @@ import styles from '../styles/submit.module.css';
 
 function Submit() {
   const [files, setFiles] = useState([]);
-  const [selectedCollection, setSelectedCollection] = useState();
   const [overwriteCollection, setOverwriteCollection] = useState(false);
 
   const showSubmitProgress = useSelector(
@@ -27,7 +26,7 @@ function Submit() {
   dispatch(getCanSubmitTo());
 
   if (showSubmitProgress) {
-    return <SubmissionStatusPanel selectedCollection={selectedCollection} />;
+    return <SubmissionStatusPanel />;
   }
   return (
     <div className={styles.container}>
@@ -45,20 +44,12 @@ function Submit() {
             uploaded into an existing or new collection."
         />
         <UploadFileSection files={files} setFiles={setFiles} />
-        <ChooseCollection
-          selectedCollection={selectedCollection}
-          setSelectedCollection={setSelectedCollection}
-        />
+        <ChooseCollection />
         <OverwriteObjects
           checked={overwriteCollection}
           setChecked={setOverwriteCollection}
         />
-        <SubmitButton
-          collection={selectedCollection}
-          files={files}
-          needsVerification={files.length === 0 || !selectedCollection}
-          overwriteCollection={overwriteCollection}
-        />
+        <SubmitButton files={files} overwriteCollection={overwriteCollection} />
       </div>
     </div>
   );

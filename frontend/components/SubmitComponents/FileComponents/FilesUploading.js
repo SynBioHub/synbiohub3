@@ -7,7 +7,7 @@ import AttachmentsUploadingDisplay from './AttachmentsUploadingDisplay';
 import FailedFilesDisplay from './FailedFilesDisplay';
 import FileUploadDisplay from './FileUploadDisplay';
 
-export default function FilesUploading(properties) {
+export default function FilesUploading() {
   const filesUploading = useSelector(state => state.submit.filesUploading);
   const [filesUploadingDisplay, setFilesUploadingDisplay] = useState(
     createFileDisplay(filesUploading)
@@ -19,7 +19,7 @@ export default function FilesUploading(properties) {
 
   return (
     <div className={styles.selectedfilescontainer}>
-      <FailedFilesDisplay selectedCollection={properties.selectedCollection} />
+      <FailedFilesDisplay />
       <AttachmentsUploadingDisplay />
       {filesUploading.length > 0 && (
         <MajorLabel

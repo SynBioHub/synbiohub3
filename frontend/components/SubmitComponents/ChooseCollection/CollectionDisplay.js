@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
+import { setSelectedCollection } from '../../../redux/actions';
 import styles from '../../../styles/choosecollection.module.css';
 
 export default function CollectionDisplay(properties) {
@@ -12,8 +13,7 @@ export default function CollectionDisplay(properties) {
       <CollectionSelector
         key={collection.displayId + collection.name + collection.version}
         filter={properties.filter}
-        selected={properties.selectedCollection}
-        setSelected={properties.setSelectedCollection}
+        setFilter={properties.setFilter}
         collection={collection}
       />
     );
@@ -36,11 +36,20 @@ export default function CollectionDisplay(properties) {
 }
 
 function CollectionSelector(properties) {
+  const dispatch = useDispatch();
+
+  const selectedCollection = useSelector(
+    state => state.submit.selectedCollection
+  );
+
   const [isSelected, setIsSelected] = useState(false);
 
   useEffect(() => {
-    setIsSelected(Object.is(properties.selected, properties.collection));
-  }, [properties.selected]);
+    if (selectedCollection)
+      setIsSelected(
+        shallowEqualCollection(selectedCollection, properties.collection)
+      );
+  }, [selectedCollection, properties.collection]);
 
   if (
     !properties.collection ||
@@ -50,10 +59,11 @@ function CollectionSelector(properties) {
 
   return (
     <tr
-      className={isSelected ? styles.selectedcollection : undefined}
+      className={`${isSelected ? styles.selectedcollection : ''}`}
       key={properties.collection.displayId}
       onClick={() => {
-        properties.setSelected(properties.collection);
+        dispatch(setSelectedCollection(properties.collection));
+        properties.setFilter('');
       }}
     >
       <td className={styles.headertext}>{properties.collection.name}</td>
@@ -69,5 +79,13 @@ const checkCollectionPassesFilter = (filter, collection) => {
     collection.displayId.includes(filter) ||
     collection.description.includes(filter) ||
     collection.version.includes(filter)
+  );
+};
+
+const shallowEqualCollection = (collection1, collection2) => {
+  return (
+    collection1.displayId === collection2.displayId &&
+    collection1.name === collection2.name &&
+    collection1.version === collection2.version
   );
 };

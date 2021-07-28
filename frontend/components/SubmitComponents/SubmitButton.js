@@ -1,17 +1,20 @@
 import { faCloudUploadAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { submit } from '../../redux/actions';
 import styles from '../../styles/submit.module.css';
 
 export default function SubmitButton(properties) {
   const dispatch = useDispatch();
-  const [canSubmit, setCanSubmit] = useState(false);
+  const selectedCollection = useSelector(
+    state => state.submit.selectedCollection
+  );
+  const [canSubmit, setCanSubmit] = useState();
   useEffect(() => {
-    setCanSubmit(!properties.needsVerification);
-  }, [properties.needsVerification]);
+    setCanSubmit(!(properties.files.length === 0 || !selectedCollection));
+  }, [selectedCollection, properties.files]);
 
   return (
     <div
@@ -27,7 +30,7 @@ export default function SubmitButton(properties) {
         else
           dispatch(
             submit(
-              properties.collection.uri,
+              selectedCollection.uri,
               properties.files,
               properties.overwriteCollection ? 1 : 0
             )
