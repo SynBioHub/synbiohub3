@@ -115,7 +115,7 @@
    transition: width .35s;
 }
 
-.collectionfilter::placeholder {
+.collectionfilteraactive::placeholder {
    color: #D25627;
 }
 

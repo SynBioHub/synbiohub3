@@ -36,7 +36,7 @@ export default function ChooseCollection() {
           value={filter}
           className={`${styles.collectionfilter} ${
             promptNewCollection ? styles.collpasefilter : ''
-          }`}
+          } ${selectedCollection ? styles.collectionfilteraactive : ''}`}
           placeholder={
             selectedCollection
               ? `${selectedCollection.name}, version ${selectedCollection.version}`
