@@ -17,7 +17,7 @@
    font-size: 1.7rem;
    margin-bottom: 0.5rem;
    margin-top: 0.5rem;
-   font-weight: 400;
+   font-weight: 500;
 }
 
 .intro {
@@ -25,18 +25,30 @@
    margin-bottom: 2rem;
 }
 
-.input {
-   outline: none;
-   padding: 0.6rem;
-   font-size: 1.1rem;
+.inputcontainer {
+   position: relative;
    margin: 0.5rem;
-   width: 22rem;
-   border: 2px solid #00A1E4;
-   color: #171D26;
 }
 
-.input::placeholder {
-   color: #465775;
+.inputiconcontainer {
+   position: absolute;
+   left: 0.8rem;
+   top: 0;
+   bottom: 0;
+   display: flex;
+   align-items: center;
+   font-size: 1.2rem;
+}
+
+.input {
+   outline: none;
+   padding: 0.7rem 0.7rem 0.7rem 2.5rem;
+   font-size: 1rem;
+   margin: 0;
+   width: 22rem;
+   border: 1px solid #00A1E4;
+   border-radius: 0.4rem;
+   color: #171D26;
 }
 
 .infocontainer {
@@ -69,6 +81,8 @@
    color: #fff;
    cursor: pointer;
    transition: transform .3s;
+   border-radius: 0.4rem;
+   font-size: 1.05rem;
 }
 
 .submitbutton:hover .submiticon {
@@ -76,7 +90,7 @@
 }
 
 .submiticon {
-   margin-right: 0.35rem;
+   margin-right: 0.6rem;
    transition: transform .3s;
    color: #84DCCF;
 }
@@ -86,4 +100,8 @@
    width: 22rem;
    text-align: center;
    margin-bottom: 0.5rem;
+}
+
+.registericon  {
+   margin: 1.2rem 0;
 }

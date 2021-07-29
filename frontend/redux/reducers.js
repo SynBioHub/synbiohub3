@@ -17,6 +17,8 @@ const initialUserState = {
   affiliation: '',
   isAdmin: false,
   loggedIn: false,
+  registerError: false,
+  registerErrorMessage: '',
   loginError: false,
   loginErrorMessage: ''
 };
@@ -32,7 +34,9 @@ const userReducer = (state = initialUserState, { type, payload }) => {
         ...state,
         loggedIn: true,
         loginError: false,
+        registerError: false,
         loginErrorMessage: '',
+        registerErrorMessage: '',
         username: payload.username,
         token: payload.token
       };
@@ -51,6 +55,12 @@ const userReducer = (state = initialUserState, { type, payload }) => {
         email: payload.email,
         affiliation: payload.affiliation,
         isAdmin: payload.isAdmin
+    case types.REGISTERERROR:
+      return {
+        ...state,
+        loggedIn: false,
+        registerError: true,
+        registerErrorMessage: payload
       };
     case types.LOGOUT:
       return initialUserState;
