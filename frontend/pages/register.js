@@ -8,7 +8,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Link from 'next/dist/client/link';
-import router from 'next/router';
+import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -26,6 +26,7 @@ function Register() {
   const pageVisited = useSelector(state => state.tracking.pageVisited);
 
   const dispatch = useDispatch();
+  const router = useRouter();
 
   const [name, setName] = useState('');
   const [username, setUsername] = useState('');
