@@ -16,7 +16,10 @@ export default function ProfileMenu() {
   const username = useSelector(state => state.user.username);
   return (
     <div className={styles.profilemenu}>
-      <div className={styles.userinfo}>{username}</div>
+      <div className={styles.userinfo}>
+        <p className={styles.userinfointro}>Signed in as</p>
+        {username}
+      </div>
       <a href={`${process.env.backendUrl}/profile`}>
         <div className={styles.menuoption}>
           <div className={styles.profilemenuicon}>

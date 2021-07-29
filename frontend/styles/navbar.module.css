@@ -181,11 +181,19 @@
    display: flex;
 }
 
+.userinfointro {
+   padding: 0;
+   margin: 0 0 0.3rem 0;
+   font-weight: 400;
+   color: #000;
+}
+
 .userinfo {
    padding: 0.75rem;
-   color: #000;
-   background-color: #7cc2fc;
+   color: #D25627;
    font-weight: 550;
+   border-bottom: 1px solid #7cc2fc;
+   font-size: 0.95rem;
 }
 
 @media only screen and (max-width: 600px) { 
