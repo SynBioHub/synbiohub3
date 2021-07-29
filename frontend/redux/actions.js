@@ -44,6 +44,7 @@ export const login = (username, password) => async dispatch => {
         token: message
       }
     });
+    dispatch(fetchUserInfo());
     localStorage.setItem('userToken', message); // save the token of the user locally, change to cookie later
     localStorage.setItem('username', username); // save the username of the user locally, change to cookie later
   } else {
@@ -69,6 +70,7 @@ export const restoreLogin = (username, token) => dispatch => {
       token
     }
   });
+  dispatch(fetchUserInfo());
 };
 
 /**
@@ -80,6 +82,35 @@ export const logoutUser = () => dispatch => {
   localStorage.removeItem('userToken');
   localStorage.removeItem('username');
   dispatch({ type: types.LOGOUT });
+};
+
+export const fetchUserInfo = () => async (dispatch, getState) => {
+  const url = `${process.env.backendUrl}/profile`;
+  const token = getState().user.token;
+  const headers = {
+    Accept: 'text/plain',
+    'X-authorization': token
+  };
+
+  const response = await fetch(url, {
+    method: 'GET',
+    headers
+  });
+  if (response.status === 200) {
+    const message = await response.json();
+    dispatch({
+      type: types.USERINFO,
+      payload: {
+        username: message.username,
+        name: message.name,
+        email: message.email,
+        affiliation: message.affiliation,
+        isAdmin: message.isAdmin
+      }
+    });
+  } else {
+    dispatch(logoutUser());
+  }
 };
 
 // SEARCHING ACTIONS

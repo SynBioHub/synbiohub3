@@ -12,6 +12,10 @@ To see how these reducers are utilizes to update state, see ./actions.js
 const initialUserState = {
   username: '',
   token: '',
+  name: '',
+  email: '',
+  affiliation: '',
+  isAdmin: false,
   loggedIn: false,
   loginError: false,
   loginErrorMessage: ''
@@ -38,6 +42,15 @@ const userReducer = (state = initialUserState, { type, payload }) => {
         loggedIn: false,
         loginError: true,
         loginErrorMessage: payload
+      };
+    case types.USERINFO:
+      return {
+        ...state,
+        username: payload.username,
+        name: payload.name,
+        email: payload.email,
+        affiliation: payload.affiliation,
+        isAdmin: payload.isAdmin
       };
     case types.LOGOUT:
       return initialUserState;
