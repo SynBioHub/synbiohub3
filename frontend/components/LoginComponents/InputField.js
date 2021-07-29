@@ -15,7 +15,7 @@ export default function InputField(properties) {
         className={styles.input}
         placeholder={properties.placeholder}
         type={properties.type}
-        ref={properties.ref}
+        ref={properties.inputRef}
       />
     </div>
   );

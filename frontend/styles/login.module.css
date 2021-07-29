@@ -17,7 +17,7 @@
    font-size: 1.7rem;
    margin-bottom: 0.5rem;
    margin-top: 0.5rem;
-   font-weight: 400;
+   font-weight: 500;
 }
 
 .intro {
@@ -42,8 +42,8 @@
 
 .input {
    outline: none;
-   padding: 0.7rem 0.7rem 0.7rem 2.4rem;
-   font-size: 1.1rem;
+   padding: 0.7rem 0.7rem 0.7rem 2.5rem;
+   font-size: 1rem;
    margin: 0;
    width: 22rem;
    border: 1px solid #00A1E4;
@@ -100,4 +100,8 @@
    width: 22rem;
    text-align: center;
    margin-bottom: 0.5rem;
+}
+
+.registericon  {
+   margin: 1.2rem 0;
 }

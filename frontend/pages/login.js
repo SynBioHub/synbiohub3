@@ -26,7 +26,7 @@ function Login() {
 
   const next = router.query.next;
 
-  const passwordInput = useRef();
+  const passwordInput = useRef(null);
 
   useEffect(() => {
     if (loggedIn) {
@@ -46,7 +46,7 @@ function Login() {
         />
         <h1 className={styles.header}>Welcome Back</h1>
         <div className={styles.intro}>
-          Sign in to view, submit, and share your genetic designs.
+          Sign in to view, submit, and share your genetic designs
         </div>
         {loginError && (
           <div className={styles.warning}>{loginErrorMessage}</div>
@@ -63,7 +63,7 @@ function Login() {
         />
         <InputField
           value={password}
-          ref={passwordInput}
+          inputRef={passwordInput}
           onChange={event => setPassword(event.target.value)}
           onKeyPress={event => {
             if (event.key === 'Enter') {
