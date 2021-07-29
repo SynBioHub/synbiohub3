@@ -181,6 +181,13 @@
    display: flex;
 }
 
+.userinfo {
+   padding: 0.75rem;
+   color: #000;
+   background-color: #7cc2fc;
+   font-weight: 550;
+}
+
 @media only screen and (max-width: 600px) { 
    .navoptionname { 
      display: none; 
