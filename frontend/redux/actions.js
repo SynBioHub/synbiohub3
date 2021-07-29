@@ -82,6 +82,40 @@ export const logoutUser = () => dispatch => {
   dispatch({ type: types.LOGOUT });
 };
 
+export const registerUser =
+  (fullName, username, affiliation, email, password, confirmPassword) =>
+  async dispatch => {
+    const url = `${process.env.backendUrl}/register`;
+    const headers = {
+      Accept: 'text/plain'
+    };
+
+    const parameters = new URLSearchParams();
+    parameters.append('name', fullName);
+    parameters.append('username', username);
+    parameters.append('affiliation', affiliation);
+    parameters.append('email', email);
+    parameters.append('password1', password);
+    parameters.append('password2', confirmPassword);
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers,
+      body: parameters
+    });
+    const message = await response.text();
+    if (response.status === 200) {
+      localStorage.setItem('userToken', message); // save the token of the user locally, change to cookie later
+      localStorage.setItem('username', username); // save the username of the user locally, change to cookie later
+      dispatch(login(username, password));
+    } else {
+      dispatch({
+        type: types.REGISTERERROR,
+        payload: message
+      });
+    }
+  };
+
 // SEARCHING ACTIONS
 
 /**

@@ -1,10 +1,12 @@
-import { faSignInAlt } from '@fortawesome/free-solid-svg-icons';
+import { faLock, faSignInAlt, faUser } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
+import InputField from '../components/LoginComponents/InputField';
 import TopLevel from '../components/TopLevel';
 import { login } from '../redux/actions';
 import styles from '../styles/login.module.css';
@@ -24,7 +26,7 @@ function Login() {
 
   const next = router.query.next;
 
-  const passwordInput = useRef();
+  const passwordInput = useRef(null);
 
   useEffect(() => {
     if (loggedIn) {
@@ -44,25 +46,24 @@ function Login() {
         />
         <h1 className={styles.header}>Welcome Back</h1>
         <div className={styles.intro}>
-          Sign in to view, submit, and share your genetic designs.
+          Sign in to view, submit, and share your genetic designs
         </div>
         {loginError && (
           <div className={styles.warning}>{loginErrorMessage}</div>
         )}
-        <input
+        <InputField
           value={username}
           onChange={event => setUsername(event.target.value)}
           onKeyPress={event => {
             if (event.key === 'Enter') passwordInput.current.focus();
           }}
-          autoFocus
-          className={styles.input}
-          placeholder="Email or Username"
+          placeholder="Username or Email"
           type="text"
+          icon={faUser}
         />
-        <input
+        <InputField
           value={password}
-          ref={passwordInput}
+          inputRef={passwordInput}
           onChange={event => setPassword(event.target.value)}
           onKeyPress={event => {
             if (event.key === 'Enter') {
@@ -71,9 +72,9 @@ function Login() {
               setPassword('');
             }
           }}
-          className={styles.input}
           placeholder="Password"
           type="password"
+          icon={faLock}
         />
         <div
           role="button"
@@ -97,12 +98,9 @@ function Login() {
           </div>
           <div className={styles.info}>
             New to SynBioHub?{' '}
-            <a
-              className={styles.blue}
-              href="https://dev.synbiohub.org/register"
-            >
-              Join now
-            </a>
+            <Link href="/register">
+              <a className={styles.blue}>Join now</a>
+            </Link>
           </div>
         </div>
       </div>
