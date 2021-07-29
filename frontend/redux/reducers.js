@@ -55,6 +55,7 @@ const userReducer = (state = initialUserState, { type, payload }) => {
         email: payload.email,
         affiliation: payload.affiliation,
         isAdmin: payload.isAdmin
+      };
     case types.REGISTERERROR:
       return {
         ...state,
