@@ -10,17 +10,22 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Link from 'next/dist/client/link';
 import router from 'next/router';
 import { useEffect, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import InputField from '../components/LoginComponents/InputField';
 import TopLevel from '../components/TopLevel';
+import { registerUser } from '../redux/actions';
 import styles from '../styles/login.module.css';
 
 function Register() {
   const loggedIn = useSelector(state => state.user.loggedIn);
-  const loginError = useSelector(state => state.user.loginError);
-  const loginErrorMessage = useSelector(state => state.user.loginErrorMessage);
+  const registerError = useSelector(state => state.user.registerError);
+  const registerErrorMessage = useSelector(
+    state => state.user.registerErrorMessage
+  );
   const pageVisited = useSelector(state => state.tracking.pageVisited);
+
+  const dispatch = useDispatch();
 
   const [name, setName] = useState('');
   const [username, setUsername] = useState('');
@@ -57,8 +62,8 @@ function Register() {
         <div className={styles.intro}>
           Tell us about yourself to get started
         </div>
-        {loginError && (
-          <div className={styles.warning}>{loginErrorMessage}</div>
+        {registerError && (
+          <div className={styles.warning}>{registerErrorMessage}</div>
         )}
         <InputField
           value={name}
@@ -118,6 +123,22 @@ function Register() {
           value={confirmPassword}
           inputRef={confirmPasswordInput}
           onChange={event => setConfirmPassword(event.target.value)}
+          onKeyPress={event => {
+            if (event.key === 'Enter') {
+              dispatch(
+                registerUser(
+                  name,
+                  username,
+                  affiliation,
+                  email,
+                  password,
+                  confirmPassword
+                )
+              );
+              setPassword('');
+              setConfirmPassword('');
+            }
+          }}
           placeholder="Confirm password"
           type="password"
           icon={faLock}
@@ -126,6 +147,16 @@ function Register() {
           role="button"
           className={styles.submitbutton}
           onClick={() => {
+            dispatch(
+              registerUser(
+                name,
+                username,
+                affiliation,
+                email,
+                password,
+                confirmPassword
+              )
+            );
             setPassword('');
             setConfirmPassword('');
           }}

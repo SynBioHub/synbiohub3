@@ -13,6 +13,8 @@ const initialUserState = {
   username: '',
   token: '',
   loggedIn: false,
+  registerError: false,
+  registerErrorMessage: '',
   loginError: false,
   loginErrorMessage: ''
 };
@@ -28,7 +30,9 @@ const userReducer = (state = initialUserState, { type, payload }) => {
         ...state,
         loggedIn: true,
         loginError: false,
+        registerError: false,
         loginErrorMessage: '',
+        registerErrorMessage: '',
         username: payload.username,
         token: payload.token
       };
@@ -38,6 +42,13 @@ const userReducer = (state = initialUserState, { type, payload }) => {
         loggedIn: false,
         loginError: true,
         loginErrorMessage: payload
+      };
+    case types.REGISTERERROR:
+      return {
+        ...state,
+        loggedIn: false,
+        registerError: true,
+        registerErrorMessage: payload
       };
     case types.LOGOUT:
       return initialUserState;
