@@ -28,7 +28,7 @@
 .title {
   margin: 0;
   line-height: 1.15;
-  font-size: 4rem;
+  font-size: 3.7rem;
 }
 
 .title,
@@ -40,6 +40,7 @@
   line-height: 1.5;
   font-size: 1.05rem;
   max-width: 900px;
+  margin: 1.1rem 1rem;
 }
 
 .grid {
@@ -61,6 +62,7 @@
   border: 1px solid #eaeaea;
   border-radius: 10px;
   transition: color 0.15s ease, border-color 0.15s ease;
+  background-color: #f5f5f5;
 }
 
 .card:hover,

@@ -14,6 +14,7 @@ export const LOGGEDIN = 'LOGGEDIN';
 export const LOGINERROR = 'LOGINERROR';
 export const LOGIN = 'LOGIN';
 export const LOGOUT = 'LOGOUT';
+export const USERINFO = 'USERINFO';
 export const REGISTERERROR = 'REGISTERERROR';
 
 // SEARCH
