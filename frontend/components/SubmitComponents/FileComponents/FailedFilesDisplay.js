@@ -8,9 +8,12 @@ import styles from '../../../styles/attachmentupload.module.css';
 import MajorLabel from '../ReusableComponents/MajorLabel';
 import FileUploadDisplay from './FileUploadDisplay';
 
-export default function FailedFilesDisplay(properties) {
+export default function FailedFilesDisplay() {
   const failedFiles = useSelector(state => state.submit.failedFiles);
   const submitting = useSelector(state => state.submit.submitting);
+  const selectedCollection = useSelector(
+    state => state.submit.selectedCollection
+  );
   const [selectedFiles, setSelectedFiles] = useState({});
   const [allFilesChecked, setAllFilesChecked] = useState(true);
   const [submitAttachmentsButtonClass, setSubmitAttachmentsButtonClass] =
@@ -85,7 +88,7 @@ export default function FailedFilesDisplay(properties) {
               dispatch(
                 addAttachments(
                   Object.values(selectedFiles),
-                  properties.selectedCollection.uri
+                  selectedCollection.uri
                 )
               );
           }}
