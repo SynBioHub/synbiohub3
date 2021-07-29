@@ -6,11 +6,7 @@ export default function InputField(properties) {
   return (
     <div className={styles.inputcontainer}>
       <div className={styles.inputiconcontainer}>
-        <FontAwesomeIcon
-          icon={properties.icon}
-          size="1x"
-          color={`${properties.highlight ? '#84DCCF' : '#00A1E4'}`}
-        />
+        <FontAwesomeIcon icon={properties.icon} size="1x" color="#00A1E4" />
       </div>
       <input
         value={properties.value}

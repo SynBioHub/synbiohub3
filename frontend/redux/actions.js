@@ -84,33 +84,6 @@ export const logoutUser = () => dispatch => {
   dispatch({ type: types.LOGOUT });
 };
 
-export const updateUser =
-  (name, affiliation, email, password, confirmPassword) =>
-  async (dispatch, getState) => {
-    const url = `${process.env.backendUrl}/profile`;
-    const token = getState().user.token;
-    const headers = {
-      Accept: 'text/plain',
-      'X-authorization': token
-    };
-
-    const parameters = new URLSearchParams();
-    parameters.append('name', name);
-    parameters.append('affiliation', affiliation);
-    parameters.append('email', email);
-    if (password) {
-      parameters.append('password1', password);
-      parameters.append('password2', confirmPassword);
-    }
-
-    const response = await fetch(url, {
-      method: 'POST',
-      headers,
-      body: parameters
-    });
-    if (response.status === 200) dispatch(fetchUserInfo());
-  };
-
 export const fetchUserInfo = () => async (dispatch, getState) => {
   const url = `${process.env.backendUrl}/profile`;
   const token = getState().user.token;

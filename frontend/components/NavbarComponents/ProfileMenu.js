@@ -4,7 +4,6 @@ import {
   faUser
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -21,16 +20,14 @@ export default function ProfileMenu() {
         <p className={styles.userinfointro}>Signed in as</p>
         {username}
       </div>
-      <Link href="/profile">
-        <a>
-          <div className={styles.menuoption}>
-            <div className={styles.profilemenuicon}>
-              <FontAwesomeIcon icon={faUser} size="1x" />
-            </div>
-            Profile
+      <a href={`${process.env.backendUrl}/profile`}>
+        <div className={styles.menuoption}>
+          <div className={styles.profilemenuicon}>
+            <FontAwesomeIcon icon={faUser} size="1x" />
           </div>
-        </a>
-      </Link>
+          Profile
+        </div>
+      </a>
       <a href={`${process.env.backendUrl}/admin`}>
         <div className={styles.menuoption}>
           <div className={styles.profilemenuicon}>
