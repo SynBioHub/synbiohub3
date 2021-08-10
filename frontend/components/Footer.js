@@ -16,7 +16,7 @@ export default function Footer() {
           src="/images/logo_secondary.svg"
         />
         <div className={styles.copyright}>
-          ©2018{' '}
+          ©2018 <br />
           <a
             href="https://www.utah.edu/"
             target="_blank"
@@ -25,7 +25,7 @@ export default function Footer() {
           >
             University of Utah
           </a>
-          ,
+          <br />
           <a
             href="https://www.colorado.edu/"
             target="_blank"
@@ -34,7 +34,7 @@ export default function Footer() {
           >
             University of Colorado Boulder
           </a>
-          ,{'  &  '}
+          <br />
           Other Collaborators
         </div>
       </div>
