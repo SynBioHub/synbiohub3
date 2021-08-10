@@ -32,3 +32,14 @@
    cursor: pointer;
    background-color: #ececec;
 }
+
+.menuselectorselected {
+   color: #fff;
+   background-color: #00A1E4;
+}
+
+.menuselectorselected:hover {
+   color: #fff;
+   background-color: #00A1E4;
+   cursor: default;
+}
