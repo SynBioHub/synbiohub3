@@ -15,6 +15,7 @@ export default function SearchDefault() {
   const dispatch = useDispatch();
   return (
     <TopLevel
+      doNotTrack={true}
       navbar={
         <NavbarSearch
           value={query}

@@ -18,7 +18,6 @@ function Login() {
   const loggedIn = useSelector(state => state.user.loggedIn);
   const loginError = useSelector(state => state.user.loginError);
   const loginErrorMessage = useSelector(state => state.user.loginErrorMessage);
-  const pageVisited = useSelector(state => state.tracking.pageVisited);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const dispatch = useDispatch();
@@ -33,7 +32,7 @@ function Login() {
       if (next) router.replace(next);
       else router.push('/');
     }
-  }, [loggedIn, pageVisited, router, next]);
+  }, [loggedIn, router, next]);
 
   return (
     <div className={styles.container}>

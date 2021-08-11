@@ -14,6 +14,7 @@ export default function RootCollections({ data }) {
 
   return (
     <TopLevel
+      doNotTrack={true}
       navbar={
         <NavbarSearch
           value={query}
