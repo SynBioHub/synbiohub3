@@ -27,10 +27,10 @@ export default function TopLevel(properties) {
       if (username && token) {
         dispatch(restoreLogin(username, token));
       } else if (protectRoute) {
-        router.replace(`/login?next=${router.pathname}`);
+        router.replace(`/login?next=${router.asPath}`);
       }
     }
-  }, [loggedIn]);
+  }, [loggedIn, router, protectRoute]);
 
   if (!protectRoute | loggedIn)
     return (
