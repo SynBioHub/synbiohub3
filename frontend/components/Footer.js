@@ -9,9 +9,14 @@ export default function Footer() {
   return (
     <footer className={styles.footer}>
       <div className={styles.copyrightcontainer}>
-        <Image alt="logo" width={80} height={80} src="/images/logo_light.svg" />
+        <Image
+          alt="logo"
+          width={80}
+          height={80}
+          src="/images/logo_secondary.svg"
+        />
         <div className={styles.copyright}>
-          ©2018{' '}
+          ©2018 <br />
           <a
             href="https://www.utah.edu/"
             target="_blank"
@@ -20,7 +25,7 @@ export default function Footer() {
           >
             University of Utah
           </a>
-          ,
+          <br />
           <a
             href="https://www.colorado.edu/"
             target="_blank"
@@ -29,7 +34,7 @@ export default function Footer() {
           >
             University of Colorado Boulder
           </a>
-          ,{'  &  '}
+          <br />
           Other Collaborators
         </div>
       </div>
