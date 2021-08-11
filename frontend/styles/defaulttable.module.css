@@ -1,0 +1,40 @@
+.table {
+   min-width: 100%;
+   text-align: left;
+   overflow: scroll;
+   border-spacing: 0;
+   font-size: 0.9rem;
+}
+
+.name {
+   font-weight: 600;
+}
+
+.table tr {
+   width: 100%;
+}
+
+#results tr:nth-child(even) {
+   background-color: #e1e6ee;
+ }
+
+.table td {
+   padding: 0.75rem;
+   cursor: pointer;
+}
+
+.table tbody tr:hover {
+   background-color: #00A1E4 !important;
+   color: #fff;
+} 
+
+.table th {
+   padding: 0.75rem;
+   background-color: #465775;
+   color: white;
+   font-size: 0.95rem;
+   font-weight: 600;
+   position: sticky;
+   z-index: 2;
+   top: 0;
+}

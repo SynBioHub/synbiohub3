@@ -16,6 +16,7 @@
    text-align: left;
    overflow: scroll;
    border-spacing: 0;
+   font-size: 0.9rem;
 }
 
 .name {
@@ -36,7 +37,7 @@
 }
 
 .table tbody tr:hover {
-   background-color: #465775 !important;
+   background-color: #00A1E4 !important;
    color: #fff;
 } 
 
@@ -49,16 +50,6 @@
    position: sticky;
    z-index: 2;
    top: 0;
-}
-
-.centerheader {
-   display: flex;
-   flex-direction: row;
-   align-items: center;
-}
-
-.headertext {
-   margin-right: 0.15rem;
 }
 
 .tablebuttons {
@@ -113,8 +104,6 @@
    cursor: not-allowed;
    opacity: 0.5;
 }
-
-
 
 .count {
    color: #383838;
