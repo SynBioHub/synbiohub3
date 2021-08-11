@@ -138,30 +138,32 @@
    min-width: 100%;
    text-align: left;
    border-spacing: 0;
-   font-size: 0.95rem;
+   font-size: 0.9rem;
    font-weight: 400;
 }
 
 .name {
-   font-weight: 600;
+   color: #00A1E4;
+   font-weight: 500;
 }
 
 .table tr {
    width: 100%;
 }
 
-#results tr:nth-child(even) {
-   background-color: #e1e6ee;
+#results tr:nth-child(odd) {
+   background-color: #f9f9f9;
  }
 
 .table td {
-   padding: 0.75rem;
+   padding: 0.5rem;
    cursor: pointer;
+   line-height: 1.5;
+   border-top: 1px solid #ddd;
 }
 
 .table tbody tr:hover {
-   background-color: #00A1E4 !important;
-   color: #fff;
+   background-color: #e4e4e4 !important;
 }
 
 .table th {
@@ -251,7 +253,9 @@
 }
 
 .selectedcollection {
-   background-color: #00A1E4 !important;
-   color: #fff;
-   filter: drop-shadow(0px 0px 5px #acacac);
+   background-color: #e4e4e4 !important;
+}
+
+.selectedcollection .name {
+   color: #D25627;
 }
