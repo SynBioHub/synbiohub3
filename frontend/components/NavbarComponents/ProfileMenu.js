@@ -31,14 +31,16 @@ export default function ProfileMenu() {
           </div>
         </a>
       </Link>
-      <a href={`${process.env.backendUrl}/admin`}>
-        <div className={styles.menuoption}>
-          <div className={styles.profilemenuicon}>
-            <FontAwesomeIcon icon={faCogs} size="1x" />
+      <Link href="/admin">
+        <a>
+          <div className={styles.menuoption}>
+            <div className={styles.profilemenuicon}>
+              <FontAwesomeIcon icon={faCogs} size="1x" />
+            </div>
+            Admin
           </div>
-          Admin
-        </div>
-      </a>
+        </a>
+      </Link>
       <div
         className={styles.menuoption}
         role="button"

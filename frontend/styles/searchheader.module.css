@@ -23,7 +23,7 @@
 
 .categoryselected {
    background-color: #F2E86D;
-   cursor: not-allowed !important;
+   cursor: default !important;
 }
 
 .notselected {
@@ -40,10 +40,14 @@
    color: #A99C0F;
 }
 
-@media (max-width: 600px) {
-   .categoryheader {
-     margin: 0;
-     padding: 0.4rem;
+@media (max-width: 820px) {
+   .categoryname {
      font-size: 0.8rem;
+   }
+ }
+
+@media (max-width: 710px) {
+   .categoryname {
+     display: none;
    }
  }

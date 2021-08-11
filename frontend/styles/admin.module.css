@@ -1,0 +1,43 @@
+.container {
+   display: flex;
+   padding: 2rem 0 4rem 0;
+   flex-direction: row;
+   margin: 0 1rem;
+}
+
+.content {
+   width: 100%;
+}
+
+.menucontainer {
+   display: flex;
+   flex-direction: column;
+   width: fit-content;
+   margin: 0 1rem 0 0;
+}
+
+.menuselector {
+   color: #D25627;
+   padding: 0.6rem;
+   margin: 0.1rem 0;
+   border-radius: 0.4rem;
+   font-size: 0.9rem;
+   font-weight: 600;
+}
+
+.menuselector:hover {
+   color: #00A1E4;
+   cursor: pointer;
+   background-color: #ececec;
+}
+
+.menuselectorselected {
+   color: #fff;
+   background-color: #00A1E4;
+}
+
+.menuselectorselected:hover {
+   color: #fff;
+   background-color: #00A1E4;
+   cursor: default;
+}
