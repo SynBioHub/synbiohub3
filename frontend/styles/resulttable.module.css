@@ -1,6 +1,7 @@
 .resultcontainer {
    min-width: 100%;
    margin-top: 0.3rem;
+   font-size: 0.9rem;
 }
 
 .tablecontainer {
@@ -15,7 +16,6 @@
    text-align: left;
    overflow: scroll;
    border-spacing: 0;
-   font-size: 0.95rem;
 }
 
 .name {
@@ -44,7 +44,7 @@
    padding: 0.75rem;
    background-color: #465775;
    color: white;
-   font-size: 1rem;
+   font-size: 0.95rem;
    font-weight: 600;
    position: sticky;
    z-index: 2;
