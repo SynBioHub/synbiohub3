@@ -9,7 +9,7 @@
 .categoryheader {
    display: flex;
    align-items: center;
-   font-size: 1rem;
+   font-size: 0.9rem;
    margin: 0 0.2rem 0 0;
    padding: 0.6rem;
    border-radius: 0.4rem 0.4rem 0 0;

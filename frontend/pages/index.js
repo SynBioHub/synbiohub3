@@ -4,19 +4,15 @@ import {
   faCloudUploadAlt,
   faSearch
 } from '@fortawesome/free-solid-svg-icons';
-import { useDispatch } from 'react-redux';
 
 import Card from '../components/HomeComponents/Card';
 import TopLevel from '../components/TopLevel';
-import { markPageVisited } from '../redux/actions';
 import styles from '../styles/home.module.css';
 
 /**
  * This page renders the home/landing page for sbh.
  */
 function Home() {
-  const dispatch = useDispatch();
-  dispatch(markPageVisited(true));
   return (
     <div className={styles.container}>
       <main className={styles.main}>

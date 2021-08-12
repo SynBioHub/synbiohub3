@@ -18,7 +18,6 @@ function Login() {
   const loggedIn = useSelector(state => state.user.loggedIn);
   const loginError = useSelector(state => state.user.loginError);
   const loginErrorMessage = useSelector(state => state.user.loginErrorMessage);
-  const pageVisited = useSelector(state => state.tracking.pageVisited);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const dispatch = useDispatch();
@@ -30,10 +29,10 @@ function Login() {
 
   useEffect(() => {
     if (loggedIn) {
-      if (pageVisited) next ? router.replace(next) : router.back();
+      if (next) router.replace(next);
       else router.push('/');
     }
-  }, [loggedIn, pageVisited, router]);
+  }, [loggedIn, router, next]);
 
   return (
     <div className={styles.container}>

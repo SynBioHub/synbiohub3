@@ -71,7 +71,7 @@ export default function StandardSearch() {
     return (
       <div className={standardcontainer}>
         <div className={standardresultsloading}>
-          <Loader color="#D25627" type="Grid" />
+          <Loader color="#D25627" type="ThreeDots" />
         </div>
       </div>
     );

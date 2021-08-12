@@ -7,6 +7,7 @@
 
 .content {
    width: 100%;
+   margin-top: 0.2rem;
 }
 
 .menucontainer {
@@ -17,27 +18,43 @@
 }
 
 .menuselector {
-   color: #D25627;
-   padding: 0.6rem;
+   padding: 0.6rem 0.7rem;
    margin: 0.1rem 0;
    border-radius: 0.4rem;
    font-size: 0.9rem;
    font-weight: 600;
-}
-
-.menuselector:hover {
-   color: #00A1E4;
+   display: flex;
    cursor: pointer;
-   background-color: #ececec;
 }
 
 .menuselectorselected {
    color: #fff;
    background-color: #00A1E4;
+   cursor: default;
+}
+
+.menuselectorselected .menuselectoricon {
+   color: #F2E86D;
 }
 
 .menuselectorselected:hover {
    color: #fff;
    background-color: #00A1E4;
-   cursor: default;
+}
+
+.menuselectoricon {
+   min-width: 1.1rem;
+   margin-right: 0.4rem;
+   color: #00A1E4;
+   transition: transform .3s;
+}
+
+.menuselectoractive:hover {
+   color: #00A1E4;
+   cursor: pointer;
+   background-color: #ececec;
+}
+
+.menuselectoractive:hover .menuselectoricon {
+   transform: translateX(0.2rem);
 }

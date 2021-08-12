@@ -22,7 +22,7 @@ export default function Submissions() {
     content = (
       <div className={styles.loadercontainer}>
         <div className={styles.loaderanimation}>
-          <Loader color="#D25627" type="Grid" />
+          <Loader color="#D25627" type="ThreeDots" />
         </div>
       </div>
     );

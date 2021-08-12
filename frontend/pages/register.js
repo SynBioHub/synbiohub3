@@ -23,7 +23,6 @@ function Register() {
   const registerErrorMessage = useSelector(
     state => state.user.registerErrorMessage
   );
-  const pageVisited = useSelector(state => state.tracking.pageVisited);
 
   const dispatch = useDispatch();
   const router = useRouter();
@@ -45,10 +44,10 @@ function Register() {
 
   useEffect(() => {
     if (loggedIn) {
-      if (pageVisited) next ? router.replace(next) : router.back();
+      if (next) router.replace(next);
       else router.push('/');
     }
-  }, [loggedIn, pageVisited, router]);
+  }, [loggedIn, router, next]);
 
   return (
     <div className={styles.container}>
