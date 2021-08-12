@@ -63,7 +63,7 @@ export default function TableButtons(properties) {
                   size="1x"
                 />
               </span>
-              Make Public
+              Publish
             </div>
             <div
               className={`${styles.tablebutton} ${properties.buttonClass} ${styles.rightspace}`}
@@ -71,7 +71,7 @@ export default function TableButtons(properties) {
               <span className={styles.buttonicon}>
                 <FontAwesomeIcon icon={faTrashAlt} color="#00000" size="1x" />
               </span>
-              Remove Collection
+              Remove
             </div>
           </React.Fragment>
         ) : null}
