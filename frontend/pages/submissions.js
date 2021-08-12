@@ -1,5 +1,3 @@
-import { faAlignLeft } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import axios from 'axios';
 import Loader from 'react-loader-spinner';
 import { useSelector } from 'react-redux';
@@ -45,10 +43,7 @@ export default function Submissions() {
   return (
     <TopLevel>
       <div className={styles.container}>
-        <div className={styles.pageheader}>
-          <FontAwesomeIcon icon={faAlignLeft} size="2x" color="#00A1E4" />{' '}
-          <h2 className={styles.pagetitle}>My Submissions</h2>
-        </div>
+        <div className={styles.pageheader}></div>
         <Basket />
         {content}
       </div>
