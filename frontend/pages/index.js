@@ -61,7 +61,7 @@ function Home() {
           />
 
           <Card
-            description="View design collections made available to the public"
+            description="View collections made available to the public"
             icon={faBoxOpen}
             title="View Collections"
             route={'/root-collections'}

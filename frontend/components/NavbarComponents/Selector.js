@@ -1,8 +1,11 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
 
 import {
   navoption,
+  navoptionactive,
   navoptionicon,
   navoptionname
 } from '../../styles/navbar.module.css';
@@ -12,9 +15,16 @@ import {
  * Generic component based on props
  */
 export default function Selector(properties) {
+  const router = useRouter();
+  const [style, setStyle] = useState('');
+
+  useEffect(() => {
+    if (properties.href === router.pathname) setStyle(navoptionactive);
+  }, [router.pathname, properties.href]);
+
   return (
     <Link href={properties.href}>
-      <div className={navoption}>
+      <a className={`${navoption}  ${style}`}>
         {!properties.customIcon ? (
           <FontAwesomeIcon
             className={navoptionicon}
@@ -28,7 +38,7 @@ export default function Selector(properties) {
         )}
 
         <span className={navoptionname}>{properties.name}</span>
-      </div>
+      </a>
     </Link>
   );
 }

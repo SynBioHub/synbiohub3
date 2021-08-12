@@ -27,12 +27,6 @@
 }
 
 .pageheader {
-  margin: 1rem 1rem 0.8rem 1rem;
+  padding: 1.5rem 0;
   display: flex;
-  align-items: center;
-}
-
-.pagetitle {
-  margin: 0 0 0 0.7rem;
-  color: #D25627;
 }
