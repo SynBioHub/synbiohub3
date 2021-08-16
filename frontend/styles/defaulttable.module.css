@@ -26,14 +26,14 @@
 }
 
 .table th {
-   padding: 0.75rem;
-   background-color: #465775;
-   color: white;
-   font-size: 0.95rem;
+   padding: 0.5rem;
+   font-size: 0.9rem;
    font-weight: 600;
    position: sticky;
    z-index: 2;
    top: 0;
+   border-bottom: 2px solid #ddd;
+   background-color: #fff;
 }
 
 
