@@ -1,10 +1,104 @@
 .table {
-   min-width: 100%;
+   width: 100%;
    text-align: left;
-   overflow: scroll;
    border-spacing: 0;
    font-size: 0.9rem;
    font-weight: 500;
+}
+
+.tableheader {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   margin: 0.1rem 0 0.3rem 0;
+}
+
+.tableheadertitle {
+   font-size: 1.1rem;
+   font-weight: 500;
+}
+
+.tableheadernav {
+   display: flex;
+   flex-direction: row;
+}
+
+.sortbycontainer {
+   display: flex;
+   flex-direction: row;
+   align-items: center;
+   width: 12rem;
+}
+
+.filterinput {
+   min-height: 32px;
+   margin: 0;
+   border-radius: 4px;
+   border: 1px solid hsl(0, 0%, 80%);
+   width: 100%;
+   padding: 0 10px;
+   font-size: 0.9rem;
+   margin-right: 1.1rem;
+}
+
+.tableheadernavlabel {
+   font-size: 0.7rem;
+   font-weight: 700;
+   margin: 0 0.4rem;
+   color: hsl(0, 0%, 30%);
+}
+
+.tableheadernavflex {
+   flex: 2;
+   font-size: 0.9rem;
+}
+
+.tablefooter {
+   margin: 1rem 0 0.1rem 0;
+   display: flex;
+   flex-direction: row;
+   align-items: center;
+   justify-content: space-between;
+}
+
+.tablefooternav {
+   display: flex;
+   align-items: center;
+   font-size: 0.9rem;
+   color: #888;
+}
+
+.tablefooternavicon {
+   font-size: 1.4rem;
+   color: #D25627;
+}
+
+.tablefooternav span {
+   margin: 0 0.35rem;
+   font-weight: 500;
+   color: hsl(0, 0%, 30%);
+   cursor: pointer;
+}
+
+.tablefooternav span:hover {
+   background-color: #ddd;
+   padding: 0.15rem 0.4rem;
+   border-radius: 100%;
+}
+
+.tablefooternavstart {
+   margin-left: 1rem !important;
+}
+
+.tablefooternavend {
+   margin-right: 1rem !important;
+}
+
+.tablefooternavselected {
+   background-color: #D25627;
+   color: #fff !important;
+   padding: 0.15rem 0.4rem;
+   border-radius: 100%;
 }
 
 .name {
@@ -30,7 +124,6 @@
    font-size: 0.9rem;
    font-weight: 600;
    position: sticky;
-   z-index: 2;
    top: 0;
    border-bottom: 2px solid #ddd;
    background-color: #fff;
@@ -38,7 +131,7 @@
 
 
 .statuscontainer {
-   max-width: 60rem;
+   max-width: 62rem;
 }
 
 .error {
@@ -61,4 +154,11 @@
    height: calc(100vh - 20rem);
    display: flex;
    flex-direction: column;
+ }
+
+
+ @media (max-width: 700px) {
+   #filterresults {
+      display: none;
+   }
  }
