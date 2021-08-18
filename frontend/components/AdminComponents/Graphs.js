@@ -17,6 +17,7 @@ export default function Graphs() {
   const [numberEntries, setNumberEntries] = useState(
     numberDisplayOptions[0].value
   );
+  const [filter, setFilter] = useState('');
 
   useEffect(() => {
     if (graphs) {
@@ -28,6 +29,11 @@ export default function Graphs() {
         graphs.sort((graph1, graph2) => graph2[sortType] - graph1[sortType]);
       setGraphDisplay(
         graphs
+          .filter(
+            graph =>
+              graph.graphUri.includes(filter) ||
+              graph.numTriples.toString().includes(filter)
+          )
           .slice(
             0,
             Math.min(
@@ -47,7 +53,7 @@ export default function Graphs() {
           })
       );
     }
-  }, [graphs, sortType, numberEntries]);
+  }, [graphs, sortType, numberEntries, filter]);
 
   if (graphs) {
     return (
@@ -62,6 +68,8 @@ export default function Graphs() {
               <input
                 type="text"
                 className={`${styles.tableheadernavflex} ${styles.filterinput}`}
+                value={filter}
+                onChange={event => setFilter(event.target.value)}
               />
             </div>
             <div className={styles.sortbycontainer}>
