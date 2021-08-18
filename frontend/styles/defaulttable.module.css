@@ -74,15 +74,15 @@
 }
 
 .tablefooternav span {
-   margin: 0 0.35rem;
+   margin: 0 0.15rem;
    font-weight: 500;
    color: hsl(0, 0%, 30%);
+   padding: 0.15rem 0.4rem;
    cursor: pointer;
 }
 
 .tablefooternav span:hover {
    background-color: #ddd;
-   padding: 0.15rem 0.4rem;
    border-radius: 100%;
 }
 

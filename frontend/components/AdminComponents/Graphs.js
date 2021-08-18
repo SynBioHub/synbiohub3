@@ -13,9 +13,14 @@ export default function Graphs() {
   const token = useSelector(state => state.user.token);
   const { graphs, loading } = useStatus(token);
   const [graphDisplay, setGraphDisplay] = useState([]);
+  const [sortType, setSortType] = useState('');
 
   useEffect(() => {
     if (graphs) {
+      if (sortType)
+        graphs.sort(
+          (graph1, graph2) => (graph2[sortType] > graph1[sortType] && 1) || -1
+        );
       setGraphDisplay(
         graphs.map(graph => {
           return (
@@ -29,7 +34,7 @@ export default function Graphs() {
         })
       );
     }
-  }, [graphs]);
+  }, [graphs, sortType]);
 
   if (graphs) {
     return (
@@ -48,7 +53,11 @@ export default function Graphs() {
             </div>
             <div className={styles.sortbycontainer}>
               <span className={styles.tableheadernavlabel}>SORT BY</span>
-              <Select options={options} className={styles.tableheadernavflex} />
+              <Select
+                options={options}
+                className={styles.tableheadernavflex}
+                onChange={option => setSortType(option.value)}
+              />
             </div>
           </div>
         </div>
@@ -81,7 +90,7 @@ export default function Graphs() {
             <span className={styles.tablefooternavstart}>1</span>
             <span className={styles.tablefooternavselected}>2</span>
             <span>3</span>
-            <span>...</span>
+            <p>...</p>
             <span className={styles.tablefooternavend}>16</span>
             <FontAwesomeIcon
               icon={faAngleRight}
@@ -119,7 +128,7 @@ const numberDisplayOptions = [
   { value: 25, label: '25' },
   { value: 50, label: '50' },
   { value: 100, label: '100' },
-  { value: 'all', label: 'ALL' }
+  { value: 'all', label: 'all' }
 ];
 
 const useStatus = token => {
