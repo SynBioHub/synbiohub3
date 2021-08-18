@@ -17,10 +17,12 @@ export default function Graphs() {
 
   useEffect(() => {
     if (graphs) {
-      if (sortType)
+      if (sortType === 'graphUri')
         graphs.sort(
-          (graph1, graph2) => (graph2[sortType] > graph1[sortType] && 1) || -1
+          (graph1, graph2) => (graph1[sortType] > graph2[sortType] && 1) || -1
         );
+      else if (sortType === 'numTriples')
+        graphs.sort((graph1, graph2) => graph2[sortType] - graph1[sortType]);
       setGraphDisplay(
         graphs.map(graph => {
           return (
