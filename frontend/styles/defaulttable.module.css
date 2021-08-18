@@ -71,6 +71,7 @@
 .tablefooternavicon {
    font-size: 1.4rem;
    color: #D25627;
+   cursor: pointer;
 }
 
 .tablefooternav span {

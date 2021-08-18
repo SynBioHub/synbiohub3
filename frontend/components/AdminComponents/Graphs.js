@@ -9,36 +9,38 @@ import useSWR from 'swr';
 
 import styles from '../../styles/defaulttable.module.css';
 
+/* eslint sonarjs/cognitive-complexity: "off" */
 export default function Graphs() {
   const token = useSelector(state => state.user.token);
   const { graphs, loading } = useStatus(token);
+  const [filteredGraphs, setFilteredGraphs] = useState([]);
   const [graphDisplay, setGraphDisplay] = useState([]);
   const [sortType, setSortType] = useState('');
   const [numberEntries, setNumberEntries] = useState(
     numberDisplayOptions[0].value
   );
   const [filter, setFilter] = useState('');
+  const [offset, setOffset] = useState(0);
 
   useEffect(() => {
-    if (graphs) {
+    if (filteredGraphs) {
       if (sortType === 'graphUri')
-        graphs.sort(
+        filteredGraphs.sort(
           (graph1, graph2) => (graph1[sortType] > graph2[sortType] && 1) || -1
         );
       else if (sortType === 'numTriples')
-        graphs.sort((graph1, graph2) => graph2[sortType] - graph1[sortType]);
+        filteredGraphs.sort(
+          (graph1, graph2) => graph2[sortType] - graph1[sortType]
+        );
       setGraphDisplay(
-        graphs
-          .filter(
-            graph =>
-              graph.graphUri.includes(filter) ||
-              graph.numTriples.toString().includes(filter)
-          )
+        filteredGraphs
           .slice(
-            0,
+            offset,
             Math.min(
-              graphs.length,
-              numberEntries === 'all' ? graphs.length : numberEntries
+              filteredGraphs.length,
+              numberEntries === 'all'
+                ? filteredGraphs.length
+                : offset + numberEntries
             )
           )
           .map(graph => {
@@ -53,7 +55,23 @@ export default function Graphs() {
           })
       );
     }
-  }, [graphs, sortType, numberEntries, filter]);
+  }, [filteredGraphs, sortType, numberEntries, filter, offset]);
+
+  useEffect(() => {
+    if (graphs) {
+      setFilteredGraphs(
+        graphs.filter(
+          graph =>
+            graph.graphUri.includes(filter) ||
+            graph.numTriples.toString().includes(filter)
+        )
+      );
+    }
+  }, [graphs, filter]);
+
+  useEffect(() => {
+    setOffset(0);
+  }, [filter]);
 
   if (graphs) {
     return (
@@ -64,7 +82,7 @@ export default function Graphs() {
           </div>
           <div className={styles.tableheadernav}>
             <div className={styles.sortbycontainer} id={styles.filterresults}>
-              <span className={styles.tableheadernavlabel}>FILTER</span>
+              <span className={styles.tableheadernavlabel}>SEARCH</span>
               <input
                 type="text"
                 className={`${styles.tableheadernavflex} ${styles.filterinput}`}
@@ -105,21 +123,28 @@ export default function Graphs() {
             <span className={styles.tableheadernavlabel}>ENTRIES</span>
           </div>
           <div className={styles.tablefooternav}>
-            <FontAwesomeIcon
-              icon={faAngleLeft}
-              size="2x"
+            <div
               className={styles.tablefooternavicon}
-            />
+              onClick={() => setOffset(Math.max(0, offset - numberEntries))}
+              role="button"
+            >
+              <FontAwesomeIcon icon={faAngleLeft} size="1x" />
+            </div>
             <span className={styles.tablefooternavstart}>1</span>
             <span className={styles.tablefooternavselected}>2</span>
             <span>3</span>
             <p>...</p>
             <span className={styles.tablefooternavend}>16</span>
-            <FontAwesomeIcon
-              icon={faAngleRight}
-              size="2x"
+            <div
               className={styles.tablefooternavicon}
-            />
+              onClick={() => {
+                if (offset + numberEntries < filteredGraphs.length)
+                  setOffset(offset + numberEntries);
+              }}
+              role="button"
+            >
+              <FontAwesomeIcon icon={faAngleRight} size="1x" />
+            </div>
           </div>
         </div>
       </div>
