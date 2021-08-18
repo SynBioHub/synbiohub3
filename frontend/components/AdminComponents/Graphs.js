@@ -14,6 +14,9 @@ export default function Graphs() {
   const { graphs, loading } = useStatus(token);
   const [graphDisplay, setGraphDisplay] = useState([]);
   const [sortType, setSortType] = useState('');
+  const [numberEntries, setNumberEntries] = useState(
+    numberDisplayOptions[0].value
+  );
 
   useEffect(() => {
     if (graphs) {
@@ -24,19 +27,27 @@ export default function Graphs() {
       else if (sortType === 'numTriples')
         graphs.sort((graph1, graph2) => graph2[sortType] - graph1[sortType]);
       setGraphDisplay(
-        graphs.map(graph => {
-          return (
-            <tr key={graph.graphUri}>
-              <td>
-                <code>{graph.graphUri}</code>
-              </td>
-              <td>{graph.numTriples}</td>
-            </tr>
-          );
-        })
+        graphs
+          .slice(
+            0,
+            Math.min(
+              graphs.length,
+              numberEntries === 'all' ? graphs.length : numberEntries
+            )
+          )
+          .map(graph => {
+            return (
+              <tr key={graph.graphUri}>
+                <td>
+                  <code>{graph.graphUri}</code>
+                </td>
+                <td>{graph.numTriples}</td>
+              </tr>
+            );
+          })
       );
     }
-  }, [graphs, sortType]);
+  }, [graphs, sortType, numberEntries]);
 
   if (graphs) {
     return (
@@ -59,6 +70,7 @@ export default function Graphs() {
                 options={options}
                 className={styles.tableheadernavflex}
                 onChange={option => setSortType(option.value)}
+                menuPortalTarget={document.querySelector('body')}
               />
             </div>
           </div>
@@ -80,6 +92,7 @@ export default function Graphs() {
               defaultValue={numberDisplayOptions[0]}
               className={styles.tableheadernavflex}
               menuPortalTarget={document.querySelector('body')}
+              onChange={option => setNumberEntries(option.value)}
             />
             <span className={styles.tableheadernavlabel}>ENTRIES</span>
           </div>
