@@ -66,7 +66,9 @@ function CollectionSelector(properties) {
         properties.setFilter('');
       }}
     >
-      <td className={styles.name}>{properties.collection.name}</td>
+      <td className={styles.name}>
+        <code>{properties.collection.name}</code>
+      </td>
       <td>{properties.collection.description}</td>
       <td>{properties.collection.version}</td>
     </tr>

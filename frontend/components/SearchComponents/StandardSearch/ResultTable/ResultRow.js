@@ -60,7 +60,9 @@ export default function ResultRow(properties) {
         />
       </td>
 
-      <td className={styles.name}>{properties.name}</td>
+      <td className={styles.name}>
+        <code>{properties.name}</code>
+      </td>
 
       <td>{properties.displayId}</td>
 

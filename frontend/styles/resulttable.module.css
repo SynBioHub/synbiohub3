@@ -41,18 +41,18 @@
 }
 
 .table tbody tr:hover {
-   background-color: #e4e4e4 !important;
+   background-color: rgb(233, 233, 233) !important;
 }
 
 .table th {
-   padding: 0.75rem;
-   background-color: #465775;
-   color: white;
-   font-size: 0.95rem;
+   padding: 0.5rem;
+   font-size: 0.9rem;
    font-weight: 600;
    position: sticky;
-   z-index: 2;
    top: 0;
+   border-bottom: 2px solid #ddd;
+   background-color: #fff;
+   z-index: 2;
 }
 
 .tablebuttons {
