@@ -62,3 +62,25 @@
 .menuselectoractive:hover .menuselectoricon {
    transform: translateX(0.2rem);
 }
+
+.mailcontainer p {
+   margin: 1rem 0 0 0.5rem;
+   font-size: 0.95rem;
+   font-weight: 500;
+}
+
+.mailheader {
+   margin: 0 0.5rem 1.2rem 0.5rem;
+   padding: 0;
+   font-size: 1.3rem;
+   font-weight: 500;
+}
+
+.savebuttoncontainer {
+   margin: 1rem 0 0 0.5rem;
+}
+
+.error {
+   color: #FF3C38;
+   margin: 0 0 0 0.5rem;
+}

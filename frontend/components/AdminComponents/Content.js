@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 
 import styles from '../../styles/admin.module.css';
 import Graphs from './Graphs';
+import Mail from './Mail';
 import Status from './Status';
 
 export default function Content(properties) {
@@ -14,6 +15,9 @@ export default function Content(properties) {
         break;
       case 'graphs':
         setContent(<Graphs />);
+        break;
+      case 'mail':
+        setContent(<Mail />);
         break;
       default:
         setContent(<Status />);

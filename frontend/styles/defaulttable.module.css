@@ -74,14 +74,14 @@
 }
 
 .tablefooternavicon:hover {
-   color: #D25627;
+   color: #465775;
 }
 
 .numbercontainer {
    display: flex;
    flex-direction: row;
    align-items: center;
-   font-size: 0.9rem;
+   font-size: 1rem;
    color: #888;
    margin: 0 0.9rem;
 }
@@ -102,7 +102,7 @@
 }
 
 .pageselectorselected {
-   background-color: #D25627;
+   background-color: #465775;
    color: #fff !important;
    padding: 0.15rem 0.4rem;
 }

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import Loader from 'react-loader-spinner';
 
 import styles from '../../../styles/defaulttable.module.css';
+import Loading from '../Loading';
 import { numberDisplayOptions } from './TableConfig';
 import TableHeader from './TableHeader';
 import TableNav from './TableNav';
@@ -110,16 +110,6 @@ function filterData(data, searchable, filter) {
     }
     return passesFilter;
   });
-}
-
-function Loading() {
-  return (
-    <div className={styles.loadercontainer}>
-      <div className={styles.loaderanimation}>
-        <Loader color="#D25627" type="ThreeDots" />
-      </div>
-    </div>
-  );
 }
 
 function ErrorMessage(properties) {
