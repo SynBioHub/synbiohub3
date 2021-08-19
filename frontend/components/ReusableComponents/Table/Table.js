@@ -97,6 +97,7 @@ function createHeader(headers) {
 }
 
 function filterData(data, searchable, filter) {
+  if (!filter) return data;
   return data.filter(result => {
     let passesFilter = false;
     for (const key of searchable) {
