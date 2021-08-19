@@ -58,7 +58,9 @@ export default function TableNav(properties) {
           onChange={option => properties.setNumberEntries(option.value)}
         />
         <span className={styles.tableheadernavlabel}>
-          {properties.title.toUpperCase()}
+          {properties.numberShownLabel
+            ? properties.numberShownLabel.toUpperCase()
+            : properties.title.toUpperCase()}
         </span>
       </div>
 

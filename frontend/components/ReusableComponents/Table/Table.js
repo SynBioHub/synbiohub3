@@ -11,7 +11,9 @@ export default function Table(properties) {
   const [display, setDisplay] = useState([]);
   const [sortOption, setSortOption] = useState(properties.defaultSortOption);
   const [numberEntries, setNumberEntries] = useState(
-    numberDisplayOptions[0].value
+    properties.hideFooter
+      ? numberDisplayOptions[numberDisplayOptions.length - 1].value
+      : numberDisplayOptions[0].value
   );
   const [filter, setFilter] = useState('');
   const [offset, setOffset] = useState(0);
@@ -67,14 +69,17 @@ export default function Table(properties) {
           )}
           <tbody>{display}</tbody>
         </table>
-        <TableNav
-          title={properties.title}
-          offset={offset}
-          setOffset={setOffset}
-          numberEntries={numberEntries}
-          setNumberEntries={setNumberEntries}
-          filteredData={filteredData}
-        />
+        {!properties.hideFooter && (
+          <TableNav
+            title={properties.title}
+            offset={offset}
+            setOffset={setOffset}
+            numberEntries={numberEntries}
+            setNumberEntries={setNumberEntries}
+            filteredData={filteredData}
+            numberShownLabel={properties.numberShownLabel}
+          />
+        )}
       </div>
     );
   } else if (properties.loading) return <Loading />;
@@ -106,7 +111,8 @@ function filterData(data, searchable, filter) {
   return data.filter(result => {
     let passesFilter = false;
     for (const key of searchable) {
-      if (result[key].toString().includes(filter)) passesFilter = true;
+      if (result[key].toString().toLowerCase().includes(filter.toLowerCase()))
+        passesFilter = true;
     }
     return passesFilter;
   });
