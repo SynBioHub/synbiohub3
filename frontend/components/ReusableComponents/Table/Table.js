@@ -24,7 +24,14 @@ export default function Table(properties) {
         filteredData.sort((data1, data2) =>
           properties.sortMethods[sortType](data1, data2)
         );
-      setDisplay(createDisplay(filteredData, offset, numberEntries));
+      setDisplay(
+        createDisplay(
+          filteredData,
+          offset,
+          numberEntries,
+          properties.dataRowDisplay
+        )
+      );
     }
   }, [filteredData, sortType, numberEntries, filter, offset]);
 
@@ -71,7 +78,7 @@ export default function Table(properties) {
   }
 }
 
-function createDisplay(filteredData, offset, numberEntries) {
+function createDisplay(filteredData, offset, numberEntries, dataRowDisplay) {
   return filteredData
     .slice(
       offset,
@@ -81,14 +88,7 @@ function createDisplay(filteredData, offset, numberEntries) {
       )
     )
     .map(graph => {
-      return (
-        <tr key={graph.graphUri}>
-          <td>
-            <code>{graph.graphUri}</code>
-          </td>
-          <td>{graph.numTriples}</td>
-        </tr>
-      );
+      return dataRowDisplay(graph);
     });
 }
 

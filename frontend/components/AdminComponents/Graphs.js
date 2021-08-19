@@ -16,6 +16,14 @@ export default function Graphs() {
       headers={['Graph URI', '# Triples']}
       sortOptions={options}
       sortMethods={sortMethods}
+      dataRowDisplay={graph => (
+        <tr key={graph.graphUri}>
+          <td>
+            <code>{graph.graphUri}</code>
+          </td>
+          <td>{graph.numTriples}</td>
+        </tr>
+      )}
     />
   );
 }
