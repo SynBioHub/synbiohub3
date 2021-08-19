@@ -9,7 +9,7 @@ import TableNav from './TableNav';
 export default function Table(properties) {
   const [filteredData, setfilteredData] = useState([]);
   const [display, setDisplay] = useState([]);
-  const [sortType, setSortType] = useState('');
+  const [sortOption, setSortOption] = useState(properties.defaultSortOption);
   const [numberEntries, setNumberEntries] = useState(
     numberDisplayOptions[0].value
   );
@@ -20,9 +20,9 @@ export default function Table(properties) {
 
   useEffect(() => {
     if (filteredData) {
-      if (sortType)
+      if (sortOption)
         filteredData.sort((data1, data2) =>
-          properties.sortMethods[sortType](data1, data2)
+          properties.sortMethods[sortOption.value](data1, data2)
         );
       setDisplay(
         createDisplay(
@@ -33,7 +33,7 @@ export default function Table(properties) {
         )
       );
     }
-  }, [filteredData, sortType, numberEntries, filter, offset]);
+  }, [filteredData, sortOption, numberEntries, filter, offset]);
 
   useEffect(() => {
     if (properties.data) {
@@ -45,7 +45,7 @@ export default function Table(properties) {
 
   useEffect(() => {
     setOffset(0);
-  }, [filter]);
+  }, [filter, sortOption]);
 
   if (properties.data) {
     return (
@@ -56,10 +56,15 @@ export default function Table(properties) {
           filter={filter}
           setFilter={setFilter}
           sortOptions={properties.sortOptions}
-          setSortType={setSortType}
+          setSortOption={setSortOption}
+          defaultSortOption={properties.defaultSortOption}
         />
         <table className={styles.table}>
-          {properties.headers && <thead>{header}</thead>}
+          {properties.headers && (
+            <thead>
+              <tr>{header}</tr>
+            </thead>
+          )}
           <tbody>{display}</tbody>
         </table>
         <TableNav

@@ -15,6 +15,7 @@ export default function Graphs() {
       searchable={['graphUri', 'numTriples']}
       headers={['Graph URI', '# Triples']}
       sortOptions={options}
+      defaultSortOption={options[0]}
       sortMethods={sortMethods}
       dataRowDisplay={graph => (
         <tr key={graph.graphUri}>
@@ -29,8 +30,8 @@ export default function Graphs() {
 }
 
 const options = [
-  { value: 'graphUri', label: 'Graph URI' },
-  { value: 'numTriples', label: '# Triples' }
+  { value: 'numTriples', label: '# Triples' },
+  { value: 'graphUri', label: 'Graph URI' }
 ];
 
 const sortMethods = {

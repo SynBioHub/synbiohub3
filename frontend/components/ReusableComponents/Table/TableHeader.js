@@ -23,8 +23,9 @@ export default function TableHeader(properties) {
           <Select
             options={properties.sortOptions}
             className={styles.tableheadernavflex}
-            onChange={option => properties.setSortType(option.value)}
+            onChange={option => properties.setSortOption(option)}
             menuPortalTarget={document.querySelector('body')}
+            defaultValue={properties.defaultSortOption}
           />
         </div>
       </div>
