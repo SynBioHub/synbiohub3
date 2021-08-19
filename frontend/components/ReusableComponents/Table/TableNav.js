@@ -25,6 +25,13 @@ export default function TableNav(properties) {
   }, [numberPages, currentPage]);
 
   useEffect(() => {
+    if (numberPages && currentPage > numberPages) {
+      setCurrentPage(numberPages);
+      properties.setOffset((numberPages - 1) * properties.numberEntries);
+    }
+  }, [numberPages, properties.numberEntries]);
+
+  useEffect(() => {
     setNumberPages(
       Math.ceil(properties.filteredData.length / properties.numberEntries)
     );
@@ -37,7 +44,7 @@ export default function TableNav(properties) {
         Math.ceil(properties.filteredData.length / properties.offset)
       );
     }
-  }, [properties.offset, properties.filteredData]);
+  }, [properties.offset, properties.filteredData, numberPages]);
 
   return (
     <div className={styles.tablefooter}>
