@@ -7,6 +7,7 @@ export default function TableInput(properties) {
       className={styles.tableinput}
       value={properties.value}
       onChange={event => properties.onChange(event)}
+      placeholder={properties.placeholder}
     />
   );
 }

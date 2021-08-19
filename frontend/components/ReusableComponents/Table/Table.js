@@ -67,7 +67,10 @@ export default function Table(properties) {
               <tr>{header}</tr>
             </thead>
           )}
-          <tbody>{display}</tbody>
+          <tbody>
+            {display}
+            {properties.finalRow}
+          </tbody>
         </table>
         {!properties.hideFooter && (
           <TableNav
