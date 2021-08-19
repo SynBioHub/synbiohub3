@@ -88,3 +88,40 @@
 .plugintable {
    margin-bottom: 3rem;
 }
+
+.actionbutton {
+   background-color: #f1f1f1;
+   border: 1px solid #ddd;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   padding: 0.3rem 0.5rem;
+   border-radius: 5px;
+   cursor: pointer;
+   margin-right: 0.5rem;
+   font-weight: 400;
+   width: 5rem;
+}
+
+.actionbutton:hover {
+   background-color: #fff;
+}
+
+.actionbutton span {
+   margin-left: 0.4rem;
+}
+
+.actionbuttonscontainer {
+   display: flex;
+   flex-direction: row;
+}
+
+.tableinput {
+   outline: none;
+   padding: 0.5rem;
+   border-radius: 5px;
+   border: 1px solid #ddd;
+   font-size: 0.9rem;
+   font-weight: 500;
+   width: 100%;
+}
