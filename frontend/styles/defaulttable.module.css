@@ -16,6 +16,8 @@
 .tableheadertitle {
    font-size: 1.1rem;
    font-weight: 500;
+   padding-left: 0.5rem;
+   border-left: 4px solid #D25627;
 }
 
 .tableheadernav {
@@ -74,7 +76,7 @@
 }
 
 .tablefooternavicon:hover {
-   color: #465775;
+   color: #D25627;
 }
 
 .numbercontainer {
@@ -102,7 +104,7 @@
 }
 
 .pageselectorselected {
-   background-color: #465775;
+   background-color: #D25627;
    color: #fff !important;
    padding: 0.15rem 0.4rem;
 }
