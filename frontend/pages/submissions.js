@@ -11,7 +11,7 @@ import axios from 'axios';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import useSWR from 'swr';
+import useSWR, { mutate } from 'swr';
 
 import Basket from '../components/Basket';
 import Table from '../components/ReusableComponents/Table/Table';
@@ -212,6 +212,21 @@ function TableButtons(properties) {
     downloadFiles(itemsChecked, properties.token);
   }
 
+  const removeCheckedItems = () => {
+    let checklist = new Map();
+    const itemsChecked = [];
+    for (const submission of properties.processedData) {
+      checklist.set(submission.displayId, false);
+      if (properties.selected.get(submission.displayId)) {
+        itemsChecked.push({
+          url: `${process.env.backendUrl}${submission.url}/removeCollection`,
+        });
+      }
+    }
+    properties.setSelected(checklist);
+    removeCollections(itemsChecked, properties.token);
+  }
+
   return (
     <div className={styles.buttonscontainer}>
       <TableButton
@@ -235,6 +250,7 @@ function TableButtons(properties) {
         title="Remove"
         enabled={properties.buttonEnabled}
         icon={faTrashAlt}
+        onClick={() => removeCheckedItems()}
       />
     </div>
   );
@@ -267,6 +283,27 @@ const downloadFiles = (files, token) => {
             saveAs(content, zipFilename);
           })
         }
+    });
+  });
+}
+
+const removeCollections = (collections, token) => {
+  var count = 0;
+  collections.forEach(collection => {
+    axios.get(
+      collection.url, {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'text/plain',
+          'X-authorization': token
+        }
+      }
+    ).then(() => {
+      count++;
+      if (count === collections.length) {
+        mutate([`${process.env.backendUrl}/shared`, token]);
+        mutate([`${process.env.backendUrl}/manage`, token]);
+      }
     });
   });
 }
