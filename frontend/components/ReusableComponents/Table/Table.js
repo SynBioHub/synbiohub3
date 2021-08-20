@@ -51,7 +51,7 @@ export default function Table(properties) {
 
   if (properties.data) {
     return (
-      <div className={styles.statuscontainer}>
+      <div className={styles.container}>
         <TableHeader
           title={properties.title}
           count={properties.data.length}

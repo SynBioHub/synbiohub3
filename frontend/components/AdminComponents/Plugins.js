@@ -1,7 +1,7 @@
 import {
-  faCloudUploadAlt,
   faPencilAlt,
   faPlusCircle,
+  faSave,
   faTimesCircle,
   faTrashAlt
 } from '@fortawesome/free-solid-svg-icons';
@@ -184,7 +184,7 @@ function PluginDisplay(properties) {
         <div className={styles.actionbuttonscontainer}>
           <ActionButton
             action="Save"
-            icon={faCloudUploadAlt}
+            icon={faSave}
             color="#1C7C54"
             onClick={() => {
               savePlugin(

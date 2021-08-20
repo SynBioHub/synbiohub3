@@ -94,7 +94,7 @@
    cursor: pointer;
    min-width: 1.4rem;
    text-align: center;
-   border-radius: 4px;
+   border-radius: 2px;
 }
 
 .pageselector:hover {
@@ -136,8 +136,8 @@
 }
 
 
-.statuscontainer {
-   max-width: 62rem;
+.container {
+   max-width: 100%;
 }
 
 .error {
