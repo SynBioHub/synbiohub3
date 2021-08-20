@@ -38,6 +38,19 @@ export default function Table(properties) {
   }, [filteredData, sortOption, numberEntries, filter, offset]);
 
   useEffect(() => {
+    if (properties.updateRowsWhen) {
+      setDisplay(
+        createDisplay(
+          filteredData,
+          offset,
+          numberEntries,
+          properties.dataRowDisplay
+        )
+      );
+    }
+  }, [properties.updateRowsWhen]);
+
+  useEffect(() => {
     if (properties.data) {
       setfilteredData(
         filterData(properties.data, properties.searchable, filter)
