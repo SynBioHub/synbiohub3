@@ -8,8 +8,6 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import axios from 'axios';
-import { saveAs } from 'file-saver';
-import JSZip from 'jszip';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -19,8 +17,10 @@ import Basket from '../components/Basket';
 import Table from '../components/ReusableComponents/Table/Table';
 import TableButton from '../components/ReusableComponents/TableButton';
 import TopLevel from '../components/TopLevel';
-import { addToBasket } from '../redux/actions';
 import styles from '../styles/submissions.module.css';
+import { addToBasket } from '../redux/actions';
+import JSZip from 'jszip';
+import { saveAs } from 'file-saver';
 
 const searchable = ['name', 'displayId', 'type', 'description', 'privacy'];
 
@@ -71,13 +71,7 @@ function Submissions() {
     <div className={styles.container}>
       <Basket />
       <div className={styles.content}>
-        <TableButtons
-          buttonEnabled={buttonEnabled}
-          selected={selected}
-          setSelected={setSelected}
-          processedData={processedData}
-          token={token}
-        />
+        <TableButtons buttonEnabled={buttonEnabled} selected={selected} setSelected={setSelected} processedData={processedData} token={token} />
         <Table
           data={processedData}
           loading={isMySubmissionsLoading || isSharedLoading}
@@ -179,7 +173,9 @@ function SubmissionDisplay(properties) {
   );
 }
 
+
 function TableButtons(properties) {
+
   const dispatch = useDispatch();
 
   const addCheckedItemsToBasket = () => {
@@ -196,7 +192,7 @@ function TableButtons(properties) {
     }
     properties.setSelected(checklist);
     dispatch(addToBasket(itemsChecked));
-  };
+  }
 
   const downloadCheckedItems = () => {
     let checklist = new Map();
@@ -214,7 +210,7 @@ function TableButtons(properties) {
     }
     properties.setSelected(checklist);
     downloadFiles(itemsChecked, properties.token);
-  };
+  }
 
   return (
     <div className={styles.buttonscontainer}>
@@ -234,7 +230,6 @@ function TableButtons(properties) {
         title="Publish"
         enabled={properties.buttonEnabled}
         icon={faGlobeAmericas}
-        onClick={() => {}}
       />
       <TableButton
         title="Remove"
@@ -248,9 +243,9 @@ function TableButtons(properties) {
 const downloadFiles = (files, token) => {
   var count = 0;
   var zip = new JSZip();
-  var zipFilename = 'sbhdownload.zip';
+  var zipFilename = "sbhdownload.zip";
 
-  for (const file of files) {
+  files.forEach((file) => {
     var filename = `${file.displayId}.${file.type}`;
     // loading a file and add it in a zip file
     axios({
@@ -261,16 +256,20 @@ const downloadFiles = (files, token) => {
         'X-authorization': token
       }
     }).then(response => {
-      zip.file(filename, response.data);
-      count++;
-      if (count === files.length) {
-        zip.generateAsync({ type: 'blob' }).then(function (content) {
-          saveAs(content, zipFilename);
-        });
-      }
+        zip.file(filename, response.data);
+        count++;
+        console.log(count);
+        console.log(files.length);
+        console.log(file.displayId);
+        if (count === files.length) {
+          zip.generateAsync({type: "blob"})
+          .then(function(content) {
+            saveAs(content, zipFilename);
+          })
+        }
     });
-  }
-};
+  });
+}
 
 const processSubmissions = submissions => {
   for (const submission of submissions) {
