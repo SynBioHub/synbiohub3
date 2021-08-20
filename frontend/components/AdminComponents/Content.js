@@ -11,9 +11,6 @@ export default function Content(properties) {
 
   useEffect(() => {
     switch (properties.selected) {
-      case 'status':
-        setContent(<Status />);
-        break;
       case 'graphs':
         setContent(<Graphs />);
         break;

@@ -15,6 +15,7 @@ export default function ProfileMenu() {
   const dispatch = useDispatch();
   const router = useRouter();
   const username = useSelector(state => state.user.username);
+  const isAdmin = useSelector(state => state.user.isAdmin);
   return (
     <div className={styles.profilemenu}>
       <div className={styles.userinfo}>
@@ -31,7 +32,7 @@ export default function ProfileMenu() {
           </div>
         </a>
       </Link>
-      <Link href="/admin">
+      {isAdmin && <Link href="/admin/status">
         <a>
           <div className={styles.menuoption}>
             <div className={styles.profilemenuicon}>
@@ -40,7 +41,7 @@ export default function ProfileMenu() {
             Admin
           </div>
         </a>
-      </Link>
+      </Link>}
       <div
         className={styles.menuoption}
         role="button"
