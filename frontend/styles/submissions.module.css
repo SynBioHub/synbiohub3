@@ -1,6 +1,6 @@
 .container {
   display: flex;
-  padding: 0 0 3rem 0;
+  padding: 1rem 0 3rem 0;
   flex-direction: column;
 }
 
@@ -15,4 +15,17 @@
 
 .submissiontable {
   margin-bottom: 2rem;
+}
+
+.submission {
+  cursor: pointer;
+}
+
+.submission:hover {
+  background-color: #e9e9e9 !important;
+}
+
+.buttonscontainer {
+  display: flex;
+  flex-direction: row;
 }

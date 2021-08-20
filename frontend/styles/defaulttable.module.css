@@ -164,6 +164,40 @@
    flex-direction: column;
  }
 
+ .tablebutton {
+   padding: 0.5rem 0.75rem;
+   font-size: 0.9rem;
+   margin-bottom: 0.2rem;
+   background: #d25527b4;
+   border-radius: 0.2rem;
+   cursor: pointer;
+   display: flex;
+   align-items: center;
+ }
+ 
+ .buttonicon {
+   margin-right: 0.3rem;
+ }
+ 
+ .enabled {
+   opacity: 1;
+   transition: opacity 0.5s;
+ }
+ 
+ .enabled:hover {
+   background: #00A1E4;
+   color: #fff;
+ }
+ 
+ .disabled {
+   cursor: not-allowed;
+   opacity: 0.5;
+ }
+
+.rightspace {
+   margin-right: 0.5rem;
+}
+
 
  @media (max-width: 700px) {
    #filterresults {
