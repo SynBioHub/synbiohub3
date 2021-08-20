@@ -1,4 +1,5 @@
 import { useRouter } from 'next/router';
+import { useSelector } from 'react-redux';
 
 import Content from '../../components/AdminComponents/Content';
 import Menu from '../../components/AdminComponents/Menu';
@@ -17,8 +18,9 @@ function Admin() {
 }
 
 export default function AdminWrapped() {
+  const isAdmin = useSelector(state => state.user.isAdmin);
   return (
-    <TopLevel>
+    <TopLevel blockEntry={!isAdmin}>
       <Admin />
     </TopLevel>
   );

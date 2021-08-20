@@ -39,7 +39,12 @@ export default function TopLevel(properties) {
     }
   }, [loggedIn, router, protectRoute]);
 
-  if (!protectRoute | loggedIn)
+  useEffect(() => {
+    if (properties.blockEntry)
+      router.replace(`/`);
+  }, [properties.blockEntry, router]);
+
+  if ((!protectRoute | loggedIn) && !properties.blockEntry)
     return (
       <div>
         <Head>
