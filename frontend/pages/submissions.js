@@ -234,6 +234,7 @@ function TableButtons(properties) {
         title="Publish"
         enabled={properties.buttonEnabled}
         icon={faGlobeAmericas}
+        onClick={() => {}}
       />
       <TableButton
         title="Remove"
