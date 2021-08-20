@@ -129,9 +129,8 @@
    margin-top: 1rem;
    width: 100%;
    overflow: scroll;
-   height: 20rem;
-   color: #171D26;
-   border: 2px solid #465775;
+   max-height: 20rem;
+   color: #171D26;   
 }
 
 .table {
@@ -168,13 +167,13 @@
 
 .table th {
    padding: 0.5rem;
-   background-color: #465775;
-   color: #fff;
-   font-size: 1rem;
-   font-weight: 400;
+   font-size: 0.9rem;
+   font-weight: 600;
    position: sticky;
-   z-index: 2;
    top: 0;
+   border-bottom: 2px solid #ddd;
+   background-color: #fff;
+   z-index: 2;
 }
 
 
