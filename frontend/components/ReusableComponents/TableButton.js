@@ -13,6 +13,10 @@ export default function TableButton(properties) {
   return (
     <div
       className={`${styles.tablebutton} ${buttonClass} ${styles.rightspace}`}
+      role="button"
+      onClick={() => {
+        if (properties.enabled) properties.onClick();
+      }}
     >
       <span className={styles.buttonicon}>
         <FontAwesomeIcon icon={properties.icon} color="#00000" size="1x" />

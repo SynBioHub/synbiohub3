@@ -8,15 +8,18 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import axios from 'axios';
+import { saveAs } from 'file-saver';
+import JSZip from 'jszip';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import useSWR from 'swr';
 
 import Basket from '../components/Basket';
 import Table from '../components/ReusableComponents/Table/Table';
 import TableButton from '../components/ReusableComponents/TableButton';
 import TopLevel from '../components/TopLevel';
+import { addToBasket } from '../redux/actions';
 import styles from '../styles/submissions.module.css';
 
 const searchable = ['name', 'displayId', 'type', 'description', 'privacy'];
@@ -68,28 +71,13 @@ function Submissions() {
     <div className={styles.container}>
       <Basket />
       <div className={styles.content}>
-        <div className={styles.buttonscontainer}>
-          <TableButton
-            title="Add to Basket"
-            enabled={buttonEnabled}
-            icon={faPlus}
-          />
-          <TableButton
-            title="Download"
-            enabled={buttonEnabled}
-            icon={faDownload}
-          />
-          <TableButton
-            title="Publish"
-            enabled={buttonEnabled}
-            icon={faGlobeAmericas}
-          />
-          <TableButton
-            title="Remove"
-            enabled={buttonEnabled}
-            icon={faTrashAlt}
-          />
-        </div>
+        <TableButtons
+          buttonEnabled={buttonEnabled}
+          selected={selected}
+          setSelected={setSelected}
+          processedData={processedData}
+          token={token}
+        />
         <Table
           data={processedData}
           loading={isMySubmissionsLoading || isSharedLoading}
@@ -190,6 +178,98 @@ function SubmissionDisplay(properties) {
     </tr>
   );
 }
+
+function TableButtons(properties) {
+  const dispatch = useDispatch();
+
+  const addCheckedItemsToBasket = () => {
+    const itemsChecked = [];
+    let checklist = new Map();
+    for (const submission of properties.processedData) {
+      checklist.set(submission.displayId, false);
+      if (properties.selected.get(submission.displayId)) {
+        itemsChecked.push({
+          uri: submission.uri,
+          name: submission.name
+        });
+      }
+    }
+    properties.setSelected(checklist);
+    dispatch(addToBasket(itemsChecked));
+  };
+
+  const downloadCheckedItems = () => {
+    let checklist = new Map();
+    const itemsChecked = [];
+    for (const submission of properties.processedData) {
+      checklist.set(submission.displayId, false);
+      if (properties.selected.get(submission.displayId)) {
+        itemsChecked.push({
+          url: `${process.env.backendUrl}${submission.url}/sbol`,
+          name: submission.name,
+          displayId: submission.displayId,
+          type: 'xml'
+        });
+      }
+    }
+    properties.setSelected(checklist);
+    downloadFiles(itemsChecked, properties.token);
+  };
+
+  return (
+    <div className={styles.buttonscontainer}>
+      <TableButton
+        title="Add to Basket"
+        enabled={properties.buttonEnabled}
+        icon={faPlus}
+        onClick={() => addCheckedItemsToBasket()}
+      />
+      <TableButton
+        title="Download"
+        enabled={properties.buttonEnabled}
+        icon={faDownload}
+        onClick={() => downloadCheckedItems()}
+      />
+      <TableButton
+        title="Publish"
+        enabled={properties.buttonEnabled}
+        icon={faGlobeAmericas}
+      />
+      <TableButton
+        title="Remove"
+        enabled={properties.buttonEnabled}
+        icon={faTrashAlt}
+      />
+    </div>
+  );
+}
+
+const downloadFiles = (files, token) => {
+  var count = 0;
+  var zip = new JSZip();
+  var zipFilename = 'sbhdownload.zip';
+
+  for (const file of files) {
+    var filename = `${file.displayId}.${file.type}`;
+    // loading a file and add it in a zip file
+    axios({
+      url: file.url,
+      method: 'GET',
+      responseType: 'blob',
+      headers: {
+        'X-authorization': token
+      }
+    }).then(response => {
+      zip.file(filename, response.data);
+      count++;
+      if (count === files.length) {
+        zip.generateAsync({ type: 'blob' }).then(function (content) {
+          saveAs(content, zipFilename);
+        });
+      }
+    });
+  }
+};
 
 const processSubmissions = submissions => {
   for (const submission of submissions) {
