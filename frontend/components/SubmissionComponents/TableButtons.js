@@ -53,7 +53,9 @@ export default function TableButtons(properties) {
       properties.setSelected,
       function (submission) {
         return {
-          url: `${process.env.backendUrl}${submission.url}/removeCollection`
+          url: `${process.env.backendUrl}${submission.url}/removeCollection`,
+          name: submission.name,
+          privacy: submission.privacy
         };
       }
     );
@@ -129,17 +131,23 @@ const zippedFilePromise = (file, token) => {
 };
 
 const removeCollections = (collections, token) => {
-  const removeCollectionPromises = collections.map(collection =>
-    axios({
-      url: collection.url,
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'text/plain',
-        'X-authorization': token
-      }
-    })
-  );
+  const removeCollectionPromises = collections.map(collection => {
+    if (collection.privacy === 'public') {
+      alert(
+        `${collection.name} cannot be removed because it has been published`
+      );
+    } else {
+      return axios({
+        url: collection.url,
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'text/plain',
+          'X-authorization': token
+        }
+      });
+    }
+  });
 
   Promise.all(removeCollectionPromises)
     .then(() => {
