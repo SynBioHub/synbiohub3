@@ -141,7 +141,7 @@ const removeCollections = (collections, token) => {
     })
   );
 
-  Promise.all(removeCollectionPromises).then(() => {
+  Promise.allSettled(removeCollectionPromises).then(() => {
     mutate([`${process.env.backendUrl}/shared`, token]);
     mutate([`${process.env.backendUrl}/manage`, token]);
   });
