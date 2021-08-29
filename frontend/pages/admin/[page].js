@@ -13,8 +13,7 @@ function Admin() {
   const { page } = router.query;
 
   useEffect(() => {
-    if (!isAdmin)
-      router.replace('/');
+    if (!isAdmin) router.replace('/');
   }, [isAdmin]);
   if (isAdmin)
     return (

@@ -129,24 +129,22 @@ const zippedFilePromise = (file, token) => {
 };
 
 const removeCollections = (collections, token) => {
-  var count = 0;
-  for (const collection of collections) {
-    axios
-      .get(collection.url, {
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'text/plain',
-          'X-authorization': token
-        }
-      })
-      .then(() => {
-        count++;
-        if (count === collections.length) {
-          mutate([`${process.env.backendUrl}/shared`, token]);
-          mutate([`${process.env.backendUrl}/manage`, token]);
-        }
-      });
-  }
+  const removeCollectionPromises = collections.map(collection =>
+    axios({
+      url: collection.url,
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'text/plain',
+        'X-authorization': token
+      }
+    })
+  );
+
+  Promise.all(removeCollectionPromises).then(() => {
+    mutate([`${process.env.backendUrl}/shared`, token]);
+    mutate([`${process.env.backendUrl}/manage`, token]);
+  });
 };
 
 const parseAndClearCheckedItems = (
