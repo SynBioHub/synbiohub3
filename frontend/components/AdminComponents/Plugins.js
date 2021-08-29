@@ -271,16 +271,16 @@ const options = [
   { value: 'url', label: 'URL' }
 ];
 
-const sortString = (plugin1, plugin2) => {
-  return (plugin1.name > plugin2.name && 1) || -1;
+const compareStrings = (string1, string2) => {
+  return (string1.toLowerCase() > string2.toLowerCase() && 1) || -1;
 };
 
 const sortMethods = {
   index: function (plugin1, plugin2) {
     return plugin1.index - plugin2.index;
   },
-  name: sortString,
-  url: sortString
+  name: (plugin1, plugin2) => compareStrings(plugin1.name, plugin2.name),
+  url: (plugin1, plugin2) => compareStrings(plugin1.name, plugin2.name)
 };
 
 const usePlugins = token => {
