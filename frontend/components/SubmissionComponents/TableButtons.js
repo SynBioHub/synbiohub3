@@ -141,10 +141,12 @@ const removeCollections = (collections, token) => {
     })
   );
 
-  Promise.allSettled(removeCollectionPromises).then(() => {
-    mutate([`${process.env.backendUrl}/shared`, token]);
-    mutate([`${process.env.backendUrl}/manage`, token]);
-  });
+  Promise.all(removeCollectionPromises)
+    .then(() => {
+      mutate([`${process.env.backendUrl}/shared`, token]);
+      mutate([`${process.env.backendUrl}/manage`, token]);
+    })
+    .catch(error => alert(error));
 };
 
 const parseAndClearCheckedItems = (
