@@ -1,26 +1,20 @@
 import {
-  faDownload,
   faGlobeAmericas,
-  faPlus,
   faShareAlt,
-  faTrashAlt,
   faUserLock
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import useSWR, { mutate } from 'swr';
+import { useSelector } from 'react-redux';
+import useSWR from 'swr';
 
 import Basket from '../components/Basket';
 import Table from '../components/ReusableComponents/Table/Table';
-import TableButton from '../components/ReusableComponents/TableButton';
+import TableButtons from '../components/SubmissionComponents/TableButtons';
 import TopLevel from '../components/TopLevel';
 import styles from '../styles/submissions.module.css';
-import { addToBasket } from '../redux/actions';
-import JSZip from 'jszip';
-import { saveAs } from 'file-saver';
 
 const searchable = ['name', 'displayId', 'type', 'description', 'privacy'];
 
@@ -71,7 +65,13 @@ function Submissions() {
     <div className={styles.container}>
       <Basket />
       <div className={styles.content}>
-        <TableButtons buttonEnabled={buttonEnabled} selected={selected} setSelected={setSelected} processedData={processedData} token={token} />
+        <TableButtons
+          buttonEnabled={buttonEnabled}
+          selected={selected}
+          setSelected={setSelected}
+          processedData={processedData}
+          token={token}
+        />
         <Table
           data={processedData}
           loading={isMySubmissionsLoading || isSharedLoading}
@@ -173,141 +173,6 @@ function SubmissionDisplay(properties) {
   );
 }
 
-
-function TableButtons(properties) {
-
-  const dispatch = useDispatch();
-
-  const addCheckedItemsToBasket = () => {
-    const itemsChecked = [];
-    let checklist = new Map();
-    for (const submission of properties.processedData) {
-      checklist.set(submission.displayId, false);
-      if (properties.selected.get(submission.displayId)) {
-        itemsChecked.push({
-          uri: submission.uri,
-          name: submission.name
-        });
-      }
-    }
-    properties.setSelected(checklist);
-    dispatch(addToBasket(itemsChecked));
-  }
-
-  const downloadCheckedItems = () => {
-    let checklist = new Map();
-    const itemsChecked = [];
-    for (const submission of properties.processedData) {
-      checklist.set(submission.displayId, false);
-      if (properties.selected.get(submission.displayId)) {
-        itemsChecked.push({
-          url: `${process.env.backendUrl}${submission.url}/sbol`,
-          name: submission.name,
-          displayId: submission.displayId,
-          type: 'xml'
-        });
-      }
-    }
-    properties.setSelected(checklist);
-    downloadFiles(itemsChecked, properties.token);
-  }
-
-  const removeCheckedItems = () => {
-    let checklist = new Map();
-    const itemsChecked = [];
-    for (const submission of properties.processedData) {
-      checklist.set(submission.displayId, false);
-      if (properties.selected.get(submission.displayId)) {
-        itemsChecked.push({
-          url: `${process.env.backendUrl}${submission.url}/removeCollection`,
-        });
-      }
-    }
-    properties.setSelected(checklist);
-    removeCollections(itemsChecked, properties.token);
-  }
-
-  return (
-    <div className={styles.buttonscontainer}>
-      <TableButton
-        title="Add to Basket"
-        enabled={properties.buttonEnabled}
-        icon={faPlus}
-        onClick={() => addCheckedItemsToBasket()}
-      />
-      <TableButton
-        title="Download"
-        enabled={properties.buttonEnabled}
-        icon={faDownload}
-        onClick={() => downloadCheckedItems()}
-      />
-      <TableButton
-        title="Publish"
-        enabled={properties.buttonEnabled}
-        icon={faGlobeAmericas}
-      />
-      <TableButton
-        title="Remove"
-        enabled={properties.buttonEnabled}
-        icon={faTrashAlt}
-        onClick={() => removeCheckedItems()}
-      />
-    </div>
-  );
-}
-
-const downloadFiles = (files, token) => {
-  var count = 0;
-  var zip = new JSZip();
-  var zipFilename = "sbhdownload.zip";
-
-  files.forEach((file) => {
-    var filename = `${file.displayId}.${file.type}`;
-    // loading a file and add it in a zip file
-    axios({
-      url: file.url,
-      method: 'GET',
-      responseType: 'blob',
-      headers: {
-        'X-authorization': token
-      }
-    }).then(response => {
-        zip.file(filename, response.data);
-        count++;
-        console.log(count);
-        console.log(files.length);
-        console.log(file.displayId);
-        if (count === files.length) {
-          zip.generateAsync({type: "blob"})
-          .then(function(content) {
-            saveAs(content, zipFilename);
-          })
-        }
-    });
-  });
-}
-
-const removeCollections = (collections, token) => {
-  var count = 0;
-  collections.forEach(collection => {
-    axios.get(
-      collection.url, {
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'text/plain',
-          'X-authorization': token
-        }
-      }
-    ).then(() => {
-      count++;
-      if (count === collections.length) {
-        mutate([`${process.env.backendUrl}/shared`, token]);
-        mutate([`${process.env.backendUrl}/manage`, token]);
-      }
-    });
-  });
-}
-
 const processSubmissions = submissions => {
   for (const submission of submissions) {
     const potentialType = submission.type.toLowerCase();
@@ -333,13 +198,6 @@ const processSubmissions = submissions => {
   }
 
   return submissions;
-
-  /*
-  let privacy = <FontAwesomeIcon icon={faGlobeAmericas} size="1x" />;
-  if (!properties.uri.includes('/public/'))
-    privacy = <FontAwesomeIcon icon={faUserLock} color="#ff0000" size="1x" />;
-
-  */
 };
 
 const options = [

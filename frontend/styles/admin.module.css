@@ -114,6 +114,14 @@
 .actionbuttonscontainer {
    display: flex;
    flex-direction: row;
+   width: 100%;
+   justify-content: flex-end;
+}
+
+.actionbuttonslayout {
+   width: 12rem;
+   display: flex;
+   flex-direction: row;
 }
 
 .tableinput {
