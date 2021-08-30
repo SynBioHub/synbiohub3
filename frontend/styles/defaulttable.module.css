@@ -198,6 +198,24 @@
    margin-right: 0.5rem;
 }
 
+.dropdowncontainer {
+   position: absolute;
+   z-index: 99;
+   box-shadow: 0 5px 15px #c9c9c9;
+   border: 1px solid #f0f0f0;
+}
+
+.tablebuttondropdown {
+   background-color: #fff;
+   font-size: 0.85rem;
+   font-weight: 500;
+   padding: 0.5rem;
+   cursor: pointer;
+}
+
+.tablebuttondropdown:hover {
+   background-color: #ececec;
+}
 
  @media (max-width: 700px) {
    #filterresults {

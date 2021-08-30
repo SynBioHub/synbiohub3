@@ -20,7 +20,7 @@ const submittingType = 'submit';
 const downloadingType = 'download';
 
 const searchable = ['index', 'name', 'url'];
-const headers = ['ID', 'Name', 'URL', 'Actions'];
+const headers = ['ID', 'Name', 'URL', ''];
 
 /* eslint sonarjs/no-duplicate-string: "off" */
 
@@ -105,16 +105,18 @@ function NewPluginRow(properties) {
       </td>
       <td>
         <div className={styles.actionbuttonscontainer}>
-          <ActionButton
-            action="Create"
-            icon={faPlusCircle}
-            color="#1C7C54"
-            onClick={() => {
-              savePlugin('New', properties.type, name, url, properties.token);
-              setName('');
-              setUrl('');
-            }}
-          />
+          <div className={styles.actionbuttonslayout}>
+            <ActionButton
+              action="Create"
+              icon={faPlusCircle}
+              color="#1C7C54"
+              onClick={() => {
+                savePlugin('New', properties.type, name, url, properties.token);
+                setName('');
+                setUrl('');
+              }}
+            />
+          </div>
         </div>
       </td>
     </tr>
@@ -140,24 +142,26 @@ function PluginDisplay(properties) {
       </td>
       <td>
         <div className={styles.actionbuttonscontainer}>
-          <ActionButton
-            action="Edit"
-            icon={faPencilAlt}
-            color="#00A1E4"
-            onClick={() => setEditMode(true)}
-          />
-          <ActionButton
-            action="Delete"
-            icon={faTrashAlt}
-            color="#FF3C38"
-            onClick={() =>
-              deletePlugin(
-                properties.plugin.index + 1,
-                properties.type,
-                properties.token
-              )
-            }
-          />
+          <div className={styles.actionbuttonslayout}>
+            <ActionButton
+              action="Edit"
+              icon={faPencilAlt}
+              color="#00A1E4"
+              onClick={() => setEditMode(true)}
+            />
+            <ActionButton
+              action="Delete"
+              icon={faTrashAlt}
+              color="#FF3C38"
+              onClick={() =>
+                deletePlugin(
+                  properties.plugin.index + 1,
+                  properties.type,
+                  properties.token
+                )
+              }
+            />
+          </div>
         </div>
       </td>
     </tr>
@@ -182,31 +186,33 @@ function PluginDisplay(properties) {
       </td>
       <td>
         <div className={styles.actionbuttonscontainer}>
-          <ActionButton
-            action="Save"
-            icon={faSave}
-            color="#1C7C54"
-            onClick={() => {
-              savePlugin(
-                properties.plugin.index,
-                properties.type,
-                name,
-                url,
-                properties.token
-              );
-              setEditMode(false);
-            }}
-          />
-          <ActionButton
-            action="Cancel"
-            icon={faTimesCircle}
-            color="#888"
-            onClick={() => {
-              setName(properties.plugin.name);
-              setUrl(properties.plugin.url);
-              setEditMode(false);
-            }}
-          />
+          <div className={styles.actionbuttonslayout}>
+            <ActionButton
+              action="Save"
+              icon={faSave}
+              color="#1C7C54"
+              onClick={() => {
+                savePlugin(
+                  properties.plugin.index,
+                  properties.type,
+                  name,
+                  url,
+                  properties.token
+                );
+                setEditMode(false);
+              }}
+            />
+            <ActionButton
+              action="Cancel"
+              icon={faTimesCircle}
+              color="#888"
+              onClick={() => {
+                setName(properties.plugin.name);
+                setUrl(properties.plugin.url);
+                setEditMode(false);
+              }}
+            />
+          </div>
         </div>
       </td>
     </tr>
@@ -265,16 +271,16 @@ const options = [
   { value: 'url', label: 'URL' }
 ];
 
-const sortString = (plugin1, plugin2) => {
-  return (plugin1.name > plugin2.name && 1) || -1;
+const compareStrings = (string1, string2) => {
+  return (string1.toLowerCase() > string2.toLowerCase() && 1) || -1;
 };
 
 const sortMethods = {
   index: function (plugin1, plugin2) {
     return plugin1.index - plugin2.index;
   },
-  name: sortString,
-  url: sortString
+  name: (plugin1, plugin2) => compareStrings(plugin1.name, plugin2.name),
+  url: (plugin1, plugin2) => compareStrings(plugin1.name, plugin2.name)
 };
 
 const usePlugins = token => {

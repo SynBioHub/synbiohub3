@@ -1,0 +1,69 @@
+.outercontainer {
+   position: fixed;
+   top: 0;
+   right: 0;
+   bottom: 0;
+   left: 0;
+   background-color: #80808041;
+   z-index: 1000;
+   display: flex;
+   justify-content: center;
+}
+
+.container {
+   background-color: #fff;
+   padding: 1rem;
+   border-radius: 0.4rem;
+   width: 95%;
+   max-width: 55rem;
+   margin: 4.5rem 0;
+   height: fit-content;
+   max-height: calc(100% - 5rem);
+   overflow: scroll;
+}
+
+.closeicon {
+   margin-right: 0.3rem;
+}
+
+.closebutton {
+   float: right;
+   padding: 0.4rem;
+   border-radius: 0.4rem;
+   background-color: #e4e4e4;
+   cursor: pointer;
+}
+
+.closebutton:hover {
+   background-color: #d2552723;
+}
+
+
+.errorcontainer {
+   margin: 1rem 0;
+   font-size: 1rem;
+}
+
+.downloadstatuscontainer {
+   position: fixed;
+   bottom: 0;
+   right: 1rem;
+   color: #fff;
+   background-color: #D25627;
+   padding: 0.5rem;
+   border-radius: 0.4rem 0.4rem 0 0;
+   font-weight: 500;
+   font-size: 1rem;
+   display: flex;
+   align-items: center;
+}
+
+.downloadstatusanimation {
+   margin-right: 0.5rem;
+   padding: 0;
+}
+
+.downloadmsg {
+   height: 100%;
+   padding: 0 0 0.25rem 0;
+}

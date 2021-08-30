@@ -127,7 +127,10 @@ function filterData(data, searchable, filter) {
   return data.filter(result => {
     let passesFilter = false;
     for (const key of searchable) {
-      if (result[key].toString().toLowerCase().includes(filter.toLowerCase()))
+      if (
+        result[key] &&
+        result[key].toString().toLowerCase().includes(filter.toLowerCase())
+      )
         passesFilter = true;
     }
     return passesFilter;

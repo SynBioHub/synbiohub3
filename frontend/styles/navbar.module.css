@@ -137,7 +137,7 @@
    position: absolute;
    top: 2.3rem;
    right: 0.45rem;
-   border-radius: 0.5rem 0 0.5rem 0.5rem;
+   border-radius: 0.5rem;
    overflow: hidden;
    background-color: #fff;
 }

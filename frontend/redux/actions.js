@@ -1,4 +1,7 @@
+import axios from 'axios';
+import { saveAs } from 'file-saver';
 import JSZip from 'jszip';
+import { mutate } from 'swr';
 
 import * as types from './types';
 
@@ -506,6 +509,96 @@ export const getCanSubmitTo = () => async (dispatch, getState) => {
   });
 
   dispatch({ type: types.GETTINGCANSUBMITTO, payload: false });
+};
+
+export const makePublicCollection =
+  (
+    submissionUrl,
+    displayId,
+    version,
+    name,
+    description,
+    citations,
+    setShowPublishModal,
+    tabState = 'new'
+  ) =>
+  async (dispatch, getState) => {
+    dispatch({ type: types.PUBLISHING, payload: true });
+
+    const token = getState().user.token;
+    const url = `${process.env.backendUrl}${submissionUrl}/makePublic`;
+    const headers = {
+      Accept: 'text/plain; charset=UTF-8',
+      'X-authorization': token
+    };
+
+    const parameters = new URLSearchParams();
+    parameters.append('id', displayId);
+    parameters.append('version', version);
+    parameters.append('name', name);
+    parameters.append('description', description);
+    parameters.append('citations', citations);
+    parameters.append('tabState', tabState);
+
+    var response = await fetch(url, {
+      method: 'POST',
+      headers,
+      body: parameters
+    });
+
+    if (response.status === 200) {
+      setShowPublishModal(false);
+      mutate([`${process.env.backendUrl}/shared`, token]);
+      mutate([`${process.env.backendUrl}/manage`, token]);
+    }
+
+    dispatch({ type: types.PUBLISHING, payload: false });
+  };
+
+export const downloadFiles = files => (dispatch, getState) => {
+  dispatch({ type: types.DOWNLOADSTATUS, payload: 'Downloading' });
+  dispatch({ type: types.DOWNLOADLIST, payload: files });
+  dispatch({ type: types.SHOWDOWNLOAD, payload: true });
+
+  const token = getState().user.token;
+  var zip = new JSZip();
+  var zipFilename = 'sbhdownload.zip';
+
+  const zippedFilePromises = files.map(file => {
+    return zippedFilePromise(file, token);
+  });
+
+  Promise.allSettled(zippedFilePromises).then(results => {
+    dispatch({ type: types.DOWNLOADSTATUS, payload: 'Zipping' });
+    for (const result of results) {
+      if (result.status === 'fulfilled') {
+        var filename = `${result.value.file.displayId}.${result.value.file.type}`;
+        zip.file(filename, result.value.response.data);
+      }
+    }
+    zip.generateAsync({ type: 'blob' }).then(function (content) {
+      dispatch({ type: types.SHOWDOWNLOAD, payload: false });
+      saveAs(content, zipFilename);
+    });
+  });
+};
+
+const zippedFilePromise = (file, token) => {
+  return new Promise((resolve, reject) => {
+    axios({
+      url: file.url,
+      method: 'GET',
+      responseType: 'blob',
+      headers: {
+        'X-authorization': token
+      }
+    })
+      .then(response => {
+        if (response.status === 200) resolve({ file, response });
+        else reject();
+      })
+      .catch(error => reject(error));
+  });
 };
 
 // BASKET ACTIONS

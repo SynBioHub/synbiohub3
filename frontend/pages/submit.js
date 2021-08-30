@@ -44,7 +44,7 @@ function Submit() {
             uploaded into an existing or new collection."
         />
         <UploadFileSection files={files} setFiles={setFiles} />
-        <ChooseCollection />
+        <ChooseCollection label="Select Destination Collection" />
         <OverwriteObjects
           checked={overwriteCollection}
           setChecked={setOverwriteCollection}

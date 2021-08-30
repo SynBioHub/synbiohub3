@@ -40,7 +40,7 @@ export default function NewCollectionButtons(properties) {
           else properties.postCollection();
         }}
       >
-        Create
+        {properties.title}
         <FontAwesomeIcon
           icon={faFolderPlus}
           size="1x"

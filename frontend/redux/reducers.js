@@ -113,7 +113,8 @@ const initialSubmitState = {
   fileFailed: false,
   attachmentsUploading: [],
   canSubmitTo: [],
-  gettingCanSubmitTo: false
+  gettingCanSubmitTo: false,
+  publishing: false
 };
 
 /**
@@ -175,6 +176,11 @@ const submitReducer = (state = initialSubmitState, { type, payload }) => {
       return {
         ...state,
         gettingCanSubmitTo: payload
+      };
+    case type.PUBLISHING:
+      return {
+        ...state,
+        publishing: payload
       };
     default:
       return state;
@@ -242,6 +248,35 @@ const basketReducer = (state = initialBasketState, { type, payload }) => {
     : state;
 };
 
+// DOWNLOAD REDUCER
+const initialDownloadState = {
+  showDownloadStatus: false,
+  downloadList: [],
+  downloadStatus: ''
+};
+
+const downloadReducer = (state = initialDownloadState, { type, payload }) => {
+  switch (type) {
+    case types.SHOWDOWNLOAD:
+      return {
+        ...state,
+        showDownloadStatus: payload
+      };
+    case types.DOWNLOADLIST:
+      return {
+        ...state,
+        downloadList: payload
+      };
+    case types.DOWNLOADSTATUS:
+      return {
+        ...state,
+        downloadStatus: payload
+      };
+    default:
+      return state;
+  }
+};
+
 // TRACKER REDUCER
 const initialTrackingState = {
   pageVisited: false
@@ -267,6 +302,7 @@ const reducers = {
   search: searchReducer,
   submit: submitReducer,
   collectionCreate: collectionCreateReducer,
+  download: downloadReducer,
   basket: basketReducer,
   tracking: trackingReducer
 };
