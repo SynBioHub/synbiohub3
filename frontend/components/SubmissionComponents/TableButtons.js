@@ -5,14 +5,12 @@ import {
   faTrashAlt
 } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
-import { saveAs } from 'file-saver';
-import JSZip from 'jszip';
 import React from 'react';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { mutate } from 'swr';
 
-import { addToBasket } from '../../redux/actions';
+import { addToBasket, downloadFiles } from '../../redux/actions';
 import styles from '../../styles/submissions.module.css';
 import TableButton from '../ReusableComponents/TableButton';
 import PublishModal from './PublishModal';
@@ -49,7 +47,7 @@ export default function TableButtons(properties) {
         };
       }
     );
-    downloadFiles(itemsChecked, properties.token);
+    dispatch(downloadFiles(itemsChecked));
   };
 
   const removeCheckedItems = () => {
@@ -121,45 +119,6 @@ export default function TableButtons(properties) {
     </React.Fragment>
   );
 }
-
-const downloadFiles = (files, token) => {
-  var zip = new JSZip();
-  var zipFilename = 'sbhdownload.zip';
-
-  const zippedFilePromises = files.map(file => {
-    return zippedFilePromise(file, token);
-  });
-
-  Promise.allSettled(zippedFilePromises).then(results => {
-    for (const result of results) {
-      if (result.status === 'fulfilled') {
-        var filename = `${result.value.file.displayId}.${result.value.file.type}`;
-        zip.file(filename, result.value.response.data);
-      }
-    }
-    zip.generateAsync({ type: 'blob' }).then(function (content) {
-      saveAs(content, zipFilename);
-    });
-  });
-};
-
-const zippedFilePromise = (file, token) => {
-  return new Promise((resolve, reject) => {
-    axios({
-      url: file.url,
-      method: 'GET',
-      responseType: 'blob',
-      headers: {
-        'X-authorization': token
-      }
-    })
-      .then(response => {
-        if (response.status === 200) resolve({ file, response });
-        else reject();
-      })
-      .catch(error => reject(error));
-  });
-};
 
 const removeCollections = (collections, token) => {
   const removeCollectionPromises = collections.map(collection => {

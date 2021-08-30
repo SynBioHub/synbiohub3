@@ -1,3 +1,5 @@
+import axios from 'axios';
+import { saveAs } from 'file-saver';
 import JSZip from 'jszip';
 import { mutate } from 'swr';
 
@@ -552,6 +554,46 @@ export const makePublicCollection =
 
     dispatch({ type: types.PUBLISHING, payload: false });
   };
+
+export const downloadFiles = files => (dispatch, getState) => {
+  const token = getState().user.token;
+  var zip = new JSZip();
+  var zipFilename = 'sbhdownload.zip';
+
+  const zippedFilePromises = files.map(file => {
+    return zippedFilePromise(file, token);
+  });
+
+  Promise.allSettled(zippedFilePromises).then(results => {
+    for (const result of results) {
+      if (result.status === 'fulfilled') {
+        var filename = `${result.value.file.displayId}.${result.value.file.type}`;
+        zip.file(filename, result.value.response.data);
+      }
+    }
+    zip.generateAsync({ type: 'blob' }).then(function (content) {
+      saveAs(content, zipFilename);
+    });
+  });
+};
+
+const zippedFilePromise = (file, token) => {
+  return new Promise((resolve, reject) => {
+    axios({
+      url: file.url,
+      method: 'GET',
+      responseType: 'blob',
+      headers: {
+        'X-authorization': token
+      }
+    })
+      .then(response => {
+        if (response.status === 200) resolve({ file, response });
+        else reject();
+      })
+      .catch(error => reject(error));
+  });
+};
 
 // BASKET ACTIONS
 
