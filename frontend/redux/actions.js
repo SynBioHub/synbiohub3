@@ -1,4 +1,5 @@
 import JSZip from 'jszip';
+import { mutate } from 'swr';
 
 import * as types from './types';
 
@@ -507,6 +508,50 @@ export const getCanSubmitTo = () => async (dispatch, getState) => {
 
   dispatch({ type: types.GETTINGCANSUBMITTO, payload: false });
 };
+
+export const makePublicCollection =
+  (
+    submissionUrl,
+    displayId,
+    version,
+    name,
+    description,
+    citations,
+    setShowPublishModal,
+    tabState = 'new'
+  ) =>
+  async (dispatch, getState) => {
+    dispatch({ type: types.PUBLISHING, payload: true });
+
+    const token = getState().user.token;
+    const url = `${process.env.backendUrl}${submissionUrl}/makePublic`;
+    const headers = {
+      Accept: 'text/plain; charset=UTF-8',
+      'X-authorization': token
+    };
+
+    const parameters = new URLSearchParams();
+    parameters.append('id', displayId);
+    parameters.append('version', version);
+    parameters.append('name', name);
+    parameters.append('description', description);
+    parameters.append('citations', citations);
+    parameters.append('tabState', tabState);
+
+    var response = await fetch(url, {
+      method: 'POST',
+      headers,
+      body: parameters
+    });
+
+    if (response.status === 200) {
+      setShowPublishModal(false);
+      mutate([`${process.env.backendUrl}/shared`, token]);
+      mutate([`${process.env.backendUrl}/manage`, token]);
+    }
+
+    dispatch({ type: types.PUBLISHING, payload: false });
+  };
 
 // BASKET ACTIONS
 

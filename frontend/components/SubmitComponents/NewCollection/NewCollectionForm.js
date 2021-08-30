@@ -14,10 +14,10 @@ export default function NewCollectionForm(properties) {
     properties.filler ? properties.filler.name : ''
   );
   const [description, setCollectionDescription] = useState(
-    properties.description ? properties.filler.description : ''
+    properties.filler ? properties.filler.description : ''
   );
   const [id, setCollectionID] = useState(
-    properties.filler ? properties.filler.id : ''
+    properties.filler ? properties.filler.displayId : ''
   );
   const [version, setCollectionVersion] = useState(
     properties.filler ? properties.filler.version : '1'

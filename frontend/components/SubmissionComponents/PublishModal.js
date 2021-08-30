@@ -5,7 +5,10 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import useSWR from 'swr';
 
-import { setSelectedCollection } from '../../redux/actions';
+import {
+  makePublicCollection,
+  setSelectedCollection
+} from '../../redux/actions';
 import styles from '../../styles/modal.module.css';
 import Loading from '../ReusableComponents/Loading';
 import ChooseCollection from '../SubmitComponents/ChooseCollection/ChooseCollection';
@@ -17,6 +20,8 @@ export default function PublishModal(properties) {
   const dispatch = useDispatch();
 
   const [filteredCollections, setFilteredCollections] = useState();
+
+  const publishing = useSelector(state => state.submit.publishing);
 
   const promptNewCollection = useSelector(
     state => state.collectionCreate.promptNewCollection
@@ -46,7 +51,7 @@ export default function PublishModal(properties) {
 
   if (!properties.showPublishModal) return null;
 
-  if (loading) {
+  if (loading || publishing) {
     return (
       <div className={styles.outercontainer}>
         <div className={styles.container}>
@@ -119,15 +124,25 @@ export default function PublishModal(properties) {
         <ChooseCollection
           label={label}
           newCollectionLabel="Publish as New Collection"
-          overridePost={() => {}}
-          overrideCollectionDisplay={collections}
-          filler={{
-            name: 'text',
-            version: '3',
-            description: '20'
+          overridePost={(displayId, version, name, description, citations) => {
+            dispatch(
+              makePublicCollection(
+                filteredCollections[0].url,
+                displayId,
+                version,
+                name,
+                description,
+                citations,
+                properties.setShowPublishModal
+              )
+            );
           }}
+          overrideCollectionDisplay={collections}
+          filler={filteredCollections[0]}
         />
-        {!promptNewCollection && <PublishCollectionButton />}
+        {!promptNewCollection && (
+          <PublishCollectionButton filteredCollections={filteredCollections} />
+        )}
       </div>
     </div>
   );
