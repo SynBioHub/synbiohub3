@@ -7,6 +7,7 @@ import { markPageVisited, restoreLogin } from '../redux/actions';
 import styles from '../styles/layout.module.css';
 import Footer from './Footer';
 import Navbar from './Navbar';
+import DownloadStatus from './ReusableComponents/Download/DownloadStatus';
 
 /* eslint sonarjs/cognitive-complexity: "off" */
 
@@ -55,6 +56,7 @@ export default function TopLevel(properties) {
           </div>
           {!properties.hideFooter && <Footer />}
         </div>
+        <DownloadStatus />
       </div>
     );
   return null;

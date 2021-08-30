@@ -43,7 +43,8 @@ export default function TableButtons(properties) {
           url: `${process.env.backendUrl}${submission.url}/sbol`,
           name: submission.name,
           displayId: submission.displayId,
-          type: 'xml'
+          type: 'xml',
+          status: 'downloading'
         };
       }
     );

@@ -556,6 +556,10 @@ export const makePublicCollection =
   };
 
 export const downloadFiles = files => (dispatch, getState) => {
+  dispatch({ type: types.DOWNLOADSTATUS, payload: 'Downloading' });
+  dispatch({ type: types.DOWNLOADLIST, payload: files });
+  dispatch({ type: types.SHOWDOWNLOAD, payload: true });
+
   const token = getState().user.token;
   var zip = new JSZip();
   var zipFilename = 'sbhdownload.zip';
@@ -565,6 +569,7 @@ export const downloadFiles = files => (dispatch, getState) => {
   });
 
   Promise.allSettled(zippedFilePromises).then(results => {
+    dispatch({ type: types.DOWNLOADSTATUS, payload: 'Zipping' });
     for (const result of results) {
       if (result.status === 'fulfilled') {
         var filename = `${result.value.file.displayId}.${result.value.file.type}`;
@@ -572,6 +577,7 @@ export const downloadFiles = files => (dispatch, getState) => {
       }
     }
     zip.generateAsync({ type: 'blob' }).then(function (content) {
+      dispatch({ type: types.SHOWDOWNLOAD, payload: false });
       saveAs(content, zipFilename);
     });
   });
