@@ -7,15 +7,21 @@ import {
 import axios from 'axios';
 import { saveAs } from 'file-saver';
 import JSZip from 'jszip';
+import React from 'react';
+import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { mutate } from 'swr';
 
 import { addToBasket } from '../../redux/actions';
 import styles from '../../styles/submissions.module.css';
 import TableButton from '../ReusableComponents/TableButton';
+import PublishModal from './PublishModal';
 
 export default function TableButtons(properties) {
   const dispatch = useDispatch();
+
+  const [toPublish, setToPublish] = useState([]);
+  const [showPublishModal, setShowPublishModal] = useState(false);
 
   const addCheckedItemsToBasket = () => {
     const itemsChecked = parseAndClearCheckedItems(
@@ -62,32 +68,57 @@ export default function TableButtons(properties) {
     removeCollections(itemsChecked, properties.token);
   };
 
+  const preparePublishModal = () => {
+    const itemsChecked = parseAndClearCheckedItems(
+      properties.processedData,
+      properties.selected,
+      properties.setSelected,
+      function (submission) {
+        if (submission.privacy === 'public')
+          alert(
+            `You cannot publish the "${submission.name}" collection because it is already public`
+          );
+        else return submission;
+      }
+    );
+    setToPublish(itemsChecked);
+    setShowPublishModal(true);
+  };
+
   return (
-    <div className={styles.buttonscontainer}>
-      <TableButton
-        title="Add to Basket"
-        enabled={properties.buttonEnabled}
-        icon={faPlus}
-        onClick={() => addCheckedItemsToBasket()}
+    <React.Fragment>
+      <PublishModal
+        setShowPublishModal={setShowPublishModal}
+        toPublish={toPublish}
+        showPublishModal={showPublishModal}
       />
-      <TableButton
-        title="Download"
-        enabled={properties.buttonEnabled}
-        icon={faDownload}
-        onClick={() => downloadCheckedItems()}
-      />
-      <TableButton
-        title="Publish"
-        enabled={properties.buttonEnabled}
-        icon={faGlobeAmericas}
-      />
-      <TableButton
-        title="Remove"
-        enabled={properties.buttonEnabled}
-        icon={faTrashAlt}
-        onClick={() => removeCheckedItems()}
-      />
-    </div>
+      <div className={styles.buttonscontainer}>
+        <TableButton
+          title="Add to Basket"
+          enabled={properties.buttonEnabled}
+          icon={faPlus}
+          onClick={() => addCheckedItemsToBasket()}
+        />
+        <TableButton
+          title="Download"
+          enabled={properties.buttonEnabled}
+          icon={faDownload}
+          onClick={() => downloadCheckedItems()}
+        />
+        <TableButton
+          title="Publish"
+          enabled={properties.buttonEnabled}
+          icon={faGlobeAmericas}
+          onClick={() => preparePublishModal()}
+        />
+        <TableButton
+          title="Remove"
+          enabled={properties.buttonEnabled}
+          icon={faTrashAlt}
+          onClick={() => removeCheckedItems()}
+        />
+      </div>
+    </React.Fragment>
   );
 }
 

@@ -8,13 +8,23 @@ import CreatingCollectionLoader from './CreatingCollectionLoader';
 import ErrorLogger from './ErrorLogger';
 import NewCollectionButtons from './NewCollectionButtons';
 
-export default function NewCollectionForm() {
+export default function NewCollectionForm(properties) {
   const dispatch = useDispatch();
-  const [name, setCollectionName] = useState('');
-  const [description, setCollectionDescription] = useState('');
-  const [id, setCollectionID] = useState('');
-  const [version, setCollectionVersion] = useState('1');
-  const [citations, setCollectionCitations] = useState('');
+  const [name, setCollectionName] = useState(
+    properties.filler ? properties.filler.name : ''
+  );
+  const [description, setCollectionDescription] = useState(
+    properties.description ? properties.filler.description : ''
+  );
+  const [id, setCollectionID] = useState(
+    properties.filler ? properties.filler.id : ''
+  );
+  const [version, setCollectionVersion] = useState(
+    properties.filler ? properties.filler.version : '1'
+  );
+  const [citations, setCollectionCitations] = useState(
+    properties.filler ? properties.filler.citations : ''
+  );
 
   const [needsVerification, setNeedsVerification] = useState('');
 
@@ -23,7 +33,9 @@ export default function NewCollectionForm() {
   );
 
   const postCollection = () => {
-    dispatch(createCollection(id, version, name, description, citations, 0));
+    if (!properties.overridePost)
+      dispatch(createCollection(id, version, name, description, citations, 0));
+    else properties.overridePost(id, version, name, description, citations);
   };
 
   if (creatingCollection) return <CreatingCollectionLoader />;
@@ -86,6 +98,7 @@ export default function NewCollectionForm() {
       <NewCollectionButtons
         needsVerification={needsVerification}
         postCollection={postCollection}
+        title={!properties.overridePost ? 'Create' : 'Publish'}
       />
     </div>
   );

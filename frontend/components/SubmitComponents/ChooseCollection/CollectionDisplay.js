@@ -1,14 +1,22 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { setSelectedCollection } from '../../../redux/actions';
+import { getCanSubmitTo, setSelectedCollection } from '../../../redux/actions';
 import styles from '../../../styles/choosecollection.module.css';
 
 export default function CollectionDisplay(properties) {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getCanSubmitTo(properties));
+  }, []);
+
   const canSubmitTo = useSelector(state => state.submit.canSubmitTo);
 
   const collections = [];
-  for (const collection of canSubmitTo) {
+  for (const collection of properties.overrideCollectionDisplay
+    ? properties.overrideCollectionDisplay
+    : canSubmitTo) {
     collections.push(
       <CollectionSelector
         key={collection.displayId + collection.name + collection.version}

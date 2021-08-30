@@ -9,7 +9,7 @@ import NewCollectionForm from '../NewCollection/NewCollectionForm';
 import MajorLabel from '../ReusableComponents/MajorLabel';
 import CollectionDisplay from './CollectionDisplay';
 
-export default function ChooseCollection() {
+export default function ChooseCollection(properties) {
   const dispatch = useDispatch();
   const [filter, setFilter] = useState('');
   const createCollectionButtonText = useSelector(
@@ -27,7 +27,7 @@ export default function ChooseCollection() {
   return (
     <div>
       <MajorLabel
-        text="Select Destination Collection"
+        text={properties.label}
         link="https://wiki.synbiohub.org/userdocumentation/managingsubmitting/"
       />
       <div className={styles.inputandcreatecontainer}>
@@ -59,13 +59,22 @@ export default function ChooseCollection() {
             size="1x"
             className={styles.createcollectionbuttonicon}
           />
-          {createCollectionButtonText}
+          {properties.newCollectionLabel
+            ? properties.newCollectionLabel
+            : createCollectionButtonText}
         </div>
       </div>
       {!promptNewCollection ? (
-        <CollectionDisplay filter={filter} setFilter={setFilter} />
+        <CollectionDisplay
+          filter={filter}
+          setFilter={setFilter}
+          overrideCollectionDisplay={properties.overrideCollectionDisplay}
+        />
       ) : (
-        <NewCollectionForm />
+        <NewCollectionForm
+          overridePost={properties.overridePost}
+          filler={properties.filler}
+        />
       )}
     </div>
   );
