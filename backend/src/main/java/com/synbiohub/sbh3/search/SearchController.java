@@ -1,8 +1,8 @@
 package com.synbiohub.sbh3.search;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -11,21 +11,22 @@ import org.springframework.web.servlet.view.RedirectView;
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
 @RestController
+@RequiredArgsConstructor
 public class SearchController {
 
     // Singleton search object for business logic
-    @Autowired
-    private SearchService searchService;
+    private final SearchService searchService;
 
-    // Singleton config file object
-    @Autowired
-    JsonNode config;
+
+    @Value("${SBOLExplorerEndpoint}")
+    private String sbolExplorerEndpoint;
+
+    @Value("${triplestore.sparqlEndpoint}")
+    private String sparqlEndpoint;
 
     /**
      * Returns the metadata for the object from the specified search query.
@@ -197,10 +198,10 @@ public class SearchController {
         params.put("default-graph-uri", defaultGraph);
         params.put("query", query);
 
-        if (config.get("useSBOLExplorer").asBoolean() && query.length() > 0)
-            url = config.get("SBOLExplorerEndpoint").asText()  + "?default-graph-uri={defaultGraph}&query={query}&";
-        else
-            url = config.get("triplestore").get("sparqlEndpoint").asText() + "/?default-graph-uri={defaultGraph}&query={query}&format=json&" ;
+        //if (useSBOLExplorer && query.length() > 0)
+            //url = sbolExplorerEndpoint  + "?default-graph-uri={defaultGraph}&query={query}&";
+        //else
+            //url = sparqlEndpoint + "/?default-graph-uri={defaultGraph}&query={query}&format=json&" ;
 
         return restTemplate.getForObject(url, String.class, defaultGraph, query);
     }

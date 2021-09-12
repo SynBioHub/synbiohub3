@@ -1,45 +1,75 @@
 package com.synbiohub.sbh3.admin;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.info.BuildProperties;
+import lombok.NoArgsConstructor;
+import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
+@NoArgsConstructor
 public class AdminService {
 
-    @Autowired
-    JsonNode config;
+    @Value("${version}")
+    private String version;
 
-    @Autowired
-    ObjectMapper mapper;
+    @Value("${instanceName}")
+    private String instanceName;
 
-    @Autowired
-    BuildProperties buildProperties;
+    @Value("${instanceUrl}")
+    private String instanceUrl;
+
+    @Value("${port}")
+    private String port;
+
+    @Value("${triplestore.sparqlEndpoint}")
+    private String sparqlEndpoint;
+
+    @Value("${triplestore.graphStoreEndpoint}")
+    private String graphStoreEndpoint;
+
+    @Value("${triplestore.defaultGraph}")
+    private String defaultGraph;
+
+    @Value("${triplestore.graphPrefix}")
+    private String graphPrefix;
+
+    @Value("${databasePrefix}")
+    private String databasePrefix;
+
+    @Value("${removePublicEnabled}")
+    private Boolean removePublicEnabled;
+
+    @Value("${uploadLimit}")
+    private String uploadLimit;
+
+    @Value("${resolveBatch}")
+    private String resolveBatch;
+
+    @Value("${fetchLimit}")
+    private String fetchLimit;
+
+    @Value("${staggeredQueryLimit}")
+    private String staggeredQueryLimit;
 
 
-    public String getStatus() {
-        ObjectNode node = mapper.createObjectNode();
-        node.put("platform", System.getProperty("os.name"));
-        node.put("architecture", System.getProperty("os.arch"));
-        node.put("osRelease", System.getProperty("os.version"));
-        node.put("version", buildProperties.getVersion());  // Version of SynBioHub3. Corresponds with <version> tag in pom.xml.
-        node.put("instanceName", config.get("instanceName").asText());
-        node.put("instanceUrl", config.get("instanceUrl").asText());
-        node.put("listenPort", config.get("port").asText());
-        node.put("sparqlEndpoint", config.get("triplestore").get("sparqlEndpoint").asText());
-        node.put("graphStoreEndpoint", config.get("triplestore").get("graphStoreEndpoint").asText());
-        node.put("defaultGraph", config.get("triplestore").get("defaultGraph").asText());
-        node.put("graphPrefix", config.get("triplestore").get("graphPrefix").asText());
-        node.put("databasePrefix", config.get("databasePrefix").asText());
-        node.put("removePublicEnabled", config.get("removePublicEnabled").asText());
-        node.put("uploadLimit", config.get("uploadLimit").asText());
-        node.put("resolveBatch", config.get("resolveBatch").asText());
-        node.put("fetchLimit", config.get("fetchLimit").asText());
-        node.put("staggeredQueryLimit", config.get("staggeredQueryLimit").asText());
-
-        return node.toString();
+    public JSONObject getStatus() {
+        return new JSONObject()
+        .put("platform", System.getProperty("os.name"))
+        .put("architecture", System.getProperty("os.arch"))
+        .put("osRelease", System.getProperty("os.version"))
+        .put("version", version)  // Version of SynBioHub3. Corresponds with <version> tag in pom.xml.
+        .put("instanceName", instanceName)
+        .put("instanceUrl", instanceUrl)
+        .put("listenPort", port)
+        .put("sparqlEndpoint", sparqlEndpoint)
+        .put("graphStoreEndpoint", graphStoreEndpoint)
+        .put("defaultGraph", defaultGraph)
+        .put("graphPrefix", graphPrefix)
+        .put("databasePrefix", databasePrefix)
+        .put("removePublicEnabled", removePublicEnabled)
+        .put("uploadLimit", uploadLimit)
+        .put("resolveBatch", resolveBatch)
+        .put("fetchLimit", fetchLimit)
+        .put("staggeredQueryLimit", staggeredQueryLimit);
     }
 }

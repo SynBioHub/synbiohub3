@@ -7,7 +7,7 @@ import java.util.Map;
 
 public class SPARQLQuery {
 
-    private String filename;
+    private final String filename;
 
     /**
      * Constructor

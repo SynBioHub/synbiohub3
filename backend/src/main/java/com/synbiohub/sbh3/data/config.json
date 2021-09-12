@@ -26,7 +26,7 @@
   "databasePrefix": "http://synbiohub.org/",
   "sessionSecret": "synbiohub_change_me",
   "shareLinkSalt": "synbiohub_change_me",
-  "passwordSalt": "synbiohub_change_me",
+  "passwordSalt": "4e1f13f0-eb41-4bbe-850f-b34618015eaa",
   "requireCompliant": false,
   "requireComplete": false,
   "requireBestPractice": false,

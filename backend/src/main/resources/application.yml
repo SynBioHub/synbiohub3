@@ -1,0 +1,127 @@
+spring:
+  datasource:
+    driver-class-name: org.sqlite.JDBC
+    initialization-mode: always
+    url: jdbc:sqlite:synbiohub.sqlite
+  jpa:
+    database-platform: com.synbiohub.sbh3.sqlite
+    hibernate:
+      ddl-auto: update
+
+version: "1.0"
+firstLaunch: true
+instanceName: "SynBioHub"
+instanceUrl: "http://synbiohub.org/"
+instanceLogo: ''
+keywords: "synbiohub"
+javaPath: "java"
+theme: "default"
+webOfRegistriesUrl: "https://wor.synbiohub.org"
+port: "7777"
+databasePrefix: "http://synbiohub.org/"
+sessionSecret: "synbiohub_change_me"
+shareLinkSalt: "synbiohub_change_me"
+passwordSalt: "4e1f13f0-eb41-4bbe-850f-b34618015eaa"
+requireCompliant: false
+requireComplete: false
+requireBestPractice: false
+removePublicEnabled: false
+webOfRegistries: {}
+uploadLimit: "150mb"
+resolveBatch: "20"
+fetchLimit: "1000"
+staggeredQueryLimit: "10000"
+iceMaxRetries: "10"
+iceRetryDelay: "500"
+remotes: {}
+defaultLimit: "10"
+SBOLExplorerEndpoint: "http://localhost:13162"
+useSBOLExplorer: True
+frontPageText: |
+  <a href="/About">SynBioHub</a> is a <i>design repository</i> for people
+  designing biological constructs. It enables DNA and protein designs to be uploaded,
+  then provides a shareable link to allow others to view them. SynBioHub also facilitates
+  searching for information about existing useful parts and designs by combining data
+  from a variety of sources.
+allowPublicSignup: true
+showModuleInteractions: false
+prewarmSearch: true
+
+themeParameters:
+  default: {}
+
+triplestore:
+  sparqlEndpoint: "http://localhost:8890/sparql"
+  graphStoreEndpoint: "http://localhost:8890/sparql-graph-crud-auth/"
+  defaultGraph: "http://synbiohub.org/public"
+  graphPrefix: "http://synbiohub.org/"
+  username: "dba"
+  password: "dba"
+  virtuosoINI: "/etc/virtuoso-opensource-7/virtuoso.ini"
+  virtuosoDB: "/var/lib/virtuoso-opensource-7/db"
+  isql: "isql-vt"
+
+namespaces:
+  xmlns:rdf: "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  xmlns:dcterms: "http://purl.org/dc/terms/"
+  xmlns:dc: "http://purl.org/dc/elements/1.1/"
+  xmlns:sbh: "http://wiki.synbiohub.org/wiki/Terms/synbiohub#"
+  xmlns:prov: "http://www.w3.org/ns/prov#"
+  xmlns:sbol: "http://sbols.org/v2#"
+  xmlns:xsd: "http://www.w3.org/2001/XMLSchema#"
+  xmlns:rdfs: "http://www.w3.org/2000/01/rdf-schema#"
+  xmlns:purl: "http://purl.obolibrary.org/obo/"
+
+
+mail:
+  sendgridApiKey: ''
+  fromAddress: "foo@example.com"
+
+collectionIcons:
+  http://synbiohub.org/public/igem/igem_collection/1: "/local/igem.png"
+  http://synbiohub.org/public/eco/eco_collection/1: "/local/ekb.png"
+  http://synbiohub.org/public/bsu/bsu_collection/1: "/local/bsu.png"
+  http://synbiohub.org/public/jbei/jbei_collection/current: "/local/jbeir_public.png"
+  http://synbiohub.org/public/acs/acs_collection/current: "/local/acs.png"
+  http://synbiohub.org/public/cidar_ice/cidar_ice_collection/current: "/local/cidar.png"
+
+experimental:
+  dataIntegration: false
+
+fileExtensionToAttachmentType:
+  png: "http://wiki.synbiohub.org/wiki/Terms/synbiohub#imageAttachment"
+
+attachmentTypeToMimeType:
+  http://wiki.synbiohub.org/wiki/Terms/synbiohub#imageAttachment: "image/png"
+
+attachmentTypeToTypeName:
+  http://wiki.synbiohub.org/wiki/Terms/synbiohub#imageAttachment: "Image"
+
+bioschemas:
+  DataCatalog:
+    "@context":
+      scheme: "http://schema.org/"
+      bs: "http://bioschema.org/"
+    "@type": "https://schema.org/DataCatalog"
+    provider:
+      - "foo@example.com"
+    publication: "https://pubs.acs.org/doi/abs/10.1021/acssynbio.7b00403"
+    sourceOrganization:
+      - "Newcastle University"
+  Dataset:
+    "@context":
+      scheme: "http://schema.org/"
+      bs: "http://bioschema.org/"
+    "@type": "https://schema.org/Dataset"
+    creator:
+      - "SynBioHub"
+    keywords: "synbiohub"
+  DataRecord:
+    "@context":
+      scheme: "http://schema.org/"
+      bs: "http://bioschema.org/"
+    "@type": "https://bioschemas.org/DataRecord"
+plugins:
+  rendering:
+  download:
+  submit:

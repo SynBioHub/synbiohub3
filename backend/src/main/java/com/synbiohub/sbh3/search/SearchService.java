@@ -1,31 +1,33 @@
 package com.synbiohub.sbh3.search;
 
- import com.fasterxml.jackson.core.JsonProcessingException;
- import com.fasterxml.jackson.databind.JsonNode;
- import com.fasterxml.jackson.databind.ObjectMapper;
- import com.fasterxml.jackson.databind.node.ObjectNode;
- import com.synbiohub.sbh3.sparql.SPARQLQuery;
- import org.springframework.beans.factory.annotation.Autowired;
- import org.springframework.stereotype.Service;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.synbiohub.sbh3.sparql.SPARQLQuery;
+import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
- import javax.servlet.http.HttpServletRequest;
- import java.util.ArrayList;
- import java.util.HashMap;
- import java.util.List;
- import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Handles the business logic (parsing keys, formatting SPARQL, etc)
  * @see SearchController
  */
 @Service
+@NoArgsConstructor
 public class SearchService {
 
-    @Autowired
-    JsonNode config;
+    @Value("${databasePrefix}")
+    private String databasePrefix;
 
-    @Autowired
-    ObjectMapper mapper;
+    @Value("${useSBOLExplorer}")
+    private Boolean useSBOLExplorer;
+
 
     /**
      * Returns the metadata for the object from the specified search query
@@ -121,8 +123,8 @@ public class SearchService {
                     if (notMode) {
                         criteriaString += " !";
                     }
-                    String criteria = "(CONTAINS(lcase(?displayId), lcase(\'%s\'))||CONTAINS(lcase(?name), lcase(\'%s\'))||CONTAINS(lcase(?description), lcase(\'%s\')))";
-                    criteriaString += String.format(criteria, searchTerms[i], searchTerms[i], searchTerms[i]).replace("/''/g", "'\\\''");
+                    String criteria = "(CONTAINS(lcase(?displayId), lcase('%s'))||CONTAINS(lcase(?name), lcase('%s'))||CONTAINS(lcase(?description), lcase('%s')))";
+                    criteriaString += String.format(criteria, searchTerms[i], searchTerms[i], searchTerms[i]).replace("/''/g", "'\\''");
                 }
                 criteriaString += ')';
             } else {
@@ -165,7 +167,7 @@ public class SearchService {
         HashMap<String, String> sparqlArgs = new HashMap<String, String>
                 (Map.of("from", "", "criteria", "", "limit", "", "offset", ""));
 
-        String URI = config.get("databasePrefix").asText() + collectionInfo;
+        String URI = databasePrefix + collectionInfo;
 
         if (endpoint.equalsIgnoreCase("uses")) {
             sparqlArgs.replace("criteria", " { ?subject ?p <" + URI + "> } UNION { ?subject ?p ?use . ?use ?useP <" + URI + "> } ." +
@@ -175,8 +177,8 @@ public class SearchService {
 
         else if (endpoint.equalsIgnoreCase("similar")) {
             // Make sure explorer is enabled
-            if (config.get("useSBOLExplorer").asBoolean()) {
-
+            if (useSBOLExplorer) {
+                // TODO: Use Explorer here
             }
         }
 
@@ -194,7 +196,7 @@ public class SearchService {
         HashMap<String, String> sparqlArgs = new HashMap<String, String>
                 (Map.of("from", "", "criteria", "", "limit", "", "offset", ""));
 
-        String URI = config.get("databasePrefix").asText() + collectionInfo;
+        String URI = databasePrefix + collectionInfo;
 
         sparqlArgs.replace("criteria", " { ?subject ?p <" + URI + "> } UNION { ?subject ?p ?use . ?use ?useP <" + URI + "> } ." +
                 " FILTER(?useP != <http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel>) " +
@@ -210,7 +212,7 @@ public class SearchService {
 
     public String getSubCollectionsSPARQL(String collectionInfo) {
         SPARQLQuery searchQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/SubCollectionMetadata.sparql");
-        String IRI = "<" + config.get("databasePrefix").asText() + collectionInfo + ">";
+        String IRI = "<" + databasePrefix + collectionInfo + ">";
 
         HashMap<String, String> sparqlArgs = new HashMap<String, String>
                 (Map.of("parentCollection", IRI));
@@ -225,6 +227,7 @@ public class SearchService {
      * @throws JsonProcessingException
      */
     public String rawJSONToOutput(String rawJSON) throws JsonProcessingException {
+        var mapper = new ObjectMapper();
         JsonNode rawTree = mapper.readTree(rawJSON);
         ArrayList<ObjectNode> listOfParts = new ArrayList<>();
         for(JsonNode node : rawTree.get("results").get("bindings")) {
@@ -242,6 +245,7 @@ public class SearchService {
     }
 
     public String collectionToOutput(String rawJSON) throws JsonProcessingException{
+        var mapper = new ObjectMapper();
         JsonNode rawTree = mapper.readTree(rawJSON);
         ArrayList<ObjectNode> listOfParts = new ArrayList<>();
         for(JsonNode node : rawTree.get("results").get("bindings")) {
@@ -264,6 +268,7 @@ public class SearchService {
      * @throws JsonProcessingException
      */
     public String JSONToCount(String rawJSON) throws JsonProcessingException {
+        var mapper = new ObjectMapper();
         JsonNode rawData = mapper.readTree(rawJSON);
         String value = "";
 
