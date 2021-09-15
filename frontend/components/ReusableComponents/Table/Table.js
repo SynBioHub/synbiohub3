@@ -67,6 +67,7 @@ export default function Table(properties) {
       <div className={styles.container}>
         <TableHeader
           title={properties.title}
+          hideCount={properties.hideCount}
           count={properties.data.length}
           filter={filter}
           setFilter={setFilter}

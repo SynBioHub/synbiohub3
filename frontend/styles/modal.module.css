@@ -22,16 +22,58 @@
    overflow: scroll;
 }
 
+.modalheader {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   margin-bottom: 1rem;
+   border-bottom: 1px solid #A99C0F;
+}
+
+
+.icon {
+   margin-right: 0.3rem;
+   color: #A99C0F;
+}
+
+.headertitle {
+   font-size: 0.9rem;
+   display: flex;
+   align-items: center;
+   font-weight: 500;
+}
+
+.headertitle span {
+   margin: 0 0.3rem;
+}
+
+.optionscontainer {
+   display: flex;
+   color: #000;
+   display: flex;
+   margin: 0 0.5rem;
+   align-items: flex-end;
+}
+
+.option {
+   background-color: #F2E86D;
+   font-weight: 400;
+   margin: 0 0.2rem 0 0;
+   padding: 0.6rem;
+   border-radius: 0.4rem 0.4rem 0 0;
+}
+
 .closeicon {
    margin-right: 0.3rem;
 }
 
 .closebutton {
-   float: right;
    padding: 0.4rem;
    border-radius: 0.4rem;
    background-color: #e4e4e4;
    cursor: pointer;
+   display: block;
+   width: fit-content;
 }
 
 .closebutton:hover {

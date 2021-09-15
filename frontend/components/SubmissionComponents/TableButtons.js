@@ -13,7 +13,7 @@ import { mutate } from 'swr';
 import { addToBasket, downloadFiles } from '../../redux/actions';
 import styles from '../../styles/submissions.module.css';
 import TableButton from '../ReusableComponents/TableButton';
-import PublishModal from './PublishModal';
+import PublishModal from './PublishModal2';
 
 export default function TableButtons(properties) {
   const dispatch = useDispatch();

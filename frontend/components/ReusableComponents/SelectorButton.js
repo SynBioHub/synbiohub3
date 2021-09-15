@@ -2,7 +2,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 
-import styles from '../../../styles/searchheader.module.css';
+import styles from '../../styles/searchheader.module.css';
 
 /**
  * This component is used to select what type of search the user wishes to conduct
@@ -12,7 +12,9 @@ export default function SearchTypeSelector(properties) {
   const router = useRouter();
 
   useEffect(() => {
-    router.prefetch(`/${properties.route}`);
+    if (properties.route) {
+      router.prefetch(`/${properties.route}`);
+    }
   }, []);
 
   const extraClass =
@@ -25,7 +27,8 @@ export default function SearchTypeSelector(properties) {
       className={`${styles.categoryheader} ${extraClass}`}
       role="button"
       onClick={() => {
-        if (!properties.external) router.replace(`/${properties.route}`);
+        if (properties.onClick) properties.onClick();
+        else if (!properties.external) router.replace(`/${properties.route}`);
         else router.push(`${process.env.backendUrl}/${properties.route}`);
       }}
     >

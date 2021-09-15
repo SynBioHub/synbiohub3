@@ -6,7 +6,8 @@ export default function TableHeader(properties) {
   return (
     <div className={styles.tableheader}>
       <div className={styles.tableheadertitle}>
-        {properties.title} ({properties.count})
+        {properties.title}
+        {!properties.hideCount ? `(${properties.count})` : ''}
       </div>
       <div className={styles.tableheadernav}>
         <div className={styles.sortbycontainer} id={styles.filterresults}>

@@ -7,6 +7,7 @@ import useSWR from 'swr';
 
 import {
   makePublicCollection,
+  setPromptNewCollection,
   setSelectedCollection
 } from '../../redux/actions';
 import styles from '../../styles/modal.module.css';
@@ -53,56 +54,54 @@ export default function PublishModal(properties) {
 
   if (loading || publishing) {
     return (
-      <div className={styles.outercontainer}>
-        <div className={styles.container}>
-          <div
-            className={styles.closebutton}
-            onClick={() => {
-              properties.setShowPublishModal(false);
-              dispatch(setSelectedCollection());
-            }}
-            role="button"
-          >
-            <FontAwesomeIcon
-              icon={faTimesCircle}
-              color="#D25627"
-              className={styles.closeicon}
-            />
-            Close
-          </div>
-          <div className={styles.loadercontainer}>
-            <Loading />
-          </div>
+      <BasicLayout setShowPublishModal={properties.setShowPublishModal}>
+        <div className={styles.loadercontainer}>
+          <Loading />
         </div>
-      </div>
+      </BasicLayout>
     );
   } else if (error) {
     return (
-      <div className={styles.outercontainer}>
-        <div className={styles.container}>
-          <div
-            className={styles.closebutton}
-            onClick={() => {
-              properties.setShowPublishModal(false);
-              dispatch(setSelectedCollection());
-            }}
-            role="button"
-          >
-            <FontAwesomeIcon
-              icon={faTimesCircle}
-              color="#D25627"
-              className={styles.closeicon}
-            />
-            Close
-          </div>
+      <BasicLayout setShowPublishModal={properties.setShowPublishModal}>
+        <div className={styles.loadercontainer}>
           <div className={styles.errorcontainer}>
             Errors occured while fetching rootCollections
           </div>
         </div>
-      </div>
+      </BasicLayout>
     );
   }
 
+  return (
+    <BasicLayout setShowPublishModal={properties.setShowPublishModal}>
+      <ChooseCollection
+        label={label}
+        newCollectionLabel="Publish as New Collection"
+        overridePost={(displayId, version, name, description, citations) => {
+          dispatch(
+            makePublicCollection(
+              filteredCollections[0].url,
+              displayId,
+              version,
+              name,
+              description,
+              citations,
+              properties.setShowPublishModal
+            )
+          );
+        }}
+        overrideCollectionDisplay={collections}
+        filler={filteredCollections[0]}
+      />
+      {!promptNewCollection && (
+        <PublishCollectionButton filteredCollections={filteredCollections} />
+      )}
+    </BasicLayout>
+  );
+}
+
+function BasicLayout(properties) {
+  const dispatch = useDispatch();
   return (
     <div className={styles.outercontainer}>
       <div className={styles.container}>
@@ -111,6 +110,7 @@ export default function PublishModal(properties) {
           onClick={() => {
             properties.setShowPublishModal(false);
             dispatch(setSelectedCollection());
+            dispatch(setPromptNewCollection(false));
           }}
           role="button"
         >
@@ -121,28 +121,7 @@ export default function PublishModal(properties) {
           />
           Close
         </div>
-        <ChooseCollection
-          label={label}
-          newCollectionLabel="Publish as New Collection"
-          overridePost={(displayId, version, name, description, citations) => {
-            dispatch(
-              makePublicCollection(
-                filteredCollections[0].url,
-                displayId,
-                version,
-                name,
-                description,
-                citations,
-                properties.setShowPublishModal
-              )
-            );
-          }}
-          overrideCollectionDisplay={collections}
-          filler={filteredCollections[0]}
-        />
-        {!promptNewCollection && (
-          <PublishCollectionButton filteredCollections={filteredCollections} />
-        )}
+        {properties.children}
       </div>
     </div>
   );
