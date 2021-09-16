@@ -131,6 +131,7 @@
    padding: 0.5rem;
    border-top: 1px solid #ddd;
    line-height: 1.42857143;
+   vertical-align: baseline;
 }
 
 .table th {

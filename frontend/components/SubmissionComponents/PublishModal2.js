@@ -12,6 +12,7 @@ import styles from '../../styles/modal.module.css';
 import SelectorButton from '../ReusableComponents/SelectorButton';
 import Table from '../ReusableComponents/Table/Table';
 import PublishCollectionButton from './PublishCollectionButton';
+import NewCollectionForm from './PublishNewCollectionForm';
 
 const EXISTING = 'to Existing';
 const NEW = 'as New';
@@ -86,7 +87,9 @@ export default function PublishModal(properties) {
               )}
             />
           </div>
-        ) : null}
+        ) : (
+          <NewCollectionForm filler={properties.toPublish[0]} />
+        )}
         <PublishCollectionButton />
       </div>
     </div>

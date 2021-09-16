@@ -59,22 +59,13 @@ export default function ChooseCollection(properties) {
             size="1x"
             className={styles.createcollectionbuttonicon}
           />
-          {properties.newCollectionLabel
-            ? properties.newCollectionLabel
-            : createCollectionButtonText}
+          {createCollectionButtonText}
         </div>
       </div>
       {!promptNewCollection ? (
-        <CollectionDisplay
-          filter={filter}
-          setFilter={setFilter}
-          overrideCollectionDisplay={properties.overrideCollectionDisplay}
-        />
+        <CollectionDisplay filter={filter} setFilter={setFilter} />
       ) : (
-        <NewCollectionForm
-          overridePost={properties.overridePost}
-          filler={properties.filler}
-        />
+        <NewCollectionForm />
       )}
     </div>
   );
