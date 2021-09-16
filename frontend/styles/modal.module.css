@@ -5,7 +5,7 @@
    bottom: 0;
    left: 0;
    background-color: #80808041;
-   z-index: 1000;
+   z-index: 100;
    display: flex;
    justify-content: center;
 }
@@ -16,7 +16,7 @@
    border-radius: 0.4rem;
    width: 95%;
    max-width: 55rem;
-   margin: 4.5rem 0;
+   margin: 2rem 0;
    height: fit-content;
    max-height: calc(100% - 5rem);
    overflow: scroll;
@@ -28,8 +28,9 @@
    align-items: center;
    margin-bottom: 1rem;
    border-bottom: 1px solid #A99C0F;
+   position: sticky;
+   top: 0;
 }
-
 
 .icon {
    margin-right: 0.3rem;
@@ -78,6 +79,11 @@
 
 .closebutton:hover {
    background-color: #d2552723;
+}
+
+.tablecontainer {
+   max-height: calc(100vh - 15rem);
+   overflow: scroll;
 }
 
 

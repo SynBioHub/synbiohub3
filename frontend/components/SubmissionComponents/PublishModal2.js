@@ -11,6 +11,7 @@ import useSWR from 'swr';
 import styles from '../../styles/modal.module.css';
 import SelectorButton from '../ReusableComponents/SelectorButton';
 import Table from '../ReusableComponents/Table/Table';
+import PublishCollectionButton from './PublishCollectionButton';
 
 const EXISTING = 'to Existing';
 const NEW = 'as New';
@@ -19,12 +20,16 @@ export default function PublishModal(properties) {
   const { collections, loading } = useRootCollections();
   const [selected, setSelected] = useState(EXISTING);
 
+  if (!properties.showPublishModal) {
+    return null;
+  }
+
   return (
     <div className={styles.outercontainer}>
       <div className={styles.container}>
         <div className={styles.modalheader}>
           <div className={styles.headertitle}>
-            <span>Publish</span> <code>Collection</code>
+            <span>Publish</span> <code>{properties.toPublish[0].name}</code>
             <span></span>
             <div className={styles.optionscontainer}>
               <SelectorButton
@@ -58,44 +63,47 @@ export default function PublishModal(properties) {
           </div>
         </div>
         {selected === 'to Existing' ? (
-          <Table
-            data={collections}
-            loading={loading}
-            title="Select Collection to Publish To"
-            hideCount={true}
-            numberShownLabel=" "
-            searchable={['name', 'description', 'version']}
-            headers={['Name', 'Description', 'Version']}
-            sortOptions={options}
-            defaultSortOption={options[0]}
-            sortMethods={sortMethods}
-            dataRowDisplay={collection => (
-              <tr key={collection.displayId}>
-                <td>
-                  <code>{collection.name}</code>
-                </td>
-                <td>{collection.displayId}</td>
-                <td>{collection.version}</td>
-              </tr>
-            )}
-          />
+          <div className={styles.tablecontainer}>
+            <Table
+              data={collections}
+              loading={loading}
+              title="Select Collection to Publish To"
+              hideCount={true}
+              numberShownLabel=" "
+              searchable={['name', 'description', 'version']}
+              headers={['Name', 'Description', 'Version']}
+              sortOptions={options}
+              defaultSortOption={options[0]}
+              sortMethods={sortMethods}
+              dataRowDisplay={collection => (
+                <tr key={collection.displayId}>
+                  <td>
+                    <code>{collection.name}</code>
+                  </td>
+                  <td>{collection.displayId}</td>
+                  <td>{collection.version}</td>
+                </tr>
+              )}
+            />
+          </div>
         ) : null}
+        <PublishCollectionButton />
       </div>
     </div>
   );
 }
 
 const options = [
-  { value: 'numTriples', label: '# Triples' },
-  { value: 'graphUri', label: 'Graph URI' }
+  { value: 'name', label: 'Name' },
+  { value: 'displayId', label: 'ID' }
 ];
 
 const sortMethods = {
-  graphUri: function (graph1, graph2) {
-    return (graph1.graphUri > graph2.graphUri && 1) || -1;
+  name: function (collection1, collection2) {
+    return (collection1.name > collection2.name && 1) || -1;
   },
-  numTriples: function (graph1, graph2) {
-    return graph2.numTriples - graph1.numTriples;
+  displayId: function (collection1, collection2) {
+    return (collection1.displayId > collection2.displayId && 1) || -1;
   }
 };
 
