@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 import styles from '../../styles/submit.module.css';
 import InputField from '../SubmitComponents/ReusableComponents/InputField';
+import PublishCollectionButton from './PublishCollectionButton';
 
 export default function NewCollectionForm(properties) {
   const [name, setCollectionName] = useState(
@@ -76,6 +77,11 @@ export default function NewCollectionForm(properties) {
         placeholder="Pubmed IDs separated by commas, we'll do the rest!"
         value={citations}
         onChange={event => setCollectionCitations(event.value)}
+      />
+
+      <PublishCollectionButton
+        onClick={() => {}}
+        canSubmit={!needsVerification}
       />
     </div>
   );
