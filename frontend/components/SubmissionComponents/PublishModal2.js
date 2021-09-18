@@ -54,6 +54,7 @@ export default function PublishModal(properties) {
         properties.setProcessUnderway
       )
     );
+    setCollectionIndex(0);
     setToPublish(
       toPublish.filter(
         collection => collection.displayId !== collectionToPublish.displayId
@@ -155,7 +156,14 @@ export default function PublishModal(properties) {
             />
           </div>
         ) : (
-          <NewCollectionForm filler={toPublish[collectionIndex]} />
+          <NewCollectionForm
+            filler={toPublish[collectionIndex]}
+            setProcessUnderway={properties.setProcessUnderway}
+            url={toPublish[collectionIndex].url}
+            setToPublish={setToPublish}
+            toPublish={toPublish}
+            setCollectionIndex={setCollectionIndex}
+          />
         )}
       </div>
     </div>

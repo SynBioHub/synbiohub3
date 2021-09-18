@@ -1,5 +1,7 @@
 import { useState } from 'react';
+import { useDispatch } from 'react-redux';
 
+import { makePublicCollection } from '../../redux/actions';
 import styles from '../../styles/submit.module.css';
 import InputField from '../SubmitComponents/ReusableComponents/InputField';
 import PublishCollectionButton from './PublishCollectionButton';
@@ -22,6 +24,36 @@ export default function NewCollectionForm(properties) {
   );
 
   const [needsVerification, setNeedsVerification] = useState('');
+
+  const dispatch = useDispatch();
+
+  const publishNewCollection = (
+    displayId,
+    version,
+    name,
+    description,
+    citations
+  ) => {
+    dispatch(
+      makePublicCollection(
+        properties.url,
+        displayId,
+        version,
+        name,
+        description,
+        citations,
+        'new',
+        '',
+        properties.setProcessUnderway
+      )
+    );
+    properties.setCollectionIndex(0);
+    properties.setToPublish(
+      properties.toPublish.filter(
+        collection => collection.displayId !== properties.filler.displayId
+      )
+    );
+  };
 
   return (
     <div className={styles.newcollectioncontainer}>
@@ -80,7 +112,9 @@ export default function NewCollectionForm(properties) {
       />
 
       <PublishCollectionButton
-        onClick={() => {}}
+        onClick={() =>
+          publishNewCollection(id, version, name, description, citations)
+        }
         canSubmit={!needsVerification}
       />
     </div>
