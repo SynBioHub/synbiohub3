@@ -66,44 +66,46 @@ function Submissions() {
           processedData={processedData}
           token={token}
         />
-        <Table
-          data={processedData}
-          loading={isMySubmissionsLoading || isSharedLoading}
-          title="My Submissions"
-          searchable={searchable}
-          headers={[
-            <input
-              key={0}
-              checked={selectAll}
-              onChange={event => {
-                let checklist = new Map();
-                for (const submission of processedData)
-                  checklist.set(submission.displayId, event.target.checked);
-                setSelected(checklist);
-                setSelectAll(event.target.checked);
-              }}
-              type="checkbox"
-            />,
-            'Name',
-            'Display ID',
-            'Description',
-            'Type',
-            'Privacy'
-          ]}
-          sortOptions={options}
-          defaultSortOption={options[0]}
-          sortMethods={sortMethods}
-          numberShownLabel=" "
-          updateRowsWhen={selected}
-          dataRowDisplay={submission => (
-            <SubmissionDisplay
-              key={submission.displayId}
-              submission={submission}
-              selected={selected}
-              setSelected={setSelected}
-            />
-          )}
-        />
+        <div className={styles.submissiontablecontainer}>
+          <Table
+            data={processedData}
+            loading={isMySubmissionsLoading || isSharedLoading}
+            title="My Submissions"
+            searchable={searchable}
+            headers={[
+              <input
+                key={0}
+                checked={selectAll}
+                onChange={event => {
+                  let checklist = new Map();
+                  for (const submission of processedData)
+                    checklist.set(submission.displayId, event.target.checked);
+                  setSelected(checklist);
+                  setSelectAll(event.target.checked);
+                }}
+                type="checkbox"
+              />,
+              'Name',
+              'Display ID',
+              'Description',
+              'Type',
+              'Privacy'
+            ]}
+            sortOptions={options}
+            defaultSortOption={options[0]}
+            sortMethods={sortMethods}
+            numberShownLabel=" "
+            updateRowsWhen={selected}
+            dataRowDisplay={submission => (
+              <SubmissionDisplay
+                key={submission.displayId}
+                submission={submission}
+                selected={selected}
+                setSelected={setSelected}
+              />
+            )}
+          />
+        </div>
       </div>
     </div>
   );

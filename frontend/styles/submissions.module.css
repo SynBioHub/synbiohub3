@@ -30,3 +30,8 @@
   flex-direction: row;
   margin-bottom: 0.5rem;
 }
+
+.submissiontablecontainer {
+  max-width: 100vw;
+  overflow-x: scroll;
+}
