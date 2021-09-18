@@ -13,7 +13,7 @@ export default function TableButton(properties) {
   }, [properties.enabled]);
 
   return (
-    <div>
+    <div className={styles.buttoncontainer}>
       <div
         className={`${styles.tablebutton} ${buttonClass} ${styles.rightspace}`}
         role="button"

@@ -224,6 +224,10 @@
    background-color: #ececec;
 }
 
+.buttoncontainer {
+   display: inline-block;
+}
+
  @media (max-width: 700px) {
    #filterresults {
       display: none;
