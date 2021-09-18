@@ -20,6 +20,7 @@ function Submissions() {
   const [selected, setSelected] = useState(new Map());
   const [selectAll, setSelectAll] = useState(false);
   const [buttonEnabled, setButtonEnabled] = useState(false);
+  const [processUnderway, setProcessUnderway] = useState(false);
 
   useEffect(() => {
     if (processedData) {
@@ -65,11 +66,14 @@ function Submissions() {
           setSelected={setSelected}
           processedData={processedData}
           token={token}
+          setProcessUnderway={setProcessUnderway}
         />
         <div className={styles.submissiontablecontainer}>
           <Table
             data={processedData}
-            loading={isMySubmissionsLoading || isSharedLoading}
+            loading={
+              isMySubmissionsLoading || isSharedLoading || processUnderway
+            }
             title="My Submissions"
             searchable={searchable}
             headers={[

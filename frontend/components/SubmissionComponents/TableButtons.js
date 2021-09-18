@@ -51,7 +51,8 @@ export default function TableButtons(properties) {
     dispatch(downloadFiles(itemsChecked));
   };
 
-  const removeCheckedItems = () => {
+  const removeCheckedItems = setProcessUnderway => {
+    setProcessUnderway(true);
     const itemsChecked = parseAndClearCheckedItems(
       properties.processedData,
       properties.selected,
@@ -64,7 +65,7 @@ export default function TableButtons(properties) {
         };
       }
     );
-    removeCollections(itemsChecked, properties.token);
+    removeCollections(itemsChecked, properties.token, setProcessUnderway);
   };
 
   const preparePublishModal = () => {
@@ -119,14 +120,14 @@ export default function TableButtons(properties) {
           title="Remove"
           enabled={properties.buttonEnabled}
           icon={faTrashAlt}
-          onClick={() => removeCheckedItems()}
+          onClick={() => removeCheckedItems(properties.setProcessUnderway)}
         />
       </div>
     </React.Fragment>
   );
 }
 
-const removeCollections = (collections, token) => {
+const removeCollections = (collections, token, setProcessUnderway) => {
   const removeCollectionPromises = collections.map(collection => {
     if (collection.privacy === 'public') {
       alert(
@@ -147,10 +148,14 @@ const removeCollections = (collections, token) => {
 
   Promise.all(removeCollectionPromises)
     .then(() => {
+      setProcessUnderway(false);
       mutate([`${process.env.backendUrl}/shared`, token]);
       mutate([`${process.env.backendUrl}/manage`, token]);
     })
-    .catch(error => alert(error));
+    .catch(error => {
+      setProcessUnderway(false);
+      alert(error);
+    });
 };
 
 const parseAndClearCheckedItems = (
