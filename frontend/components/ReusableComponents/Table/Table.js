@@ -62,7 +62,8 @@ export default function Table(properties) {
     setOffset(0);
   }, [filter, sortOption]);
 
-  if (properties.data) {
+  if (properties.loading) return <Loading />;
+  else if (properties.data) {
     return (
       <div className={styles.container}>
         <TableHeader
@@ -99,8 +100,7 @@ export default function Table(properties) {
         )}
       </div>
     );
-  } else if (properties.loading) return <Loading />;
-  else {
+  } else {
     return <ErrorMessage title={properties.title} />;
   }
 }

@@ -108,6 +108,7 @@ export default function PublishModal(properties) {
                     collection={collection}
                     selectedCollection={selectedCollection}
                     onClick={() => setSelectedCollection(collection)}
+                    key={collection.displayId}
                   />
                 )}
               />
