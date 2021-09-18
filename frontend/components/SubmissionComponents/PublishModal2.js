@@ -129,8 +129,9 @@ function CollectionDisplay(properties) {
   const [style, setStyle] = useState();
   useEffect(() => {
     if (
+      properties.selectedCollection &&
       properties.selectedCollection.displayId ===
-      properties.collection.displayId
+        properties.collection.displayId
     )
       setStyle(styles.selectedCollection);
     else setStyle('');
