@@ -6,8 +6,10 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import useSWR from 'swr';
 
+import { makePublicCollection } from '../../redux/actions';
 import styles from '../../styles/modal.module.css';
 import SelectorButton from '../ReusableComponents/SelectorButton';
 import Table from '../ReusableComponents/Table/Table';
@@ -22,12 +24,44 @@ export default function PublishModal(properties) {
   const [selected, setSelected] = useState(EXISTING);
   const [selectedCollection, setSelectedCollection] = useState();
   const [collectionIndex, setCollectionIndex] = useState(0);
+  const [toPublish, setToPublish] = useState(properties.toPublish);
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    setToPublish(properties.toPublish);
+  }, [properties.toPublish]);
+
+  if (toPublish.length === 0) {
+    return null;
+  }
 
   if (!properties.showPublishModal) {
     return null;
   }
 
-  const collectionSelectors = properties.toPublish.map((collection, index) => {
+  const publishExistingCollection = collectionToPublish => {
+    dispatch(
+      makePublicCollection(
+        collectionToPublish.url,
+        collectionToPublish.displayId,
+        collectionToPublish.version,
+        collectionToPublish.name,
+        collectionToPublish.description,
+        collectionToPublish.citations,
+        'existing',
+        selectedCollection.uri,
+        properties.setProcessUnderway
+      )
+    );
+    setToPublish(
+      toPublish.filter(
+        collection => collection.displayId !== collectionToPublish.displayId
+      )
+    );
+  };
+
+  const collectionSelectors = toPublish.map((collection, index) => {
     return (
       <div
         className={`${styles.collectionSelector} ${
@@ -68,7 +102,7 @@ export default function PublishModal(properties) {
           <div className={styles.modalheader}>
             <div className={styles.headertitle}>
               <span>Publish</span>{' '}
-              <code>{properties.toPublish[collectionIndex].name}</code>
+              <code>{toPublish[collectionIndex].name}</code>
               <span></span>
               <div className={styles.optionscontainer}>
                 <SelectorButton
@@ -115,11 +149,13 @@ export default function PublishModal(properties) {
             </div>
             <PublishCollectionButton
               canSubmit={selectedCollection}
-              onClick={() => {}}
+              onClick={() => {
+                publishExistingCollection(toPublish[collectionIndex]);
+              }}
             />
           </div>
         ) : (
-          <NewCollectionForm filler={properties.toPublish[collectionIndex]} />
+          <NewCollectionForm filler={toPublish[collectionIndex]} />
         )}
       </div>
     </div>

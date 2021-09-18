@@ -94,6 +94,7 @@ export default function TableButtons(properties) {
     <React.Fragment>
       <PublishModal
         setShowPublishModal={setShowPublishModal}
+        setProcessUnderway={properties.setProcessUnderway}
         toPublish={toPublish}
         showPublishModal={showPublishModal}
       />

@@ -519,10 +519,12 @@ export const makePublicCollection =
     name,
     description,
     citations,
-    setShowPublishModal,
-    tabState = 'new'
+    tabState,
+    collections,
+    setProcessUnderway
   ) =>
   async (dispatch, getState) => {
+    setProcessUnderway(true);
     dispatch({ type: types.PUBLISHING, payload: true });
 
     const token = getState().user.token;
@@ -539,6 +541,7 @@ export const makePublicCollection =
     parameters.append('description', description);
     parameters.append('citations', citations);
     parameters.append('tabState', tabState);
+    if (tabState === 'existing') parameters.append('collections', collections);
 
     var response = await fetch(url, {
       method: 'POST',
@@ -547,11 +550,11 @@ export const makePublicCollection =
     });
 
     if (response.status === 200) {
-      setShowPublishModal(false);
       mutate([`${process.env.backendUrl}/shared`, token]);
       mutate([`${process.env.backendUrl}/manage`, token]);
     }
 
+    setProcessUnderway(false);
     dispatch({ type: types.PUBLISHING, payload: false });
   };
 
