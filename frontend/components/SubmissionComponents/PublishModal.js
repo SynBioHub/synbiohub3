@@ -1,131 +1,214 @@
-import { faTimesCircle } from '@fortawesome/free-solid-svg-icons';
+import {
+  faHandPointer,
+  faPlusCircle,
+  faTimesCircle
+} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import useSWR from 'swr';
 
-import {
-  makePublicCollection,
-  setPromptNewCollection,
-  setSelectedCollection
-} from '../../redux/actions';
+import { makePublicCollection } from '../../redux/actions';
 import styles from '../../styles/modal.module.css';
-import Loading from '../ReusableComponents/Loading';
-import ChooseCollection from '../SubmitComponents/ChooseCollection/ChooseCollection';
+import SelectorButton from '../ReusableComponents/SelectorButton';
+import Table from '../ReusableComponents/Table/Table';
 import PublishCollectionButton from './PublishCollectionButton';
+import NewCollectionForm from './PublishNewCollectionForm';
+
+const EXISTING = 'to Existing';
+const NEW = 'as New';
 
 export default function PublishModal(properties) {
-  const { collections, loading, error } = useRootCollections();
+  const { collections, loading } = useRootCollections();
+  const [selected, setSelected] = useState(EXISTING);
+  const [selectedCollection, setSelectedCollection] = useState();
+  const [collectionIndex, setCollectionIndex] = useState(0);
+  const [toPublish, setToPublish] = useState(properties.toPublish);
 
   const dispatch = useDispatch();
 
-  const [filteredCollections, setFilteredCollections] = useState();
-
-  const publishing = useSelector(state => state.submit.publishing);
-
-  const promptNewCollection = useSelector(
-    state => state.collectionCreate.promptNewCollection
-  );
-
-  const [label, setLabel] = useState(
-    'Select Existing Collection to Publish to'
-  );
-
   useEffect(() => {
-    if (properties.toPublish)
-      setFilteredCollections(
-        properties.toPublish.filter(submission => submission !== undefined)
-      );
+    setToPublish(properties.toPublish);
   }, [properties.toPublish]);
 
-  useEffect(() => {
-    if (filteredCollections && filteredCollections.length === 0)
-      properties.setShowPublishModal(false);
-  }, [filteredCollections]);
-
-  useEffect(() => {
-    if (promptNewCollection) {
-      setLabel('Review Collection Information for Publishing');
-    } else setLabel('Select Existing Collection to Publish to');
-  }, [promptNewCollection]);
-
-  if (!properties.showPublishModal) return null;
-
-  if (loading || publishing) {
-    return (
-      <BasicLayout setShowPublishModal={properties.setShowPublishModal}>
-        <div className={styles.loadercontainer}>
-          <Loading />
-        </div>
-      </BasicLayout>
-    );
-  } else if (error) {
-    return (
-      <BasicLayout setShowPublishModal={properties.setShowPublishModal}>
-        <div className={styles.loadercontainer}>
-          <div className={styles.errorcontainer}>
-            Errors occured while fetching rootCollections
-          </div>
-        </div>
-      </BasicLayout>
-    );
+  if (toPublish.length === 0) {
+    return null;
   }
 
-  return (
-    <BasicLayout setShowPublishModal={properties.setShowPublishModal}>
-      <ChooseCollection
-        label={label}
-        newCollectionLabel="Publish as New Collection"
-        overridePost={(displayId, version, name, description, citations) => {
-          dispatch(
-            makePublicCollection(
-              filteredCollections[0].url,
-              displayId,
-              version,
-              name,
-              description,
-              citations,
-              properties.setShowPublishModal
-            )
-          );
-        }}
-        overrideCollectionDisplay={collections}
-        filler={filteredCollections[0]}
-      />
-      {!promptNewCollection && (
-        <PublishCollectionButton filteredCollections={filteredCollections} />
-      )}
-    </BasicLayout>
-  );
-}
+  if (!properties.showPublishModal) {
+    return null;
+  }
 
-function BasicLayout(properties) {
-  const dispatch = useDispatch();
+  const publishExistingCollection = collectionToPublish => {
+    dispatch(
+      makePublicCollection(
+        collectionToPublish.url,
+        collectionToPublish.displayId,
+        collectionToPublish.version,
+        collectionToPublish.name,
+        collectionToPublish.description,
+        collectionToPublish.citations,
+        'existing',
+        selectedCollection.uri,
+        properties.setProcessUnderway
+      )
+    );
+    setCollectionIndex(0);
+    setToPublish(
+      toPublish.filter(
+        collection => collection.displayId !== collectionToPublish.displayId
+      )
+    );
+  };
+
+  const collectionSelectors = toPublish.map((collection, index) => {
+    return (
+      <div
+        className={`${styles.collectionSelector} ${
+          collectionIndex === index ? styles.collectionSelectorSelected : ''
+        }`}
+        key={collection.displayId}
+        onClick={() => setCollectionIndex(index)}
+        role="button"
+      >
+        {collection.name}
+      </div>
+    );
+  });
+
   return (
     <div className={styles.outercontainer}>
       <div className={styles.container}>
-        <div
-          className={styles.closebutton}
-          onClick={() => {
-            properties.setShowPublishModal(false);
-            dispatch(setSelectedCollection());
-            dispatch(setPromptNewCollection(false));
-          }}
-          role="button"
-        >
-          <FontAwesomeIcon
-            icon={faTimesCircle}
-            color="#D25627"
-            className={styles.closeicon}
-          />
-          Close
+        <div className={styles.sticktotop}>
+          <div className={styles.top}>
+            <div className={styles.collectionSelectors}>
+              {collectionSelectors}
+            </div>
+            <div
+              className={styles.closebutton}
+              onClick={() => {
+                properties.setShowPublishModal(false);
+              }}
+              role="button"
+            >
+              <FontAwesomeIcon
+                icon={faTimesCircle}
+                color="#D25627"
+                className={styles.closeicon}
+              />
+              Close
+            </div>
+          </div>
+          <div className={styles.modalheader}>
+            <div className={styles.headertitle}>
+              <span>Publish</span>{' '}
+              <code>{toPublish[collectionIndex].name}</code>
+              <span></span>
+              <div className={styles.optionscontainer}>
+                <SelectorButton
+                  name={EXISTING}
+                  selected={selected}
+                  icon={faHandPointer}
+                  onClick={() => setSelected(EXISTING)}
+                />
+                <SelectorButton
+                  name={NEW}
+                  selected={selected}
+                  icon={faPlusCircle}
+                  onClick={() => setSelected(NEW)}
+                />
+              </div>
+              <span>Collection</span>
+            </div>
+          </div>
         </div>
-        {properties.children}
+        {selected === 'to Existing' ? (
+          <div>
+            <div className={styles.tablecontainer}>
+              <Table
+                data={collections}
+                loading={loading}
+                title="Select Collection to Publish To"
+                hideCount={true}
+                numberShownLabel=" "
+                searchable={['name', 'description', 'version']}
+                headers={['Name', 'Description', 'Version']}
+                sortOptions={options}
+                defaultSortOption={options[0]}
+                sortMethods={sortMethods}
+                updateRowsWhen={selectedCollection}
+                dataRowDisplay={collection => (
+                  <CollectionDisplay
+                    collection={collection}
+                    selectedCollection={selectedCollection}
+                    onClick={() => setSelectedCollection(collection)}
+                    key={collection.displayId}
+                  />
+                )}
+              />
+            </div>
+            <PublishCollectionButton
+              canSubmit={selectedCollection}
+              onClick={() => {
+                publishExistingCollection(toPublish[collectionIndex]);
+              }}
+            />
+          </div>
+        ) : (
+          <NewCollectionForm
+            filler={toPublish[collectionIndex]}
+            setProcessUnderway={properties.setProcessUnderway}
+            url={toPublish[collectionIndex].url}
+            setToPublish={setToPublish}
+            toPublish={toPublish}
+            setCollectionIndex={setCollectionIndex}
+          />
+        )}
       </div>
     </div>
   );
 }
+
+function CollectionDisplay(properties) {
+  const [style, setStyle] = useState();
+  useEffect(() => {
+    if (
+      properties.selectedCollection &&
+      properties.selectedCollection.displayId ===
+        properties.collection.displayId
+    )
+      setStyle(styles.selectedCollection);
+    else setStyle('');
+  }, [properties.selectedCollection]);
+  return (
+    <tr
+      className={`${styles.trhover} ${style}`}
+      key={properties.collection.displayId}
+      onClick={properties.onClick}
+    >
+      <td>
+        <code>{properties.collection.name}</code>
+      </td>
+      <td>{properties.collection.displayId}</td>
+      <td>{properties.collection.version}</td>
+    </tr>
+  );
+}
+
+const options = [
+  { value: 'name', label: 'Name' },
+  { value: 'displayId', label: 'ID' }
+];
+
+const sortMethods = {
+  name: function (collection1, collection2) {
+    return (collection1.name > collection2.name && 1) || -1;
+  },
+  displayId: function (collection1, collection2) {
+    return (collection1.displayId > collection2.displayId && 1) || -1;
+  }
+};
 
 const useRootCollections = () => {
   const { data, error } = useSWR(

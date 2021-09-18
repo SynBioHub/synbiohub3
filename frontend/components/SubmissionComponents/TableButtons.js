@@ -7,19 +7,21 @@ import {
 import axios from 'axios';
 import React from 'react';
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { mutate } from 'swr';
 
 import { addToBasket, downloadFiles } from '../../redux/actions';
 import styles from '../../styles/submissions.module.css';
 import TableButton from '../ReusableComponents/TableButton';
-import PublishModal from './PublishModal2';
+import PublishModal from './PublishModal';
 
 export default function TableButtons(properties) {
   const dispatch = useDispatch();
 
   const [toPublish, setToPublish] = useState([]);
   const [showPublishModal, setShowPublishModal] = useState(false);
+
+  const isAdmin = useSelector(state => state.user.isAdmin);
 
   const addCheckedItemsToBasket = () => {
     const itemsChecked = parseAndClearCheckedItems(
@@ -111,12 +113,14 @@ export default function TableButtons(properties) {
           icon={faDownload}
           onClick={() => downloadCheckedItems()}
         />
-        <TableButton
-          title="Publish"
-          enabled={properties.buttonEnabled}
-          icon={faGlobeAmericas}
-          onClick={() => preparePublishModal()}
-        />
+        {isAdmin && (
+          <TableButton
+            title="Publish"
+            enabled={properties.buttonEnabled}
+            icon={faGlobeAmericas}
+            onClick={() => preparePublishModal()}
+          />
+        )}
         <TableButton
           title="Remove"
           enabled={properties.buttonEnabled}
