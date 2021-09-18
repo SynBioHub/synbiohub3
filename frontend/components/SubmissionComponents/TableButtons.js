@@ -80,8 +80,13 @@ export default function TableButtons(properties) {
         else return submission;
       }
     );
-    setToPublish(itemsChecked);
-    setShowPublishModal(true);
+    const itemsCheckedFiltered = itemsChecked.filter(
+      submission => submission !== undefined
+    );
+    if (itemsCheckedFiltered.length > 0) {
+      setToPublish(itemsCheckedFiltered);
+      setShowPublishModal(true);
+    }
   };
 
   return (
