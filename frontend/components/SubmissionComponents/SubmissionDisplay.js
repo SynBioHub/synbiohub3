@@ -21,7 +21,10 @@ export default function SubmissionDisplay(properties) {
       setPrivacyDisplay(
         <FontAwesomeIcon icon={faUserLock} color="#ff0000" size="1x" />
       );
-    else setPrivacyDisplay(<FontAwesomeIcon icon={faShareAlt} size="1x" />);
+    else
+      setPrivacyDisplay(
+        <FontAwesomeIcon icon={faShareAlt} color="#1C7C54" size="1x" />
+      );
   }, [properties.submission.privacy]);
 
   return (
