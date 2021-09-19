@@ -94,14 +94,34 @@
    position: fixed;
    bottom: 0;
    right: 1rem;
-   color: #fff;
-   background-color: #D25627;
+   background-color: #ffffff;
+   box-shadow: 0 0 2px #888;
    padding: 0.5rem;
    border-radius: 0.4rem 0.4rem 0 0;
    font-weight: 500;
    font-size: 1rem;
    display: flex;
+   flex-direction: column;
    align-items: center;
+   width: 20rem;
+   transition: height .3s;
+}
+
+.downloadheader {
+   margin: 0 0 0.7rem 0;
+   padding: 0.5rem;
+   border-radius: 0.4rem;
+   color: #00A1E4;
+   background-color: #eeeeee;
+   width: 100%;
+   display: flex;
+   flex-direction: row;
+   justify-content: space-between;
+}
+
+.downloadheader:hover {
+   background-color: #e4e4e4;
+   cursor: pointer;
 }
 
 .downloadstatusanimation {
@@ -111,6 +131,8 @@
 
 .downloadmsg {
    height: 100%;
+   width: 100%;
+   overflow: scroll;
    padding: 0 0 0.25rem 0;
 }
 

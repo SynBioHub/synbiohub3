@@ -567,8 +567,8 @@ export const downloadFiles = files => (dispatch, getState) => {
   var zip = new JSZip();
   var zipFilename = 'sbhdownload.zip';
 
-  const zippedFilePromises = files.map(file => {
-    return zippedFilePromise(file, token);
+  const zippedFilePromises = files.map((file, index) => {
+    return zippedFilePromise(file, index, token, files, dispatch);
   });
 
   Promise.allSettled(zippedFilePromises).then(results => {
@@ -586,7 +586,7 @@ export const downloadFiles = files => (dispatch, getState) => {
   });
 };
 
-const zippedFilePromise = (file, token) => {
+const zippedFilePromise = (file, index, token, files, dispatch) => {
   return new Promise((resolve, reject) => {
     axios({
       url: file.url,
@@ -597,10 +597,22 @@ const zippedFilePromise = (file, token) => {
       }
     })
       .then(response => {
-        if (response.status === 200) resolve({ file, response });
-        else reject();
+        if (response.status === 200) {
+          files[index].status = 'downloaded';
+          resolve({ file, response });
+        } else {
+          files[index].status = 'failed';
+          files[index].errors = 'Sorry, this file could not be downloaded';
+          reject();
+        }
+        dispatch({ type: types.DOWNLOADLIST, payload: [...files] });
       })
-      .catch(error => reject(error));
+      .catch(error => {
+        files[index].status = 'failed';
+        files[index].errors = error;
+        dispatch({ type: types.DOWNLOADLIST, payload: [...files] });
+        reject(error);
+      });
   });
 };
 
