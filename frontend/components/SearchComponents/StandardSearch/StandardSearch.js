@@ -78,12 +78,16 @@ export default function StandardSearch() {
   }
   if (results.length === 0) {
     return <div className={standarderror}>No results found</div>;
+  } else {
+    for (const result of results) {
+      getTypeAndUrl(result);
+    }
+    return (
+      <div className={standardcontainer}>
+        <ResultTable count={count} data={results} />
+      </div>
+    );
   }
-  return (
-    <div className={standardcontainer}>
-      <ResultTable count={count} data={results} />
-    </div>
-  );
 }
 
 const useSearchResults = (query, offset, limit, token) => {
@@ -113,6 +117,31 @@ const useSearchCount = (query, token) => {
     isCountLoading: !error && !data,
     isCountError: error
   };
+};
+
+const getTypeAndUrl = result => {
+  let type = '';
+  const potentialType = result.type.toLowerCase();
+
+  // Identify what type of object the search result is from type url
+  if (potentialType.includes('component')) {
+    type = 'Component';
+  }
+  if (potentialType.includes('sequence')) {
+    type = 'Sequence';
+  }
+  if (potentialType.includes('module')) {
+    type = 'Module';
+  }
+  if (potentialType.includes('collection')) {
+    type = 'Collection';
+  }
+
+  result.type = type;
+
+  let newUrl = result.uri.replace('https://synbiohub.org', '');
+  newUrl = newUrl.replace('https://dev.synbiohub.org', '');
+  result.url = newUrl;
 };
 
 const fetcher = (url, token) =>
