@@ -78,16 +78,15 @@ export default function StandardSearch() {
   }
   if (results.length === 0) {
     return <div className={standarderror}>No results found</div>;
-  } else {
-    for (const result of results) {
-      getTypeAndUrl(result);
-    }
-    return (
-      <div className={standardcontainer}>
-        <ResultTable count={count} data={results} />
-      </div>
-    );
   }
+  for (const result of results) {
+    getTypeAndUrl(result);
+  }
+  return (
+    <div className={standardcontainer}>
+      <ResultTable count={count} data={results} />
+    </div>
+  );
 }
 
 const useSearchResults = (query, offset, limit, token) => {

@@ -641,11 +641,24 @@ export const restoreBasket = () => dispatch => {
   }
 };
 
-export const clearBasket = () => dispatch => {
-  localStorage.removeItem('basket');
-  dispatch({
-    type: types.CLEARBASKET
+export const clearBasket = itemsToClear => (dispatch, getState) => {
+  const newBasket = getState().basket.basket.filter(item => {
+    let shouldKeep = true;
+    for (const itemToDelete of itemsToClear) {
+      if (
+        item.displayId === itemToDelete.displayId &&
+        item.version === itemToDelete.version
+      ) {
+        shouldKeep = false;
+      }
+    }
+    return shouldKeep;
   });
+  dispatch({
+    type: types.SETBASKET,
+    payload: newBasket
+  });
+  localStorage.setItem('basket', JSON.stringify(newBasket));
 };
 
 // TRACKING ACTIONS

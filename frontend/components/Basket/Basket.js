@@ -79,7 +79,7 @@ export default function Basket() {
           <TableButton
             title="Create Collection"
             icon={faPlus}
-            enabled={buttonEnabled}
+            enabled={false}
           />
           <TableButton
             title="Download"
@@ -94,7 +94,7 @@ export default function Basket() {
             icon={faTrashAlt}
             enabled={buttonEnabled}
             onClick={() => {
-              dispatch(clearBasket());
+              clearCheckedItems(basketItems, selected, setSelected, dispatch);
             }}
           />
         </div>
@@ -152,6 +152,21 @@ export default function Basket() {
     </div>
   );
 }
+
+const clearCheckedItems = (items, selected, setSelected, dispatch) => {
+  const itemsChecked = parseAndClearCheckedItems(
+    items,
+    selected,
+    setSelected,
+    function (item) {
+      return {
+        displayId: item.displayId,
+        version: item.version
+      };
+    }
+  );
+  dispatch(clearBasket(itemsChecked));
+};
 
 const downloadCheckedItems = (items, selected, setSelected, dispatch) => {
   const itemsChecked = parseAndClearCheckedItems(

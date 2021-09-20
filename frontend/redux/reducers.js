@@ -246,10 +246,10 @@ const basketReducer = (state = initialBasketState, { type, payload }) => {
           )
         ]
       };
-    case types.CLEARBASKET:
+    case types.SETBASKET:
       return {
         ...state,
-        basket: []
+        basket: payload
       };
     default:
       return state;
