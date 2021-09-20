@@ -622,10 +622,29 @@ const zippedFilePromise = (file, index, token, files, dispatch) => {
  * This action adds objects to the Basket that is located in the Search Panel in sbh
  * @param {Array} uriArray - the objects that will be stored in the Basket
  */
-export const addToBasket = uriArray => dispatch => {
+export const addToBasket = uriArray => async (dispatch, getState) => {
   dispatch({
     type: types.ADDTOBASKET,
     payload: uriArray
+  });
+  const newBasket = await getState().basket.basket;
+  localStorage.setItem('basket', JSON.stringify(newBasket));
+};
+
+export const restoreBasket = () => dispatch => {
+  const basket = JSON.parse(localStorage.getItem('basket'));
+  if (basket) {
+    dispatch({
+      type: types.ADDTOBASKET,
+      payload: basket
+    });
+  }
+};
+
+export const clearBasket = () => dispatch => {
+  localStorage.removeItem('basket');
+  dispatch({
+    type: types.CLEARBASKET
   });
 };
 

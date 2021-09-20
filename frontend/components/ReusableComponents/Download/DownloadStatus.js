@@ -29,7 +29,7 @@ export default function DownloadStatus() {
   useEffect(() => {
     if (open) setHeight({ height: '40%' });
     else setHeight({ height: '3rem' });
-  });
+  }, [open]);
 
   useEffect(() => {
     let newDownloadNumber = downloadList.length;

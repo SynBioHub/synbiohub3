@@ -105,6 +105,7 @@
    align-items: center;
    width: 20rem;
    transition: height .3s;
+   z-index: 999;
 }
 
 .downloadheader {

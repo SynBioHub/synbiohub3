@@ -12,7 +12,6 @@
    align-items: center;
    height: 2.5rem;
    position: sticky;
-   top: 0;
    background-color: #fff;
 }
 
@@ -134,12 +133,14 @@
    vertical-align: baseline;
 }
 
+.table thead {
+   position: sticky;
+}
+
 .table th {
    padding: 0.5rem;
    font-size: 0.9rem;
    font-weight: 600;
-   position: sticky;
-   top: 2.5rem;
    border-bottom: 2px solid #ddd;
    background-color: #fff;
 }

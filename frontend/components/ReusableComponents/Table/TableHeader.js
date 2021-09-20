@@ -4,7 +4,14 @@ import styles from '../../../styles/defaulttable.module.css';
 
 export default function TableHeader(properties) {
   return (
-    <div className={styles.tableheader}>
+    <div
+      className={styles.tableheader}
+      style={{
+        top: `${
+          properties.topStickyIncrement ? properties.topStickyIncrement : 0
+        }rem`
+      }}
+    >
       <div className={styles.tableheadertitle}>
         {properties.title}
         {!properties.hideCount ? `(${properties.count})` : ''}

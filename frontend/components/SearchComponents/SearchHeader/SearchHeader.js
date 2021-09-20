@@ -8,7 +8,7 @@ import {
 import React from 'react';
 
 import styles from '../../../styles/searchheader.module.css';
-import Basket from '../../Basket';
+import Basket from '../../Basket/Basket';
 import SearchTypeButton from '../../ReusableComponents/SelectorButton';
 
 export default function SearchHeader(properties) {

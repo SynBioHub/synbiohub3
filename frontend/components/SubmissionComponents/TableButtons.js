@@ -29,7 +29,7 @@ export default function TableButtons(properties) {
       properties.selected,
       properties.setSelected,
       function (submission) {
-        return { uri: submission.uri, name: submission.name };
+        return submission;
       }
     );
     dispatch(addToBasket(itemsChecked));

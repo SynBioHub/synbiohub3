@@ -27,10 +27,7 @@ export default function TableButtons(properties) {
             for (const result of properties.data) {
               checklist.set(result.displayId, false);
               if (properties.selected.get(result.displayId)) {
-                itemsChecked.push({
-                  uri: result.uri,
-                  name: result.name
-                });
+                itemsChecked.push(result);
               }
             }
             properties.setSelected(checklist);

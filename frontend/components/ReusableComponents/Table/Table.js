@@ -1,3 +1,4 @@
+/* eslint sonarjs/cognitive-complexity: "off" */
 import { useEffect, useState } from 'react';
 
 import styles from '../../../styles/defaulttable.module.css';
@@ -75,10 +76,19 @@ export default function Table(properties) {
           sortOptions={properties.sortOptions}
           setSortOption={setSortOption}
           defaultSortOption={properties.defaultSortOption}
+          topStickyIncrement={properties.topStickyIncrement}
         />
         <table className={styles.table}>
           {properties.headers && (
-            <thead>
+            <thead
+              style={{
+                top: `${
+                  properties.topStickyIncrement
+                    ? 2.5 + properties.topStickyIncrement
+                    : 2.5
+                }rem`
+              }}
+            >
               <tr>{header}</tr>
             </thead>
           )}
