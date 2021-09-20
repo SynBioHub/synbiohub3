@@ -1,30 +1,21 @@
 import { faBook } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 
 import styles from '../../styles/submit.module.css';
 
-export default function PublishCollectionButton() {
-  const selectedCollection = useSelector(
-    state => state.submit.selectedCollection
-  );
-  const [canSubmit, setCanSubmit] = useState();
-  useEffect(() => {
-    setCanSubmit(selectedCollection ? true : false);
-  }, [selectedCollection]);
-
+export default function PublishCollectionButton(properties) {
   return (
     <div
       className={`${styles.submitbuttoncontainer} ${
-        !canSubmit && styles.disabledsubmitbutton
+        !properties.canSubmit && styles.disabledsubmitbutton
       }`}
       role="button"
       onClick={() => {
-        if (!canSubmit)
+        if (!properties.canSubmit)
           alert(
             'You must select or create a destination collection to publish to.'
           );
+        else properties.onClick();
       }}
     >
       <FontAwesomeIcon

@@ -235,8 +235,9 @@ const initialBasketState = {
  * be updated
  */
 const basketReducer = (state = initialBasketState, { type, payload }) => {
-  return type === types.ADDTOBASKET
-    ? {
+  switch (type) {
+    case types.ADDTOBASKET:
+      return {
         ...state,
         basket: [
           ...payload,
@@ -244,8 +245,15 @@ const basketReducer = (state = initialBasketState, { type, payload }) => {
             item => payload.findIndex(compare => compare.uri === item.uri) < 0
           )
         ]
-      }
-    : state;
+      };
+    case types.SETBASKET:
+      return {
+        ...state,
+        basket: payload
+      };
+    default:
+      return state;
+  }
 };
 
 // DOWNLOAD REDUCER

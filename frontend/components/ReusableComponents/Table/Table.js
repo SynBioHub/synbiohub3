@@ -1,3 +1,4 @@
+/* eslint sonarjs/cognitive-complexity: "off" */
 import { useEffect, useState } from 'react';
 
 import styles from '../../../styles/defaulttable.module.css';
@@ -62,21 +63,32 @@ export default function Table(properties) {
     setOffset(0);
   }, [filter, sortOption]);
 
-  if (properties.data) {
+  if (properties.loading) return <Loading />;
+  else if (properties.data) {
     return (
       <div className={styles.container}>
         <TableHeader
           title={properties.title}
+          hideCount={properties.hideCount}
           count={properties.data.length}
           filter={filter}
           setFilter={setFilter}
           sortOptions={properties.sortOptions}
           setSortOption={setSortOption}
           defaultSortOption={properties.defaultSortOption}
+          topStickyIncrement={properties.topStickyIncrement}
         />
         <table className={styles.table}>
           {properties.headers && (
-            <thead>
+            <thead
+              style={{
+                top: `${
+                  properties.topStickyIncrement
+                    ? 2.5 + properties.topStickyIncrement
+                    : 2.5
+                }rem`
+              }}
+            >
               <tr>{header}</tr>
             </thead>
           )}
@@ -98,8 +110,7 @@ export default function Table(properties) {
         )}
       </div>
     );
-  } else if (properties.loading) return <Loading />;
-  else {
+  } else {
     return <ErrorMessage title={properties.title} />;
   }
 }

@@ -14,9 +14,7 @@ export default function CollectionDisplay(properties) {
   const canSubmitTo = useSelector(state => state.submit.canSubmitTo);
 
   const collections = [];
-  for (const collection of properties.overrideCollectionDisplay
-    ? properties.overrideCollectionDisplay
-    : canSubmitTo) {
+  for (const collection of canSubmitTo) {
     collections.push(
       <CollectionSelector
         key={collection.displayId + collection.name + collection.version}

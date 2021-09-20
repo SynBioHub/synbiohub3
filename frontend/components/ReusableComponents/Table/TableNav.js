@@ -54,7 +54,8 @@ export default function TableNav(properties) {
           options={numberDisplayOptions}
           defaultValue={numberDisplayOptions[0]}
           className={styles.tableheadernavflex}
-          menuPortalTarget={document.querySelector('body')}
+          menuPortalTarget={document.body}
+          styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
           onChange={option => properties.setNumberEntries(option.value)}
         />
         <span className={styles.tableheadernavlabel}>
