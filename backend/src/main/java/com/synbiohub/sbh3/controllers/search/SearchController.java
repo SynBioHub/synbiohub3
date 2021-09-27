@@ -1,6 +1,7 @@
-package com.synbiohub.sbh3.search;
+package com.synbiohub.sbh3.controllers.search;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.synbiohub.sbh3.services.search.SearchService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;

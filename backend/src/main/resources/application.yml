@@ -1,12 +1,21 @@
 spring:
   datasource:
-    driver-class-name: org.sqlite.JDBC
-    initialization-mode: always
-    url: jdbc:sqlite:synbiohub.sqlite
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:./data/sbhdb
+    username: sa
+    password:
+
   jpa:
-    database-platform: com.synbiohub.sbh3.sqlite
+    database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
+  flyway:
+    enabled: true
+  h2:
+    console:
+      enabled: true
+
+
 
 version: "1.0"
 firstLaunch: true

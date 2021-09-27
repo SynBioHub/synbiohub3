@@ -1,13 +1,21 @@
 package com.synbiohub.sbh3.security;
 
+import lombok.AllArgsConstructor;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 
 @EnableWebSecurity
+@AllArgsConstructor
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+
+    private final CustomUserDetailsService customUserDetailsService;
 
     /**
      * Handles authentication
@@ -16,8 +24,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
      */
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        // Check if the username and (salted) password match with the object returned from SQLite
-        //auth.userDetailsService(customUserDetailService).passwordEncoder(getPasswordEncoder());
+        // Check if the username and (salted) password match with the object returned from H2
+        auth.authenticationProvider(daoAuthenticationProvider());
     }
 
     /**
@@ -31,9 +39,17 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
         http.authorizeRequests()
                 .antMatchers("/admin/**").hasRole("ADMIN")
-                .anyRequest().authenticated()
-                .and()
-                .formLogin();
+                .antMatchers("/h2-console/**").permitAll()
+                //.anyRequest().authenticated()
+
+                // Make H2-Console non-secured; for debug purposes
+                .and().csrf().ignoringAntMatchers("/h2-console/**")
+                // Allow pages to be loaded in frames from
+                // the same origin; needed for H2-Console
+                .and().headers().frameOptions().sameOrigin()
+                .and().csrf().disable().formLogin()
+
+                ;
 
         http.logout(logout -> logout
                 .logoutUrl("/logout")
@@ -41,5 +57,16 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         );
     }
 
+    public PasswordEncoder getPasswordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    public AuthenticationProvider daoAuthenticationProvider() {
+        DaoAuthenticationProvider provider =
+                new DaoAuthenticationProvider();
+        provider.setPasswordEncoder(getPasswordEncoder());
+        provider.setUserDetailsService(customUserDetailsService);
+        return provider;
+    }
 
 }

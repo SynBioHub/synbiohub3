@@ -1,9 +1,10 @@
-package com.synbiohub.sbh3.search;
+package com.synbiohub.sbh3.services.search;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.synbiohub.sbh3.controllers.search.SearchController;
 import com.synbiohub.sbh3.sparql.SPARQLQuery;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
