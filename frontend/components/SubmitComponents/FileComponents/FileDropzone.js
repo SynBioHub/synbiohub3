@@ -29,7 +29,10 @@ export default function FileDropzone(properties) {
     properties.setFiles(acceptedFiles);
   }, []);
 
-  const { getRootProps, getInputProps, isDragAccept } = useDropzone({ onDrop });
+  const { getRootProps, getInputProps, isDragAccept } = useDropzone({
+    onDrop,
+    multiple: properties.disableMultiple ? false : true
+  });
 
   const style = useMemo(
     () => ({
@@ -46,7 +49,7 @@ export default function FileDropzone(properties) {
         <div className={styles.dropzoneinner}>
           <FontAwesomeIcon icon={faFolderOpen} color="#00A1E4" size="3x" />
           <h3 className={styles.dropzonedirection}>
-            Drag files here to upload
+            Drag file(s) here to upload
           </h3>
           <span className={styles.dropzoneor}>or</span>
           <span className={styles.dropzonebrowsefiles}>Browse Files</span>

@@ -29,7 +29,7 @@ export default function SelectedFileView(properties) {
       >
         {fileDisplay}
       </div>
-      {properties.files.length > 0 ? (
+      {properties.files.length > 0 && !properties.disableMultiple ? (
         <div className={styles.clearfilesbuttoncontainer}>
           <div
             className={styles.clearfilesbutton}
