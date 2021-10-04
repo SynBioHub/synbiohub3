@@ -14,7 +14,7 @@
    position: fixed;
    top: 6.9rem;
    right: 1rem;
-   height: calc(80vh - 3rem);
+   max-height: calc(80vh - 3rem);
    background: aqua;
    border-radius: 0.4rem;
    width: 35rem;
@@ -76,4 +76,33 @@
    top: 0;
    background-color: white;
    padding: 0.9rem 0;
+}
+
+.backtobasket {
+   background-color: #D25627;
+   margin-top: 1rem;
+   padding: 0.5rem;
+   border-radius: 0.4rem;
+   color: #fff;
+}
+
+.backtobasket h4 {
+   margin: 0 0 0 0.9rem;
+   padding: 0;
+   display: inline;
+   font-weight: 500;
+}
+
+.backtobasket:hover {
+   background-color: #00A1E4;
+   cursor: pointer;
+}
+
+.backtobasketarrow {
+   margin-left: 0.7rem;
+   transition: transform .3s;
+}
+
+.backtobasket:hover .backtobasketarrow {
+   transform: translateX(-0.4rem);
 }

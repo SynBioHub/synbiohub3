@@ -217,7 +217,7 @@ export const setLimit = newLimit => dispatch => {
  * @returns
  */
 export const submit =
-  (uri, files, overwriteIncrement = 0) =>
+  (uri, files, overwriteIncrement = 0, addingToCollection = false) =>
   async (dispatch, getState) => {
     dispatch({
       type: types.SUBMITRESET,
@@ -231,7 +231,14 @@ export const submit =
 
     const token = getState().user.token;
 
-    await uploadFiles(dispatch, token, uri, files, overwriteIncrement);
+    await uploadFiles(
+      dispatch,
+      token,
+      uri,
+      files,
+      overwriteIncrement,
+      addingToCollection
+    );
 
     dispatch({
       type: types.SUBMITTING,
@@ -251,7 +258,8 @@ async function uploadFiles(
   token,
   uri,
   files,
-  overwriteIncrement = 0
+  overwriteIncrement = 0,
+  addingToCollection = false
 ) {
   const filesUploading = [];
   const failedFiles = [];
@@ -260,6 +268,7 @@ async function uploadFiles(
     filesUploading.push({
       file: file,
       name: file.name,
+      url: file.url,
       status: 'pending',
       errors: []
     });
@@ -270,7 +279,7 @@ async function uploadFiles(
     payload: filesUploading
   });
 
-  const url = `${process.env.backendUrl}/submit`;
+  let url = `${process.env.backendUrl}/submit`;
   const headers = {
     Accept: 'text/plain; charset=UTF-8',
     'X-authorization': token
@@ -278,16 +287,25 @@ async function uploadFiles(
 
   // upload all files
   for (var fileIndex = 0; fileIndex < filesUploading.length; fileIndex++) {
+    if (addingToCollection) {
+      url = `${process.env.backendUrl}${filesUploading[fileIndex].url}/addToCollection`;
+    }
     filesUploading[fileIndex].status = 'uploading';
+
     dispatch({
       type: types.FILESUPLOADING,
       payload: [...filesUploading]
     });
 
-    const form = new FormData();
-    form.append('rootCollections', uri);
-    form.append('file', filesUploading[fileIndex].file);
-    form.append('overwrite_merge', 2 + overwriteIncrement);
+    let form = new FormData();
+    if (!addingToCollection) {
+      form.append('rootCollections', uri);
+      form.append('file', filesUploading[fileIndex].file);
+      form.append('overwrite_merge', 2 + overwriteIncrement);
+    } else {
+      form = new URLSearchParams();
+      form.append('collections', uri);
+    }
 
     const response = await fetch(url, {
       method: 'POST',
@@ -610,9 +628,16 @@ const zippedFilePromise = (file, index, token, files, dispatch) => {
       .catch(error => {
         files[index].status = 'failed';
         files[index].errors = error;
-        dispatch({ type: types.DOWNLOADLIST, payload: [...files] });
         reject(error);
+        dispatch({ type: types.DOWNLOADLIST, payload: [...files] });
       });
+  });
+};
+
+export const toggleShowDownload = () => (dispatch, getState) => {
+  dispatch({
+    type: types.SETDOWNLOADOPEN,
+    payload: !getState().download.downloadOpen
   });
 };
 

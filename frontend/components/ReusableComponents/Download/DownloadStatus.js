@@ -5,8 +5,9 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
+import { toggleShowDownload } from '../../../redux/actions';
 import styles from '../../../styles/modal.module.css';
 import FileDownloadDisplay from './FileDownloadDisplay';
 
@@ -18,18 +19,20 @@ export default function DownloadStatus() {
   );
   // const downloadStatus = useSelector(state => state.download.downloadStatus);
   const downloadList = useSelector(state => state.download.downloadList);
+  const downloadOpen = useSelector(state => state.download.downloadOpen);
   const [filesDownloadingDisplay, setFilesDownloadingDisplay] = useState(
     createFileDisplay(downloadList)
   );
 
+  const dispatch = useDispatch();
+
   const [downloadNumber, setDownloadNumber] = useState(downloadList.length);
-  const [open, setOpen] = useState(true);
   const [height, setHeight] = useState({});
 
   useEffect(() => {
-    if (open) setHeight({ height: '40%' });
+    if (downloadOpen) setHeight({ height: '40%' });
     else setHeight({ height: '3rem' });
-  }, [open]);
+  }, [downloadOpen]);
 
   useEffect(() => {
     let newDownloadNumber = downloadList.length;
@@ -45,18 +48,18 @@ export default function DownloadStatus() {
       <div className={styles.downloadstatuscontainer} style={height}>
         <div
           className={styles.downloadheader}
-          onClick={() => setOpen(!open)}
+          onClick={() => dispatch(toggleShowDownload())}
           role="button"
         >
           <div>
             <FontAwesomeIcon icon={faCloudDownloadAlt} size="1x" />
             {downloadNumber !== 0
               ? ` Downloading ${downloadNumber} files...`
-              : ' Download finished'}
+              : ' Download finished, zipping'}
           </div>
           <div>
             <FontAwesomeIcon
-              icon={open ? faChevronDown : faChevronRight}
+              icon={downloadOpen ? faChevronDown : faChevronRight}
               size="1x"
             />
           </div>
@@ -68,10 +71,5 @@ export default function DownloadStatus() {
 }
 
 const createFileDisplay = files => {
-  files = files.sort((file1, file2) => {
-    if (file1.status === downloadStatus) return -1;
-    else if (file2.status === downloadStatus) return 1;
-    return 0;
-  });
   return files.map(file => <FileDownloadDisplay file={file} key={file.name} />);
 };
