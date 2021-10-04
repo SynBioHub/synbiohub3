@@ -628,9 +628,16 @@ const zippedFilePromise = (file, index, token, files, dispatch) => {
       .catch(error => {
         files[index].status = 'failed';
         files[index].errors = error;
-        dispatch({ type: types.DOWNLOADLIST, payload: [...files] });
         reject(error);
+        dispatch({ type: types.DOWNLOADLIST, payload: [...files] });
       });
+  });
+};
+
+export const toggleShowDownload = () => (dispatch, getState) => {
+  dispatch({
+    type: types.SETDOWNLOADOPEN,
+    payload: !getState().download.downloadOpen
   });
 };
 

@@ -259,6 +259,7 @@ const basketReducer = (state = initialBasketState, { type, payload }) => {
 // DOWNLOAD REDUCER
 const initialDownloadState = {
   showDownloadStatus: false,
+  downloadOpen: true,
   downloadList: [],
   downloadStatus: ''
 };
@@ -279,6 +280,11 @@ const downloadReducer = (state = initialDownloadState, { type, payload }) => {
       return {
         ...state,
         downloadStatus: payload
+      };
+    case types.SETDOWNLOADOPEN:
+      return {
+        ...state,
+        downloadOpen: payload
       };
     default:
       return state;
