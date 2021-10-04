@@ -33,9 +33,7 @@ export default function NewCollectionForm(properties) {
   );
 
   const postCollection = () => {
-    if (!properties.overridePost)
-      dispatch(createCollection(id, version, name, description, citations, 0));
-    else properties.overridePost(id, version, name, description, citations);
+    dispatch(createCollection(id, version, name, description, citations, 0));
   };
 
   if (creatingCollection) return <CreatingCollectionLoader />;

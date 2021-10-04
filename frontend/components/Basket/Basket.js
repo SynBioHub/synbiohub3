@@ -16,6 +16,7 @@ import styles from '../../styles/basket.module.css';
 import Table from '../ReusableComponents/Table/Table';
 import TableButton from '../ReusableComponents/TableButton';
 import BasketItem from './BasketItem';
+import CreateCollection from './CreateCollection';
 
 const searchable = ['name', 'displayId', 'type', 'description'];
 
@@ -31,6 +32,8 @@ export default function Basket() {
   const [selected, setSelected] = useState(new Map());
   const [selectAll, setSelectAll] = useState(false);
   const [buttonEnabled, setButtonEnabled] = useState(false);
+  const [itemsToAddToCollection, setItemsToAddToCollection] = useState([]);
+  const [createCollectionMode, setCreateCollectionMode] = useState(false);
 
   useEffect(() => {
     dispatch(restoreBasket());
@@ -72,14 +75,33 @@ export default function Basket() {
     );
   }
 
+  if (createCollectionMode) {
+    return (
+      <CreateCollection
+        setShowBasket={setShowBasket}
+        setCreateCollectionMode={setCreateCollectionMode}
+        itemsToAddToCollection={itemsToAddToCollection}
+      />
+    );
+  }
+
   return (
     <div>
       <div className={styles.basketcontent}>
         <div className={styles.heading}>
           <TableButton
-            title="Create Collection"
+            title="Add to Collection"
             icon={faPlus}
-            enabled={false}
+            enabled={buttonEnabled}
+            onClick={() => {
+              addCheckedToCollection(
+                basketItems,
+                selected,
+                setSelected,
+                setItemsToAddToCollection,
+                setCreateCollectionMode
+              );
+            }}
           />
           <TableButton
             title="Download"
@@ -184,6 +206,32 @@ const downloadCheckedItems = (items, selected, setSelected, dispatch) => {
     }
   );
   dispatch(downloadFiles(itemsChecked));
+};
+
+const addCheckedToCollection = (
+  items,
+  selected,
+  setSelected,
+  setItemsToAddToCollection,
+  setCreateCollectionMode
+) => {
+  const itemsChecked = parseAndClearCheckedItems(
+    items,
+    selected,
+    setSelected,
+    function (item) {
+      return {
+        url: item.url,
+        uri: item.uri,
+        name: item.name,
+        displayId: item.displayId,
+        type: 'xml',
+        status: 'downloading'
+      };
+    }
+  );
+  setItemsToAddToCollection(itemsChecked);
+  setCreateCollectionMode(true);
 };
 
 const parseAndClearCheckedItems = (
