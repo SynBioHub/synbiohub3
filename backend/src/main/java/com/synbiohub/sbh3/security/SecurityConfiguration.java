@@ -10,6 +10,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import javax.sql.DataSource;
+
 
 @EnableWebSecurity
 @AllArgsConstructor
@@ -23,7 +25,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
      * @throws Exception
      */
     @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+    protected void configure(AuthenticationManagerBuilder auth) {
         // Check if the username and (salted) password match with the object returned from H2
         auth.authenticationProvider(daoAuthenticationProvider());
     }
@@ -37,18 +39,24 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         // Note: Place most restrictive roles at the top of the method chain
 
-        http.authorizeRequests()
-                .antMatchers("/admin/**").hasRole("ADMIN")
-                .antMatchers("/h2-console/**").permitAll()
-                //.anyRequest().authenticated()
+        http
+                .authorizeRequests()
+                    .antMatchers("/admin/*").hasRole("ADMIN")
+                    .antMatchers("/h2-console/*").permitAll()
 
                 // Make H2-Console non-secured; for debug purposes
-                .and().csrf().ignoringAntMatchers("/h2-console/**")
+                .and()
+                    .csrf().ignoringAntMatchers("/h2-console/**")
+
                 // Allow pages to be loaded in frames from
                 // the same origin; needed for H2-Console
-                .and().headers().frameOptions().sameOrigin()
-                .and().csrf().disable().formLogin()
+                .and()
+                    .headers().frameOptions().sameOrigin()
 
+                .and()
+                    .csrf().disable()
+
+                .formLogin()
                 ;
 
         http.logout(logout -> logout

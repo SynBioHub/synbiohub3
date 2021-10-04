@@ -23,11 +23,6 @@ public class SearchController {
     private final SearchService searchService;
 
 
-    @Value("${SBOLExplorerEndpoint}")
-    private String sbolExplorerEndpoint;
-
-    @Value("${triplestore.sparqlEndpoint}")
-    private String sparqlEndpoint;
 
     /**
      * Returns the metadata for the object from the specified search query.
@@ -36,10 +31,10 @@ public class SearchController {
      */
     @GetMapping(value = "/search")
     @ResponseBody
-    public String getResults(@RequestParam Map<String,String> allParams, HttpServletRequest request) throws UnsupportedEncodingException, JsonProcessingException {
+    public String getResults(@RequestParam Map<String,String> allParams, HttpServletRequest request) throws JsonProcessingException {
         String sparqlQuery = searchService.getMetadataQuerySPARQL(allParams);
         System.out.println(sparqlQuery);
-        return searchService.rawJSONToOutput(getSPARQL(sparqlQuery));
+        return searchService.rawJSONToOutput(searchService.SPARQLQuery(sparqlQuery));
     }
 
 
@@ -79,7 +74,7 @@ public class SearchController {
     public String getSearchCount(@RequestParam Map<String,String> allParams) throws UnsupportedEncodingException, JsonProcessingException {
         String sparqlQuery = searchService.getSearchCountSPARQL(allParams);
         System.out.println(sparqlQuery);
-        return searchService.JSONToCount(getSPARQL(sparqlQuery));
+        return searchService.JSONToCount(searchService.SPARQLQuery(sparqlQuery));
     }
 
 
@@ -112,7 +107,7 @@ public class SearchController {
     public String getRootCollections() throws JsonProcessingException{
 
         String sparqlQuery = searchService.getRootCollectionsSPARQL();
-        return searchService.collectionToOutput(getSPARQL(sparqlQuery));
+        return searchService.collectionToOutput(searchService.SPARQLQuery(sparqlQuery));
     }
 
 
@@ -130,7 +125,7 @@ public class SearchController {
 
 
         String sparqlQuery = searchService.getSubCollectionsSPARQL(collectionInfo);
-        return searchService.collectionToOutput(getSPARQL(sparqlQuery));
+        return searchService.collectionToOutput(searchService.SPARQLQuery(sparqlQuery));
     }
 
     /**
@@ -142,7 +137,7 @@ public class SearchController {
     public String getTypeCount(@PathVariable("type") String type, HttpServletRequest request) throws JsonProcessingException {
 
         String sparqlQuery = searchService.getTypeCountSPARQL(type);
-        return searchService.JSONToCount(getSPARQL(sparqlQuery));
+        return searchService.JSONToCount(searchService.SPARQLQuery(sparqlQuery));
     }
 
     /**
@@ -159,7 +154,7 @@ public class SearchController {
 
 
         String sparqlQuery = searchService.getURISPARQL(collectionInfo, "twins");
-        return searchService.rawJSONToOutput(getSPARQL(sparqlQuery));
+        return searchService.rawJSONToOutput(searchService.SPARQLQuery(sparqlQuery));
     }
 
     /**
@@ -177,7 +172,7 @@ public class SearchController {
 
 
         String sparqlQuery = searchService.getURISPARQL(collectionInfo, "uses");
-        return searchService.rawJSONToOutput(getSPARQL(sparqlQuery));
+        return searchService.rawJSONToOutput(searchService.SPARQLQuery(sparqlQuery));
     }
 
 
@@ -191,19 +186,7 @@ public class SearchController {
     @RequestMapping(value = "/sparql", headers = "Accept=application/json")
     @ResponseBody
     public String getSPARQL(@RequestParam String query)  {
-        RestTemplate restTemplate = new RestTemplate();
-        String url = "";
-        String defaultGraph = "";
-        // Encoding the SPARQL query to be sent to Explorer/SPARQL
-        HashMap<String, String> params = new HashMap<>();
-        params.put("default-graph-uri", defaultGraph);
-        params.put("query", query);
+        return searchService.SPARQLQuery(query);
 
-        //if (useSBOLExplorer && query.length() > 0)
-            //url = sbolExplorerEndpoint  + "?default-graph-uri={defaultGraph}&query={query}&";
-        //else
-            //url = sparqlEndpoint + "/?default-graph-uri={defaultGraph}&query={query}&format=json&" ;
-
-        return restTemplate.getForObject(url, String.class, defaultGraph, query);
     }
 }
