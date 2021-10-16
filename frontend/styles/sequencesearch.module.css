@@ -3,6 +3,31 @@
    width: 100%;
 }
 
+.optionscontainer {
+   margin-bottom: 1.3rem;
+}
+
+.optionsbutton {
+   box-shadow: 0px 0px 10px #c5c5c5;
+   padding: 0.7rem;
+   border-radius: 0.4rem;
+   font-size: 1rem;
+   font-weight: 500;
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   cursor: pointer;
+   transition: box-shadow .3s;
+}
+
+.optionsbutton:hover {
+   box-shadow: 0px 0px 25px #c5c5c5;
+}
+
+.optionsplus {
+   font-size: 1.15rem;
+}
+
 /**STANDARD SEARCH CSS**/
 .standardcontainer {
    width: 100%;

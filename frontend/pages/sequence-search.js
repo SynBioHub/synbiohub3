@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import { useState } from 'react';
 
 import SearchHeader from '../components/SearchComponents/SearchHeader/SearchHeader';
+import Options from '../components/SearchComponents/SequenceSearch/Options';
 import UploadFile from '../components/SearchComponents/SequenceSearch/UploadFile';
 import InputField from '../components/SubmitComponents/ReusableComponents/InputField';
 import TopLevel from '../components/TopLevel';
@@ -35,11 +36,15 @@ export default function SequenceSearch() {
 
             <UploadFile files={files} setFiles={setFiles} />
 
+            <Options />
+
             <div
               className={styles.searchbutton}
               role="button"
               onClick={() => {
-                router.push(`/search/globalsequence=${sequence}&`);
+                if (files.length > 0)
+                  router.push(`/search/file_search=${files[0].path}&`);
+                else router.push(`/search/globalsequence=${sequence}&`);
               }}
             >
               <FontAwesomeIcon

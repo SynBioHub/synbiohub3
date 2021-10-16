@@ -49,7 +49,9 @@ export default function FileDropzone(properties) {
         <div className={styles.dropzoneinner}>
           <FontAwesomeIcon icon={faFolderOpen} color="#00A1E4" size="3x" />
           <h3 className={styles.dropzonedirection}>
-            Drag file(s) here to upload
+            {properties.disableMultiple
+              ? 'Drag file here to upload'
+              : 'Drag file(s) here to upload'}
           </h3>
           <span className={styles.dropzoneor}>or</span>
           <span className={styles.dropzonebrowsefiles}>Browse Files</span>
