@@ -72,7 +72,7 @@ export default function Options(properties) {
             />
           </div>
           <div className={styles.inputsection}>
-            <label>Percent Match</label>
+            <label>Percent Match (0-100)</label>
             <input
               type="text"
               className={styles.filterinput}
