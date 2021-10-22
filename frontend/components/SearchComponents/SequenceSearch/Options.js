@@ -10,7 +10,7 @@ export default function Options(properties) {
   return (
     <div className={styles.optionscontainer}>
       <div
-        className={styles.optionsbutton}
+        className={`${styles.optionsbutton} ${open ? styles.optionsopen : ''}`}
         role="button"
         onClick={() => setOpen(!open)}
       >

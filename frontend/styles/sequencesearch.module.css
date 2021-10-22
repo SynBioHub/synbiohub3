@@ -18,11 +18,14 @@
    cursor: pointer;
    transition: box-shadow .3s;
    padding: 0.7rem;
-   border-radius: 0.4rem;
+}
+
+.optionsopen {
+   box-shadow: 0px 0px 10px #c5c5c5;
 }
 
 .optionsbutton:hover {
-   box-shadow: 0px 0px 25px #c5c5c5;
+   box-shadow: 0px 0px 10px #c5c5c5;
 }
 
 .optionsmenu {
