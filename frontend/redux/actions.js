@@ -217,7 +217,7 @@ export const setLimit = newLimit => dispatch => {
  * @returns
  */
 export const submit =
-  (uri, files, overwriteIncrement = 0) =>
+  (uri, files, overwriteIncrement = 0, addingToCollection = false) =>
   async (dispatch, getState) => {
     dispatch({
       type: types.SUBMITRESET,
@@ -231,7 +231,14 @@ export const submit =
 
     const token = getState().user.token;
 
-    await uploadFiles(dispatch, token, uri, files, overwriteIncrement);
+    await uploadFiles(
+      dispatch,
+      token,
+      uri,
+      files,
+      overwriteIncrement,
+      addingToCollection
+    );
 
     dispatch({
       type: types.SUBMITTING,
@@ -251,7 +258,8 @@ async function uploadFiles(
   token,
   uri,
   files,
-  overwriteIncrement = 0
+  overwriteIncrement = 0,
+  addingToCollection = false
 ) {
   const filesUploading = [];
   const failedFiles = [];
@@ -260,6 +268,7 @@ async function uploadFiles(
     filesUploading.push({
       file: file,
       name: file.name,
+      url: file.url,
       status: 'pending',
       errors: []
     });
@@ -270,7 +279,7 @@ async function uploadFiles(
     payload: filesUploading
   });
 
-  const url = `${process.env.backendUrl}/submit`;
+  let url = `${process.env.backendUrl}/submit`;
   const headers = {
     Accept: 'text/plain; charset=UTF-8',
     'X-authorization': token
@@ -278,16 +287,25 @@ async function uploadFiles(
 
   // upload all files
   for (var fileIndex = 0; fileIndex < filesUploading.length; fileIndex++) {
+    if (addingToCollection) {
+      url = `${process.env.backendUrl}${filesUploading[fileIndex].url}/addToCollection`;
+    }
     filesUploading[fileIndex].status = 'uploading';
+
     dispatch({
       type: types.FILESUPLOADING,
       payload: [...filesUploading]
     });
 
-    const form = new FormData();
-    form.append('rootCollections', uri);
-    form.append('file', filesUploading[fileIndex].file);
-    form.append('overwrite_merge', 2 + overwriteIncrement);
+    let form = new FormData();
+    if (!addingToCollection) {
+      form.append('rootCollections', uri);
+      form.append('file', filesUploading[fileIndex].file);
+      form.append('overwrite_merge', 2 + overwriteIncrement);
+    } else {
+      form = new URLSearchParams();
+      form.append('collections', uri);
+    }
 
     const response = await fetch(url, {
       method: 'POST',
@@ -519,10 +537,12 @@ export const makePublicCollection =
     name,
     description,
     citations,
-    setShowPublishModal,
-    tabState = 'new'
+    tabState,
+    collections,
+    setProcessUnderway
   ) =>
   async (dispatch, getState) => {
+    setProcessUnderway(true);
     dispatch({ type: types.PUBLISHING, payload: true });
 
     const token = getState().user.token;
@@ -539,6 +559,7 @@ export const makePublicCollection =
     parameters.append('description', description);
     parameters.append('citations', citations);
     parameters.append('tabState', tabState);
+    if (tabState === 'existing') parameters.append('collections', collections);
 
     var response = await fetch(url, {
       method: 'POST',
@@ -547,11 +568,11 @@ export const makePublicCollection =
     });
 
     if (response.status === 200) {
-      setShowPublishModal(false);
       mutate([`${process.env.backendUrl}/shared`, token]);
       mutate([`${process.env.backendUrl}/manage`, token]);
     }
 
+    setProcessUnderway(false);
     dispatch({ type: types.PUBLISHING, payload: false });
   };
 
@@ -564,8 +585,8 @@ export const downloadFiles = files => (dispatch, getState) => {
   var zip = new JSZip();
   var zipFilename = 'sbhdownload.zip';
 
-  const zippedFilePromises = files.map(file => {
-    return zippedFilePromise(file, token);
+  const zippedFilePromises = files.map((file, index) => {
+    return zippedFilePromise(file, index, token, files, dispatch);
   });
 
   Promise.allSettled(zippedFilePromises).then(results => {
@@ -583,7 +604,7 @@ export const downloadFiles = files => (dispatch, getState) => {
   });
 };
 
-const zippedFilePromise = (file, token) => {
+const zippedFilePromise = (file, index, token, files, dispatch) => {
   return new Promise((resolve, reject) => {
     axios({
       url: file.url,
@@ -594,10 +615,29 @@ const zippedFilePromise = (file, token) => {
       }
     })
       .then(response => {
-        if (response.status === 200) resolve({ file, response });
-        else reject();
+        if (response.status === 200) {
+          files[index].status = 'downloaded';
+          resolve({ file, response });
+        } else {
+          files[index].status = 'failed';
+          files[index].errors = 'Sorry, this file could not be downloaded';
+          reject();
+        }
+        dispatch({ type: types.DOWNLOADLIST, payload: [...files] });
       })
-      .catch(error => reject(error));
+      .catch(error => {
+        files[index].status = 'failed';
+        files[index].errors = error;
+        reject(error);
+        dispatch({ type: types.DOWNLOADLIST, payload: [...files] });
+      });
+  });
+};
+
+export const toggleShowDownload = () => (dispatch, getState) => {
+  dispatch({
+    type: types.SETDOWNLOADOPEN,
+    payload: !getState().download.downloadOpen
   });
 };
 
@@ -607,11 +647,43 @@ const zippedFilePromise = (file, token) => {
  * This action adds objects to the Basket that is located in the Search Panel in sbh
  * @param {Array} uriArray - the objects that will be stored in the Basket
  */
-export const addToBasket = uriArray => dispatch => {
+export const addToBasket = items => async (dispatch, getState) => {
   dispatch({
     type: types.ADDTOBASKET,
-    payload: uriArray
+    payload: items
   });
+  const newBasket = await getState().basket.basket;
+  localStorage.setItem('basket', JSON.stringify(newBasket));
+};
+
+export const restoreBasket = () => dispatch => {
+  const basket = JSON.parse(localStorage.getItem('basket'));
+  if (basket) {
+    dispatch({
+      type: types.ADDTOBASKET,
+      payload: basket
+    });
+  }
+};
+
+export const clearBasket = itemsToClear => (dispatch, getState) => {
+  const newBasket = getState().basket.basket.filter(item => {
+    let shouldKeep = true;
+    for (const itemToDelete of itemsToClear) {
+      if (
+        item.displayId === itemToDelete.displayId &&
+        item.version === itemToDelete.version
+      ) {
+        shouldKeep = false;
+      }
+    }
+    return shouldKeep;
+  });
+  dispatch({
+    type: types.SETBASKET,
+    payload: newBasket
+  });
+  localStorage.setItem('basket', JSON.stringify(newBasket));
 };
 
 // TRACKING ACTIONS

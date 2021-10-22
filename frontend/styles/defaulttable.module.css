@@ -10,7 +10,9 @@
    display: flex;
    justify-content: space-between;
    align-items: center;
-   margin: 0.1rem 0 0.3rem 0;
+   height: 2.5rem;
+   position: sticky;
+   background-color: #fff;
 }
 
 .tableheadertitle {
@@ -56,11 +58,14 @@
 }
 
 .tablefooter {
-   margin: 1rem 0 0.1rem 0;
+   padding: 0.5rem 0;
    display: flex;
    flex-direction: row;
    align-items: center;
    justify-content: space-between;
+   position: sticky;
+   bottom: 0;
+   background-color: #fff;
 }
 
 .tablefooternav {
@@ -125,14 +130,17 @@
    padding: 0.5rem;
    border-top: 1px solid #ddd;
    line-height: 1.42857143;
+   vertical-align: baseline;
+}
+
+.table thead {
+   position: sticky;
 }
 
 .table th {
    padding: 0.5rem;
    font-size: 0.9rem;
    font-weight: 600;
-   position: sticky;
-   top: 0;
    border-bottom: 2px solid #ddd;
    background-color: #fff;
 }
@@ -215,6 +223,10 @@
 
 .tablebuttondropdown:hover {
    background-color: #ececec;
+}
+
+.buttoncontainer {
+   display: inline-block;
 }
 
  @media (max-width: 700px) {

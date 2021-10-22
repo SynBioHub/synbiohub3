@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import { useDispatch } from 'react-redux';
 
-import { addToBasket } from '../../../../redux/actions';
+import { addToBasket, downloadFiles } from '../../../../redux/actions';
 import styles from '../../../../styles/resulttable.module.css';
 import Navigation from './Navigation';
 
@@ -27,10 +27,7 @@ export default function TableButtons(properties) {
             for (const result of properties.data) {
               checklist.set(result.displayId, false);
               if (properties.selected.get(result.displayId)) {
-                itemsChecked.push({
-                  uri: result.uri,
-                  name: result.name
-                });
+                itemsChecked.push(result);
               }
             }
             properties.setSelected(checklist);
@@ -45,6 +42,19 @@ export default function TableButtons(properties) {
 
         <div
           className={`${styles.tablebutton} ${properties.buttonClass} ${styles.rightspace}`}
+          role="button"
+          onClick={() => {
+            const itemsChecked = [];
+            let checklist = new Map();
+            for (const result of properties.data) {
+              checklist.set(result.displayId, false);
+              if (properties.selected.get(result.displayId)) {
+                itemsChecked.push(convertToDownloadableFile(result));
+              }
+            }
+            properties.setSelected(checklist);
+            dispatch(downloadFiles(itemsChecked));
+          }}
         >
           <span className={styles.buttonicon}>
             <FontAwesomeIcon icon={faDownload} color="#00000" size="1x" />
@@ -81,3 +91,13 @@ export default function TableButtons(properties) {
     </div>
   );
 }
+
+const convertToDownloadableFile = item => {
+  return {
+    url: `${process.env.backendUrl}${item.url}/sbol`,
+    name: item.name,
+    displayId: item.displayId,
+    type: 'xml',
+    status: 'downloading'
+  };
+};

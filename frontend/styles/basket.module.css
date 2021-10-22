@@ -1,5 +1,5 @@
 .basketicon {
-   position: absolute;
+   position: fixed;
    top: 4.6rem;
    right: 1rem;
    cursor: pointer;
@@ -11,13 +11,13 @@
 }
 
 .basketcontent {
-   position: absolute;
+   position: fixed;
    top: 6.9rem;
    right: 1rem;
-   height: calc(80% - 10rem);
+   max-height: calc(80vh - 3rem);
    background: aqua;
    border-radius: 0.4rem;
-   width: 20rem;
+   width: 35rem;
    padding: 0 1rem 1rem 1rem;
    background-color: white;
    filter: drop-shadow(0px 0px 2px #888888);
@@ -51,7 +51,8 @@
 }
 
 .itemscontainer {
-   padding-top: 0.5rem;
+   padding: 0;
+   margin: 0;
 }
 
 .item {
@@ -74,5 +75,34 @@
    position: sticky;
    top: 0;
    background-color: white;
-   padding: 1rem 0rem 0.3rem 0;
+   padding: 0.9rem 0;
+}
+
+.backtobasket {
+   background-color: #D25627;
+   margin-top: 1rem;
+   padding: 0.5rem;
+   border-radius: 0.4rem;
+   color: #fff;
+}
+
+.backtobasket h4 {
+   margin: 0 0 0 0.9rem;
+   padding: 0;
+   display: inline;
+   font-weight: 500;
+}
+
+.backtobasket:hover {
+   background-color: #00A1E4;
+   cursor: pointer;
+}
+
+.backtobasketarrow {
+   margin-left: 0.7rem;
+   transition: transform .3s;
+}
+
+.backtobasket:hover .backtobasketarrow {
+   transform: translateX(-0.4rem);
 }

@@ -26,7 +26,11 @@
 }
 
 .buttonscontainer {
-  display: flex;
-  flex-direction: row;
   margin-bottom: 0.5rem;
+  margin-right: 2.5rem;
+}
+
+.submissiontablecontainer {
+  max-width: 100vw;
+  overflow-x: scroll;
 }

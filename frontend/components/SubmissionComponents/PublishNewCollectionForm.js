@@ -1,15 +1,12 @@
 import { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
-import { createCollection } from '../../../redux/actions';
-import styles from '../../../styles/submit.module.css';
-import InputField from '../ReusableComponents/InputField';
-import CreatingCollectionLoader from './CreatingCollectionLoader';
-import ErrorLogger from './ErrorLogger';
-import NewCollectionButtons from './NewCollectionButtons';
+import { makePublicCollection } from '../../redux/actions';
+import styles from '../../styles/submit.module.css';
+import InputField from '../SubmitComponents/ReusableComponents/InputField';
+import PublishCollectionButton from './PublishCollectionButton';
 
 export default function NewCollectionForm(properties) {
-  const dispatch = useDispatch();
   const [name, setCollectionName] = useState(
     properties.filler ? properties.filler.name : ''
   );
@@ -28,18 +25,38 @@ export default function NewCollectionForm(properties) {
 
   const [needsVerification, setNeedsVerification] = useState('');
 
-  const creatingCollection = useSelector(
-    state => state.collectionCreate.creatingCollection
-  );
+  const dispatch = useDispatch();
 
-  const postCollection = () => {
-    dispatch(createCollection(id, version, name, description, citations, 0));
+  const publishNewCollection = (
+    displayId,
+    version,
+    name,
+    description,
+    citations
+  ) => {
+    dispatch(
+      makePublicCollection(
+        properties.url,
+        displayId,
+        version,
+        name,
+        description,
+        citations,
+        'new',
+        '',
+        properties.setProcessUnderway
+      )
+    );
+    properties.setCollectionIndex(0);
+    properties.setToPublish(
+      properties.toPublish.filter(
+        collection => collection.displayId !== properties.filler.displayId
+      )
+    );
   };
 
-  if (creatingCollection) return <CreatingCollectionLoader />;
   return (
     <div className={styles.newcollectioncontainer}>
-      <ErrorLogger />
       <InputField
         labelText="Name"
         inputName="collection name"
@@ -93,10 +110,12 @@ export default function NewCollectionForm(properties) {
         value={citations}
         onChange={event => setCollectionCitations(event.value)}
       />
-      <NewCollectionButtons
-        needsVerification={needsVerification}
-        postCollection={postCollection}
-        title="Create"
+
+      <PublishCollectionButton
+        onClick={() =>
+          publishNewCollection(id, version, name, description, citations)
+        }
+        canSubmit={!needsVerification}
       />
     </div>
   );

@@ -7,7 +7,7 @@ import {
 import axios from 'axios';
 import React from 'react';
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { mutate } from 'swr';
 
 import { addToBasket, downloadFiles } from '../../redux/actions';
@@ -21,13 +21,15 @@ export default function TableButtons(properties) {
   const [toPublish, setToPublish] = useState([]);
   const [showPublishModal, setShowPublishModal] = useState(false);
 
+  const isAdmin = useSelector(state => state.user.isAdmin);
+
   const addCheckedItemsToBasket = () => {
     const itemsChecked = parseAndClearCheckedItems(
       properties.processedData,
       properties.selected,
       properties.setSelected,
       function (submission) {
-        return { uri: submission.uri, name: submission.name };
+        return submission;
       }
     );
     dispatch(addToBasket(itemsChecked));
@@ -51,7 +53,8 @@ export default function TableButtons(properties) {
     dispatch(downloadFiles(itemsChecked));
   };
 
-  const removeCheckedItems = () => {
+  const removeCheckedItems = setProcessUnderway => {
+    setProcessUnderway(true);
     const itemsChecked = parseAndClearCheckedItems(
       properties.processedData,
       properties.selected,
@@ -64,7 +67,7 @@ export default function TableButtons(properties) {
         };
       }
     );
-    removeCollections(itemsChecked, properties.token);
+    removeCollections(itemsChecked, properties.token, setProcessUnderway);
   };
 
   const preparePublishModal = () => {
@@ -80,14 +83,20 @@ export default function TableButtons(properties) {
         else return submission;
       }
     );
-    setToPublish(itemsChecked);
-    setShowPublishModal(true);
+    const itemsCheckedFiltered = itemsChecked.filter(
+      submission => submission !== undefined
+    );
+    if (itemsCheckedFiltered.length > 0) {
+      setToPublish(itemsCheckedFiltered);
+      setShowPublishModal(true);
+    }
   };
 
   return (
     <React.Fragment>
       <PublishModal
         setShowPublishModal={setShowPublishModal}
+        setProcessUnderway={properties.setProcessUnderway}
         toPublish={toPublish}
         showPublishModal={showPublishModal}
       />
@@ -104,24 +113,26 @@ export default function TableButtons(properties) {
           icon={faDownload}
           onClick={() => downloadCheckedItems()}
         />
-        <TableButton
-          title="Publish"
-          enabled={properties.buttonEnabled}
-          icon={faGlobeAmericas}
-          onClick={() => preparePublishModal()}
-        />
+        {isAdmin && (
+          <TableButton
+            title="Publish"
+            enabled={properties.buttonEnabled}
+            icon={faGlobeAmericas}
+            onClick={() => preparePublishModal()}
+          />
+        )}
         <TableButton
           title="Remove"
           enabled={properties.buttonEnabled}
           icon={faTrashAlt}
-          onClick={() => removeCheckedItems()}
+          onClick={() => removeCheckedItems(properties.setProcessUnderway)}
         />
       </div>
     </React.Fragment>
   );
 }
 
-const removeCollections = (collections, token) => {
+const removeCollections = (collections, token, setProcessUnderway) => {
   const removeCollectionPromises = collections.map(collection => {
     if (collection.privacy === 'public') {
       alert(
@@ -142,10 +153,14 @@ const removeCollections = (collections, token) => {
 
   Promise.all(removeCollectionPromises)
     .then(() => {
+      setProcessUnderway(false);
       mutate([`${process.env.backendUrl}/shared`, token]);
       mutate([`${process.env.backendUrl}/manage`, token]);
     })
-    .catch(error => alert(error));
+    .catch(error => {
+      setProcessUnderway(false);
+      alert(error);
+    });
 };
 
 const parseAndClearCheckedItems = (

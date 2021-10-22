@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import useSWR from 'swr';
 
-import Basket from '../components/Basket';
+import Basket from '../components/Basket/Basket';
 import Table from '../components/ReusableComponents/Table/Table';
 import SubmissionDisplay from '../components/SubmissionComponents/SubmissionDisplay';
 import TableButtons from '../components/SubmissionComponents/TableButtons';
@@ -20,6 +20,7 @@ function Submissions() {
   const [selected, setSelected] = useState(new Map());
   const [selectAll, setSelectAll] = useState(false);
   const [buttonEnabled, setButtonEnabled] = useState(false);
+  const [processUnderway, setProcessUnderway] = useState(false);
 
   useEffect(() => {
     if (processedData) {
@@ -65,45 +66,50 @@ function Submissions() {
           setSelected={setSelected}
           processedData={processedData}
           token={token}
+          setProcessUnderway={setProcessUnderway}
         />
-        <Table
-          data={processedData}
-          loading={isMySubmissionsLoading || isSharedLoading}
-          title="My Submissions"
-          searchable={searchable}
-          headers={[
-            <input
-              key={0}
-              checked={selectAll}
-              onChange={event => {
-                let checklist = new Map();
-                for (const submission of processedData)
-                  checklist.set(submission.displayId, event.target.checked);
-                setSelected(checklist);
-                setSelectAll(event.target.checked);
-              }}
-              type="checkbox"
-            />,
-            'Name',
-            'Display ID',
-            'Description',
-            'Type',
-            'Privacy'
-          ]}
-          sortOptions={options}
-          defaultSortOption={options[0]}
-          sortMethods={sortMethods}
-          numberShownLabel=" "
-          updateRowsWhen={selected}
-          dataRowDisplay={submission => (
-            <SubmissionDisplay
-              key={submission.displayId}
-              submission={submission}
-              selected={selected}
-              setSelected={setSelected}
-            />
-          )}
-        />
+        <div className={styles.submissiontablecontainer}>
+          <Table
+            data={processedData}
+            loading={
+              isMySubmissionsLoading || isSharedLoading || processUnderway
+            }
+            title="My Submissions"
+            searchable={searchable}
+            headers={[
+              <input
+                key={0}
+                checked={selectAll}
+                onChange={event => {
+                  let checklist = new Map();
+                  for (const submission of processedData)
+                    checklist.set(submission.displayId, event.target.checked);
+                  setSelected(checklist);
+                  setSelectAll(event.target.checked);
+                }}
+                type="checkbox"
+              />,
+              'Name',
+              'Display ID',
+              'Description',
+              'Type',
+              'Privacy'
+            ]}
+            sortOptions={options}
+            defaultSortOption={options[0]}
+            sortMethods={sortMethods}
+            numberShownLabel=" "
+            updateRowsWhen={selected}
+            dataRowDisplay={submission => (
+              <SubmissionDisplay
+                key={submission.displayId}
+                submission={submission}
+                selected={selected}
+                setSelected={setSelected}
+              />
+            )}
+          />
+        </div>
       </div>
     </div>
   );

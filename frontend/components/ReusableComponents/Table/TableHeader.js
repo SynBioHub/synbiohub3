@@ -4,9 +4,17 @@ import styles from '../../../styles/defaulttable.module.css';
 
 export default function TableHeader(properties) {
   return (
-    <div className={styles.tableheader}>
+    <div
+      className={styles.tableheader}
+      style={{
+        top: `${
+          properties.topStickyIncrement ? properties.topStickyIncrement : 0
+        }rem`
+      }}
+    >
       <div className={styles.tableheadertitle}>
-        {properties.title} ({properties.count})
+        {properties.title}
+        {!properties.hideCount ? `(${properties.count})` : ''}
       </div>
       <div className={styles.tableheadernav}>
         <div className={styles.sortbycontainer} id={styles.filterresults}>
@@ -24,7 +32,8 @@ export default function TableHeader(properties) {
             options={properties.sortOptions}
             className={styles.tableheadernavflex}
             onChange={option => properties.setSortOption(option)}
-            menuPortalTarget={document.querySelector('body')}
+            menuPortalTarget={document.body}
+            styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
             defaultValue={properties.defaultSortOption}
           />
         </div>
