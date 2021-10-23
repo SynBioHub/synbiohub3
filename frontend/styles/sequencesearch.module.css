@@ -5,12 +5,12 @@
 
 .optionscontainer {
    margin-bottom: 1.3rem;
-   box-shadow: 0px 0px 10px #c5c5c5;
+   box-shadow: 0px 0px 5px #c5c5c5;
    border-radius: 0.4rem;
 }
 
 .optionsbutton {
-   font-size: 1rem;
+   font-size: 0.95rem;
    font-weight: 500;
    display: flex;
    justify-content: space-between;
@@ -20,16 +20,12 @@
    padding: 0.7rem;
 }
 
-.optionsopen {
-   box-shadow: 0px 0px 10px #c5c5c5;
-}
-
 .optionsbutton:hover {
-   box-shadow: 0px 0px 10px #c5c5c5;
+   box-shadow: 0px 0px 5px #c5c5c5;
 }
 
 .optionsmenu {
-   font-size: 0.95rem;
+   font-size: 0.9rem;
    margin-top: 0.5rem;
 }
 

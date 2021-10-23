@@ -38,8 +38,7 @@ export default function SearchHeader(properties) {
 
         <SearchTypeButton
           name="Advanced Search"
-          route="advancedSearch"
-          external={true}
+          route="advanced-search"
           selected={properties.selected}
           icon={faHatWizard}
         />
