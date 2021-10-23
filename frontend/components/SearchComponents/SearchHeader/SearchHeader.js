@@ -31,8 +31,7 @@ export default function SearchHeader(properties) {
 
         <SearchTypeButton
           name="Sequence Search"
-          route="sbsearch"
-          external={true}
+          route="sequence-search"
           selected={properties.selected}
           icon={faDna}
         />
