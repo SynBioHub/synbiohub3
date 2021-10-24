@@ -16,6 +16,8 @@
 
 	<properties>
 		<java.version>11</java.version>
+		<!-- The main class to start by executing java -jar -->
+		<start-class>com.synbiohub.sbh3.Synbiohub3Application</start-class>
 	</properties>
 
 	<dependencies>
@@ -97,6 +99,9 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<mainClass>com.synbiohub.sbh3.Synbiohub3Application</mainClass>
+				</configuration>
 				<executions>
 					<execution>
 						<goals>
@@ -111,30 +116,6 @@
 						<goals>
 							<goal>build-info</goal>
 						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<executions>
-					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-						<configuration>
-							<archive>
-								<manifest>
-									<mainClass>
-                                        com.synbiohub.sbh3.Synbiohub3Application
-									</mainClass>
-								</manifest>
-							</archive>
-							<descriptorRefs>
-								<descriptorRef>jar-with-dependencies</descriptorRef>
-							</descriptorRefs>
-						</configuration>
 					</execution>
 				</executions>
 			</plugin>

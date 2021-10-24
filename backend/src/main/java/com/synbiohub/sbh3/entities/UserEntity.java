@@ -10,27 +10,28 @@ import javax.persistence.*;
 public class UserEntity {
 
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @SequenceGenerator(name="client_generator", sequenceName="client_sequence", allocationSize=1)
+    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="client_generator")
     private Integer id;
 
-    @Column(name = "NAME")
+    @Column(name = "name")
     private String name;
 
-    @Column(name = "USERNAME")
+    @Column(name = "username")
     private String username;
 
-    @Column(name = "PASSWORD")
+    @Column(name = "password")
     private String password;
 
-    @Column(name = "EMAIL")
+    @Column(name = "email")
     private String email;
 
-    @Column(name = "AFFILIATION")
+    @Column(name = "affiliation")
     private String affiliation;
 
-    @Column(name = "ISADMIN")
+    @Column(name = "isAdmin")
     private Boolean isAdmin;
 
-    @Column(name = "ISCURATOR")
+    @Column(name = "isCurator")
     private Boolean isCurator;
 }
