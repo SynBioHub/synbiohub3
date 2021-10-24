@@ -127,7 +127,7 @@
 							<archive>
 								<manifest>
 									<mainClass>
-										Synbiohub3Application
+                                        com.synbiohub.sbh3.Synbiohub3Application
 									</mainClass>
 								</manifest>
 							</archive>
