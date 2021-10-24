@@ -46,7 +46,6 @@ export default function SearchHeader(properties) {
         <SearchTypeButton
           name="SPARQL"
           route="sparql"
-          external={true}
           selected={properties.selected}
           icon={faDatabase}
         />
