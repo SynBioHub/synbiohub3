@@ -17,8 +17,11 @@ public class CustomUserDetailsService implements UserDetailsService {
     private final UserRepository userRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        var userCredentials = userRepository.findByUsername(username).get();
+    /**
+     * NOTE: This is looking up by email, not username.
+     */
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        var userCredentials = userRepository.findByEmail(email).get();
         var userDetails = User.builder()
                 .username(userCredentials.getUsername())
                 .password(userCredentials.getPassword())

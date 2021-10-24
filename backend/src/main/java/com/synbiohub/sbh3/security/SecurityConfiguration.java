@@ -1,16 +1,17 @@
 package com.synbiohub.sbh3.security;
 
 import lombok.AllArgsConstructor;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
-import javax.sql.DataSource;
 
 
 @EnableWebSecurity
@@ -41,8 +42,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
         http
                 .authorizeRequests()
-                    .antMatchers("/admin/*").hasRole("ADMIN")
-                    .antMatchers("/h2-console/*").permitAll()
+                .antMatchers(
+                        HttpMethod.POST,
+                        "/login",
+                        "/logout"
+                ).permitAll()
+                .antMatchers("/admin/*").hasRole("ADMIN")
+                .antMatchers("/h2-console/*").permitAll()
 
                 // Make H2-Console non-secured; for debug purposes
                 .and()
@@ -54,15 +60,19 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                     .headers().frameOptions().sameOrigin()
 
                 .and()
-                    .csrf().disable()
-
-                .formLogin()
-                ;
+                    .csrf().disable();
 
         http.logout(logout -> logout
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/")
+                .invalidateHttpSession(true)
         );
+    }
+
+    @Bean()
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
     }
 
     public PasswordEncoder getPasswordEncoder() {
