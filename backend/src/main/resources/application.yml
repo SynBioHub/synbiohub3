@@ -1,12 +1,21 @@
 spring:
   datasource:
-    driver-class-name: org.sqlite.JDBC
-    initialization-mode: always
-    url: jdbc:sqlite:synbiohub.sqlite
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:./data/sbhdb
+    username: sa
+    password:
+
   jpa:
-    database-platform: com.synbiohub.sbh3.sqlite
+    database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
+  flyway:
+    enabled: true
+  h2:
+    console:
+      enabled: true
+
+
 
 version: "1.0"
 firstLaunch: true
@@ -14,14 +23,11 @@ instanceName: "SynBioHub"
 instanceUrl: "http://synbiohub.org/"
 instanceLogo: ''
 keywords: "synbiohub"
-javaPath: "java"
 theme: "default"
 webOfRegistriesUrl: "https://wor.synbiohub.org"
 port: "7777"
 databasePrefix: "http://synbiohub.org/"
 sessionSecret: "synbiohub_change_me"
-shareLinkSalt: "synbiohub_change_me"
-passwordSalt: "4e1f13f0-eb41-4bbe-850f-b34618015eaa"
 requireCompliant: false
 requireComplete: false
 requireBestPractice: false
@@ -35,8 +41,8 @@ iceMaxRetries: "10"
 iceRetryDelay: "500"
 remotes: {}
 defaultLimit: "10"
-SBOLExplorerEndpoint: "http://localhost:13162"
-useSBOLExplorer: True
+SBOLExplorerEndpoint: "http://localhost:13162/"
+useSBOLExplorer: false
 frontPageText: |
   <a href="/About">SynBioHub</a> is a <i>design repository</i> for people
   designing biological constructs. It enables DNA and protein designs to be uploaded,
@@ -51,10 +57,10 @@ themeParameters:
   default: {}
 
 triplestore:
-  sparqlEndpoint: "http://localhost:8890/sparql"
+  sparqlEndpoint: "http://localhost:8890/sparql/"
   graphStoreEndpoint: "http://localhost:8890/sparql-graph-crud-auth/"
-  defaultGraph: "http://synbiohub.org/public"
-  graphPrefix: "http://synbiohub.org/"
+  defaultGraph: "https://synbiohub.org/public"
+  graphPrefix: "https://synbiohub.org/"
   username: "dba"
   password: "dba"
   virtuosoINI: "/etc/virtuoso-opensource-7/virtuoso.ini"

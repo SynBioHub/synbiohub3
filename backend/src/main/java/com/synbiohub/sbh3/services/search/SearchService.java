@@ -1,13 +1,20 @@
-package com.synbiohub.sbh3.search;
+package com.synbiohub.sbh3.services.search;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.synbiohub.sbh3.controllers.search.SearchController;
+import com.synbiohub.sbh3.entities.UserEntity;
+import com.synbiohub.sbh3.security.CustomUserDetailsService;
 import com.synbiohub.sbh3.sparql.SPARQLQuery;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -28,6 +35,17 @@ public class SearchService {
     @Value("${useSBOLExplorer}")
     private Boolean useSBOLExplorer;
 
+    @Value("${SBOLExplorerEndpoint}")
+    private String sbolExplorerEndpoint;
+
+    @Value("${triplestore.sparqlEndpoint}")
+    private String sparqlEndpoint;
+
+    @Value("${triplestore.defaultGraph}")
+    private String defaultGraph;
+
+    @Value("${triplestore.graphPrefix}")
+    private String graphPrefix;
 
     /**
      * Returns the metadata for the object from the specified search query
@@ -59,6 +77,11 @@ public class SearchService {
 
         String criteriaString = getCriteriaString(allParams);
         sparqlArgs.replace("criteria", criteriaString);
+
+        String userGraph = getPrivateGraph();
+        if (!getPrivateGraph().isEmpty()) {
+            sparqlArgs.replace("from", "FROM <" + userGraph + ">");
+        }
 
         return searchQuery.loadTemplate(sparqlArgs);
     }
@@ -165,7 +188,7 @@ public class SearchService {
         // Initialize arguments to be parsed into SPARQL template
         SPARQLQuery searchQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/search.sparql");
         HashMap<String, String> sparqlArgs = new HashMap<String, String>
-                (Map.of("from", "", "criteria", "", "limit", "", "offset", ""));
+                (Map.of("from", getPrivateGraph(), "criteria", "", "limit", "", "offset", ""));
 
         String URI = databasePrefix + collectionInfo;
 
@@ -187,6 +210,10 @@ public class SearchService {
                     + "> a sbol2:ComponentDefinition . <" + URI + "> sbol2:sequence ?seq2 . ?seq2 sbol2:elements ?elements2 . " +
                     "FILTER(?subject != <" + URI + "> && ?elements = ?elements2) # TWINS");
         }
+        String userGraph = getPrivateGraph();
+        if (!getPrivateGraph().isEmpty()) {
+            sparqlArgs.replace("from", "FROM <" + userGraph + ">");
+        }
 
         return searchQuery.loadTemplate(sparqlArgs);
     }
@@ -194,13 +221,18 @@ public class SearchService {
     public String getTwinsSPARQL(String collectionInfo) {
         SPARQLQuery searchQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/search.sparql");
         HashMap<String, String> sparqlArgs = new HashMap<String, String>
-                (Map.of("from", "", "criteria", "", "limit", "", "offset", ""));
+                (Map.of("from", getPrivateGraph(), "criteria", "", "limit", "", "offset", ""));
 
         String URI = databasePrefix + collectionInfo;
 
         sparqlArgs.replace("criteria", " { ?subject ?p <" + URI + "> } UNION { ?subject ?p ?use . ?use ?useP <" + URI + "> } ." +
                 " FILTER(?useP != <http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel>) " +
                 "# USES");
+
+        String userGraph = getPrivateGraph();
+        if (!getPrivateGraph().isEmpty()) {
+            sparqlArgs.replace("from", "FROM <" + userGraph + ">");
+        }
 
         return searchQuery.loadTemplate(sparqlArgs);
     }
@@ -276,5 +308,32 @@ public class SearchService {
                 value = node.get("count").get("value").asText();
             }
         return value;
+    }
+
+    public String SPARQLQuery(String query) {
+        RestTemplate restTemplate = new RestTemplate();
+        String url = "";
+        // Encoding the SPARQL query to be sent to Explorer/SPARQL
+        HashMap<String, String> params = new HashMap<>();
+        params.put("default-graph-uri", defaultGraph);
+        params.put("query", query);
+
+        if (useSBOLExplorer && query.length() > 0)
+            url = sbolExplorerEndpoint  + "?default-graph-uri={defaultGraph}&query={query}&";
+        else
+            url = sparqlEndpoint + "?default-graph-uri={defaultGraph}&query={query}&format=json&" ;
+
+        return restTemplate.getForObject(url, String.class, defaultGraph, query);
+    }
+
+    /**
+     * Gets the user's private graph.
+     * @return Empty string if user is not logged in, otherwise returns their private graph.
+     */
+    public String getPrivateGraph() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication instanceof AnonymousAuthenticationToken) return "";
+        //var user = authentication.getPrincipal();
+        return graphPrefix + "user/" + authentication.getName();
     }
 }
