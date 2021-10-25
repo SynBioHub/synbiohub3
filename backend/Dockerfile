@@ -5,5 +5,5 @@ COPY src /synbiohub3/src
 RUN mvn -B package --file pom.xml -DskipTests
 FROM openjdk:11-slim
 COPY --from=build /synbiohub3/target/*SNAPSHOT.jar app.jar
-EXPOSE 7777
+EXPOSE 6666 
 ENTRYPOINT ["java","-jar","app.jar"]
