@@ -30,7 +30,7 @@
    border: 1px solid hsl(0, 0%, 80%);
    width: 95%;
    padding: 0 10px;
-   font-size: 0.9rem;
+   font-size: 0.85rem;
 }
 
 .newfilterbutton {
@@ -62,10 +62,12 @@
    border-radius: 0.4rem;
    margin: 0.4rem 0;
    font-size: 0.9rem;
+   min-height: 45px;
 }
 
 .optionselect {
    width: 100%;
+   font-size: 0.8rem;
 }
 
 /**STANDARD SEARCH CSS**/

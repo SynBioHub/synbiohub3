@@ -7,7 +7,13 @@ import { useEffect, useState } from 'react';
 import { DateRangePicker } from 'react-date-range';
 import Select from 'react-select';
 
+import getCollections from '../../../sparql/getCollections';
+import getCreators from '../../../sparql/getCreators';
+import getRoles from '../../../sparql/getRoles';
+import getSBOLTypes from '../../../sparql/getSBOLTypes';
+import getTypes from '../../../sparql/getTypes';
 import styles from '../../../styles/advancedsearch.module.css';
+import SelectLoader from './SelectLoader';
 
 export default function Options(properties) {
   const [additionalFilters, setAdditionalFilters] = useState([]);
@@ -43,33 +49,51 @@ export default function Options(properties) {
         />
       </div>
       <div className={styles.inputsection}>
-        <label>Type</label>
-        <Select
-          options={objectTypes}
-          defaultValue={objectTypes[0]}
-          className={styles.optionselect}
-          styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-          onChange={option => properties.setType(option.value)}
-        />
-      </div>
-      <div className={styles.inputsection}>
-        <label>Role</label>
-        <Select
-          options={objectTypes}
-          defaultValue={objectTypes[0]}
-          className={styles.optionselect}
-          styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-          onChange={option => properties.setRole(option.value)}
+        <label>Object Type</label>
+        <SelectLoader
+          sparql={getTypes}
+          parseResult={result => {
+            return { value: result.object.value, label: result.object.value };
+          }}
         />
       </div>
       <div className={styles.inputsection}>
         <label>Creator</label>
-        <Select
-          options={creators}
-          defaultValue={creators[0]}
-          className={styles.optionselect}
-          styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-          onChange={option => properties.setCreator(option.value)}
+        <SelectLoader
+          sparql={getCreators}
+          parseResult={result => {
+            return { value: result.object.value, label: result.object.value };
+          }}
+        />
+      </div>
+      <div className={styles.inputsection}>
+        <label>Role</label>
+        <SelectLoader
+          sparql={getRoles}
+          parseResult={result => {
+            return { value: result.object.value, label: result.object.value };
+          }}
+        />
+      </div>
+      <div className={styles.inputsection}>
+        <label>SBOL Types</label>
+        <SelectLoader
+          sparql={getSBOLTypes}
+          parseResult={result => {
+            return { value: result.object.value, label: result.object.value };
+          }}
+        />
+      </div>
+      <div className={styles.inputsection}>
+        <label>Collections</label>
+        <SelectLoader
+          sparql={getCollections}
+          isMulti={true}
+          parseResult={result => {
+            return !result.name
+              ? { value: result.displayId.value, label: result.displayId.value }
+              : { value: result.name.value, label: result.name.value };
+          }}
         />
       </div>
       <div className={styles.calendarinputsection}>
@@ -90,15 +114,6 @@ export default function Options(properties) {
           inputRanges={[]}
           ranges={properties.modified}
           moveRangeOnFirstSelection={false}
-        />
-      </div>
-      <div className={styles.inputsection}>
-        <label>Collections</label>
-        <Select
-          isMulti
-          options={creators}
-          className={styles.optionselect}
-          styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
         />
       </div>
       {filterDisplay}
@@ -125,15 +140,6 @@ const addFilter = filters => {
     }
   ];
 };
-
-const objectTypes = [
-  { value: '', label: 'Any' },
-  { value: 'prov:Activity', label: 'prov:Activity' },
-  { value: 'sbol2:Attachment', label: 'sbol2:Attachment' },
-  { value: 'sbol2:Collection', label: 'sbol2:Collection' },
-  { value: 'sbol2:ComponentDefinition', label: 'sbol2:ComponentDefinition' },
-  { value: 'sbol2:Sequence', label: 'sbol2:Sequence' }
-];
 
 const creators = [
   { value: '', label: 'Any' },
