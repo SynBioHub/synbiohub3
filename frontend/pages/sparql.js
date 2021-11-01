@@ -12,7 +12,7 @@ import styles from '../styles/sparql.module.css';
 
 let CodeMirror = null;
 if (typeof window !== 'undefined' && typeof window.navigator !== 'undefined') {
-  CodeMirror = require('react-codemirror2').UnControlled;
+  CodeMirror = require('@leifandersen/react-codemirror2').UnControlled;
   require('codemirror/mode/sparql/sparql');
 }
 
