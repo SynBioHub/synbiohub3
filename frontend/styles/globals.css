@@ -25,3 +25,9 @@ code {
   border-radius: 4px;
   font-family: Menlo,Monaco,Consolas,"Courier New",monospace;
 }
+
+.CodeMirror {
+  width: 100vw;
+  padding: 0 1rem;
+  font-size: 0.85rem;
+}

@@ -1,0 +1,75 @@
+.container {
+   background: white;
+   width: 100%;
+}
+
+/**STANDARD SEARCH CSS**/
+.standardcontainer {
+   width: 100%;
+   display: flex;
+   flex-direction: column; 
+   max-height: calc(100vh - 8rem);
+   overflow: scroll;
+}
+
+.graphselect {
+   display: flex;
+   flex: row;
+   align-items: center;
+   font-size: 0.95rem;
+}
+
+.graphselect label {
+   margin-right: 0.5rem;
+   font-weight: 500;
+}
+
+.optionselect {
+   width: 150px;
+}
+
+.controls {
+   display: flex;
+   flex-direction: row;
+   justify-content: space-between;
+   margin: 0.5rem;
+   align-items: center;
+   margin-bottom: 1rem;
+}
+
+.submitquery {
+   background-color: #D25627;
+   padding: 0.7rem;
+   border-radius: 0.4rem;
+   font-weight: 500;
+   justify-content: center;
+   align-items: center;
+   display: flex;
+   color: #fff;
+   cursor: pointer;
+}
+
+.submitquery:hover .dnaicon {
+   animation: shake 1s infinite;
+}
+
+.submitquery:hover {
+   background-color: #00A1E4;
+}
+
+@keyframes shake {
+   0% { transform: rotate(0deg); }
+   10% { transform: rotate(0deg); }
+   45% { transform: rotate(25deg); }
+   75% { transform: rotate(-25deg); }
+  100% { transform: rotate(0deg); }
+ }
+
+.dnaicon {
+   margin-right: 1rem;
+   transition: transform .3s;
+}
+
+.tablecontainer {
+   margin: 0 1rem;
+}

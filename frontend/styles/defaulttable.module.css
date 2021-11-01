@@ -172,6 +172,15 @@
    flex-direction: column;
  }
 
+ .loaderanimationmini {
+   width: 100%;
+   align-items: center;
+   justify-content: center;
+   
+   display: flex;
+   flex-direction: column;
+ }
+
  .tablebutton {
    padding: 0.5rem 0.75rem;
    font-size: 0.9rem;

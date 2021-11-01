@@ -141,8 +141,9 @@ function filterData(data, searchable, filter) {
       if (
         result[key] &&
         result[key].toString().toLowerCase().includes(filter.toLowerCase())
-      )
+      ) {
         passesFilter = true;
+      }
     }
     return passesFilter;
   });

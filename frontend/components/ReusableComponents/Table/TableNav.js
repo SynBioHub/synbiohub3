@@ -41,7 +41,7 @@ export default function TableNav(properties) {
     if (properties.offset === 0) setCurrentPage(1);
     else {
       setCurrentPage(
-        Math.ceil(properties.filteredData.length / properties.offset)
+        Math.ceil(properties.offset / properties.numberEntries) + 1
       );
     }
   }, [properties.offset, properties.filteredData, numberPages]);

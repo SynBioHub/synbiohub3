@@ -1,0 +1,118 @@
+.container {
+   background: white;
+   width: 100%;
+}
+
+.container label {
+   width: 100%;
+   font-weight: 500;
+  
+}
+
+.calendarinputsection {
+   display: flex;
+   flex-direction: column;
+   padding: 0.4rem 0.5rem;
+   box-shadow: 0px 0px 5px #c5c5c5;
+   font-size: 0.9rem;
+   border-radius: 0.4rem;
+   margin: 0.8rem 0;
+}
+
+.calendarinputsection label {
+   margin: 0.5rem 0;
+}
+
+.filterinput {
+   min-height: 34px;
+   margin: 0;
+   border-radius: 4px;
+   border: 1px solid hsl(0, 0%, 80%);
+   width: 95%;
+   padding: 0 10px;
+   font-size: 0.85rem;
+}
+
+.newfilterbutton {
+   width: 100%;
+   display: flex;
+   justify-content: center;
+   padding: 0.7rem;
+   box-shadow: 0px 0px 5px #5350255d;
+   border-radius: 0.4rem;
+   background-color: #F2E86D;
+   cursor: pointer;
+   margin: 0.6rem 0;
+}
+
+.newfilterbutton:hover {
+   box-shadow: 0px 0px 10px #5350255d;
+}
+
+.addfiltericon {
+   margin-right: 0.5rem;
+}
+
+.inputsection {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   padding: 0.4rem 0.5rem;
+   box-shadow: 0px 0px 5px #c5c5c5;
+   border-radius: 0.4rem;
+   margin: 0.4rem 0;
+   font-size: 0.9rem;
+   min-height: 45px;
+}
+
+.optionselect {
+   width: 100%;
+   font-size: 0.8rem;
+}
+
+/**STANDARD SEARCH CSS**/
+.standardcontainer {
+   width: 100%;
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   max-height: calc(100vh - 8rem);
+   overflow: scroll;
+}
+
+.body {
+   width: 35rem;
+}
+
+.searchbutton {
+   background-color: #D25627;
+   padding: 1rem;
+   border-radius: 0.4rem;
+   font-weight: 500;
+   justify-content: center;
+   align-items: center;
+   display: flex;
+   color: #fff;
+   cursor: pointer;
+   margin: 1rem 0;
+}
+
+.searchbutton:hover {
+   background-color: #00A1E4;
+}
+
+.searchbutton:hover .dnaicon {
+   animation: shake 1s infinite;
+}
+
+@keyframes shake {
+   0% { transform: rotate(0deg); }
+   10% { transform: rotate(0deg); }
+   45% { transform: rotate(25deg); }
+   75% { transform: rotate(-25deg); }
+  100% { transform: rotate(0deg); }
+ }
+
+.dnaicon {
+   margin-right: 1rem;
+}

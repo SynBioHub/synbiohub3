@@ -16,11 +16,11 @@ export default function SequenceSearch() {
   const [files, setFiles] = useState([]);
   const [searchMethod, setSearchMethod] = useState('globalsequence');
   const [pairwiseIdentity, setPairwiseIdentity] = useState(2);
-  const [numberResults, setNumberResults] = useState(50);
-  const [minSeqLength, setMinSeqLength] = useState(20);
-  const [maxSeqLength, setMaxSeqLength] = useState(5000);
-  const [maxRejects, setMaxRejects] = useState(100);
-  const [percentMatch, setPercentMatch] = useState(80);
+  const [numberResults, setNumberResults] = useState();
+  const [minSeqLength, setMinSeqLength] = useState();
+  const [maxSeqLength, setMaxSeqLength] = useState();
+  const [maxRejects, setMaxRejects] = useState();
+  const [percentMatch, setPercentMatch] = useState();
 
   const router = useRouter();
 
@@ -28,11 +28,23 @@ export default function SequenceSearch() {
     let search = `${searchMethod}=${sequence}`;
     if (files.length > 0) search = `file_search=${files[0].path}`;
 
-    router.push(
-      `/search/${search}&maxaccepts=${numberResults}&minseqlength=${minSeqLength}&maxseqlength=${maxSeqLength}&maxrejects=${maxRejects}&id=${
-        percentMatch / 100
-      }&idddef=${pairwiseIdentity}&`
-    );
+    const url = `/search/${search}&${getUrl(
+      numberResults,
+      'maxaccepts'
+    )}${getUrl(minSeqLength, 'minseqlength')}${getUrl(
+      maxSeqLength,
+      'maxseqlength'
+    )}${getUrl(maxRejects, 'maxrejects')}${getUrl(
+      percentMatch / 100,
+      'id'
+    )}${getUrl(pairwiseIdentity, 'idddef', true)}`;
+    router.push(url);
+  };
+
+  const getUrl = (value, term, isIddef = false) => {
+    if (value && (!isIddef || value !== 2))
+      return `${term}=${encodeURIComponent(value)}&`;
+    return '';
   };
 
   return (
