@@ -39,6 +39,7 @@ export default function Options(properties) {
             <label>Number of Results</label>
             <input
               type="text"
+              placeholder="50"
               className={styles.filterinput}
               value={properties.numResults}
               onChange={event => properties.setNumResults(event.target.value)}
@@ -48,6 +49,7 @@ export default function Options(properties) {
             <label>Minimum Sequence Length</label>
             <input
               type="text"
+              placeholder="20"
               className={styles.filterinput}
               value={properties.minSeqLength}
               onChange={event => properties.setMinSeqLength(event.target.value)}
@@ -57,6 +59,7 @@ export default function Options(properties) {
             <label>Maximum Sequence Length</label>
             <input
               type="text"
+              placeholder="5000"
               className={styles.filterinput}
               value={properties.maxSeqLength}
               onChange={event => properties.setMaxSeqLength(event.target.value)}
@@ -66,6 +69,7 @@ export default function Options(properties) {
             <label># of Failed Hits Before Stopping</label>
             <input
               type="text"
+              placeholder="100"
               className={styles.filterinput}
               value={properties.maxRejects}
               onChange={event => properties.setMaxRejects(event.target.value)}
@@ -75,6 +79,7 @@ export default function Options(properties) {
             <label>Percent Match (0-100)</label>
             <input
               type="text"
+              placeholder="80"
               className={styles.filterinput}
               value={properties.percentMatch}
               onChange={event => properties.setPercentMatch(event.target.value)}
