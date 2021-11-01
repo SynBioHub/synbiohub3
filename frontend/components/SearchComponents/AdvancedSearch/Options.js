@@ -55,6 +55,7 @@ export default function Options(properties) {
           parseResult={result => {
             return { value: result.object.value, label: result.object.value };
           }}
+          onChange={option => properties.setObjectType(option.value)}
         />
       </div>
       <div className={styles.inputsection}>
@@ -64,6 +65,7 @@ export default function Options(properties) {
           parseResult={result => {
             return { value: result.object.value, label: result.object.value };
           }}
+          onChange={option => properties.setCreator(option.value)}
         />
       </div>
       <div className={styles.inputsection}>
@@ -73,6 +75,7 @@ export default function Options(properties) {
           parseResult={result => {
             return { value: result.object.value, label: result.object.value };
           }}
+          onChange={option => properties.setRole(option.value)}
         />
       </div>
       <div className={styles.inputsection}>
@@ -82,6 +85,7 @@ export default function Options(properties) {
           parseResult={result => {
             return { value: result.object.value, label: result.object.value };
           }}
+          onChange={option => properties.setSbolType(option.value)}
         />
       </div>
       <div className={styles.inputsection}>
@@ -91,9 +95,10 @@ export default function Options(properties) {
           isMulti={true}
           parseResult={result => {
             return !result.name
-              ? { value: result.displayId.value, label: result.displayId.value }
-              : { value: result.name.value, label: result.name.value };
+              ? { value: result.subject.value, label: result.displayId.value }
+              : { value: result.subject.value, label: result.name.value };
           }}
+          onChange={collections => properties.setCollections(collections)}
         />
       </div>
       <div className={styles.calendarinputsection}>

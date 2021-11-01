@@ -26,7 +26,7 @@ export default function StandardSearch() {
 
   // get search count
   const { newCount, isCountLoading, isCountError } = useSearchCount(
-    query,
+    encodeURIComponent(query),
     token
   );
 
@@ -54,7 +54,7 @@ export default function StandardSearch() {
 
   // get search results
   const { results, isLoading, isError } = useSearchResults(
-    query,
+    encodeURIComponent(query),
     offset,
     limit,
     token
