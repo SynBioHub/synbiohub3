@@ -26,17 +26,19 @@ export default function TableHeader(properties) {
             onChange={event => properties.setFilter(event.target.value)}
           />
         </div>
-        <div className={styles.sortbycontainer}>
-          <span className={styles.tableheadernavlabel}>SORT BY</span>
-          <Select
-            options={properties.sortOptions}
-            className={styles.tableheadernavflex}
-            onChange={option => properties.setSortOption(option)}
-            menuPortalTarget={document.body}
-            styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-            defaultValue={properties.defaultSortOption}
-          />
-        </div>
+        {properties.sortOptions && (
+          <div className={styles.sortbycontainer}>
+            <span className={styles.tableheadernavlabel}>SORT BY</span>
+            <Select
+              options={properties.sortOptions}
+              className={styles.tableheadernavflex}
+              onChange={option => properties.setSortOption(option)}
+              menuPortalTarget={document.body}
+              styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+              defaultValue={properties.defaultSortOption}
+            />
+          </div>
+        )}
       </div>
     </div>
   );

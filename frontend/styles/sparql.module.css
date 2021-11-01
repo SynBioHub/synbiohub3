@@ -34,7 +34,7 @@
    justify-content: space-between;
    margin: 0.5rem;
    align-items: center;
-   margin-bottom: 100px;
+   margin-bottom: 1rem;
 }
 
 .submitquery {
@@ -68,4 +68,8 @@
 .dnaicon {
    margin-right: 1rem;
    transition: transform .3s;
+}
+
+.tablecontainer {
+   margin: 0 1rem;
 }

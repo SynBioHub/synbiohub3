@@ -79,7 +79,7 @@ export default function Options(properties) {
         />
       </div>
       <div className={styles.inputsection}>
-        <label>SBOL Types</label>
+        <label>SBOL Type</label>
         <SelectLoader
           sparql={getSBOLTypes}
           parseResult={result => {

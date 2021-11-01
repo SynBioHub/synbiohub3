@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
 import Select from 'react-select';
 
+import Table from '../components/ReusableComponents/Table/Table';
 import SearchHeader from '../components/SearchComponents/SearchHeader/SearchHeader';
 import TopLevel from '../components/TopLevel';
 import styles from '../styles/sparql.module.css';
@@ -19,6 +20,10 @@ if (typeof window !== 'undefined' && typeof window.navigator !== 'undefined') {
 
 export default function SPARQL() {
   const [query, setQuery] = useState(startQuery);
+
+  const [results, setResults] = useState();
+  const [headers, setHeaders] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   return (
     <TopLevel doNotTrack={true} hideFooter={true} publicPage={true}>
@@ -49,7 +54,13 @@ export default function SPARQL() {
                 styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
               />
             </div>
-            <div className={styles.submitquery} role="button">
+            <div
+              className={styles.submitquery}
+              role="button"
+              onClick={() =>
+                submitQuery(query, setLoading, setResults, setHeaders)
+              }
+            >
               <FontAwesomeIcon
                 icon={faDatabase}
                 size="1x"
@@ -60,14 +71,38 @@ export default function SPARQL() {
             </div>
           </div>
         </div>
+        {results && (
+          <div className={styles.tablecontainer}>
+            <Table
+              data={results}
+              loading={loading}
+              title="Results"
+              searchable={headers}
+              headers={headers}
+              dataRowDisplay={result => createRowDisplay(headers, result)}
+              hideFooter={false}
+            />
+          </div>
+        )}
       </div>
     </TopLevel>
   );
 }
 
-/*
-const submitQuery = async (query) => {
-  const url = `${process.env.backendUrl}/sparql?query=${encodeURIComponent(query)}`;
+const createRowDisplay = (headers, result) => {
+  let count = 0;
+  const resultData = headers.map(header => {
+    count++;
+    return <td key={count}>{result[header]}</td>;
+  });
+  return <tr>{resultData}</tr>;
+};
+
+const submitQuery = async (query, setLoading, setResults, setHeaders) => {
+  setLoading(true);
+  const url = `${process.env.backendUrl}/sparql?query=${encodeURIComponent(
+    query
+  )}`;
   const headers = {
     'Content-Type': 'application/json',
     Accept: 'application/json'
@@ -80,9 +115,24 @@ const submitQuery = async (query) => {
 
   if (response.status === 200) {
     const results = await response.json();
+    setResults(processResults(results));
+    setHeaders(results.head.vars);
   }
-}
-*/
+
+  setLoading(false);
+};
+
+const processResults = results => {
+  const headers = results.head.vars;
+  return results.results.bindings.map(result => {
+    const resultObject = {};
+    for (const header of headers) {
+      if (result[header]) resultObject[header] = result[header].value;
+      else resultObject[header] = '';
+    }
+    return resultObject;
+  });
+};
 
 const graphs = [
   { value: 'Public', label: 'Public' },
