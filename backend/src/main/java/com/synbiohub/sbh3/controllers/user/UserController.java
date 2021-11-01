@@ -1,8 +1,10 @@
 package com.synbiohub.sbh3.controllers.user;
 
 import com.synbiohub.sbh3.dto.user.UserRegistrationDTO;
+import com.synbiohub.sbh3.entities.UserEntity;
 import com.synbiohub.sbh3.security.CustomUserService;
 import com.synbiohub.sbh3.dto.user.LoginDTO;
+import com.synbiohub.sbh3.services.user.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -12,6 +14,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,6 +30,7 @@ public class UserController {
 
     private final CustomUserService customUserService;
     private final AuthenticationManager authenticationManager;
+    private final UserService userService;
 
     @PostMapping(value = "/register")
     public void registerNewUser(@Valid @RequestBody UserRegistrationDTO userRegistrationDTO) {
@@ -52,6 +56,14 @@ public class UserController {
         securityContext.setAuthentication(auth);
         request.getSession().setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, securityContext);
         return new ResponseEntity(auth, HttpStatus.OK);
+    }
+
+    @GetMapping("/profile")
+    public ResponseEntity<UserEntity> getProfile() {
+        var user = userService.getUserProfile();
+        if (user == null)
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        return ResponseEntity.ok(user);
     }
 
 }
