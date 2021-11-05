@@ -1,7 +1,6 @@
-import 'codemirror/lib/codemirror.css';
-
 import { faDatabase } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import dynamic from 'next/dynamic';
 import { useState } from 'react';
 import Select from 'react-select';
 
@@ -10,11 +9,14 @@ import SearchHeader from '../components/SearchComponents/SearchHeader/SearchHead
 import TopLevel from '../components/TopLevel';
 import styles from '../styles/sparql.module.css';
 
-let CodeMirror = null;
-if (typeof window !== 'undefined' && typeof window.navigator !== 'undefined') {
-  CodeMirror = require('@leifandersen/react-codemirror2').UnControlled;
-  require('codemirror/mode/sparql/sparql');
-}
+const CodeMirror = dynamic(
+  () => {
+    import('codemirror/mode/sparql/sparql');
+    import('codemirror/lib/codemirror.css');
+    return import('../components/SearchComponents/Sparql/CodeMirror');
+  },
+  { ssr: false }
+);
 
 /* eslint unicorn/prefer-module: "off" */
 
@@ -30,19 +32,7 @@ export default function SPARQL() {
       <div className={styles.container}>
         <SearchHeader selected="SPARQL" />
         <div className={styles.standardcontainer}>
-          {CodeMirror && (
-            <CodeMirror
-              value={query}
-              options={{
-                mode: 'sparql',
-                lineNumbers: true
-              }}
-              width="10px"
-              onChange={(editor, data, value) => {
-                setQuery(value);
-              }}
-            />
-          )}
+          <CodeMirror query={query} setQuery={setQuery} />
           <div className={styles.controls}>
             <div className={styles.graphselect}>
               <label>Graph</label>
