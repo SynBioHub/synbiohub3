@@ -1,4 +1,4 @@
-import { UnControlled as CodeMirror } from 'react-codemirror2';
+import { UnControlled as CodeMirror } from '@leifandersen/react-codemirror2';
 
 const CodeFormat = ({ query, setQuery }) => {
   return (
