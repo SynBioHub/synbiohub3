@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import { DateRangePicker } from 'react-date-range';
 import Select from 'react-select';
 
+import namespace from '../../../namespace/namespace';
 import getCollections from '../../../sparql/getCollections';
 import getCreators from '../../../sparql/getCreators';
 import getRoles from '../../../sparql/getRoles';
@@ -14,6 +15,8 @@ import getSBOLTypes from '../../../sparql/getSBOLTypes';
 import getTypes from '../../../sparql/getTypes';
 import styles from '../../../styles/advancedsearch.module.css';
 import SelectLoader from './SelectLoader';
+
+/* eslint sonarjs/no-identical-functions: "off" */
 
 export default function Options(properties) {
   const [additionalFilters, setAdditionalFilters] = useState([]);
@@ -53,7 +56,10 @@ export default function Options(properties) {
         <SelectLoader
           sparql={getTypes}
           parseResult={result => {
-            return { value: result.object.value, label: result.object.value };
+            return {
+              value: result.object.value,
+              label: namespace.shortName(result.object.value)
+            };
           }}
           onChange={option => properties.setObjectType(option.value)}
         />
@@ -73,7 +79,10 @@ export default function Options(properties) {
         <SelectLoader
           sparql={getRoles}
           parseResult={result => {
-            return { value: result.object.value, label: result.object.value };
+            return {
+              value: result.object.value,
+              label: namespace.shortName(result.object.value)
+            };
           }}
           onChange={option => properties.setRole(option.value)}
         />
@@ -83,7 +92,10 @@ export default function Options(properties) {
         <SelectLoader
           sparql={getSBOLTypes}
           parseResult={result => {
-            return { value: result.object.value, label: result.object.value };
+            return {
+              value: result.object.value,
+              label: namespace.shortName(result.object.value)
+            };
           }}
           onChange={option => properties.setSbolType(option.value)}
         />
