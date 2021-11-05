@@ -54,6 +54,7 @@
     "next": "10.0.1",
     "qs": "^6.10.1",
     "react": "17.0.1",
+    "react-codemirror2": "^7.2.1",
     "react-date-range": "^1.4.0",
     "react-dom": "17.0.1",
     "react-dropzone": "^11.3.2",
