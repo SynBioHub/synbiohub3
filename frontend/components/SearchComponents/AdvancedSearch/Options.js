@@ -5,11 +5,11 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
 import { DateRangePicker } from 'react-date-range';
-import Select from 'react-select';
 
 import namespace from '../../../namespace/namespace';
 import getCollections from '../../../sparql/getCollections';
 import getCreators from '../../../sparql/getCreators';
+import getPredicates from '../../../sparql/getPredicates';
 import getRoles from '../../../sparql/getRoles';
 import getSBOLTypes from '../../../sparql/getSBOLTypes';
 import getTypes from '../../../sparql/getTypes';
@@ -27,11 +27,14 @@ export default function Options(properties) {
       additionalFilters.map((element, index) => {
         return (
           <div className={styles.inputsection} key={index}>
-            <Select
-              options={creators}
-              className={styles.optionselect}
-              placeholder="Filter Type"
-              styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+            <SelectLoader
+              sparql={getPredicates}
+              parseResult={result => {
+                return {
+                  value: result.predicate.value,
+                  label: namespace.shortName(result.predicate.value)
+                };
+              }}
             />
           </div>
         );
@@ -157,9 +160,3 @@ const addFilter = filters => {
     }
   ];
 };
-
-const creators = [
-  { value: '', label: 'Any' },
-  { value: 'test', label: 'Test' },
-  { value: 'test2', label: 'Test2' }
-];
