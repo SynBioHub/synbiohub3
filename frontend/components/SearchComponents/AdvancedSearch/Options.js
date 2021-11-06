@@ -21,6 +21,11 @@ import SelectLoader from './SelectLoader';
 export default function Options(properties) {
   const [additionalFilters, setAdditionalFilters] = useState([]);
   const [filterDisplay, setFilterDisplay] = useState([]);
+  const [predicates, setPredicates] = useState('loading');
+
+  useEffect(() => {
+    loadPredicates(setPredicates);
+  }, []);
 
   useEffect(() => {
     setFilterDisplay(
@@ -28,7 +33,7 @@ export default function Options(properties) {
         return (
           <div className={styles.inputsection} key={index}>
             <SelectLoader
-              sparql={getPredicates}
+              result={predicates}
               parseResult={result => {
                 return {
                   value: result.predicate.value,
@@ -159,4 +164,26 @@ const addFilter = filters => {
       value: ''
     }
   ];
+};
+
+const loadPredicates = async setPredicates => {
+  const results = await fetchPredicates();
+  setPredicates(results);
+};
+
+const fetchPredicates = async () => {
+  const url = `${process.env.backendUrl}/sparql?query=${encodeURIComponent(
+    getPredicates
+  )}`;
+  const headers = {
+    'Content-Type': 'application/json',
+    Accept: 'application/json'
+  };
+
+  const response = await fetch(url, {
+    method: 'GET',
+    headers
+  });
+
+  return response.status === 200 ? await response.json() : 'error';
 };

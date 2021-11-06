@@ -11,15 +11,26 @@ export default function SelectLoader(properties) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [data, setData] = useState([]);
+
   useEffect(() => {
-    fetchOptions(
-      properties.parseResult,
-      setLoading,
-      setData,
-      properties.sparql,
-      setError
-    );
-  }, []);
+    if (!properties.result) {
+      fetchOptions(
+        properties.parseResult,
+        setLoading,
+        setData,
+        properties.sparql,
+        setError
+      );
+    } else {
+      processResults(
+        properties.result,
+        setLoading,
+        setData,
+        setError,
+        properties.parseResult
+      );
+    }
+  }, [properties.result]);
 
   if (error) {
     return <div>Error Occured</div>;
@@ -75,4 +86,17 @@ const submitQuery = async query => {
   });
 
   return response.status === 200 ? await response.json() : 'error';
+};
+
+const processResults = (result, setLoading, setData, setError, parseResult) => {
+  if (result === 'error') setError(true);
+  else if (result === 'loading') setLoading(true);
+  else {
+    const newData = [];
+    for (const result of result.results.bindings) {
+      newData.push(parseResult(result));
+    }
+    setData(newData);
+    setLoading(false);
+  }
 };
