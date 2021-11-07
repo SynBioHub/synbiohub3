@@ -66,6 +66,15 @@
    text-decoration: underline;
 }
 
+.errormessage {
+   background-color: #edc5b6;
+   color: #D25627;
+   font-weight: 500;
+   padding: 0.7rem;
+   margin: 0.5rem;
+   border-radius: 0.4rem;
+}
+
 @keyframes shake {
    0% { transform: rotate(0deg); }
    10% { transform: rotate(0deg); }
