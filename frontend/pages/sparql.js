@@ -26,6 +26,7 @@ export default function SPARQL() {
   const [results, setResults] = useState();
   const [headers, setHeaders] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState();
 
   return (
     <TopLevel doNotTrack={true} hideFooter={true} publicPage={true}>
@@ -41,6 +42,11 @@ export default function SPARQL() {
                 defaultValue={graphs[0]}
                 className={styles.optionselect}
                 placeholder="Graph"
+                id="graph-value-select"
+                instanceId="graph-value-select"
+                menuPortalTarget={
+                  typeof window !== 'undefined' ? document.body : undefined
+                }
                 styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
               />
             </div>
@@ -48,7 +54,7 @@ export default function SPARQL() {
               className={styles.submitquery}
               role="button"
               onClick={() =>
-                submitQuery(query, setLoading, setResults, setHeaders)
+                submitQuery(query, setLoading, setResults, setHeaders, setError)
               }
             >
               <FontAwesomeIcon
@@ -61,6 +67,7 @@ export default function SPARQL() {
             </div>
           </div>
         </div>
+        {error && <div className={styles.errormessage}>{error}</div>}
         {results && (
           <div className={styles.tablecontainer}>
             <Table
@@ -71,6 +78,7 @@ export default function SPARQL() {
               headers={headers}
               dataRowDisplay={result => createRowDisplay(headers, result)}
               hideFooter={false}
+              scrollX={true}
             />
           </div>
         )}
@@ -80,19 +88,33 @@ export default function SPARQL() {
 }
 
 const createRowDisplay = (headers, result) => {
-  let count = 0;
-  const resultData = headers.map(header => {
-    count++;
-    return <td key={count}>{result[header]}</td>;
+  const resultData = headers.map((header, index) => {
+    if (result[header].type === 'uri')
+      return (
+        <td key={index}>
+          <a href={result[header].value} className={styles.link}>
+            {result[header].value}
+          </a>
+        </td>
+      );
+    return <td key={index}>{result[header].value}</td>;
   });
   return <tr>{resultData}</tr>;
 };
 
-const submitQuery = async (query, setLoading, setResults, setHeaders) => {
+const submitQuery = async (
+  query,
+  setLoading,
+  setResults,
+  setHeaders,
+  setError
+) => {
+  setError();
   setLoading(true);
   const url = `${process.env.backendUrl}/sparql?query=${encodeURIComponent(
     query
   )}`;
+
   const headers = {
     'Content-Type': 'application/json',
     Accept: 'application/json'
@@ -104,9 +126,14 @@ const submitQuery = async (query, setLoading, setResults, setHeaders) => {
   });
 
   if (response.status === 200) {
+    setError();
     const results = await response.json();
     setResults(processResults(results));
     setHeaders(results.head.vars);
+  } else {
+    const message = await response.text();
+    setError(message);
+    setResults();
   }
 
   setLoading(false);
@@ -117,7 +144,7 @@ const processResults = results => {
   return results.results.bindings.map(result => {
     const resultObject = {};
     for (const header of headers) {
-      if (result[header]) resultObject[header] = result[header].value;
+      if (result[header]) resultObject[header] = result[header];
       else resultObject[header] = '';
     }
     return resultObject;

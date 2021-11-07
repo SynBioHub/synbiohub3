@@ -13,6 +13,7 @@
    height: 2.5rem;
    position: sticky;
    background-color: #fff;
+   margin: 0.1rem;
 }
 
 .tableheadertitle {
@@ -131,6 +132,7 @@
    border-top: 1px solid #ddd;
    line-height: 1.42857143;
    vertical-align: baseline;
+   font-size: 0.85rem;
 }
 
 .table thead {
@@ -147,7 +149,11 @@
 
 
 .container {
-   max-width: 100%;
+   max-width: 100vw;
+}
+
+.scrollX {
+   overflow-x: scroll;
 }
 
 .error {

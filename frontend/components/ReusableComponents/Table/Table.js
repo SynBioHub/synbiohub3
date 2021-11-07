@@ -66,7 +66,11 @@ export default function Table(properties) {
   if (properties.loading) return <Loading />;
   else if (properties.data) {
     return (
-      <div className={styles.container}>
+      <div
+        className={`${styles.container} ${
+          properties.scrollX ? styles.scrollX : ''
+        }`}
+      >
         <TableHeader
           title={properties.title}
           hideCount={properties.hideCount}

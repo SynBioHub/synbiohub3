@@ -63,7 +63,7 @@ export default function StandardSearch() {
   if (isError) {
     return (
       <div className={standarderror}>
-        Errors were encountered while fetching the data count
+        Errors were encountered while fetching the data
       </div>
     );
   }

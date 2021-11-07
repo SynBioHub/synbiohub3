@@ -135,7 +135,8 @@ export const fetchUserInfo = () => async (dispatch, getState) => {
         name: message.name,
         email: message.email,
         affiliation: message.affiliation,
-        isAdmin: message.isAdmin
+        isAdmin: message.isAdmin,
+        graphUri: message.graphUri
       }
     });
   } else {
