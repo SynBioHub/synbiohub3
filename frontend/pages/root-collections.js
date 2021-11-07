@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import NavbarSearch from '../components/SearchComponents/NavbarSearch/NavbarSearch';
 import SearchHeader from '../components/SearchComponents/SearchHeader/SearchHeader';
@@ -11,6 +11,17 @@ import styles from '../styles/standardsearch.module.css';
  */
 export default function RootCollections({ data }) {
   const [query, setQuery] = useState('');
+  const [filteredData, setFilteredData] = useState(data);
+
+  useEffect(() => {
+    const newFilteredData = data.filter(result => {
+      for (const key of Object.keys(result))
+        if (result[key].toString().toLowerCase().includes(query.toLowerCase()))
+          return true;
+      return false;
+    });
+    setFilteredData(newFilteredData);
+  }, [data, query]);
 
   return (
     <TopLevel
@@ -31,8 +42,8 @@ export default function RootCollections({ data }) {
         <SearchHeader selected="Root Collections" data={data} />
         <div className={styles.standardcontainer}>
           <ResultTable
-            count={data.length}
-            data={data}
+            count={filteredData.length}
+            data={filteredData}
             overrideType="Collection"
           />
         </div>
