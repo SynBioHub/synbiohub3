@@ -3,8 +3,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 
-import Options from '../components/SearchComponents/AdvancedSearch/Options';
-import SearchHeader from '../components/SearchComponents/SearchHeader/SearchHeader';
+import Options from '../components/Search/AdvancedSearch/Options';
+import SearchHeader from '../components/Search/SearchHeader/SearchHeader';
 import TopLevel from '../components/TopLevel';
 import styles from '../styles/advancedsearch.module.css';
 

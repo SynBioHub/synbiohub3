@@ -6,7 +6,7 @@ import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import InputField from '../components/LoginComponents/InputField';
+import InputField from '../components/Login/InputField';
 import TopLevel from '../components/TopLevel';
 import { login } from '../redux/actions';
 import styles from '../styles/login.module.css';

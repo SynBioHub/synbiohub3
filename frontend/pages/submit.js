@@ -4,12 +4,12 @@ import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 
-import ChooseCollection from '../components/SubmitComponents/ChooseCollection/ChooseCollection';
-import UploadFileSection from '../components/SubmitComponents/FileComponents/UploadFileSection';
-import OverwriteObjects from '../components/SubmitComponents/OverwriteObjects';
-import SubmitHeader from '../components/SubmitComponents/ReusableComponents/SubmitHeader';
-import SubmissionStatusPanel from '../components/SubmitComponents/SubmissionStatusPanel';
-import SubmitButton from '../components/SubmitComponents/SubmitButton';
+import ChooseCollection from '../components/Submit/ChooseCollection/ChooseCollection';
+import UploadFileSection from '../components/Submit/FileComponents/UploadFileSection';
+import OverwriteObjects from '../components/Submit/OverwriteObjects';
+import SubmitHeader from '../components/Submit/ReusableComponents/SubmitHeader';
+import SubmissionStatusPanel from '../components/Submit/SubmissionStatusPanel';
+import SubmitButton from '../components/Submit/SubmitButton';
 import TopLevel from '../components/TopLevel';
 import { getCanSubmitTo } from '../redux/actions';
 import styles from '../styles/submit.module.css';

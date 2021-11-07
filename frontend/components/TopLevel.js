@@ -7,7 +7,7 @@ import { markPageVisited, restoreLogin } from '../redux/actions';
 import styles from '../styles/layout.module.css';
 import Footer from './Footer';
 import Navbar from './Navbar';
-import DownloadStatus from './ReusableComponents/Download/DownloadStatus';
+import DownloadStatus from './Reusable/Download/DownloadStatus';
 
 /* eslint sonarjs/cognitive-complexity: "off" */
 

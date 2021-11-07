@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 
 import { makePublicCollection } from '../../redux/actions';
 import styles from '../../styles/submit.module.css';
-import InputField from '../SubmitComponents/ReusableComponents/InputField';
+import InputField from '../Submit/ReusableComponents/InputField';
 import PublishCollectionButton from './PublishCollectionButton';
 
 export default function NewCollectionForm(properties) {

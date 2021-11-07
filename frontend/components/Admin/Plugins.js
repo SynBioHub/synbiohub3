@@ -11,7 +11,7 @@ import { useSelector } from 'react-redux';
 import useSWR, { mutate } from 'swr';
 
 import styles from '../../styles/admin.module.css';
-import Table from '../ReusableComponents/Table/Table';
+import Table from '../Reusable/Table/Table';
 import ActionButton from './Reusable/ActionButton';
 import TableInput from './Reusable/TableInput';
 

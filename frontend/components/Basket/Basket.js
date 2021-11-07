@@ -13,8 +13,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { clearBasket, restoreBasket } from '../../redux/actions';
 import { downloadFiles } from '../../redux/actions';
 import styles from '../../styles/basket.module.css';
-import Table from '../ReusableComponents/Table/Table';
-import TableButton from '../ReusableComponents/TableButton';
+import Table from '../Reusable/Table/Table';
+import TableButton from '../Reusable/TableButton';
 import BasketItem from './BasketItem';
 import CreateCollection from './CreateCollection';
 

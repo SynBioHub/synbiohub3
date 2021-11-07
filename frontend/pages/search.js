@@ -1,8 +1,8 @@
 import { useDispatch, useSelector } from 'react-redux';
 
-import NavbarSearch from '../components/SearchComponents/NavbarSearch/NavbarSearch';
-import SearchHeader from '../components/SearchComponents/SearchHeader/SearchHeader';
-import StandardSearch from '../components/SearchComponents/StandardSearch/StandardSearch';
+import NavbarSearch from '../components/Search/NavbarSearch/NavbarSearch';
+import SearchHeader from '../components/Search/SearchHeader/SearchHeader';
+import StandardSearch from '../components/Search/StandardSearch/StandardSearch';
 import TopLevel from '../components/TopLevel';
 import { setOffset, setSearchQuery } from '../redux/actions';
 import styles from '../styles/standardsearch.module.css';

@@ -12,8 +12,8 @@ import Loader from 'react-loader-spinner';
 import { useSelector } from 'react-redux';
 
 import styles from '../styles/navbar.module.css';
-import Profile from './NavbarComponents/Profile';
-import Selector from './NavbarComponents/Selector';
+import Profile from './Navbar/Profile';
+import Selector from './Navbar/Selector';
 
 /**
  * This component renders the navigation bar at the top of sbh. Users use this to access

@@ -5,8 +5,8 @@ import { useSelector } from 'react-redux';
 import useSWR, { mutate } from 'swr';
 
 import styles from '../../styles/admin.module.css';
-import InputField from '../LoginComponents/InputField';
-import Loading from '../ReusableComponents/Loading';
+import InputField from '../Login/InputField';
+import Loading from '../Reusable/Loading';
 import ErrorMessage from './Reusable/ErrorMessage';
 import SaveButton from './Reusable/SaveButton';
 

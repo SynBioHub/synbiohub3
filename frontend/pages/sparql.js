@@ -4,8 +4,8 @@ import dynamic from 'next/dynamic';
 import { useState } from 'react';
 import Select from 'react-select';
 
-import Table from '../components/ReusableComponents/Table/Table';
-import SearchHeader from '../components/SearchComponents/SearchHeader/SearchHeader';
+import Table from '../components/Reusable/Table/Table';
+import SearchHeader from '../components/Search/SearchHeader/SearchHeader';
 import TopLevel from '../components/TopLevel';
 import styles from '../styles/sparql.module.css';
 
@@ -13,7 +13,7 @@ const CodeMirror = dynamic(
   () => {
     import('codemirror/mode/sparql/sparql');
     import('codemirror/lib/codemirror.css');
-    return import('../components/SearchComponents/Sparql/CodeMirror');
+    return import('../components/Search/Sparql/CodeMirror');
   },
   { ssr: false }
 );

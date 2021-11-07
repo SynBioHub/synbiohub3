@@ -11,8 +11,8 @@ import useSWR from 'swr';
 
 import { makePublicCollection } from '../../redux/actions';
 import styles from '../../styles/modal.module.css';
-import SelectorButton from '../ReusableComponents/SelectorButton';
-import Table from '../ReusableComponents/Table/Table';
+import SelectorButton from '../Reusable/SelectorButton';
+import Table from '../Reusable/Table/Table';
 import PublishCollectionButton from './PublishCollectionButton';
 import NewCollectionForm from './PublishNewCollectionForm';
 

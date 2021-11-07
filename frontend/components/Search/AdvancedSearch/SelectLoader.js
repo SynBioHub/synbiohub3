@@ -3,7 +3,7 @@ import WindowedSelect from 'react-windowed-select';
 import { createFilter } from 'react-windowed-select';
 
 import styles from '../../../styles/advancedsearch.module.css';
-import Loading from '../../ReusableComponents/MiniLoading';
+import Loading from '../../Reusable/MiniLoading';
 
 const customFilter = createFilter({ ignoreAccents: false });
 
