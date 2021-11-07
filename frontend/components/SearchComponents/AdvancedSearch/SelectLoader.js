@@ -46,7 +46,7 @@ export default function SelectLoader(properties) {
       isClearable={true}
       className={styles.optionselect}
       onChange={option => {
-        if (option) properties.onChange(option);
+        properties.onChange(option);
       }}
     />
   );

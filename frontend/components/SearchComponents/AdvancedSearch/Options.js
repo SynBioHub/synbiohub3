@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
 import { DateRangePicker } from 'react-date-range';
 
-import namespace from '../../../namespace/namespace';
+import { shortName } from '../../../namespace/namespace';
 import getCollections from '../../../sparql/getCollections';
 import getCreators from '../../../sparql/getCreators';
 import getPredicates from '../../../sparql/getPredicates';
@@ -14,6 +14,7 @@ import getRoles from '../../../sparql/getRoles';
 import getSBOLTypes from '../../../sparql/getSBOLTypes';
 import getTypes from '../../../sparql/getTypes';
 import styles from '../../../styles/advancedsearch.module.css';
+import AdditionalFilter from './AdditionalFilter';
 import SelectLoader from './SelectLoader';
 
 /* eslint sonarjs/no-identical-functions: "off" */
@@ -30,19 +31,7 @@ export default function Options(properties) {
   useEffect(() => {
     setFilterDisplay(
       additionalFilters.map((element, index) => {
-        return (
-          <div className={styles.inputsection} key={index}>
-            <SelectLoader
-              result={predicates}
-              parseResult={result => {
-                return {
-                  value: result.predicate.value,
-                  label: namespace.shortName(result.predicate.value)
-                };
-              }}
-            />
-          </div>
-        );
+        return <AdditionalFilter predicates={predicates} key={index} />;
       })
     );
   }, [additionalFilters]);
@@ -66,10 +55,12 @@ export default function Options(properties) {
           parseResult={result => {
             return {
               value: result.object.value,
-              label: namespace.shortName(result.object.value)
+              label: shortName(result.object.value)
             };
           }}
-          onChange={option => properties.setObjectType(option.value)}
+          onChange={option =>
+            properties.setObjectType(option ? option.value : '')
+          }
         />
       </div>
       <div className={styles.inputsection}>
@@ -79,7 +70,7 @@ export default function Options(properties) {
           parseResult={result => {
             return { value: result.object.value, label: result.object.value };
           }}
-          onChange={option => properties.setCreator(option.value)}
+          onChange={option => properties.setCreator(option ? option.value : '')}
         />
       </div>
       <div className={styles.inputsection}>
@@ -89,10 +80,10 @@ export default function Options(properties) {
           parseResult={result => {
             return {
               value: result.object.value,
-              label: namespace.shortName(result.object.value)
+              label: shortName(result.object.value)
             };
           }}
-          onChange={option => properties.setRole(option.value)}
+          onChange={option => properties.setRole(option ? option.value : '')}
         />
       </div>
       <div className={styles.inputsection}>
@@ -102,10 +93,12 @@ export default function Options(properties) {
           parseResult={result => {
             return {
               value: result.object.value,
-              label: namespace.shortName(result.object.value)
+              label: shortName(result.object.value)
             };
           }}
-          onChange={option => properties.setSbolType(option.value)}
+          onChange={option =>
+            properties.setSbolType(option ? option.value : '')
+          }
         />
       </div>
       <div className={styles.inputsection}>
