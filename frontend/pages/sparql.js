@@ -78,6 +78,7 @@ export default function SPARQL() {
               headers={headers}
               dataRowDisplay={result => createRowDisplay(headers, result)}
               hideFooter={false}
+              scrollX={true}
             />
           </div>
         )}
@@ -113,6 +114,7 @@ const submitQuery = async (
   const url = `${process.env.backendUrl}/sparql?query=${encodeURIComponent(
     query
   )}`;
+
   const headers = {
     'Content-Type': 'application/json',
     Accept: 'application/json'
