@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
 import { DateRangePicker } from 'react-date-range';
 
-import namespace from '../../../namespace/namespace';
+import { shortName } from '../../../namespace/namespace';
 import getCollections from '../../../sparql/getCollections';
 import getCreators from '../../../sparql/getCreators';
 import getPredicates from '../../../sparql/getPredicates';
@@ -14,33 +14,34 @@ import getRoles from '../../../sparql/getRoles';
 import getSBOLTypes from '../../../sparql/getSBOLTypes';
 import getTypes from '../../../sparql/getTypes';
 import styles from '../../../styles/advancedsearch.module.css';
+import AdditionalFilter from './AdditionalFilter';
 import SelectLoader from './SelectLoader';
 
 /* eslint sonarjs/no-identical-functions: "off" */
 
 export default function Options(properties) {
-  const [additionalFilters, setAdditionalFilters] = useState([]);
   const [filterDisplay, setFilterDisplay] = useState([]);
+  const [predicates, setPredicates] = useState('loading');
+
+  useEffect(() => {
+    loadPredicates(setPredicates);
+  }, []);
 
   useEffect(() => {
     setFilterDisplay(
-      additionalFilters.map((element, index) => {
+      properties.extraFilters.map((element, index) => {
         return (
-          <div className={styles.inputsection} key={index}>
-            <SelectLoader
-              sparql={getPredicates}
-              parseResult={result => {
-                return {
-                  value: result.predicate.value,
-                  label: namespace.shortName(result.predicate.value)
-                };
-              }}
-            />
-          </div>
+          <AdditionalFilter
+            predicates={predicates}
+            key={index}
+            index={index}
+            extraFilters={properties.extraFilters}
+            setExtraFilters={properties.setExtraFilters}
+          />
         );
       })
     );
-  }, [additionalFilters]);
+  }, [properties.extraFilters, predicates]);
 
   return (
     <div>
@@ -61,10 +62,12 @@ export default function Options(properties) {
           parseResult={result => {
             return {
               value: result.object.value,
-              label: namespace.shortName(result.object.value)
+              label: shortName(result.object.value)
             };
           }}
-          onChange={option => properties.setObjectType(option.value)}
+          onChange={option =>
+            properties.setObjectType(option ? option.value : '')
+          }
         />
       </div>
       <div className={styles.inputsection}>
@@ -74,7 +77,7 @@ export default function Options(properties) {
           parseResult={result => {
             return { value: result.object.value, label: result.object.value };
           }}
-          onChange={option => properties.setCreator(option.value)}
+          onChange={option => properties.setCreator(option ? option.value : '')}
         />
       </div>
       <div className={styles.inputsection}>
@@ -84,10 +87,10 @@ export default function Options(properties) {
           parseResult={result => {
             return {
               value: result.object.value,
-              label: namespace.shortName(result.object.value)
+              label: shortName(result.object.value)
             };
           }}
-          onChange={option => properties.setRole(option.value)}
+          onChange={option => properties.setRole(option ? option.value : '')}
         />
       </div>
       <div className={styles.inputsection}>
@@ -97,10 +100,12 @@ export default function Options(properties) {
           parseResult={result => {
             return {
               value: result.object.value,
-              label: namespace.shortName(result.object.value)
+              label: shortName(result.object.value)
             };
           }}
-          onChange={option => properties.setSbolType(option.value)}
+          onChange={option =>
+            properties.setSbolType(option ? option.value : '')
+          }
         />
       </div>
       <div className={styles.inputsection}>
@@ -140,7 +145,9 @@ export default function Options(properties) {
       <div
         className={styles.newfilterbutton}
         role="button"
-        onClick={() => setAdditionalFilters(addFilter(additionalFilters))}
+        onClick={() =>
+          properties.setExtraFilters(addFilter(properties.extraFilters))
+        }
       >
         <div className={styles.addfiltericon}>
           <FontAwesomeIcon icon={faPlus} size="1x" />
@@ -155,8 +162,30 @@ const addFilter = filters => {
   return [
     ...filters,
     {
-      filter: '',
-      value: ''
+      filter: undefined,
+      value: undefined
     }
   ];
+};
+
+const loadPredicates = async setPredicates => {
+  const results = await fetchPredicates();
+  setPredicates(results);
+};
+
+const fetchPredicates = async () => {
+  const url = `${process.env.backendUrl}/sparql?query=${encodeURIComponent(
+    getPredicates
+  )}`;
+  const headers = {
+    'Content-Type': 'application/json',
+    Accept: 'application/json'
+  };
+
+  const response = await fetch(url, {
+    method: 'GET',
+    headers
+  });
+
+  return response.status === 200 ? await response.json() : 'error';
 };

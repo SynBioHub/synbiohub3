@@ -29,6 +29,7 @@ export default function AdvancedSearch() {
   const [role, setRole] = useState('');
   const [sbolType, setSbolType] = useState('');
   const [collections, setCollections] = useState([]);
+  const [extraFilters, setExtraFilters] = useState([]);
 
   const router = useRouter();
 
@@ -51,8 +52,21 @@ export default function AdvancedSearch() {
       modifed[0].startDate,
       'modifedAfter',
       true
-    )}${getUrl(modifed[0].endDate, 'modifedBefore', true)}`;
+    )}${getUrl(
+      modifed[0].endDate,
+      'modifedBefore',
+      true
+    )}${constructExtraFilters()}`;
     router.push(url);
+  };
+
+  const constructExtraFilters = () => {
+    let url = '';
+    for (const filter of extraFilters) {
+      if (filter.filter && filter.value)
+        url += getUrl(filter.value, filter.filter);
+    }
+    return url;
   };
 
   const getUrl = (value, term, isDate = false) => {
@@ -81,6 +95,8 @@ export default function AdvancedSearch() {
               setCreated={setCreated}
               modified={modifed}
               setModified={setModified}
+              extraFilters={extraFilters}
+              setExtraFilters={setExtraFilters}
             />
 
             <div
