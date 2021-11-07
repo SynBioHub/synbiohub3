@@ -57,6 +57,15 @@
    background-color: #00A1E4;
 }
 
+.link {
+   color: #D25627;
+}
+
+.link:hover {
+   color: #00A1E4;
+   text-decoration: underline;
+}
+
 @keyframes shake {
    0% { transform: rotate(0deg); }
    10% { transform: rotate(0deg); }

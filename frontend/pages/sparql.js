@@ -80,10 +80,16 @@ export default function SPARQL() {
 }
 
 const createRowDisplay = (headers, result) => {
-  let count = 0;
-  const resultData = headers.map(header => {
-    count++;
-    return <td key={count}>{result[header]}</td>;
+  const resultData = headers.map((header, index) => {
+    if (result[header].type === 'uri')
+      return (
+        <td key={index}>
+          <a href={result[header].value} className={styles.link}>
+            {result[header].value}
+          </a>
+        </td>
+      );
+    return <td key={index}>{result[header].value}</td>;
   });
   return <tr>{resultData}</tr>;
 };
@@ -117,7 +123,7 @@ const processResults = results => {
   return results.results.bindings.map(result => {
     const resultObject = {};
     for (const header of headers) {
-      if (result[header]) resultObject[header] = result[header].value;
+      if (result[header]) resultObject[header] = result[header];
       else resultObject[header] = '';
     }
     return resultObject;

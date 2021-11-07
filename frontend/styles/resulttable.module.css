@@ -39,6 +39,7 @@
    line-height: 1.5;
    border-top: 1px solid #ddd;
    vertical-align: baseline;
+   font-size: 0.85rem;
 }
 
 .table tbody tr:hover {
