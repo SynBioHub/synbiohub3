@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { markPageVisited, restoreLogin } from '../redux/actions';
 import styles from '../styles/layout.module.css';
 import Footer from './Footer';
-import Navbar from './Navbar';
+import Navbar from './Navbar/Navbar';
 import DownloadStatus from './Reusable/Download/DownloadStatus';
 
 /* eslint sonarjs/cognitive-complexity: "off" */
