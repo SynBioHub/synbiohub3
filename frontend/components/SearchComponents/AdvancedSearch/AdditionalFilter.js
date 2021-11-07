@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { shortName } from '../../../namespace/namespace';
 import configureQuery from '../../../sparql/configureQuery';
@@ -8,11 +8,22 @@ import SelectLoader from './SelectLoader';
 
 export default function AdditionalFilter(properties) {
   const [selectedPredicate, setSelectedPredicate] = useState();
+  const [selectedValue, setSelectedValue] = useState();
+
+  useEffect(() => {
+    const newFilters = [...properties.extraFilters];
+    newFilters[properties.index] = {
+      filter: selectedPredicate,
+      value: selectedPredicate ? selectedValue : undefined
+    };
+    properties.setExtraFilters(newFilters);
+  }, [selectedPredicate, selectedValue, properties.index]);
 
   return (
     <div className={styles.inputsection}>
       <SelectLoader
         result={properties.predicates}
+        placeholder="Select filter type..."
         parseResult={result => {
           return {
             value: result.predicate.value,
@@ -33,6 +44,9 @@ export default function AdditionalFilter(properties) {
               value: result.object.value,
               label: shortName(result.object.value)
             };
+          }}
+          onChange={option => {
+            setSelectedValue(option ? option.value : undefined);
           }}
         />
       )}

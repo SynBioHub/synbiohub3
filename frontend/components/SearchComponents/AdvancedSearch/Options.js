@@ -20,7 +20,6 @@ import SelectLoader from './SelectLoader';
 /* eslint sonarjs/no-identical-functions: "off" */
 
 export default function Options(properties) {
-  const [additionalFilters, setAdditionalFilters] = useState([]);
   const [filterDisplay, setFilterDisplay] = useState([]);
   const [predicates, setPredicates] = useState('loading');
 
@@ -30,11 +29,19 @@ export default function Options(properties) {
 
   useEffect(() => {
     setFilterDisplay(
-      additionalFilters.map((element, index) => {
-        return <AdditionalFilter predicates={predicates} key={index} />;
+      properties.extraFilters.map((element, index) => {
+        return (
+          <AdditionalFilter
+            predicates={predicates}
+            key={index}
+            index={index}
+            extraFilters={properties.extraFilters}
+            setExtraFilters={properties.setExtraFilters}
+          />
+        );
       })
     );
-  }, [additionalFilters]);
+  }, [properties.extraFilters, predicates]);
 
   return (
     <div>
@@ -138,7 +145,9 @@ export default function Options(properties) {
       <div
         className={styles.newfilterbutton}
         role="button"
-        onClick={() => setAdditionalFilters(addFilter(additionalFilters))}
+        onClick={() =>
+          properties.setExtraFilters(addFilter(properties.extraFilters))
+        }
       >
         <div className={styles.addfiltericon}>
           <FontAwesomeIcon icon={faPlus} size="1x" />
@@ -153,8 +162,8 @@ const addFilter = filters => {
   return [
     ...filters,
     {
-      filter: '',
-      value: ''
+      filter: undefined,
+      value: undefined
     }
   ];
 };

@@ -29,6 +29,7 @@ export default function AdvancedSearch() {
   const [role, setRole] = useState('');
   const [sbolType, setSbolType] = useState('');
   const [collections, setCollections] = useState([]);
+  const [extraFilters, setExtraFilters] = useState([]);
 
   const router = useRouter();
 
@@ -81,6 +82,8 @@ export default function AdvancedSearch() {
               setCreated={setCreated}
               modified={modifed}
               setModified={setModified}
+              extraFilters={extraFilters}
+              setExtraFilters={setExtraFilters}
             />
 
             <div

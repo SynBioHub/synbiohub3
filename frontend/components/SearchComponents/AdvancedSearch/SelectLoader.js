@@ -44,6 +44,7 @@ export default function SelectLoader(properties) {
       filterOption={customFilter}
       options={data}
       isClearable={true}
+      placeholder={properties.placeholder}
       className={styles.optionselect}
       onChange={option => {
         properties.onChange(option);
