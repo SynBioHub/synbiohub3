@@ -13,6 +13,7 @@ import useSWR, { mutate } from 'swr';
 import styles from '../../styles/admin.module.css';
 import Table from '../Reusable/Table/Table';
 import ActionButton from './Reusable/ActionButton';
+import Checkbox from './Reusable/CheckBox';
 import TableInput from './Reusable/TableInput';
 
 const searchable = ['id', 'name', 'email', 'affiliation'];
@@ -44,7 +45,6 @@ export default function Users() {
         sortOptions={options}
         defaultSortOption={options[0]}
         sortMethods={sortMethods}
-        hideFooter={true}
         finalRow={<NewPluginRow type="User" token={token} />}
         dataRowDisplay={user => (
           <UserDisplay key={user.id} user={user} type="User" token={token} />
@@ -57,6 +57,10 @@ export default function Users() {
 function NewPluginRow(properties) {
   const [name, setName] = useState('');
   const [url, setUrl] = useState('');
+  const [affiliation, setAffiliation] = useState('');
+  const [member, setMember] = useState(false);
+  const [curator, setCurator] = useState(false);
+  const [admin, setAdmin] = useState(false);
   return (
     <tr key="New">
       <td>New</td>
@@ -71,8 +75,24 @@ function NewPluginRow(properties) {
         <TableInput
           value={url}
           onChange={event => setUrl(event.target.value)}
-          placeholder="URL"
+          placeholder="Email"
         />
+      </td>
+      <td>
+        <TableInput
+          value={affiliation}
+          onChange={event => setAffiliation(event.target.value)}
+          placeholder="Affiliation"
+        />
+      </td>
+      <td>
+        <Checkbox value={member} onChange={() => setMember(!member)} />
+      </td>
+      <td>
+        <Checkbox value={curator} onChange={() => setCurator(!curator)} />
+      </td>
+      <td>
+        <Checkbox value={member} onChange={() => setAdmin(!admin)} />
       </td>
       <td>
         <div className={styles.actionbuttonscontainer}>
@@ -112,9 +132,24 @@ function UserDisplay(properties) {
         <code>{properties.user.email}</code>
       </td>
       <td>{properties.user.affiliation}</td>
-      <td>{properties.user.isMember ? 'Yes' : 'No'}</td>
-      <td>{properties.user.isCurator ? 'Yes' : 'No'}</td>
-      <td>{properties.user.isAdmin ? 'Yes' : 'No'}</td>
+      <td>
+        <Checkbox
+          value={properties.user.isMember ? true : false}
+          permanent={true}
+        />
+      </td>
+      <td>
+        <Checkbox
+          value={properties.user.isCurator ? true : false}
+          permanent={true}
+        />
+      </td>
+      <td>
+        <Checkbox
+          value={properties.user.isAdmin ? true : false}
+          permanent={true}
+        />
+      </td>
       <td>
         <div className={styles.actionbuttonscontainer}>
           <div className={styles.actionbuttonslayout}>
