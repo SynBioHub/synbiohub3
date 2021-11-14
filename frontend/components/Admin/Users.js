@@ -16,9 +16,12 @@ import ActionButton from './Reusable/ActionButton';
 import Checkbox from './Reusable/CheckBox';
 import TableInput from './Reusable/TableInput';
 
-const searchable = ['id', 'name', 'email', 'affiliation'];
+/* eslint sonarjs/cognitive-complexity: "off" */
+
+const searchable = ['id', 'name', 'username', 'email', 'affiliation'];
 const headers = [
   'ID',
+  'Username',
   'Name',
   'Email',
   'Affiliation',
@@ -45,7 +48,7 @@ export default function Users() {
         sortOptions={options}
         defaultSortOption={options[0]}
         sortMethods={sortMethods}
-        finalRow={<NewPluginRow type="User" token={token} />}
+        finalRow={<NewUserRow token={token} />}
         dataRowDisplay={user => (
           <UserDisplay key={user.id} user={user} type="User" token={token} />
         )}
@@ -54,9 +57,10 @@ export default function Users() {
   );
 }
 
-function NewPluginRow(properties) {
+function NewUserRow(properties) {
+  const [username, setUsername] = useState('');
   const [name, setName] = useState('');
-  const [url, setUrl] = useState('');
+  const [email, setEmail] = useState('');
   const [affiliation, setAffiliation] = useState('');
   const [member, setMember] = useState(false);
   const [curator, setCurator] = useState(false);
@@ -66,6 +70,13 @@ function NewPluginRow(properties) {
       <td>New</td>
       <td>
         <TableInput
+          value={username}
+          onChange={event => setUsername(event.target.value)}
+          placeholder="Username"
+        />
+      </td>
+      <td>
+        <TableInput
           value={name}
           onChange={event => setName(event.target.value)}
           placeholder="Name"
@@ -73,8 +84,8 @@ function NewPluginRow(properties) {
       </td>
       <td>
         <TableInput
-          value={url}
-          onChange={event => setUrl(event.target.value)}
+          value={email}
+          onChange={event => setEmail(event.target.value)}
           placeholder="Email"
         />
       </td>
@@ -92,7 +103,7 @@ function NewPluginRow(properties) {
         <Checkbox value={curator} onChange={() => setCurator(!curator)} />
       </td>
       <td>
-        <Checkbox value={member} onChange={() => setAdmin(!admin)} />
+        <Checkbox value={admin} onChange={() => setAdmin(!admin)} />
       </td>
       <td>
         <div className={styles.actionbuttonscontainer}>
@@ -102,9 +113,23 @@ function NewPluginRow(properties) {
               icon={faPlusCircle}
               color="#1C7C54"
               onClick={() => {
-                savePlugin('New', properties.type, name, url, properties.token);
+                createUser(
+                  username,
+                  name,
+                  email,
+                  affiliation,
+                  member,
+                  curator,
+                  admin,
+                  properties.token
+                );
+                setUsername('');
                 setName('');
-                setUrl('');
+                setEmail('');
+                setAffiliation('');
+                setMember(false);
+                setCurator(false);
+                setAdmin(false);
               }}
             />
           </div>
@@ -117,7 +142,17 @@ function NewPluginRow(properties) {
 function UserDisplay(properties) {
   const [editMode, setEditMode] = useState(false);
   const [name, setName] = useState(properties.user.name);
-  const [email, setEmail] = useState(properties.user.url);
+  const [email, setEmail] = useState(properties.user.email);
+  const [affiliation, setAffiliation] = useState(properties.user.affiliation);
+  const [isMember, setIsMember] = useState(
+    properties.user.isMember ? true : false
+  );
+  const [isCurator, setIsCurator] = useState(
+    properties.user.isCurator ? true : false
+  );
+  const [isAdmin, setIsAdmin] = useState(
+    properties.user.isAdmin ? true : false
+  );
 
   useEffect(() => {
     setName(properties.user.name);
@@ -127,6 +162,7 @@ function UserDisplay(properties) {
   return !editMode ? (
     <tr key={properties.user.id}>
       <td>{properties.user.id}</td>
+      <td>{properties.user.username}</td>
       <td>{properties.user.name}</td>
       <td>
         <code>{properties.user.email}</code>
@@ -163,13 +199,7 @@ function UserDisplay(properties) {
               action="Delete"
               icon={faTrashAlt}
               color="#FF3C38"
-              onClick={() =>
-                deletePlugin(
-                  properties.user.id + 1,
-                  properties.type,
-                  properties.token
-                )
-              }
+              onClick={() => deleteUser(properties.user.id, properties.token)}
             />
           </div>
         </div>
@@ -178,6 +208,7 @@ function UserDisplay(properties) {
   ) : (
     <tr key={properties.user.id}>
       <td>{properties.user.id}</td>
+      <td>{properties.user.username}</td>
       <td>
         <TableInput
           value={name}
@@ -196,11 +227,20 @@ function UserDisplay(properties) {
       </td>
       <td>
         <TableInput
-          value={email}
+          value={affiliation}
           onChange={event => {
-            setEmail(event.target.value);
+            setAffiliation(event.target.value);
           }}
         />
+      </td>
+      <td>
+        <Checkbox value={isMember} onChange={() => setIsMember(!isMember)} />
+      </td>
+      <td>
+        <Checkbox value={isCurator} onChange={() => setIsCurator(!isCurator)} />
+      </td>
+      <td>
+        <Checkbox value={isAdmin} onChange={() => setIsAdmin(!isAdmin)} />
       </td>
       <td>
         <div className={styles.actionbuttonscontainer}>
@@ -210,11 +250,14 @@ function UserDisplay(properties) {
               icon={faSave}
               color="#1C7C54"
               onClick={() => {
-                savePlugin(
+                saveUser(
                   properties.user.id,
-                  properties.type,
                   name,
                   email,
+                  affiliation,
+                  isMember,
+                  isCurator,
+                  isAdmin,
                   properties.token
                 );
                 setEditMode(false);
@@ -227,6 +270,10 @@ function UserDisplay(properties) {
               onClick={() => {
                 setName(properties.user.name);
                 setEmail(properties.user.email);
+                setAffiliation(properties.user.affiliation);
+                setIsMember(properties.user.isMember ? true : false);
+                setIsCurator(properties.user.isCurator ? true : false);
+                setIsAdmin(properties.user.isAdmin ? true : false);
                 setEditMode(false);
               }}
             />
@@ -237,8 +284,8 @@ function UserDisplay(properties) {
   );
 }
 
-const deletePlugin = async (id, type, token) => {
-  const url = `${process.env.backendUrl}/admin/deletePlugin`;
+const deleteUser = async (id, token) => {
+  const url = `${process.env.backendUrl}/admin/deleteUser`;
   const headers = {
     Accept: 'text/plain',
     'X-authorization': token
@@ -246,7 +293,6 @@ const deletePlugin = async (id, type, token) => {
 
   const parameters = new URLSearchParams();
   parameters.append('id', id);
-  parameters.append('category', type);
 
   const response = await fetch(url, {
     method: 'POST',
@@ -255,22 +301,34 @@ const deletePlugin = async (id, type, token) => {
   });
 
   if (response.status === 200) {
-    mutate([`${process.env.backendUrl}/admin/plugins`, token]);
+    mutate([`${process.env.backendUrl}/admin/users`, token]);
   }
 };
 
-const savePlugin = async (id, type, name, pluginUrl, token) => {
-  const url = `${process.env.backendUrl}/admin/savePlugin`;
+const saveUser = async (
+  id,
+  name,
+  email,
+  affiliation,
+  isMember,
+  isCurator,
+  isAdmin,
+  token
+) => {
+  const url = `${process.env.backendUrl}/admin/updateUser`;
   const headers = {
     Accept: 'text/plain',
     'X-authorization': token
   };
 
   const parameters = new URLSearchParams();
-  parameters.append('id', id !== 'New' ? id + 1 : id);
-  parameters.append('category', type);
+  parameters.append('id', id);
   parameters.append('name', name);
-  parameters.append('url', pluginUrl);
+  parameters.append('email', email);
+  parameters.append('affiliation', affiliation);
+  parameters.append('isMember', isMember);
+  parameters.append('isCurator', isCurator);
+  parameters.append('isAdmin', isAdmin);
 
   const response = await fetch(url, {
     method: 'POST',
@@ -279,26 +337,78 @@ const savePlugin = async (id, type, name, pluginUrl, token) => {
   });
 
   if (response.status === 200) {
-    mutate([`${process.env.backendUrl}/admin/plugins`, token]);
+    mutate([`${process.env.backendUrl}/admin/users`, token]);
+  }
+};
+
+const createUser = async (
+  username,
+  name,
+  email,
+  affiliation,
+  isMember,
+  isCurator,
+  isAdmin,
+  token
+) => {
+  const url = `${process.env.backendUrl}/admin/newUser`;
+  const headers = {
+    Accept: 'text/plain',
+    'X-authorization': token
+  };
+
+  const parameters = new URLSearchParams();
+  parameters.append('username', username);
+  parameters.append('name', name);
+  parameters.append('email', email);
+  parameters.append('affiliation', affiliation);
+  isMember && parameters.append('isMember', '1');
+  isCurator && parameters.append('isCurator', '1');
+  isAdmin && parameters.append('isAdmin', '1');
+
+  const response = await fetch(url, {
+    method: 'POST',
+    headers,
+    body: parameters
+  });
+
+  if (response.status === 200) {
+    mutate([`${process.env.backendUrl}/admin/users`, token]);
   }
 };
 
 const options = [
-  { value: 'index', label: 'ID' },
+  { value: 'id', label: 'ID' },
   { value: 'name', label: 'Name' },
-  { value: 'url', label: 'URL' }
+  { value: 'email', label: 'Email' },
+  { value: 'username', label: 'Username' },
+  { value: 'affiliation', label: 'Affiliation' },
+  { value: 'admin', label: 'Admin' },
+  { value: 'member', label: 'Member' },
+  { value: 'curator', label: 'Curator' }
 ];
 
 const compareStrings = (string1, string2) => {
   return (string1.toLowerCase() > string2.toLowerCase() && 1) || -1;
 };
 
+const compareBools = (bool1, bool2) => {
+  if (bool1 && !bool2) return -1;
+  return 1;
+};
+
 const sortMethods = {
-  index: function (plugin1, plugin2) {
-    return plugin1.index - plugin2.index;
+  id: function (user1, user2) {
+    return user1.id - user2.id;
   },
-  name: (plugin1, plugin2) => compareStrings(plugin1.name, plugin2.name),
-  url: (plugin1, plugin2) => compareStrings(plugin1.name, plugin2.name)
+  name: (user1, user2) => compareStrings(user1.name, user2.name),
+  email: (user1, user2) => compareStrings(user1.email, user2.email),
+  username: (user1, user2) => compareStrings(user1.username, user2.username),
+  affiliation: (user1, user2) =>
+    compareStrings(user1.affiliation, user2.affiliation),
+  admin: (user1, user2) => compareBools(user1.isAdmin, user2.isAdmin),
+  member: (user1, user2) => compareBools(user1.isMember, user2.isMember),
+  curator: (user1, user2) => compareBools(user1.isCurator, user2.isCurator)
 };
 
 const useUsers = token => {
