@@ -50,7 +50,7 @@ export default function Users() {
         sortMethods={sortMethods}
         finalRow={<NewUserRow token={token} />}
         dataRowDisplay={user => (
-          <UserDisplay key={user.id} user={user} type="User" token={token} />
+          <UserDisplay key={user.id} user={user} token={token} />
         )}
       />
     </div>
