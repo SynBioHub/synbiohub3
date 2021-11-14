@@ -5,6 +5,7 @@ import Graphs from './Graphs';
 import Mail from './Mail';
 import Plugins from './Plugins';
 import Status from './Status';
+import Users from './Users';
 
 export default function Content(properties) {
   const [content, setContent] = useState(properties.selected);
@@ -19,6 +20,9 @@ export default function Content(properties) {
         break;
       case 'plugins':
         setContent(<Plugins />);
+        break;
+      case 'users':
+        setContent(<Users />);
         break;
       default:
         setContent(<Status />);

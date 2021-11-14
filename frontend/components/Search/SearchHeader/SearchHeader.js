@@ -9,7 +9,7 @@ import React from 'react';
 
 import styles from '../../../styles/searchheader.module.css';
 import Basket from '../../Basket/Basket';
-import SearchTypeButton from '../../ReusableComponents/SelectorButton';
+import SearchTypeButton from '../../Reusable/SelectorButton';
 
 export default function SearchHeader(properties) {
   return (

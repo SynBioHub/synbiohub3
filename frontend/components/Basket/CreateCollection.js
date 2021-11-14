@@ -7,9 +7,9 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { getCanSubmitTo } from '../../redux/actions';
 import styles from '../../styles/basket.module.css';
-import ChooseCollection from '../SubmitComponents/ChooseCollection/ChooseCollection';
-import SubmissionStatusPanel from '../SubmitComponents/SubmissionStatusPanel';
-import SubmitButton from '../SubmitComponents/SubmitButton';
+import ChooseCollection from '../Submit/ChooseCollection/ChooseCollection';
+import SubmissionStatusPanel from '../Submit/SubmissionStatusPanel';
+import SubmitButton from '../Submit/SubmitButton';
 
 export default function CreateCollection(properties) {
   const showSubmitProgress = useSelector(

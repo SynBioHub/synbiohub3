@@ -133,3 +133,8 @@
    font-weight: 500;
    width: 100%;
 }
+
+.permanent {
+   opacity: 0.35;
+   cursor: not-allowed;
+}

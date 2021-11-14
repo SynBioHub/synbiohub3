@@ -12,7 +12,7 @@ import { mutate } from 'swr';
 
 import { addToBasket, downloadFiles } from '../../redux/actions';
 import styles from '../../styles/submissions.module.css';
-import TableButton from '../ReusableComponents/TableButton';
+import TableButton from '../Reusable/TableButton';
 import PublishModal from './PublishModal';
 
 export default function TableButtons(properties) {

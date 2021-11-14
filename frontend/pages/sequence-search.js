@@ -3,10 +3,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 
-import SearchHeader from '../components/SearchComponents/SearchHeader/SearchHeader';
-import Options from '../components/SearchComponents/SequenceSearch/Options';
-import UploadFile from '../components/SearchComponents/SequenceSearch/UploadFile';
-import InputField from '../components/SubmitComponents/ReusableComponents/InputField';
+import SearchHeader from '../components/Search/SearchHeader/SearchHeader';
+import Options from '../components/Search/SequenceSearch/Options';
+import UploadFile from '../components/Search/SequenceSearch/UploadFile';
+import InputField from '../components/Submit/ReusableComponents/InputField';
 import TopLevel from '../components/TopLevel';
 import styles from '../styles/sequencesearch.module.css';
 

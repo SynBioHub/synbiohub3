@@ -4,9 +4,9 @@ import { useSelector } from 'react-redux';
 import useSWR from 'swr';
 
 import Basket from '../components/Basket/Basket';
-import Table from '../components/ReusableComponents/Table/Table';
-import SubmissionDisplay from '../components/SubmissionComponents/SubmissionDisplay';
-import TableButtons from '../components/SubmissionComponents/TableButtons';
+import Table from '../components/Reusable/Table/Table';
+import SubmissionDisplay from '../components/Submission/SubmissionDisplay';
+import TableButtons from '../components/Submission/TableButtons';
 import TopLevel from '../components/TopLevel';
 import styles from '../styles/submissions.module.css';
 

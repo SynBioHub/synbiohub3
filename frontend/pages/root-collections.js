@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 
-import NavbarSearch from '../components/SearchComponents/NavbarSearch/NavbarSearch';
-import SearchHeader from '../components/SearchComponents/SearchHeader/SearchHeader';
-import ResultTable from '../components/SearchComponents/StandardSearch/ResultTable/ResultTable';
+import NavbarSearch from '../components/Search/NavbarSearch/NavbarSearch';
+import SearchHeader from '../components/Search/SearchHeader/SearchHeader';
+import ResultTable from '../components/Search/StandardSearch/ResultTable/ResultTable';
 import TopLevel from '../components/TopLevel';
 import styles from '../styles/standardsearch.module.css';
 

@@ -2,7 +2,7 @@ import axios from 'axios';
 import { useSelector } from 'react-redux';
 import useSWR from 'swr';
 
-import Table from '../ReusableComponents/Table/Table';
+import Table from '../Reusable/Table/Table';
 
 export default function Graphs() {
   const token = useSelector(state => state.user.token);

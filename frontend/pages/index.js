@@ -5,7 +5,7 @@ import {
   faSearch
 } from '@fortawesome/free-solid-svg-icons';
 
-import Card from '../components/HomeComponents/Card';
+import Card from '../components/Home/Card';
 import TopLevel from '../components/TopLevel';
 import styles from '../styles/home.module.css';
 
