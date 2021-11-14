@@ -31,7 +31,7 @@ export default function Registries() {
       <Table
         data={registries ? registries.registries : undefined}
         loading={loading}
-        title="Users"
+        title="Local Registries"
         searchable={searchable}
         headers={headers}
         sortOptions={options}
