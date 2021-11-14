@@ -2,18 +2,17 @@ import { faDatabase } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import dynamic from 'next/dynamic';
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
 import Select from 'react-select';
 
-import Table from '../components/Reusable/Table/Table';
-import SearchHeader from '../components/Search/SearchHeader/SearchHeader';
-import TopLevel from '../components/TopLevel';
-import styles from '../styles/sparql.module.css';
+import styles from '../../styles/sparql.module.css';
+import Table from '../Reusable/Table/Table';
 
 const CodeMirror = dynamic(
   () => {
     import('codemirror/mode/sparql/sparql');
     import('codemirror/lib/codemirror.css');
-    return import('../components/Search/Sparql/CodeMirror');
+    return import('../Search/Sparql/CodeMirror');
   },
   { ssr: false }
 );
@@ -28,63 +27,69 @@ export default function SPARQL() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState();
 
+  const token = useSelector(state => state.user.token);
+
   return (
-    <TopLevel doNotTrack={true} hideFooter={true} publicPage={true}>
-      <div className={styles.container}>
-        <SearchHeader selected="SPARQL" />
-        <div className={styles.standardcontainer}>
-          <CodeMirror query={query} setQuery={setQuery} />
-          <div className={styles.controls}>
-            <div className={styles.graphselect}>
-              <label>Graph</label>
-              <Select
-                options={graphs}
-                defaultValue={graphs[0]}
-                className={styles.optionselect}
-                placeholder="Graph"
-                id="graph-value-select"
-                instanceId="graph-value-select"
-                menuPortalTarget={
-                  typeof window !== 'undefined' ? document.body : undefined
-                }
-                styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-              />
-            </div>
-            <div
-              className={styles.submitquery}
-              role="button"
-              onClick={() =>
-                submitQuery(query, setLoading, setResults, setHeaders, setError)
+    <div className={styles.container}>
+      <div className={styles.standardcontainer}>
+        <CodeMirror query={query} setQuery={setQuery} />
+        <div className={styles.controls}>
+          <div className={styles.graphselect}>
+            <label>Graph</label>
+            <Select
+              options={graphs}
+              defaultValue={graphs[0]}
+              className={styles.optionselect}
+              placeholder="Graph"
+              id="graph-value-select"
+              instanceId="graph-value-select"
+              menuPortalTarget={
+                typeof window !== 'undefined' ? document.body : undefined
               }
-            >
-              <FontAwesomeIcon
-                icon={faDatabase}
-                size="1x"
-                className={styles.dnaicon}
-                color="#F2E86D"
-              />
-              Submit Query
-            </div>
-          </div>
-        </div>
-        {error && <div className={styles.errormessage}>{error}</div>}
-        {results && (
-          <div className={styles.tablecontainer}>
-            <Table
-              data={results}
-              loading={loading}
-              title="Results"
-              searchable={headers}
-              headers={headers}
-              dataRowDisplay={result => createRowDisplay(headers, result)}
-              hideFooter={false}
-              hideFilter={true}
-              scrollX={true}
+              styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
             />
           </div>
-        )}
+          <div
+            className={styles.submitquery}
+            role="button"
+            onClick={() =>
+              submitQuery(
+                query,
+                setLoading,
+                setResults,
+                setHeaders,
+                setError,
+                token
+              )
+            }
+          >
+            <FontAwesomeIcon
+              icon={faDatabase}
+              size="1x"
+              className={styles.dnaicon}
+              color="#F2E86D"
+            />
+            Submit Query
+          </div>
+        </div>
       </div>
-    </TopLevel>
+      {error && <div className={styles.errormessage}>{error}</div>}
+      {results && (
+        <div className={styles.tablecontainer}>
+          <Table
+            data={results}
+            loading={loading}
+            title="Results"
+            searchable={headers}
+            headers={headers}
+            dataRowDisplay={result => createRowDisplay(headers, result)}
+            hideFooter={false}
+            hideFilter={true}
+            scrollX={true}
+          />
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -108,17 +113,19 @@ const submitQuery = async (
   setLoading,
   setResults,
   setHeaders,
-  setError
+  setError,
+  token
 ) => {
   setError();
   setLoading(true);
-  const url = `${process.env.backendUrl}/sparql?query=${encodeURIComponent(
-    query
-  )}`;
+  const url = `${
+    process.env.backendUrl
+  }/admin/sparql?query=${encodeURIComponent(query)}`;
 
   const headers = {
     'Content-Type': 'application/json',
-    Accept: 'application/json'
+    Accept: 'application/json',
+    'X-authorization': token
   };
 
   const response = await fetch(url, {

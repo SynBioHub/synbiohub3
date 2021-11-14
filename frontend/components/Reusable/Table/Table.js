@@ -74,6 +74,7 @@ export default function Table(properties) {
         <TableHeader
           title={properties.title}
           hideCount={properties.hideCount}
+          hideFilter={properties.hideFilter}
           count={properties.data.length}
           filter={filter}
           setFilter={setFilter}

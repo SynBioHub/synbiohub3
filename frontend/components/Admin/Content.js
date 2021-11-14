@@ -4,6 +4,7 @@ import styles from '../../styles/admin.module.css';
 import Graphs from './Graphs';
 import Mail from './Mail';
 import Plugins from './Plugins';
+import Sparql from './Sparql';
 import Status from './Status';
 import Users from './Users';
 
@@ -23,6 +24,9 @@ export default function Content(properties) {
         break;
       case 'users':
         setContent(<Users />);
+        break;
+      case 'sparql':
+        setContent(<Sparql />);
         break;
       default:
         setContent(<Status />);

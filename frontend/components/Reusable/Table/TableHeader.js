@@ -17,15 +17,17 @@ export default function TableHeader(properties) {
         {!properties.hideCount ? `(${properties.count})` : ''}
       </div>
       <div className={styles.tableheadernav}>
-        <div className={styles.sortbycontainer} id={styles.filterresults}>
-          <span className={styles.tableheadernavlabel}>FILTER</span>
-          <input
-            type="text"
-            className={`${styles.tableheadernavflex} ${styles.filterinput}`}
-            value={properties.filter}
-            onChange={event => properties.setFilter(event.target.value)}
-          />
-        </div>
+        {!properties.hideFilter && (
+          <div className={styles.sortbycontainer} id={styles.filterresults}>
+            <span className={styles.tableheadernavlabel}>FILTER</span>
+            <input
+              type="text"
+              className={`${styles.tableheadernavflex} ${styles.filterinput}`}
+              value={properties.filter}
+              onChange={event => properties.setFilter(event.target.value)}
+            />
+          </div>
+        )}
         {properties.sortOptions && (
           <div className={styles.sortbycontainer}>
             <span className={styles.tableheadernavlabel}>SORT BY</span>
