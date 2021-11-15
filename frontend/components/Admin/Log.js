@@ -33,7 +33,7 @@ export default function Log() {
         <LogHeader title="Info" viewing={viewing} setViewing={setViewing} />
         <LogHeader title="Debug" viewing={viewing} setViewing={setViewing} />
       </div>
-      {logDisplay}
+      <div className={styles.logdisplay}>{logDisplay}</div>
     </div>
   );
 }
