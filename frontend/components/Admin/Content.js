@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 
 import styles from '../../styles/admin.module.css';
 import Graphs from './Graphs';
+import Log from './Log';
 import Mail from './Mail';
 import Plugins from './Plugins';
 import Registries from './Registries';
@@ -31,6 +32,9 @@ export default function Content(properties) {
         break;
       case 'sparql':
         setContent(<Sparql />);
+        break;
+      case 'log':
+        setContent(<Log />);
         break;
       default:
         setContent(<Status />);
