@@ -138,3 +138,34 @@
    opacity: 0.35;
    cursor: not-allowed;
 }
+
+.logheaders {
+   display: flex;
+   justify-content: flex-start;
+   align-items: flex-end;
+   border-bottom: 2px solid #A99C0F;
+}
+
+.logheader {
+   display: flex;
+   align-items: center;
+   font-size: 0.9rem;
+   margin: 0 0.2rem 0 0;
+   padding: 0.6rem;
+   border-radius: 0.4rem 0.4rem 0 0;
+   font-weight: 500;
+}
+
+.logselected {
+   background-color: #F2E86D;
+   cursor: default !important;
+}
+
+.lognotselected {
+   color: #00A1E4;
+}
+
+.lognotselected:hover {
+   background-color: #ECF0F1;
+   cursor: pointer;
+}
