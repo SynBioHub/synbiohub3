@@ -171,10 +171,14 @@
 }
 
 .logdisplay {
-   background-color: #000;
+   background-color: #2e2e2e;
    padding: 0.5rem;
    border-radius: 0.4rem;
    margin: 0.5rem 0;
    color: rgb(240, 240, 240);
    font-weight: 500;
+}
+
+.logdisplay p {
+   margin: 0.8rem;
 }
