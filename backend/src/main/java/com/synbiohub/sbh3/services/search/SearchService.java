@@ -63,7 +63,6 @@ public class SearchService {
             // Set offset and limit of query
             if (param.getKey().equals("offset")) {
                 sparqlArgs.replace("offset", "OFFSET " + param.getValue());
-                allParams.remove("offset"); // Remove this as we have already processed and it may mess up criteria string
                 sparqlArgs.replace("limit", "LIMIT 50"); // Default limit for queries without limit
                 continue;
             }
@@ -74,6 +73,8 @@ public class SearchService {
                 continue;
             }
         }
+        if (allParams.containsKey("offset"))
+            allParams.remove("offset"); // Remove this as we have already processed and it may mess up criteria string
 
         String criteriaString = getCriteriaString(allParams);
         sparqlArgs.replace("criteria", criteriaString);
