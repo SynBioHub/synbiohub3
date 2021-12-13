@@ -1,18 +1,13 @@
-package com.synbiohub.sbh3.controllers.user;
+package com.synbiohub.sbh3.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.synbiohub.sbh3.dto.user.UserRegistrationDTO;
-import com.synbiohub.sbh3.entities.UserEntity;
 import com.synbiohub.sbh3.security.CustomUserService;
-import com.synbiohub.sbh3.dto.user.LoginDTO;
-import com.synbiohub.sbh3.security.HttpSessionConfig;
-import com.synbiohub.sbh3.services.user.UserService;
+import com.synbiohub.sbh3.services.UserService;
 import com.synbiohub.sbh3.utils.ObjectMapperUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -26,7 +21,6 @@ import org.springframework.web.context.request.RequestContextHolder;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
 import java.util.Map;
 
 @RestController
@@ -51,12 +45,12 @@ public class UserController {
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    @PostMapping(value = "/login")
-    public ResponseEntity<String> login(@Valid @RequestBody LoginDTO loginDTO, HttpServletRequest request, HttpServletResponse response) {
+    @PostMapping(value = "/login", produces = "text/plain", consumes = "application/x-www-form-urlencoded")
+    public ResponseEntity<String> login(@RequestParam String email, @RequestParam String password, HttpServletRequest request, HttpServletResponse response) {
         Authentication auth;
         try {
             auth = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(loginDTO.getEmail(), loginDTO.getPassword()));
+                    new UsernamePasswordAuthenticationToken(email, password));
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity(HttpStatus.UNAUTHORIZED);

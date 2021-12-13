@@ -1,4 +1,4 @@
-package com.synbiohub.sbh3.services.user;
+package com.synbiohub.sbh3.services;
 
 
 import com.synbiohub.sbh3.entities.UserEntity;

@@ -1,12 +1,10 @@
-package com.synbiohub.sbh3.services.search;
+package com.synbiohub.sbh3.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.synbiohub.sbh3.controllers.search.SearchController;
-import com.synbiohub.sbh3.entities.UserEntity;
-import com.synbiohub.sbh3.security.CustomUserDetailsService;
+import com.synbiohub.sbh3.controllers.SearchController;
 import com.synbiohub.sbh3.sparql.SPARQLQuery;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,6 +17,7 @@ import org.springframework.web.client.RestTemplate;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -265,13 +264,11 @@ public class SearchService {
         ArrayList<ObjectNode> listOfParts = new ArrayList<>();
         for(JsonNode node : rawTree.get("results").get("bindings")) {
             ObjectNode part = mapper.createObjectNode();
-            // Check to see if each field exists; otherwise represent as null
-            part.put("type", (node.has("type") ? node.get("type").get("value").asText() : ""));
-            part.put("uri", (node.has("uri") ? node.get("uri").get("value").asText() : ""));
-            part.put("name", (node.has("name") ? node.get("name").get("value").asText() : ""));
-            part.put("description", (node.has("description") ? node.get("description").get("value").asText() : ""));
-            part.put("displayId", (node.has("displayId") ? node.get("displayId").get("value").asText() : ""));
-            part.put("version", (node.has("version") ? node.get("version").get("value").asText() : ""));
+
+            for (Iterator<Map.Entry<String, JsonNode>> it = node.fields(); it.hasNext(); ) {
+                Map.Entry<String, JsonNode> subNode = it.next();
+                part.put(subNode.getKey(), subNode.getValue().get("value"));
+            }
             listOfParts.add(part);
         }
         return listOfParts.toString();
