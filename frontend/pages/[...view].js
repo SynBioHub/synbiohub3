@@ -7,6 +7,7 @@ import {
   faHardHat,
   faImage,
   faLock,
+  faMinusSquare,
   faPlug,
   faPuzzlePiece,
   faQuoteRight,
@@ -18,16 +19,32 @@ import {
   faUserPlus
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import axios from 'axios';
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import useSWR from 'swr';
 
 import TopLevel from '../components/TopLevel';
 import styles from '../styles/view.module.css';
 
 function View() {
+  const router = useRouter();
+  const { view } = router.query;
+  const token = useSelector(state => state.user.token);
+  const url = view ? view.join('/') : '';
+  const { results, isLoading, isError } = useURI(url, token);
+
+  useEffect(() => {}, [url]);
+
   return (
     <div className={styles.container}>
       <div className={styles.sidepanel}>
         <div className={styles.headercontainer}>
           <h2 className={styles.title}>GFP Report</h2>
+          <h2>
+            {results} {isLoading} {isError}
+          </h2>
           <div className={styles.metaicons}>
             <FontAwesomeIcon
               icon={faLock}
@@ -94,7 +111,47 @@ function View() {
           <SectionHeader title="Download Options" icon={faCloudDownloadAlt} />
         </div>
       </div>
+      <div className={styles.content}>
+        <div className={styles.contentheader}>
+          <h1 className={styles.maintitle}>
+            <FontAwesomeIcon
+              icon={faLock}
+              size="1x"
+              className={styles.contenttitleicon}
+            />
+            GFP Report
+          </h1>
+          <h1 className={styles.maintitleid}>(BBa_E0240)</h1>
+        </div>
+        <div className={styles.contentinfo}>
+          <FontAwesomeIcon
+            icon={faPuzzlePiece}
+            size="1x"
+            className={styles.contentinfoicon}
+          />
+          Component
+        </div>
+        <div className={styles.sections}>
+          <Section title="VisBOL" />
+          <Section title="Description" />
+        </div>
+      </div>
       <div></div>
+    </div>
+  );
+}
+
+function Section(properties) {
+  return (
+    <div className={styles.section}>
+      <div className={styles.sectiontitle}>{properties.title}</div>
+      <div className={styles.minimize}>
+        <FontAwesomeIcon
+          icon={faMinusSquare}
+          size="1x"
+          className={styles.sectionminimizeicon}
+        />
+      </div>
     </div>
   );
 }
@@ -129,6 +186,30 @@ function Info(properties) {
     </div>
   );
 }
+
+const useURI = (url, token) => {
+  const { data, error } = useSWR(
+    [`${process.env.backendUrl}/${url}/metadata`, token],
+    fetcher
+  );
+
+  return {
+    results: data,
+    isLoading: !error && !data,
+    isError: error
+  };
+};
+
+const fetcher = (url, token) =>
+  axios
+    .get(url, {
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'text/plain',
+        'X-authorization': token
+      }
+    })
+    .then(response => response.data);
 
 export default function ViewWrapped() {
   return (

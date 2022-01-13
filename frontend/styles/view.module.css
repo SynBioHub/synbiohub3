@@ -131,7 +131,8 @@
    justify-content: space-between;
    margin-bottom: 0.5rem;
    cursor: pointer;
-   transition: transform .2s;
+   transition: transform .1s;
+   box-shadow: 0px 0px 5px #7e7e7e;
 }
 
 .sectionheader:hover {
@@ -150,4 +151,78 @@
 .sectionheadericon {
    font-size: 1.3rem;
    margin-right: 0.5rem;
+}
+
+.content {
+   margin: 1rem 2rem;
+   width: 100%;
+}
+
+.contentheader {
+   display: flex;
+   align-items: center;
+}
+
+.maintitle {
+   margin: 0;
+   color: #D25627;
+   font-size: 1.7rem;
+   display: flex;
+   align-items: center;
+}
+
+.maintitleid {
+   margin: 0 0.5rem;
+   font-weight: 500;
+   color: #888;
+   font-size: 1.4rem;
+}
+
+.contentinfo {
+   margin-top: 0.3rem;
+   display: flex;
+   align-items: center;
+   color: #465775;
+   font-weight: 500;
+}
+
+.contentinfoicon {
+   margin-right: 0.5rem;
+}
+
+.contenttitleicon {
+   font-size: 1.3rem;
+   margin-right: 0.3rem;
+}
+
+.sections {
+   margin: 2rem 0;
+}
+
+.section {
+   width: 100%;
+   height: 20rem;
+   border-radius: 0.4rem;
+   box-shadow: 0px 0px 5px #948b87;
+   padding: 0.5rem;
+   position: relative;
+   margin-bottom: 1.5rem;
+}
+
+.sectiontitle {
+   font-size: 1.1rem;
+   font-weight: 500;
+   padding: 0.4rem;
+   background-color: #00A1E4;
+   width: fit-content;
+   border-radius: 0.4rem;
+   color: #fff;
+}
+
+.sectionminimizeicon {
+   position: absolute;
+   top: 0.4rem;
+   right: 0.4rem;
+   font-size: 1.4rem;
+   color: #D25627;
 }
