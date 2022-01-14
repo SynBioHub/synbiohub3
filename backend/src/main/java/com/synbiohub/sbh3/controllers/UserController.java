@@ -41,6 +41,7 @@ public class UserController {
         } catch (Exception e) {
             log.error("Error creating a new account.");
             e.printStackTrace();
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity(HttpStatus.OK);
     }

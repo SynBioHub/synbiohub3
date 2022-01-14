@@ -23,7 +23,7 @@ public class DownloadController {
     private final ObjectMapper mapper;
 
     @GetMapping(value = "**/metadata")
-    public ResponseEntity getMetadata(HttpServletRequest request) throws JsonProcessingException {
+    public ResponseEntity<?> getMetadata(HttpServletRequest request) throws JsonProcessingException {
         var uri = request.getRequestURL().toString();
         String splitUri = uri.split("/metadata")[0];
         String results = downloadService.getMetadata(splitUri);

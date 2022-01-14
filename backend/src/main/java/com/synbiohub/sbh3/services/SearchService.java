@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.synbiohub.sbh3.controllers.SearchController;
 import com.synbiohub.sbh3.sparql.SPARQLQuery;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -25,7 +26,7 @@ import java.util.Map;
  * @see SearchController
  */
 @Service
-@NoArgsConstructor
+@RequiredArgsConstructor
 public class SearchService {
 
     @Value("${databasePrefix}")
@@ -79,7 +80,7 @@ public class SearchService {
         sparqlArgs.replace("criteria", criteriaString);
 
         String userGraph = getPrivateGraph();
-        if (!getPrivateGraph().isEmpty()) {
+        if (!userGraph.isEmpty()) {
             sparqlArgs.replace("from", "FROM <" + userGraph + ">");
         }
 
@@ -211,7 +212,7 @@ public class SearchService {
                     "FILTER(?subject != <" + URI + "> && ?elements = ?elements2) # TWINS");
         }
         String userGraph = getPrivateGraph();
-        if (!getPrivateGraph().isEmpty()) {
+        if (!userGraph.isEmpty()) {
             sparqlArgs.replace("from", "FROM <" + userGraph + ">");
         }
 
@@ -230,7 +231,7 @@ public class SearchService {
                 "# USES");
 
         String userGraph = getPrivateGraph();
-        if (!getPrivateGraph().isEmpty()) {
+        if (!userGraph.isEmpty()) {
             sparqlArgs.replace("from", "FROM <" + userGraph + ">");
         }
 
@@ -334,4 +335,6 @@ public class SearchService {
         //var user = authentication.getPrincipal();
         return graphPrefix + "user/" + authentication.getName();
     }
+
+
 }
