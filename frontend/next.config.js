@@ -2,7 +2,9 @@
 module.exports = {
    env: {
      backendUrl: process.env.backendUrl,
-     testVar: process.env.testVar
+   },
+   publicRuntimeConfig: {
+     backend: process.env.backend || process.env.backendUrl
    },
    async redirects() {
     return [
