@@ -6,6 +6,7 @@ import {
   faTrashAlt
 } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
+import getConfig from 'next/config';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import useSWR, { mutate } from 'swr';
@@ -14,6 +15,7 @@ import styles from '../../styles/admin.module.css';
 import Table from '../Reusable/Table/Table';
 import ActionButton from './Reusable/ActionButton';
 import TableInput from './Reusable/TableInput';
+const { publicRuntimeConfig } = getConfig();
 
 /* eslint sonarjs/cognitive-complexity: "off" */
 
@@ -165,7 +167,7 @@ function RegistryDisplay(properties) {
 }
 
 const deleteRegistry = async (uri, token) => {
-  const url = `${process.env.backendUrl}/admin/deleteRegistry`;
+  const url = `${publicRuntimeConfig.backend}/admin/deleteRegistry`;
   const headers = {
     Accept: 'text/plain',
     'X-authorization': token
@@ -181,12 +183,12 @@ const deleteRegistry = async (uri, token) => {
   });
 
   if (response.status === 200) {
-    mutate([`${process.env.backendUrl}/admin/registries`, token]);
+    mutate([`${publicRuntimeConfig.backend}/admin/registries`, token]);
   }
 };
 
 const saveRegistry = async (uri, sbhUrl, token) => {
-  const url = `${process.env.backendUrl}/admin/saveRegistry`;
+  const url = `${publicRuntimeConfig.backend}/admin/saveRegistry`;
   const headers = {
     Accept: 'text/plain',
     'X-authorization': token
@@ -203,7 +205,7 @@ const saveRegistry = async (uri, sbhUrl, token) => {
   });
 
   if (response.status === 200) {
-    mutate([`${process.env.backendUrl}/admin/registries`, token]);
+    mutate([`${publicRuntimeConfig.backend}/admin/registries`, token]);
   }
 };
 
@@ -223,7 +225,7 @@ const sortMethods = {
 
 const useRegistries = token => {
   const { data, error } = useSWR(
-    [`${process.env.backendUrl}/admin/registries`, token],
+    [`${publicRuntimeConfig.backend}/admin/registries`, token],
     fetcher
   );
   return {

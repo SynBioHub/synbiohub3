@@ -17,9 +17,6 @@ const { publicRuntimeConfig } = getConfig();
  */
 function MyApp({ Component, pageProps }) {
   const store = useStore(pageProps.initialReduxState);
-
-  console.log(publicRuntimeConfig);
-  console.log(process.env.test);
   /* eslint no-console: "off" */
   console.log(publicRuntimeConfig.backend);
   return (

@@ -20,9 +20,11 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import axios from 'axios';
+import getConfig from 'next/config';
 import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
 import useSWR from 'swr';
+const { publicRuntimeConfig } = getConfig();
 
 import Loading from '../components/Reusable/Loading';
 import TopLevel from '../components/TopLevel';
@@ -191,7 +193,7 @@ function Info(properties) {
 
 const useURI = (url, token) => {
   const { data, error } = useSWR(
-    [`${process.env.backendUrl}/${url}/metadata`, token],
+    [`${publicRuntimeConfig.backend}/${url}/metadata`, token],
     fetcher
   );
 

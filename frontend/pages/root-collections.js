@@ -1,3 +1,4 @@
+import getConfig from 'next/config';
 import { useEffect, useState } from 'react';
 
 import NavbarSearch from '../components/Search/NavbarSearch/NavbarSearch';
@@ -5,6 +6,7 @@ import SearchHeader from '../components/Search/SearchHeader/SearchHeader';
 import ResultTable from '../components/Search/StandardSearch/ResultTable/ResultTable';
 import TopLevel from '../components/TopLevel';
 import styles from '../styles/standardsearch.module.css';
+const { publicRuntimeConfig } = getConfig();
 
 /**
  * This page renders the default search for the /search url
@@ -55,7 +57,7 @@ export default function RootCollections({ data }) {
 // eslint-disable-next-line unicorn/prevent-abbreviations
 export async function getServerSideProps() {
   // Fetch rootCollections from sbh
-  const url = `${process.env.backendUrl}/rootCollections`;
+  const url = `${publicRuntimeConfig.backend}/rootCollections`;
   const headers = {
     Accept: 'text/plain; charset=UTF-8'
   };

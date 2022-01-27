@@ -1,8 +1,10 @@
 import axios from 'axios';
+import getConfig from 'next/config';
 import useSWR from 'swr';
 
 import styles from '../../styles/defaulttable.module.css';
 import Loading from '../Reusable/Loading';
+const { publicRuntimeConfig } = getConfig();
 
 export default function Theme() {
   const { theme, loading } = useTheme();
@@ -39,7 +41,7 @@ export default function Theme() {
 
 const useTheme = () => {
   const { data, error } = useSWR(
-    [`${process.env.backendUrl}/admin/theme`],
+    [`${publicRuntimeConfig.backend}/admin/theme`],
     fetcher
   );
   return {

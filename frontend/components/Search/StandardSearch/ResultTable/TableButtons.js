@@ -5,12 +5,14 @@ import {
   faTrashAlt
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import getConfig from 'next/config';
 import React from 'react';
 import { useDispatch } from 'react-redux';
 
 import { addToBasket, downloadFiles } from '../../../../redux/actions';
 import styles from '../../../../styles/resulttable.module.css';
 import Navigation from './Navigation';
+const { publicRuntimeConfig } = getConfig();
 
 export default function TableButtons(properties) {
   const dispatch = useDispatch();
@@ -94,7 +96,7 @@ export default function TableButtons(properties) {
 
 const convertToDownloadableFile = item => {
   return {
-    url: `${process.env.backendUrl}${item.url}/sbol`,
+    url: `${publicRuntimeConfig.backend}${item.url}/sbol`,
     name: item.name,
     displayId: item.displayId,
     type: 'xml',

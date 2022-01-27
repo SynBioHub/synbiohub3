@@ -1,8 +1,10 @@
 import { faDatabase } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import getConfig from 'next/config';
 import dynamic from 'next/dynamic';
 import { useState } from 'react';
 import Select from 'react-select';
+const { publicRuntimeConfig } = getConfig();
 
 import Table from '../components/Reusable/Table/Table';
 import SearchHeader from '../components/Search/SearchHeader/SearchHeader';
@@ -112,7 +114,7 @@ const submitQuery = async (
 ) => {
   setError();
   setLoading(true);
-  const url = `${process.env.backendUrl}/sparql?query=${encodeURIComponent(
+  const url = `${publicRuntimeConfig.backend}/sparql?query=${encodeURIComponent(
     query
   )}`;
 
