@@ -22,6 +22,9 @@ const downloadingType = 'download';
 const searchable = ['index', 'name', 'url'];
 const headers = ['ID', 'Name', 'URL', ''];
 
+import getConfig from 'next/config';
+const { publicRuntimeConfig } = getConfig();
+
 /* eslint sonarjs/no-duplicate-string: "off" */
 
 export default function Plugins() {
@@ -220,7 +223,7 @@ function PluginDisplay(properties) {
 }
 
 const deletePlugin = async (id, type, token) => {
-  const url = `${process.env.backendUrl}/admin/deletePlugin`;
+  const url = `${publicRuntimeConfig.backend}/admin/deletePlugin`;
   const headers = {
     Accept: 'text/plain',
     'X-authorization': token
@@ -237,12 +240,12 @@ const deletePlugin = async (id, type, token) => {
   });
 
   if (response.status === 200) {
-    mutate([`${process.env.backendUrl}/admin/plugins`, token]);
+    mutate([`${publicRuntimeConfig.backend}/admin/plugins`, token]);
   }
 };
 
 const savePlugin = async (id, type, name, pluginUrl, token) => {
-  const url = `${process.env.backendUrl}/admin/savePlugin`;
+  const url = `${publicRuntimeConfig.backend}/admin/savePlugin`;
   const headers = {
     Accept: 'text/plain',
     'X-authorization': token
@@ -261,7 +264,7 @@ const savePlugin = async (id, type, name, pluginUrl, token) => {
   });
 
   if (response.status === 200) {
-    mutate([`${process.env.backendUrl}/admin/plugins`, token]);
+    mutate([`${publicRuntimeConfig.backend}/admin/plugins`, token]);
   }
 };
 
@@ -285,7 +288,7 @@ const sortMethods = {
 
 const usePlugins = token => {
   const { data, error } = useSWR(
-    [`${process.env.backendUrl}/admin/plugins`, token],
+    [`${publicRuntimeConfig.backend}/admin/plugins`, token],
     fetcher
   );
   return {

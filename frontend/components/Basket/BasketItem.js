@@ -1,6 +1,8 @@
+import getConfig from 'next/config';
 import { useRouter } from 'next/router';
 
 import styles from '../../styles/submissions.module.css';
+const { publicRuntimeConfig } = getConfig();
 
 export default function BasketItem(properties) {
   const router = useRouter();
@@ -13,7 +15,7 @@ export default function BasketItem(properties) {
         router.push(
           properties.item.uri.replace(
             'https://synbiohub.org',
-            process.env.backendUrl
+            publicRuntimeConfig.backend
           )
         );
       }}

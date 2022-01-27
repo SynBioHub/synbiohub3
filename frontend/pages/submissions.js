@@ -1,7 +1,9 @@
 import axios from 'axios';
+import getConfig from 'next/config';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import useSWR from 'swr';
+const { publicRuntimeConfig } = getConfig();
 
 import Basket from '../components/Basket/Basket';
 import Table from '../components/Reusable/Table/Table';
@@ -139,7 +141,7 @@ const sortMethods = {
 
 const useMySubmissions = token => {
   const { data, error } = useSWR(
-    [`${process.env.backendUrl}/manage`, token],
+    [`${publicRuntimeConfig.backend}/manage`, token],
     fetcher
   );
 
@@ -152,7 +154,7 @@ const useMySubmissions = token => {
 
 const useSharedSubmissions = token => {
   const { data, error } = useSWR(
-    [`${process.env.backendUrl}/shared`, token],
+    [`${publicRuntimeConfig.backend}/shared`, token],
     fetcher
   );
 
