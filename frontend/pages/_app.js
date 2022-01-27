@@ -7,11 +7,8 @@ import { Provider } from 'react-redux';
 import { useStore } from '../redux/store';
 config.autoAddCss = false; // Tell Font Awesome to skip adding the CSS automatically since it's being imported above
 
-import getConfig from 'next/config';
-
-const { publicRuntimeConfig } = getConfig();
-
 import App from 'next/app';
+import getConfig from 'next/config';
 
 /**
  * This component is the starting component for the sbh app. Uses Provider
@@ -20,6 +17,7 @@ import App from 'next/app';
 function MyApp({ Component, pageProps }) {
   const store = useStore(pageProps.initialReduxState);
 
+  const { publicRuntimeConfig } = getConfig();
   /* eslint no-console: "off" */
   console.log(publicRuntimeConfig.backend);
   return (
