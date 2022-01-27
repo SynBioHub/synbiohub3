@@ -8,6 +8,7 @@ import Plugins from './Plugins';
 import Registries from './Registries';
 import Sparql from './Sparql';
 import Status from './Status';
+import Theme from './Theme';
 import Users from './Users';
 
 export default function Content(properties) {
@@ -35,6 +36,9 @@ export default function Content(properties) {
         break;
       case 'log':
         setContent(<Log />);
+        break;
+      case 'theme':
+        setContent(<Theme />);
         break;
       default:
         setContent(<Status />);
