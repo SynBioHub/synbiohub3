@@ -11,6 +11,8 @@ import getConfig from 'next/config';
 
 const { publicRuntimeConfig } = getConfig();
 
+import App from 'next/app';
+
 /**
  * This component is the starting component for the sbh app. Uses Provider
  * from react-redux so that entire app can access redux state
@@ -26,5 +28,12 @@ function MyApp({ Component, pageProps }) {
     </Provider>
   );
 }
+
+MyApp.getInitialProps = async appContext => {
+  // calls page's `getInitialProps` and fills `appProps.pageProps`
+  const appProperties = await App.getInitialProps(appContext);
+
+  return { ...appProperties };
+};
 
 export default MyApp;
