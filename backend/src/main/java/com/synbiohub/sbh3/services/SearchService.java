@@ -1,14 +1,13 @@
-package com.synbiohub.sbh3.services.search;
+package com.synbiohub.sbh3.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.synbiohub.sbh3.controllers.search.SearchController;
-import com.synbiohub.sbh3.entities.UserEntity;
-import com.synbiohub.sbh3.security.CustomUserDetailsService;
+import com.synbiohub.sbh3.controllers.SearchController;
 import com.synbiohub.sbh3.sparql.SPARQLQuery;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -19,6 +18,7 @@ import org.springframework.web.client.RestTemplate;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -26,7 +26,7 @@ import java.util.Map;
  * @see SearchController
  */
 @Service
-@NoArgsConstructor
+@RequiredArgsConstructor
 public class SearchService {
 
     @Value("${databasePrefix}")
@@ -63,7 +63,6 @@ public class SearchService {
             // Set offset and limit of query
             if (param.getKey().equals("offset")) {
                 sparqlArgs.replace("offset", "OFFSET " + param.getValue());
-                allParams.remove("offset"); // Remove this as we have already processed and it may mess up criteria string
                 sparqlArgs.replace("limit", "LIMIT 50"); // Default limit for queries without limit
                 continue;
             }
@@ -74,12 +73,14 @@ public class SearchService {
                 continue;
             }
         }
+        if (allParams.containsKey("offset"))
+            allParams.remove("offset"); // Remove this as we have already processed and it may mess up criteria string
 
         String criteriaString = getCriteriaString(allParams);
         sparqlArgs.replace("criteria", criteriaString);
 
         String userGraph = getPrivateGraph();
-        if (!getPrivateGraph().isEmpty()) {
+        if (!userGraph.isEmpty()) {
             sparqlArgs.replace("from", "FROM <" + userGraph + ">");
         }
 
@@ -211,7 +212,7 @@ public class SearchService {
                     "FILTER(?subject != <" + URI + "> && ?elements = ?elements2) # TWINS");
         }
         String userGraph = getPrivateGraph();
-        if (!getPrivateGraph().isEmpty()) {
+        if (!userGraph.isEmpty()) {
             sparqlArgs.replace("from", "FROM <" + userGraph + ">");
         }
 
@@ -230,7 +231,7 @@ public class SearchService {
                 "# USES");
 
         String userGraph = getPrivateGraph();
-        if (!getPrivateGraph().isEmpty()) {
+        if (!userGraph.isEmpty()) {
             sparqlArgs.replace("from", "FROM <" + userGraph + ">");
         }
 
@@ -264,13 +265,11 @@ public class SearchService {
         ArrayList<ObjectNode> listOfParts = new ArrayList<>();
         for(JsonNode node : rawTree.get("results").get("bindings")) {
             ObjectNode part = mapper.createObjectNode();
-            // Check to see if each field exists; otherwise represent as null
-            part.put("type", (node.has("type") ? node.get("type").get("value").asText() : ""));
-            part.put("uri", (node.has("uri") ? node.get("uri").get("value").asText() : ""));
-            part.put("name", (node.has("name") ? node.get("name").get("value").asText() : ""));
-            part.put("description", (node.has("description") ? node.get("description").get("value").asText() : ""));
-            part.put("displayId", (node.has("displayId") ? node.get("displayId").get("value").asText() : ""));
-            part.put("version", (node.has("version") ? node.get("version").get("value").asText() : ""));
+
+            for (Iterator<Map.Entry<String, JsonNode>> it = node.fields(); it.hasNext(); ) {
+                Map.Entry<String, JsonNode> subNode = it.next();
+                part.put(subNode.getKey(), subNode.getValue().get("value"));
+            }
             listOfParts.add(part);
         }
         return listOfParts.toString();
@@ -336,4 +335,6 @@ public class SearchService {
         //var user = authentication.getPrincipal();
         return graphPrefix + "user/" + authentication.getName();
     }
+
+
 }

@@ -11,6 +11,7 @@ spring:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
       ddl-auto: none
+      use-new-id-generator-mappings: false
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
   flyway:
@@ -62,6 +63,7 @@ themeParameters:
 
 triplestore:
   sparqlEndpoint: "http://localhost:8890/sparql/"
+  sparqlAuthEndpoint: "http://localhost:8890/sparql-auth/"
   graphStoreEndpoint: "http://localhost:8890/sparql-graph-crud-auth/"
   defaultGraph: "https://synbiohub.org/public"
   graphPrefix: "https://synbiohub.org/"

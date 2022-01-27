@@ -14,7 +14,7 @@ jobs:
       name: Checkout source code
     - name: Build the Docker image for the frontend
       run: |
-        docker build ./frontend --tag synbiohub/sbh3frontend:snapshot
+        docker build --build-arg TEST_VAR=production ./frontend --tag synbiohub/sbh3frontend:snapshot
     - name: Build the Docker image for the backend
       run: |
         docker build ./backend --tag synbiohub/sbh3backend:snapshot
