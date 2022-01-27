@@ -105,6 +105,7 @@
    font-size: 0.9rem;
    overflow-wrap: break-word;
    cursor: pointer;
+   width: 18rem;
 }
 
 .infotitle:hover {
@@ -225,4 +226,12 @@
    right: 0.4rem;
    font-size: 1.4rem;
    color: #D25627;
+}
+
+.description {
+   margin-top: 0.5rem;
+   padding-left: 0.5rem;
+   border-left: 4px solid #D25627;
+   font-weight: 500;
+   font-size: 1rem;
 }

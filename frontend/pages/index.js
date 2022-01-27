@@ -9,10 +9,13 @@ import Card from '../components/Home/Card';
 import TopLevel from '../components/TopLevel';
 import styles from '../styles/home.module.css';
 
+/* eslint no-console: "off" */
+
 /**
  * This page renders the home/landing page for sbh.
  */
 function Home() {
+  console.log(process.env.testVar);
   return (
     <div className={styles.container}>
       <main className={styles.main}>

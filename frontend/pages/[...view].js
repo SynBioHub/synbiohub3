@@ -21,10 +21,10 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import axios from 'axios';
 import { useRouter } from 'next/router';
-import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import useSWR from 'swr';
 
+import Loading from '../components/Reusable/Loading';
 import TopLevel from '../components/TopLevel';
 import styles from '../styles/view.module.css';
 
@@ -35,16 +35,17 @@ function View() {
   const url = view ? view.join('/') : '';
   const { results, isLoading, isError } = useURI(url, token);
 
-  useEffect(() => {}, [url]);
-
+  if (!url || isLoading) {
+    return <Loading />;
+  } else if (isError || results.length === 0) {
+    return <div>Page not found</div>;
+  }
+  const data = results[0];
   return (
     <div className={styles.container}>
       <div className={styles.sidepanel}>
         <div className={styles.headercontainer}>
-          <h2 className={styles.title}>GFP Report</h2>
-          <h2>
-            {results} {isLoading} {isError}
-          </h2>
+          <h2 className={styles.title}>{data.name}</h2>
           <div className={styles.metaicons}>
             <FontAwesomeIcon
               icon={faLock}
@@ -62,7 +63,7 @@ function View() {
           </div>
         </div>
         <div className={styles.subheader}>
-          <h3 className={styles.id}>BBa_E0240</h3>
+          <h3 className={styles.id}>{data.displayId}</h3>
           <div className={styles.actionicons}>
             <FontAwesomeIcon
               icon={faShareSquare}
@@ -99,7 +100,7 @@ function View() {
           />
           <Info icon={faUserEdit} title="Jennifer Braff" />
           <Info icon={faCalendarPlus} title="2004-10-17" />
-          <Info icon={faRunning} title="https://synbiohub.org/public/igem" />
+          <Info icon={faRunning} title={data.persistentIdentity} />
         </div>
         <div className={styles.pagesections}>
           <h2 className={styles.pagesectionstitle}>Page Sections</h2>
@@ -119,9 +120,9 @@ function View() {
               size="1x"
               className={styles.contenttitleicon}
             />
-            GFP Report
+            {data.name}
           </h1>
-          <h1 className={styles.maintitleid}>(BBa_E0240)</h1>
+          <h1 className={styles.maintitleid}>({data.displayId})</h1>
         </div>
         <div className={styles.contentinfo}>
           <FontAwesomeIcon
@@ -131,6 +132,7 @@ function View() {
           />
           Component
         </div>
+        <div className={styles.description}>{data.description}</div>
         <div className={styles.sections}>
           <Section title="VisBOL" />
           <Section title="Description" />
