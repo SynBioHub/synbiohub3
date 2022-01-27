@@ -9,6 +9,7 @@ config.autoAddCss = false; // Tell Font Awesome to skip adding the CSS automatic
 
 import App from 'next/app';
 import getConfig from 'next/config';
+const { publicRuntimeConfig } = getConfig();
 
 /**
  * This component is the starting component for the sbh app. Uses Provider
@@ -17,8 +18,8 @@ import getConfig from 'next/config';
 function MyApp({ Component, pageProps }) {
   const store = useStore(pageProps.initialReduxState);
 
-  const { publicRuntimeConfig } = getConfig();
   console.log(publicRuntimeConfig);
+  console.log(process.env.test);
   /* eslint no-console: "off" */
   console.log(publicRuntimeConfig.backend);
   return (
