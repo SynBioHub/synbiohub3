@@ -4,7 +4,7 @@ module.exports = {
      backendUrl: process.env.backendUrl,
    },
    publicRuntimeConfig: {
-     backend: process.env.backend || process.env.backendUrl
+     backend: process.env.backend
    },
    async redirects() {
     return [
