@@ -5,8 +5,8 @@ import com.synbiohub.sbh3.services.EditService;
 import com.synbiohub.sbh3.services.UserService;
 import com.synbiohub.sbh3.sparql.SPARQLQuery;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -18,6 +18,7 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 public class EditController {
 
     private final UserService userService;
@@ -39,7 +40,7 @@ public class EditController {
         SPARQLQuery sparqlQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/UpdateMutableDescription.sparql");
         DateTimeFormatter dtf = ISODateTimeFormat.dateHourMinuteSecond();
         String query = sparqlQuery.loadTemplate(Map.of("desc", value, "topLevel", topLevelUri, "modified", dtf.print(DateTime.now())));
-        System.out.println(query);
+        log.debug(query);
         editService.AuthSPARQLQuery(query);
 
         return new ResponseEntity<>(HttpStatus.OK);

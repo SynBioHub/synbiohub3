@@ -3,6 +3,7 @@ package com.synbiohub.sbh3.controllers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.synbiohub.sbh3.services.SearchService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.servlet.view.RedirectView;
@@ -14,6 +15,7 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 public class SearchController {
 
     // Singleton search object for business logic
@@ -56,7 +58,7 @@ public class SearchController {
         String baseUri = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
 
         String finalUri = URLDecoder.decode(baseUri + "/search?" + keyword);
-        System.out.println("String search for: " + keyword);
+        log.info("String search for: " + keyword);
         return new RedirectView(finalUri);
     }
     
@@ -102,7 +104,7 @@ public class SearchController {
     public String getRootCollections() throws JsonProcessingException{
 
         String sparqlQuery = searchService.getRootCollectionsSPARQL();
-        System.out.println("Getting root collections");
+        log.info("Getting root collections");
         return searchService.collectionToOutput(searchService.SPARQLQuery(sparqlQuery));
     }
 

@@ -1,10 +1,13 @@
 package com.synbiohub.sbh3.sparql;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
 
+@Slf4j
 public class SPARQLQuery {
 
     private final String filename;
@@ -28,7 +31,7 @@ public class SPARQLQuery {
         try {
             query = Files.readString(Path.of(filename));
         } catch(IOException e) {
-            System.err.println(e + "\nError: SPARQL file not found.");
+            log.error(e + "\nError: SPARQL file not found.");
         }
 
         for(Map.Entry<String, String> a : args.entrySet()) {
@@ -42,7 +45,7 @@ public class SPARQLQuery {
         try {
             query = Files.readString(Path.of(filename));
         } catch(IOException e) {
-            System.err.println(e + "\nError: SPARQL file not found.");
+            log.error(e + "\nError: SPARQL file not found.");
         }
         return query;
     }
