@@ -1,9 +1,11 @@
+import getConfig from 'next/config';
 import { useEffect, useState } from 'react';
 import WindowedSelect from 'react-windowed-select';
 import { createFilter } from 'react-windowed-select';
 
 import styles from '../../../styles/advancedsearch.module.css';
 import Loading from '../../Reusable/MiniLoading';
+const { publicRuntimeConfig } = getConfig();
 
 const customFilter = createFilter({ ignoreAccents: false });
 
@@ -73,7 +75,7 @@ const fetchOptions = async (
 };
 
 const submitQuery = async query => {
-  const url = `${process.env.backendUrl}/sparql?query=${encodeURIComponent(
+  const url = `${publicRuntimeConfig.backend}/sparql?query=${encodeURIComponent(
     query
   )}`;
   const headers = {

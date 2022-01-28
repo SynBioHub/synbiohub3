@@ -1,7 +1,11 @@
 // Next.config.js
 module.exports = {
    env: {
-     backendUrl: process.env.backendUrl
+     backendUrl: process.env.backendUrl,
+     test: process.env.test
+   },
+   publicRuntimeConfig: {
+     backend: process.env.backend
    },
    async redirects() {
     return [

@@ -14,12 +14,6 @@ import java.util.HashMap;
 @RequiredArgsConstructor
 public class EditService {
 
-    @Value("${useSBOLExplorer}")
-    private Boolean useSBOLExplorer;
-
-    @Value("${SBOLExplorerEndpoint}")
-    private String sbolExplorerEndpoint;
-
     @Value("${triplestore.sparqlAuthEndpoint}")
     private String sparqlAuthEndpoint;
 

@@ -1,5 +1,5 @@
 server:
-  port : 6789
+  port : 6666
 spring:
   datasource:
     driver-class-name: org.h2.Driver
@@ -19,6 +19,9 @@ spring:
   h2:
     console:
       enabled: true
+logging:
+  file:
+    path: ./data
 
 
 
@@ -30,7 +33,7 @@ instanceLogo: ''
 keywords: "synbiohub"
 theme: "default"
 webOfRegistriesUrl: "https://wor.synbiohub.org"
-port: "6789"
+port: "6666"
 databasePrefix: "http://synbiohub.org/"
 sessionSecret: "synbiohub_change_me"
 requireCompliant: false

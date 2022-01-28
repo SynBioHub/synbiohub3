@@ -20,6 +20,9 @@ import CreateCollection from './CreateCollection';
 
 const searchable = ['name', 'displayId', 'type', 'description'];
 
+import getConfig from 'next/config';
+const { publicRuntimeConfig } = getConfig();
+
 /**
  * This component represents the basket in the search page. It stores the uri/name/displayId of
  * search results users would like to store for later (whether that be to create a collection, for
@@ -197,7 +200,7 @@ const downloadCheckedItems = (items, selected, setSelected, dispatch) => {
     setSelected,
     function (item) {
       return {
-        url: `${process.env.backendUrl}${item.url}/sbol`,
+        url: `${publicRuntimeConfig.backend}${item.url}/sbol`,
         name: item.name,
         displayId: item.displayId,
         type: 'xml',

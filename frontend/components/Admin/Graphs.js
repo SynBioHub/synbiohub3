@@ -1,6 +1,8 @@
 import axios from 'axios';
+import getConfig from 'next/config';
 import { useSelector } from 'react-redux';
 import useSWR from 'swr';
+const { publicRuntimeConfig } = getConfig();
 
 import Table from '../Reusable/Table/Table';
 
@@ -45,7 +47,7 @@ const sortMethods = {
 
 const useGraphs = token => {
   const { data, error } = useSWR(
-    [`${process.env.backendUrl}/admin/graphs`, token],
+    [`${publicRuntimeConfig.backend}/admin/graphs`, token],
     fetcher
   );
   return {
