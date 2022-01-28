@@ -1,6 +1,6 @@
 package com.synbiohub.sbh3.security;
 
-import com.synbiohub.sbh3.dto.user.UserRegistrationDTO;
+import com.synbiohub.sbh3.dto.UserRegistrationDTO;
 import com.synbiohub.sbh3.entities.UserEntity;
 import com.synbiohub.sbh3.exceptions.UserAlreadyExistsException;
 import com.synbiohub.sbh3.repositories.UserRepository;

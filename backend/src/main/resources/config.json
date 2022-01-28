@@ -1,0 +1,72 @@
+{
+  "version": "1.0",
+  "firstLaunch": true,
+  "instanceName": "SynBioHub",
+  "instanceUrl": "http://synbiohub.org/",
+  "instanceLogo": "",
+  "keywords": "synbiohub",
+  "theme": "default",
+  "webOfRegistriesUrl": "https://wor.synbiohub.org",
+  "port": "6789",
+  "databasePrefix": "http://synbiohub.org/",
+  "sessionSecret": "synbiohub_change_me",
+  "requireCompliant": false,
+  "requireComplete": false,
+  "requireBestPractice": false,
+  "removePublicEnabled": false,
+  "webOfRegistries": {},
+  "uploadLimit": "150mb",
+  "resolveBatch": "20",
+  "fetchLimit": "1000",
+  "staggeredQueryLimit": "10000",
+  "iceMaxRetries": "10",
+  "iceRetryDelay": "500",
+  "remotes": {},
+  "defaultLimit": "10",
+  "SBOLExplorerEndpoint": "http://localhost:13162/",
+  "useSBOLExplorer": false,
+  "allowPublicSignup": true,
+  "showModuleInteractions": false,
+  "prewarmSearch": true,
+  "triplestore": {
+    "sparqlEndpoint": "http://localhost:8890/sparql/",
+    "sparqlAuthEndpoint": "http://localhost:8890/sparql-auth/",
+    "graphStoreEndpoint": "http://localhost:8890/sparql-graph-crud-auth/",
+    "defaultGraph": "https://synbiohub.org/public",
+    "graphPrefix": "https://synbiohub.org/",
+    "username": "dba",
+    "password": "dba",
+    "virtuosoINI": "/etc/virtuoso-opensource-7/virtuoso.ini",
+    "virtuosoDB": "/var/lib/virtuoso-opensource-7/db",
+    "isql": "isql-vt"
+  },
+  "namespaces": {
+    "xmlns:rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "xmlns:dcterms": "http://purl.org/dc/terms/",
+    "xmlns:dc": "http://purl.org/dc/elements/1.1/",
+    "xmlns:sbh": "http://wiki.synbiohub.org/wiki/Terms/synbiohub#",
+    "xmlns:prov": "http://www.w3.org/ns/prov#",
+    "xmlns:sbol": "http://sbols.org/v2#",
+    "xmlns:xsd": "http://www.w3.org/2001/XMLSchema#",
+    "xmlns:rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "xmlns:purl": "http://purl.obolibrary.org/obo/"
+  },
+  "mail": {
+    "sendgridApiKey": "",
+    "fromAddress": "foo@example.com"
+  },
+  "fileExtensionToAttachmentType": {
+    "png": "http://wiki.synbiohub.org/wiki/Terms/synbiohub#imageAttachment"
+  },
+  "attachmentTypeToMimeType": {
+    "http://wiki.synbiohub.org/wiki/Terms/synbiohub#imageAttachment": "image/png"
+  },
+  "attachmentTypeToTypeName": {
+    "http://wiki.synbiohub.org/wiki/Terms/synbiohub#imageAttachment": "Image"
+  },
+  "plugins": {
+    "rendering": null,
+    "download": null,
+    "submit": null
+  }
+}

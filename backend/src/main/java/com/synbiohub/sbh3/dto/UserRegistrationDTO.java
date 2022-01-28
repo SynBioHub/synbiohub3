@@ -1,4 +1,4 @@
-package com.synbiohub.sbh3.dto.user;
+package com.synbiohub.sbh3.dto;
 
 import lombok.Data;
 

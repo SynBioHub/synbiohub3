@@ -2,7 +2,7 @@ package com.synbiohub.sbh3.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.synbiohub.sbh3.dto.user.UserRegistrationDTO;
+import com.synbiohub.sbh3.dto.UserRegistrationDTO;
 import com.synbiohub.sbh3.security.CustomUserService;
 import com.synbiohub.sbh3.services.UserService;
 import com.synbiohub.sbh3.utils.ObjectMapperUtils;
