@@ -19,6 +19,9 @@ spring:
   h2:
     console:
       enabled: true
+logging:
+  file:
+    path: ./data
 
 
 
