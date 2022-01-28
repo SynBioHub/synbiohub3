@@ -1,0 +1,237 @@
+.container {
+   display: flex;
+   padding: 0;
+   margin: 0;
+}
+
+.sidepanel {
+   width: 22rem;
+   max-width: 95%;
+   background-color: rgb(242, 242, 242);
+   box-shadow: 0px 0px 5px #7e7e7e;
+   position: relative;
+   padding-bottom: 3rem;
+}
+
+.headercontainer {
+   display: flex;
+   margin: 1rem 1rem 0.75rem 1rem;
+   align-items: center;
+}
+
+.title {
+   color: #D25627;
+   font-weight: 500;
+   padding: 0;
+   margin: 0 1rem 0 0;
+   font-size: 1.4rem;
+}
+
+.panelbutton {
+   position: absolute;
+   top: 1rem;
+   right: 1rem;
+   font-size: 1.3rem;
+   color: #D25627;
+   cursor: pointer;
+   transition: transform .3s;
+}
+
+.panelbutton:hover {
+   transform: rotate(90deg);
+}
+
+.metaicons {
+   margin-right: 1.5rem;
+   font-size: 1.2rem;
+}
+
+.metaicon {
+   margin-right: 0.5rem;
+   color: #465775;
+}
+
+.subheader {
+   margin: 0 1rem;
+   display: flex;
+   justify-content: space-between;
+}
+
+.id {
+   font-size: 1rem;
+   font-weight: 400;
+   color: #464646;
+   margin: 0;
+}
+
+.actionicon {
+   margin-left: 0.75rem;
+   color: #D25627;
+   font-size: 1.3rem;
+   cursor: pointer;
+   transition: transform .2s;
+}
+
+.actionicon:hover {
+   transform: scale(1.3);
+}
+
+.infocontainer {
+   width: 100%;
+   margin: 1rem;
+}
+
+.info {
+   display: flex;
+   align-items: center;
+   margin: 0.5rem;
+   overflow-wrap: break-word;
+}
+
+.infoicon {
+   font-size: 1.3rem;
+   color: #465775;
+}
+
+.infoiconcontainer {
+   width: 1rem;
+}
+
+.infotitle {
+   margin-left: 1rem;
+   font-weight: 500;
+   color: #2331B0;
+   text-decoration: underline;
+   font-size: 0.9rem;
+   overflow-wrap: break-word;
+   cursor: pointer;
+   width: 18rem;
+}
+
+.infotitle:hover {
+   color: #00A1E4;
+}
+
+.pagesections {
+   margin: 2rem 1rem 1rem 1rem;
+}
+
+.pagesectionstitle {
+   font-weight: 500;
+   font-size: 1.3rem;
+   margin-bottom: 0.75rem;
+}
+
+.sectionheader {
+   background-color: #D25627;
+   padding: 0.75rem;
+   border-radius: 0.4rem;
+   color: #fff;
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   margin-bottom: 0.5rem;
+   cursor: pointer;
+   transition: transform .1s;
+   box-shadow: 0px 0px 5px #7e7e7e;
+}
+
+.sectionheader:hover {
+   transform: scale(1.03);
+}
+
+.titleandbox {
+   display: flex;
+   align-items: center;
+}
+
+.sectionheadertitle {
+   margin-left: 0.5rem;
+}
+
+.sectionheadericon {
+   font-size: 1.3rem;
+   margin-right: 0.5rem;
+}
+
+.content {
+   margin: 1rem 2rem;
+   width: 100%;
+}
+
+.contentheader {
+   display: flex;
+   align-items: center;
+}
+
+.maintitle {
+   margin: 0;
+   color: #D25627;
+   font-size: 1.7rem;
+   display: flex;
+   align-items: center;
+}
+
+.maintitleid {
+   margin: 0 0.5rem;
+   font-weight: 500;
+   color: #888;
+   font-size: 1.4rem;
+}
+
+.contentinfo {
+   margin-top: 0.3rem;
+   display: flex;
+   align-items: center;
+   color: #465775;
+   font-weight: 500;
+}
+
+.contentinfoicon {
+   margin-right: 0.5rem;
+}
+
+.contenttitleicon {
+   font-size: 1.3rem;
+   margin-right: 0.3rem;
+}
+
+.sections {
+   margin: 2rem 0;
+}
+
+.section {
+   width: 100%;
+   height: 20rem;
+   border-radius: 0.4rem;
+   box-shadow: 0px 0px 5px #948b87;
+   padding: 0.5rem;
+   position: relative;
+   margin-bottom: 1.5rem;
+}
+
+.sectiontitle {
+   font-size: 1.1rem;
+   font-weight: 500;
+   padding: 0.4rem;
+   background-color: #00A1E4;
+   width: fit-content;
+   border-radius: 0.4rem;
+   color: #fff;
+}
+
+.sectionminimizeicon {
+   position: absolute;
+   top: 0.4rem;
+   right: 0.4rem;
+   font-size: 1.4rem;
+   color: #D25627;
+}
+
+.description {
+   margin-top: 0.5rem;
+   padding-left: 0.5rem;
+   border-left: 4px solid #D25627;
+   font-weight: 500;
+   font-size: 1rem;
+}

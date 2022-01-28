@@ -6,6 +6,7 @@ import {
   faTrashAlt
 } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
+import getConfig from 'next/config';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import useSWR, { mutate } from 'swr';
@@ -14,6 +15,7 @@ import styles from '../../styles/admin.module.css';
 import Table from '../Reusable/Table/Table';
 import ActionButton from './Reusable/ActionButton';
 import TableInput from './Reusable/TableInput';
+const { publicRuntimeConfig } = getConfig();
 
 /* eslint sonarjs/cognitive-complexity: "off" */
 
@@ -165,7 +167,7 @@ function RegistryDisplay(properties) {
 }
 
 const deleteRegistry = async (uri, token) => {
-  const url = `${process.env.backendUrl}/admin/deleteRegistry`;
+  const url = `${publicRuntimeConfig.backend}/admin/deleteRegistry`;
   const headers = {
     Accept: 'text/plain',
     'X-authorization': token
@@ -181,12 +183,12 @@ const deleteRegistry = async (uri, token) => {
   });
 
   if (response.status === 200) {
-    mutate([`${process.env.backendUrl}/admin/registries`, token]);
+    mutate([`${publicRuntimeConfig.backend}/admin/registries`, token]);
   }
 };
 
 const saveRegistry = async (uri, sbhUrl, token) => {
-  const url = `${process.env.backendUrl}/admin/saveRegistry`;
+  const url = `${publicRuntimeConfig.backend}/admin/saveRegistry`;
   const headers = {
     Accept: 'text/plain',
     'X-authorization': token
@@ -203,47 +205,27 @@ const saveRegistry = async (uri, sbhUrl, token) => {
   });
 
   if (response.status === 200) {
-    mutate([`${process.env.backendUrl}/admin/registries`, token]);
+    mutate([`${publicRuntimeConfig.backend}/admin/registries`, token]);
   }
 };
 
 const options = [
-  { value: 'id', label: 'ID' },
-  { value: 'name', label: 'Name' },
-  { value: 'email', label: 'Email' },
-  { value: 'username', label: 'Username' },
-  { value: 'affiliation', label: 'Affiliation' },
-  { value: 'admin', label: 'Admin' },
-  { value: 'member', label: 'Member' },
-  { value: 'curator', label: 'Curator' }
+  { value: 'uri', label: 'URI Prefix' },
+  { value: 'url', label: 'SynBioHub Url' }
 ];
 
 const compareStrings = (string1, string2) => {
   return (string1.toLowerCase() > string2.toLowerCase() && 1) || -1;
 };
 
-const compareBools = (bool1, bool2) => {
-  if (bool1 && !bool2) return -1;
-  return 1;
-};
-
 const sortMethods = {
-  id: function (user1, user2) {
-    return user1.id - user2.id;
-  },
-  name: (user1, user2) => compareStrings(user1.name, user2.name),
-  email: (user1, user2) => compareStrings(user1.email, user2.email),
-  username: (user1, user2) => compareStrings(user1.username, user2.username),
-  affiliation: (user1, user2) =>
-    compareStrings(user1.affiliation, user2.affiliation),
-  admin: (user1, user2) => compareBools(user1.isAdmin, user2.isAdmin),
-  member: (user1, user2) => compareBools(user1.isMember, user2.isMember),
-  curator: (user1, user2) => compareBools(user1.isCurator, user2.isCurator)
+  uri: (registry1, registry2) => compareStrings(registry1.uri, registry2.uri),
+  url: (registry1, registry2) => compareStrings(registry1.url, registry2.url)
 };
 
 const useRegistries = token => {
   const { data, error } = useSWR(
-    [`${process.env.backendUrl}/admin/registries`, token],
+    [`${publicRuntimeConfig.backend}/admin/registries`, token],
     fetcher
   );
   return {

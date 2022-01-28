@@ -6,6 +6,7 @@ import {
   faTrashAlt
 } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
+import getConfig from 'next/config';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import useSWR, { mutate } from 'swr';
@@ -15,6 +16,7 @@ import Table from '../Reusable/Table/Table';
 import ActionButton from './Reusable/ActionButton';
 import Checkbox from './Reusable/CheckBox';
 import TableInput from './Reusable/TableInput';
+const { publicRuntimeConfig } = getConfig();
 
 /* eslint sonarjs/cognitive-complexity: "off" */
 
@@ -285,7 +287,7 @@ function UserDisplay(properties) {
 }
 
 const deleteUser = async (id, token) => {
-  const url = `${process.env.backendUrl}/admin/deleteUser`;
+  const url = `${publicRuntimeConfig.backend}/admin/deleteUser`;
   const headers = {
     Accept: 'text/plain',
     'X-authorization': token
@@ -301,7 +303,7 @@ const deleteUser = async (id, token) => {
   });
 
   if (response.status === 200) {
-    mutate([`${process.env.backendUrl}/admin/users`, token]);
+    mutate([`${publicRuntimeConfig.backend}/admin/users`, token]);
   }
 };
 
@@ -315,7 +317,7 @@ const saveUser = async (
   isAdmin,
   token
 ) => {
-  const url = `${process.env.backendUrl}/admin/updateUser`;
+  const url = `${publicRuntimeConfig.backend}/admin/updateUser`;
   const headers = {
     Accept: 'text/plain',
     'X-authorization': token
@@ -337,7 +339,7 @@ const saveUser = async (
   });
 
   if (response.status === 200) {
-    mutate([`${process.env.backendUrl}/admin/users`, token]);
+    mutate([`${publicRuntimeConfig.backend}/admin/users`, token]);
   }
 };
 
@@ -351,7 +353,7 @@ const createUser = async (
   isAdmin,
   token
 ) => {
-  const url = `${process.env.backendUrl}/admin/newUser`;
+  const url = `${publicRuntimeConfig.backend}/admin/newUser`;
   const headers = {
     Accept: 'text/plain',
     'X-authorization': token
@@ -373,7 +375,7 @@ const createUser = async (
   });
 
   if (response.status === 200) {
-    mutate([`${process.env.backendUrl}/admin/users`, token]);
+    mutate([`${publicRuntimeConfig.backend}/admin/users`, token]);
   }
 };
 
@@ -413,7 +415,7 @@ const sortMethods = {
 
 const useUsers = token => {
   const { data, error } = useSWR(
-    [`${process.env.backendUrl}/admin/users`, token],
+    [`${publicRuntimeConfig.backend}/admin/users`, token],
     fetcher
   );
   return {

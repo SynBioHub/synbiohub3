@@ -3,6 +3,7 @@ import 'react-date-range/dist/theme/default.css';
 
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import getConfig from 'next/config';
 import { useEffect, useState } from 'react';
 import { DateRangePicker } from 'react-date-range';
 
@@ -16,6 +17,7 @@ import getTypes from '../../../sparql/getTypes';
 import styles from '../../../styles/advancedsearch.module.css';
 import AdditionalFilter from './AdditionalFilter';
 import SelectLoader from './SelectLoader';
+const { publicRuntimeConfig } = getConfig();
 
 /* eslint sonarjs/no-identical-functions: "off" */
 
@@ -174,7 +176,7 @@ const loadPredicates = async setPredicates => {
 };
 
 const fetchPredicates = async () => {
-  const url = `${process.env.backendUrl}/sparql?query=${encodeURIComponent(
+  const url = `${publicRuntimeConfig.backend}/sparql?query=${encodeURIComponent(
     getPredicates
   )}`;
   const headers = {

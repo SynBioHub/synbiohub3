@@ -1,9 +1,11 @@
 import axios from 'axios';
 import { saveAs } from 'file-saver';
 import JSZip from 'jszip';
+import getConfig from 'next/config';
 import { mutate } from 'swr';
 
 import * as types from './types';
+const { publicRuntimeConfig } = getConfig();
 
 /* eslint sonarjs/no-duplicate-string: "off" */
 
@@ -24,7 +26,7 @@ redux state.
  * @returns
  */
 export const login = (username, password) => async dispatch => {
-  const url = `${process.env.backendUrl}/login`;
+  const url = `${publicRuntimeConfig.backend}/login`;
   const headers = {
     Accept: 'text/plain'
   };
@@ -90,7 +92,7 @@ export const logoutUser = () => dispatch => {
 export const updateUser =
   (name, affiliation, email, password, confirmPassword) =>
   async (dispatch, getState) => {
-    const url = `${process.env.backendUrl}/profile`;
+    const url = `${publicRuntimeConfig.backend}/profile`;
     const token = getState().user.token;
     const headers = {
       Accept: 'text/plain',
@@ -115,7 +117,7 @@ export const updateUser =
   };
 
 export const fetchUserInfo = () => async (dispatch, getState) => {
-  const url = `${process.env.backendUrl}/profile`;
+  const url = `${publicRuntimeConfig.backend}/profile`;
   const token = getState().user.token;
   const headers = {
     Accept: 'text/plain',
@@ -147,7 +149,7 @@ export const fetchUserInfo = () => async (dispatch, getState) => {
 export const registerUser =
   (fullName, username, affiliation, email, password, confirmPassword) =>
   async dispatch => {
-    const url = `${process.env.backendUrl}/register`;
+    const url = `${publicRuntimeConfig.backend}/register`;
     const headers = {
       Accept: 'text/plain'
     };
@@ -280,7 +282,7 @@ async function uploadFiles(
     payload: filesUploading
   });
 
-  let url = `${process.env.backendUrl}/submit`;
+  let url = `${publicRuntimeConfig.backend}/submit`;
   const headers = {
     Accept: 'text/plain; charset=UTF-8',
     'X-authorization': token
@@ -289,7 +291,7 @@ async function uploadFiles(
   // upload all files
   for (var fileIndex = 0; fileIndex < filesUploading.length; fileIndex++) {
     if (addingToCollection) {
-      url = `${process.env.backendUrl}${filesUploading[fileIndex].url}/addToCollection`;
+      url = `${publicRuntimeConfig.backend}${filesUploading[fileIndex].url}/addToCollection`;
     }
     filesUploading[fileIndex].status = 'uploading';
 
@@ -363,7 +365,7 @@ export const addAttachments = (files, uri) => async (dispatch, getState) => {
 
   const token = getState().user.token;
 
-  const url = `${process.env.backendUrl}/submit`;
+  const url = `${publicRuntimeConfig.backend}/submit`;
   const headers = {
     Accept: 'text/plain; charset=UTF-8',
     'X-authorization': token
@@ -427,7 +429,7 @@ export const createCollection =
       payload: 'Creating Collection'
     });
     const token = getState().user.token;
-    const url = `${process.env.backendUrl}/submit`;
+    const url = `${publicRuntimeConfig.backend}/submit`;
     var headers = {
       Accept: 'text/plain; charset=UTF-8',
       'X-authorization': token
@@ -498,7 +500,7 @@ export const getCanSubmitTo = () => async (dispatch, getState) => {
   dispatch({ type: types.GETTINGCANSUBMITTO, payload: true });
 
   const token = getState().user.token;
-  var url = `${process.env.backendUrl}/manage`;
+  var url = `${publicRuntimeConfig.backend}/manage`;
   var headers = {
     Accept: 'text/plain; charset=UTF-8',
     'X-authorization': token
@@ -511,7 +513,7 @@ export const getCanSubmitTo = () => async (dispatch, getState) => {
 
   const submissions = await data.json();
 
-  url = `${process.env.backendUrl}/shared`;
+  url = `${publicRuntimeConfig.backend}/shared`;
 
   data = await fetch(url, {
     method: 'GET',
@@ -547,7 +549,7 @@ export const makePublicCollection =
     dispatch({ type: types.PUBLISHING, payload: true });
 
     const token = getState().user.token;
-    const url = `${process.env.backendUrl}${submissionUrl}/makePublic`;
+    const url = `${publicRuntimeConfig.backend}${submissionUrl}/makePublic`;
     const headers = {
       Accept: 'text/plain; charset=UTF-8',
       'X-authorization': token
@@ -569,8 +571,8 @@ export const makePublicCollection =
     });
 
     if (response.status === 200) {
-      mutate([`${process.env.backendUrl}/shared`, token]);
-      mutate([`${process.env.backendUrl}/manage`, token]);
+      mutate([`${publicRuntimeConfig.backend}/shared`, token]);
+      mutate([`${publicRuntimeConfig.backend}/manage`, token]);
     }
 
     setProcessUnderway(false);

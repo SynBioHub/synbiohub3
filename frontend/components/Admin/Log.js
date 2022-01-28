@@ -1,8 +1,10 @@
 import axios from 'axios';
 import he from 'he';
+import getConfig from 'next/config';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import useSWR from 'swr';
+const { publicRuntimeConfig } = getConfig();
 
 import styles from '../../styles/admin.module.css';
 import Loading from '../Reusable/Loading';
@@ -33,7 +35,7 @@ export default function Log() {
         <LogHeader title="Info" viewing={viewing} setViewing={setViewing} />
         <LogHeader title="Debug" viewing={viewing} setViewing={setViewing} />
       </div>
-      {logDisplay}
+      <div className={styles.logdisplay}>{logDisplay}</div>
     </div>
   );
 }
@@ -68,7 +70,7 @@ const decodeHtml = (line, index) => {
 
 const useLog = token => {
   const { data, error } = useSWR(
-    [`${process.env.backendUrl}/admin/log`, token],
+    [`${publicRuntimeConfig.backend}/admin/log`, token],
     fetcher
   );
   return {

@@ -1,8 +1,10 @@
 import axios from 'axios';
+import getConfig from 'next/config';
 import { useEffect, useState } from 'react';
 import Loader from 'react-loader-spinner';
 import { useSelector } from 'react-redux';
 import useSWR from 'swr';
+const { publicRuntimeConfig } = getConfig();
 
 import {
   countloader,
@@ -92,7 +94,7 @@ export default function StandardSearch() {
 const useSearchResults = (query, offset, limit, token) => {
   const { data, error } = useSWR(
     [
-      `${process.env.backendUrl}/search/${query}?offset=${offset}&limit=${limit}`,
+      `${publicRuntimeConfig.backend}/search/${query}?offset=${offset}&limit=${limit}`,
       token
     ],
     fetcher
@@ -107,7 +109,7 @@ const useSearchResults = (query, offset, limit, token) => {
 
 const useSearchCount = (query, token) => {
   const { data, error } = useSWR(
-    [`${process.env.backendUrl}/searchCount/${query}`, token],
+    [`${publicRuntimeConfig.backend}/searchCount/${query}`, token],
     fetcher
   );
 
