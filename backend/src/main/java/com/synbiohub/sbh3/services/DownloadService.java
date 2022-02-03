@@ -1,15 +1,10 @@
 package com.synbiohub.sbh3.services;
 
-import com.synbiohub.sbh3.sparql.SPARQLQuery;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.util.UriComponentsBuilder;
 
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URL;
 import java.util.Collections;
 
 @Service
@@ -30,7 +25,7 @@ public class DownloadService {
         }
 //TODO: refactor graph prefix
         String modifiedUri = graphPrefix + uriClass.getPath().substring(1);     // The path contains a / at the beginning, so does our graph prefix
-        var metadataQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/GetTopLevelMetadata.sparql");
+        var metadataQuery = new SPARQLQuery("src/main/resources/sparql/GetTopLevelMetadata.sparql");
         var args = Collections.singletonMap("uri", modifiedUri);
         String query = metadataQuery.loadTemplate(args);
         String results = searchService.SPARQLQuery(query);

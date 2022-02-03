@@ -3,11 +3,8 @@ package com.synbiohub.sbh3.services;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.synbiohub.sbh3.entities.UserEntity;
 import com.synbiohub.sbh3.repositories.UserRepository;
-import com.synbiohub.sbh3.sparql.SPARQLQuery;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -57,7 +54,7 @@ public class UserService {
      * @return True if it matches, false otherwise.
      */
     public Boolean isOwnedBy(String topLevelUri) {
-        SPARQLQuery query = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/GetOwnedBy.sparql");
+        SPARQLQuery query = new SPARQLQuery("src/main/resources/sparql/GetOwnedBy.sparql");
         String results = searchService.SPARQLQuery(query.loadTemplate(Collections.singletonMap("topLevel", topLevelUri)));
         ArrayList<String> owners = new ArrayList<>();
         try {
