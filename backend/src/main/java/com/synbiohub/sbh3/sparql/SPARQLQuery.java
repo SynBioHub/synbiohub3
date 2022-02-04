@@ -1,4 +1,4 @@
-package com.synbiohub.sbh3.services;
+package com.synbiohub.sbh3.sparql;
 
 import lombok.extern.slf4j.Slf4j;
 

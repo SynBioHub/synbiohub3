@@ -2,8 +2,8 @@ package com.synbiohub.sbh3.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.synbiohub.sbh3.services.EditService;
-import com.synbiohub.sbh3.services.SPARQLQuery;
 import com.synbiohub.sbh3.services.UserService;
+import com.synbiohub.sbh3.sparql.SPARQLQuery;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
@@ -37,7 +37,7 @@ public class EditController {
         if (!userService.validateXAuth(xauth) || !userService.isOwnedBy(topLevelUri))
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 
-        SPARQLQuery sparqlQuery = new SPARQLQuery("src/main/resources/sparql/UpdateMutableDescription.sparql");
+        SPARQLQuery sparqlQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/UpdateMutableDescription.sparql");
         DateTimeFormatter dtf = ISODateTimeFormat.dateHourMinuteSecond();
         String query = sparqlQuery.loadTemplate(Map.of("desc", value, "topLevel", topLevelUri, "modified", dtf.print(DateTime.now())));
         log.debug(query);

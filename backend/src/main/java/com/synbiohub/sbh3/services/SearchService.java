@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.synbiohub.sbh3.controllers.SearchController;
+import com.synbiohub.sbh3.sparql.SPARQLQuery;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -50,7 +52,7 @@ public class SearchService {
      * @see SearchController#getResults(Map, HttpServletRequest)
      */
     public String getMetadataQuerySPARQL(Map<String,String> allParams) {
-        SPARQLQuery searchQuery = new SPARQLQuery("src/main/resources/sparql/search.sparql");
+        SPARQLQuery searchQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/search.sparql");
         HashMap<String, String> sparqlArgs = new HashMap<String, String>
                 (Map.of("from", "", "criteria", "", "limit", "", "offset", ""));
 
@@ -160,7 +162,7 @@ public class SearchService {
      * @return Count of a part
      */
     public String getSearchCountSPARQL(Map<String,String> allParams) {
-        SPARQLQuery searchQuery = new SPARQLQuery("src/main/resources/sparql/searchCount.sparql");
+        SPARQLQuery searchQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/searchCount.sparql");
         HashMap<String, String> sparqlArgs = new HashMap<String, String>
                 (Map.of("from", "", "criteria", ""));
         String criteriaString = getCriteriaString(allParams);
@@ -174,7 +176,7 @@ public class SearchService {
      * @return Count of a type
      */
     public String getTypeCountSPARQL(String type) {
-        SPARQLQuery searchQuery = new SPARQLQuery("src/main/resources/sparql/Count.sparql");
+        SPARQLQuery searchQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/Count.sparql");
         HashMap<String, String> sparqlArgs = new HashMap<String, String>
                 (Map.of("type", type));
         return searchQuery.loadTemplate(sparqlArgs);
@@ -183,7 +185,7 @@ public class SearchService {
     // TODO: Make sure this method (and others) are compatible with user authentication in the future
     public String getURISPARQL(String collectionInfo, String endpoint) {
         // Initialize arguments to be parsed into SPARQL template
-        SPARQLQuery searchQuery = new SPARQLQuery("src/main/resources/sparql/search.sparql");
+        SPARQLQuery searchQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/search.sparql");
         HashMap<String, String> sparqlArgs = new HashMap<String, String>
                 (Map.of("from", getPrivateGraph(), "criteria", "", "limit", "", "offset", ""));
 
@@ -216,7 +218,7 @@ public class SearchService {
     }
 
     public String getTwinsSPARQL(String collectionInfo) {
-        SPARQLQuery searchQuery = new SPARQLQuery("src/main/resources/sparql/search.sparql");
+        SPARQLQuery searchQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/search.sparql");
         HashMap<String, String> sparqlArgs = new HashMap<String, String>
                 (Map.of("from", getPrivateGraph(), "criteria", "", "limit", "", "offset", ""));
 
@@ -235,12 +237,12 @@ public class SearchService {
     }
 
     public String getRootCollectionsSPARQL() {
-        SPARQLQuery searchQuery = new SPARQLQuery("src/main/resources/sparql/RootCollectionMetadata.sparql");
+        SPARQLQuery searchQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/RootCollectionMetadata.sparql");
         return searchQuery.getQuery();
     }
 
     public String getSubCollectionsSPARQL(String collectionInfo) {
-        SPARQLQuery searchQuery = new SPARQLQuery("src/main/resources/sparql/SubCollectionMetadata.sparql");
+        SPARQLQuery searchQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/SubCollectionMetadata.sparql");
         String IRI = "<" + databasePrefix + collectionInfo + ">";
 
         HashMap<String, String> sparqlArgs = new HashMap<String, String>
