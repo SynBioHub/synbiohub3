@@ -248,7 +248,7 @@ public class SearchService {
 
             for (Iterator<Map.Entry<String, JsonNode>> it = node.fields(); it.hasNext(); ) {
                 Map.Entry<String, JsonNode> subNode = it.next();
-                part.put(subNode.getKey(), subNode.getValue().get("value"));
+                part.put((subNode.getKey().equals("subject")? "uri" : subNode.getKey()), subNode.getValue().get("value"));
             }
             listOfParts.add(part);
         }
