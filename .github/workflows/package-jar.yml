@@ -3,6 +3,8 @@ name: Maven CI/CD
 on:
  push:
     branches: [ main ]
+    paths:
+      - 'backend/**'
  pull_request:
     branches: [ main ]
 
