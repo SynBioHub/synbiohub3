@@ -24,7 +24,6 @@ public class SearchController {
     private final SearchService searchService;
 
 
-
     /**
      * Returns the metadata for the object from the specified search query.
      * @param allParams Key/value pairs of all parameters

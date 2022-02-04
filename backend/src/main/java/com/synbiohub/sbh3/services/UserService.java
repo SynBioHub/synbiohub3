@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.synbiohub.sbh3.entities.UserEntity;
 import com.synbiohub.sbh3.repositories.UserRepository;
 import com.synbiohub.sbh3.sparql.SPARQLQuery;
+import com.synbiohub.sbh3.utils.ConfigUtil;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,9 +22,6 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 public class UserService {
-
-    @Value("${triplestore.graphPrefix}")
-    private String graphPrefix;
 
     private final UserRepository userRepository;
 
@@ -72,6 +70,6 @@ public class UserService {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return owners.contains(graphPrefix + "user/" + SecurityContextHolder.getContext().getAuthentication().getName());
+        return owners.contains(ConfigUtil.get("triplestore").get("graphPrefix").asText() + "user/" + SecurityContextHolder.getContext().getAuthentication().getName());
     }
 }

@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.synbiohub.sbh3.controllers.SearchController;
 import com.synbiohub.sbh3.sparql.SPARQLQuery;
-import lombok.RequiredArgsConstructor;
+import com.synbiohub.sbh3.utils.ConfigUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -26,24 +26,6 @@ import java.util.Map;
  */
 @Service
 public class SearchService {
-
-    @Value("${databasePrefix}")
-    private String databasePrefix;
-
-    @Value("${useSBOLExplorer}")
-    private Boolean useSBOLExplorer;
-
-    @Value("${SBOLExplorerEndpoint}")
-    private String sbolExplorerEndpoint;
-
-    @Value("${triplestore.sparqlEndpoint}")
-    private String sparqlEndpoint;
-
-    @Value("${triplestore.defaultGraph}")
-    private String defaultGraph;
-
-    @Value("${triplestore.graphPrefix}")
-    private String graphPrefix;
 
     /**
      * Returns the metadata for the object from the specified search query
@@ -189,7 +171,7 @@ public class SearchService {
         HashMap<String, String> sparqlArgs = new HashMap<String, String>
                 (Map.of("from", getPrivateGraph(), "criteria", "", "limit", "", "offset", ""));
 
-        String URI = databasePrefix + collectionInfo;
+        String URI = ConfigUtil.get("databasePrefix").asText() + collectionInfo;
 
         if (endpoint.equalsIgnoreCase("uses")) {
             sparqlArgs.replace("criteria", " { ?subject ?p <" + URI + "> } UNION { ?subject ?p ?use . ?use ?useP <" + URI + "> } ." +
@@ -199,7 +181,7 @@ public class SearchService {
 
         else if (endpoint.equalsIgnoreCase("similar")) {
             // Make sure explorer is enabled
-            if (useSBOLExplorer) {
+            if (ConfigUtil.get("useSBOLExplorer").asBoolean()) {
                 // TODO: Use Explorer here
             }
         }
@@ -222,7 +204,7 @@ public class SearchService {
         HashMap<String, String> sparqlArgs = new HashMap<String, String>
                 (Map.of("from", getPrivateGraph(), "criteria", "", "limit", "", "offset", ""));
 
-        String URI = databasePrefix + collectionInfo;
+        String URI = ConfigUtil.get("databasePrefix").asText() + collectionInfo;
 
         sparqlArgs.replace("criteria", " { ?subject ?p <" + URI + "> } UNION { ?subject ?p ?use . ?use ?useP <" + URI + "> } ." +
                 " FILTER(?useP != <http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel>) " +
@@ -243,7 +225,7 @@ public class SearchService {
 
     public String getSubCollectionsSPARQL(String collectionInfo) {
         SPARQLQuery searchQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/SubCollectionMetadata.sparql");
-        String IRI = "<" + databasePrefix + collectionInfo + ">";
+        String IRI = "<" + ConfigUtil.get("databasePrefix").asText() + collectionInfo + ">";
 
         HashMap<String, String> sparqlArgs = new HashMap<String, String>
                 (Map.of("parentCollection", IRI));
@@ -312,15 +294,15 @@ public class SearchService {
         String url = "";
         // Encoding the SPARQL query to be sent to Explorer/SPARQL
         HashMap<String, String> params = new HashMap<>();
-        params.put("default-graph-uri", defaultGraph);
+        params.put("default-graph-uri", ConfigUtil.get("triplestore").get("defaultGraph").asText());
         params.put("query", query);
 
-        if (useSBOLExplorer && query.length() > 0)
-            url = sbolExplorerEndpoint  + "?default-graph-uri={defaultGraph}&query={query}&";
+        if (ConfigUtil.get("useSBOLExplorer").asBoolean() && query.length() > 0)
+            url = ConfigUtil.get("SBOLExplorerEndpoint").asText()  + "?default-graph-uri={default-graph-uri}&query={query}&";
         else
-            url = sparqlEndpoint + "?default-graph-uri={defaultGraph}&query={query}&format=json&" ;
+            url = ConfigUtil.get("triplestore").get("sparqlEndpoint").asText() + "?default-graph-uri={default-graph-uri}&query={query}&format=json&";
 
-        return restTemplate.getForObject(url, String.class, defaultGraph, query);
+        return restTemplate.getForObject(url, String.class, ConfigUtil.get("triplestore").get("defaultGraph").asText(), query);
     }
 
     /**
@@ -331,7 +313,7 @@ public class SearchService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication instanceof AnonymousAuthenticationToken) return "";
         //var user = authentication.getPrincipal();
-        return graphPrefix + "user/" + authentication.getName();
+        return ConfigUtil.get("triplestore").get("graphPrefix").asText() + "user/" + authentication.getName();
     }
 
 

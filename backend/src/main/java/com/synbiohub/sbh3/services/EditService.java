@@ -1,5 +1,7 @@
 package com.synbiohub.sbh3.services;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.synbiohub.sbh3.utils.ConfigUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -14,25 +16,18 @@ import java.util.HashMap;
 @RequiredArgsConstructor
 public class EditService {
 
-    @Value("${triplestore.sparqlAuthEndpoint}")
-    private String sparqlAuthEndpoint;
-
-    @Value("${triplestore.username}")
-    private String adminUsername;
-
-    @Value("${triplestore.password}")
-    private String adminPassword;
-
-    @Value("${triplestore.defaultGraph}")
-    private String defaultGraph;
-
-
     /**
      * Sends a SPARQL query with full admin credentials.
      * @param query SPARQL Query to send
      * @return Virtuoso response
      */
     public String AuthSPARQLQuery(String query) {
+        JsonNode triplestore = ConfigUtil.get("triplestore");
+        String sparqlAuthEndpoint = triplestore.get("sparqlAuthEndpoint").asText();
+        String adminUsername = triplestore.get("username").asText();
+        String adminPassword = triplestore.get("password").asText();
+        String defaultGraph = triplestore.get("defaultGraph").asText();
+
         RestTemplate restTemplate = new RestTemplate();
         String url = sparqlAuthEndpoint + "?default-graph-uri={defaultGraph}&query={query}&format=json&";
         HashMap<String, String> params = new HashMap<>();

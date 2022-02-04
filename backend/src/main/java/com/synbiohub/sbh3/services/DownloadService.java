@@ -1,15 +1,12 @@
 package com.synbiohub.sbh3.services;
 
 import com.synbiohub.sbh3.sparql.SPARQLQuery;
-import lombok.AllArgsConstructor;
+import com.synbiohub.sbh3.utils.ConfigUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.util.UriComponentsBuilder;
 
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URL;
 import java.util.Collections;
 
 @Service
@@ -18,10 +15,9 @@ public class DownloadService {
 
     private final SearchService searchService;
 
-    @Value("${triplestore.graphPrefix}")
-    private String graphPrefix;
 
     public String getMetadata(String uri) {
+        String graphPrefix = ConfigUtil.get("triplestore").get("graphPrefix").asText();
         URI uriClass = null;
         try {
             uriClass = new URI(uri);
