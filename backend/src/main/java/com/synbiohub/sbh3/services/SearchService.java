@@ -44,17 +44,17 @@ public class SearchService {
             if (param.getKey().equals("offset")) {
                 sparqlArgs.replace("offset", "OFFSET " + param.getValue());
                 sparqlArgs.replace("limit", "LIMIT 50"); // Default limit for queries without limit
-                continue;
             }
 
             else if (param.getKey().equals("limit")) {
                 sparqlArgs.replace("limit", "LIMIT " + param.getValue());
-                allParams.remove("limit");
-                continue;
             }
         }
         if (allParams.containsKey("offset"))
             allParams.remove("offset"); // Remove this as we have already processed and it may mess up criteria string
+
+        if (allParams.containsKey("limit"))
+            allParams.remove("limit");
 
         String criteriaString = getCriteriaString(allParams);
         sparqlArgs.replace("criteria", criteriaString);
@@ -69,12 +69,27 @@ public class SearchService {
 
     /**
      * Gets the criteria string for a SPARQL query
-     * @param params Key/value pairs from GET request
+     * @param allParams Key/value pairs from GET request
      * @return SPARQL-compatible criteria string
      */
-    private String getCriteriaString(Map<String, String> params) {
+    private String getCriteriaString(Map<String, String> allParams) {
         String criteriaString = "";
-        for (Map.Entry<String, String> param : params.entrySet()) {
+
+        var paramMap = allParams.entrySet();
+
+        // Take care of URL encoded string of params
+        for (Map.Entry<String, String> param : paramMap) {
+            if (paramMap.size() == 1) {
+                var params = param.getKey().split("=|&");
+                for (int i = 0; i < params.length - 1; i+= 2) {
+                    allParams.put(params[i], params[i+1]);
+                }
+                paramMap.remove(param);
+            }
+
+        }
+
+        for (Map.Entry<String, String> param : paramMap) {
 
             // A tag in the dcterms namespace to search for
             if (param.getKey().contains(":")) {

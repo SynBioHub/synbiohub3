@@ -53,7 +53,7 @@ public class UserController {
             auth = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(email, password));
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Bad credentials");
             return new ResponseEntity(HttpStatus.UNAUTHORIZED);
         }
         var securityContext = SecurityContextHolder.getContext();

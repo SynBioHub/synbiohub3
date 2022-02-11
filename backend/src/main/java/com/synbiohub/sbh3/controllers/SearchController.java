@@ -4,15 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.synbiohub.sbh3.services.SearchService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpMethod;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.Map;
 
 @RestController
@@ -45,23 +39,13 @@ public class SearchController {
      * @return Redirect to search controller
      */
     @GetMapping(value = "/search/**", produces = "text/plain")
-    public String redirectOldSearch(HttpServletRequest request) {
-
+    public String redirectOldSearch(HttpServletRequest request, @RequestParam Map<String,String> allParams) throws JsonProcessingException{
         String requestURL = request.getRequestURL().toString();
-
-        String limitAndOffset = request.getQueryString();
-
-        if (limitAndOffset != null)
-            requestURL = requestURL + "&" + limitAndOffset;
-
-        String keyword = requestURL.split("/search/")[1];
-
-        String baseUri = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
-
-        String finalUri = URLDecoder.decode(baseUri + "/search?" + keyword);
-        log.info("String search for: " + keyword);
-        RestTemplate restTemplate = new RestTemplate();
-        return restTemplate.exchange(finalUri, HttpMethod.GET, null, String.class).getBody();
+        String[] uriArr = requestURL.split("/");
+        String keyword = uriArr[uriArr.length - 1].split("\\?")[0];
+        allParams.put(keyword, "");
+        String sparqlQuery = searchService.getMetadataQuerySPARQL(allParams);
+        return searchService.rawJSONToOutput(searchService.SPARQLQuery(sparqlQuery));
     }
     
     /**
@@ -71,7 +55,7 @@ public class SearchController {
      */
     @GetMapping(value = "/searchCount")
     @ResponseBody
-    public String getSearchCount(@RequestParam Map<String,String> allParams) throws UnsupportedEncodingException, JsonProcessingException {
+    public String getSearchCount(@RequestParam Map<String,String> allParams) throws JsonProcessingException {
         String sparqlQuery = searchService.getSearchCountSPARQL(allParams);
         return searchService.JSONToCount(searchService.SPARQLQuery(sparqlQuery));
     }
@@ -85,15 +69,11 @@ public class SearchController {
      * @return Redirect to search count controller
      */
     @GetMapping(value = "/searchCount/**", produces = "text/plain")
-    public String redirectOldSearchCount(HttpServletRequest request) {
+    public String redirectOldSearchCount(HttpServletRequest request, @RequestParam Map<String,String> allParams) throws JsonProcessingException{
 
         String requestURL = request.getRequestURL().toString();
-        String keyword = requestURL.split("/searchCount/")[1];
-        String baseUri = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
-        String finalUri = URLDecoder.decode(baseUri + "/searchCount?" + keyword);
-
-        RestTemplate restTemplate = new RestTemplate();
-        return restTemplate.exchange(finalUri, HttpMethod.GET, null, String.class).getBody();
+        String sparqlQuery = searchService.getSearchCountSPARQL(allParams);
+        return searchService.JSONToCount(searchService.SPARQLQuery(sparqlQuery));
     }
 
     /**
