@@ -79,7 +79,7 @@ public class SearchService {
 
         // Take care of URL encoded string of params
         for (Map.Entry<String, String> param : paramMap) {
-            if (paramMap.size() == 1) {
+            if (paramMap.size() == 1 && (param.getKey().contains("&") || param.getKey().contains("="))) {
                 var params = param.getKey().split("=|&");
                 for (int i = 0; i < params.length - 1; i+= 2) {
                     allParams.put(params[i], params[i+1]);
