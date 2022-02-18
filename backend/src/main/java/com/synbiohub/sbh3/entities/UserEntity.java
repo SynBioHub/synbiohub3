@@ -10,8 +10,8 @@ import javax.persistence.*;
 public class UserEntity {
 
     @Id
-    @SequenceGenerator(name="client_generator", sequenceName="client_sequence", allocationSize=1)
-    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="client_generator")
+    @SequenceGenerator(name= "CLIENT_SEQUENCE", sequenceName = "CLIENT_SEQUENCE_ID", initialValue=1, allocationSize = 1)
+    @GeneratedValue(strategy=GenerationType.AUTO, generator="CLIENT_SEQUENCE")
     private Integer id;
 
     @Column(name = "name")
