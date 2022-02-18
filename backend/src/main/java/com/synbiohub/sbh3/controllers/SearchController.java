@@ -27,7 +27,7 @@ public class SearchController {
     @ResponseBody
     public String getResults(@RequestParam Map<String,String> allParams, HttpServletRequest request) throws JsonProcessingException {
         String sparqlQuery = searchService.getMetadataQuerySPARQL(allParams);
-        return searchService.rawJSONToOutput(searchService.SPARQLQuery(sparqlQuery));
+        return searchService.rawJSONToOutput(searchService.SPARQLOrExplorerQuery(sparqlQuery));
     }
 
 
@@ -45,7 +45,7 @@ public class SearchController {
         String keyword = uriArr[uriArr.length - 1].split("\\?")[0];
         allParams.put(keyword, "");
         String sparqlQuery = searchService.getMetadataQuerySPARQL(allParams);
-        return searchService.rawJSONToOutput(searchService.SPARQLQuery(sparqlQuery));
+        return searchService.rawJSONToOutput(searchService.SPARQLOrExplorerQuery(sparqlQuery));
     }
     
     /**
@@ -57,7 +57,7 @@ public class SearchController {
     @ResponseBody
     public String getSearchCount(@RequestParam Map<String,String> allParams) throws JsonProcessingException {
         String sparqlQuery = searchService.getSearchCountSPARQL(allParams);
-        return searchService.JSONToCount(searchService.SPARQLQuery(sparqlQuery));
+        return searchService.JSONToCount(searchService.SPARQLOrExplorerQuery(sparqlQuery));
     }
 
 
@@ -72,8 +72,11 @@ public class SearchController {
     public String redirectOldSearchCount(HttpServletRequest request, @RequestParam Map<String,String> allParams) throws JsonProcessingException{
 
         String requestURL = request.getRequestURL().toString();
+        String[] uriArr = requestURL.split("/");
+        String keyword = uriArr[uriArr.length - 1].split("\\?")[0];
+        allParams.put(keyword, "");
         String sparqlQuery = searchService.getSearchCountSPARQL(allParams);
-        return searchService.JSONToCount(searchService.SPARQLQuery(sparqlQuery));
+        return searchService.JSONToCount(searchService.SPARQLOrExplorerQuery(sparqlQuery));
     }
 
     /**
@@ -132,7 +135,7 @@ public class SearchController {
 
 
         String sparqlQuery = searchService.getURISPARQL(collectionInfo, "twins");
-        return searchService.rawJSONToOutput(searchService.SPARQLQuery(sparqlQuery));
+        return searchService.rawJSONToOutput(searchService.SPARQLOrExplorerQuery(sparqlQuery));
     }
 
     /**

@@ -304,7 +304,7 @@ public class SearchService {
         return value;
     }
 
-    public String SPARQLQuery(String query) {
+    public String SPARQLOrExplorerQuery(String query) {
         RestTemplate restTemplate = new RestTemplate();
         String url = "";
         // Encoding the SPARQL query to be sent to Explorer/SPARQL
@@ -316,6 +316,19 @@ public class SearchService {
             url = ConfigUtil.get("SBOLExplorerEndpoint").asText()  + "?default-graph-uri={default-graph-uri}&query={query}&";
         else
             url = ConfigUtil.get("triplestore").get("sparqlEndpoint").asText() + "?default-graph-uri={default-graph-uri}&query={query}&format=json&";
+
+        return restTemplate.getForObject(url, String.class, ConfigUtil.get("triplestore").get("defaultGraph").asText(), query);
+    }
+
+    public String SPARQLQuery(String query) {
+        RestTemplate restTemplate = new RestTemplate();
+        String url = "";
+        // Encoding the SPARQL query to be sent to Explorer/SPARQL
+        HashMap<String, String> params = new HashMap<>();
+        params.put("default-graph-uri", ConfigUtil.get("triplestore").get("defaultGraph").asText());
+        params.put("query", query);
+
+        url = ConfigUtil.get("triplestore").get("sparqlEndpoint").asText() + "?default-graph-uri={default-graph-uri}&query={query}&format=json&";
 
         return restTemplate.getForObject(url, String.class, ConfigUtil.get("triplestore").get("defaultGraph").asText(), query);
     }
