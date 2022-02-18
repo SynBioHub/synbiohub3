@@ -7,7 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 
 @Slf4j
 @Component
@@ -18,15 +19,28 @@ public class ConfigUtil {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode json = null;
         try {
-            json = mapper.readValue(new File("src/main/resources/config.json"), JsonNode.class);
-            if (json.isEmpty())
-                throw new FileNotFoundException();
+            // Initialize config.local.json
+            if (!Files.exists(new File("data/config-local.json").toPath())) {
+                Files.copy(new File("src/main/resources/config.json").toPath(), new File("data/config-local.json").toPath());
+                json = mapper.readValue(new File("data/config-local.json"), JsonNode.class);
+            } else
+                json = mapper.readValue(new File("data/config-local.json"), JsonNode.class);
+
+            if (key.isEmpty())
+                return json;
+
+            var item = json.get(key);
+            if (!item.isNull())
+                return item;
+            else {
+                // Go to regular config if item not in local
+                json = mapper.readValue(new File("src/main/resources/config.json"), JsonNode.class);
+                return json.get(key);
+            }
         } catch (Exception e) {
             log.error("Error initializing config file!");
         }
-        if (key.isEmpty())
-            return json;
-        return json.get(key);
+        return null;
     }
 
     // TODO : Add set method

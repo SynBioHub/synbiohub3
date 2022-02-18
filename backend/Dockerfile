@@ -4,6 +4,7 @@ COPY pom.xml /synbiohub3
 COPY src /synbiohub3/src/
 RUN mvn -B package --file pom.xml -DskipTests
 FROM openjdk:11-slim
+WORKDIR /synbiohub3
 # Copy src directory over
 COPY --from=build /synbiohub3/src/main/ src/main/
 # Copy JAR file over
