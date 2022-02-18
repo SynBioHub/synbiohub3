@@ -9,6 +9,7 @@ WORKDIR /synbiohub3
 COPY --from=build /synbiohub3/src/main/ src/main/
 # Copy JAR file over
 COPY --from=build /synbiohub3/target/*SNAPSHOT.jar app.jar 
-RUN apt-get install vi
+RUN ["apt-get", "update"]
+RUN ["apt-get", "install", "-y", "vi"]
 EXPOSE 6789 
 ENTRYPOINT ["java","-jar","app.jar"]
