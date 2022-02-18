@@ -70,7 +70,6 @@ public class SearchController {
      */
     @GetMapping(value = "/searchCount/**", produces = "text/plain")
     public String redirectOldSearchCount(HttpServletRequest request, @RequestParam Map<String,String> allParams) throws JsonProcessingException{
-
         String requestURL = request.getRequestURL().toString();
         String[] uriArr = requestURL.split("/");
         String keyword = uriArr[uriArr.length - 1].split("\\?")[0];
