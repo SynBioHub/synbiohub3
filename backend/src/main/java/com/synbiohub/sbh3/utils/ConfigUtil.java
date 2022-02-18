@@ -20,11 +20,11 @@ public class ConfigUtil {
         JsonNode json = null;
         try {
             // Initialize config.local.json
-            if (!Files.exists(new File("data/config-local.json").toPath())) {
-                Files.copy(new File("src/main/resources/config.json").toPath(), new File("data/config-local.json").toPath());
-                json = mapper.readValue(new File("data/config-local.json"), JsonNode.class);
+            if (!Files.exists(new File("data/config.local.json").toPath())) {
+                Files.copy(new File("src/main/resources/config.json").toPath(), new File("data/config.local.json").toPath());
+                json = mapper.readValue(new File("data/config.local.json"), JsonNode.class);
             } else
-                json = mapper.readValue(new File("data/config-local.json"), JsonNode.class);
+                json = mapper.readValue(new File("data/config.local.json"), JsonNode.class);
 
             if (key.isEmpty())
                 return json;
