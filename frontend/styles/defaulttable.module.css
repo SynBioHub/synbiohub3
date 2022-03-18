@@ -244,6 +244,12 @@
    display: inline-block;
 }
 
+.smallerfont {
+   font-size: 0.9rem;
+   padding-bottom: 0.1rem;
+   color: #313131;
+}
+
  @media (max-width: 700px) {
    #filterresults {
       display: none;

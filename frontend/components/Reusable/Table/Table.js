@@ -75,7 +75,7 @@ export default function Table(properties) {
           title={properties.title}
           hideCount={properties.hideCount}
           hideFilter={properties.hideFilter}
-          count={properties.data.length}
+          count={properties.count ? properties.count : properties.data.length}
           filter={filter}
           setFilter={setFilter}
           sortOptions={properties.sortOptions}
