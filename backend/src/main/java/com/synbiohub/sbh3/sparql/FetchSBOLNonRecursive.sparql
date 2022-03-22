@@ -1,0 +1,5 @@
+PREFIX sbh: <http://wiki.synbiohub.org/wiki/Terms/synbiohub#>
+construct { ?s ?p ?o } where
+{ ?s ?p ?o .
+     ?s sbh:topLevel <$uri>
+}

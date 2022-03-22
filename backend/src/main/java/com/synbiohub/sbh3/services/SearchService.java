@@ -7,7 +7,9 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.synbiohub.sbh3.controllers.SearchController;
 import com.synbiohub.sbh3.sparql.SPARQLQuery;
 import com.synbiohub.sbh3.utils.ConfigUtil;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -15,6 +17,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -317,20 +322,36 @@ public class SearchService {
         else
             url = ConfigUtil.get("triplestore").get("sparqlEndpoint").asText() + "?default-graph-uri={default-graph-uri}&query={query}&format=json&";
 
-        return restTemplate.getForObject(url, String.class, ConfigUtil.get("triplestore").get("defaultGraph").asText(), query);
+        return restTemplate.getForObject(url, String.class, params);
     }
 
     public String SPARQLQuery(String query) {
         RestTemplate restTemplate = new RestTemplate();
         String url = "";
-        // Encoding the SPARQL query to be sent to Explorer/SPARQL
         HashMap<String, String> params = new HashMap<>();
         params.put("default-graph-uri", ConfigUtil.get("triplestore").get("defaultGraph").asText());
         params.put("query", query);
 
         url = ConfigUtil.get("triplestore").get("sparqlEndpoint").asText() + "?default-graph-uri={default-graph-uri}&query={query}&format=json&";
 
-        return restTemplate.getForObject(url, String.class, ConfigUtil.get("triplestore").get("defaultGraph").asText(), query);
+        return restTemplate.getForObject(url, String.class, params);
+    }
+
+    public byte[] SPARQLRDFXMLQuery(String query) {
+        RestTemplate restTemplate = new RestTemplate();
+        String url = "";
+        HashMap<String, String> params = new HashMap<>();
+        params.put("default-graph-uri", ConfigUtil.get("triplestore").get("defaultGraph").asText());
+        params.put("query", query);
+        params.put("format", "application/rdf+xml");
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("Accept", "application/rdf+xml");
+        HttpEntity entity = new HttpEntity(httpHeaders);
+
+        url = ConfigUtil.get("triplestore").get("sparqlEndpoint").asText() + "?default-graph-uri={default-graph-uri}&query={query}";
+
+        var rest = restTemplate.exchange(url, HttpMethod.GET, entity, byte[].class, params);
+        return rest.getBody();
     }
 
     /**
@@ -344,5 +365,13 @@ public class SearchService {
         return ConfigUtil.get("triplestore").get("graphPrefix").asText() + "user/" + authentication.getName();
     }
 
+    // Method to encode a string value using `UTF-8` encoding scheme
+    private static String encodeValue(String value) {
+        try {
+            return URLEncoder.encode(value, StandardCharsets.UTF_8.toString());
+        } catch (UnsupportedEncodingException ex) {
+            throw new RuntimeException(ex.getCause());
+        }
+    }
 
 }

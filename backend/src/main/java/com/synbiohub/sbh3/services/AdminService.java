@@ -1,4 +1,4 @@
-package com.synbiohub.sbh3.admin;
+package com.synbiohub.sbh3.services;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.synbiohub.sbh3.utils.ConfigUtil;

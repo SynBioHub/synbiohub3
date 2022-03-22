@@ -1,11 +1,9 @@
-package com.synbiohub.sbh3.admin;
+package com.synbiohub.sbh3.controllers;
 
+import com.synbiohub.sbh3.services.AdminService;
 import com.synbiohub.sbh3.services.UserService;
 import com.synbiohub.sbh3.utils.ConfigUtil;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
