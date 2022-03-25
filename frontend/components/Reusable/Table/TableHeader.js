@@ -14,7 +14,12 @@ export default function TableHeader(properties) {
     >
       <div className={styles.tableheadertitle}>
         {properties.title}
-        {!properties.hideCount ? `(${properties.count})` : ''}
+        {!properties.hideCount && ':'}
+        {!properties.hideCount ? (
+          <span className={styles.smallerfont}> {properties.count}</span>
+        ) : (
+          ''
+        )}
       </div>
       <div className={styles.tableheadernav}>
         {!properties.hideFilter && (
