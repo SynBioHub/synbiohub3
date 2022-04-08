@@ -7,6 +7,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.synbiohub.sbh3.controllers.SearchController;
 import com.synbiohub.sbh3.sparql.SPARQLQuery;
 import com.synbiohub.sbh3.utils.ConfigUtil;
+import com.synbiohub.sbh3.utils.ObjectMapperUtils;
+import org.json.JSONObject;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -352,6 +354,27 @@ public class SearchService {
 
         var rest = restTemplate.exchange(url, HttpMethod.GET, entity, byte[].class, params);
         return rest.getBody();
+    }
+
+    /**
+     * Hit the /sparql endpoint on other SBH instances
+     * @param query SPARQL Query to send
+     * @return JSON representation of results
+     */
+    public byte[] queryOldSBHSparqlEndpoint(String WOREndpoint, String query) {
+        RestTemplate restTemplate = new RestTemplate();
+        String url = "";
+        HashMap<String, String> params = new HashMap<>();
+        params.put("query", query);
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("Accept", "application/rdf+xml");
+        HttpEntity entity = new HttpEntity(httpHeaders);
+
+        url = ConfigUtil.get("webOfRegistries").get(WOREndpoint).asText() + "/sparql?query={query}";
+
+        var rest = restTemplate.exchange(url, HttpMethod.GET, entity, String.class, params);
+
+        return rest.getBody().getBytes(StandardCharsets.UTF_8);
     }
 
     /**

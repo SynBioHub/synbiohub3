@@ -16,8 +16,11 @@ import org.springframework.stereotype.Service;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.net.URI;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -80,14 +83,28 @@ public class DownloadService {
         } catch (Exception e) {
             e.printStackTrace();
         }
-//TODO: refactor graph prefix
+
         String modifiedUri = graphPrefix + uriClass.getPath().substring(1);     // The path contains a / at the beginning, so does our graph prefix
         var metadataQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/FetchSBOLNonRecursive.sparql");
-        var args = Collections.singletonMap("uri", modifiedUri);
+        var args = new HashMap<String, String>();
+        args.put("uri", modifiedUri);
+        args.put("offset", "0");
         String query = metadataQuery.loadTemplate(args);
         byte[] results = searchService.SPARQLRDFXMLQuery(query);
         Model model = ModelFactory.createDefaultModel();
         model.read(new ByteArrayInputStream(results), null);
+        if (model.size() >= 10000) {
+            int counter = 1;
+            var offset = model.size();
+            log.info("model size is " + model.size());
+            while (model.size() / 10000 >= counter) {    // Limit at 10k; we may need to fetch more than that
+                args.replace("offset", Integer.toString((int) offset));
+                query = metadataQuery.loadTemplate(args);
+                model.read(new ByteArrayInputStream(searchService.SPARQLRDFXMLQuery(query)), null);
+                offset = model.size();
+                counter++;
+            }
+        }
         var resolved = new LinkedHashSet<String>();   // list of resolved URI's
         for(var s : model.listSubjects().toSet()) { // Add all subjects to resolved
             resolved.add(s.getURI());
@@ -112,11 +129,42 @@ public class DownloadService {
         while(!unresolved.isEmpty()) {
             var subject = unresolved.iterator().next();
             if (!resolved.contains(subject)) {
+
+                // Check if subject contains a WOR URI
+                worIterator = wor.fields();
+                var worUrl = "";
+                while(worIterator.hasNext()) {
+                    var next = worIterator.next();
+                    if (subject.startsWith(next.getKey())) {
+                        worUrl = next.getValue().asText();
+                    }
+                }
                 var subjectArgs = Collections.singletonMap("uri", subject);
                 String subjectQuery = metadataQuery.loadTemplate(subjectArgs);
-                byte[] subjectResults = searchService.SPARQLRDFXMLQuery(subjectQuery);  // TODO: Hit WOR SPARQL (not just localhost) and check if part does not start with our database prefix
-                Model tempModel = ModelFactory.createDefaultModel();    // TODO: Look at query limit in config as well (staggeredquerylimit)
+                byte[] subjectResults;
+                if (!worUrl.isEmpty()) {
+                    subjectResults = searchService.queryOldSBHSparqlEndpoint(worUrl, subjectQuery);
+                } else {
+                    subjectResults = searchService.SPARQLRDFXMLQuery(subjectQuery);
+                }
+                Model tempModel = ModelFactory.createDefaultModel();
                 tempModel.read(new ByteArrayInputStream(subjectResults), null);
+                if (model.size() > 10000) {
+                    int counter = 1;
+                    var offset = model.size();
+                    log.info("model size is " + model.size());
+                    while (model.size() / 10000 >= counter) {    // Limit at 10k; we may need to fetch more than that
+                        args.replace("offset", Integer.toString((int) offset));
+                        query = metadataQuery.loadTemplate(args);
+                        if (!worUrl.isEmpty()) {
+                            model.read(new ByteArrayInputStream(searchService.queryOldSBHSparqlEndpoint(worUrl, query)), null);
+                        } else {
+                            model.read(new ByteArrayInputStream(searchService.SPARQLRDFXMLQuery(query)), null);
+                        }
+                        offset = model.size();
+                        counter++;
+                    }
+                }
                 model = model.union(tempModel); // add new RDF object to original model
                 for(var s : tempModel.listSubjects().toSet()) {  // Add all subjects to list of resolved
                     resolved.add(s.getURI());
