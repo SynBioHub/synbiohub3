@@ -33,6 +33,8 @@ export default function Members(properties) {
     limit: ''
   };
 
+  // ' LIMIT 10'
+
   useEffect(() => {
     if (!members) {
       if (search)
