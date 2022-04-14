@@ -27,16 +27,23 @@ export default function Table(properties) {
         filteredData.sort((data1, data2) =>
           properties.sortMethods[sortOption.value](data1, data2)
         );
+      if (properties.customBounds) {
+        if (offset < properties.customBounds[0] || offset > properties.customBounds[1]) {
+          properties.outOfBoundsHandle(offset);
+          return;
+        }
+      }
       setDisplay(
         createDisplay(
           filteredData,
           offset,
           numberEntries,
-          properties.dataRowDisplay
+          properties.dataRowDisplay,
+          properties.customBounds
         )
       );
     }
-  }, [filteredData, sortOption, numberEntries, filter, offset]);
+  }, [filteredData, sortOption, numberEntries, filter, offset, properties.customBounds, properties.outOfBoundsHandle]);
 
   useEffect(() => {
     if (properties.updateRowsWhen) {
@@ -45,7 +52,8 @@ export default function Table(properties) {
           filteredData,
           offset,
           numberEntries,
-          properties.dataRowDisplay
+          properties.dataRowDisplay,
+          properties.customBounds
         )
       );
     }
@@ -61,7 +69,7 @@ export default function Table(properties) {
 
   useEffect(() => {
     setOffset(0);
-  }, [filter, sortOption]);
+  }, [filter, sortOption, properties.customSearch]);
 
   if (properties.loading) return <Loading />;
   else if (properties.data) {
@@ -111,6 +119,8 @@ export default function Table(properties) {
             setNumberEntries={setNumberEntries}
             filteredData={filteredData}
             numberShownLabel={properties.numberShownLabel}
+            customCount={properties.customCount}
+            customBounds={properties.customBounds}
           />
         )}
       </div>
@@ -120,8 +130,10 @@ export default function Table(properties) {
   }
 }
 
-function createDisplay(filteredData, offset, numberEntries, dataRowDisplay) {
-  return filteredData
+function createDisplay(filteredData, offset, numberEntries, dataRowDisplay, customBounds) {
+  let additionalOffset = customBounds ? customBounds[0] : 0;
+  offset -= additionalOffset;
+  const toDisplay = filteredData
     .slice(
       offset,
       Math.min(
@@ -132,6 +144,7 @@ function createDisplay(filteredData, offset, numberEntries, dataRowDisplay) {
     .map(graph => {
       return dataRowDisplay(graph);
     });
+  return toDisplay;
 }
 
 function createHeader(headers) {

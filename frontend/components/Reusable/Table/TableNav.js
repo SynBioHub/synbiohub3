@@ -8,8 +8,9 @@ import { numberDisplayOptions } from './TableConfig';
 
 export default function TableNav(properties) {
   const [currentPage, setCurrentPage] = useState(1);
+  let dataLength = properties.customCount ? properties.customCount : properties.filteredData.length;
   const [numberPages, setNumberPages] = useState(
-    Math.ceil(properties.filteredData.length / properties.numberEntries)
+    Math.ceil(dataLength / properties.numberEntries)
   );
   const [pageSelectors, setPageSelectors] = useState(null);
 
@@ -19,10 +20,12 @@ export default function TableNav(properties) {
         numberPages,
         properties.setOffset,
         properties.numberEntries,
-        currentPage
+        currentPage,
+        properties.customBounds
       )
     );
-  }, [numberPages, currentPage]);
+  }, [numberPages, currentPage, properties.customBounds]);
+
 
   useEffect(() => {
     if (numberPages && currentPage > numberPages) {
@@ -32,10 +35,15 @@ export default function TableNav(properties) {
   }, [numberPages, properties.numberEntries]);
 
   useEffect(() => {
-    setNumberPages(
-      Math.ceil(properties.filteredData.length / properties.numberEntries)
-    );
-  }, [properties.filteredData, properties.numberEntries]);
+    if (!properties.customCount)
+      setNumberPages(
+        Math.ceil(properties.filteredData.length / properties.numberEntries)
+      );
+    else
+      setNumberPages(
+        Math.ceil(properties.customCount / properties.numberEntries)
+      );
+  }, [properties.filteredData, properties.numberEntries, properties.customCount]);
 
   useEffect(() => {
     if (properties.offset === 0) setCurrentPage(1);
@@ -106,9 +114,9 @@ function PageSelector(properties) {
           ? styles.pageselectorselected
           : ''
       }`}
-      onClick={() =>
-        properties.setOffset((properties.number - 1) * properties.numberEntries)
-      }
+      onClick={() => {
+        properties.setOffset((properties.number - 1) * properties.numberEntries);
+      }}
       role="button"
     >
       {properties.number}
@@ -121,6 +129,7 @@ function createPageSelectors(
   setOffset,
   numberEntries,
   currentPage,
+  customBounds,
   pageSlots = 7
 ) {
   const pageSelectors = [];
@@ -131,6 +140,7 @@ function createPageSelectors(
       setOffset={setOffset}
       numberEntries={numberEntries}
       currPage={currentPage}
+      customBounds={customBounds}
     />
   );
   if (numberPages > 1) {
@@ -150,6 +160,7 @@ function createPageSelectors(
             setOffset={setOffset}
             numberEntries={numberEntries}
             currPage={currentPage}
+            customBounds={customBounds}
           />
         );
     }
@@ -164,6 +175,7 @@ function createPageSelectors(
         setOffset={setOffset}
         numberEntries={numberEntries}
         currPage={currentPage}
+        customBounds={customBounds}
       />
     );
   }

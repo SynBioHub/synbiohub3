@@ -17,6 +17,9 @@ export default function Members(properties) {
   const [totalMemberCount, setTotalMemberCount] = useState();
   const [currentMemberCount, setCurrentMemberCount] = useState();
   const [search, setSearch] = useState('');
+  const [offset, setOffset] = useState(0);
+  const startBound = [0, 10000];
+  const [customBounds, setCustomBounds] = useState(startBound);
 
   const preparedSearch =
     search !== ''
@@ -29,8 +32,8 @@ export default function Members(properties) {
     collection: properties.uri,
     sort: ' ORDER BY ASC(concat(lcase(str(?name)),lcase(str(?displayId)))) ',
     search: preparedSearch,
-    offset: '',
-    limit: ''
+    offset: offset ? ` OFFSET ${offset}`: '',
+    limit: ' LIMIT 10000 '
   };
 
   // ' LIMIT 10'
@@ -67,7 +70,14 @@ export default function Members(properties) {
         else setCurrentMemberCount('error');
       });
     }
-  }, [members, totalMemberCount, currentMemberCount, search]);
+  }, [members, totalMemberCount, currentMemberCount, search, offset]);
+
+  const outOfBoundsHandle = (offset) => {
+      const newBounds = getNewBounds(offset, currentMemberCount);
+      setCustomBounds(newBounds);
+      setOffset(newBounds[0]);
+      setMembers(undefined);
+  }
 
   return (
     <Section title="Members">
@@ -76,11 +86,15 @@ export default function Members(properties) {
         setSearch={setSearch}
         setMembers={setMembers}
         setCurrMemberCount={setCurrentMemberCount}
+        outOfBoundsHandle={outOfBoundsHandle}
       />
       <MemberTable
         members={members}
         totalMembers={totalMemberCount}
         currMembers={currentMemberCount}
+        outOfBoundsHandle={outOfBoundsHandle}
+        customBounds={customBounds}
+        customSearch={search}
       />
     </Section>
   );
@@ -91,7 +105,7 @@ function SearchHeader(properties) {
 
   const runSearch = () => {
     properties.setSearch(search);
-    properties.setMembers();
+    properties.outOfBoundsHandle(0);
     properties.setCurrMemberCount();
   };
 
@@ -142,22 +156,42 @@ function MemberTable(properties) {
       loading={!properties.members}
       title="Members"
       count={count}
+      customCount={properties.currMembers}
+      customBounds={properties.customBounds}
+      outOfBoundsHandle={properties.outOfBoundsHandle}
+      customSearch={properties.customSearch}
       hideFilter={true}
       searchable={[]}
       headers={['Name', 'Identifier', 'Type', 'Description']}
       sortOptions={[]}
       defaultSortOption={undefined}
       sortMethods={[]}
-      dataRowDisplay={member => (
+      dataRowDisplay={member => {
+         var textArea = document.createElement("textarea");
+         textArea.innerHTML = member.name;
+         return (
         <tr key={member.displayId + member.description}>
           <td>
-            <code>{member.name}</code>
+            <code>{textArea.value}</code>
           </td>
           <td>{member.displayId}</td>
           <td>{member.type.replace('http://sbols.org/v2#', '')}</td>
           <td>{member.description}</td>
         </tr>
-      )}
+      )}}
     />
   );
+}
+
+
+function getNewBounds(offset, memberCount) {
+   let low = Math.max(offset - 5000, 0);
+   let high = Math.min(offset + 5000, memberCount);
+   if (low == 0) {
+      high = Math.min(memberCount, 10000);
+   }
+   else if (high == memberCount) {
+      low = Math.max(0, memberCount - 10000);
+   }
+   return [low, high];
 }
