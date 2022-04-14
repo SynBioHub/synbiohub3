@@ -1,10 +1,8 @@
 import { faGlobeAmericas, faUserLock } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import getConfig from 'next/config';
 import router from 'next/router';
 
 import styles from '../../../../styles/resulttable.module.css';
-const { publicRuntimeConfig } = getConfig();
 
 /**
  * This component renders a single result row in the result table in standard search
@@ -34,12 +32,7 @@ export default function ResultRow(properties) {
   return (
     <tr
       onClick={() => {
-        router.push(
-          properties.uri.replace(
-            'https://synbiohub.org',
-            publicRuntimeConfig.backend
-          )
-        );
+        router.push(properties.uri.replace('https://synbiohub.org', ''));
       }}
     >
       <td>
