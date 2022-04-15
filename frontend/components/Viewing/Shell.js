@@ -12,7 +12,7 @@ export default function Shell(properties) {
 
   return (
     <div className={styles.container}>
-      <SidePanel metadata={metadata} type={properties.type} />
+      <SidePanel metadata={metadata} type={properties.type} uri={properties.uri} />
       <div className={styles.content}>
         <ViewHeader
           name={metadata.name}
