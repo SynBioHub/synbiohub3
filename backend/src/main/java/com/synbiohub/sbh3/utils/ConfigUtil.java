@@ -12,12 +12,13 @@ import java.nio.file.StandardCopyOption;
 
 @Slf4j
 @Component
-@RequiredArgsConstructor
 public class ConfigUtil {
 
-    public static JsonNode get(String key) {
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode json = null;
+    private static JsonNode json;
+    private static ObjectMapper mapper = new ObjectMapper();
+
+    public ConfigUtil() {
+        json = null;
         try {
             // Initialize config.local.json
             if (!Files.exists(new File("data/config.local.json").toPath())) {
@@ -26,9 +27,16 @@ public class ConfigUtil {
             } else
                 json = mapper.readValue(new File("data/config.local.json"), JsonNode.class);
 
-            if (key.isEmpty())
-                return json;
+        } catch (Exception e) {
+            log.error("Error intializing config file!");
+        }
+    }
 
+    public static JsonNode get(String key) {
+        if (key.isEmpty())
+            return json;
+
+        try {
             var item = json.get(key);
             if (!item.isNull())
                 return item;

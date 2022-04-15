@@ -68,7 +68,7 @@ public class SearchService {
 
         String userGraph = getPrivateGraph();
         if (!userGraph.isEmpty()) {
-            sparqlArgs.replace("from", "FROM <" + userGraph + ">");
+            sparqlArgs.replace("from", "FROM <" + userGraph + ">\nFROM <" + ConfigUtil.get("triplestore").get("defaultGraph").toString());
         }
 
         return searchQuery.loadTemplate(sparqlArgs);

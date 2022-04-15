@@ -25,7 +25,7 @@ public class DownloadController {
 
     private final ObjectMapper mapper;
 
-    @GetMapping(value = "**/metadata")
+    @GetMapping(value = "*/metadata")
     public ResponseEntity<?> getMetadata(HttpServletRequest request) throws JsonProcessingException {
         var uri = request.getRequestURL().toString();
         String splitUri = uri.split("/metadata")[0];
@@ -42,7 +42,7 @@ public class DownloadController {
                 .body(new InputStreamResource(new ByteArrayInputStream(buf)));
     }
 
-    @GetMapping(value = "**/sbolnr")
+    @GetMapping(value = "*/sbolnr")
     public ResponseEntity<?> getSBOLNonRecursive(HttpServletRequest request) throws JsonProcessingException {
         var uri = request.getRequestURL().toString();
         String splitUri = uri.split("/sbolnr")[0];
@@ -65,7 +65,7 @@ public class DownloadController {
                 .body(new InputStreamResource(new ByteArrayInputStream(outputStream.toByteArray())));
     }
 
-    @GetMapping(value = "**/sbol")
+    @GetMapping(value = "*/sbol")
     public ResponseEntity<?> getSBOLRecursiveRDF(HttpServletRequest request) {
         var uri = request.getRequestURL().toString();
         String splitUri = uri.split("/sbol")[0];
@@ -88,7 +88,7 @@ public class DownloadController {
                 .body(new InputStreamResource(new ByteArrayInputStream(byteOutput.toByteArray())));
     }
 
-    @GetMapping(value = "**/gb")
+    @GetMapping(value = "*/gb")
     public ResponseEntity<?> getSBOLRecursiveGenbank(HttpServletRequest request) {
         var uri = request.getRequestURL().toString();
         String splitUri = uri.split("/gb")[0];
@@ -111,7 +111,7 @@ public class DownloadController {
                 .body(new InputStreamResource(new ByteArrayInputStream(byteOutput.toByteArray())));
     }
 
-    @GetMapping(value = "**/fasta")
+    @GetMapping(value = "*/fasta")
     public ResponseEntity<?> getSBOLRecursiveFasta(HttpServletRequest request) {
         var uri = request.getRequestURL().toString();
         String splitUri = uri.split("/fasta")[0];
@@ -134,7 +134,7 @@ public class DownloadController {
                 .body(new InputStreamResource(new ByteArrayInputStream(byteOutput.toByteArray())));
     }
 
-    @GetMapping(value = "**/gff")
+    @GetMapping(value = "*/gff")
     public ResponseEntity<?> getSBOLRecursiveGff3(HttpServletRequest request) {
         var uri = request.getRequestURL().toString();
         String splitUri = uri.split("/gff")[0];
