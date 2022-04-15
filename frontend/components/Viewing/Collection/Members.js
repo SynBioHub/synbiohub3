@@ -18,10 +18,24 @@ import loadTemplate from '../../../sparql/tools/loadTemplate';
 
 /* eslint sonarjs/cognitive-complexity: "off" */
 
+const sortMethods = {
+  default: ' ORDER BY ASC(concat(lcase(str(?name)),lcase(str(?displayId)))) ',
+  name: ' ORDER BY ASC(concat(lcase(str(?name)))) ',
+  displayId: ' ORDER BY ASC(concat(lcase(str(?displayId)))) '
+}
+
+const sortOptions = [
+  { value: 'default', label: 'Default' },
+  { value: 'name', label: 'Name' },
+  { value: 'displayId', label: 'Identifier' }
+]
+
 export default function Members(properties) {
   const token = useSelector(state => state.user.token);
   const [search, setSearch] = useState('');
   const [offset, setOffset] = useState(0);
+  const [sort, setSort] = useState(sortMethods.displayId);
+  const [defaultSortOption, setDefaultSortOption] = useState(sortOptions[0]);
   const [customBounds, setCustomBounds] = useState([0, 10000]);
 
   const preparedSearch =
@@ -33,7 +47,7 @@ export default function Members(properties) {
     graphs: '',
     graphPrefix: 'https://synbiohub.org/',
     collection: properties.uri,
-    sort: ' ORDER BY ASC(concat(lcase(str(?name)),lcase(str(?displayId)))) ',
+    sort: sort,
     search: preparedSearch,
     offset: offset ? ` OFFSET ${offset}`: '',
     limit: ' LIMIT 10000 '
@@ -41,9 +55,9 @@ export default function Members(properties) {
 
   let query = search ? getCollectionMembersSearch: getCollectionMembers;
 
-  const { members, membersLoading } = useMembers(query, parameters, token);
-  const { count: totalMemberCount, countLoading: totalMemberCountLoading } = useCount(CountMembersTotal, {...parameters, search: ''}, token);
-  const { count: currentMemberCount, countLoading: currMembersLoading } = useCount(search ? CountMembersTotal : CountMembers, parameters, token);
+  const { members } = useMembers(query, parameters, token);
+  const { count: totalMemberCount } = useCount(CountMembersTotal, {...parameters, search: ''}, token);
+  const { count: currentMemberCount } = useCount(search ? CountMembersTotal : CountMembers, parameters, token);
 
   const outOfBoundsHandle = (offset) => {
       const newBounds = getNewBounds(offset, currentMemberCount);
@@ -65,6 +79,9 @@ export default function Members(properties) {
         outOfBoundsHandle={outOfBoundsHandle}
         customBounds={customBounds}
         customSearch={search}
+        setSort={setSort}
+        defaultSortOption={defaultSortOption}
+        setDefaultSortOption={setDefaultSortOption}
       />
     </Section>
   );
@@ -132,9 +149,13 @@ function MemberTable(properties) {
       hideFilter={true}
       searchable={[]}
       headers={['Name', 'Identifier', 'Type', 'Description']}
-      sortOptions={[]}
-      defaultSortOption={undefined}
-      sortMethods={[]}
+      sortOptions={sortOptions}
+      sortMethods={sortMethods}
+      defaultSortOption={properties.defaultSortOption}
+      customSortBehavior={(sortMethod, sortOption) => {
+        properties.setSort(sortMethod);
+        properties.setDefaultSortOption(sortOption);
+      }}
       dataRowDisplay={member => {
          var textArea = document.createElement("textarea");
          textArea.innerHTML = member.name;
@@ -169,8 +190,7 @@ const useCount = (query, options, token) => {
    let processedData = data ? processResults(data)[0].count : undefined
 
    return {
-      count: processedData,
-      countLoading: !processedData && !error
+      count: processedData
    }
 }
 
@@ -184,8 +204,7 @@ const useMembers = (query, options, token) => {
    let processedData = data ? processResults(data) : undefined;
    
    return {
-      members: processedData,
-      membersLoading: !error && !processedData
+      members: processedData
    }
 }
 

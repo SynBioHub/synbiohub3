@@ -23,7 +23,10 @@ export default function Table(properties) {
 
   useEffect(() => {
     if (filteredData) {
-      if (sortOption)
+      if (properties.customSortBehavior) {
+        properties.customSortBehavior(properties.sortMethods[sortOption.value], sortOption);
+      }
+      else if (sortOption)
         filteredData.sort((data1, data2) =>
           properties.sortMethods[sortOption.value](data1, data2)
         );
