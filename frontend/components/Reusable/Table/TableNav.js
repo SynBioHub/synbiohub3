@@ -89,8 +89,9 @@ export default function TableNav(properties) {
         <div
           className={styles.tablefooternavicon}
           onClick={() => {
+            const additionalOffset = properties.customBounds ? properties.customBounds[0] : 0;
             if (
-              properties.offset + properties.numberEntries <
+              properties.offset - additionalOffset + properties.numberEntries <
               properties.filteredData.length
             )
               properties.setOffset(
@@ -129,10 +130,10 @@ function createPageSelectors(
   setOffset,
   numberEntries,
   currentPage,
-  customBounds,
-  pageSlots = 7
+  customBounds
 ) {
   const pageSelectors = [];
+
   pageSelectors.push(
     <PageSelector
       key={1}
@@ -143,31 +144,50 @@ function createPageSelectors(
       customBounds={customBounds}
     />
   );
-  if (numberPages > 1) {
-    let availableSlots = pageSlots - 1;
-    let start = 2;
-    if (currentPage - Math.floor(pageSlots / 2) > 1) {
-      pageSelectors.push(<p>...</p>);
-      start = currentPage - 1;
-      availableSlots--;
-    }
-    for (let index = start; index < start + availableSlots - 2; index++) {
-      if (index < numberPages)
-        pageSelectors.push(
-          <PageSelector
-            key={index}
-            number={index}
-            setOffset={setOffset}
-            numberEntries={numberEntries}
-            currPage={currentPage}
-            customBounds={customBounds}
-          />
-        );
-    }
-    if (currentPage + Math.floor(pageSlots / 2) < numberPages) {
-      pageSelectors.push(<p>...</p>);
-      availableSlots--;
-    }
+
+  if (numberPages <= 1)
+    return pageSelectors;
+
+  const skipBegin = currentPage >= 5;
+  const skipEnd = currentPage <= numberPages - 4;
+
+  skipBegin && pageSelectors.push(<p key="startRange">...</p>);
+
+  let start = currentPage - 1;
+  let end = currentPage + 1;
+
+  if (skipBegin && !skipEnd) {
+    start = numberPages - 4;
+    end = numberPages - 1;
+  }
+
+  else if (!skipBegin && skipEnd) {
+    start = 2;
+    end = 5;
+  }
+
+  else if (!skipBegin && !skipEnd) {
+    start = 2;
+    end = numberPages - 1;
+  }
+
+
+  for (let index = start; index <= end; index++) {
+    if (index < numberPages)
+      pageSelectors.push(
+        <PageSelector
+          key={index}
+          number={index}
+          setOffset={setOffset}
+          numberEntries={numberEntries}
+          currPage={currentPage}
+          customBounds={customBounds}
+        />
+      );
+  }
+
+    
+  skipEnd && pageSelectors.push(<p key="endRange">...</p>);
     pageSelectors.push(
       <PageSelector
         key={numberPages}
@@ -178,6 +198,5 @@ function createPageSelectors(
         customBounds={customBounds}
       />
     );
-  }
   return pageSelectors;
 }

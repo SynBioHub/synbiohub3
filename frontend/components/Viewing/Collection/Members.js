@@ -1,25 +1,42 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { useSelector } from 'react-redux';
+import useSWR from 'swr';
+import axios from 'axios';
+
+import getConfig from 'next/config';
+const { publicRuntimeConfig } = getConfig();
 
 import CountMembers from '../../../sparql/CountMembers';
 import CountMembersTotal from '../../../sparql/CountMembersSearch';
 import getCollectionMembers from '../../../sparql/getCollectionMembers';
 import getCollectionMembersSearch from '../../../sparql/getCollectionMembersSearch';
-import getQueryResponse from '../../../sparql/tools/getQueryResponse';
 import styles from '../../../styles/view.module.css';
 import MiniLoading from '../../Reusable/MiniLoading';
 import Table from '../../Reusable/Table/Table';
 import Section from '../Sections/Section';
+import loadTemplate from '../../../sparql/tools/loadTemplate';
 
 /* eslint sonarjs/cognitive-complexity: "off" */
 
+const sortMethods = {
+  default: ' ORDER BY ASC(concat(lcase(str(?name)),lcase(str(?displayId)))) ',
+  name: ' ORDER BY ASC(concat(lcase(str(?name)))) ',
+  displayId: ' ORDER BY ASC(concat(lcase(str(?displayId)))) '
+}
+
+const sortOptions = [
+  { value: 'default', label: 'Default' },
+  { value: 'name', label: 'Name' },
+  { value: 'displayId', label: 'Identifier' }
+]
+
 export default function Members(properties) {
-  const [members, setMembers] = useState();
-  const [totalMemberCount, setTotalMemberCount] = useState();
-  const [currentMemberCount, setCurrentMemberCount] = useState();
+  const token = useSelector(state => state.user.token);
   const [search, setSearch] = useState('');
   const [offset, setOffset] = useState(0);
-  const startBound = [0, 10000];
-  const [customBounds, setCustomBounds] = useState(startBound);
+  const [sort, setSort] = useState(sortMethods.displayId);
+  const [defaultSortOption, setDefaultSortOption] = useState(sortOptions[0]);
+  const [customBounds, setCustomBounds] = useState([0, 10000]);
 
   const preparedSearch =
     search !== ''
@@ -30,53 +47,22 @@ export default function Members(properties) {
     graphs: '',
     graphPrefix: 'https://synbiohub.org/',
     collection: properties.uri,
-    sort: ' ORDER BY ASC(concat(lcase(str(?name)),lcase(str(?displayId)))) ',
+    sort: sort,
     search: preparedSearch,
     offset: offset ? ` OFFSET ${offset}`: '',
     limit: ' LIMIT 10000 '
   };
 
-  // ' LIMIT 10'
+  let query = search ? getCollectionMembersSearch: getCollectionMembers;
 
-  useEffect(() => {
-    if (!members) {
-      if (search)
-        getQueryResponse(getCollectionMembersSearch, parameters).then(
-          newMembers => {
-            if (newMembers) setMembers(newMembers);
-          }
-        );
-      else
-        getQueryResponse(getCollectionMembers, parameters).then(newMembers => {
-          if (newMembers) setMembers(newMembers);
-        });
-    }
-
-    if (totalMemberCount == undefined) {
-      const temporarySearch = parameters.search;
-      if (search) parameters.search = '';
-      getQueryResponse(CountMembersTotal, parameters).then(memberCount => {
-        if (memberCount) setTotalMemberCount(memberCount[0].count);
-        else setTotalMemberCount('error');
-      });
-      parameters.search = temporarySearch;
-    }
-
-    if (currentMemberCount == undefined) {
-      let query = CountMembers;
-      if (search) query = CountMembersTotal;
-      getQueryResponse(query, parameters).then(memberCount => {
-        if (memberCount) setCurrentMemberCount(memberCount[0].count);
-        else setCurrentMemberCount('error');
-      });
-    }
-  }, [members, totalMemberCount, currentMemberCount, search, offset]);
+  const { members } = useMembers(query, parameters, token);
+  const { count: totalMemberCount } = useCount(CountMembersTotal, {...parameters, search: ''}, token);
+  const { count: currentMemberCount } = useCount(search ? CountMembersTotal : CountMembers, parameters, token);
 
   const outOfBoundsHandle = (offset) => {
       const newBounds = getNewBounds(offset, currentMemberCount);
       setCustomBounds(newBounds);
       setOffset(newBounds[0]);
-      setMembers(undefined);
   }
 
   return (
@@ -84,8 +70,6 @@ export default function Members(properties) {
       <SearchHeader
         search={search}
         setSearch={setSearch}
-        setMembers={setMembers}
-        setCurrMemberCount={setCurrentMemberCount}
         outOfBoundsHandle={outOfBoundsHandle}
       />
       <MemberTable
@@ -95,6 +79,9 @@ export default function Members(properties) {
         outOfBoundsHandle={outOfBoundsHandle}
         customBounds={customBounds}
         customSearch={search}
+        setSort={setSort}
+        defaultSortOption={defaultSortOption}
+        setDefaultSortOption={setDefaultSortOption}
       />
     </Section>
   );
@@ -104,9 +91,8 @@ function SearchHeader(properties) {
   const [search, setSearch] = useState('');
 
   const runSearch = () => {
-    properties.setSearch(search);
+    properties.setSearch(search.toLowerCase());
     properties.outOfBoundsHandle(0);
-    properties.setCurrMemberCount();
   };
 
   return (
@@ -163,9 +149,13 @@ function MemberTable(properties) {
       hideFilter={true}
       searchable={[]}
       headers={['Name', 'Identifier', 'Type', 'Description']}
-      sortOptions={[]}
-      defaultSortOption={undefined}
-      sortMethods={[]}
+      sortOptions={sortOptions}
+      sortMethods={sortMethods}
+      defaultSortOption={properties.defaultSortOption}
+      customSortBehavior={(sortMethod, sortOption) => {
+        properties.setSort(sortMethod);
+        properties.setDefaultSortOption(sortOption);
+      }}
       dataRowDisplay={member => {
          var textArea = document.createElement("textarea");
          textArea.innerHTML = member.name;
@@ -183,8 +173,67 @@ function MemberTable(properties) {
   );
 }
 
+const createUrl = (query, options) => {
+   query = loadTemplate(query, options);
+   return `${publicRuntimeConfig.backend}/sparql?query=${encodeURIComponent(
+      query
+   )}`;
+}
 
-function getNewBounds(offset, memberCount) {
+const useCount = (query, options, token) => {
+   const url = createUrl(query, options, token);
+   const { data, error } = useSWR(
+      [url, token],
+      fetcher
+   );
+
+   let processedData = data ? processResults(data)[0].count : undefined
+
+   return {
+      count: processedData
+   }
+}
+
+const useMembers = (query, options, token) => {
+   const url = createUrl(query, options);
+   const { data, error } = useSWR(
+      [url, token],
+      fetcher
+   );
+
+   let processedData = data ? processResults(data) : undefined;
+   
+   return {
+      members: processedData
+   }
+}
+
+const fetcher = (url, token) =>
+   axios
+      .get(url, {
+      headers: {
+         'Content-Type': 'application/json',
+         Accept: 'application/json',
+         'X-authorization': token
+      }
+      })
+      .then(response => response.data);
+
+
+const processResults = results => {
+   const headers = results.head.vars;
+   return results.results.bindings.map(result => {
+      const resultObject = {};
+      for (const header of headers) {
+         if (result[header]) resultObject[header] = result[header].value;
+         else resultObject[header] = '';
+      }
+      return resultObject;
+   });
+};
+
+
+const getNewBounds = (offset, memberCount) => {
    let low = Math.max(offset - 5000, 0);
    let high = Math.min(offset + 5000, memberCount);
    if (low == 0) {
