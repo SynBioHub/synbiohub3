@@ -23,7 +23,12 @@ export default function SidePanel(properties) {
           <FontAwesomeIcon icon={faBars} size="1x" />
         </div>
       </div>
-      <SidePanelTools type={properties.type} />
+      <SidePanelTools 
+      type={properties.type}
+      displayId={metadata.displayId}
+      name={metadata.name}
+      url={properties.uri.replace('https://synbiohub.org', '')}
+      />
       <div className={styles.infocontainer}>
         <Info
           icon={faQuoteLeft}
