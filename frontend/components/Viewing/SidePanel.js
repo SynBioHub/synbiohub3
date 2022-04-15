@@ -7,6 +7,7 @@ import {
   faUserEdit
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useState } from 'react';
 
 import styles from '../../styles/view.module.css';
 import SectionSelector from './SectionSelector';
@@ -14,16 +15,26 @@ import SidePanelTools from './SidePanelTools';
 
 export default function SidePanel(properties) {
   const metadata = properties.metadata;
+  const [translation, setTranslation] = useState(0);
   return (
-    <div className={styles.sidepanel}>
+    <div className={translation == 0 ? styles.sidepanelcontaineropen : styles.sidepanelcontainercollapse}>
+            <div className={styles.sidepanel} style={{ transform: `translateX(-${translation}rem)`, transition: "transform 0.3s" }}>
       <div className={styles.headercontainer}>
         <h2 className={styles.title}>{metadata.name}</h2>
         <div className={styles.displayId}>({metadata.displayId})</div>
-        <div className={styles.panelbutton}>
+        <div className={styles.panelbutton} onClick={() => {
+          translation == 18 ? setTranslation(0) : setTranslation(18);
+        }}
+        role="button">
           <FontAwesomeIcon icon={faBars} size="1x" />
         </div>
       </div>
-      <SidePanelTools type={properties.type} />
+      <SidePanelTools 
+      type={properties.type}
+      displayId={metadata.displayId}
+      name={metadata.name}
+      url={properties.uri.replace('https://synbiohub.org', '')}
+      />
       <div className={styles.infocontainer}>
         <Info
           icon={faQuoteLeft}
@@ -48,6 +59,7 @@ export default function SidePanel(properties) {
         />
       </div>
       <SectionSelector />
+    </div>
     </div>
   );
 }

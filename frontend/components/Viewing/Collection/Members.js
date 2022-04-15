@@ -1,22 +1,42 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { useSelector } from 'react-redux';
+import useSWR from 'swr';
+import axios from 'axios';
+
+import getConfig from 'next/config';
+const { publicRuntimeConfig } = getConfig();
 
 import CountMembers from '../../../sparql/CountMembers';
 import CountMembersTotal from '../../../sparql/CountMembersSearch';
 import getCollectionMembers from '../../../sparql/getCollectionMembers';
 import getCollectionMembersSearch from '../../../sparql/getCollectionMembersSearch';
-import getQueryResponse from '../../../sparql/tools/getQueryResponse';
 import styles from '../../../styles/view.module.css';
 import MiniLoading from '../../Reusable/MiniLoading';
 import Table from '../../Reusable/Table/Table';
 import Section from '../Sections/Section';
+import loadTemplate from '../../../sparql/tools/loadTemplate';
 
 /* eslint sonarjs/cognitive-complexity: "off" */
 
+const sortMethods = {
+  default: ' ORDER BY ASC(concat(lcase(str(?name)),lcase(str(?displayId)))) ',
+  name: ' ORDER BY ASC(concat(lcase(str(?name)))) ',
+  displayId: ' ORDER BY ASC(concat(lcase(str(?displayId)))) '
+}
+
+const sortOptions = [
+  { value: 'default', label: 'Default' },
+  { value: 'name', label: 'Name' },
+  { value: 'displayId', label: 'Identifier' }
+]
+
 export default function Members(properties) {
-  const [members, setMembers] = useState();
-  const [totalMemberCount, setTotalMemberCount] = useState();
-  const [currentMemberCount, setCurrentMemberCount] = useState();
+  const token = useSelector(state => state.user.token);
   const [search, setSearch] = useState('');
+  const [offset, setOffset] = useState(0);
+  const [sort, setSort] = useState(sortMethods.displayId);
+  const [defaultSortOption, setDefaultSortOption] = useState(sortOptions[0]);
+  const [customBounds, setCustomBounds] = useState([0, 10000]);
 
   const preparedSearch =
     search !== ''
@@ -27,58 +47,41 @@ export default function Members(properties) {
     graphs: '',
     graphPrefix: 'https://synbiohub.org/',
     collection: properties.uri,
-    sort: ' ORDER BY ASC(concat(lcase(str(?name)),lcase(str(?displayId)))) ',
+    sort: sort,
     search: preparedSearch,
-    offset: '',
-    limit: ''
+    offset: offset ? ` OFFSET ${offset}`: '',
+    limit: ' LIMIT 10000 '
   };
 
-  useEffect(() => {
-    if (!members) {
-      if (search)
-        getQueryResponse(getCollectionMembersSearch, parameters).then(
-          newMembers => {
-            if (newMembers) setMembers(newMembers);
-          }
-        );
-      else
-        getQueryResponse(getCollectionMembers, parameters).then(newMembers => {
-          if (newMembers) setMembers(newMembers);
-        });
-    }
+  let query = search ? getCollectionMembersSearch: getCollectionMembers;
 
-    if (totalMemberCount == undefined) {
-      const temporarySearch = parameters.search;
-      if (search) parameters.search = '';
-      getQueryResponse(CountMembersTotal, parameters).then(memberCount => {
-        if (memberCount) setTotalMemberCount(memberCount[0].count);
-        else setTotalMemberCount('error');
-      });
-      parameters.search = temporarySearch;
-    }
+  const { members } = useMembers(query, parameters, token);
+  const { count: totalMemberCount } = useCount(CountMembersTotal, {...parameters, search: ''}, token);
+  const { count: currentMemberCount } = useCount(search ? CountMembersTotal : CountMembers, parameters, token);
 
-    if (currentMemberCount == undefined) {
-      let query = CountMembers;
-      if (search) query = CountMembersTotal;
-      getQueryResponse(query, parameters).then(memberCount => {
-        if (memberCount) setCurrentMemberCount(memberCount[0].count);
-        else setCurrentMemberCount('error');
-      });
-    }
-  }, [members, totalMemberCount, currentMemberCount, search]);
+  const outOfBoundsHandle = (offset) => {
+      const newBounds = getNewBounds(offset, currentMemberCount);
+      setCustomBounds(newBounds);
+      setOffset(newBounds[0]);
+  }
 
   return (
     <Section title="Members">
       <SearchHeader
         search={search}
         setSearch={setSearch}
-        setMembers={setMembers}
-        setCurrMemberCount={setCurrentMemberCount}
+        outOfBoundsHandle={outOfBoundsHandle}
       />
       <MemberTable
         members={members}
         totalMembers={totalMemberCount}
         currMembers={currentMemberCount}
+        outOfBoundsHandle={outOfBoundsHandle}
+        customBounds={customBounds}
+        customSearch={search}
+        setSort={setSort}
+        defaultSortOption={defaultSortOption}
+        setDefaultSortOption={setDefaultSortOption}
       />
     </Section>
   );
@@ -88,9 +91,8 @@ function SearchHeader(properties) {
   const [search, setSearch] = useState('');
 
   const runSearch = () => {
-    properties.setSearch(search);
-    properties.setMembers();
-    properties.setCurrMemberCount();
+    properties.setSearch(search.toLowerCase());
+    properties.outOfBoundsHandle(0);
   };
 
   return (
@@ -140,22 +142,105 @@ function MemberTable(properties) {
       loading={!properties.members}
       title="Members"
       count={count}
+      customCount={properties.currMembers}
+      customBounds={properties.customBounds}
+      outOfBoundsHandle={properties.outOfBoundsHandle}
+      customSearch={properties.customSearch}
       hideFilter={true}
       searchable={[]}
       headers={['Name', 'Identifier', 'Type', 'Description']}
-      sortOptions={[]}
-      defaultSortOption={undefined}
-      sortMethods={[]}
-      dataRowDisplay={member => (
+      sortOptions={sortOptions}
+      sortMethods={sortMethods}
+      defaultSortOption={properties.defaultSortOption}
+      customSortBehavior={(sortMethod, sortOption) => {
+        properties.setSort(sortMethod);
+        properties.setDefaultSortOption(sortOption);
+      }}
+      dataRowDisplay={member => {
+         var textArea = document.createElement("textarea");
+         textArea.innerHTML = member.name;
+         return (
         <tr key={member.displayId + member.description}>
           <td>
-            <code>{member.name}</code>
+            <code>{textArea.value}</code>
           </td>
           <td>{member.displayId}</td>
           <td>{member.type.replace('http://sbols.org/v2#', '')}</td>
           <td>{member.description}</td>
         </tr>
-      )}
+      )}}
     />
   );
+}
+
+const createUrl = (query, options) => {
+   query = loadTemplate(query, options);
+   return `${publicRuntimeConfig.backend}/sparql?query=${encodeURIComponent(
+      query
+   )}`;
+}
+
+const useCount = (query, options, token) => {
+   const url = createUrl(query, options, token);
+   const { data, error } = useSWR(
+      [url, token],
+      fetcher
+   );
+
+   let processedData = data ? processResults(data)[0].count : undefined
+
+   return {
+      count: processedData
+   }
+}
+
+const useMembers = (query, options, token) => {
+   const url = createUrl(query, options);
+   const { data, error } = useSWR(
+      [url, token],
+      fetcher
+   );
+
+   let processedData = data ? processResults(data) : undefined;
+   
+   return {
+      members: processedData
+   }
+}
+
+const fetcher = (url, token) =>
+   axios
+      .get(url, {
+      headers: {
+         'Content-Type': 'application/json',
+         Accept: 'application/json',
+         'X-authorization': token
+      }
+      })
+      .then(response => response.data);
+
+
+const processResults = results => {
+   const headers = results.head.vars;
+   return results.results.bindings.map(result => {
+      const resultObject = {};
+      for (const header of headers) {
+         if (result[header]) resultObject[header] = result[header].value;
+         else resultObject[header] = '';
+      }
+      return resultObject;
+   });
+};
+
+
+const getNewBounds = (offset, memberCount) => {
+   let low = Math.max(offset - 5000, 0);
+   let high = Math.min(offset + 5000, memberCount);
+   if (low == 0) {
+      high = Math.min(memberCount, 10000);
+   }
+   else if (high == memberCount) {
+      low = Math.max(0, memberCount - 10000);
+   }
+   return [low, high];
 }
