@@ -56,7 +56,7 @@ Make sure that a JDK is available on your machine. Java version 11 or greater is
 Once you have finished installing the developer tools, clone the repository and open it as a project in IntelliJ. To setup your JDK, go to File->Project Structure->Project->ProjectSDK and click on your downloaded Java JDK.
 
 ## Running
-You can run the application by right clicking the "Synbiohub3Application", and clicking run. On later runs, simply clikc the run or debut icons at the top right of your screen.
+You can run the application by right clicking the `Synbiohub3Application` class and clicking run. On later runs, simply clikc the run or debut icons at the top right of your screen.
 
 ## Troubleshooting
 If IntelliJ is warning about packages not being found, right click on the `pom.xml` file and click Maven->Reload Project. This should download all required dependencies to run the application.
