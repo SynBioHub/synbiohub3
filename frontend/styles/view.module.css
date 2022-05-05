@@ -2,25 +2,32 @@
    display: flex;
    padding: 0;
    margin: 0;
+   min-height: 100vh;
 }
 
 .sidepanelcontainercollapse {
    display: flex;
-   width: 2rem;
+   flex-shrink: 0;
+   width: 3.2rem;
    transition: width 0.3s;
 }
 
 .sidepanelcontaineropen {
    display: flex;
-   width: 22rem;
+   flex-shrink: 0;
+   width: 21.2rem;
    transition: width 0.3s;
 }
 
 .sidepanel {
    background-color: rgb(242, 242, 242);
    box-shadow: 0px 0px 5px #7e7e7e;
-   position: relative;
+   position: fixed;
+   left: 0;
+   top: 4rem;
+   bottom: 0;
    padding-bottom: 3rem;
+   z-index: 9999;
 }
 
 .headercontainer {
@@ -91,8 +98,8 @@
 }
 
 .infocontainer {
-   width: 100%;
    margin: 1rem;
+   width: 19rem;
 }
 
 .info {
@@ -109,6 +116,7 @@
    background-color: #465875;
    color: #fff;
    padding: 0.2rem 0.5rem;
+   width: 100%;
 }
 
 .infolabel {
@@ -179,7 +187,7 @@
 }
 
 .content {
-   margin: 1rem;
+   margin: 1rem 0;
    padding: 0 1rem;
    width: 100%;
    overflow: scroll;
@@ -233,6 +241,7 @@
    padding: 0.5rem;
    position: relative;
    margin-bottom: 1.5rem;
+   scroll-margin-top: 5rem;
 }
 
 .sectiontitle {
@@ -304,4 +313,8 @@
    width: 100%;
    margin-left: 0.5rem;
    font-weight: 400;
+}
+
+.headeroverflowcontainer {
+   
 }

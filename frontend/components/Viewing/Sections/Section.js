@@ -5,7 +5,7 @@ import styles from '../../../styles/view.module.css';
 
 export default function Section(properties) {
   return (
-    <div className={styles.section}>
+    <div className={styles.section} id={properties.title}>
       <div className={styles.sectiontitle}>{properties.title}</div>
       <div className={styles.minimize}>
         <FontAwesomeIcon
