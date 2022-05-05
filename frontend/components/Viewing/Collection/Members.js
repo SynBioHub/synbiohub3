@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import useSWR from 'swr';
 import axios from 'axios';
+import Select from 'react-select';
 
 import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
@@ -10,11 +11,14 @@ import CountMembers from '../../../sparql/CountMembers';
 import CountMembersTotal from '../../../sparql/CountMembersSearch';
 import getCollectionMembers from '../../../sparql/getCollectionMembers';
 import getCollectionMembersSearch from '../../../sparql/getCollectionMembersSearch';
+import getTypesRoles from '../../../sparql/getTypesRoles';
 import styles from '../../../styles/view.module.css';
 import MiniLoading from '../../Reusable/MiniLoading';
 import Table from '../../Reusable/Table/Table';
 import Section from '../Sections/Section';
 import loadTemplate from '../../../sparql/tools/loadTemplate';
+import { shortName } from '../../../namespace/namespace';
+import lookupRole from '../../../namespace/lookupRole';
 
 /* eslint sonarjs/cognitive-complexity: "off" */
 
@@ -37,11 +41,24 @@ export default function Members(properties) {
   const [sort, setSort] = useState(sortMethods.displayId);
   const [defaultSortOption, setDefaultSortOption] = useState(sortOptions[0]);
   const [customBounds, setCustomBounds] = useState([0, 10000]);
+  const [typeFilter, setTypeFilter] = useState("Show Only Root Objects");
 
-  const preparedSearch =
+  let preparedSearch =
     search !== ''
       ? `FILTER(CONTAINS(lcase(str(?uri)), lcase("${search}"))||CONTAINS(lcase(?displayId), lcase("${search}"))||CONTAINS(lcase(?name), lcase("${search}"))||CONTAINS(lcase(?description), lcase("${search}")))`
       : '';
+
+  if (typeFilter !== 'Show Only Root Objects' && typeFilter !== 'Show All Objects') {
+    if (typeFilter.startsWith('http://www.biopax.org/release/biopax-level3.owl#')) {
+      preparedSearch += '\n FILTER(?sbolType = <' + typeFilter + '>)'
+    } else if (typeFilter.startsWith('http://identifiers.org/so/')) {
+      preparedSearch += '\n FILTER(?role = <' + typeFilter + '>)'
+    } else {
+      preparedSearch += '\n FILTER(?type = <' + typeFilter + '>)'
+    }
+  }
+
+  console.log("search: " + preparedSearch)
 
   const parameters = {
     graphs: '',
@@ -53,11 +70,15 @@ export default function Members(properties) {
     limit: ' LIMIT 10000 '
   };
 
-  let query = search ? getCollectionMembersSearch: getCollectionMembers;
+  const searchQuery = preparedSearch || (typeFilter !== 'Show Only Root Objects')
+
+  let query = searchQuery ? getCollectionMembersSearch: getCollectionMembers;
 
   const { members } = useMembers(query, parameters, token);
   const { count: totalMemberCount } = useCount(CountMembersTotal, {...parameters, search: ''}, token);
-  const { count: currentMemberCount } = useCount(search ? CountMembersTotal : CountMembers, parameters, token);
+  const { count: currentMemberCount } = useCount(searchQuery ? CountMembersTotal : CountMembers, parameters, token);
+
+  const { filters } = useFilters(getTypesRoles, { uri: properties.uri }, token)
 
   const outOfBoundsHandle = (offset) => {
       const newBounds = getNewBounds(offset, currentMemberCount);
@@ -67,6 +88,9 @@ export default function Members(properties) {
 
   return (
     <Section title="Members">
+      <FilterHeader 
+      filters={filters}
+      setTypeFilter={setTypeFilter} />
       <SearchHeader
         search={search}
         setSearch={setSearch}
@@ -122,6 +146,37 @@ function SearchHeader(properties) {
   );
 }
 
+function FilterHeader(properties) {
+  const [filters, setFilters] = useState(undefined);
+
+  useEffect(() => {
+    if (properties.filters) {
+        const newFilters = properties.filters.map(filter => {
+          const shortNamedFilter = shortName(filter.uri);
+          return { value: filter.uri, label: shortNamedFilter };
+        });
+        newFilters.sort((a, b) => (a.label > b.label) ? 1 : -1);
+        newFilters.unshift({ value: 'Show All Objects', label: 'Show All Objects' })
+        newFilters.unshift({ value: 'Show Only Root Objects', label: 'Show Only Root Objects' })
+        setFilters(newFilters);
+    }
+  }, [properties.filters]);
+
+
+  return (
+    <div className={styles.filtercontainer}>
+      Show
+      {filters ? <Select 
+        options={filters}
+        menuPortalTarget={document.body}
+        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+        className={styles.filterSelect}
+        onChange={option => properties.setTypeFilter(option.value)}
+      /> : <MiniLoading height={10} />}
+    </div>
+  );
+}
+
 function MemberTable(properties) {
   let count = (
     <div className={styles.loadinginline}>
@@ -157,6 +212,7 @@ function MemberTable(properties) {
         properties.setDefaultSortOption(sortOption);
       }}
       dataRowDisplay={member => {
+        console.log(member)
          var textArea = document.createElement("textarea");
          textArea.innerHTML = member.name;
          return (
@@ -165,12 +221,26 @@ function MemberTable(properties) {
             <code>{textArea.value}</code>
           </td>
           <td>{member.displayId}</td>
-          <td>{member.type.replace('http://sbols.org/v2#', '')}</td>
+          <td>{getType(member)}</td>
           <td>{member.description}</td>
         </tr>
       )}}
     />
   );
+}
+
+function getType(member) {
+  var memberType = member.type ? member.type.slice(member.type.lastIndexOf('#') + 1) : 'Unknown';
+  if (member.sbolType) {
+    memberType = member.sbolType.slice(member.sbolType.lastIndexOf('#') + 1)
+  }
+  if (member.role) {
+    memberType = lookupRole(member.role).description.name
+  }
+  if (memberType === 'ComponentDefinition') memberType = 'Component'
+  else if (memberType === 'ModuleDefinition') memberType = 'Module'
+
+  return memberType;
 }
 
 const createUrl = (query, options) => {
@@ -188,7 +258,6 @@ const useCount = (query, options, token) => {
    );
 
    let processedData = data ? processResults(data)[0].count : undefined
-
    return {
       count: processedData
    }
@@ -206,6 +275,20 @@ const useMembers = (query, options, token) => {
    return {
       members: processedData
    }
+}
+
+const useFilters = (query, options, token) => {
+  const url = createUrl(query, options);
+  const { data, error } = useSWR(
+    [url, token],
+    fetcher
+  );
+
+  let  processedData = data? processResults(data) : undefined;
+
+  return {
+    filters: processedData
+  }
 }
 
 const fetcher = (url, token) =>

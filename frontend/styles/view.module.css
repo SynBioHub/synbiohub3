@@ -291,3 +291,17 @@
 .loadinginline {
    display: inline-block;
 }
+
+.filtercontainer {
+   display: flex;
+   align-items: center;
+   width: 100%;
+   margin-bottom: 1rem;
+   font-weight: 500;
+}
+
+.filterSelect {
+   width: 100%;
+   margin-left: 0.5rem;
+   font-weight: 400;
+}
