@@ -18,10 +18,12 @@ export default function SidePanel(properties) {
   const [translation, setTranslation] = useState(0);
   return (
     <div className={translation == 0 ? styles.sidepanelcontaineropen : styles.sidepanelcontainercollapse}>
-            <div className={styles.sidepanel} style={{ transform: `translateX(-${translation}rem)`, transition: "transform 0.3s" }}>
+      <div className={styles.sidepanel} style={{ transform: `translateX(-${translation}rem)`, transition: "transform 0.3s" }}>
       <div className={styles.headercontainer}>
-        <h2 className={styles.title}>{metadata.name}</h2>
-        <div className={styles.displayId}>({metadata.displayId})</div>
+        <div className={styles.headeroverflowcontainer}>
+          <h2 className={styles.title}>{metadata.name}</h2>
+          <div className={styles.displayId}>({metadata.displayId})</div>
+        </div>
         <div className={styles.panelbutton} onClick={() => {
           translation == 18 ? setTranslation(0) : setTranslation(18);
         }}
@@ -58,7 +60,7 @@ export default function SidePanel(properties) {
           title={metadata.persistentIdentity}
         />
       </div>
-      <SectionSelector />
+      <SectionSelector pages={properties.pages}/>
     </div>
     </div>
   );

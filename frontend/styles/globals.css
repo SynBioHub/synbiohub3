@@ -7,6 +7,7 @@ body {
   background-color: #fff;
   color: #171D26; 
   font-size: 0.93rem;
+  scroll-behavior: smooth;
 }
 
 a {
