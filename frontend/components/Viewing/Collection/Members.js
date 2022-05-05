@@ -18,6 +18,7 @@ import Table from '../../Reusable/Table/Table';
 import Section from '../Sections/Section';
 import loadTemplate from '../../../sparql/tools/loadTemplate';
 import { shortName } from '../../../namespace/namespace';
+import lookupRole from '../../../namespace/lookupRole';
 
 /* eslint sonarjs/cognitive-complexity: "off" */
 
@@ -69,11 +70,13 @@ export default function Members(properties) {
     limit: ' LIMIT 10000 '
   };
 
-  let query = search ? getCollectionMembersSearch: getCollectionMembers;
+  const searchQuery = preparedSearch || (typeFilter !== 'Show Only Root Objects')
+
+  let query = searchQuery ? getCollectionMembersSearch: getCollectionMembers;
 
   const { members } = useMembers(query, parameters, token);
   const { count: totalMemberCount } = useCount(CountMembersTotal, {...parameters, search: ''}, token);
-  const { count: currentMemberCount } = useCount(preparedSearch ? CountMembersTotal : CountMembers, parameters, token);
+  const { count: currentMemberCount } = useCount(searchQuery ? CountMembersTotal : CountMembers, parameters, token);
 
   const { filters } = useFilters(getTypesRoles, { uri: properties.uri }, token)
 
@@ -153,6 +156,8 @@ function FilterHeader(properties) {
           return { value: filter.uri, label: shortNamedFilter };
         });
         newFilters.sort((a, b) => (a.label > b.label) ? 1 : -1);
+        newFilters.unshift({ value: 'Show All Objects', label: 'Show All Objects' })
+        newFilters.unshift({ value: 'Show Only Root Objects', label: 'Show Only Root Objects' })
         setFilters(newFilters);
     }
   }, [properties.filters]);
@@ -207,6 +212,7 @@ function MemberTable(properties) {
         properties.setDefaultSortOption(sortOption);
       }}
       dataRowDisplay={member => {
+        console.log(member)
          var textArea = document.createElement("textarea");
          textArea.innerHTML = member.name;
          return (
@@ -215,12 +221,26 @@ function MemberTable(properties) {
             <code>{textArea.value}</code>
           </td>
           <td>{member.displayId}</td>
-          <td>{member.type.replace('http://sbols.org/v2#', '')}</td>
+          <td>{getType(member)}</td>
           <td>{member.description}</td>
         </tr>
       )}}
     />
   );
+}
+
+function getType(member) {
+  var memberType = member.type ? member.type.slice(member.type.lastIndexOf('#') + 1) : 'Unknown';
+  if (member.sbolType) {
+    memberType = member.sbolType.slice(member.sbolType.lastIndexOf('#') + 1)
+  }
+  if (member.role) {
+    memberType = lookupRole(member.role).description.name
+  }
+  if (memberType === 'ComponentDefinition') memberType = 'Component'
+  else if (memberType === 'ModuleDefinition') memberType = 'Module'
+
+  return memberType;
 }
 
 const createUrl = (query, options) => {
