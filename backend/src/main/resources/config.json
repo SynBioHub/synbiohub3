@@ -11,12 +11,12 @@
       }
   },
   "webOfRegistriesUrl" : "https://wor.synbiohub.org",
-  "port": 7777,
+  "port": 6789,
   "triplestore": {
       "sparqlEndpoint": "http://localhost:8890/sparql",
       "graphStoreEndpoint": "http://localhost:8890/sparql-graph-crud-auth/",
-      "defaultGraph": "http://synbiohub.org/public",
-      "graphPrefix": "http://synbiohub.org/",
+      "defaultGraph": "https://synbiohub.org/public",
+      "graphPrefix": "https://synbiohub.org/",
       "username": "dba",
       "password": "dba",
       "virtuosoINI": "/etc/virtuoso-opensource-7/virtuoso.ini",
