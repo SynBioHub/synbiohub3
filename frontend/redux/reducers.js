@@ -311,6 +311,24 @@ const trackingReducer = (state = initialTrackingState, { type, payload }) => {
     : state;
 };
 
+// PAGE SECTIONS REDUCER
+const initialPageSectionsOrder = {
+  order: []
+}
+
+/**
+ * This reducer is used to update the order that the page sections are in.
+ */
+const pageSectionsOrder = (state = initialPageSectionsOrder, { type, payload }) => {
+  return type === types.UPDATEORDER
+    ? {
+        ...state,
+        order: payload
+      }
+    : state;
+};
+
+
 // COMBINED REDUCERS
 // combine all reducers for sbh to use
 const reducers = {
@@ -320,7 +338,8 @@ const reducers = {
   collectionCreate: collectionCreateReducer,
   download: downloadReducer,
   basket: basketReducer,
-  tracking: trackingReducer
+  tracking: trackingReducer,
+  pageSections: pageSectionsOrder
 };
 
 export default combineReducers(reducers);

@@ -701,3 +701,16 @@ export const markPageVisited = pageVisited => dispatch => {
     payload: pageVisited
   });
 };
+
+// PAGE SECTIONS ORDER
+
+/**
+ * This action updates the order of page sections.
+ * @param {Array} pageSectionOrder An array containing the order of the page sections.
+ */
+export const updatePageSectionsOrder = pageSectionOrder => dispatch => {
+  dispatch({
+    type: types.UPDATEORDER,
+    payload: pageSectionOrder
+  });
+}
