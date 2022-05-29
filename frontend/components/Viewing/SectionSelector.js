@@ -11,13 +11,20 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import styles from '../../styles/view.module.css';
-import { createPortal } from 'react-dom';
 
+import { createPortal } from 'react-dom';
 import { useRef, useEffect, useState } from 'react';
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { useDispatch, useSelector } from 'react-redux';
 import { updatePageSectionsOrder, updateMinimizedSections } from '../../redux/actions';
 
+/**
+ * Handles making the page section elements draggable and updating the store variables
+ * when the order is updated.
+ * 
+ * @param {Any} properties Information passed down from the parent component.
+ * @returns Draggable page sections.
+ */
 export default function SectionSelector(properties) {
   const [pagesOrder, setPagesOrder] = useState([]);
   const dispatch = useDispatch();
@@ -26,6 +33,7 @@ export default function SectionSelector(properties) {
 
   const selectors = headerCreate(pageSectionsOrder);
 
+  //Initializes the store page sections and minimized order.
   useEffect(() => {
     dispatch(updatePageSectionsOrder(properties.pages));
     dispatch(updateMinimizedSections(new Array(properties.pages.length).fill(false)));
@@ -33,6 +41,11 @@ export default function SectionSelector(properties) {
   },
     [pagesOrder === []]);
 
+  /**
+   * Handles updating the order of the pages/minimized order and updating the store.
+   * 
+   * @param {Object} result The result from the drag.
+   */
   const onDragEnd = (result) => {
     if (!result.destination) {
       return;
@@ -56,6 +69,14 @@ export default function SectionSelector(properties) {
     setPagesOrder(updatedPageOrder);
   }
 
+  /**
+   * Swaps two indexes in the specified list.
+   * 
+   * @param {Array} list The list to reorder.
+   * @param {Number} startIndex The index to start at.
+   * @param {Number} endIndex The index to end at.
+   * @returns The updated array.
+   */
   const reorder = (list, startIndex, endIndex) => {
     const result = Array.from(list);
     const [removed] = result.splice(startIndex, 1);
@@ -81,6 +102,12 @@ export default function SectionSelector(properties) {
   );
 }
 
+/**
+ * Handles the mapping of the different page section icons in the sidebar.
+ * 
+ * @param {Array} pages An array containing the current page section order.
+ * @returns The mapped pages.
+ */
 function headerCreate(pages) {
   const useDraggableInPortal = () => {
     const self = useRef({}).current;
@@ -129,6 +156,10 @@ function headerCreate(pages) {
   return headers;
 }
 
+/**
+ * @param {String} page The name of the page.
+ * @returns The correct icon that corresponds to the page.
+ */
 function iconSelector(page) {
   switch (page) {
     case "Details":
@@ -150,6 +181,10 @@ function iconSelector(page) {
   }
 }
 
+/**
+ * @param {Any} properties Information passed down from the parent component.
+ * @returns A section header with the correct icon.
+ */
 function SectionHeader(properties) {
   return (
     <a className={styles.sectionheader} href={`#${properties.title}`}>
