@@ -18,7 +18,7 @@ const { publicRuntimeConfig } = getConfig();
 function MyApp({ Component, pageProps }) {
   const store = useStore(pageProps.initialReduxState);
   /* eslint no-console: "off" */
-  console.log(publicRuntimeConfig.backend);
+
   return (
     <Provider store={store}>
       <Component {...pageProps} />

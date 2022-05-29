@@ -8,6 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
 import Loader from 'react-loader-spinner';
 import { useDispatch, useSelector } from 'react-redux';
+import { useRouter } from 'next/router';
 
 import { resetSubmit } from '../../redux/actions';
 import styles from '../../styles/submit.module.css';
@@ -17,8 +18,11 @@ import SubmitHeader from './ReusableComponents/SubmitHeader';
 export default function SubmissionStatusPanel() {
   const fileFailed = useSelector(state => state.submit.fileFailed);
   const submitting = useSelector(state => state.submit.submitting);
+  const submissionUri = useSelector(state => state.submit.selectedCollection.uri);
+
   const [header, setHeader] = useState(null);
   const dispatch = useDispatch();
+  const router = useRouter();
 
   useEffect(() => {
     if (submitting)
@@ -78,7 +82,15 @@ export default function SubmissionStatusPanel() {
               />
               Back to Submit
             </div>
-            <div className={styles.aftersubmitbutton}>
+            <div
+              className={styles.aftersubmitbutton}
+              role="button"
+              onClick={() => {
+                router.push(submissionUri).then(() => {
+                  dispatch(resetSubmit());
+                });
+              }}
+            >
               View Submission
               <FontAwesomeIcon
                 className={`${styles.aftersubmitbuttonicon} ${styles.aftersubmitbuttoniconright}`}
