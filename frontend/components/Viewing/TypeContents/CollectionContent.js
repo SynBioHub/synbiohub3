@@ -33,7 +33,7 @@ function generateSectionOrder(pages, properties) {
    const sections = pages.map((page, index) => {
       return (
          <React.Fragment key={index}>
-            {getSection(page, properties.uri)}
+            {getSection(page, properties)}
          </React.Fragment>
       );
    });

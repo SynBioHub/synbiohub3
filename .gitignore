@@ -135,3 +135,5 @@ hs_err_pid*
 config.json
 
 .DS_Store
+
+frontend/package-lock.json

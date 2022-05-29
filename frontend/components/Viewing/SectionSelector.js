@@ -141,7 +141,7 @@ function headerCreate(pages) {
     return (
       <Draggable key={page} draggableId={page} index={index}>
         {renderDraggable(dragProvided => (
-          <div className={styles.sectionHeaderParent}
+          <div className={styles.sectionheaderparent}
             {...dragProvided.dragHandleProps}
             {...dragProvided.draggableProps}
             ref={dragProvided.innerRef}
