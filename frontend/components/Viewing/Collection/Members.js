@@ -58,8 +58,6 @@ export default function Members(properties) {
     }
   }
 
-  console.log("search: " + preparedSearch)
-
   const parameters = {
     graphs: '',
     graphPrefix: 'https://synbiohub.org/',
@@ -212,7 +210,6 @@ function MemberTable(properties) {
         properties.setDefaultSortOption(sortOption);
       }}
       dataRowDisplay={member => {
-        console.log(member)
          var textArea = document.createElement("textarea");
          textArea.innerHTML = member.name;
          return (

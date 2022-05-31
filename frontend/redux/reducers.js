@@ -305,22 +305,47 @@ const initialTrackingState = {
 const trackingReducer = (state = initialTrackingState, { type, payload }) => {
   return type === types.TRACKPAGEVISIT
     ? {
-        ...state,
-        pageVisited: payload
-      }
+      ...state,
+      pageVisited: payload
+    }
     : state;
 };
 
-// COMBINED REDUCERS
-// combine all reducers for sbh to use
-const reducers = {
-  user: userReducer,
-  search: searchReducer,
-  submit: submitReducer,
-  collectionCreate: collectionCreateReducer,
-  download: downloadReducer,
-  basket: basketReducer,
-  tracking: trackingReducer
+// PAGE SECTIONS REDUCER
+const initialPageSectionsOrder = {
+  sectionOrder: [],
+  minimizedSections: []
+}
+
+const pageSectionsReducer = (state = initialPageSectionsOrder, { type, payload }) => {
+  switch (type) {
+    case types.UPDATESECTIONORDER:
+      return {
+        ...state,
+        sectionOrder: payload
+      };
+    case types.UPDATEMINIMIZEDSECTIONS:
+      return {
+        ...state,
+        minimizedSections: payload
+      }
+    default:
+      return state;
+  }
 };
 
-export default combineReducers(reducers);
+
+  // COMBINED REDUCERS
+  // combine all reducers for sbh to use
+  const reducers = {
+    user: userReducer,
+    search: searchReducer,
+    submit: submitReducer,
+    collectionCreate: collectionCreateReducer,
+    download: downloadReducer,
+    basket: basketReducer,
+    tracking: trackingReducer,
+    pageSections: pageSectionsReducer
+  };
+
+  export default combineReducers(reducers);

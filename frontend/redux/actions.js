@@ -701,3 +701,27 @@ export const markPageVisited = pageVisited => dispatch => {
     payload: pageVisited
   });
 };
+
+// PAGE SECTIONS
+
+/**
+ * This action updates the order of page sections.
+ * @param {Array} pageSectionOrder An array containing the order of the page sections.
+ */
+export const updatePageSectionsOrder = pageSectionOrder => dispatch => {
+  dispatch({
+    type: types.UPDATESECTIONORDER,
+    payload: pageSectionOrder
+  });
+}
+
+/**
+ * This action updates which sections are minimized.
+ * @param {Array} minimizedSections An array containing which sections are minimized.
+ */
+export const updateMinimizedSections = minimizedSections => dispatch => {
+  dispatch({
+    type: types.UPDATEMINIMIZEDSECTIONS,
+    payload: minimizedSections
+  });
+}
