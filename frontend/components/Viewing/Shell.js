@@ -10,11 +10,11 @@ export default function Shell(properties) {
   const metadata = properties.metadata;
 
   const content = getContent(properties.type, properties.uri);
-  const pages = getPages(properties.type);
+  const pagesInfo = getPages(properties.type);
 
   return (
     <div className={styles.container}>
-      <SidePanel metadata={metadata} type={properties.type} uri={properties.uri} pagesInfo={pages} />
+      <SidePanel metadata={metadata} type={properties.type} uri={properties.uri} pagesInfo={pagesInfo} />
       <div className={styles.content}>
         <ViewHeader
           name={metadata.name}
