@@ -60,7 +60,7 @@ export default function SidePanel(properties) {
           title={metadata.persistentIdentity}
         />
       </div>
-      <SectionSelector pages={properties.pages}/>
+      <SectionSelector pagesInfo={properties.pagesInfo}/>
     </div>
     </div>
   );

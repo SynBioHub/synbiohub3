@@ -28,16 +28,20 @@ import { updatePageSectionsOrder, updateMinimizedSections } from '../../redux/ac
 export default function SectionSelector(properties) {
   const [pagesOrder, setPagesOrder] = useState([]);
   const dispatch = useDispatch();
-  const pageSectionsOrder = useSelector(state => state.pageSections.sectionOrder);
-  const minimizedSections = useSelector(state => state.pageSections.minimizedSections)
+  const pageSectionsOrder = useSelector(state => state.pageSections.sectionOrder.order);
+  const minimizedSections = useSelector(state => state.pageSections.minimizedSections.minimized);
 
   const selectors = headerCreate(pageSectionsOrder);
 
   //Initializes the store page sections and minimized order.
   useEffect(() => {
-    dispatch(updatePageSectionsOrder(properties.pages));
-    dispatch(updateMinimizedSections(new Array(properties.pages.length).fill(false)));
-    setPagesOrder(properties.pages);
+    let minimizedValues = localStorage.getItem(properties.pagesInfo.type) === null
+      ? new Array(properties.pagesInfo.order.length).fill(false)
+      : JSON.parse(localStorage.getItem(properties.pagesInfo.type)).minimized;
+    dispatch(updatePageSectionsOrder({ type: properties.pagesInfo.type, order: properties.pagesInfo.order }));
+    dispatch(updateMinimizedSections({ type: properties.pagesInfo.type, minimized: minimizedValues }));
+
+    setPagesOrder(properties.pagesInfo.order);
   },
     [pagesOrder === []]);
 
@@ -63,8 +67,8 @@ export default function SectionSelector(properties) {
       result.destination.index
     );
 
-    dispatch(updatePageSectionsOrder(updatedPageOrder));
-    dispatch(updateMinimizedSections(updatedMinimizedOrder));
+    dispatch(updatePageSectionsOrder({ type: properties.pagesInfo.type, order: updatedPageOrder }));
+    dispatch(updateMinimizedSections({ type: properties.pagesInfo.type, minimized: updatedMinimizedOrder }));
 
     setPagesOrder(updatedPageOrder);
   }

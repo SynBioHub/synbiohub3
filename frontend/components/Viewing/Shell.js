@@ -14,7 +14,7 @@ export default function Shell(properties) {
 
   return (
     <div className={styles.container}>
-      <SidePanel metadata={metadata} type={properties.type} uri={properties.uri} pages={pages} />
+      <SidePanel metadata={metadata} type={properties.type} uri={properties.uri} pagesInfo={pages} />
       <div className={styles.content}>
         <ViewHeader
           name={metadata.name}
@@ -41,7 +41,7 @@ function Plugins(properties) {
 }
 
 function getContent(type, uri) {
-  switch(type) {
+  switch (type) {
     case 'Collection':
       return <CollectionContent uri={uri} />
     case 'ComponentDefinition':
@@ -53,13 +53,20 @@ function getContent(type, uri) {
 }
 
 function getPages(type) {
-  switch(type) {
+  switch (type) {
     case 'Collection':
-      return collectionPages
+      return getOrder('Collection', collectionPages);
     case 'ComponentDefinition':
+
     case 'Component':
-      return componentPages
+      return getOrder('Component', componentPages);
     default:
-      return [];
+      return getOrder('Unknown', []);
   }
+}
+
+function getOrder(type, pages) {
+  if (localStorage.getItem(type) === null) return { type: type, order: pages };
+
+  return { type: type, order: JSON.parse(localStorage.getItem(type)).order };
 }
