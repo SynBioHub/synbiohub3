@@ -91,30 +91,30 @@ export const logoutUser = () => dispatch => {
 
 export const updateUser =
   (name, affiliation, email, password, confirmPassword) =>
-  async (dispatch, getState) => {
-    const url = `${publicRuntimeConfig.backend}/profile`;
-    const token = getState().user.token;
-    const headers = {
-      Accept: 'text/plain',
-      'X-authorization': token
+    async (dispatch, getState) => {
+      const url = `${publicRuntimeConfig.backend}/profile`;
+      const token = getState().user.token;
+      const headers = {
+        Accept: 'text/plain',
+        'X-authorization': token
+      };
+
+      const parameters = new URLSearchParams();
+      parameters.append('name', name);
+      parameters.append('affiliation', affiliation);
+      parameters.append('email', email);
+      if (password) {
+        parameters.append('password1', password);
+        parameters.append('password2', confirmPassword);
+      }
+
+      const response = await fetch(url, {
+        method: 'POST',
+        headers,
+        body: parameters
+      });
+      if (response.status === 200) dispatch(fetchUserInfo());
     };
-
-    const parameters = new URLSearchParams();
-    parameters.append('name', name);
-    parameters.append('affiliation', affiliation);
-    parameters.append('email', email);
-    if (password) {
-      parameters.append('password1', password);
-      parameters.append('password2', confirmPassword);
-    }
-
-    const response = await fetch(url, {
-      method: 'POST',
-      headers,
-      body: parameters
-    });
-    if (response.status === 200) dispatch(fetchUserInfo());
-  };
 
 export const fetchUserInfo = () => async (dispatch, getState) => {
   const url = `${publicRuntimeConfig.backend}/profile`;
@@ -148,37 +148,37 @@ export const fetchUserInfo = () => async (dispatch, getState) => {
 
 export const registerUser =
   (fullName, username, affiliation, email, password, confirmPassword) =>
-  async dispatch => {
-    const url = `${publicRuntimeConfig.backend}/register`;
-    const headers = {
-      Accept: 'text/plain'
-    };
+    async dispatch => {
+      const url = `${publicRuntimeConfig.backend}/register`;
+      const headers = {
+        Accept: 'text/plain'
+      };
 
-    const parameters = new URLSearchParams();
-    parameters.append('name', fullName);
-    parameters.append('username', username);
-    parameters.append('affiliation', affiliation);
-    parameters.append('email', email);
-    parameters.append('password1', password);
-    parameters.append('password2', confirmPassword);
+      const parameters = new URLSearchParams();
+      parameters.append('name', fullName);
+      parameters.append('username', username);
+      parameters.append('affiliation', affiliation);
+      parameters.append('email', email);
+      parameters.append('password1', password);
+      parameters.append('password2', confirmPassword);
 
-    const response = await fetch(url, {
-      method: 'POST',
-      headers,
-      body: parameters
-    });
-    const message = await response.text();
-    if (response.status === 200) {
-      localStorage.setItem('userToken', message); // save the token of the user locally, change to cookie later
-      localStorage.setItem('username', username); // save the username of the user locally, change to cookie later
-      dispatch(login(username, password));
-    } else {
-      dispatch({
-        type: types.REGISTERERROR,
-        payload: message
+      const response = await fetch(url, {
+        method: 'POST',
+        headers,
+        body: parameters
       });
-    }
-  };
+      const message = await response.text();
+      if (response.status === 200) {
+        localStorage.setItem('userToken', message); // save the token of the user locally, change to cookie later
+        localStorage.setItem('username', username); // save the username of the user locally, change to cookie later
+        dispatch(login(username, password));
+      } else {
+        dispatch({
+          type: types.REGISTERERROR,
+          payload: message
+        });
+      }
+    };
 
 // SEARCHING ACTIONS
 
@@ -221,33 +221,33 @@ export const setLimit = newLimit => dispatch => {
  */
 export const submit =
   (uri, files, overwriteIncrement = 0, addingToCollection = false) =>
-  async (dispatch, getState) => {
-    dispatch({
-      type: types.SUBMITRESET,
-      payload: true // sets submitting state to true
-    });
+    async (dispatch, getState) => {
+      dispatch({
+        type: types.SUBMITRESET,
+        payload: true // sets submitting state to true
+      });
 
-    dispatch({
-      type: types.SHOWSUBMITPROGRESS,
-      payload: true
-    });
+      dispatch({
+        type: types.SHOWSUBMITPROGRESS,
+        payload: true
+      });
 
-    const token = getState().user.token;
+      const token = getState().user.token;
 
-    await uploadFiles(
-      dispatch,
-      token,
-      uri,
-      files,
-      overwriteIncrement,
-      addingToCollection
-    );
+      await uploadFiles(
+        dispatch,
+        token,
+        uri,
+        files,
+        overwriteIncrement,
+        addingToCollection
+      );
 
-    dispatch({
-      type: types.SUBMITTING,
-      payload: false
-    });
-  };
+      dispatch({
+        type: types.SUBMITTING,
+        payload: false
+      });
+    };
 
 /**
  * Helper function called by the submit action
@@ -421,56 +421,56 @@ export const addAttachments = (files, uri) => async (dispatch, getState) => {
 
 export const createCollection =
   (id, version, name, description, citations, overwrite_merge) =>
-  async (dispatch, getState) => {
-    dispatch({ type: types.CREATINGCOLLECTIONERRORS, payload: [] });
-    dispatch({ type: types.CREATINGCOLLECTION, payload: true });
-    dispatch({
-      type: types.CREATINGCOLLECTIONBUTTONTEXT,
-      payload: 'Creating Collection'
-    });
-    const token = getState().user.token;
-    const url = `${publicRuntimeConfig.backend}/submit`;
-    var headers = {
-      Accept: 'text/plain; charset=UTF-8',
-      'X-authorization': token
-    };
-
-    const form = new FormData();
-    form.append('id', id);
-    form.append('version', version);
-    form.append('name', name);
-    form.append('description', description);
-    form.append('citations', citations);
-    form.append('overwrite_merge', `${overwrite_merge}`);
-
-    const response = await fetch(url, {
-      method: 'POST',
-      headers,
-      body: form
-    });
-
-    if (response.status !== 200) {
-      var messages = await response.text();
-      messages = messages.charAt(0) !== '[' ? [messages] : JSON.parse(messages);
-      dispatch({ type: types.CREATINGCOLLECTIONERRORS, payload: messages });
-    } else {
+    async (dispatch, getState) => {
       dispatch({ type: types.CREATINGCOLLECTIONERRORS, payload: [] });
-      await dispatch(getCanSubmitTo());
-      const collections = getState().submit.canSubmitTo;
-      for (const collection of collections) {
-        if (
-          collection.displayId === id + '_collection' &&
-          collection.version === version &&
-          collection.name === name
-        ) {
-          dispatch(setSelectedCollection(collection));
-          break;
+      dispatch({ type: types.CREATINGCOLLECTION, payload: true });
+      dispatch({
+        type: types.CREATINGCOLLECTIONBUTTONTEXT,
+        payload: 'Creating Collection'
+      });
+      const token = getState().user.token;
+      const url = `${publicRuntimeConfig.backend}/submit`;
+      var headers = {
+        Accept: 'text/plain; charset=UTF-8',
+        'X-authorization': token
+      };
+
+      const form = new FormData();
+      form.append('id', id);
+      form.append('version', version);
+      form.append('name', name);
+      form.append('description', description);
+      form.append('citations', citations);
+      form.append('overwrite_merge', `${overwrite_merge}`);
+
+      const response = await fetch(url, {
+        method: 'POST',
+        headers,
+        body: form
+      });
+
+      if (response.status !== 200) {
+        var messages = await response.text();
+        messages = messages.charAt(0) !== '[' ? [messages] : JSON.parse(messages);
+        dispatch({ type: types.CREATINGCOLLECTIONERRORS, payload: messages });
+      } else {
+        dispatch({ type: types.CREATINGCOLLECTIONERRORS, payload: [] });
+        await dispatch(getCanSubmitTo());
+        const collections = getState().submit.canSubmitTo;
+        for (const collection of collections) {
+          if (
+            collection.displayId === id + '_collection' &&
+            collection.version === version &&
+            collection.name === name
+          ) {
+            dispatch(setSelectedCollection(collection));
+            break;
+          }
         }
+        dispatch(setPromptNewCollection(false));
       }
-      dispatch(setPromptNewCollection(false));
-    }
-    dispatch({ type: types.CREATINGCOLLECTION, payload: false });
-  };
+      dispatch({ type: types.CREATINGCOLLECTION, payload: false });
+    };
 
 export const setSelectedCollection = collection => dispatch => {
   dispatch({ type: types.SELECTEDCOLLECTION, payload: collection });
@@ -544,40 +544,40 @@ export const makePublicCollection =
     collections,
     setProcessUnderway
   ) =>
-  async (dispatch, getState) => {
-    setProcessUnderway(true);
-    dispatch({ type: types.PUBLISHING, payload: true });
+    async (dispatch, getState) => {
+      setProcessUnderway(true);
+      dispatch({ type: types.PUBLISHING, payload: true });
 
-    const token = getState().user.token;
-    const url = `${publicRuntimeConfig.backend}${submissionUrl}/makePublic`;
-    const headers = {
-      Accept: 'text/plain; charset=UTF-8',
-      'X-authorization': token
+      const token = getState().user.token;
+      const url = `${publicRuntimeConfig.backend}${submissionUrl}/makePublic`;
+      const headers = {
+        Accept: 'text/plain; charset=UTF-8',
+        'X-authorization': token
+      };
+
+      const parameters = new URLSearchParams();
+      parameters.append('id', displayId);
+      parameters.append('version', version);
+      parameters.append('name', name);
+      parameters.append('description', description);
+      parameters.append('citations', citations);
+      parameters.append('tabState', tabState);
+      if (tabState === 'existing') parameters.append('collections', collections);
+
+      var response = await fetch(url, {
+        method: 'POST',
+        headers,
+        body: parameters
+      });
+
+      if (response.status === 200) {
+        mutate([`${publicRuntimeConfig.backend}/shared`, token]);
+        mutate([`${publicRuntimeConfig.backend}/manage`, token]);
+      }
+
+      setProcessUnderway(false);
+      dispatch({ type: types.PUBLISHING, payload: false });
     };
-
-    const parameters = new URLSearchParams();
-    parameters.append('id', displayId);
-    parameters.append('version', version);
-    parameters.append('name', name);
-    parameters.append('description', description);
-    parameters.append('citations', citations);
-    parameters.append('tabState', tabState);
-    if (tabState === 'existing') parameters.append('collections', collections);
-
-    var response = await fetch(url, {
-      method: 'POST',
-      headers,
-      body: parameters
-    });
-
-    if (response.status === 200) {
-      mutate([`${publicRuntimeConfig.backend}/shared`, token]);
-      mutate([`${publicRuntimeConfig.backend}/manage`, token]);
-    }
-
-    setProcessUnderway(false);
-    dispatch({ type: types.PUBLISHING, payload: false });
-  };
 
 export const downloadFiles = files => (dispatch, getState) => {
   dispatch({ type: types.DOWNLOADSTATUS, payload: 'Downloading' });
@@ -709,6 +709,13 @@ export const markPageVisited = pageVisited => dispatch => {
  * @param {Array} pageSectionOrder An array containing the order of the page sections.
  */
 export const updatePageSectionsOrder = pageSectionOrder => dispatch => {
+  const parsed = JSON.parse(localStorage.getItem(pageSectionOrder.type));
+  const minimizedInfo = parsed === null ? [] : parsed.minimized;
+
+  localStorage.setItem(pageSectionOrder.type, JSON.stringify(
+    { order: pageSectionOrder.order, minimized: minimizedInfo }
+  ));
+
   dispatch({
     type: types.UPDATESECTIONORDER,
     payload: pageSectionOrder
@@ -720,6 +727,13 @@ export const updatePageSectionsOrder = pageSectionOrder => dispatch => {
  * @param {Array} minimizedSections An array containing which sections are minimized.
  */
 export const updateMinimizedSections = minimizedSections => dispatch => {
+  const parsed = JSON.parse(localStorage.getItem(minimizedSections.type));
+  const orderInfo = parsed === null ? [] : parsed.order;
+
+  localStorage.setItem(minimizedSections.type, JSON.stringify(
+    { order: orderInfo, minimized: minimizedSections.minimized }
+  ));
+
   dispatch({
     type: types.UPDATEMINIMIZEDSECTIONS,
     payload: minimizedSections
