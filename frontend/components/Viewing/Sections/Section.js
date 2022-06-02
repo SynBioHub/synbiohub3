@@ -16,19 +16,17 @@ import { updateMinimizedSections } from '../../../redux/actions.js';
 export default function Section(properties) {
   const dispatch = useDispatch();
   //The index that the section is at in the section order.
-  const sectionIndex = useSelector(state => state.pageSections.sectionOrder.order).indexOf(properties.title);
-  //The content type the section is a part of.
-  const contentType = useSelector(state => state.pageSections.sectionOrder.type);
+  const sectionIndex = useSelector(state => state.pageSections.sectionOrder).indexOf(properties.title);
   const minimizedSections = useSelector(state => state.pageSections.minimizedSections);
-  const minimizedSectionsCopy = Array.from(minimizedSections.minimized);
+  const minimizedSectionsCopy = Array.from(minimizedSections);
 
-  const [isMinimized, setIsMinimized] = useState(minimizedSections.minimized[sectionIndex]);
+  const [isMinimized, setIsMinimized] = useState(minimizedSections[sectionIndex]);
 
   useEffect(() => {
-    if (isMinimized) minimizedSectionsCopy[sectionIndex] = true;
+    if(isMinimized) minimizedSectionsCopy[sectionIndex] = true;
     else minimizedSectionsCopy[sectionIndex] = false;
 
-    dispatch(updateMinimizedSections({ type: contentType, minimized: minimizedSectionsCopy }));
+    dispatch(updateMinimizedSections(minimizedSectionsCopy));
   }, [isMinimized]);
 
   return (
@@ -36,7 +34,7 @@ export default function Section(properties) {
       <div className={styles.sectiontitle}>{properties.title}</div>
       <div className={styles.minimize}>
         <FontAwesomeIcon
-          icon={minimizedSections.minimized[sectionIndex] ? faPlusSquare : faMinusSquare}
+          icon={minimizedSections[sectionIndex] ? faPlusSquare : faMinusSquare}
           size="1x"
           className={styles.sectionminimizeicon}
           onClick={() => {

@@ -313,9 +313,9 @@ const trackingReducer = (state = initialTrackingState, { type, payload }) => {
 
 // PAGE SECTIONS REDUCER
 const initialPageSectionsOrder = {
-  sectionOrder: { type: '', order: [] },
-  minimizedSections: { type: '', minimized: [] }
-};
+  sectionOrder: [],
+  minimizedSections: []
+}
 
 const pageSectionsReducer = (state = initialPageSectionsOrder, { type, payload }) => {
   switch (type) {
@@ -333,6 +333,7 @@ const pageSectionsReducer = (state = initialPageSectionsOrder, { type, payload }
       return state;
   }
 };
+
 
   // COMBINED REDUCERS
   // combine all reducers for sbh to use

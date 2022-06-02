@@ -12,7 +12,7 @@ import React from "react";
  * @returns The page sections that are in correct order.
  */
 export function CollectionContent(properties) {
-   const pageSectionsOrder = useSelector(state => state.pageSections.sectionOrder.order);
+   const pageSectionsOrder = useSelector(state => state.pageSections.sectionOrder);
    const sectionsOrder = generateSectionOrder(pageSectionsOrder, properties);
 
    return (
