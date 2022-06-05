@@ -4,6 +4,7 @@ import Details from "../Sections/Details";
 
 import { useSelector } from 'react-redux';
 import React from "react";
+import OtherProperties from "../Sections/OtherProperties";
 
 /**
  * Generates the content for the collection.
@@ -55,6 +56,12 @@ function getSection(sectionName, properties) {
          return (
             <Section title={sectionName}>
                <Details uri={properties.uri} />
+            </Section>
+         );
+      case "Other Properties":
+         return (
+            <Section title={sectionName}>
+               <OtherProperties uri={properties.uri} />
             </Section>
          );
       default:

@@ -19,7 +19,7 @@ export default function MemberOfCollections(properties) {
   useEffect(() => {
     if (otherProps == undefined)
       getQueryResponse(getOtherProperties, { uri: properties.uri }).then(props => {
-        if (props !== undefined) setOtherProps(props);
+        if (props.length > 0) setOtherProps(props);
       });
   }, [otherProps]);
 
@@ -60,14 +60,14 @@ export default function MemberOfCollections(properties) {
             </Link>
           </span>
           <Link href={`/search/collection=<${encodeURIComponent(collection.subject)}>&`} >
-            <React.Fragment>
+            <a>
               <FontAwesomeIcon
                 icon={faSearch}
                 size="1x"
                 color="#465875"
                 className={styles.searchicon}
               />
-            </React.Fragment>
+            </a>
           </Link>
         </td>
       </tr>
