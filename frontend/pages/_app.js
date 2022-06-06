@@ -3,7 +3,7 @@ import '@fortawesome/fontawesome-svg-core/styles.css';
 
 import { config } from '@fortawesome/fontawesome-svg-core';
 import { Provider } from 'react-redux';
-
+import { useRouter} from "next/router";
 import { useStore } from '../redux/store';
 config.autoAddCss = false; // Tell Font Awesome to skip adding the CSS automatically since it's being imported above
 
@@ -17,11 +17,13 @@ const { publicRuntimeConfig } = getConfig();
  */
 function MyApp({ Component, pageProps }) {
   const store = useStore(pageProps.initialReduxState);
+  const router = useRouter();
+
   /* eslint no-console: "off" */
 
   return (
     <Provider store={store}>
-      <Component {...pageProps} />
+      <Component {...pageProps} key={router.asPath} />
     </Provider>
   );
 }

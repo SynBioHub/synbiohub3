@@ -300,6 +300,16 @@
    background-color: #e6e6e6;
 }
 
+.membername:hover {
+   font-weight: 600;
+   color: #c2244b;
+}
+
+.memberid:hover {
+   text-decoration: underline;
+   font-weight: 600;
+}
+
 .loadinginline {
    display: inline-block;
 }
