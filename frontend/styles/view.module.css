@@ -258,6 +258,7 @@
 
 .sectionchildcontainer {
    padding: 0.5rem;
+   overflow: scroll;
 }
 
 .sectionminimizeicon {
@@ -301,13 +302,12 @@
 }
 
 .membername:hover {
-   font-weight: 600;
    color: #c2244b;
 }
 
 .memberid:hover {
    text-decoration: underline;
-   font-weight: 600;
+   color: #465875;
 }
 
 .loadinginline {
@@ -350,6 +350,7 @@
 }
 
 .table th {
+   min-width: 100%;
    padding: 0.5rem;
    font-size: 0.9rem;
    font-weight: 600;
@@ -378,6 +379,152 @@
 }
 
 .link:hover {
-   color: #D25627;
    text-decoration: underline;
+}
+
+.downloadbutton div,
+.removebutton div {
+   font-weight: 500;
+   padding: 0.5rem 1rem 0.5rem 1rem;
+   border: 0;
+   width: fit-content;
+   border-radius: 0.4rem;
+   color: #fff;
+   cursor: pointer;
+}
+
+.downloadbutton div {
+   background-color: #D25627;
+}
+
+.removebutton div {
+   background-color: #d9534f;
+}
+
+.downloadbutton {
+   width: 1%;
+   white-space: nowrap;
+}
+
+.downloadbutton div:hover {
+   background-color: #973d1c;
+}
+
+.removebutton div:hover {
+   background-color: #d1332e;
+}
+
+.downloadicon,
+.deleteicon {
+   color: white;
+}
+
+.attachbutton,
+.attachbuttondisabled {
+   font-weight: 500;
+   padding: 0.5rem 1rem 0.5rem 1rem;
+   border: 0;
+   width: 100%;
+   border-radius: 0.4rem;
+   color: #fff;
+   cursor: pointer;
+   background-color: #24AE5F;
+   text-align: center;
+}
+
+.attachbutton:hover {
+   background-color: #1e9451;
+}
+
+.selectfile {
+   font-weight: 500;
+   padding: 0.5rem 1rem 0.5rem 1rem;
+   border: 0;
+   border-radius: 0 0.4rem 0.4rem 0;
+   color: #fff;
+   cursor: pointer;
+   background-color: #D25627;
+   border: 1px solid transparent;
+   position: relative;
+   white-space: nowrap;
+   vertical-align: middle;
+   width: 1%;
+   display: table-cell;
+}
+
+.selectfile:hover {
+   background-color: #973d1c;
+}
+
+.selectfile input {
+   display: none;
+}
+
+.fileattached {
+   background-color: #eee;
+   border-radius: 0.4rem 0 0 0.4rem;
+   padding: 0.5rem 1rem 0.5rem 1rem;
+   border: 1px solid #ccc;
+   width: 100%;
+   display: table-cell;
+}
+
+.fileattached:focus {
+   outline: none;
+}
+
+.attachtd {
+   vertical-align: middle !important;
+}
+
+.attachelements {
+   display: table;
+   line-height: 0 !important;
+}
+
+.lookupinput {
+   border-radius: 0.4rem;
+   padding: 0.5rem 1rem 0.5rem 1rem;
+   border: 1px solid #ccc;
+   width: fit-content;
+}
+
+.lookupurl input {
+   width: 100%;
+}
+
+.attachbuttondisabled {
+   cursor: not-allowed;
+   opacity: 0.65;
+}
+
+.lookuprow {
+   display: flex;
+   justify-content: space-between;
+}
+
+.lookuprow input {
+   width: 100%;
+   display: table-cell;
+   margin-top: 10px;
+}
+
+.lookuprow select {
+   margin: 10px 0 0 20px;
+   border-radius: 0.4rem;
+   padding: 0.5rem 1rem 0.5rem 1rem;
+   border: 1px solid #ccc;
+   color: gray;
+   width: 100%;
+   display: table-cell;
+}
+
+@media screen and (max-width: 790px) {
+   .lookuprow {
+      display: inline-block;
+   }
+
+   .lookuprow select {
+      margin-left: 0;
+   }
 }

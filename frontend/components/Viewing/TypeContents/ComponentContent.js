@@ -5,6 +5,7 @@ import OtherProperties from "../Sections/OtherProperties";
 import { useSelector } from 'react-redux';
 import React from "react";
 import MemberOfCollections from "../Sections/MemberOfCollections";
+import Attachments from "../Sections/Attachments";
 
 /**
  * Generates the content for the component.
@@ -48,24 +49,30 @@ function generateSectionOrder(pages, properties) {
  */
 function getSection(sectionName, properties) {
    switch (sectionName) {
-      case "Details":
+      case componentPages[0]:
          return (
             <Section title={sectionName}>
                <Details uri={properties.uri} />
             </Section>
          );
-      case "Other Properties":
+      case componentPages[3]:
          return (
             <Section title={sectionName}>
                <OtherProperties uri={properties.uri} />
             </Section>
          );
-      case "Member of these Collections":
+      case componentPages[4]:
          return (
             <Section title={sectionName}>
                <MemberOfCollections uri={properties.uri} />
             </Section>
          );
+      case componentPages[5]:
+         return (
+            <Section title={sectionName}>
+               <Attachments uri={properties.uri} />
+            </Section>
+         )
       default:
          return (
             <Section title={sectionName}>

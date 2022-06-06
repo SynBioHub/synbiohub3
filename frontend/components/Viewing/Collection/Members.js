@@ -240,7 +240,6 @@ function MemberTable(properties) {
 }
 
 function getType(member) {
-  console.log(member);
   var memberType = member.type ? member.type.slice(member.type.lastIndexOf('#') + 1) : 'Unknown';
   if (member.sbolType) {
     memberType = member.sbolType.slice(member.sbolType.lastIndexOf('#') + 1)
