@@ -317,3 +317,57 @@
    margin-left: 0.5rem;
    font-weight: 400;
 }
+
+.table {
+   min-width: 100%;
+   text-align: left;
+   overflow: scroll;
+   border-spacing: 0;
+   font-size: 0.9rem;
+   font-weight: 400;
+}
+
+.table tr {
+   width: 100%;
+}
+
+.table td {
+   padding: 0.5rem;
+   line-height: 1.5;
+   border-top: 1px solid #ddd;
+   vertical-align: baseline;
+   font-size: 0.85rem;
+}
+
+.table th {
+   padding: 0.5rem;
+   font-size: 0.9rem;
+   font-weight: 600;
+   position: sticky;
+   top: 0;
+   border-bottom: 2px solid #ddd;
+   background-color: #fff;
+}
+
+.table tr:nth-child(odd) {
+   background-color: #f9f9f9;
+}
+
+.searchicon {
+   margin-left: 0.3rem;
+   cursor: pointer;
+}
+
+.searchicon:hover {
+   color: #D25627;
+}
+
+.link {
+   color: #465875;
+   font-weight: bold;
+}
+
+.link:hover {
+   color: #D25627;
+   text-decoration: underline;
+}
