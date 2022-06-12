@@ -5,7 +5,7 @@ import Details from "../Sections/Details";
 import { useSelector } from 'react-redux';
 import React from "react";
 import OtherProperties from "../Sections/OtherProperties";
-import Attachments from "../Sections/Attachments";
+import Attachments from "../Sections//Attachments/Attachments";
 
 /**
  * Generates the content for the collection.

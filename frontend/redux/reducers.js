@@ -312,11 +312,15 @@ const trackingReducer = (state = initialTrackingState, { type, payload }) => {
 };
 
 // PAGE SECTIONS REDUCER
+
 const initialPageSectionsOrder = {
   sectionOrder: { type: '', order: [] },
   minimizedSections: { type: '', minimized: [] }
 };
 
+/**
+ * This reducer tracks the order of the page sections the minimized sections.
+ */
 const pageSectionsReducer = (state = initialPageSectionsOrder, { type, payload }) => {
   switch (type) {
     case types.UPDATESECTIONORDER:
@@ -334,17 +338,39 @@ const pageSectionsReducer = (state = initialPageSectionsOrder, { type, payload }
   }
 };
 
-  // COMBINED REDUCERS
-  // combine all reducers for sbh to use
-  const reducers = {
-    user: userReducer,
-    search: searchReducer,
-    submit: submitReducer,
-    collectionCreate: collectionCreateReducer,
-    download: downloadReducer,
-    basket: basketReducer,
-    tracking: trackingReducer,
-    pageSections: pageSectionsReducer
-  };
+// ATTACHMENTS REDUCER
 
-  export default combineReducers(reducers);
+const initialAttachments = {
+  attachments: []
+}
+
+/**
+ * This reducer lets AttachmentRows know if the displayed rows should be updated.
+ */
+const attachmentsReducer = (state = initialAttachments, { type, payload }) => {
+  switch (type) {
+    case types.SETATTACHMENTS:
+      return {
+        ...state,
+        attachments: payload
+      }
+    default:
+      return state;
+  }
+}
+
+// COMBINED REDUCERS
+// combine all reducers for sbh to use
+const reducers = {
+  user: userReducer,
+  search: searchReducer,
+  submit: submitReducer,
+  collectionCreate: collectionCreateReducer,
+  download: downloadReducer,
+  basket: basketReducer,
+  tracking: trackingReducer,
+  pageSections: pageSectionsReducer,
+  attachments: attachmentsReducer
+};
+
+export default combineReducers(reducers);

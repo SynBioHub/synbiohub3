@@ -32,19 +32,19 @@ export default function Section(properties) {
   }, [isMinimized]);
 
   return (
-    <div className={styles.section} id={properties.title}>
+    <div className={styles.section}>
       <div className={styles.sectiontitle}>{properties.title}</div>
-      <div className={styles.minimize}>
-        <FontAwesomeIcon
-          icon={minimizedSections.minimized[sectionIndex] ? faPlusSquare : faMinusSquare}
-          size="1x"
-          className={styles.sectionminimizeicon}
-          onClick={() => {
-            setIsMinimized(!isMinimized);
-          }}
-        />
+      <FontAwesomeIcon
+        icon={minimizedSections.minimized[sectionIndex] ? faPlusSquare : faMinusSquare}
+        size="1x"
+        className={styles.sectionminimizeicon}
+        onClick={() => {
+          setIsMinimized(!isMinimized);
+        }}
+      />
+      <div className={isMinimized ? styles.sectionclosed : styles.sectionopen}>
+        <div className={styles.sectionchildcontainer}>{properties.children}</div>
       </div>
-      {!isMinimized && <div className={styles.sectionchildcontainer}>{properties.children}</div>}
     </div>
   );
 }

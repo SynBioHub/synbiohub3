@@ -6,7 +6,8 @@ import {
   faFile,
   faImage,
   faInfoCircle,
-  faStickyNote
+  faStickyNote,
+  faMinus
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -95,7 +96,17 @@ export default function SectionSelector(properties) {
         {(dropProvided) => (
           <div {...dropProvided.droppableProps}>
             <div ref={dropProvided.innerRef} className={styles.pagesections}>
-              <h2 className={styles.pagesectionstitle}>Page Sections</h2>
+              <div className={styles.pagesectionstitle}>
+                <h2>Page Sections</h2>
+                <FontAwesomeIcon
+                  icon={faMinus}
+                  size="1x"
+                  className={styles.pagesectionsminus}
+                  onClick = {() => {
+                    //minify sections w/ animation.
+                  }}
+                />
+              </div>
               {selectors}
               {dropProvided.placeholder}
             </div>

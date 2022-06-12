@@ -148,9 +148,26 @@
 }
 
 .pagesectionstitle {
+   margin-bottom: 0.75rem;
+   position: relative;
+}
+
+.pagesectionstitle h2 {
    font-weight: 500;
    font-size: 1.3rem;
-   margin-bottom: 0.75rem;
+}
+
+.pagesectionsminus {
+   color: #D25627;
+   cursor: pointer;
+   position: absolute;
+   right: 5.625px;
+   top: 5.625px;
+   transition: transform .2s;
+}
+
+.pagesectionsminus:hover {
+   transform: scale(1.3);
 }
 
 .sectionheader {
@@ -244,6 +261,16 @@
    position: relative;
    margin-bottom: 1.5rem;
    scroll-margin-top: 5rem;
+}
+
+.sectionopen {
+   display: block;
+   height: fit-content;
+}
+
+.sectionclosed {
+   display: none;
+   height: 0;
 }
 
 .sectiontitle {
@@ -503,20 +530,26 @@
    justify-content: space-between;
 }
 
-.lookuprow input {
+.lookuprow input[name="name"] {
    width: 100%;
    display: table-cell;
    margin-top: 10px;
 }
 
-.lookuprow select {
+/* Removes the blueish glow when the user uses autocomplete to fill the input. */
+.lookuprow input:-webkit-autofill,
+.lookuprow input:-webkit-autofill:hover,
+.lookuprow input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0px 1000px #ffffff inset !important;
+}
+
+.customselect {
    margin: 10px 0 0 20px;
    border-radius: 0.4rem;
-   padding: 0.5rem 1rem 0.5rem 1rem;
-   border: 1px solid #ccc;
    color: gray;
-   width: 100%;
    display: table-cell;
+   width: 100%;
+   white-space: nowrap;
 }
 
 @media screen and (max-width: 790px) {
@@ -524,7 +557,8 @@
       display: inline-block;
    }
 
-   .lookuprow select {
+   .customselect {
       margin-left: 0;
+      display: inline-block;
    }
 }

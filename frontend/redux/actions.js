@@ -254,7 +254,7 @@ export const submit =
  * @param {*} dispatch
  * @param {string} token - the authorization token of the current user
  * @param {string} uri - the collection uri
- * @param {array} files - the files to uplod to sbh
+ * @param {array} files - the files to upload to sbh
  */
 async function uploadFiles(
   dispatch,
@@ -737,5 +737,16 @@ export const updateMinimizedSections = minimizedSections => dispatch => {
   dispatch({
     type: types.UPDATEMINIMIZEDSECTIONS,
     payload: minimizedSections
+  });
+}
+
+/**
+ * This action sets the attachments.
+ * @param {Array} attachments Nested array that contains all the information about the attachments.
+ */
+export const setAttachments = attachments => dispatch => {
+  dispatch({
+    type: types.SETATTACHMENTS,
+    payload: attachments
   });
 }
