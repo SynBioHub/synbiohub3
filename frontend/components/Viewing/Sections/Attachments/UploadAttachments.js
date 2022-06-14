@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import styles from '../../../../styles/view.module.css';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { setAttachments } from '../../../../redux/actions';
+import { setAttachments, setUploadStatus } from '../../../../redux/actions';
 
 import getAttachments from "../../../../sparql/getAttachments";
 import getQueryResponse from '../../../../sparql/tools/getQueryResponse';
@@ -25,6 +25,7 @@ export default function UploadAttachments(properties) {
 	const [selectedFiles, setSelectedFiles] = useState([]);
 	const dispatch = useDispatch();
 	const token = useSelector(state => state.user.token);
+	const uploadStatus = useSelector(state => state.attachments.uploadStatus);
 
 	/**
 	 * Handles a input value change and updates the filled inputs array.
@@ -89,6 +90,8 @@ export default function UploadAttachments(properties) {
 			"X-authorization": token
 		};
 
+		dispatch(setUploadStatus("Uploading"));
+
 		for (let fileIndex = 0; fileIndex < files.length; fileIndex++) {
 			const form = new FormData();
 			form.append("file", files[fileIndex].file);
@@ -147,25 +150,30 @@ export default function UploadAttachments(properties) {
 						className={selectedFiles.length > 0 ? styles.attachbutton : styles.attachbuttondisabled}
 						onClick={() => {
 							if (selectedFiles.length > 0) {
+								//Resets everything.
+								document.getElementById("attached-file-input").value = "";
+								setSelectedFiles([]);
+
 								attachFromFile(
 									selectedFiles,
 									properties.uri.replace("https://synbiohub.org", publicRuntimeConfig.backend)
 								).then(() => {
+									dispatch(setUploadStatus(""));
+
 									//Query all the attachments so the store can be updated.
 									getQueryResponse(getAttachments, { uri: properties.uri }).then(allAttachments => {
 										dispatch(setAttachments(allAttachments));
 									});
-
-									//Resets everything.
-									document.getElementById("attached-file-input").value = "";
-									setSelectedFiles([]);
 								});
 							} else {
 								alert("You need to select at least 1 file.");
 							}
 						}}
 					>
-						Attach
+						{uploadStatus === ""
+							? "Attach"
+							: <div className = {styles.uploading}></div>
+						}
 					</div>
 				</td>
 			</tr>

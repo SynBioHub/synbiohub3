@@ -540,7 +540,7 @@
 .lookuprow input:-webkit-autofill,
 .lookuprow input:-webkit-autofill:hover,
 .lookuprow input:-webkit-autofill:focus {
-  -webkit-box-shadow: 0 0 0px 1000px #ffffff inset !important;
+   -webkit-box-shadow: 0 0 0px 1000px #ffffff inset !important;
 }
 
 .customselect {
@@ -560,5 +560,25 @@
    .customselect {
       margin-left: 0;
       display: inline-block;
+   }
+}
+
+.uploading {
+   margin: auto;
+   width: 18.964px;
+   height: 18.964px;
+   border: 4px solid transparent;
+   border-top-color: white;
+   border-radius: 50%;
+   animation: uploading-spinner 1s ease infinite;
+}
+
+@keyframes uploading-spinner {
+   from {
+      transform: rotate(0turn);
+   }
+
+   to {
+      transform: rotate(1turn);
    }
 }

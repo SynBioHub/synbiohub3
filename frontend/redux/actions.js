@@ -750,3 +750,10 @@ export const setAttachments = attachments => dispatch => {
     payload: attachments
   });
 }
+
+export const setUploadStatus = status => dispatch => {
+  dispatch({
+    type: types.UPLOADSTATUS,
+    payload: status
+  });
+}

@@ -341,7 +341,8 @@ const pageSectionsReducer = (state = initialPageSectionsOrder, { type, payload }
 // ATTACHMENTS REDUCER
 
 const initialAttachments = {
-  attachments: []
+  attachments: [],
+  uploadStatus: ""
 }
 
 /**
@@ -353,6 +354,11 @@ const attachmentsReducer = (state = initialAttachments, { type, payload }) => {
       return {
         ...state,
         attachments: payload
+      }
+    case types.UPLOADSTATUS:
+      return {
+        ...state,
+        uploadStatus: payload
       }
     default:
       return state;
