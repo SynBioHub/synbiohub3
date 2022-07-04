@@ -9,7 +9,7 @@ import com.synbiohub.sbh3.utils.ConfigUtil;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import javax.activation.MimetypesFileTypeMap;
+
 import java.io.File;
 import java.net.URLConnection;
 
@@ -47,14 +47,12 @@ public class PluginService {
                 ObjectNode curr = mapper.createObjectNode();
 
                 String filename = file.getName();
-                MimetypesFileTypeMap fileTypeMap = new MimetypesFileTypeMap();
-                //String type = fileTypeMap.getContentType(file);
                 String type = URLConnection.guessContentTypeFromName(filename);
                 String url = ConfigUtil.get("instanceUrl").asText() + "expose/";
 
                 curr.put("filename", filename);
-                curr.put("type", type);
-                curr.put("url", url);
+                curr.put("type", "");
+                curr.put("url", "");
 
                 array.add(curr);
 
