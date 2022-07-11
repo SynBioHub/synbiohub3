@@ -314,8 +314,10 @@ const trackingReducer = (state = initialTrackingState, { type, payload }) => {
 // PAGE SECTIONS REDUCER
 
 const initialPageSectionsOrder = {
-  sectionOrder: { type: '', order: [] },
-  minimizedSections: { type: '', minimized: [] }
+  type: "",
+  order: [],
+  minimized: [],
+  selected: []
 };
 
 /**
@@ -326,12 +328,22 @@ const pageSectionsReducer = (state = initialPageSectionsOrder, { type, payload }
     case types.UPDATESECTIONORDER:
       return {
         ...state,
-        sectionOrder: payload
+        order: payload
       };
     case types.UPDATEMINIMIZEDSECTIONS:
       return {
         ...state,
-        minimizedSections: payload
+        minimized: payload
+      }
+    case types.UPDATEPAGETYPE:
+      return {
+        ...state,
+        type: payload
+      }
+    case types.UPDATESELECTEDSECTIONS:
+      return {
+        ...state,
+        selected: payload
       }
     default:
       return state;

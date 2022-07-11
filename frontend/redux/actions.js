@@ -706,39 +706,78 @@ export const markPageVisited = pageVisited => dispatch => {
 
 /**
  * This action updates the order of page sections.
+ * 
  * @param {Array} pageSectionOrder An array containing the order of the page sections.
+ * @param {String} type The type of the element being displayed.
  */
-export const updatePageSectionsOrder = pageSectionOrder => dispatch => {
-  const parsed = JSON.parse(localStorage.getItem(pageSectionOrder.type));
-  const minimizedInfo = parsed === null ? [] : parsed.minimized;
+export const updatePageSectionsOrder = (pageSectionOrder, type)  => dispatch => {
+  const parsed = JSON.parse(localStorage.getItem(type));
+  const minimized = parsed === null ? [] : parsed.minimized;
+  const selected = parsed === null ? pageSectionOrder : parsed.selected;
 
-  localStorage.setItem(pageSectionOrder.type, JSON.stringify(
-    { order: pageSectionOrder.order, minimized: minimizedInfo }
+  localStorage.setItem(type, JSON.stringify(
+    { order: pageSectionOrder, minimized: minimized, selected: selected }
   ));
 
   dispatch({
     type: types.UPDATESECTIONORDER,
     payload: pageSectionOrder
   });
+
+  dispatch({
+    type: types.UPDATEPAGETYPE,
+    payload: type
+  });
 }
 
 /**
  * This action updates which sections are minimized.
+ * 
  * @param {Array} minimizedSections An array containing which sections are minimized.
+ * @param {String} type The type of the element being displayed.
  */
-export const updateMinimizedSections = minimizedSections => dispatch => {
-  const parsed = JSON.parse(localStorage.getItem(minimizedSections.type));
-  const orderInfo = parsed === null ? [] : parsed.order;
+export const updateMinimizedSections = (minimizedSections, type) => dispatch => {
+  const parsed = JSON.parse(localStorage.getItem(type));
+  const order = parsed === null ? [] : parsed.order;
+  const selected = parsed === null ? [] : parsed.selected;
 
-  localStorage.setItem(minimizedSections.type, JSON.stringify(
-    { order: orderInfo, minimized: minimizedSections.minimized }
+  localStorage.setItem(type, JSON.stringify(
+    { order: order, minimized: minimizedSections, selected: selected}
   ));
 
   dispatch({
     type: types.UPDATEMINIMIZEDSECTIONS,
     payload: minimizedSections
   });
+
+  dispatch({
+    type: types.UPDATEPAGETYPE,
+    payload: type
+  });
 }
+
+/**
+ * This action updates which sections are shown.
+ * 
+ * @param {Array} selectedSections The new sections to be shown.
+ * @param {String} type The type of the element being displayed.
+ */
+export const updateSelectedSections = (selectedSections, type) => dispatch => {
+  const parsed = JSON.parse(localStorage.getItem(type));
+  const order = parsed === null ? [] : parsed.order;
+  const minimized = parsed === null ? [] : parsed.minimized;
+
+  localStorage.setItem(type, JSON.stringify(
+    { order: order, minimized: minimized, selected: selectedSections }
+  ));
+
+  dispatch({
+    type: types.UPDATESELECTEDSECTIONS,
+    payload: selectedSections
+  })
+}
+
+// ATTACHMENTS SECTION
 
 /**
  * This action sets the attachments.

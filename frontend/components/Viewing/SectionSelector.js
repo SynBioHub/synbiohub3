@@ -7,7 +7,8 @@ import {
   faImage,
   faInfoCircle,
   faStickyNote,
-  faMinus
+  faMinus,
+  faPlus
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -17,7 +18,7 @@ import { createPortal } from 'react-dom';
 import { useRef, useEffect, useState } from 'react';
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { useDispatch, useSelector } from 'react-redux';
-import { updatePageSectionsOrder, updateMinimizedSections } from '../../redux/actions';
+import { updatePageSectionsOrder, updateMinimizedSections, updateSelectedSections } from '../../redux/actions';
 
 /**
  * Handles making the page section elements draggable and updating the store variables
@@ -28,23 +29,33 @@ import { updatePageSectionsOrder, updateMinimizedSections } from '../../redux/ac
  */
 export default function SectionSelector(properties) {
   const [pagesOrder, setPagesOrder] = useState([]);
+  const [isMinimized, setIsMinimized] = useState(true);
   const dispatch = useDispatch();
-  const pageSectionsOrder = useSelector(state => state.pageSections.sectionOrder.order);
-  const minimizedSections = useSelector(state => state.pageSections.minimizedSections.minimized);
+  const pageSectionsOrder = useSelector(state => state.pageSections.order);
+  const minimizedSections = useSelector(state => state.pageSections.minimized);
+  const selectedOrder = useSelector(state => state.pageSections.selected);
 
-  const selectors = headerCreate(pageSectionsOrder);
+  const selectors = headerCreate(pageSectionsOrder, properties.pagesInfo.type);
 
   //Initializes the store page sections and minimized order.
   useEffect(() => {
-    let minimizedValues = localStorage.getItem(properties.pagesInfo.type) === null
-      ? new Array(properties.pagesInfo.order.length).fill(false)
-      : JSON.parse(localStorage.getItem(properties.pagesInfo.type)).minimized;
-    dispatch(updatePageSectionsOrder({ type: properties.pagesInfo.type, order: properties.pagesInfo.order }));
-    dispatch(updateMinimizedSections({ type: properties.pagesInfo.type, minimized: minimizedValues }));
+    let savedMinimizedValues, savedSelectedSections;
+
+    if (localStorage.getItem(properties.pagesInfo.type) === null) {
+      savedMinimizedValues = new Array(properties.pagesInfo.order.length).fill(false);
+      savedSelectedSections = properties.pagesInfo.order;
+    } else {
+      const savedValues = JSON.parse(localStorage.getItem(properties.pagesInfo.type));
+      savedMinimizedValues = savedValues.minimized;
+      savedSelectedSections = savedValues.selected;
+    }
+
+    dispatch(updatePageSectionsOrder(properties.pagesInfo.order, properties.pagesInfo.type));
+    dispatch(updateMinimizedSections(savedMinimizedValues, properties.pagesInfo.type));
+    dispatch(updateSelectedSections(savedSelectedSections, properties.pagesInfo.type));
 
     setPagesOrder(properties.pagesInfo.order);
-  },
-    [pagesOrder === []]);
+  }, []);
 
   /**
    * Handles updating the order of the pages/minimized order and updating the store.
@@ -62,14 +73,16 @@ export default function SectionSelector(properties) {
       result.destination.index
     );
 
+    dispatch(updatePageSectionsOrder(updatedPageOrder, properties.pagesInfo.type));
+    dispatch(updateSelectedSections(updatedPageOrder.filter(page => selectedOrder.includes(page)), properties.pagesInfo.type));
+
     const updatedMinimizedOrder = reorder(
       minimizedSections,
       result.source.index,
       result.destination.index
     );
 
-    dispatch(updatePageSectionsOrder({ type: properties.pagesInfo.type, order: updatedPageOrder }));
-    dispatch(updateMinimizedSections({ type: properties.pagesInfo.type, minimized: updatedMinimizedOrder }));
+    dispatch(updateMinimizedSections(updatedMinimizedOrder, properties.pagesInfo.type));
 
     setPagesOrder(updatedPageOrder);
   }
@@ -99,16 +112,48 @@ export default function SectionSelector(properties) {
               <div className={styles.pagesectionstitle}>
                 <h2>Page Sections</h2>
                 <FontAwesomeIcon
-                  icon={faMinus}
+                  icon={isMinimized ? faMinus : faPlus}
                   size="1x"
                   className={styles.pagesectionsminus}
-                  onClick = {() => {
-                    //minify sections w/ animation.
+                  onClick={() => {
+                    /*
+                    Visual bug when collapsing the section headers the top box shadow of the top section header
+                    will not be hidden. Handles removing that shadow and adding it back correspondingly.
+                    */
+                    const topSectionHeader = document.getElementsByClassName(styles.sectionheader)[0];
+                    const container = document.getElementById("headers-container");
+
+                    /**
+                     * Removes the css class that adds no box-shadow so the default box-shadow will apply.
+                     */
+                    const addBoxShadow = () => {
+                      topSectionHeader.classList.remove(styles.nosectionheadershadow);
+                      container.removeEventListener("transitionstart", addBoxShadow);
+                    }
+
+                    /**
+                     * Removes the box shadow from top section header.
+                     */
+                    const removeBoxShadow = () => {
+                      topSectionHeader.classList.add(styles.nosectionheadershadow);
+                      container.removeEventListener("transitionend", removeBoxShadow);
+                    }
+
+                    container.classList.toggle(styles.collapsed);
+                    if (container.classList.toggle(styles.expanded)) {
+                      container.addEventListener("transitionstart", addBoxShadow, false);
+                    } else {
+                      container.addEventListener("transitionend", removeBoxShadow, false);
+                    }
+
+                    setIsMinimized(!isMinimized);
                   }}
                 />
               </div>
-              {selectors}
-              {dropProvided.placeholder}
+              <div id="headers-container" className={styles.expanded}>
+                {selectors}
+                {dropProvided.placeholder}
+              </div>
             </div>
           </div>
         )}
@@ -123,7 +168,7 @@ export default function SectionSelector(properties) {
  * @param {Array} pages An array containing the current page section order.
  * @returns The mapped pages.
  */
-function headerCreate(pages) {
+function headerCreate(pages, type) {
   const useDraggableInPortal = () => {
     const self = useRef({}).current;
 
@@ -161,7 +206,7 @@ function headerCreate(pages) {
             {...dragProvided.draggableProps}
             ref={dragProvided.innerRef}
           >
-            <SectionHeader title={page} icon={iconSelector(page)} />
+            <SectionHeader type={type} title={page} icon={iconSelector(page)} />
           </div>
         ))}
       </Draggable>
@@ -201,10 +246,39 @@ function iconSelector(page) {
  * @returns A section header with the correct icon.
  */
 function SectionHeader(properties) {
+  const selectedSections = useSelector(state => state.pageSections.selected);
+  const type = useSelector(state => state.pageSections.type);
+  const sectionOrder = useSelector(state => state.pageSections.order);
+  const dispatch = useDispatch();
+
+  //Don't want to use the sections from the previous page.
+  let sectionRendered = type === properties.type ? selectedSections.includes(properties.title) : null;
+
   return (
     <a className={styles.sectionheader} href={`#${properties.title}`}>
       <div className={styles.titleandbox}>
-        <input type="checkbox" />
+        <input
+          type="checkbox"
+          defaultChecked={sectionRendered}
+          onClick={(e) => {
+            const isChecked = e.target.checked;
+
+            if (isChecked && !sectionRendered) {
+              const sectionOrderIndex = sectionOrder.indexOf(properties.title);
+
+              const updatedSelected = [];
+              updatedSelected[sectionOrderIndex] = properties.title;
+              selectedSections.forEach(section => {
+                const index = sectionOrder.indexOf(section);
+                updatedSelected[index] = section;
+              });
+
+              dispatch(updateSelectedSections(updatedSelected, type));
+            } else if (!isChecked && sectionRendered) {
+              dispatch(updateSelectedSections(selectedSections.filter(title => title !== properties.title), type));
+            }
+          }}
+        />
         <div className={styles.sectionheadertitle}>{properties.title}</div>
       </div>
       <FontAwesomeIcon

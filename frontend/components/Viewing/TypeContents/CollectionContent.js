@@ -1,11 +1,12 @@
 import Members from "../Collection/Members";
 import Section from "../Sections/Section";
-import Details from "../Sections/Details";
+import Details from "../Sections/Details/Details.js";
+import OtherProperties from "../Sections/OtherProperties";
+import Attachments from "../Sections//Attachments/Attachments";
 
 import { useSelector } from 'react-redux';
 import React from "react";
-import OtherProperties from "../Sections/OtherProperties";
-import Attachments from "../Sections//Attachments/Attachments";
+
 
 /**
  * Generates the content for the collection.
@@ -14,8 +15,8 @@ import Attachments from "../Sections//Attachments/Attachments";
  * @returns The page sections that are in correct order.
  */
 export function CollectionContent(properties) {
-   const pageSectionsOrder = useSelector(state => state.pageSections.sectionOrder.order);
-   const sectionsOrder = generateSectionOrder(pageSectionsOrder, properties);
+   const selectedSections = useSelector(state => state.pageSections.selected);
+   const sectionsOrder = generateSectionOrder(selectedSections, properties);
 
    return (
       <React.Fragment>
@@ -32,7 +33,7 @@ export function CollectionContent(properties) {
  * @returns The different page sections .
  */
 function generateSectionOrder(pages, properties) {
-   const sections = pages.map((page, index) => {
+   return pages.map((page, index) => {
       return (
          <React.Fragment key={index}>
             {getSection(page, properties)}
@@ -40,7 +41,6 @@ function generateSectionOrder(pages, properties) {
       );
    });
 
-   return sections;
 }
 
 /**

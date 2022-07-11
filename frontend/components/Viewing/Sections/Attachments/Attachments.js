@@ -9,7 +9,6 @@ import AttachmentsTable from './AttachmentsTable';
 import Loading from '../../../Reusable/Loading';
 import { setAttachments } from '../../../../redux/actions';
 
-
 /**
  * If the user is the creator of the collection then the upload/lookup attachment section
  * and the garbage icon next to any attachments is shown.

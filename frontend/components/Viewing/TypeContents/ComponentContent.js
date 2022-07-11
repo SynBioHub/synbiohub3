@@ -1,11 +1,14 @@
 import Section from "../Sections/Section";
-import Details from "../Sections/Details";
+import Details from "../Sections/Details/Details.js";
 import OtherProperties from "../Sections/OtherProperties";
+import MemberOfCollections from "../Sections/MemberOfCollections";
+import Attachments from "../Sections//Attachments/Attachments";
+
+import { pages, getComponents } from "./Component";
 
 import { useSelector } from 'react-redux';
 import React from "react";
-import MemberOfCollections from "../Sections/MemberOfCollections";
-import Attachments from "../Sections//Attachments/Attachments";
+
 
 /**
  * Generates the content for the component.
@@ -14,8 +17,8 @@ import Attachments from "../Sections//Attachments/Attachments";
  * @returns The page sections that are in correct order.
  */
 export function ComponentContent(properties) {
-   const pageSectionsOrder = useSelector(state => state.pageSections.sectionOrder.order);
-   const sectionsOrder = generateSectionOrder(pageSectionsOrder, properties);
+   const selectedSections = useSelector(state => state.pageSections.selected);
+   const sectionsOrder = generateSectionOrder(selectedSections, properties);
 
    return (
       <React.Fragment>

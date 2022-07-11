@@ -11,6 +11,8 @@ import App from 'next/app';
 import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
 
+import { ToastContainer } from "react-toastify";
+
 /**
  * This component is the starting component for the sbh app. Uses Provider
  * from react-redux so that entire app can access redux state
@@ -24,6 +26,7 @@ function MyApp({ Component, pageProps }) {
   return (
     <Provider store={store}>
       <Component {...pageProps} key={router.asPath} />
+      <ToastContainer />
     </Provider>
   );
 }

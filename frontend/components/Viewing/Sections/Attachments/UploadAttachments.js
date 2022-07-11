@@ -9,7 +9,7 @@ import getAttachments from "../../../../sparql/getAttachments";
 import getQueryResponse from '../../../../sparql/tools/getQueryResponse';
 import edam from "./edam.json";
 
-import WindowedSelect from 'react-windowed-select';
+import Select from 'react-select';
 import options from "./SelectOptions";
 
 const { publicRuntimeConfig } = getConfig();
@@ -203,8 +203,8 @@ export default function UploadAttachments(properties) {
 							name="name"
 							readOnly={false}
 						/>
-						<WindowedSelect
-							className={styles.customselect}
+						<Select
+							className={styles.attachmentscustomselect}
 							value={selectedOption}
 							onChange={(e) => {
 								handleAttachURLChange(e);
