@@ -1,10 +1,12 @@
 import Members from "../Collection/Members";
 import Section from "../Sections/Section";
-import Details from "../Sections/Details";
+import Details from "../Sections/Details/Details.js";
+import OtherProperties from "../Sections/OtherProperties";
+import Attachments from "../Sections//Attachments/Attachments";
 
 import { useSelector } from 'react-redux';
 import React from "react";
-import OtherProperties from "../Sections/OtherProperties";
+
 
 /**
  * Generates the content for the collection.
@@ -13,8 +15,8 @@ import OtherProperties from "../Sections/OtherProperties";
  * @returns The page sections that are in correct order.
  */
 export function CollectionContent(properties) {
-   const pageSectionsOrder = useSelector(state => state.pageSections.sectionOrder.order);
-   const sectionsOrder = generateSectionOrder(pageSectionsOrder, properties);
+   const selectedSections = useSelector(state => state.pageSections.selected);
+   const sectionsOrder = generateSectionOrder(selectedSections, properties);
 
    return (
       <React.Fragment>
@@ -31,7 +33,7 @@ export function CollectionContent(properties) {
  * @returns The different page sections .
  */
 function generateSectionOrder(pages, properties) {
-   const sections = pages.map((page, index) => {
+   return pages.map((page, index) => {
       return (
          <React.Fragment key={index}>
             {getSection(page, properties)}
@@ -39,7 +41,6 @@ function generateSectionOrder(pages, properties) {
       );
    });
 
-   return sections;
 }
 
 /**
@@ -50,18 +51,24 @@ function generateSectionOrder(pages, properties) {
  */
 function getSection(sectionName, properties) {
    switch (sectionName) {
-      case "Members":
+      case collectionPages[0]:
          return <Members uri={properties.uri} />
-      case "Details":
+      case collectionPages[1]:
          return (
             <Section title={sectionName}>
                <Details uri={properties.uri} />
             </Section>
          );
-      case "Other Properties":
+      case collectionPages[2]:
          return (
             <Section title={sectionName}>
                <OtherProperties uri={properties.uri} />
+            </Section>
+         );
+      case collectionPages[3]:
+         return (
+            <Section title = {sectionName}>
+               <Attachments uri = {properties.uri} />
             </Section>
          );
       default:

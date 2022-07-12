@@ -1,10 +1,14 @@
 import Section from "../Sections/Section";
-import Details from "../Sections/Details";
+import Details from "../Sections/Details/Details.js";
 import OtherProperties from "../Sections/OtherProperties";
+import MemberOfCollections from "../Sections/MemberOfCollections";
+import Attachments from "../Sections//Attachments/Attachments";
+
+import { pages, getComponents } from "./Component";
 
 import { useSelector } from 'react-redux';
 import React from "react";
-import MemberOfCollections from "../Sections/MemberOfCollections";
+
 
 /**
  * Generates the content for the component.
@@ -13,8 +17,8 @@ import MemberOfCollections from "../Sections/MemberOfCollections";
  * @returns The page sections that are in correct order.
  */
 export function ComponentContent(properties) {
-   const pageSectionsOrder = useSelector(state => state.pageSections.sectionOrder.order);
-   const sectionsOrder = generateSectionOrder(pageSectionsOrder, properties);
+   const selectedSections = useSelector(state => state.pageSections.selected);
+   const sectionsOrder = generateSectionOrder(selectedSections, properties);
 
    return (
       <React.Fragment>
@@ -48,24 +52,30 @@ function generateSectionOrder(pages, properties) {
  */
 function getSection(sectionName, properties) {
    switch (sectionName) {
-      case "Details":
+      case componentPages[0]:
          return (
             <Section title={sectionName}>
                <Details uri={properties.uri} />
             </Section>
          );
-      case "Other Properties":
+      case componentPages[3]:
          return (
             <Section title={sectionName}>
                <OtherProperties uri={properties.uri} />
             </Section>
          );
-      case "Member of these Collections":
+      case componentPages[4]:
          return (
             <Section title={sectionName}>
                <MemberOfCollections uri={properties.uri} />
             </Section>
          );
+      case componentPages[5]:
+         return (
+            <Section title={sectionName}>
+               <Attachments uri={properties.uri} />
+            </Section>
+         )
       default:
          return (
             <Section title={sectionName}>

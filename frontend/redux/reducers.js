@@ -312,39 +312,83 @@ const trackingReducer = (state = initialTrackingState, { type, payload }) => {
 };
 
 // PAGE SECTIONS REDUCER
+
 const initialPageSectionsOrder = {
-  sectionOrder: { type: '', order: [] },
-  minimizedSections: { type: '', minimized: [] }
+  type: "",
+  order: [],
+  minimized: [],
+  selected: []
 };
 
+/**
+ * This reducer tracks the order of the page sections the minimized sections.
+ */
 const pageSectionsReducer = (state = initialPageSectionsOrder, { type, payload }) => {
   switch (type) {
     case types.UPDATESECTIONORDER:
       return {
         ...state,
-        sectionOrder: payload
+        order: payload
       };
     case types.UPDATEMINIMIZEDSECTIONS:
       return {
         ...state,
-        minimizedSections: payload
+        minimized: payload
+      }
+    case types.UPDATEPAGETYPE:
+      return {
+        ...state,
+        type: payload
+      }
+    case types.UPDATESELECTEDSECTIONS:
+      return {
+        ...state,
+        selected: payload
       }
     default:
       return state;
   }
 };
 
-  // COMBINED REDUCERS
-  // combine all reducers for sbh to use
-  const reducers = {
-    user: userReducer,
-    search: searchReducer,
-    submit: submitReducer,
-    collectionCreate: collectionCreateReducer,
-    download: downloadReducer,
-    basket: basketReducer,
-    tracking: trackingReducer,
-    pageSections: pageSectionsReducer
-  };
+// ATTACHMENTS REDUCER
 
-  export default combineReducers(reducers);
+const initialAttachments = {
+  attachments: [],
+  uploadStatus: ""
+}
+
+/**
+ * This reducer lets AttachmentRows know if the displayed rows should be updated.
+ */
+const attachmentsReducer = (state = initialAttachments, { type, payload }) => {
+  switch (type) {
+    case types.SETATTACHMENTS:
+      return {
+        ...state,
+        attachments: payload
+      }
+    case types.UPLOADSTATUS:
+      return {
+        ...state,
+        uploadStatus: payload
+      }
+    default:
+      return state;
+  }
+}
+
+// COMBINED REDUCERS
+// combine all reducers for sbh to use
+const reducers = {
+  user: userReducer,
+  search: searchReducer,
+  submit: submitReducer,
+  collectionCreate: collectionCreateReducer,
+  download: downloadReducer,
+  basket: basketReducer,
+  tracking: trackingReducer,
+  pageSections: pageSectionsReducer,
+  attachments: attachmentsReducer
+};
+
+export default combineReducers(reducers);

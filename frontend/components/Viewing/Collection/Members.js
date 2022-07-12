@@ -19,6 +19,7 @@ import Section from '../Sections/Section';
 import loadTemplate from '../../../sparql/tools/loadTemplate';
 import { shortName } from '../../../namespace/namespace';
 import lookupRole from '../../../namespace/lookupRole';
+import Link from 'next/link';
 
 /* eslint sonarjs/cognitive-complexity: "off" */
 
@@ -64,31 +65,31 @@ export default function Members(properties) {
     collection: properties.uri,
     sort: sort,
     search: preparedSearch,
-    offset: offset ? ` OFFSET ${offset}`: '',
+    offset: offset ? ` OFFSET ${offset}` : '',
     limit: ' LIMIT 10000 '
   };
 
   const searchQuery = preparedSearch || (typeFilter !== 'Show Only Root Objects')
 
-  let query = searchQuery ? getCollectionMembersSearch: getCollectionMembers;
+  let query = searchQuery ? getCollectionMembersSearch : getCollectionMembers;
 
   const { members } = useMembers(query, parameters, token);
-  const { count: totalMemberCount } = useCount(CountMembersTotal, {...parameters, search: ''}, token);
+  const { count: totalMemberCount } = useCount(CountMembersTotal, { ...parameters, search: '' }, token);
   const { count: currentMemberCount } = useCount(searchQuery ? CountMembersTotal : CountMembers, parameters, token);
 
   const { filters } = useFilters(getTypesRoles, { uri: properties.uri }, token)
 
   const outOfBoundsHandle = (offset) => {
-      const newBounds = getNewBounds(offset, currentMemberCount);
-      setCustomBounds(newBounds);
-      setOffset(newBounds[0]);
+    const newBounds = getNewBounds(offset, currentMemberCount);
+    setCustomBounds(newBounds);
+    setOffset(newBounds[0]);
   }
 
   return (
     <Section title="Members">
-      <FilterHeader 
-      filters={filters}
-      setTypeFilter={setTypeFilter} />
+      <FilterHeader
+        filters={filters}
+        setTypeFilter={setTypeFilter} />
       <SearchHeader
         search={search}
         setSearch={setSearch}
@@ -149,14 +150,14 @@ function FilterHeader(properties) {
 
   useEffect(() => {
     if (properties.filters) {
-        const newFilters = properties.filters.map(filter => {
-          const shortNamedFilter = shortName(filter.uri);
-          return { value: filter.uri, label: shortNamedFilter };
-        });
-        newFilters.sort((a, b) => (a.label > b.label) ? 1 : -1);
-        newFilters.unshift({ value: 'Show All Objects', label: 'Show All Objects' })
-        newFilters.unshift({ value: 'Show Only Root Objects', label: 'Show Only Root Objects' })
-        setFilters(newFilters);
+      const newFilters = properties.filters.map(filter => {
+        const shortNamedFilter = shortName(filter.uri);
+        return { value: filter.uri, label: shortNamedFilter };
+      });
+      newFilters.sort((a, b) => (a.label > b.label) ? 1 : -1);
+      newFilters.unshift({ value: 'Show All Objects', label: 'Show All Objects' })
+      newFilters.unshift({ value: 'Show Only Root Objects', label: 'Show Only Root Objects' })
+      setFilters(newFilters);
     }
   }, [properties.filters]);
 
@@ -164,7 +165,7 @@ function FilterHeader(properties) {
   return (
     <div className={styles.filtercontainer}>
       Show
-      {filters ? <Select 
+      {filters ? <Select
         options={filters}
         menuPortalTarget={document.body}
         styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
@@ -210,18 +211,30 @@ function MemberTable(properties) {
         properties.setDefaultSortOption(sortOption);
       }}
       dataRowDisplay={member => {
-         var textArea = document.createElement("textarea");
-         textArea.innerHTML = member.name;
-         return (
-        <tr key={member.displayId + member.description}>
-          <td>
-            <code>{textArea.value}</code>
-          </td>
-          <td>{member.displayId}</td>
-          <td>{getType(member)}</td>
-          <td>{member.description}</td>
-        </tr>
-      )}}
+        var textArea = document.createElement("textarea");
+        textArea.innerHTML = member.name;
+
+        return (
+          <tr key={member.displayId + member.description}>
+            <td>
+              <Link href={member.uri.replace('https://synbiohub.org', '')}>
+                <a className={styles.membername}>
+                  <code>{textArea.value}</code>
+                </a>
+              </Link>
+            </td>
+            <td>
+              <Link href={member.uri.replace('https://synbiohub.org', '')}>
+                <a className={styles.memberid}>
+                  {member.displayId}
+                </a>
+              </Link>
+            </td>
+            <td>{getType(member)}</td>
+            <td>{member.description}</td>
+          </tr>
+        )
+      }}
     />
   );
 }
@@ -241,37 +254,37 @@ function getType(member) {
 }
 
 const createUrl = (query, options) => {
-   query = loadTemplate(query, options);
-   return `${publicRuntimeConfig.backend}/sparql?query=${encodeURIComponent(
-      query
-   )}`;
+  query = loadTemplate(query, options);
+  return `${publicRuntimeConfig.backend}/sparql?query=${encodeURIComponent(
+    query
+  )}`;
 }
 
 const useCount = (query, options, token) => {
-   const url = createUrl(query, options, token);
-   const { data, error } = useSWR(
-      [url, token],
-      fetcher
-   );
+  const url = createUrl(query, options, token);
+  const { data, error } = useSWR(
+    [url, token],
+    fetcher
+  );
 
-   let processedData = data ? processResults(data)[0].count : undefined
-   return {
-      count: processedData
-   }
+  let processedData = data ? processResults(data)[0].count : undefined
+  return {
+    count: processedData
+  }
 }
 
 const useMembers = (query, options, token) => {
-   const url = createUrl(query, options);
-   const { data, error } = useSWR(
-      [url, token],
-      fetcher
-   );
+  const url = createUrl(query, options);
+  const { data, error } = useSWR(
+    [url, token],
+    fetcher
+  );
 
-   let processedData = data ? processResults(data) : undefined;
-   
-   return {
-      members: processedData
-   }
+  let processedData = data ? processResults(data) : undefined;
+
+  return {
+    members: processedData
+  }
 }
 
 const useFilters = (query, options, token) => {
@@ -281,7 +294,7 @@ const useFilters = (query, options, token) => {
     fetcher
   );
 
-  let  processedData = data? processResults(data) : undefined;
+  let processedData = data ? processResults(data) : undefined;
 
   return {
     filters: processedData
@@ -289,38 +302,38 @@ const useFilters = (query, options, token) => {
 }
 
 const fetcher = (url, token) =>
-   axios
-      .get(url, {
+  axios
+    .get(url, {
       headers: {
-         'Content-Type': 'application/json',
-         Accept: 'application/json',
-         'X-authorization': token
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        'X-authorization': token
       }
-      })
-      .then(response => response.data);
+    })
+    .then(response => response.data);
 
 
 const processResults = results => {
-   const headers = results.head.vars;
-   return results.results.bindings.map(result => {
-      const resultObject = {};
-      for (const header of headers) {
-         if (result[header]) resultObject[header] = result[header].value;
-         else resultObject[header] = '';
-      }
-      return resultObject;
-   });
+  const headers = results.head.vars;
+  return results.results.bindings.map(result => {
+    const resultObject = {};
+    for (const header of headers) {
+      if (result[header]) resultObject[header] = result[header].value;
+      else resultObject[header] = '';
+    }
+    return resultObject;
+  });
 };
 
 
 const getNewBounds = (offset, memberCount) => {
-   let low = Math.max(offset - 5000, 0);
-   let high = Math.min(offset + 5000, memberCount);
-   if (low == 0) {
-      high = Math.min(memberCount, 10000);
-   }
-   else if (high == memberCount) {
-      low = Math.max(0, memberCount - 10000);
-   }
-   return [low, high];
+  let low = Math.max(offset - 5000, 0);
+  let high = Math.min(offset + 5000, memberCount);
+  if (low == 0) {
+    high = Math.min(memberCount, 10000);
+  }
+  else if (high == memberCount) {
+    low = Math.max(0, memberCount - 10000);
+  }
+  return [low, high];
 }

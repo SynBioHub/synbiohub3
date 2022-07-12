@@ -3,10 +3,11 @@ import getConfig from 'next/config';
 import loadTemplate from './loadTemplate';
 const { publicRuntimeConfig } = getConfig();
 
-export default async function getQueryResponse(query, options, token) {
+export default async function getQueryResponse(query, options, token, admin) {
   query = loadTemplate(query, options);
 
-  const url = `${publicRuntimeConfig.backend}/sparql?query=${encodeURIComponent(
+  const params = admin ? "/admin/sparql?query=" : "/sparql?query=";
+  const url = `${publicRuntimeConfig.backend}${params}${encodeURIComponent(
     query
   )}`;
 

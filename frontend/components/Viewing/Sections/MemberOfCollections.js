@@ -41,7 +41,7 @@ export default function MemberOfCollections(properties) {
    */
   function generateRows() {
     return otherProps.map((collection, key) => {
-      return getRow(key, collection);
+      return getRow(collection, key);
     });
   }
 
@@ -50,7 +50,7 @@ export default function MemberOfCollections(properties) {
    * @param {Object} collection The collection information.
    * @returns A row with the populated collection information.
    */
-  function getRow(key, collection) {
+  function getRow(collection, key) {
     return (
       <tr key={key}>
         <td>

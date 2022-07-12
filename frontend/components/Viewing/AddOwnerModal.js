@@ -1,0 +1,133 @@
+import styles from "../../styles/view.module.css";
+import { faExclamationTriangle, faIdCard } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
+import Select from "react-select";
+import CustomModal from "./CustomModal";
+
+import { useSelector } from "react-redux";
+import React, { useEffect, useState } from "react";
+
+import getConfig from 'next/config';
+const { publicRuntimeConfig } = getConfig();
+
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+/**
+ * Shows the add owner modal and handles adding a new owner.
+ * 
+ * @param {Any} properties Information passed in from the parent component.
+ */
+export default function AddOwnerModal(properties) {
+  const [selectedOption, setSelectedOption] = useState("Select user...");
+  const [submitted, setSubmitted] = useState(false);
+  const [submittable, setSubmittable] = useState(false);
+  const token = useSelector(state => state.user.token);
+
+  //Properties for the error toast.
+  const errorToast = (message) => toast.error(message, {
+    position: "top-right",
+    autoClose: 5000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+    className: styles.modaltoast
+  });
+
+  //Checks if the submit button has been clicked and adds to owner and then hides the modal.
+  useEffect(() => {
+    if (submitted) {
+      addOwner(selectedOption);
+    }
+  }, [submitted]);
+
+  /**
+   * Posts the new owner.
+   * 
+   * @param {String} owner The owner to add.
+   */
+  const addOwner = async (owner) => {
+    const url = `${publicRuntimeConfig.backend}${properties.url}/addOwner`;
+    var headers = {
+      Accept: "text/plain; charset=UTF-8",
+      "X-authorization": token
+    };
+
+    const parameters = new URLSearchParams();
+    parameters.append("user", owner);
+    parameters.append("uri", publicRuntimeConfig.backend + properties.url);
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers,
+      body: parameters
+    });
+
+    if (response.status !== 200) errorToast("Something went wrong with adding an owner.");
+  }
+
+  return (
+    <CustomModal
+      buttonText={["Cancel", "Grant Ownership"]}
+      setModal={properties.setModal}
+      setSubmitted={setSubmitted}
+      submittable={submittable}
+      error={"You must choose an user to grant ownership to."}
+      header={
+        <React.Fragment>
+          <FontAwesomeIcon
+            icon={faIdCard}
+            size="1x"
+            className={styles.idcardicon}
+          />
+          <h1>Add Owner</h1>
+        </React.Fragment>
+      }
+      content={
+        <React.Fragment>
+          <div className={styles.modalwarning}>
+            <FontAwesomeIcon
+              icon={faExclamationTriangle}
+              size="1x"
+            />
+            {" "}Warning: this will give another user complete control over this object.
+          </div>
+          <div className={styles.ownerselectcontainer}>
+            <h5>Select a user to add</h5>
+            <Select
+              className={styles.ownercustomselect}
+              value={selectedOption}
+              onChange={(e) => {
+                if (e.value !== undefined) {
+                  setSelectedOption(e.value);
+                  setSubmittable(true);
+                }
+              }}
+              options={selectOptions}
+              menuPortalTarget={document.body}
+              placeholder={selectedOption}
+              styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+            />
+          </div>
+        </React.Fragment>
+      }
+    />
+  );
+}
+
+//Fill in later once there's an endpoint to get the users.
+const selectOptions = [
+  { value: "User Value 1", label: "User Information 1" },
+  { value: "User Value 2", label: "User Information 2" },
+  { value: "User Value 3", label: "User Information 3" },
+  { value: "User Value 4", label: "User Information 4" },
+  { value: "User Value 5", label: "User Information 5" },
+  { value: "User Value 6", label: "User Information 6" },
+  { value: "User Value 7", label: "User Information 7" },
+  { value: "User Value 8", label: "User Information 8" },
+  { value: "User Value 9", label: "User Information 9" },
+  { value: "User Value 10", label: "User Information 10" }
+];
