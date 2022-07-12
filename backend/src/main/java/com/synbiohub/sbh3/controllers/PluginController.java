@@ -4,6 +4,8 @@ package com.synbiohub.sbh3.controllers;
 import com.synbiohub.sbh3.services.PluginService;
 import com.synbiohub.sbh3.utils.ConfigUtil;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,56 +24,60 @@ public class PluginController {
     public String getPlugins() {
         return ConfigUtil.get("plugins").toString();
     }
-    @GetMapping(value = "/status")
-    public String status(@RequestParam String name){
+    //Returns a string of all of the current plugins in the instance of synbiohub
 
-        String pluginURL;
-        URL url;
-        HttpURLConnection connection;
-        int statusCode;
+
+    @GetMapping(value = "/status")
+    public ResponseEntity status(@RequestParam String name){
+
+        //Name parameter can be either the plugin name or the plugin url
+
+        String pluginURL; //Used to store the url of the plugin server
+        URL url; //URL class type for the specific plugin endpoint
+        HttpURLConnection connection; //Used to open an Http Connection with the plugin server
 
 
         try {
-            pluginURL = pluginService.getURL(name);
+            pluginURL = pluginService.getURL(name); //From PluginService, can find a plugin url based on name or url for standardization
         }
         catch (NullPointerException e) {
-            statusCode = 404;
-            return statusCode + ": Plugin not Found\n";
+            return new ResponseEntity(HttpStatus.NOT_FOUND); //If the plugin doesn't exist, a nullpointerexception will be caught
         }
 
-        try {
+        try { //Used to open a connection with the status endpoint of the plugin
             url = new URL(pluginURL + "status");
             connection = (HttpURLConnection) url.openConnection();
             connection.connect();
-            statusCode = connection.getResponseCode();
         }
         catch (IOException e) {
-            statusCode = 500;
-            return statusCode + ": Connection Unsuccessful\n";
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
 
 
-        if (statusCode != 200) {
-            return statusCode + ": The Plugin is Not Responding\n";
-        }
+        return new ResponseEntity("The Plugin is Up and Running", HttpStatus.OK);
 
-        return statusCode + ": The Plugin is Up and Running\n";
     }
 
 
 
 
     @PostMapping(value = "/evaluate")
-    public String evaluate(@RequestParam String name, @RequestParam(required = false) File [] attached, @RequestParam(required = false) File data) {
+    public ResponseEntity evaluate(@RequestParam String name, @RequestParam(required = false) File [] attached, @RequestParam(required = false) File data) {
+
+        //Name can be the name or url of the target plugin
+        //Attached is used to store files to be used for Submit plugins, will be sent to PluginService to create a manifest
+        //Data is used for all components of Download/Visual Plugins and additionally can include a manifest of files for Submit plugins
+        //NOTE: Currently files can only be sent for Submit plugins through attached OR data, not both
+
 
         String pluginURL;
         URL url;
         HttpURLConnection connection;
         int statusCode;
-        StringBuilder answer;
-        String send;
+        StringBuilder answer; //Used to store the response from the plugin
+        String send; //Used to store data that will be sent to the plugin
 
-        if (attached == null) {
+        if (attached == null) { //Used to convert send to a single string from attached/data based on which is used
             send = data.toString();
         }
         else {
@@ -83,22 +89,24 @@ public class PluginController {
             pluginURL = pluginService.getURL(name);
         }
         catch (NullPointerException e) {
-            statusCode = 404;
-            return statusCode + ": Plugin not Found\n";
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
         }
 
 
         try {
+            //Open a connection and set the method as post
             url = new URL(pluginURL + "evaluate");
             connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
 
+            //Send information from the "send" variable to the plugin
             connection.setRequestProperty("Content-Type", "application/json");
             connection.setDoOutput(true);
             OutputStream os = connection.getOutputStream();
             byte[] input = send.getBytes("utf-8");
             os.write(input, 0, input.length);
 
+            //Catch the response from the plugin in a string
             BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream(), "utf-8"));
             answer = new StringBuilder();
             String responseLine = null;
@@ -109,12 +117,11 @@ public class PluginController {
             statusCode = connection.getResponseCode();
         }
         catch (IOException e) {
-            statusCode = 500;
-            return statusCode + ": Unsuccessful\n";
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
 
 
-        return statusCode + ": Evaluate successful\n" + answer.toString() + "\n";
+        return new ResponseEntity(answer + "\n", HttpStatus.valueOf(statusCode));
 
 
     }
@@ -125,7 +132,10 @@ public class PluginController {
 
 
     @PostMapping(value = "/run")
-    public String run(@RequestParam String name, @RequestParam(required = false) File [] attached, @RequestParam(required = false) File data) {
+    public ResponseEntity run(@RequestParam String name, @RequestParam(required = false) File [] attached, @RequestParam(required = false) File data) {
+
+        //All code should have the same uses as in the /evaluate endpoint
+
         String pluginURL;
         URL url;
         HttpURLConnection connection;
@@ -147,8 +157,7 @@ public class PluginController {
             pluginURL = pluginService.getURL(name);
         }
         catch (NullPointerException e) {
-            statusCode = 404;
-            return statusCode + ": Plugin not Found\n";
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
         }
 
 
@@ -173,13 +182,12 @@ public class PluginController {
             statusCode = connection.getResponseCode();
         }
         catch (IOException e) {
-            statusCode = 500;
-            return statusCode + ": Unsuccessful\n";
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
 
 
 
-        return statusCode + ": Run successful\n" + answer.toString() + "\n";
+        return new ResponseEntity(answer + "\n", HttpStatus.valueOf(statusCode));
 
 
     }
@@ -200,34 +208,21 @@ public class PluginController {
 
 
     @PostMapping(value = "/call")
-    public String callPlugin(@RequestParam(required = false) String token, @RequestParam String name, @RequestParam(required = false) File [] attached, @RequestParam String endpoint, @RequestParam(required = false) File data) {
+    public ResponseEntity callPlugin(@RequestParam(required = false) String token, @RequestParam String name, @RequestParam(required = false) File [] attached, @RequestParam String endpoint, @RequestParam(required = false) File data) {
 
 
-
-        String test = "";
 
         switch(endpoint) {
             case "status":
-                test += status(name);
-                break;
+                return status(name);
             case "evaluate":
-                test += evaluate(name, attached, data);
-                break;
+                return evaluate(name, attached, data);
             case "run":
-                test += run(name, attached, data);
-                break;
-            case "save":
-                test += save();
-                break;
-            case "parameters":
-                test += parameters();
-                break;
+                return run(name, attached, data);
             default :
-                test += "Unsuccessful \n";
-                break;
+                return new ResponseEntity("Unsuccessful", HttpStatus.BAD_REQUEST);
         }
 
-        return test;
     }
 
 

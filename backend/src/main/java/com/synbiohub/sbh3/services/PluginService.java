@@ -51,8 +51,13 @@ public class PluginService {
                 String url = ConfigUtil.get("instanceUrl").asText() + "expose/";
 
                 curr.put("filename", filename);
-                curr.put("type", "");
-                curr.put("url", "");
+                if (type == null) {
+                    curr.put("type","");
+                }
+                else {
+                    curr.put("type", type);
+                }
+                curr.put("url", url);
 
                 array.add(curr);
 
