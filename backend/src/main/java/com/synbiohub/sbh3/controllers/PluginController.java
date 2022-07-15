@@ -8,10 +8,13 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.net.*;
+import java.util.List;
 
 @RestController
 @AllArgsConstructor
@@ -62,7 +65,7 @@ public class PluginController {
 
 
     @PostMapping(value = "/evaluate")
-    public ResponseEntity evaluate(@RequestParam String name, @RequestParam(required = false) File [] attached, @RequestParam(required = false) String type, @RequestParam(required = false) File data) {
+    public ResponseEntity evaluate(@RequestParam String name, @RequestParam(required = false) List<MultipartFile> attached, @RequestParam(required = false) String type, @RequestParam(required = false) String data) {
 
         //Name can be the name or url of the target plugin
         //Attached is used to store files to be used for Submit plugins, will be sent to PluginService to create a manifest
@@ -88,12 +91,14 @@ public class PluginController {
         category = pluginService.getCategory(name);
 
         if (attached == null) { //Used to convert send to a single string from attached/data based on which is used
+
             if (type == null) {
-                send = data.toString();
+                send = data;
             }
             else {
                 send = pluginService.buildType(type).toString();
             }
+
         }
         else {
             send = pluginService.buildManifest(attached).toString();
@@ -145,13 +150,18 @@ public class PluginController {
 
     }
 
+    @PostMapping(value = "/test")
+    public String fileTest(List<MultipartFile> attached) {
+        return attached.get(0).getOriginalFilename() + attached.get(1).getOriginalFilename() + "\n";
+    }
+
 
 
 
 
 
     @PostMapping(value = "/run", produces = "application/zip")
-    public ResponseEntity run(@RequestParam String name, @RequestParam(required = false) File [] attached, @RequestParam(required = false) File data) {
+    public ResponseEntity run(@RequestParam String name, @RequestParam(required = false) List<MultipartFile> attached, @RequestParam(required = false) String data) {
 
         //All code should have the same uses as in the /evaluate endpoint
 
@@ -174,7 +184,7 @@ public class PluginController {
         category = pluginService.getCategory(name);
 
         if (attached == null) {
-            send = data.toString();
+            send = data;
 
         }
         else {
@@ -242,9 +252,7 @@ public class PluginController {
 
 
     @PostMapping(value = "/call")
-    public ResponseEntity callPlugin(@RequestParam(required = false) String token, @RequestParam String name, @RequestParam(required = false) File [] attached, @RequestParam(required = false) String type, @RequestParam String endpoint, @RequestParam(required = false) File data) {
-
-
+    public ResponseEntity callPlugin(@RequestParam(required = false) String token, @RequestParam String name, @RequestParam(required = false) List<MultipartFile> attached, @RequestParam(required = false) String type, @RequestParam String endpoint, @RequestParam(required = false) String data) {
 
         switch(endpoint) {
             case "status":
@@ -262,7 +270,7 @@ public class PluginController {
 
 
 
-
+/*
     @PostMapping(value = "/update")
     public String update(@RequestParam String method, @RequestParam File dictionary) {
 
@@ -287,5 +295,7 @@ public class PluginController {
         }
         return test;
     }
+    
+ */
 
 }

@@ -8,10 +8,12 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.synbiohub.sbh3.utils.ConfigUtil;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 
 import java.io.File;
 import java.net.URLConnection;
+import java.util.List;
 
 @Service
 @NoArgsConstructor
@@ -58,17 +60,17 @@ public class PluginService {
         }
 
 
-        public JsonNode buildManifest(File[] attached) {
+        public JsonNode buildManifest(List<MultipartFile> attached) {
             ObjectMapper mapper = new ObjectMapper();
             ObjectNode manifest =  mapper.createObjectNode();
             ObjectNode files = mapper.createObjectNode();
             ArrayNode array = mapper.createArrayNode();
 
-            for (File file: attached) {
+            for (MultipartFile file: attached) {
 
                 ObjectNode curr = mapper.createObjectNode();
 
-                String filename = file.getName();
+                String filename = file.getOriginalFilename();
                 String type = URLConnection.guessContentTypeFromName(filename);
                 String url = ConfigUtil.get("instanceUrl").asText() + "expose/";
 
