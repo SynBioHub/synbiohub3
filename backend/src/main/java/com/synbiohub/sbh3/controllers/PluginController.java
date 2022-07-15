@@ -4,6 +4,7 @@ package com.synbiohub.sbh3.controllers;
 import com.synbiohub.sbh3.services.PluginService;
 import com.synbiohub.sbh3.utils.ConfigUtil;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -75,6 +76,16 @@ public class PluginController {
         int statusCode;
         StringBuilder answer; //Used to store the response from the plugin
         String send; //Used to store data that will be sent to the plugin
+        String category;
+
+        try {
+            pluginURL = pluginService.getURL(name);
+        }
+        catch (NullPointerException e) {
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        }
+
+        category = pluginService.getCategory(name);
 
         if (attached == null) { //Used to convert send to a single string from attached/data based on which is used
             if (type == null) {
@@ -88,13 +99,6 @@ public class PluginController {
             send = pluginService.buildManifest(attached).toString();
         }
 
-
-        try {
-            pluginURL = pluginService.getURL(name);
-        }
-        catch (NullPointerException e) {
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
-        }
 
 
         try {
@@ -125,7 +129,17 @@ public class PluginController {
         }
 
 
-        return new ResponseEntity(answer + "\n", HttpStatus.valueOf(statusCode));
+        HttpHeaders responseHeaders = new HttpHeaders();
+
+        if(category == "submit") {
+            responseHeaders.set("Content-Type", "application/json");
+        }
+        else {
+            responseHeaders.set("Content-Type", "text/plain");
+        }
+
+        return ResponseEntity.status(HttpStatus.valueOf(statusCode)).headers(responseHeaders).body(answer);
+
         //Either returns a message with the accepted component type, or a string of JSON with a manifest of files
 
 
@@ -136,7 +150,7 @@ public class PluginController {
 
 
 
-    @PostMapping(value = "/run")
+    @PostMapping(value = "/run", produces = "application/zip")
     public ResponseEntity run(@RequestParam String name, @RequestParam(required = false) File [] attached, @RequestParam(required = false) File data) {
 
         //All code should have the same uses as in the /evaluate endpoint
@@ -147,7 +161,17 @@ public class PluginController {
         int statusCode;
         StringBuilder answer;
         String send;
+        String category;
         byte[] responseArray;
+
+        try {
+            pluginURL = pluginService.getURL(name);
+        }
+        catch (NullPointerException e) {
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        }
+
+        category = pluginService.getCategory(name);
 
         if (attached == null) {
             send = data.toString();
@@ -155,15 +179,6 @@ public class PluginController {
         }
         else {
             send = pluginService.buildManifest(attached).toString();
-        }
-
-
-
-        try {
-            pluginURL = pluginService.getURL(name);
-        }
-        catch (NullPointerException e) {
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
         }
 
 
@@ -194,13 +209,24 @@ public class PluginController {
         }
 
 
+        HttpHeaders responseHeaders = new HttpHeaders();
 
-        return new ResponseEntity(responseArray, HttpStatus.valueOf(statusCode));
+        if (category == "visual") {
+            responseHeaders.set("Content-Type", "text/html");
+            return ResponseEntity.status(HttpStatus.valueOf(statusCode)).headers(responseHeaders).body(answer);
+        }
+        else if (category == "submit") {
+            responseHeaders.set("Content-Type", "application/zip");
+        }
+        else {
+            responseHeaders.set("Content-Type", "application/octet-stream");
+        }
+
+        return ResponseEntity.status(HttpStatus.valueOf(statusCode)).headers(responseHeaders).body(responseArray);
+
 
 
     }
-
-
 
 
 
@@ -232,6 +258,7 @@ public class PluginController {
         }
 
     }
+
 
 
 

@@ -35,6 +35,28 @@ public class PluginService {
             //Redundant if the URL was given, but a way to standardize without other checks
         }
 
+        public String getCategory(String name) {
+            JsonNode plugins = ConfigUtil.get("plugins");
+
+            JsonNode category = plugins.get("submit");
+
+            for (JsonNode instance : category) {
+                if (name.equals(instance.get("name").textValue()) || name.equals(instance.get("url").textValue())) {
+                    return "submit";
+                }
+            }
+
+            category = plugins.get("rendering");
+
+            for (JsonNode instance : category) {
+                if (name.equals(instance.get("name").textValue()) || name.equals(instance.get("url").textValue())) {
+                    return "visual";
+                }
+            }
+
+            return "download";
+        }
+
 
         public JsonNode buildManifest(File[] attached) {
             ObjectMapper mapper = new ObjectMapper();
