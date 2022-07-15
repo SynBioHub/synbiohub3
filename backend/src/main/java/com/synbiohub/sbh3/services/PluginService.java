@@ -70,7 +70,7 @@ public class PluginService {
 
         }
 
-        /*
+
         public JsonNode buildType(String type) {
             ObjectMapper mapper = new ObjectMapper();
             ObjectNode node =  mapper.createObjectNode();
@@ -81,6 +81,6 @@ public class PluginService {
 
 
         }
-        */
+
 
 }

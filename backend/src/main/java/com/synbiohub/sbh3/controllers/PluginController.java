@@ -5,11 +5,10 @@ import com.synbiohub.sbh3.services.PluginService;
 import com.synbiohub.sbh3.utils.ConfigUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.*;
 
@@ -24,7 +23,7 @@ public class PluginController {
     public String getPlugins() {
         return ConfigUtil.get("plugins").toString();
     }
-    //Returns a string of all of the current plugins in the instance of synbiohub
+    //Returns a string of all the current plugins in the instance of synbiohub
 
 
     @GetMapping(value = "/status")
@@ -62,7 +61,7 @@ public class PluginController {
 
 
     @PostMapping(value = "/evaluate")
-    public ResponseEntity evaluate(@RequestParam String name, @RequestParam(required = false) File [] attached, @RequestParam(required = false) File data) {
+    public ResponseEntity evaluate(@RequestParam String name, @RequestParam(required = false) File [] attached, @RequestParam(required = false) String type, @RequestParam(required = false) File data) {
 
         //Name can be the name or url of the target plugin
         //Attached is used to store files to be used for Submit plugins, will be sent to PluginService to create a manifest
@@ -78,7 +77,12 @@ public class PluginController {
         String send; //Used to store data that will be sent to the plugin
 
         if (attached == null) { //Used to convert send to a single string from attached/data based on which is used
-            send = data.toString();
+            if (type == null) {
+                send = data.toString();
+            }
+            else {
+                send = pluginService.buildType(type).toString();
+            }
         }
         else {
             send = pluginService.buildManifest(attached).toString();
@@ -122,6 +126,7 @@ public class PluginController {
 
 
         return new ResponseEntity(answer + "\n", HttpStatus.valueOf(statusCode));
+        //Either returns a message with the accepted component type, or a string of JSON with a manifest of files
 
 
     }
@@ -142,6 +147,7 @@ public class PluginController {
         int statusCode;
         StringBuilder answer;
         String send;
+        byte[] responseArray;
 
         if (attached == null) {
             send = data.toString();
@@ -179,6 +185,8 @@ public class PluginController {
                 answer.append(responseLine.trim());
             }
 
+            responseArray = answer.toString().getBytes();
+
             statusCode = connection.getResponseCode();
         }
         catch (IOException e) {
@@ -187,7 +195,7 @@ public class PluginController {
 
 
 
-        return new ResponseEntity(answer + "\n", HttpStatus.valueOf(statusCode));
+        return new ResponseEntity(responseArray, HttpStatus.valueOf(statusCode));
 
 
     }
@@ -208,7 +216,7 @@ public class PluginController {
 
 
     @PostMapping(value = "/call")
-    public ResponseEntity callPlugin(@RequestParam(required = false) String token, @RequestParam String name, @RequestParam(required = false) File [] attached, @RequestParam String endpoint, @RequestParam(required = false) File data) {
+    public ResponseEntity callPlugin(@RequestParam(required = false) String token, @RequestParam String name, @RequestParam(required = false) File [] attached, @RequestParam(required = false) String type, @RequestParam String endpoint, @RequestParam(required = false) File data) {
 
 
 
@@ -216,7 +224,7 @@ public class PluginController {
             case "status":
                 return status(name);
             case "evaluate":
-                return evaluate(name, attached, data);
+                return evaluate(name, attached, type, data);
             case "run":
                 return run(name, attached, data);
             default :
