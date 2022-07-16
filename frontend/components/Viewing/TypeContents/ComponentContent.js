@@ -1,10 +1,8 @@
 import Section from "../Sections/Section";
 import Details from "../Sections/Details";
-import OtherProperties from "../Sections/OtherProperties";
 
 import { useSelector } from 'react-redux';
 import React from "react";
-import MemberOfCollections from "../Sections/MemberOfCollections";
 
 /**
  * Generates the content for the component.
@@ -14,6 +12,7 @@ import MemberOfCollections from "../Sections/MemberOfCollections";
  */
 export function ComponentContent(properties) {
    const pageSectionsOrder = useSelector(state => state.pageSections.sectionOrder.order);
+   console.log(pageSectionsOrder);
    const sectionsOrder = generateSectionOrder(pageSectionsOrder, properties);
 
    return (
@@ -31,13 +30,17 @@ export function ComponentContent(properties) {
  * @returns The different page sections.
  */
 function generateSectionOrder(pages, properties) {
-   return pages.map((page, index) => {
+   console.log(pages);
+
+   const sections = pages.map((page, index) => {
       return (
          <React.Fragment key={index}>
             {getSection(page, properties)}
          </React.Fragment>
       );
    });
+
+   return sections;
 }
 
 /**
@@ -47,23 +50,12 @@ function generateSectionOrder(pages, properties) {
  * @param {Any} properties The properties that can be accessed by the section.
  */
 function getSection(sectionName, properties) {
+   console.log(properties.uri);
    switch (sectionName) {
       case "Details":
          return (
             <Section title={sectionName}>
                <Details uri={properties.uri} />
-            </Section>
-         );
-      case "Other Properties":
-         return (
-            <Section title={sectionName}>
-               <OtherProperties uri={properties.uri} />
-            </Section>
-         );
-      case "Member of these Collections":
-         return (
-            <Section title={sectionName}>
-               <MemberOfCollections uri={properties.uri} />
             </Section>
          );
       default:
