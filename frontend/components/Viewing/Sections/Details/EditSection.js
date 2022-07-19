@@ -70,16 +70,18 @@ export default function EditSection(properties) {
    * @param {String} citation The citations to find the PMID's from.
    */
   const getPMID = (citations) => {
-    const splitCitations = citations.split("<br><br>");
-    const pmids = [];
-
-    for (let citation of splitCitations) {
-      const start = citation.indexOf("\">") + 2;
-      const end = citation.indexOf("</a></b>.");
-      pmids.push(citation.slice(start, end));
+    if(citations !== undefined) {
+      const splitCitations = citations.split("<br><br>");
+      const pmids = [];
+  
+      for (let citation of splitCitations) {
+        const start = citation.indexOf("\">") + 2;
+        const end = citation.indexOf("</a></b>.");
+        pmids.push(citation.slice(start, end));
+      }
+  
+      return pmids.join(", ");
     }
-
-    return pmids.join(", ");
   }
 
   return (

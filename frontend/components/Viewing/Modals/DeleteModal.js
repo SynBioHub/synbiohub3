@@ -1,4 +1,4 @@
-import styles from "../../styles/view.module.css";
+import styles from "../../../styles/view.module.css";
 import { faTrashAlt, faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
@@ -28,7 +28,7 @@ export default function DeleteModal(properties) {
           <FontAwesomeIcon
             icon={faTrashAlt}
             size="1x"
-            className={styles.idcardicon}
+            className={styles.modalicon}
           />
           <h1>Are you sure you want to delete this?</h1>
         </React.Fragment>

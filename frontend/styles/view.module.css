@@ -63,6 +63,11 @@
   font-size: 1rem;
   font-weight: 500;
   color: #888;
+  cursor: pointer;
+}
+
+.displayId:hover {
+  color: #4d4d4d;
 }
 
 .metaicon {
@@ -85,6 +90,10 @@
   font-size: 0.75rem;
 }
 
+.id:hover {
+  color: #263040;
+}
+
 .actionicon {
   margin-left: 0.75rem;
   color: #D25627;
@@ -105,6 +114,7 @@
 .info {
   margin: 0 0.5rem;
   overflow-wrap: break-word;
+  cursor: pointer;
 }
 
 .infoheader {
@@ -140,7 +150,6 @@
   font-size: 0.8rem;
   overflow-wrap: break-word;
   border: 1px solid #465875;
-  cursor: pointer;
   width: 18rem;
 }
 
@@ -233,12 +242,20 @@
   font-size: 1.4rem;
 }
 
+.maintitleid:hover {
+  color: #4d4d4d;
+}
+
 .contentinfo {
   margin-top: 0.3rem;
   display: flex;
   align-items: center;
   color: #465775;
   font-weight: 500;
+}
+
+.contentinfo:hover {
+  color: #263040;
 }
 
 .contentinfoicon {
@@ -310,6 +327,7 @@
   border-left: 4px solid #D25627;
   font-weight: 500;
   font-size: 1rem;
+  cursor: pointer;
 }
 
 .detailsheader {
@@ -695,7 +713,7 @@
 
 .expanded {
   overflow: hidden;
-  height: 282.72px;
+  height: 999px;
   padding: 5px 8.48px 0 8.48px;
   transition: height 0.20s ease-in-out;
 }
@@ -857,7 +875,7 @@
   transform: scale(1.1);
 }
 
-.idcardicon {
+.modalicon {
   display: block;
   margin-left: auto;
   margin-right: auto;
@@ -866,7 +884,8 @@
   color: #2C3E50;
 }
 
-.ownercustomselect {
+.ownercustomselect,
+.addtocollectionselect {
   border-radius: 0.4rem;
   color: gray;
   width: 100%;
@@ -878,17 +897,28 @@
   text-align: left;
 }
 
-.ownerselectcontainer {
+.ownerselectcontainer,
+.addtocollectioncontainer {
   width: 50%;
   text-align: left;
   margin: 0 auto;
-  padding: 2rem 0 4rem 0;
+  padding: 1rem 0 2rem 0;
+}
+
+.addtocollectioncontainer {
+  padding: 3rem 0 5rem 0;
+}
+
+.downloadmodalcontainer {
+  width: 50%;
+  text-align: left;
+  margin: 0 auto;
+  padding: 4rem 0 4rem 0;
 }
 
 .copylinkcontainer {
   display: table;
   line-height: 0 !important;
-  padding: 10vh;
 }
 
 .copylinktext {
@@ -934,4 +964,10 @@
 
 .copylinktext:focus {
   outline: none;
+}
+
+.toastcopyicon {
+  font-size: 1.2rem;
+  margin-right: 0.5rem;
+  color: #465875;
 }
