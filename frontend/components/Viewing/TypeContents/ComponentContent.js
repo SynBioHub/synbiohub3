@@ -2,12 +2,14 @@ import Section from "../Sections/Section";
 import Details from "../Sections/Details/Details.js";
 import OtherProperties from "../Sections/OtherProperties";
 import MemberOfCollections from "../Sections/MemberOfCollections";
-import Attachments from "../Sections//Attachments/Attachments";
+import Attachments from "../Sections/Attachments/Attachments";
+import Components from "../Sections/Components";
 
 import { pages, getComponents } from "./Component";
 
 import { useSelector } from 'react-redux';
 import React from "react";
+import SequenceAnnotations from "../Sections/SequenceAnnotations";
 
 
 /**
@@ -56,6 +58,18 @@ function getSection(sectionName, properties) {
          return (
             <Section title={sectionName}>
                <Details uri={properties.uri} />
+            </Section>
+         );
+      case componentPages[1]:
+         return (
+            <Section title={sectionName}>
+               <Components uri={properties.uri} />
+            </Section>
+         );
+      case componentPages[2]:
+         return (
+            <Section title={sectionName}>
+               <SequenceAnnotations uri={properties.uri} />
             </Section>
          );
       case componentPages[3]:

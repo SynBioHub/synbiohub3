@@ -971,3 +971,7 @@
   margin-right: 0.5rem;
   color: #465875;
 }
+
+.componentsinfo span:hover {
+  text-decoration: underline;
+}
