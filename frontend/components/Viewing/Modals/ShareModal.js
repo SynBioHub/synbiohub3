@@ -1,25 +1,27 @@
-import styles from "../../styles/view.module.css";
-import { faExclamationTriangle, faIdCard } from "@fortawesome/free-solid-svg-icons";
+import styles from "../../../styles/view.module.css";
+import { faShareSquare, faCopy, faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-import Select from "react-select";
+import React, { useEffect, useState } from "react";
 import CustomModal from "./CustomModal";
 
 import { useSelector } from "react-redux";
-import React, { useEffect, useState } from "react";
 
-import getConfig from 'next/config';
+import Select from "react-select";
+
+import getConfig from "next/config";
 const { publicRuntimeConfig } = getConfig();
 
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 /**
- * Shows the add owner modal and handles adding a new owner.
+ * A modal class that handles the user wanting to share an object.
  * 
  * @param {Any} properties Information passed in from the parent component.
  */
-export default function AddOwnerModal(properties) {
+export default function ShareModal(properties) {
+  const [copyText, setCopyText] = useState("Copy");
   const [selectedOption, setSelectedOption] = useState("Select user...");
   const [submitted, setSubmitted] = useState(false);
   const [submittable, setSubmittable] = useState(false);
@@ -40,7 +42,7 @@ export default function AddOwnerModal(properties) {
   //Checks if the submit button has been clicked and adds to owner and then hides the modal.
   useEffect(() => {
     if (submitted) {
-      addOwner(selectedOption);
+      addOwner(selectedOption.value);
     }
   }, [submitted]);
 
@@ -69,6 +71,18 @@ export default function AddOwnerModal(properties) {
     if (response.status !== 200) errorToast("Something went wrong with adding an owner.");
   }
 
+  /**
+   * Copies the link to the users clipboard.
+   */
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(`${publicRuntimeConfig.backend}${properties.url}`).then(() => {
+      setTimeout(() => {
+        setCopyText("Copy");
+      }, 1000);
+      setCopyText("Copied!");
+    });
+  }
+
   return (
     <CustomModal
       buttonText={["Cancel", "Grant Ownership"]}
@@ -79,11 +93,11 @@ export default function AddOwnerModal(properties) {
       header={
         <React.Fragment>
           <FontAwesomeIcon
-            icon={faIdCard}
+            icon={faShareSquare}
             size="1x"
-            className={styles.idcardicon}
+            className={styles.modalicon}
           />
-          <h1>Add Owner</h1>
+          <h1>Share</h1>
         </React.Fragment>
       }
       content={
@@ -102,7 +116,7 @@ export default function AddOwnerModal(properties) {
               value={selectedOption}
               onChange={(e) => {
                 if (e.value !== undefined) {
-                  setSelectedOption(e.value);
+                  setSelectedOption({ value: e.value, label: e.label });
                   setSubmittable(true);
                 }
               }}
@@ -111,6 +125,25 @@ export default function AddOwnerModal(properties) {
               placeholder={selectedOption}
               styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
             />
+          </div>
+          <div className={styles.copylinkcontainer}>
+            <label
+              className={styles.copylinkicon}
+            >
+              <FontAwesomeIcon
+                icon={faCopy}
+                size="1x"
+              />
+            </label>
+            <input placeholder={`${publicRuntimeConfig.backend}${properties.url}`} className={styles.copylinktext} type="text" readOnly={true} />
+            <label
+              className={styles.copylinkbutton}
+              onClick={() => {
+                copyToClipboard();
+              }}
+            >
+              {copyText}
+            </label>
           </div>
         </React.Fragment>
       }

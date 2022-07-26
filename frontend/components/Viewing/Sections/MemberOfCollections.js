@@ -11,7 +11,7 @@ import styles from '../../../styles/view.module.css';
 
 /**
  * @param {Any} properties Information passed down from parent component.
- * @returns The collections that this component is a member of
+ * @returns The collections that this component is a member of.
  */
 export default function MemberOfCollections(properties) {
   const [otherProps, setOtherProps] = useState();
@@ -37,6 +37,7 @@ export default function MemberOfCollections(properties) {
 
   /**
    * Maps the query information and gets x number of rows.
+   * 
    * @returns All the returned collection info mapped into rows.
    */
   function generateRows() {

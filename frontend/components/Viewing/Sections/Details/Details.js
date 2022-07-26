@@ -47,13 +47,15 @@ export default function Details(properties) {
 
           //Get the citation info and parse it.
           getCitationInfo(results.join(", ")).then(parsedCitations => {
-            const list = [];
-            parsedCitations.forEach(citation => {
-              list.push(citation);
-            });
+            if(parsedCitations !== undefined) {
+              const list = [];
+              parsedCitations.forEach(citation => {
+                list.push(citation);
+              });
 
-            //Joins the list with line breaks so html-react-parser renders line breaks between citations.
-            setReferences(list.join("<br><br>"));
+              //Joins the list with line breaks so html-react-parser renders line breaks between citations.
+              setReferences(list.join("<br><br>"));
+            }
           });
         }
       });

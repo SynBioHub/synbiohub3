@@ -1,4 +1,5 @@
-import styles from "../../styles/view.module.css";
+import styles from "../../../styles/view.module.css";
+
 import { faWindowClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
@@ -29,13 +30,15 @@ export default function CustomModal(properties) {
   /**
    * Animates the modal out of the screen and then hides it when the animation is over.
   */
-  const hideAnimation = () => {
+  const hideAnimation = (submitted) => {
     const container = document.getElementsByClassName(styles.modalcontainer)[0];
     container.classList.add(styles.modalanimationremove);
 
     //Waits 0.4 seconds to hide the modal so the full remove animation can play out.
     setTimeout(() => {
-      properties.setModal("");
+      if (submitted) properties.setSubmitted(true);
+
+      properties.setModal();
     }, 400);
   }
 
@@ -103,7 +106,7 @@ export default function CustomModal(properties) {
               type="button"
               onClick={() => {
                 if (properties.submittable) {
-                  hideAnimation();
+                  hideAnimation(properties.setSubmitted);
                 } else warningToast(properties.error);
               }}
             >
