@@ -12,6 +12,7 @@ const { publicRuntimeConfig } = getConfig();
 
 import { useDispatch } from "react-redux";
 import { downloadFiles } from "../../../redux/actions";
+import axios from "axios";
 
 /**
  * A modal that lets the user choose what format they want to download the object in.
@@ -61,12 +62,32 @@ export default function ShareModal(properties) {
 
     if (properties.type === "Component") {
       selectOptions.push({ value: "gb", label: "Download GenBank" });
-      selectOptions.push({ value: "gbff", label: "Download GFF3" });
+      selectOptions.push({ value: "gff", label: "Download GFF3" });
     }
 
     if (properties.type === "Sequence") selectOptions.push({ value: "fasta", label: "Download FASTA" });
     if (properties.type === "Module") selectOptions.push({ value: "image", label: "Download Image" });
     if (properties.type === "Attachment") selectOptions.push({ value: "download", label: "Download Attachment" });
+
+    const url = 'http://localhost:6789/';
+
+    
+    axios.get(`${url}plugins`).then(response => {
+      const downloadPlugins = response.data.download;
+
+      for(let i = 0; i < downloadPlugins.length; i++) {
+        const plugin = downloadPlugins[i];
+
+        axios.post(`${url}call`, {}, {params: {
+          name: plugin.name,
+          type: properties.type,
+          endpoint: 'evaluate'
+        }}).then(response => {
+          if (response.status === 200) selectOptions.push({ value: "plugin", label: `Download ${plugin.name}` });
+        });
+      }
+
+    });
 
     return selectOptions;
   }

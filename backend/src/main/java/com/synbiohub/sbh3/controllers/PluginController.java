@@ -4,11 +4,10 @@ package com.synbiohub.sbh3.controllers;
 import com.synbiohub.sbh3.services.PluginService;
 import com.synbiohub.sbh3.utils.ConfigUtil;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -18,6 +17,7 @@ import java.util.List;
 
 @RestController
 @AllArgsConstructor
+@Slf4j
 public class PluginController {
 
     private final PluginService pluginService;
@@ -151,10 +151,9 @@ public class PluginController {
     }
 
     @PostMapping(value = "/test")
-    public String fileTest(List<MultipartFile> attached) {
-        return attached.get(0).getOriginalFilename() + attached.get(1).getOriginalFilename() + "\n";
+    public void test(@RequestParam String message) {
+        log.info(message);
     }
-
 
 
 
