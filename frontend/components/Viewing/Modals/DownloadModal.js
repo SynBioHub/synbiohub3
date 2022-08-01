@@ -99,9 +99,9 @@ export default function DownloadModal(properties) {
           }
         }).then(response => {
           if (response.status === 200) selectOptions.push({ value: "plugin", label: plugin.name});
-        })
+        }).catch(error => {return;});
       }
-    });
+    }).catch(error => {return;});
 
     return selectOptions;
   }
