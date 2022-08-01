@@ -6,9 +6,7 @@ import com.synbiohub.sbh3.utils.ConfigUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -150,15 +148,6 @@ public class PluginController {
 
     }
 
-    @PostMapping(value = "/test")
-    public String fileTest(List<MultipartFile> attached) {
-        return attached.get(0).getOriginalFilename() + attached.get(1).getOriginalFilename() + "\n";
-    }
-
-
-
-
-
 
     @PostMapping(value = "/run", produces = "application/zip")
     public ResponseEntity run(@RequestParam String name, @RequestParam(required = false) List<MultipartFile> attached, @RequestParam(required = false) String data) {
@@ -239,7 +228,7 @@ public class PluginController {
     }
 
 
-
+/*
     @PostMapping(value = "/save")
     public String save() {
         return "Save successful\n";
@@ -249,6 +238,8 @@ public class PluginController {
     public String parameters() {
         return "Parameters successful\n";
     }
+
+ */
 
 
     @PostMapping(value = "/call")
