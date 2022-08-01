@@ -61,7 +61,7 @@ export default function ShareModal(properties) {
 
     if (properties.type === "Component") {
       selectOptions.push({ value: "gb", label: "Download GenBank" });
-      selectOptions.push({ value: "gbff", label: "Download GFF3" });
+      selectOptions.push({ value: "gff", label: "Download GFF3" });
     }
 
     if (properties.type === "Sequence") selectOptions.push({ value: "fasta", label: "Download FASTA" });

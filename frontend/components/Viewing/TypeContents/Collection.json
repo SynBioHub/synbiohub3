@@ -1,0 +1,102 @@
+{
+  "type": "http://sbols.org/v2#Collection",
+  "metadata": {
+    "role": {
+      "title": "Role",
+      "pred": "pred",
+      "icon": "faIcon"
+    },
+    "type": {}
+  },
+  "tables": [
+    {
+      "title": "Components",
+      "icon": "faIcon",
+      "startingPred": "pred",
+      "columns": {
+          "access": {
+            "title": "Access",
+            "predicates": [
+              ["$uri", "sbol2", "component"],
+              ["component", "access", "sbol2"]
+            ],
+            "icon": "faInfo",
+            "link": "http://sbols.org/v2#access",
+            "info": "Learn more about access"
+          },
+          "instance": {
+            "title": "Instance",
+            "predicates": [
+              "pred1",
+              "pred2"
+            ],
+            "icon": "faInfo",
+            "link": "http://sbols.org/v2#Component",
+            "info": "Learn more about components"
+          },
+          "definition": {
+            "title": "Definition",
+            "predicates": [
+              "pred1",
+              "pred2"
+            ],
+            "icon": "faInfo",
+            "link": "http://sbols.org/v2#definition",
+            "info": "Learn more about definitions"
+          }
+        }
+    },
+    {
+      "title": "Sequence Annotations",
+      "icon": "faIcon",
+      "startingPred": "pred",
+      "columns": {
+          "sequenceAnnotation": {
+            "title": "Sequence Annotation",
+            "predicates": [
+              "pred1",
+              "pred2"
+            ],
+            "icon": "faInfo",
+            "link": "http://sbols.org/v2#SequenceAnnotation",
+            "info": "Learn more about Sequence Annotations"
+          },
+          "location": {
+            "title": "Location",
+            "predicates": [
+              "pred1",
+              "pred2"
+            ],
+            "icon": "faInfo",
+            "link": "http://sbols.org/v2#Location",
+            "info": "Learn more about Locations"
+          },
+          "componentRoles": {
+            "title": [
+              "Component",
+              "Role(s)"
+            ],
+            "predicates": [
+              "pred1",
+              "pred2"
+            ],
+            "icon": "faInfo",
+            "link": [
+              "http://sbols.org/v2#component",
+              "http://sbols.org/v2#role"
+            ],
+            "info": [
+              "Learn more about components",
+              "Learn more about roles"
+            ]
+          }
+        }
+    }
+  ],
+  "pages": [
+    "Members",
+    "Details",
+    "Other Properties",
+    "Attachments"
+  ]
+}
