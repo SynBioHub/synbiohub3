@@ -71,22 +71,26 @@ export default function ShareModal(properties) {
 
     const url = 'http://localhost:6789/';
 
-    
-    axios.get(`${url}plugins`).then(response => {
+    axios({
+      method: 'GET',
+      url: `${url}plugins`,
+      responseType: 'application/json'
+    }).then(response => {
       const downloadPlugins = response.data.download;
 
-      for(let i = 0; i < downloadPlugins.length; i++) {
-        const plugin = downloadPlugins[i];
-
-        axios.post(`${url}call`, {}, {params: {
-          name: plugin.name,
-          type: properties.type,
-          endpoint: 'evaluate'
-        }}).then(response => {
-          if (response.status === 200) selectOptions.push({ value: "plugin", label: `Download ${plugin.name}` });
-        });
+      for(let plugin of downloadPlugins) {
+        axios({
+          method: 'POST',
+          url: `${url}call`,
+          params: {
+            name: plugin.name,
+            type: properties.type,
+            endpoint: 'evaluate'
+          }
+        }).then(response => {
+          if (response.status === 200) selectOptions.push({ value: "plugin", label: plugin.name});
+        })
       }
-
     });
 
     return selectOptions;
