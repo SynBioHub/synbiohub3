@@ -19,7 +19,7 @@ import axios from "axios";
  * 
  * @param {Any} properties Information passed in from the parent component.
  */
-export default function ShareModal(properties) {
+export default function DownloadModal(properties) {
   const [selectedOption, setSelectedOption] = useState();
   const [submitted, setSubmitted] = useState(false);
   const [submittable, setSubmittable] = useState(false);
