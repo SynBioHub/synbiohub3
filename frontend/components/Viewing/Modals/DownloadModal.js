@@ -11,7 +11,7 @@ import getConfig from "next/config";
 const { publicRuntimeConfig } = getConfig();
 
 import { useDispatch } from "react-redux";
-import { downloadFiles } from "../../../redux/actions";
+import { downloadFiles, downloadFilesPlugin } from "../../../redux/actions";
 import axios from "axios";
 
 /**
@@ -56,7 +56,27 @@ export default function DownloadModal(properties) {
   }
 
   const downloadPlugin = (pluginName) => {
-    axios({method: 'POST', url: 'http://localhost:6789/test', params: {message: `${pluginName} successful`}});
+
+    const item = {
+      name: properties.name,
+      displayId: properties.displayId,
+      type: "xml", //needs to be changed to the type specified by the plugin
+      status: "downloading"
+    };
+
+    const pluginData = {
+      "complete_sbol":"",
+      "shallow_sbol":"",
+      "genbank":"",
+      "top_level":"",
+      "instanceUrl": "",
+      "size": 0,
+      "type": properties.type
+    };
+    axios({method: 'POST', url: 'http://localhost:6789/test', params: {message: properties.type}});
+
+
+    dispatch(downloadFilesPlugin([item], pluginName, pluginData));
   }
 
   /**
