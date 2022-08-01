@@ -28,7 +28,13 @@ export default function DownloadModal(properties) {
   //Checks if the modal has been submitted and downloads in the format the user chose.
   useEffect(() => {
     if (submitted) {
-      download(selectedOption.value);
+
+      if(selectedOption.value === 'plugin') {
+        downloadPlugin(selectedOption.label);
+      }
+      else {
+        download(selectedOption.value);
+      }
     }
   }, [submitted]);
 
@@ -47,6 +53,10 @@ export default function DownloadModal(properties) {
     };
 
     dispatch(downloadFiles([item]));
+  }
+
+  const downloadPlugin = (pluginName) => {
+    axios({method: 'POST', url: 'http://localhost:6789/test', params: {message: `${pluginName} successful`}});
   }
 
   /**
