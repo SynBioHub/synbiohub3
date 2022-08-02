@@ -65,7 +65,7 @@ public class PluginController {
 
 
     @PostMapping(value = "/evaluate")
-    public ResponseEntity evaluate(@RequestParam String name, @RequestParam(required = false) List<MultipartFile> attached, @RequestParam(required = false) String type, @RequestParam(required = false) String data) {
+    public ResponseEntity evaluate(@RequestParam String name, @RequestParam(required = false) List<MultipartFile> attached, @RequestParam(required = false) String data) {
 
         //Name can be the name or url of the target plugin
         //Attached is used to store files to be used for Submit plugins, will be sent to PluginService to create a manifest
@@ -91,14 +91,7 @@ public class PluginController {
         category = pluginService.getCategory(name);
 
         if (attached == null) { //Used to convert send to a single string from attached/data based on which is used
-
-            if (type == null) {
                 send = data;
-            }
-            else {
-                send = pluginService.buildType(type).toString();
-            }
-
         }
         else {
             send = pluginService.buildManifest(attached).toString();
@@ -251,13 +244,13 @@ public class PluginController {
 
 
     @PostMapping(value = "/call")
-    public ResponseEntity callPlugin(@RequestParam(required = false) String token, @RequestParam String name, @RequestParam(required = false) List<MultipartFile> attached, @RequestParam(required = false) String type, @RequestParam String endpoint, @RequestParam(required = false) String data) {
+    public ResponseEntity callPlugin(@RequestParam(required = false) String token, @RequestParam String name, @RequestParam(required = false) List<MultipartFile> attached, @RequestParam String endpoint, @RequestParam(required = false) String data) {
 
         switch(endpoint) {
             case "status":
                 return status(name);
             case "evaluate":
-                return evaluate(name, attached, type, data);
+                return evaluate(name, attached, data);
             case "run":
                 return run(name, attached, data);
             default :

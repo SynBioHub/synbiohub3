@@ -93,18 +93,4 @@ public class PluginService {
             return mapper.convertValue(manifest, JsonNode.class);
 
         }
-
-
-        public JsonNode buildType(String type) {
-            ObjectMapper mapper = new ObjectMapper();
-            ObjectNode node =  mapper.createObjectNode();
-
-            node.put("type", type);
-
-            return mapper.convertValue(node, JsonNode.class);
-
-
-        }
-
-
 }
