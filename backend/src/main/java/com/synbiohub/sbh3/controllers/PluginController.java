@@ -11,9 +11,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 import java.net.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @AllArgsConstructor
@@ -65,7 +67,7 @@ public class PluginController {
 
 
     @PostMapping(value = "/evaluate")
-    public ResponseEntity evaluate(@RequestParam String name, @RequestParam(required = false) List<MultipartFile> attached, @RequestParam(required = false) String data) {
+    public ResponseEntity evaluate(@RequestParam String name, @RequestParam(required = false) List<MultipartFile> attached, HttpServletRequest request) {
 
         //Name can be the name or url of the target plugin
         //Attached is used to store files to be used for Submit plugins, will be sent to PluginService to create a manifest
@@ -91,7 +93,11 @@ public class PluginController {
         category = pluginService.getCategory(name);
 
         if (attached == null) { //Used to convert send to a single string from attached/data based on which is used
-                send = data;
+            try {
+                send = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
+            } catch (IOException e) {
+                return new ResponseEntity(HttpStatus.BAD_REQUEST);
+            }
         }
         else {
             send = pluginService.buildManifest(attached).toString();
@@ -153,7 +159,7 @@ public class PluginController {
 
 
     @PostMapping(value = "/run", produces = "application/zip")
-    public ResponseEntity run(@RequestParam String name, @RequestParam(required = false) List<MultipartFile> attached, @RequestParam(required = false) String data) {
+    public ResponseEntity run(@RequestParam String name, @RequestParam(required = false) List<MultipartFile> attached, HttpServletRequest request) {
 
         //All code should have the same uses as in the /evaluate endpoint
 
@@ -176,8 +182,11 @@ public class PluginController {
         category = pluginService.getCategory(name);
 
         if (attached == null) {
-            send = data;
-
+            try {
+                send = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
+            } catch (IOException e) {
+                return new ResponseEntity(HttpStatus.BAD_REQUEST);
+            }
         }
         else {
             send = pluginService.buildManifest(attached).toString();
@@ -244,15 +253,17 @@ public class PluginController {
 
 
     @PostMapping(value = "/call")
-    public ResponseEntity callPlugin(@RequestParam(required = false) String token, @RequestParam String name, @RequestParam(required = false) List<MultipartFile> attached, @RequestParam String endpoint, @RequestParam(required = false) String data) {
+    public ResponseEntity callPlugin(@RequestParam(required = false) String token, @RequestParam String name, @RequestParam(required = false) List<MultipartFile> attached, @RequestParam String endpoint, HttpServletRequest request) {
+
+
 
         switch(endpoint) {
             case "status":
                 return status(name);
             case "evaluate":
-                return evaluate(name, attached, data);
+                return evaluate(name, attached, request);
             case "run":
-                return run(name, attached, data);
+                return  run(name, attached, request);
             default :
                 return new ResponseEntity("Unsuccessful", HttpStatus.BAD_REQUEST);
         }

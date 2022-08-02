@@ -109,9 +109,9 @@ export default function DownloadModal(properties) {
           params: {
             name: plugin.name,
             endpoint: 'evaluate',
-            data: {
-              type: properties.type
-            }
+          },
+          data: {
+            type: properties.type
           }
         }).then(response => {
           if (response.status === 200) selectOptions.push({ value: "plugin", label: plugin.name});

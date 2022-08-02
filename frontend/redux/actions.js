@@ -630,8 +630,8 @@ const zippedFilePromise = (file, index, token, files, dispatch, pluginName, plug
       params: {
         name: pluginName,
         endpoint: 'run',
-        data: pluginData
-      }
+      },
+      data: pluginData
     })
       .then(response => {
         if (response.status === 200) {
