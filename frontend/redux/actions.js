@@ -235,7 +235,7 @@ export const submit =
       const token = getState().user.token;
 
       if (pluginName != 'default') {
-         axios({url: 'http://localhost:6789/test', method: 'POST', params: {message: `Successful`}});
+         submitPluginHandler(pluginName);
       }
 
       await uploadFiles(
@@ -344,6 +344,42 @@ async function uploadFiles(
       payload: [...filesUploading]
     });
   }
+}
+
+const submitPluginHandler = (pluginName) => {
+  axios({url: 'http://localhost:6789/test', method: 'POST', params: {message: `Successful`}});
+
+  const evaluateManifest = {
+    manifest: {
+      files: [
+        {
+          url: '',
+          filename: 'Test.dna',
+          type: ''
+        }
+      ]
+    }
+  };
+
+  axios({url: 'http://localhost:6789/test', method: 'POST', params: {message: `${encodeURIComponent(JSON.stringify(evaluateManifest))}`}});
+
+  axios({
+    method: 'POST',
+    url: 'http://localhost:6789/call',
+    responseType: 'application/json',
+    params: {
+      name: pluginName,
+      endpoint: 'evaluate',
+      data: encodeURIComponent(JSON.stringify(evaluateManifest))
+    }
+  }).then(response => {
+    axios({url: 'http://localhost:6789/test', method: 'POST', params: {message: `${encodeURIComponent(JSON.stringify(response.data))}`}});
+  }).catch(error => {
+    axios({url: 'http://localhost:6789/test', method: 'POST', params: {message: `Test ${encodeURIComponent(error.message)}`}});
+  })
+
+
+
 }
 
 export const addAttachments = (files, uri) => async (dispatch, getState) => {
@@ -630,8 +666,9 @@ const zippedFilePromise = (file, index, token, files, dispatch, pluginName, plug
       params: {
         name: pluginName,
         endpoint: 'run',
-      },
-      data: pluginData
+        data: encodeURIComponent(JSON.stringify(pluginData))
+      }
+      
     })
       .then(response => {
         if (response.status === 200) {

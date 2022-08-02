@@ -60,13 +60,13 @@ export default function DownloadModal(properties) {
     };
 
     const pluginData = {
-      "complete_sbol":"",
-      "shallow_sbol":"",
-      "genbank":"",
-      "top_level":"",
-      "instanceUrl": "",
-      "size": 0,
-      "type": properties.type
+      complete_sbol: '',
+      shallow_sbol: '',
+      genbank: '',
+      top_level: '',
+      instanceUrl: '',
+      size: 0,
+      type: properties.type
     };
 
     dispatch(downloadFiles([item], pluginName, pluginData));
@@ -109,10 +109,11 @@ export default function DownloadModal(properties) {
           params: {
             name: plugin.name,
             endpoint: 'evaluate',
-          },
-          data: {
-            type: properties.type
+            data: {
+              type: properties.type
+            }
           }
+          
         }).then(response => {
           if (response.status === 200) selectOptions.push({ value: "plugin", label: plugin.name});
         }).catch(error => {return;});
