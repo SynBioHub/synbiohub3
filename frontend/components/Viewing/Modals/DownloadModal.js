@@ -161,6 +161,7 @@ export default function DownloadModal(properties) {
               options={getSelectOptions()}
               menuPortalTarget={document.body}
               styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+              getOptionValue={option => option.label}
             />
           </div>
         </React.Fragment>
