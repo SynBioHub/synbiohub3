@@ -95,7 +95,6 @@ public class PluginController {
         if (attached == null) { //Used to convert send to a single string from attached/data based on which is used
             try {
                 send = URLDecoder.decode(data, "UTF-8");
-                test(send);
             } catch (IOException e) {
                 return new ResponseEntity(HttpStatus.BAD_REQUEST);
             }

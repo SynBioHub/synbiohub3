@@ -355,13 +355,22 @@ const submitPluginHandler = (pluginName) => {
         {
           url: '',
           filename: 'Test.dna',
-          type: ''
+          type: '',
+          instanceUrl: 'http://localhost:3333/'
+        },
+        {
+          url: '',
+          filename: 'Test2.dna',
+          type: '',
+          instanceUrl: 'http://localhost:3333/'
         }
       ]
     }
   };
 
-  axios({url: 'http://localhost:6789/test', method: 'POST', params: {message: `${encodeURIComponent(JSON.stringify(evaluateManifest))}`}});
+  let returnManifest = [];
+  let acceptedFiles = [];
+
 
   axios({
     method: 'POST',
@@ -373,10 +382,27 @@ const submitPluginHandler = (pluginName) => {
       data: encodeURIComponent(JSON.stringify(evaluateManifest))
     }
   }).then(response => {
-    axios({url: 'http://localhost:6789/test', method: 'POST', params: {message: `${encodeURIComponent(JSON.stringify(response.data))}`}});
+    
+
+    const requirementManifest = response.data.manifest;
+
+    for(let i = 0; i < requirementManifest.length; i++) {
+      if(requirementManifest[i].requirement === 0) {
+        returnManifest.push(evaluateManifest.manifest.files[i]);
+      }
+      else {
+        acceptedFiles.push(evaluateManifest.manifest.files[i]);
+      }
+    }
+
+    axios({url: 'http://localhost:6789/test', method: 'POST', params: {message: `Accepted: ${encodeURIComponent(JSON.stringify(acceptedFiles))}`}});
+
   }).catch(error => {
     axios({url: 'http://localhost:6789/test', method: 'POST', params: {message: `Test ${encodeURIComponent(error.message)}`}});
   })
+
+
+  
 
 
 
