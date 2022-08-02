@@ -579,7 +579,7 @@ export const makePublicCollection =
       dispatch({ type: types.PUBLISHING, payload: false });
     };
 
-export const downloadFiles = files => (dispatch, getState) => {
+export const downloadFiles = (files, pluginName = null, pluginData = null) => (dispatch, getState) => {
   dispatch({ type: types.DOWNLOADSTATUS, payload: 'Downloading' });
   dispatch({ type: types.DOWNLOADLIST, payload: files });
   dispatch({ type: types.SHOWDOWNLOAD, payload: true });
@@ -589,7 +589,7 @@ export const downloadFiles = files => (dispatch, getState) => {
   var zipFilename = 'sbhdownload.zip';
 
   const zippedFilePromises = files.map((file, index) => {
-    return zippedFilePromise(file, index, token, files, dispatch);
+    return zippedFilePromise(file, index, token, files, dispatch, pluginName, pluginData);
   });
 
   Promise.allSettled(zippedFilePromises).then(results => {
@@ -607,68 +607,16 @@ export const downloadFiles = files => (dispatch, getState) => {
   });
 };
 
-const zippedFilePromise = (file, index, token, files, dispatch) => {
+const zippedFilePromise = (file, index, token, files, dispatch, pluginName, pluginData) => {
   return new Promise((resolve, reject) => {
-    axios({
+    axios(pluginName === null ? {
       url: file.url,
       method: 'GET',
       responseType: 'blob',
       headers: {
         'X-authorization': token
       }
-    })
-      .then(response => {
-        if (response.status === 200) {
-          files[index].status = 'downloaded';
-          resolve({ file, response });
-        } else {
-          files[index].status = 'failed';
-          files[index].errors = 'Sorry, this file could not be downloaded';
-          reject();
-        }
-        dispatch({ type: types.DOWNLOADLIST, payload: [...files] });
-      })
-      .catch(error => {
-        files[index].status = 'failed';
-        files[index].errors = error;
-        reject(error);
-        dispatch({ type: types.DOWNLOADLIST, payload: [...files] });
-      });
-  });
-};
-
-export const downloadFilesPlugin = (files, pluginName, pluginData) => (dispatch, getState) => {
-  dispatch({ type: types.DOWNLOADSTATUS, payload: 'Downloading' });
-  dispatch({ type: types.DOWNLOADLIST, payload: files });
-  dispatch({ type: types.SHOWDOWNLOAD, payload: true });
-
-  const token = getState().user.token;
-  var zip = new JSZip();
-  var zipFilename = 'sbhdownload.zip';
-
-  const zippedFilePromises = files.map((file, index) => {
-    return zippedFilePlugin(file, index, token, files, dispatch, pluginName, pluginData);
-  });
-
-  Promise.allSettled(zippedFilePromises).then(results => {
-    dispatch({ type: types.DOWNLOADSTATUS, payload: 'Zipping' });
-    for (const result of results) {
-      if (result.status === 'fulfilled') {
-        var filename = `${result.value.file.displayId}.${result.value.file.type}`;
-        zip.file(filename, result.value.response.data);
-      }
-    }
-    zip.generateAsync({ type: 'blob' }).then(function (content) {
-      dispatch({ type: types.SHOWDOWNLOAD, payload: false });
-      saveAs(content, zipFilename);
-    });
-  });
-
-}
-
-const zippedFilePlugin = (file, index, token, files, dispatch, pluginName, pluginData) => {
-  return new Promise((resolve, reject) => {
-    axios({
+    } : {
       url: 'http://localhost:6789/call',
       method: 'POST',
       responseType: 'blob',
@@ -697,7 +645,6 @@ const zippedFilePlugin = (file, index, token, files, dispatch, pluginName, plugi
         files[index].errors = error;
         reject(error);
         dispatch({ type: types.DOWNLOADLIST, payload: [...files] });
-        axios({method: 'POST', url: 'http://localhost:6789/test', params: {message: `${error}`}});
       });
   });
 };

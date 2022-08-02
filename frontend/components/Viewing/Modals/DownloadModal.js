@@ -28,13 +28,7 @@ export default function DownloadModal(properties) {
   //Checks if the modal has been submitted and downloads in the format the user chose.
   useEffect(() => {
     if (submitted) {
-
-      if(selectedOption.value === 'plugin') {
-        downloadPlugin(selectedOption.label);
-      }
-      else {
-        download(selectedOption.value);
-      }
+        download(selectedOption.value, selectedOption.label);
     }
   }, [submitted]);
 
@@ -43,7 +37,9 @@ export default function DownloadModal(properties) {
    * 
    * @param {String} type The download endpoint the user has chosen.
    */
-  const download = (type) => {
+  const download = (type, pluginName) => {
+    
+    if (type != 'plugin') {
     const item = {
       url: `${publicRuntimeConfig.backend}${properties.url}/${type}`,
       name: properties.name,
@@ -55,8 +51,7 @@ export default function DownloadModal(properties) {
     dispatch(downloadFiles([item]));
   }
 
-  const downloadPlugin = (pluginName) => {
-
+  else {
     const item = {
       name: properties.name,
       displayId: properties.displayId,
@@ -73,10 +68,9 @@ export default function DownloadModal(properties) {
       "size": 0,
       "type": properties.type
     };
-    axios({method: 'POST', url: 'http://localhost:6789/test', params: {message: properties.type}});
 
-
-    dispatch(downloadFilesPlugin([item], pluginName, pluginData));
+    dispatch(downloadFiles([item], pluginName, pluginData));
+  }
   }
 
   /**
