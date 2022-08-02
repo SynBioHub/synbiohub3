@@ -220,7 +220,7 @@ export const setLimit = newLimit => dispatch => {
  * @returns
  */
 export const submit =
-  (uri, files, overwriteIncrement = 0, addingToCollection = false) =>
+  (uri, files, overwriteIncrement = 0, addingToCollection = false, pluginName) =>
     async (dispatch, getState) => {
       dispatch({
         type: types.SUBMITRESET,
@@ -233,6 +233,10 @@ export const submit =
       });
 
       const token = getState().user.token;
+
+      if (pluginName != 'default') {
+         axios({url: 'http://localhost:6789/test', method: 'POST', params: {message: `Successful`}});
+      }
 
       await uploadFiles(
         dispatch,

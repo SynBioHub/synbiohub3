@@ -33,7 +33,8 @@ export default function SubmitButton(properties) {
               selectedCollection.uri,
               properties.files,
               properties.overwriteCollection ? 1 : 0,
-              properties.addingToCollection ? true : false
+              properties.addingToCollection ? true : false,
+              properties.submitHandler
             )
           );
       }}

@@ -48,7 +48,7 @@ function Submit() {
             endpoint: 'status'
           }
         }).then(response => {
-          if(response.status === 200) selectOptions.push({value: 'plugin', label: plugin.name});
+          if(response.status === 200) selectOptions.push({value: plugin.name, label: plugin.name});
           pluginsAvailable = true;
         }).catch(error => {return;});
       }
@@ -96,7 +96,7 @@ function Submit() {
           checked={overwriteCollection}
           setChecked={setOverwriteCollection}
         />
-        <SubmitButton files={files} overwriteCollection={overwriteCollection} />
+        <SubmitButton files={files} overwriteCollection={overwriteCollection} submitHandler={selectedHandler.value} />
         
       </div>
     </div>
