@@ -67,7 +67,7 @@ public class PluginController {
 
 
     @PostMapping(value = "/evaluate")
-    public ResponseEntity evaluate(@RequestParam String name, @RequestParam(required = false) List<MultipartFile> attached, @RequestParam(required = false) String data) {
+    public ResponseEntity evaluate(@RequestParam String name, @RequestParam(required = false) String data) {
 
         //Name can be the name or url of the target plugin
         //Attached is used to store files to be used for Submit plugins, will be sent to PluginService to create a manifest
@@ -92,17 +92,11 @@ public class PluginController {
 
         category = pluginService.getCategory(name);
 
-        if (attached == null) { //Used to convert send to a single string from attached/data based on which is used
-            try {
-                send = URLDecoder.decode(data, "UTF-8");
-            } catch (IOException e) {
+        try {
+            send = URLDecoder.decode(data, "UTF-8");
+        } catch (IOException e) {
                 return new ResponseEntity(HttpStatus.BAD_REQUEST);
-            }
         }
-        else {
-            send = pluginService.buildManifest(attached).toString();
-        }
-
 
 
         try {
@@ -164,7 +158,7 @@ public class PluginController {
 
 
     @PostMapping(value = "/run", produces = "application/zip")
-    public ResponseEntity run(@RequestParam String name, @RequestParam(required = false) List<MultipartFile> attached, @RequestParam(required = false) String data) {
+    public ResponseEntity run(@RequestParam String name, @RequestParam(required = false) String data) {
 
         //All code should have the same uses as in the /evaluate endpoint
 
@@ -186,15 +180,10 @@ public class PluginController {
 
         category = pluginService.getCategory(name);
 
-        if (attached == null) {
-            try {
-                send = URLDecoder.decode(data, "UTF-8");
-            } catch (IOException e) {
-                return new ResponseEntity(HttpStatus.BAD_REQUEST);
-            }
-        }
-        else {
-            send = pluginService.buildManifest(attached).toString();
+        try {
+            send = URLDecoder.decode(data, "UTF-8");
+        } catch (IOException e) {
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
 
 
@@ -258,7 +247,7 @@ public class PluginController {
 
 
     @PostMapping(value = "/call")
-    public ResponseEntity callPlugin(@RequestParam(required = false) String token, @RequestParam String name, @RequestParam(required = false) List<MultipartFile> attached, @RequestParam String endpoint, @RequestParam(required = false) String data) {
+    public ResponseEntity callPlugin(@RequestParam(required = false) String token, @RequestParam String name, @RequestParam String endpoint, @RequestParam(required = false) String data) {
 
 
 
@@ -266,9 +255,9 @@ public class PluginController {
             case "status":
                 return status(name);
             case "evaluate":
-                return evaluate(name, attached, data);
+                return evaluate(name, data);
             case "run":
-                return  run(name, attached, data);
+                return  run(name, data);
             default :
                 return new ResponseEntity("Unsuccessful", HttpStatus.BAD_REQUEST);
         }

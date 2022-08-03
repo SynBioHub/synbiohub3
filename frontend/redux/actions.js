@@ -3,6 +3,7 @@ import { saveAs } from 'file-saver';
 import JSZip from 'jszip';
 import getConfig from 'next/config';
 import { mutate } from 'swr';
+const mime = require('mime-types')
 
 import * as types from './types';
 const { publicRuntimeConfig } = getConfig();
@@ -235,7 +236,7 @@ export const submit =
       const token = getState().user.token;
 
       if (pluginName != 'default') {
-         files = submitPluginHandler(pluginName);
+        submitPluginHandler(pluginName, files);
       }
 
       await uploadFiles(
@@ -346,27 +347,24 @@ async function uploadFiles(
   }
 }
 
-const submitPluginHandler = (pluginName) => {
+const submitPluginHandler = (pluginName, files) => {
 
   const evaluateManifest = {
     manifest: {
-      files: [
-        {
-          url: '',
-          filename: 'Test.dna',
-          type: '',
-          instanceUrl: 'http://localhost:3333/'
-        },
-        {
-          url: '',
-          filename: 'Test2.dna',
-          type: '',
-          instanceUrl: 'http://localhost:3333/'
-        }
-      ]
+      files: []
     }
   };
 
+  for (let file of files) {
+    evaluateManifest.manifest.files.push({
+      url: file.url ? file.url : 'Unsuccessful', //File url isn't working
+      filename: file.name,
+      type: mime.lookup(file.name) ? mime.lookup(file.name) : '',
+      instanceUrl: 'http://localhost:3333/'
+    })
+  }
+
+  
   let returnManifest = [];
   let acceptedFiles = [];
 
@@ -409,13 +407,14 @@ const submitPluginHandler = (pluginName) => {
   axios({
     method: 'POST',
     url: 'http://localhost:6789/call',
-    responseType: 'blob',
+    responseType: 'arraybuffer',
     params: {
       name: pluginName,
       endpoint: 'evaluate',
       data: encodeURIComponent(JSON.stringify(runManifest))
     }
   }).then(response => {
+    //Need to unzip response and deal with files
     returnFiles.push(response.data);
   }).catch(error => {
     axios({url: 'http://localhost:6789/test', method: 'POST', params: {message: `${encodeURIComponent(error.message)}`}});

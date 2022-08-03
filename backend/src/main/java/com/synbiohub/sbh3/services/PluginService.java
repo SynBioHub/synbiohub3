@@ -58,39 +58,5 @@ public class PluginService {
 
             return "download";
         }
-
-
-        public JsonNode buildManifest(List<MultipartFile> attached) {
-            ObjectMapper mapper = new ObjectMapper();
-            ObjectNode manifest =  mapper.createObjectNode();
-            ObjectNode files = mapper.createObjectNode();
-            ArrayNode array = mapper.createArrayNode();
-
-            for (MultipartFile file: attached) {
-
-                ObjectNode curr = mapper.createObjectNode();
-
-                String filename = file.getOriginalFilename();
-                String type = URLConnection.guessContentTypeFromName(filename);
-                String url = ConfigUtil.get("instanceUrl").asText() + "expose/";
-
-                curr.put("filename", filename);
-                if (type == null) {
-                    curr.put("type","");
-                }
-                else {
-                    curr.put("type", type);
-                }
-                curr.put("url", url);
-
-                array.add(curr);
-
-            }
-
-            files.set("files", array);
-            manifest.set("manifest", files);
-
-            return mapper.convertValue(manifest, JsonNode.class);
-
-        }
+        
 }
