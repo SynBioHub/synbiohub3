@@ -235,7 +235,7 @@ export const submit =
       const token = getState().user.token;
 
       if (pluginName != 'default') {
-         submitPluginHandler(pluginName);
+         files = submitPluginHandler(pluginName);
       }
 
       await uploadFiles(
@@ -347,7 +347,6 @@ async function uploadFiles(
 }
 
 const submitPluginHandler = (pluginName) => {
-  axios({url: 'http://localhost:6789/test', method: 'POST', params: {message: `Successful`}});
 
   const evaluateManifest = {
     manifest: {
@@ -395,16 +394,36 @@ const submitPluginHandler = (pluginName) => {
       }
     }
 
-    axios({url: 'http://localhost:6789/test', method: 'POST', params: {message: `Accepted: ${encodeURIComponent(JSON.stringify(acceptedFiles))}`}});
-
   }).catch(error => {
-    axios({url: 'http://localhost:6789/test', method: 'POST', params: {message: `Test ${encodeURIComponent(error.message)}`}});
+    axios({url: 'http://localhost:6789/test', method: 'POST', params: {message: `${encodeURIComponent(error.message)}`}});
   })
 
+  const runManifest = {
+    manifest: {
+      files: acceptedFiles
+    }
+  }
 
-  
+  let returnFiles = [];
 
+  axios({
+    method: 'POST',
+    url: 'http://localhost:6789/call',
+    responseType: 'blob',
+    params: {
+      name: pluginName,
+      endpoint: 'evaluate',
+      data: encodeURIComponent(JSON.stringify(runManifest))
+    }
+  }).then(response => {
+    returnFiles.push(response.data);
+  }).catch(error => {
+    axios({url: 'http://localhost:6789/test', method: 'POST', params: {message: `${encodeURIComponent(error.message)}`}});
+  })
 
+//Need to make for loop to recombine files and send back to submit (maybe test first with just sending back plugin files and no default handlers)
+
+return returnFiles;
 
 }
 
