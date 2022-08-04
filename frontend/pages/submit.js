@@ -16,6 +16,9 @@ import TopLevel from '../components/TopLevel';
 import { getCanSubmitTo } from '../redux/actions';
 import styles from '../styles/submit.module.css';
 
+import getConfig from "next/config";
+const { publicRuntimeConfig } = getConfig();
+
 function Submit() {
   const [files, setFiles] = useState([]);
   const [overwriteCollection, setOverwriteCollection] = useState(false);
@@ -34,7 +37,7 @@ function Submit() {
 
     axios({
       method: 'GET',
-      url: `http://localhost:7777/plugins`,
+      url: `${publicRuntimeConfig.backend}/plugins`,
       responseType: 'application/json',
       params: {
         category: 'submit'
@@ -45,7 +48,7 @@ function Submit() {
       for(let plugin of submitPlugins) {
         axios({
           method: 'POST',
-          url: `http://localhost:7777/call`,
+          url: `${publicRuntimeConfig.backend}/call`,
           params: {
             name: plugin.name,
             endpoint: 'status'

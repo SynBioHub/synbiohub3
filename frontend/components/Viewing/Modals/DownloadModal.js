@@ -96,7 +96,7 @@ export default function DownloadModal(properties) {
 
     axios({
       method: 'GET',
-      url: `http://localhost:7777/plugins`,
+      url: `${publicRuntimeConfig.backend}/plugins`,
       responseType: 'application/json',
       params: {
         category: 'download'
@@ -107,7 +107,7 @@ export default function DownloadModal(properties) {
       for(let plugin of downloadPlugins) {
         axios({
           method: 'POST',
-          url: `http://localhost:7777/call`,
+          url: `${publicRuntimeConfig.backend}/call`,
           params: {
             name: plugin.name,
             endpoint: 'evaluate',

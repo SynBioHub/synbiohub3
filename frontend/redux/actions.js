@@ -360,7 +360,7 @@ const submitPluginHandler = (pluginName, files, token) => {
       url: file.url ? file.url : 'Unsuccessful', //File url isn't working
       filename: file.name,
       type: mime.lookup(file.name) ? mime.lookup(file.name) : '',
-      instanceUrl: 'http://localhost:3333/'
+      instanceUrl: publicRuntimeConfig.backend
     })
   }
 
@@ -371,7 +371,7 @@ const submitPluginHandler = (pluginName, files, token) => {
 
   axios({
     method: 'POST',
-    url: `http://localhost:7777/call`,
+    url: `${publicRuntimeConfig.backend}/call`,
     responseType: 'application/json',
     params: {
       name: pluginName,
@@ -406,7 +406,7 @@ const submitPluginHandler = (pluginName, files, token) => {
 
   axios({
     method: 'POST',
-    url: `http://localhost:7777/call`,
+    url: `${publicRuntimeConfig.backend}/call`,
     responseType: 'arraybuffer',
     params: {
       name: pluginName,
@@ -701,7 +701,7 @@ const zippedFilePromise = (file, index, token, files, dispatch, pluginName, plug
         'X-authorization': token
       }
     } : {
-      url: `http://localhost:7777/call`,
+      url: `${publicRuntimeConfig.backend}/call`,
       method: 'POST',
       responseType: 'blob',
       params: {
