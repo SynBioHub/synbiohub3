@@ -34,15 +34,18 @@ function Submit() {
 
     axios({
       method: 'GET',
-      url: 'http://localhost:6789/plugins',
-      responseType: 'application/json'
+      url: `http://localhost:7777/plugins`,
+      responseType: 'application/json',
+      params: {
+        category: 'submit'
+      }
     }).then(response => {
-      const submitPlugins = response.data.submit;
+      const submitPlugins = response.data;
 
       for(let plugin of submitPlugins) {
         axios({
           method: 'POST',
-          url: 'http://localhost:6789/call',
+          url: `http://localhost:7777/call`,
           params: {
             name: plugin.name,
             endpoint: 'status'

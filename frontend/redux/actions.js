@@ -236,7 +236,7 @@ export const submit =
       const token = getState().user.token;
 
       if (pluginName != 'default') {
-        submitPluginHandler(pluginName, files);
+        submitPluginHandler(pluginName, files, token);
       }
 
       await uploadFiles(
@@ -347,7 +347,7 @@ async function uploadFiles(
   }
 }
 
-const submitPluginHandler = (pluginName, files) => {
+const submitPluginHandler = (pluginName, files, token) => {
 
   const evaluateManifest = {
     manifest: {
@@ -371,7 +371,7 @@ const submitPluginHandler = (pluginName, files) => {
 
   axios({
     method: 'POST',
-    url: 'http://localhost:6789/call',
+    url: `http://localhost:7777/call`,
     responseType: 'application/json',
     params: {
       name: pluginName,
@@ -393,7 +393,7 @@ const submitPluginHandler = (pluginName, files) => {
     }
 
   }).catch(error => {
-    axios({url: 'http://localhost:6789/test', method: 'POST', params: {message: `${encodeURIComponent(error.message)}`}});
+    return;
   })
 
   const runManifest = {
@@ -406,7 +406,7 @@ const submitPluginHandler = (pluginName, files) => {
 
   axios({
     method: 'POST',
-    url: 'http://localhost:6789/call',
+    url: `http://localhost:7777/call`,
     responseType: 'arraybuffer',
     params: {
       name: pluginName,
@@ -417,7 +417,7 @@ const submitPluginHandler = (pluginName, files) => {
     //Need to unzip response and deal with files
     returnFiles.push(response.data);
   }).catch(error => {
-    axios({url: 'http://localhost:6789/test', method: 'POST', params: {message: `${encodeURIComponent(error.message)}`}});
+    return;
   })
 
 //Need to make for loop to recombine files and send back to submit (maybe test first with just sending back plugin files and no default handlers)
@@ -701,12 +701,9 @@ const zippedFilePromise = (file, index, token, files, dispatch, pluginName, plug
         'X-authorization': token
       }
     } : {
-      url: 'http://localhost:6789/call',
+      url: `http://localhost:7777/call`,
       method: 'POST',
       responseType: 'blob',
-      headers: {
-        'X-authorization': token
-      },
       params: {
         name: pluginName,
         endpoint: 'run',

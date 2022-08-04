@@ -24,10 +24,15 @@ public class PluginController {
 
     private final PluginService pluginService;
 
-    @GetMapping(value = "/plugins")
+    @GetMapping(value = "/plugins", produces="application/json")
     @ResponseBody
-    public String getPlugins() {
-        return ConfigUtil.get("plugins").toString();
+    public String getPlugins(@RequestParam(required = false) String category) {
+        if(category == null) {
+            return ConfigUtil.get("plugins").toString();
+        }
+        else {
+            return ConfigUtil.get("plugins").get(category).toString();
+        }
     }
     //Returns a string of all the current plugins in the instance of synbiohub
 
@@ -157,7 +162,7 @@ public class PluginController {
 
 
 
-    @PostMapping(value = "/run", produces = "application/zip")
+    @PostMapping(value = "/run")
     public ResponseEntity run(@RequestParam String name, @RequestParam(required = false) String data) {
 
         //All code should have the same uses as in the /evaluate endpoint

@@ -93,19 +93,21 @@ export default function DownloadModal(properties) {
     if (properties.type === "Module") selectOptions.push({ value: "image", label: "Download Image" });
     if (properties.type === "Attachment") selectOptions.push({ value: "download", label: "Download Attachment" });
 
-    const url = 'http://localhost:6789/';
 
     axios({
       method: 'GET',
-      url: `${url}plugins`,
-      responseType: 'application/json'
+      url: `http://localhost:7777/plugins`,
+      responseType: 'application/json',
+      params: {
+        category: 'download'
+      }
     }).then(response => {
-      const downloadPlugins = response.data.download;
+      const downloadPlugins = response.data;
 
       for(let plugin of downloadPlugins) {
         axios({
           method: 'POST',
-          url: `${url}call`,
+          url: `http://localhost:7777/call`,
           params: {
             name: plugin.name,
             endpoint: 'evaluate',
