@@ -3,6 +3,7 @@ import { saveAs } from 'file-saver';
 import JSZip from 'jszip';
 import getConfig from 'next/config';
 import { mutate } from 'swr';
+import FileDropzone from '../components/Submit/FileComponents/FileDropzone';
 const mime = require('mime-types')
 
 import * as types from './types';
@@ -236,7 +237,27 @@ export const submit =
       const token = getState().user.token;
 
       if (pluginName != 'default') {
-        submitPluginHandler(pluginName, files, token);
+        let unzippedFiles = [];
+        for(let file of files) {
+          if(mime.lookup(file.name) === 'application/zip') {
+            var zip = new JSZip();
+            const result = await zip.loadAsync(file);
+            const keys = Object.keys(result.files);
+
+            for (let key of keys) {
+              if(!key.includes('__MACOSX/._')) {
+                const currFile = await result.files[key].async('blob');
+                currFile.name = key
+                unzippedFiles.push(currFile);
+              }
+            }
+          }
+          else {
+            unzippedFiles.push(file);
+          }
+        }
+        files = unzippedFiles;
+        files = await submitPluginHandler(pluginName, files);
       }
 
       await uploadFiles(
@@ -347,7 +368,7 @@ async function uploadFiles(
   }
 }
 
-const submitPluginHandler = (pluginName, files, token) => {
+async function submitPluginHandler(pluginName, files) {
 
   const evaluateManifest = {
     manifest: {
@@ -359,17 +380,13 @@ const submitPluginHandler = (pluginName, files, token) => {
     evaluateManifest.manifest.files.push({
       url: file.url ? file.url : 'Unsuccessful', //File url isn't working
       filename: file.name,
-      type: mime.lookup(file.name) ? mime.lookup(file.name) : '',
+      type: '',
       instanceUrl: publicRuntimeConfig.backend
     })
   }
 
-  
-  let returnManifest = [];
-  let acceptedFiles = [];
 
-
-  axios({
+  return axios({
     method: 'POST',
     url: `${publicRuntimeConfig.backend}/call`,
     responseType: 'application/json',
@@ -378,8 +395,11 @@ const submitPluginHandler = (pluginName, files, token) => {
       endpoint: 'evaluate',
       data: encodeURIComponent(JSON.stringify(evaluateManifest))
     }
-  }).then(response => {
+  }).then(async function(response) {
     
+    let returnManifest = [];
+    let acceptedFiles = [];
+    let returnFiles = [];
 
     const requirementManifest = response.data.manifest;
 
@@ -392,37 +412,57 @@ const submitPluginHandler = (pluginName, files, token) => {
       }
     }
 
-  }).catch(error => {
-    return;
-  })
-
-  const runManifest = {
-    manifest: {
-      files: acceptedFiles
+    const runManifest = {
+      manifest: {
+        files: acceptedFiles
+      }
     }
-  }
 
-  let returnFiles = [];
-
-  axios({
-    method: 'POST',
-    url: `${publicRuntimeConfig.backend}/call`,
-    responseType: 'arraybuffer',
-    params: {
-      name: pluginName,
-      endpoint: 'evaluate',
-      data: encodeURIComponent(JSON.stringify(runManifest))
+    for(let rejected of returnManifest) {
+      for(let file of files) {
+        if(file.name === rejected.filename) {
+          returnFiles.push(file);
+        }
+      }
     }
-  }).then(response => {
-    //Need to unzip response and deal with files
-    returnFiles.push(response.data);
-  }).catch(error => {
-    return;
-  })
 
+    return axios({
+      method: 'POST',
+      url: `${publicRuntimeConfig.backend}/call`,
+      responseType: 'arraybuffer',
+      params: {
+        name: pluginName,
+        endpoint: 'run',
+        data: encodeURIComponent(JSON.stringify(runManifest))
+      }
+    }).then(async function (response) {
+      //Need to unzip response and deal with files
+
+      const pluginZip = response.data;
+
+      var zip = new JSZip();
+      const result = await zip.loadAsync(pluginZip);
+      const keys = Object.keys(result.files);
+
+      for(let key of keys) {
+        if(key !== 'manifest.json') {
+          const currFile = await result.files[key].async('blob');
+          currFile.name = key;
+          returnFiles.push(currFile);
+        }
+      }
+      return returnFiles;
+    }).catch(error => {
+      axios({method: 'POST', url: 'http://localhost:6789/test', params: 'Error with request'});
+      return files;
+    })
+
+
+  }).catch(error => {
+    axios({method: 'POST', url: 'http://localhost:6789/test', params: 'Error with request'});
+    return files;
+  });
 //Need to make for loop to recombine files and send back to submit (maybe test first with just sending back plugin files and no default handlers)
-
-return returnFiles;
 
 }
 
