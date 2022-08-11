@@ -22,7 +22,7 @@ const { publicRuntimeConfig } = getConfig();
 function Submit() {
   const [files, setFiles] = useState([]);
   const [overwriteCollection, setOverwriteCollection] = useState(false);
-  const [selectedHandler, setSelectedHandler] = useState({value: 'default', label: 'Default Handler'});
+  const [selectedHandlers, setSelectedHandlers] = useState([]);
   let pluginsAvailable = false;
 
   const showSubmitProgress = useSelector(
@@ -33,7 +33,7 @@ function Submit() {
   dispatch(getCanSubmitTo());
 
   const getSelectOptions = () => {
-    const selectOptions = [{value: 'default', label: 'Default Handler'}];
+    const selectOptions = [];
 
     axios({
       method: 'GET',
@@ -85,13 +85,12 @@ function Submit() {
         <UploadFileSection files={files} setFiles={setFiles} />
           <Select 
             className={styles.ownerselectcontainer}
-            value={selectedHandler.value === 'default' ? null : selectedHandler}
+            value={selectedHandlers}
             onChange={(e) => {
-              if (e.value !== undefined) {
-                setSelectedHandler({ value: e.value, label: e.label });
-              }
+                setSelectedHandlers(e);
             }}
             options={getSelectOptions()}
+            isMulti={true}
             menuPortalTarget={document.body}
             styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
             getOptionValue={option => option.label}
@@ -102,7 +101,7 @@ function Submit() {
           checked={overwriteCollection}
           setChecked={setOverwriteCollection}
         />
-        <SubmitButton files={files} overwriteCollection={overwriteCollection} submitHandler={selectedHandler.value} />
+        <SubmitButton files={files} overwriteCollection={overwriteCollection} submitHandlers={selectedHandlers} />
         
       </div>
     </div>

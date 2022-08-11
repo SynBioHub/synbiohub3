@@ -222,7 +222,7 @@ export const setLimit = newLimit => dispatch => {
  * @returns
  */
 export const submit =
-  (uri, files, overwriteIncrement = 0, addingToCollection = false, pluginName) =>
+  (uri, files, overwriteIncrement = 0, addingToCollection = false, plugins = []) =>
     async (dispatch, getState) => {
       dispatch({
         type: types.SUBMITRESET,
@@ -236,8 +236,11 @@ export const submit =
 
       const token = getState().user.token;
 
-      if (pluginName != 'default') {
+
+      //Look for pluginName
+      if (plugins.length != 0) {
         let unzippedFiles = [];
+        let convertedFiles = [];
         for(let file of files) {
           if(mime.lookup(file.name) === 'application/zip') {
             var zip = new JSZip();
@@ -256,8 +259,11 @@ export const submit =
             unzippedFiles.push(file);
           }
         }
-        files = unzippedFiles;
-        files = await submitPluginHandler(pluginName, files);
+        for(let plugin of plugins) {
+          [convertedFiles, unzippedFiles] = await submitPluginHandler(plugin.value, convertedFiles, unzippedFiles);
+        }
+        convertedFiles = convertedFiles.concat(unzippedFiles);
+        files = convertedFiles;
       }
 
       await uploadFiles(
@@ -368,7 +374,7 @@ async function uploadFiles(
   }
 }
 
-async function submitPluginHandler(pluginName, files) {
+async function submitPluginHandler(pluginName, convertedFiles, files) {
 
   const evaluateManifest = {
     manifest: {
@@ -448,19 +454,19 @@ async function submitPluginHandler(pluginName, files) {
         if(key !== 'manifest.json') {
           const currFile = await result.files[key].async('blob');
           currFile.name = key;
-          returnFiles.push(currFile);
+          convertedFiles.push(currFile);
         }
       }
-      return returnFiles;
+      return [convertedFiles, returnFiles];
     }).catch(error => {
       axios({method: 'POST', url: 'http://localhost:6789/test', params: 'Error with request'});
-      return files;
+      return [files, convertedFiles];
     })
 
 
   }).catch(error => {
     axios({method: 'POST', url: 'http://localhost:6789/test', params: 'Error with request'});
-    return files;
+    return [files, convertedFiles];
   });
 //Need to make for loop to recombine files and send back to submit (maybe test first with just sending back plugin files and no default handlers)
 
