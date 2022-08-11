@@ -12,13 +12,20 @@ export default function Plugin(properties) {
     }
   }, [status]);
 
-  return <Section title={properties.plugin.name}>{status}</Section>;
+  return <Section title={properties.plugin.name}>{status ? `${properties.plugin.name} is up and running`: `${properties.plugin.name} is not working`}</Section>;
 }
 
 async function evaluatePlugin(url) {
-  try {
-    return await axios.get(`${url}status`);
-  } catch (error) {
-    return <div>{error.toString()}</div>;
-  }
+    return await axios({
+      method: 'POST',
+      url: 'http://localhost:7777/call',
+      params: {
+        name: plugin.name,
+        endpoint: 'status'
+      }
+    }).then(response => {
+      return response.status === 200;
+    }).catch(error => {
+      return false;
+    });
 }
