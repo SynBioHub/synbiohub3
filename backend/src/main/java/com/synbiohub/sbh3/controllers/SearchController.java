@@ -206,5 +206,4 @@ public class SearchController {
 //    public String sequenceSearch() throws JsonProcessingException {
 //        return "Done";
 //    }
-    // test
 }
