@@ -31,7 +31,7 @@ public class EditController {
      */
     @PostMapping(value = "/updateMutableDescription")
     @ResponseBody
-    public ResponseEntity<String> getResults(@RequestParam Map<String,String> allParams, @RequestHeader("X-authorization") String xauth, HttpServletRequest request) throws JsonProcessingException {
+    public ResponseEntity<String> updateMutableDescription(@RequestParam Map<String, String> allParams, @RequestHeader("X-authorization") String xauth, HttpServletRequest request) throws JsonProcessingException {
         String topLevelUri = allParams.get("uri");
         String value = allParams.get("value");
         if (!userService.validateXAuth(xauth) || !userService.isOwnedBy(topLevelUri))
@@ -43,6 +43,54 @@ public class EditController {
         log.debug(query);
         editService.AuthSPARQLQuery(query);
 
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/updateMutableNotes")
+    @ResponseBody
+    public ResponseEntity<String> updateMutableNotes(@RequestParam Map<String, String> allParams, @RequestHeader("X-authorization") String xauth, HttpServletRequest request) throws JsonProcessingException {
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/updateMutableSource")
+    @ResponseBody
+    public ResponseEntity<String> updateMutableSource(@RequestParam Map<String, String> allParams, @RequestHeader("X-authorization") String xauth, HttpServletRequest request) throws JsonProcessingException {
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/updateCitations")
+    @ResponseBody
+    public ResponseEntity<String> updateCitations(@RequestParam Map<String, String> allParams, @RequestHeader("X-authorization") String xauth, HttpServletRequest request) throws JsonProcessingException {
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/editField")
+    @ResponseBody
+    public ResponseEntity<String> editField(@RequestParam Map<String, String> allParams, @RequestHeader("X-authorization") String xauth, HttpServletRequest request) throws JsonProcessingException {
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/addField")
+    @ResponseBody
+    public ResponseEntity<String> addField(@RequestParam Map<String, String> allParams, @RequestHeader("X-authorization") String xauth, HttpServletRequest request) throws JsonProcessingException {
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/removeField")
+    @ResponseBody
+    public ResponseEntity<String> removeField(@RequestParam Map<String, String> allParams, @RequestHeader("X-authorization") String xauth, HttpServletRequest request) throws JsonProcessingException {
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/addToCollection")
+    @ResponseBody
+    public ResponseEntity<String> addToCollection(@RequestParam Map<String, String> allParams, @RequestHeader("X-authorization") String xauth, HttpServletRequest request) throws JsonProcessingException {
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/removeMembership")
+    @ResponseBody
+    public ResponseEntity<String> removeMembership(@RequestParam Map<String, String> allParams, @RequestHeader("X-authorization") String xauth, HttpServletRequest request) throws JsonProcessingException {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

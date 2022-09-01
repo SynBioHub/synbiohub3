@@ -18,4 +18,34 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Slf4j
 public class SubmitController {
+
+    @PostMapping(value = "/submit")
+    public ResponseEntity<String> submit(@RequestParam Map<String, String> allParams) {
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/makePublic")
+    public ResponseEntity<String> makePublic(@RequestParam Map<String, String> allParams) {
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/removeCollection")
+    public void removeCollection(@RequestParam Map<String, String> allParams) {
+
+    }
+
+    @GetMapping(value = "/remove")
+    public void removeObject(@RequestParam Map<String, String> allParams) {
+
+    }
+
+    @GetMapping(value = "/replace")
+    public void replaceObject(@RequestParam Map<String, String> allParams) {
+
+    }
+
+    @PostMapping(value = "/icon")
+    public ResponseEntity<String> updateIcon(@RequestParam Map<String, String> allParams) {
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

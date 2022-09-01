@@ -4,8 +4,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.synbiohub.sbh3.services.SearchService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.json.JSONObject;
 import org.springframework.web.bind.annotation.*;
 
+import javax.json.Json;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
@@ -83,13 +85,30 @@ public class SearchController {
      * @return All root collections
      */
     @GetMapping(value = "/rootCollections")
-    public String getRootCollections() throws JsonProcessingException{
+    public String getRootCollections() throws JsonProcessingException {
 
         String sparqlQuery = searchService.getRootCollectionsSPARQL();
         log.info("Getting root collections");
         return searchService.collectionToOutput(searchService.SPARQLQuery(sparqlQuery));
     }
 
+    /**
+     * Returns the meta data on all submissions for the user specified by the X-authorization token.
+     * @return JSON metadata
+     */
+    @GetMapping(value = "/manage")
+    public JSONObject getSubmissions() throws JsonProcessingException {
+        return null;
+    }
+
+    /**
+     * Returns the meta data on objects that other users have shared with the user specified by the X-authorization token.
+     * @return JSON metadata
+     */
+    @GetMapping(value = "/shared")
+    public JSONObject getSharedObjects() throws JsonProcessingException {
+        return null;
+    }
 
     /**
      * Returns the collections that are members of another collection.
@@ -102,22 +121,8 @@ public class SearchController {
                            HttpServletRequest request) throws JsonProcessingException {
 
         String collectionInfo = String.format("%s/%s/%s/%s", visibility, collectionID, displayID, version);
-
-
         String sparqlQuery = searchService.getSubCollectionsSPARQL(collectionInfo);
         return searchService.collectionToOutput(searchService.SPARQLQuery(sparqlQuery));
-    }
-
-    /**
-     * Returns the number of objects with a specified object type.
-     * @param request The incoming type to count
-     * @return A count in plaintext
-     */
-    @GetMapping("/{type:.+}/count")
-    public String getTypeCount(@PathVariable("type") String type, HttpServletRequest request) throws JsonProcessingException {
-
-        String sparqlQuery = searchService.getTypeCountSPARQL(type);
-        return searchService.JSONToCount(searchService.SPARQLQuery(sparqlQuery));
     }
 
     /**
@@ -127,13 +132,31 @@ public class SearchController {
      */
     @GetMapping("/{visibility:.+}/{collectionID:.+}/{displayID:.+}/{version:.+}/twins")
     public String getTwins(@PathVariable("visibility") String visibility, @PathVariable("collectionID") String collectionID,
-                          @PathVariable("displayID") String displayID, @PathVariable("version") String version,
-                          HttpServletRequest request) throws JsonProcessingException {
+                           @PathVariable("displayID") String displayID, @PathVariable("version") String version,
+                           HttpServletRequest request) throws JsonProcessingException {
 
         String collectionInfo = String.format("%s/%s/%s/%s", visibility, collectionID, displayID, version);
 
 
         String sparqlQuery = searchService.getURISPARQL(collectionInfo, "twins");
+        return searchService.rawJSONToOutput(searchService.SPARQLOrExplorerQuery(sparqlQuery));
+    }
+
+    /**
+     * Returns other components that have similar sequences.
+     * Note that this endpoint only works if SBOLExplorer is activated.
+     * @param
+     * @return JSON containing all components with similar sequences.
+     */
+    @GetMapping("/{visibility:.+}/{collectionID:.+}/{displayID:.+}/{version:.+}/similar")
+    public String getSimilar(@PathVariable("visibility") String visibility, @PathVariable("collectionID") String collectionID,
+                           @PathVariable("displayID") String displayID, @PathVariable("version") String version,
+                           HttpServletRequest request) throws JsonProcessingException {
+
+        String collectionInfo = String.format("%s/%s/%s/%s", visibility, collectionID, displayID, version);
+
+
+        String sparqlQuery = searchService.getURISPARQL(collectionInfo, "similar");
         return searchService.rawJSONToOutput(searchService.SPARQLOrExplorerQuery(sparqlQuery));
     }
 
@@ -155,7 +178,17 @@ public class SearchController {
         return searchService.rawJSONToOutput(searchService.SPARQLQuery(sparqlQuery));
     }
 
+    /**
+     * Returns the number of objects with a specified object type.
+     * @param request The incoming type to count
+     * @return A count in plaintext
+     */
+    @GetMapping("/{type:.+}/count")
+    public String getTypeCount(@PathVariable("type") String type, HttpServletRequest request) throws JsonProcessingException {
 
+        String sparqlQuery = searchService.getTypeCountSPARQL(type);
+        return searchService.JSONToCount(searchService.SPARQLQuery(sparqlQuery));
+    }
 
     /**
      * Returns the results of the SPARQL query in JSON format.
@@ -167,6 +200,10 @@ public class SearchController {
     @ResponseBody
     public String getSPARQL(@RequestParam String query)  {
         return searchService.SPARQLQuery(query);
-
     }
+
+//    @GetMapping(value = "/search/**")
+//    public String sequenceSearch() throws JsonProcessingException {
+//        return "Done";
+//    }
 }
