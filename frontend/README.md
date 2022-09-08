@@ -1,7 +1,13 @@
 ## Getting Started
 
+Note: The following instructions are for installing the frontend of SBH3, NOT THE BACKEND. For information on
+getting the SBH3 backend setup locally, please see the README in the /frontend directory
+
+### Manual Installation
+
 Download or clone the repository on github. Then, make sure to install
 all dependencies by running the following command in your terminal in the /frontend directory:
+
 ```bash
 yarn install
 # or
@@ -19,6 +25,8 @@ npm run dev
 yarn dev
 ```
 
+### Installing and running through Docker
+
 Open [http://localhost:3333](http://localhost:3333) with your browser to see the result.
 
 ## Developer Notes
@@ -30,11 +38,14 @@ deeply nested props. To view how this application uses Redux, see the /redux dir
 
 This app uses eslint that is set up for React/Next.js code. To run the linter, navigate to
 the frontend directory in your terminal (the directory this README is in) and run the command:
+
 ```
 npm run lint
 ```
+
 If you'd like to format all code and fix minor styling errors (recommened before pushing anything
 to the directory), run the command:
+
 ```
 npm run lint.fix
 ```
