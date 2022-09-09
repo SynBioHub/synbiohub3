@@ -14,83 +14,115 @@
       "icon": "faIcon",
       "startingPred": "pred",
       "columns": {
-          "access": {
-            "title": "Access",
-            "predicates": [
-              ["$uri", "sbol2", "component"],
-              ["component", "access", "sbol2"]
+        "access": {
+          "title": "Access",
+          "predicates": {
+            "text": [
+              "sbol2:component",
+              "sbol2:access"
             ],
-            "icon": "faInfo",
-            "link": "http://sbols.org/v2#access",
-            "info": "Learn more about access"
+            "link": [
+              "sbol2:component",
+              "sbol2:access"
+            ]
           },
-          "instance": {
-            "title": "Instance",
-            "predicates": [
-              "pred1",
-              "pred2"
+          "icon": "faInfo",
+          "link": "http://sbols.org/v2#access",
+          "info": "Learn more about access"
+        },
+        "instance": {
+          "title": "Instance",
+          "predicates": {
+            "text": [
+              "sbol2:displayId"
             ],
-            "icon": "faInfo",
-            "link": "http://sbols.org/v2#Component",
-            "info": "Learn more about components"
+            "link": [
+              "sbol2:component"
+            ]
           },
-          "definition": {
-            "title": "Definition",
-            "predicates": [
-              "pred1",
-              "pred2"
+          "icon": "faInfo",
+          "link": "http://sbols.org/v2#Component",
+          "info": "Learn more about components"
+        },
+        "definition": {
+          "title": "Definition",
+          "predicates": {
+            "text": [
+              "sbol2:displayId"
             ],
-            "icon": "faInfo",
-            "link": "http://sbols.org/v2#definition",
-            "info": "Learn more about definitions"
-          }
+            "link": [
+              "sbol2:persistentIdentity"
+            ]
+          },
+          "icon": "faInfo",
+          "link": "http://sbols.org/v2#definition",
+          "info": "Learn more about definitions"
         }
+      }
     },
     {
       "title": "Sequence Annotations",
       "icon": "faIcon",
       "startingPred": "pred",
       "columns": {
-          "sequenceAnnotation": {
-            "title": "Sequence Annotation",
-            "predicates": [
-              "pred1",
-              "pred2"
+        "sequenceAnnotation": {
+          "title": "Sequence Annotation",
+          "predicates": {
+            "text": [
+              "sbol2:component",
+              "sbol2:access"
             ],
-            "icon": "faInfo",
-            "link": "http://sbols.org/v2#SequenceAnnotation",
-            "info": "Learn more about Sequence Annotations"
-          },
-          "location": {
-            "title": "Location",
-            "predicates": [
-              "pred1",
-              "pred2"
-            ],
-            "icon": "faInfo",
-            "link": "http://sbols.org/v2#Location",
-            "info": "Learn more about Locations"
-          },
-          "componentRoles": {
-            "title": [
-              "Component",
-              "Role(s)"
-            ],
-            "predicates": [
-              "pred1",
-              "pred2"
-            ],
-            "icon": "faInfo",
             "link": [
-              "http://sbols.org/v2#component",
-              "http://sbols.org/v2#role"
-            ],
-            "info": [
-              "Learn more about components",
-              "Learn more about roles"
+              "sbol2:component",
+              "sbol2:access"
             ]
-          }
+          },
+          "icon": "faInfo",
+          "link": "http://sbols.org/v2#SequenceAnnotation",
+          "info": "Learn more about Sequence Annotations"
+        },
+        "location": {
+          "title": "Location",
+          "predicates": {
+            "text": [
+              "sbol2:component",
+              "sbol2:access"
+            ],
+            "link": [
+              "sbol2:component",
+              "sbol2:access"
+            ]
+          },
+          "icon": "faInfo",
+          "link": "http://sbols.org/v2#Location",
+          "info": "Learn more about Locations"
+        },
+        "componentRoles": {
+          "title": [
+            "Component",
+            "Role(s)"
+          ],
+          "predicates": {
+            "text": [
+              "sbol2:component",
+              "sbol2:access"
+            ],
+            "link": [
+              "sbol2:component",
+              "sbol2:access"
+            ]
+          },
+          "icon": "faInfo",
+          "link": [
+            "http://sbols.org/v2#component",
+            "http://sbols.org/v2#role"
+          ],
+          "info": [
+            "Learn more about components",
+            "Learn more about roles"
+          ]
         }
+      }
     }
   ],
   "pages": [

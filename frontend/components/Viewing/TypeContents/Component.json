@@ -18,14 +18,12 @@
           "title": "Access",
           "predicates": [
             [
-              "$uri",
-              "sbol2",
-              "component"
+              "sbol2:component",
+              "sbol2:access"
             ],
             [
-              "component",
-              "access",
-              "sbol2"
+              "sbol2:component",
+              "sbol2:access"
             ]
           ],
           "icon": "faInfo",
@@ -35,8 +33,12 @@
         "instance": {
           "title": "Instance",
           "predicates": [
-            "pred1",
-            "pred2"
+            [
+              "sbol2:displayId"
+            ],
+            [
+              "sbol2:component"
+            ]
           ],
           "icon": "faInfo",
           "link": "http://sbols.org/v2#Component",
@@ -45,8 +47,12 @@
         "definition": {
           "title": "Definition",
           "predicates": [
-            "pred1",
-            "pred2"
+            [
+              "sbol2:displayId"
+            ],
+            [
+              "sbol2:persistentIdentity"
+            ]
           ],
           "icon": "faInfo",
           "link": "http://sbols.org/v2#definition",
@@ -62,8 +68,14 @@
         "sequenceAnnotations": {
           "title": "Sequence Annotations",
           "predicates": [
-            "pred1",
-            "pred2"
+            [
+              "sbol2:component",
+              "sbol2:access"
+            ],
+            [
+              "sbol2:component",
+              "sbol2:access"
+            ]
           ],
           "icon": "faInfo",
           "link": "http://sbols.org/v2#SequenceAnnotation",
@@ -72,8 +84,14 @@
         "location": {
           "title": "Location",
           "predicates": [
-            "pred1",
-            "pred2"
+            [
+              "sbol2:component",
+              "sbol2:access"
+            ],
+            [
+              "sbol2:component",
+              "sbol2:access"
+            ]
           ],
           "icon": "faInfo",
           "link": "http://sbols.org/v2#Location",
@@ -85,8 +103,14 @@
             "Role(s)"
           ],
           "predicates": [
-            "pred1",
-            "pred2"
+            [
+              "sbol2:component",
+              "sbol2:access"
+            ],
+            [
+              "sbol2:component",
+              "sbol2:access"
+            ]
           ],
           "icon": "faInfo",
           "link": [

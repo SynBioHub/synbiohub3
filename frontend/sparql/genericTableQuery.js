@@ -3,19 +3,13 @@ PREFIX sbol2: <http://sbols.org/v2#>
 PREFIX dcterms: <http://purl.org/dc/terms/>
 
 SELECT
-    ?access
+    ?pred$id
 WHERE {
-    <https://synbiohub.org/public/igem/BBa_K1001752/1> sbol2:component ?component
-    OPTIONAL { ?component sbol2:access ?access . }
+    {
+      $subquery
+    }
+    <$uri> $predicate ?pred$id
 }
 `;
 
-/*
-SELECT
-    $predicate
-WHERE {
-    <$uri> sbol2:component ?component
-    OPTIONAL { ?component sbol2:access ?access . }
-}
-
-*/
+export default query;

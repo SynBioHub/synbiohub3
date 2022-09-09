@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import getComponents from '../../../sparql/getComponents';
 import getLocation from "../../../sparql/getLocation";
+import genericTableQuery from "../../../sparql/genericTableQuery";
 import getQueryResponse from '../../../sparql/tools/getQueryResponse';
 
 import Loading from '../../Reusable/Loading';
@@ -21,23 +22,67 @@ import styles from '../../../styles/view.module.css';
  */
 export default function Components(properties) {
   const [components, setComponents] = useState();
+  const [rowPredicates, setRowPredicates] = useState([]);
+  const [jsonFile, setJsonFile] = useState();
+  const [tableIndex, setTableIndex] = useState();
 
   //Sets the information from virtuoso into a state variable.
   useEffect(() => {
-    if (components == undefined) {
+    //Lets the file know what the correct JSON file is.
+    if (properties.type === "Collection") setJsonFile(collectionJSON);
+    else if (properties.type === "Component") setJsonFile(componentJSON);
+    else if (properties.type === "ComponentDefinition") setJsonFile(componentJSON);
+
+    //Gets the information from the correct table and organizes it into a variable.
+    if(tableIndex !== undefined && rowPredicates.length === 0) {
+      const columns = jsonFile.tables[tableIndex].columns;
+      const columnNames = Object.keys(columns);
+
+      for(let i = 0; i < columnNames.length; i++) {
+        const columnInfo = columns[columnNames[i]].predicates;
+        setRowPredicates(currRows => [...currRows, columnInfo]);
+      }
+    }
+
+    if(rowPredicates !== undefined) {
+      for(let i = 0; i < rowPredicates.length; i++) {
+        for(let j = 0; j < rowPredicates[i].length; j++) {
+          if(rowPredicates[i][j].length > 1) {
+            //there needs to be a nested subquery
+          } else {
+            //no subquery query immediately w/ pred
+            getQueryResponse(genericTableQuery, { uri: properties.uri, id: i+j, subquery: "", predicate: rowPredicates[i][j][0] }).then(res => {
+              //console.log(res);
+            });
+          }
+          // for(let k = 0; k < rowPredicates[i][j].length; k++) {
+          //   console.log(rowPredicates[i][j][k]);
+          //   getQueryResponse(genericTableQuery, { uri: properties.uri, id: i+j+k, subquery: "", predicate: rowPredicates[i][j][k] }).then(res => {
+          //     //console.log(res);
+          //   });
+          // }
+          console.log(rowPredicates[i][j])
+        }
+      }
+    }
+
+    //TODO, i have the predicates set to rowPredicates but now i actually need to query them and dispay that queried data.
+
+    //Sets the table index so the file knows which table is being rendered.
+    if(jsonFile !== undefined) {
+      for(let i = 0; i < jsonFile.tables.length; i++) {
+        if(jsonFile.tables[i].title === properties.title) setTableIndex(i);
+      }
+    }
+
+    if(components === undefined) {
       getQueryResponse(properties.title === "Sequence Annotations" ? getLocation : getComponents, { uri: properties.uri }).then(props => {
         if (props.length > 0) setComponents(props);
       });
     }
-  }, [components]);
+  });
 
   if (!components) return <Loading />;
-
-  let tableColumns;
-  if (properties.type === "Collection") tableColumns = getColumns(collectionJSON);
-  else if (properties.type === "Component") tableColumns = getColumns(componentJSON);
-  else if (properties.type === "ComponentDefinition") tableColumns = getColumns(componentJSON);
-
   /**
    * Handles which section the information is needed to be gotten from.
    * 
@@ -90,7 +135,7 @@ export default function Components(properties) {
   }
 
   //Generates the table headers with their corresponding links.
-  const header = createHeader(tableColumns);
+  const header = createHeader(getColumns(jsonFile));
 
   return (
     <div>
