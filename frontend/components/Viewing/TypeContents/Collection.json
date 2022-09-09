@@ -1,0 +1,134 @@
+{
+  "type": "http://sbols.org/v2#Collection",
+  "metadata": {
+    "role": {
+      "title": "Role",
+      "pred": "pred",
+      "icon": "faIcon"
+    },
+    "type": {}
+  },
+  "tables": [
+    {
+      "title": "Components",
+      "icon": "faIcon",
+      "startingPred": "pred",
+      "columns": {
+        "access": {
+          "title": "Access",
+          "predicates": {
+            "text": [
+              "sbol2:component",
+              "sbol2:access"
+            ],
+            "link": [
+              "sbol2:component",
+              "sbol2:access"
+            ]
+          },
+          "icon": "faInfo",
+          "link": "http://sbols.org/v2#access",
+          "info": "Learn more about access"
+        },
+        "instance": {
+          "title": "Instance",
+          "predicates": {
+            "text": [
+              "sbol2:displayId"
+            ],
+            "link": [
+              "sbol2:component"
+            ]
+          },
+          "icon": "faInfo",
+          "link": "http://sbols.org/v2#Component",
+          "info": "Learn more about components"
+        },
+        "definition": {
+          "title": "Definition",
+          "predicates": {
+            "text": [
+              "sbol2:displayId"
+            ],
+            "link": [
+              "sbol2:persistentIdentity"
+            ]
+          },
+          "icon": "faInfo",
+          "link": "http://sbols.org/v2#definition",
+          "info": "Learn more about definitions"
+        }
+      }
+    },
+    {
+      "title": "Sequence Annotations",
+      "icon": "faIcon",
+      "startingPred": "pred",
+      "columns": {
+        "sequenceAnnotation": {
+          "title": "Sequence Annotation",
+          "predicates": {
+            "text": [
+              "sbol2:component",
+              "sbol2:access"
+            ],
+            "link": [
+              "sbol2:component",
+              "sbol2:access"
+            ]
+          },
+          "icon": "faInfo",
+          "link": "http://sbols.org/v2#SequenceAnnotation",
+          "info": "Learn more about Sequence Annotations"
+        },
+        "location": {
+          "title": "Location",
+          "predicates": {
+            "text": [
+              "sbol2:component",
+              "sbol2:access"
+            ],
+            "link": [
+              "sbol2:component",
+              "sbol2:access"
+            ]
+          },
+          "icon": "faInfo",
+          "link": "http://sbols.org/v2#Location",
+          "info": "Learn more about Locations"
+        },
+        "componentRoles": {
+          "title": [
+            "Component",
+            "Role(s)"
+          ],
+          "predicates": {
+            "text": [
+              "sbol2:component",
+              "sbol2:access"
+            ],
+            "link": [
+              "sbol2:component",
+              "sbol2:access"
+            ]
+          },
+          "icon": "faInfo",
+          "link": [
+            "http://sbols.org/v2#component",
+            "http://sbols.org/v2#role"
+          ],
+          "info": [
+            "Learn more about components",
+            "Learn more about roles"
+          ]
+        }
+      }
+    }
+  ],
+  "pages": [
+    "Members",
+    "Details",
+    "Other Properties",
+    "Attachments"
+  ]
+}

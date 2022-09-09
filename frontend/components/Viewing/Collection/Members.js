@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import useSWR from 'swr';
 import axios from 'axios';
@@ -86,7 +86,7 @@ export default function Members(properties) {
   }
 
   return (
-    <Section title="Members">
+    <React.Fragment>
       <FilterHeader
         filters={filters}
         setTypeFilter={setTypeFilter} />
@@ -106,7 +106,7 @@ export default function Members(properties) {
         defaultSortOption={defaultSortOption}
         setDefaultSortOption={setDefaultSortOption}
       />
-    </Section>
+    </React.Fragment>
   );
 }
 
