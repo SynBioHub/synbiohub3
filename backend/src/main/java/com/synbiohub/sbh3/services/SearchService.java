@@ -20,12 +20,10 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Handles the business logic (parsing keys, formatting SPARQL, etc)
@@ -40,7 +38,7 @@ public class SearchService {
      * @return String containing SPARQL query
      * @see SearchController#getResults(Map, HttpServletRequest)
      */
-    public String getMetadataQuerySPARQL(Map<String,String> allParams) {
+    public String getMetadataQuerySPARQL(Map<String,String> allParams) throws UnsupportedEncodingException {
         SPARQLQuery searchQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/search.sparql");
         HashMap<String, String> sparqlArgs = new HashMap<String, String>
                 (Map.of("from", "", "criteria", "", "limit", "", "offset", ""));
@@ -68,7 +66,8 @@ public class SearchService {
 
         String userGraph = getPrivateGraph();
         if (!userGraph.isEmpty()) {
-            sparqlArgs.replace("from", "FROM <" + userGraph + ">\nFROM <" + ConfigUtil.get("triplestore").get("defaultGraph").toString());
+            String defaultGraph = ConfigUtil.get("triplestore").get("defaultGraph").toString();
+            sparqlArgs.replace("from", "FROM <" + defaultGraph.substring(1,defaultGraph.length()-1) + ">\nFROM NAMED <" + userGraph + ">");
         }
 
         return searchQuery.loadTemplate(sparqlArgs);
@@ -79,15 +78,21 @@ public class SearchService {
      * @param allParams Key/value pairs from GET request
      * @return SPARQL-compatible criteria string
      */
-    private String getCriteriaString(Map<String, String> allParams) {
+    private String getCriteriaString(Map<String, String> allParams) throws UnsupportedEncodingException {
         String criteriaString = "";
 
         var paramMap = allParams.entrySet();
 
         // Take care of URL encoded string of params
         for (Map.Entry<String, String> param : paramMap) {
+//            String params = URLDecoder.decode(param.getKey(), StandardCharsets.UTF_8.name());
+//            String[] splitParam = params.split("=");
+//            allParams.put(splitParam[0], splitParam[1]);
+//            paramMap.remove(param);
+
             if (paramMap.size() == 1 && (param.getKey().contains("&") || param.getKey().contains("="))) {
-                var params = param.getKey().split("=|&");
+                String params1 = URLDecoder.decode(param.getKey(), StandardCharsets.UTF_8.name());
+                String[] params = param.getKey().split("=|&");
                 for (int i = 0; i < params.length - 1; i+= 2) {
                     allParams.put(params[i], params[i+1]);
                 }
@@ -98,9 +103,9 @@ public class SearchService {
 
         for (Map.Entry<String, String> param : paramMap) {
 
-            // A tag in the dcterms namespace to search for
+            // Search for "Created by.."
             if (param.getKey().contains(":")) {
-                criteriaString += "   ?subject " + param.getKey() + " " + param.getValue() + " . ";
+                criteriaString += "   ?subject " + param.getKey() + " '" + param.getValue().substring(1, param.getValue().length()-2) + "' . ";
             }
             // Type of object to search for
             else if (param.getKey().equals("objectType")) {
@@ -110,7 +115,7 @@ public class SearchService {
                     criteriaString += "   ?subject a sbol2:" + param.getValue() + " . ";
                 }
             } else if (param.getKey().equals("collection")) {
-                criteriaString += "   ?collection a sbol2:Collection .   " + param.getValue() + " sbol2:member ?subject .";
+                criteriaString += "?subject a <http://sbols.org/v2#Collection> .";
             } else if (param.getKey().equals("createdBefore")) {
                 criteriaString += "   FILTER (xsd:dateTime(?cdate) <= \"" + param.getValue() + "T23:59:59Z\"^^xsd:dateTime) ";
             } else if (param.getKey().equals("createdAfter")) {
@@ -165,7 +170,7 @@ public class SearchService {
      * @param allParams Key/value pairs from GET request
      * @return Count of a part
      */
-    public String getSearchCountSPARQL(Map<String,String> allParams) {
+    public String getSearchCountSPARQL(Map<String,String> allParams) throws UnsupportedEncodingException {
         SPARQLQuery searchQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/searchCount.sparql");
         HashMap<String, String> sparqlArgs = new HashMap<String, String>
                 (Map.of("from", "", "criteria", ""));
@@ -385,7 +390,7 @@ public class SearchService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication instanceof AnonymousAuthenticationToken) return "";
         //var user = authentication.getPrincipal();
-        return ConfigUtil.get("triplestore").get("graphPrefix").asText() + "user/" + authentication.getName();
+        return ConfigUtil.get("triplestore").get("graphPrefix").asText() + "/user/" + authentication.getName();
     }
 
     // Method to encode a string value using `UTF-8` encoding scheme

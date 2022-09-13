@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.json.Json;
 import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
 @RestController
@@ -27,7 +28,7 @@ public class SearchController {
      */
     @GetMapping(value = "/search")
     @ResponseBody
-    public String getResults(@RequestParam Map<String,String> allParams, HttpServletRequest request) throws JsonProcessingException {
+    public String getResults(@RequestParam Map<String,String> allParams, HttpServletRequest request) throws JsonProcessingException, UnsupportedEncodingException {
         String sparqlQuery = searchService.getMetadataQuerySPARQL(allParams);
         return searchService.rawJSONToOutput(searchService.SPARQLOrExplorerQuery(sparqlQuery));
     }
@@ -41,7 +42,7 @@ public class SearchController {
      * @return Redirect to search controller
      */
     @GetMapping(value = "/search/**", produces = "text/plain")
-    public String redirectOldSearch(HttpServletRequest request, @RequestParam Map<String,String> allParams) throws JsonProcessingException{
+    public String redirectOldSearch(HttpServletRequest request, @RequestParam Map<String,String> allParams) throws JsonProcessingException, UnsupportedEncodingException {
         String requestURL = request.getRequestURL().toString();
         String[] uriArr = requestURL.split("/");
         String keyword = uriArr[uriArr.length - 1].split("\\?")[0];
@@ -57,7 +58,7 @@ public class SearchController {
      */
     @GetMapping(value = "/searchCount")
     @ResponseBody
-    public String getSearchCount(@RequestParam Map<String,String> allParams) throws JsonProcessingException {
+    public String getSearchCount(@RequestParam Map<String,String> allParams) throws JsonProcessingException, UnsupportedEncodingException {
         String sparqlQuery = searchService.getSearchCountSPARQL(allParams);
         return searchService.JSONToCount(searchService.SPARQLOrExplorerQuery(sparqlQuery));
     }
@@ -71,7 +72,7 @@ public class SearchController {
      * @return Redirect to search count controller
      */
     @GetMapping(value = "/searchCount/**", produces = "text/plain")
-    public String redirectOldSearchCount(HttpServletRequest request, @RequestParam Map<String,String> allParams) throws JsonProcessingException{
+    public String redirectOldSearchCount(HttpServletRequest request, @RequestParam Map<String,String> allParams) throws JsonProcessingException, UnsupportedEncodingException {
         String requestURL = request.getRequestURL().toString();
         String[] uriArr = requestURL.split("/");
         String keyword = uriArr[uriArr.length - 1].split("\\?")[0];
@@ -86,7 +87,6 @@ public class SearchController {
      */
     @GetMapping(value = "/rootCollections")
     public String getRootCollections() throws JsonProcessingException {
-
         String sparqlQuery = searchService.getRootCollectionsSPARQL();
         log.info("Getting root collections");
         return searchService.collectionToOutput(searchService.SPARQLQuery(sparqlQuery));
