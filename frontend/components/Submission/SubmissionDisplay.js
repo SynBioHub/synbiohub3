@@ -12,6 +12,7 @@ const { publicRuntimeConfig } = getConfig();
 import styles from '../../styles/submissions.module.css';
 
 export default function SubmissionDisplay(properties) {
+  console.log(properties.submission.uri);
   const router = useRouter();
 
   const [privacyDisplay, setPrivacyDisplay] = useState();
@@ -35,10 +36,7 @@ export default function SubmissionDisplay(properties) {
       className={styles.submission}
       onClick={() => {
         router.push(
-          properties.submission.uri.replace(
-            'https://synbiohub.org',
-            publicRuntimeConfig.backend
-          )
+          properties.submission.uri.replace('https://synbiohub.org', '')
         );
       }}
     >
