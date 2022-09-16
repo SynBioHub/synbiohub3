@@ -42,6 +42,7 @@
   padding: 0;
   margin: 0 0.5rem 0 0;
   font-size: 1.4rem;
+  white-space: nowrap;
 }
 
 .panelbutton {
@@ -56,6 +57,12 @@
 
 .panelbutton:hover {
   transform: rotate(90deg);
+}
+
+.titleHolder {
+  max-width: 17rem;
+  overflow: scroll;
+  padding-bottom: 1rem;
 }
 
 .displayId {
