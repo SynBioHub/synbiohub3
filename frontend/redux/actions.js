@@ -413,6 +413,10 @@ async function submitPluginHandler(pluginName, convertedFiles, files) {
       if(requirementManifest[i].requirement === 0) {
         returnManifest.push(evaluateManifest.manifest.files[i]);
       }
+      else if (requirementManifest[i] === 1) {
+        returnManifest.push(evaluateManifest.manifest.files[i]);
+        acceptedFiles.push(evaluateManifest.manifest.files[i]);
+      }
       else {
         acceptedFiles.push(evaluateManifest.manifest.files[i]);
       }
