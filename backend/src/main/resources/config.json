@@ -1,7 +1,7 @@
 {
   "firstLaunch": true,
   "instanceName": "SynBioHub",
-  "instanceUrl": "http://synbiohub.org/",
+  "instanceUrl": "https://synbiohub.org/",
   "instanceLogo": "",
   "keywords": "synbiohub",
   "javaPath": "java",
@@ -13,8 +13,8 @@
   "webOfRegistriesUrl" : "https://wor.synbiohub.org",
   "port": 6789,
   "triplestore": {
-      "sparqlEndpoint": "http://localhost:8890/sparql",
-      "graphStoreEndpoint": "http://localhost:8890/sparql-graph-crud-auth/",
+      "sparqlEndpoint": "http://virtuoso:8890/sparql",
+      "graphStoreEndpoint": "http://virtuoso:8890/sparql-graph-crud-auth/",
       "defaultGraph": "https://synbiohub.org/public",
       "graphPrefix": "https://synbiohub.org/",
       "username": "dba",
@@ -23,7 +23,7 @@
       "virtuosoDB": "/var/lib/virtuoso-opensource-7/db",
       "isql": "isql-vt"
   },
-  "SBOLExplorerEndpoint": "http://localhost:13162/",
+  "SBOLExplorerEndpoint": "http://virtuoso:13162/",
   "useSBOLExplorer": false,
   "databasePrefix": "http://synbiohub.org/",
   "sessionSecret": "synbiohub_change_me",

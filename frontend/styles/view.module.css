@@ -321,13 +321,18 @@
   cursor: pointer;
 }
 
-.description {
+.description div {
   margin-top: 0.5rem;
   padding-left: 0.5rem;
   border-left: 4px solid #D25627;
   font-weight: 500;
   font-size: 1rem;
   cursor: pointer;
+  width: fit-content;
+}
+
+.description {
+  cursor: default;
 }
 
 .detailsheader {
