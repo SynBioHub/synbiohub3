@@ -239,7 +239,7 @@ public class PluginController {
     }
 
 
-/*
+
     @PostMapping(value = "/save")
     public String save() {
         return "Save successful\n";
@@ -249,8 +249,6 @@ public class PluginController {
     public String parameters() {
         return "Parameters successful\n";
     }
-
- */
 
 
     @PostMapping(value = "/call")

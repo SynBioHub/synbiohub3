@@ -297,18 +297,14 @@ const getCitationInfo = async (ids) => {
   parameters.append("id", ids);
   parameters.append("retmode", "xml");
 
-  try {
-    const response = await fetch(url, {
-      method: "POST",
-      body: parameters
-    });
+  const response = await fetch(url, {
+    method: "POST",
+    body: parameters
+  });
 
-    const citationXML = await response.text();
-    if (response.status === 200) return parseCitationInfo(citationXML);
-    else return undefined;
-  } catch(e) {
-    return undefined;
-  }
+  const citationXML = await response.text();
+  if (response.status === 200) return parseCitationInfo(citationXML);
+  else return undefined;
 }
 
 //Details needs this information to set the default look of references.

@@ -1,18 +1,7 @@
 ## Getting Started
 
-Note: The following instructions are for installing the frontend of SBH3, NOT THE BACKEND. For information on
-getting the SBH3 backend setup locally, please see the README in the [/backend](../backend/README.md) directory of this repo.
-
-### Manual Installation
-
-Prerequisites - Install following software:
-
-- [Node & NPM](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
-- [Yarn](https://classic.yarnpkg.com/lang/en/docs/install)
-
 Download or clone the repository on github. Then, make sure to install
 all dependencies by running the following command in your terminal in the /frontend directory:
-
 ```bash
 yarn install
 # or
@@ -30,48 +19,7 @@ npm run dev
 yarn dev
 ```
 
-### Installing and running through Docker
-
-Prerequisites - Install following software:
-
-- [Docker](https://www.docker.com/)
-
-Installation steps:
-
-1. Open terminal
-2. Pull frontend image from docker hub by running `docker pull synbiohub/sbh3frontend:snapshot` in terminal
-3. Open [docker desktop](https://docs.docker.com/desktop/)
-4. Confirm that you see the `synbiohub/sbh3frontend` image in the `images` tab:
-   <br />
-   <br />
-   ![Docker image for SBH3 frontend](./images/docker_images.png)
-   <br />
-   <br />
-5. Hover mouse over the image and click `Run`
-   <br />
-   <br />
-   ![Run image](./images/run_image.png)
-   <br />
-   <br />
-6. Expand `Optional settings` dropdown BEFORE clicking the `Run` button
-7. In `Optional settings`, enter `3333` in the "Host port" text field
-8. In `Optional settings`, add an environment variable with "Variable" `backend` and "Value" `[backend address of SBH w/o ending slash]`
-   <br />
-   <br />
-   <img src="./images/settings.png" height="600">
-   <br />
-   <br />
-9. Click `Run`
-10. Go to the `Containers` section of docker desktop and verify that a container with `IMAGE` = `synbiohub/sbh3frontend:snapshot`, `STATUS` = `Running` and `PORT(S)` = `3333` exists
-    <br />
-    <br />
-    ![Container running (second container)](./images/containers.png)
-    <br />
-    <br />
-11. Open [http://localhost:3333](http://localhost:3333) with your browser to see the frontend up and running :)
-
-Note: For easier setup, these instructions are catered towards users of Docker desktop, which is normally installed along with Docker.
-Docker desktop is not necessary to run SBH3's frontend with Docker. All of the actions above that involve Docker desktop have corresponding Docker commands that can be executed in the terminal.
+Open [http://localhost:3333](http://localhost:3333) with your browser to see the result.
 
 ## Developer Notes
 
@@ -82,14 +30,11 @@ deeply nested props. To view how this application uses Redux, see the /redux dir
 
 This app uses eslint that is set up for React/Next.js code. To run the linter, navigate to
 the frontend directory in your terminal (the directory this README is in) and run the command:
-
 ```
 npm run lint
 ```
-
 If you'd like to format all code and fix minor styling errors (recommened before pushing anything
 to the directory), run the command:
-
 ```
 npm run lint.fix
 ```

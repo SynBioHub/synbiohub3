@@ -1,12 +1,9 @@
 import styles from '../../styles/view.module.css';
+import { CollectionContent, collectionPages } from './TypeContents/CollectionContent';
 import Plugin from './Plugin';
 import SidePanel from './SidePanel';
 import ViewHeader from './ViewHeader';
-
-import componentJSON from "./TypeContents/Component.json";
-import collectionJSON from "./TypeContents/Collection.json";
-
-import GenericContent from './TypeContents/GenericContent';
+import { ComponentContent, componentPages } from './TypeContents/ComponentContent';
 
 export default function Shell(properties) {
   const plugins = properties.plugins;
@@ -44,13 +41,18 @@ function Plugins(properties) {
 }
 
 function getContent(type, uri) {
-  return type ? <GenericContent type = {type} uri={uri} /> : undefined;
+  switch (type) {
+    case 'Collection':
+      return <CollectionContent uri={uri} />
+    case 'ComponentDefinition':
+    case 'Component':
+      return <ComponentContent uri={uri} />
+    default:
+      return undefined;
+  }
 }
 
 function getPages(type) {
-  const componentPages = componentJSON.pages;
-  const collectionPages = collectionJSON.pages;
-
   switch (type) {
     case 'Collection':
       return getOrder('Collection', collectionPages);

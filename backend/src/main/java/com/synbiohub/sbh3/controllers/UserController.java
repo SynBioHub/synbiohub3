@@ -33,6 +33,19 @@ public class UserController {
     private final UserService userService;
     private final ObjectMapper mapper;
 
+    @PostMapping(value = "/register")
+    public ResponseEntity registerNewUser(@RequestParam Map<String, String> params) {
+        try {
+            var userRegistrationDTO = ObjectMapperUtils.map(params, UserRegistrationDTO.class);
+            customUserService.registerNewUserAccount(userRegistrationDTO);
+        } catch (Exception e) {
+            log.error("Error creating a new account.");
+            e.printStackTrace();
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
     @PostMapping(value = "/login", produces = "text/plain", consumes = "application/x-www-form-urlencoded")
     public ResponseEntity<String> login(@RequestParam String email, @RequestParam String password, HttpServletRequest request, HttpServletResponse response) {
         Authentication auth;
@@ -49,35 +62,6 @@ public class UserController {
         return ResponseEntity.ok(RequestContextHolder.currentRequestAttributes().getSessionId());
     }
 
-    @PostMapping(value = "/logout")
-    @ResponseStatus(HttpStatus.OK)
-    public void logout(HttpSession session) {
-        session.invalidate();
-    }
-
-    @PostMapping(value = "/register")
-    public ResponseEntity registerNewUser(@RequestParam Map<String, String> params) {
-        try {
-            var userRegistrationDTO = ObjectMapperUtils.map(params, UserRegistrationDTO.class);
-            customUserService.registerNewUserAccount(userRegistrationDTO);
-        } catch (Exception e) {
-            log.error("Error creating a new account.");
-            e.printStackTrace();
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
-        }
-        return new ResponseEntity(HttpStatus.OK);
-    }
-
-    @PostMapping(value = "/resetPassword")
-    public ResponseEntity<String> resetPassword(@RequestParam Map<String, String> allParams) {
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    @PostMapping(value = "/setNewPassword")
-    public ResponseEntity<String> setNewPassword(@RequestParam Map<String, String> allParams) {
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
     @GetMapping(value = "/profile", produces = "text/plain")
     public ResponseEntity<String> getProfile() throws JsonProcessingException {
         var user = userService.getUserProfile();
@@ -86,16 +70,10 @@ public class UserController {
         return ResponseEntity.ok(mapper.writeValueAsString(user));
     }
 
-    @PostMapping(value = "/profile", produces = "text/plain")
-    public ResponseEntity<String> updateProfile() throws JsonProcessingException {
-        var user = userService.getUserProfile();
-        if (user == null)
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        return new ResponseEntity<>(HttpStatus.OK);
+    @PostMapping(value = "/logout")
+    @ResponseStatus(HttpStatus.OK)
+    public void logout(HttpSession session) {
+        session.invalidate();
     }
-
-
-
-
 
 }
