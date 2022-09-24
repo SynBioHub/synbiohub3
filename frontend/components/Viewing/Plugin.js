@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react';
 import parse from 'html-react-parser';
 
 import Section from './Sections/Section';
+import getConfig from 'next/config';
+const { publicRuntimeConfig } = getConfig();
 
 export default function Plugin(properties) {
   const [status, setStatus] = useState(null);
@@ -42,7 +44,7 @@ export default function Plugin(properties) {
 async function evaluatePlugin(plugin, type) {
     return await axios({
       method: 'POST',
-      url: 'http://localhost:7777/call',
+      url: `${publicRuntimeConfig.backend}/call`,
       params: {
         name: plugin.name,
         endpoint: 'status'
@@ -53,7 +55,7 @@ async function evaluatePlugin(plugin, type) {
       }
       return axios({
         method: 'POST',
-        url: 'http://localhost:7777/call',
+        url: `${publicRuntimeConfig.backend}/call`,
         params: {
           name: plugin.name,
           endpoint: 'evaluate',
@@ -72,7 +74,7 @@ async function evaluatePlugin(plugin, type) {
 async function runPlugin(plugin, pluginData) {
   return await axios({
     method: 'POST',
-    url: 'http://localhost:7777/call',
+    url: `${publicRuntimeConfig.backend}/call`,
     params: {
       name: plugin.name,
       endpoint: 'run',

@@ -463,13 +463,11 @@ async function submitPluginHandler(pluginName, convertedFiles, files) {
       }
       return [convertedFiles, returnFiles];
     }).catch(error => {
-      axios({method: 'POST', url: 'http://localhost:6789/test', params: 'Error with request'});
       return [files, convertedFiles];
     })
 
 
   }).catch(error => {
-    axios({method: 'POST', url: 'http://localhost:6789/test', params: 'Error with request'});
     return [files, convertedFiles];
   });
 //Need to make for loop to recombine files and send back to submit (maybe test first with just sending back plugin files and no default handlers)
