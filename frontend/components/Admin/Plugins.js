@@ -4,7 +4,8 @@ import {
   faSave,
   faTimesCircle,
   faTrashAlt,
-  faExclamationCircle
+  faExclamationCircle,
+  faRedo
 } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
@@ -152,8 +153,21 @@ function PluginDisplay(properties) {
       <td>{properties.plugin.name}</td>
       <td>
         <code>{properties.plugin.url}</code>
-        {!status ? <span>       <FontAwesomeIcon icon={faExclamationCircle} color={'#FB4C27'}></FontAwesomeIcon>  Plugin is not Running</span>
+        {!status ? <span><FontAwesomeIcon icon={faExclamationCircle} color={'#FB4C27'}></FontAwesomeIcon> Plugin is not Running</span>
           : null}
+      </td>
+      <td>
+        <ActionButton 
+        action="Reload"
+        icon={faRedo}
+        onClick={() => {
+          const checkStatus = async () => {
+            const hidden = await fetchStatus(properties.plugin);
+            setStatus(hidden);
+          };
+          checkStatus();
+        }}
+        />
       </td>
       <td>
         <div className={styles.actionbuttonscontainer}>
