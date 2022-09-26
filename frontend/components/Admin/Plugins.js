@@ -158,7 +158,7 @@ function PluginDisplay(properties) {
       </td>
       <td>
         <ActionButton 
-        action="Reload"
+        action="Refresh Plugin Status"
         icon={faRedo}
         onClick={() => {
           const checkStatus = async () => {
