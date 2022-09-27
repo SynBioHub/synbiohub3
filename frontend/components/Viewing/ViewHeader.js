@@ -32,8 +32,8 @@ export default function ViewHeader(properties) {
         </Link>
       </div>
       <Link href={`${publicRuntimeConfig.backend}/search/?q=${properties.description}`}>
-        <a title="Find all records with terms in common with this description" target="_blank">
-          <div className={styles.description}>{properties.description}</div>
+        <a className={styles.description} title="Find all records with terms in common with this description" target="_blank">
+          <div>{properties.description}</div>
         </a>
       </Link>
     </div>

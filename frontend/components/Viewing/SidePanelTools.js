@@ -2,10 +2,10 @@ import {
   faCloudDownloadAlt,
   faDatabase,
   faQuoteRight,
-  faShareSquare,
   faTrashAlt,
   faCopy,
-  faLink
+  faLink,
+  faShareAlt
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -110,7 +110,7 @@ export default function SidePanelTools(properties) {
       </div>
       <div className={styles.actionicons}>
         <FontAwesomeIcon
-          icon={faShareSquare}
+          icon={faShareAlt}
           size="1x"
           className={styles.actionicon}
           onClick={() => {

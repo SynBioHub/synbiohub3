@@ -148,20 +148,6 @@ public class PluginController {
 
     }
 
-    @PostMapping(value = "/test")
-    public void test(@RequestParam String message) {
-        try {
-            message = URLDecoder.decode(message, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            message += " failed";
-        }
-        log.info(message);
-    }
-
-
-
-
-
     @PostMapping(value = "/run")
     public ResponseEntity run(@RequestParam String name, @RequestParam(required = false) String data) {
 
@@ -239,7 +225,7 @@ public class PluginController {
     }
 
 
-
+/*
     @PostMapping(value = "/save")
     public String save() {
         return "Save successful\n";
@@ -249,6 +235,8 @@ public class PluginController {
     public String parameters() {
         return "Parameters successful\n";
     }
+
+ */
 
 
     @PostMapping(value = "/call")
