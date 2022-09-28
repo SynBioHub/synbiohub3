@@ -3,12 +3,15 @@ import {
   faPlusCircle,
   faSave,
   faTimesCircle,
-  faTrashAlt
+  faTrashAlt,
+  faExclamationCircle,
+  faRedo
 } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import useSWR, { mutate } from 'swr';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import styles from '../../styles/admin.module.css';
 import Table from '../Reusable/Table/Table';
@@ -130,10 +133,18 @@ function PluginDisplay(properties) {
   const [editMode, setEditMode] = useState(false);
   const [name, setName] = useState(properties.plugin.name);
   const [url, setUrl] = useState(properties.plugin.url);
+  const [status, setStatus] = useState(true);
 
   useEffect(() => {
     setName(properties.plugin.name);
     setUrl(properties.plugin.url);
+
+      const checkStatus = async () => {
+        const hidden = await fetchStatus(properties.plugin);
+        setStatus(hidden);
+      };
+      checkStatus();
+
   }, [properties.plugin.name, properties.plugin.url]);
 
   return !editMode ? (
@@ -142,6 +153,21 @@ function PluginDisplay(properties) {
       <td>{properties.plugin.name}</td>
       <td>
         <code>{properties.plugin.url}</code>
+        {!status ? <span><FontAwesomeIcon icon={faExclamationCircle} color={'#FB4C27'}></FontAwesomeIcon> Plugin is not Running</span>
+          : null}
+      </td>
+      <td>
+        <ActionButton 
+        action="Refresh Plugin Status"
+        icon={faRedo}
+        onClick={() => {
+          const checkStatus = async () => {
+            const hidden = await fetchStatus(properties.plugin);
+            setStatus(hidden);
+          };
+          checkStatus();
+        }}
+        />
       </td>
       <td>
         <div className={styles.actionbuttonscontainer}>
@@ -298,7 +324,23 @@ const usePlugins = token => {
   };
 };
 
-const fetcher = (url, token) =>
+
+async function fetchStatus(plugin) {
+  return await axios({
+    method: 'POST',
+    url: `${publicRuntimeConfig.backend}/call`,
+    params: {
+      name: plugin.name,
+      endpoint: 'status'
+    }
+  }).then(response => {
+    return response.status === 200;
+  }).catch(error => {
+    return false;
+  });
+}
+
+const fetcher = (url, token) => 
   axios
     .get(url, {
       headers: {
@@ -308,3 +350,4 @@ const fetcher = (url, token) =>
       }
     })
     .then(response => response.data);
+
