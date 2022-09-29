@@ -12,7 +12,7 @@ import { setAttachments } from '../../../../redux/actions';
 /**
  * If the user is the creator of the collection then the upload/lookup attachment section
  * and the garbage icon next to any attachments is shown.
- * 
+ *
  * @param {Any} properties Information passed down from parent component.
  * @returns The attachments and optional upload/lookup attachment section.
  */
@@ -28,22 +28,24 @@ export default function Attachments(properties) {
     if (owner == undefined) {
       //The attachments in the store should be reset, a new page has been loaded.
       dispatch(setAttachments([]));
-      
+
       //Gets the owner of the collection.
       getQueryResponse(getOwner, { uri: properties.uri }).then(owner => {
         if (owner.length > 0) setOwner(owner);
         //Handles multiple owners.
-        owner.map((res) => {
+        owner.map(res => {
           if (res.ownedBy === graphUri) setIsOwner(true);
         });
       });
 
       //Gets the initial attachments and passes them down to the children components.
-      getQueryResponse(getAttachments, { uri: properties.uri }).then(attachments => {
-        if (attachments.length > 0) {
-          dispatch(setAttachments(attachments));
+      getQueryResponse(getAttachments, { uri: properties.uri }).then(
+        attachments => {
+          if (attachments.length > 0) {
+            dispatch(setAttachments(attachments));
+          }
         }
-      });
+      );
     }
   }, [owner]);
 
@@ -53,8 +55,9 @@ export default function Attachments(properties) {
     <AttachmentsTable
       owner={isOwner}
       uri={properties.uri}
-      headers={["Type", "Name", "Size"]}
+      headers={['Type', 'Name', 'Size']}
       attachments={attachments}
+      setRefreshMembers={properties.setRefreshMembers}
     />
   );
 }
