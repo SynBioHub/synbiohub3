@@ -13,4 +13,5 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
  vim-tiny \  
  && apt-get clean && rm -rf /var/lib/apt/lists/*
 EXPOSE 6789 
+HEALTHCHECK --start-period=60s CMD ["node", "healthcheck.js"] 
 ENTRYPOINT ["java","-jar","app.jar"]
