@@ -13,6 +13,6 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
  vim-tiny \  
  && apt-get clean && rm -rf /var/lib/apt/lists/*
 EXPOSE 6789 
-HEALTHCHECK --start-period=60s 
+HEALTHCHECK --start-period=60s \
       CMD curl -f localhost:6789/rootCollections || exit 1 
 ENTRYPOINT ["java","-jar","app.jar"]
