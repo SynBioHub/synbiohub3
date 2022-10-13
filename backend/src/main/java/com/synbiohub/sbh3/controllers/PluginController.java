@@ -20,7 +20,7 @@ public class PluginController {
 
     private final PluginService pluginService;
 
-    @GetMapping(value = "/plugins")
+    @GetMapping(value = "/admin/plugins")
     @ResponseBody
     public String getPlugins() {
         return ConfigUtil.get("plugins").toString();
