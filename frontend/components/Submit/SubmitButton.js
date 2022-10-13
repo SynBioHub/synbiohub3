@@ -27,13 +27,14 @@ export default function SubmitButton(properties) {
           alert(
             'You must select one or more files and a destination collection before you can submit.'
           );
-        else
+        else 
           dispatch(
             submit(
               selectedCollection.uri,
               properties.files,
               properties.overwriteCollection ? 1 : 0,
-              properties.addingToCollection ? true : false
+              properties.addingToCollection ? true : false,
+              properties.submitHandlers
             )
           );
       }}

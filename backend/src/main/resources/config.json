@@ -13,8 +13,8 @@
   "webOfRegistriesUrl" : "https://wor.synbiohub.org",
   "port": 6789,
   "triplestore": {
-      "sparqlEndpoint": "http://localhost:8890/sparql",
-      "graphStoreEndpoint": "http://localhost:8890/sparql-graph-crud-auth/",
+      "sparqlEndpoint": "http://virtuoso:8890/sparql",
+      "graphStoreEndpoint": "http://virtuoso:8890/sparql-graph-crud-auth/",
       "defaultGraph": "https://synbiohub.org/public",
       "graphPrefix": "https://synbiohub.org/",
       "username": "dba",
