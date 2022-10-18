@@ -207,8 +207,8 @@ export default function Components(properties) {
     return components.map((obj, key) => {
       if(properties.title === "Sequence Annotations") {
         if(obj.start === "") return null;
-        const definitionIndex = components.length / 2 + key;
-        
+        // var definitionIndex = components.length / 2 + key;
+        var definitionIndex = 0
         return getRow(
           key,
           { title: obj.title, link: obj.persistentIdentity },
