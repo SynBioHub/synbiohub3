@@ -21,6 +21,7 @@ import TableInput from './Reusable/TableInput';
 const renderingType = 'rendering';
 const submittingType = 'submit';
 const downloadingType = 'download';
+const curatingType = 'curation';
 
 const searchable = ['index', 'name', 'url'];
 const headers = ['ID', 'Name', 'URL', ''];
@@ -55,6 +56,13 @@ export default function Plugins() {
         type={downloadingType}
         loading={loading}
         data={plugins ? plugins.download : undefined}
+      />
+      <PluginTable
+        token={token}
+        title="Curation"
+        type={curatingType}
+        loading={loading}
+        data={plugins ? plugins.curation : undefined}
       />
     </div>
   );
