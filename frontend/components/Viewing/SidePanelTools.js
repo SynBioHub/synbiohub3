@@ -10,7 +10,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from 'next/link';
 
 import DeleteModal from "./Modals/DeleteModal";
@@ -26,6 +26,7 @@ const { publicRuntimeConfig } = getConfig();
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import CurationModal from './Modals/CurationModal';
+import axios from 'axios';
 
 /**
  * The side panel buttons and their interactions.
@@ -34,6 +35,15 @@ import CurationModal from './Modals/CurationModal';
  */
 export default function SidePanelTools(properties) {
   const [modal, setModal] = useState();
+  const [curationAvailable, setCurationAvailable] = useState(false);
+
+  useEffect(() => {
+    const checkCurateAvailability = async () => {
+      const available = await checkCuration(properties.type);
+      setCurationAvailable(available);
+    }
+    checkCurateAvailability();
+  })
 
   //The styles for the toast saying the citation has been copied.
   const copyToast = (message) => toast(
@@ -133,6 +143,7 @@ export default function SidePanelTools(properties) {
             setModal("Download");
           }}
         />
+        {curationAvailable ?
         <FontAwesomeIcon
           icon={faFunnelDollar}
           size="1x"
@@ -140,7 +151,7 @@ export default function SidePanelTools(properties) {
           onClick={() => {
             setModal("Curation");
           }}
-        />
+        /> : null }
         <FontAwesomeIcon
           icon={faQuoteRight}
           size="1x"
@@ -169,4 +180,48 @@ export default function SidePanelTools(properties) {
       </div>
     </div>
   );
+}
+
+
+async function checkCuration(type) {
+  return await axios({
+    method: 'GET',
+    url: `${publicRuntimeConfig.backend}/plugins`,
+    responseType: 'application/json',
+    params: {
+      category: 'curation'
+    }
+  }).then(async function (response) {
+    const curatePlugins = response.data;
+    let pluginPromises = [];
+
+    const buildPromises = async () => {
+        for(let plugin of curatePlugins) {
+        pluginPromises.push(axios({
+          method: 'POST',
+          url: `${publicRuntimeConfig.backend}/call`,
+          params: {
+            name: plugin.name,
+            endpoint: 'evaluate',
+            data: {
+              type: type
+            }
+          }
+        }).then(response => {
+          return response.status === 200;
+        }).catch(error => {return false;}))
+      }
+    }
+
+    await buildPromises();
+
+    return Promise.all(pluginPromises).then(values => {
+      for(let value of values) {
+        if(value) return true;
+      }
+      return false;
+    })
+    
+  }).catch(error => {return false;});
+
 }
