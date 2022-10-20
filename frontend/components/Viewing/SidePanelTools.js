@@ -5,7 +5,8 @@ import {
   faTrashAlt,
   faCopy,
   faLink,
-  faShareAlt
+  faShareAlt,
+  faFunnelDollar
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -24,6 +25,7 @@ const { publicRuntimeConfig } = getConfig();
 
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import CurationModal from './Modals/CurationModal';
 
 /**
  * The side panel buttons and their interactions.
@@ -94,7 +96,13 @@ export default function SidePanelTools(properties) {
                 url={properties.url}
                 setModal={setModal}
               />
-              : null
+              : 
+              modal === "Curation" ?
+                <CurationModal
+                  setModal={setModal}
+                  type={properties.type}
+                />
+                : null
       }
       <div className={styles.id}>
         <Link href={`http://sbols.org/v2#${properties.type}`}>
@@ -123,6 +131,14 @@ export default function SidePanelTools(properties) {
           className={styles.actionicon}
           onClick={() => {
             setModal("Download");
+          }}
+        />
+        <FontAwesomeIcon
+          icon={faFunnelDollar}
+          size="1x"
+          className={styles.actionicon}
+          onClick={() => {
+            setModal("Curation");
           }}
         />
         <FontAwesomeIcon

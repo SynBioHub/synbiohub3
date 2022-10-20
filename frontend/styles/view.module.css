@@ -896,6 +896,14 @@
   width: 100%;
 }
 
+.curationcustomselect {
+  border-radius: 0.4rem;
+  color: gray;
+  width: 50%;
+  margin: auto;
+  margin-bottom: 10px;
+}
+
 .modalcontainer h5 {
   color: #2C3E50;
   margin-bottom: 7.5px;
@@ -919,6 +927,14 @@
   text-align: left;
   margin: 0 auto;
   padding: 4rem 0 4rem 0;
+}
+
+.curationmodalcontainer {
+  width: 70%;
+  height: 50%;
+  text-align: center;
+  margin: auto;
+  padding: 0;
 }
 
 .copylinkcontainer {
