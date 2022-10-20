@@ -39,11 +39,22 @@ export default function SidePanelTools(properties) {
 
   useEffect(() => {
     const checkCurateAvailability = async () => {
-      const available = await checkCuration(properties.type);
+      const available = await checkCuration(pluginData);
       setCurationAvailable(available);
     }
     checkCurateAvailability();
   })
+
+  const pluginData = {
+    complete_sbol: '',
+    shallow_sbol: '',
+    genbank: '',
+    top_level: '',
+    instanceUrl: '',
+    size: 0,
+    type: properties.type,
+    submit_link: ''
+  }
 
   //The styles for the toast saying the citation has been copied.
   const copyToast = (message) => toast(
@@ -183,7 +194,7 @@ export default function SidePanelTools(properties) {
 }
 
 
-async function checkCuration(type) {
+async function checkCuration(pluginData) {
   return await axios({
     method: 'GET',
     url: `${publicRuntimeConfig.backend}/plugins`,
@@ -203,9 +214,7 @@ async function checkCuration(type) {
           params: {
             name: plugin.name,
             endpoint: 'evaluate',
-            data: {
-              type: type
-            }
+            data: pluginData
           }
         }).then(response => {
           return response.status === 200;

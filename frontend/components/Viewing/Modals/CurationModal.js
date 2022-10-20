@@ -46,6 +46,17 @@ export default function CurationModal(properties) {
     const getSelectOptions = () => {
         const selectOptions = [];
 
+        const pluginData = {
+            complete_sbol: '',
+            shallow_sbol: '',
+            genbank: '',
+            top_level: '',
+            instanceUrl: '',
+            size: 0,
+            type: properties.type,
+            submit_link: ''
+        }
+
         if(selectedOption.value === "plugin") selectOptions.push({value: "default", label: "Clear Selection"});
 
         axios({
@@ -65,9 +76,7 @@ export default function CurationModal(properties) {
                     params: {
                         name: plugin.name,
                         endpoint: 'evaluate',
-                        data: {
-                        type: properties.type
-                        }
+                        data: pluginData
                     }
                     
                 }).then(response => {
