@@ -26,7 +26,9 @@ export default function CurationModal(properties) {
         top_level: '',
         instanceUrl: '',
         size: 0,
-        type: ''
+        type: properties.type,
+        submit_link: '',
+        eval_params: {}
       };
 
     useEffect(() => {
