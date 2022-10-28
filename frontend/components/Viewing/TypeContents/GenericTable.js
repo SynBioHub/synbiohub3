@@ -216,7 +216,6 @@ export default function Components(properties) {
       if (properties.title === 'Sequence Annotations') {
         if (obj.start === '') return null;
         const definitionIndex = Math.floor(components.length / 2) + key;
-
         return getRow(
           key,
           { title: obj.title, link: obj.persistentIdentity },

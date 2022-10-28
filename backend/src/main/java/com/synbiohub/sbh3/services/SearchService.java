@@ -40,7 +40,7 @@ public class SearchService {
      */
     public String getMetadataQuerySPARQL(Map<String,String> allParams) throws UnsupportedEncodingException {
         SPARQLQuery searchQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/search.sparql");
-        HashMap<String, String> sparqlArgs = new HashMap<String, String>
+        HashMap<String, String> sparqlArgs = new HashMap<>
                 (Map.of("from", "", "criteria", "", "limit", "", "offset", ""));
 
         // Process search parameters
@@ -55,11 +55,9 @@ public class SearchService {
                 sparqlArgs.replace("limit", "LIMIT " + param.getValue());
             }
         }
-        if (allParams.containsKey("offset"))
-            allParams.remove("offset"); // Remove this as we have already processed and it may mess up criteria string
+        allParams.remove("offset"); // Remove this as we have already processed and it may mess up criteria string
 
-        if (allParams.containsKey("limit"))
-            allParams.remove("limit");
+        allParams.remove("limit");
 
         String criteriaString = getCriteriaString(allParams);
         sparqlArgs.replace("criteria", criteriaString);
@@ -79,90 +77,101 @@ public class SearchService {
      * @return SPARQL-compatible criteria string
      */
     private String getCriteriaString(Map<String, String> allParams) throws UnsupportedEncodingException {
-        String criteriaString = "";
+        StringBuilder criteriaString = new StringBuilder();
 
         var paramMap = allParams.entrySet();
 
         // Take care of URL encoded string of params
         for (Map.Entry<String, String> param : paramMap) {
-//            String params = URLDecoder.decode(param.getKey(), StandardCharsets.UTF_8.name());
-//            String[] splitParam = params.split("=");
-//            allParams.put(splitParam[0], splitParam[1]);
-//            paramMap.remove(param);
-
-            if (paramMap.size() == 1 && (param.getKey().contains("&") || param.getKey().contains("="))) {
-                String params1 = URLDecoder.decode(param.getKey(), StandardCharsets.UTF_8.name());
-                String[] params = param.getKey().split("=|&");
-                for (int i = 0; i < params.length - 1; i+= 2) {
-                    allParams.put(params[i], params[i+1]);
+            if (paramMap.size() == 1 && param.getKey().contains("%")) {
+                String params = URLDecoder.decode(param.getKey(), StandardCharsets.UTF_8.name());
+                if (params.contains("&")) {
+                    String[] splitParams = params.split("&");
+                    for (String p:splitParams) {
+                        String[] splitParams1 = p.split("=");
+                        allParams.put(splitParams1[0], splitParams1[1]);
+                    }
+                    paramMap.remove(param);
+                } else {
+                    allParams.put(params, "");
+                    paramMap.remove(param);
                 }
-                paramMap.remove(param);
-            }
 
+            }
         }
 
         for (Map.Entry<String, String> param : paramMap) {
 
             // Search for "Created by.."
-            if (param.getKey().contains(":")) {
-                criteriaString += "   ?subject " + param.getKey() + " '" + param.getValue().substring(1, param.getValue().length()-2) + "' . ";
+            if (param.getKey().equals("dc:creator")) {
+                criteriaString.append("   ?subject ").append(param.getKey()).append(" '").append(param.getValue().substring(1, param.getValue().length() - 1)).append("' . ");
             }
             // Type of object to search for
             else if (param.getKey().equals("objectType")) {
-                if (param.getValue().contains(":")) {
-                    criteriaString += "   ?subject a " + param.getValue() + " . ";
-                } else {
-                    criteriaString += "   ?subject a sbol2:" + param.getValue() + " . ";
+                if (param.getValue().contains("Collection")) {
+                    criteriaString.append("?subject a <http://sbols.org/v2#Collection> .");
+                } else if (param.getValue().contains("Component")){
+                    criteriaString.append("?subject a <http://sbols.org/v2#ComponentDefinition> .");
+                } else if (param.getValue().contains("Sequence")){
+                    criteriaString.append("?subject a <http://sbols.org/v2#Sequence> .");
                 }
-            } else if (param.getKey().equals("collection")) {
-                criteriaString += "?subject a <http://sbols.org/v2#Collection> .";
-            } else if (param.getKey().equals("createdBefore")) {
-                criteriaString += "   FILTER (xsd:dateTime(?cdate) <= \"" + param.getValue() + "T23:59:59Z\"^^xsd:dateTime) ";
+            } else if (param.getKey().equalsIgnoreCase("collection")) {
+                criteriaString.append("?subject a <http://sbols.org/v2#Collection> .");
+            } else if (param.getKey().equalsIgnoreCase("component")) {
+                criteriaString.append("?subject a <http://sbols.org/v2#ComponentDefinition> .");
+            } else if (param.getKey().equalsIgnoreCase("sequence")) {
+                criteriaString.append("?subject a <http://sbols.org/v2#Sequence> .");
+            }
+
+            else if (param.getKey().equals("createdBefore")) {
+                criteriaString.append("  ?subject dcterms:created ?cdate . FILTER (xsd:dateTime(?cdate) <= \"").append(param.getValue()).append("T23:59:59Z\"^^xsd:dateTime) ");
             } else if (param.getKey().equals("createdAfter")) {
-                criteriaString += "   FILTER (xsd:dateTime(?cdate) >= \"" + param.getValue() + "T00:00:00Z\"^^xsd:dateTime) ";
+                criteriaString.append("  ?subject dcterms:created ?cdate . FILTER (xsd:dateTime(?cdate) >= \"").append(param.getValue()).append("T00:00:00Z\"^^xsd:dateTime) ");
             } else if (param.getKey().equals("modifiedBefore")) {
-                criteriaString += "   FILTER (xsd:dateTime(?mdate) <= \"" + param.getValue() + "T23:59:59Z\"^^xsd:dateTime) ";
+                criteriaString.append("  ?subject dcterms:modified ?mdate . FILTER (xsd:dateTime(?mdate) <= \"").append(param.getValue()).append("T23:59:59Z\"^^xsd:dateTime) ");
             } else if (param.getKey().equals("modifiedAfter")) {
-                criteriaString += "   FILTER (xsd:dateTime(?mdate) >= \"" + param.getValue() + "T00:00:00Z\"^^xsd:dateTime) ";
+                criteriaString.append("  ?subject dcterms:modified ?mdate . FILTER (xsd:dateTime(?mdate) >= \"").append(param.getValue()).append("T00:00:00Z\"^^xsd:dateTime) ");
             }
 
             // search keyword
             else if (param.getValue().equals("")) {
-                String[] searchTerms = param.getKey().split("/[ ]+/");
-                criteriaString += "FILTER (";
+//                String[] searchTerms = param.getKey().split("/[ ]+/");
+                String[] searchTerms = param.getKey().split(" ");
+                criteriaString.append("FILTER (");
                 boolean andMode = true;
                 boolean notMode = false;
                 for (int i = 0; i < searchTerms.length; i++) {
-                    if (searchTerms[i].equals("and")) {
-                        andMode = true;
-                        continue;
-                    } else if (searchTerms[i].equals("or")) {
-                        andMode = false;
-                        continue;
-                    } else if (searchTerms[i].equals("not")) {
-                        notMode = true;
-                        continue;
+                    switch (searchTerms[i]) {
+                        case "and":
+                            andMode = true;
+                            continue;
+                        case "or":
+                            andMode = false;
+                            continue;
+                        case "not":
+                            notMode = true;
+                            continue;
                     }
                     if (i > 0) {
-                        if (andMode) {
-                            criteriaString += "&&";
+                        if (notMode) {
+                            criteriaString.append("&& !");
+                            notMode = false;
+                        } else if (andMode) {
+                            criteriaString.append("&&");
                             andMode = false;
                         } else {
-                            criteriaString += "||";
+                            criteriaString.append("||");
                         }
                     }
-                    if (notMode) {
-                        criteriaString += " !";
-                    }
                     String criteria = "(CONTAINS(lcase(?displayId), lcase('%s'))||CONTAINS(lcase(?name), lcase('%s'))||CONTAINS(lcase(?description), lcase('%s')))";
-                    criteriaString += String.format(criteria, searchTerms[i], searchTerms[i], searchTerms[i]).replace("/''/g", "'\\''");
+                    criteriaString.append(String.format(criteria, searchTerms[i], searchTerms[i], searchTerms[i]).replace("/''/g", "'\\''"));
                 }
-                criteriaString += ')';
+                criteriaString.append(')');
             } else {
-                criteriaString += "   ?subject sbol2:" + param.getKey() + " " + param.getValue() + " . ";
+                criteriaString.append("   ?subject sbol2:").append(param.getKey()).append(" ").append(param.getValue()).append(" . ");
             }
         }
-        return criteriaString;
+        return criteriaString.toString();
     }
 
     /**
@@ -172,7 +181,7 @@ public class SearchService {
      */
     public String getSearchCountSPARQL(Map<String,String> allParams) throws UnsupportedEncodingException {
         SPARQLQuery searchQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/searchCount.sparql");
-        HashMap<String, String> sparqlArgs = new HashMap<String, String>
+        HashMap<String, String> sparqlArgs = new HashMap<>
                 (Map.of("from", "", "criteria", ""));
         String criteriaString = getCriteriaString(allParams);
         sparqlArgs.replace("criteria", criteriaString);
@@ -186,7 +195,7 @@ public class SearchService {
      */
     public String getTypeCountSPARQL(String type) {
         SPARQLQuery searchQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/Count.sparql");
-        HashMap<String, String> sparqlArgs = new HashMap<String, String>
+        HashMap<String, String> sparqlArgs = new HashMap<>
                 (Map.of("type", type));
         return searchQuery.loadTemplate(sparqlArgs);
     }
@@ -195,7 +204,7 @@ public class SearchService {
     public String getURISPARQL(String collectionInfo, String endpoint) {
         // Initialize arguments to be parsed into SPARQL template
         SPARQLQuery searchQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/search.sparql");
-        HashMap<String, String> sparqlArgs = new HashMap<String, String>
+        HashMap<String, String> sparqlArgs = new HashMap<>
                 (Map.of("from", getPrivateGraph(), "criteria", "", "limit", "", "offset", ""));
 
         String URI = ConfigUtil.get("databasePrefix").asText() + collectionInfo;
@@ -228,7 +237,7 @@ public class SearchService {
 
     public String getTwinsSPARQL(String collectionInfo) {
         SPARQLQuery searchQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/search.sparql");
-        HashMap<String, String> sparqlArgs = new HashMap<String, String>
+        HashMap<String, String> sparqlArgs = new HashMap<>
                 (Map.of("from", getPrivateGraph(), "criteria", "", "limit", "", "offset", ""));
 
         String URI = ConfigUtil.get("databasePrefix").asText() + collectionInfo;
@@ -254,7 +263,7 @@ public class SearchService {
         SPARQLQuery searchQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/SubCollectionMetadata.sparql");
         String IRI = "<" + ConfigUtil.get("databasePrefix").asText() + collectionInfo + ">";
 
-        HashMap<String, String> sparqlArgs = new HashMap<String, String>
+        HashMap<String, String> sparqlArgs = new HashMap<>
                 (Map.of("parentCollection", IRI));
 
         return searchQuery.loadTemplate(sparqlArgs);
@@ -318,7 +327,7 @@ public class SearchService {
 
     public String SPARQLOrExplorerQuery(String query) {
         RestTemplate restTemplate = new RestTemplate();
-        String url = "";
+        String url;
         // Encoding the SPARQL query to be sent to Explorer/SPARQL
         HashMap<String, String> params = new HashMap<>();
         params.put("default-graph-uri", ConfigUtil.get("triplestore").get("defaultGraph").asText());
@@ -334,7 +343,7 @@ public class SearchService {
 
     public String SPARQLQuery(String query) {
         RestTemplate restTemplate = new RestTemplate();
-        String url = "";
+        String url;
         HashMap<String, String> params = new HashMap<>();
         params.put("default-graph-uri", ConfigUtil.get("triplestore").get("defaultGraph").asText());
         params.put("query", query);
@@ -346,7 +355,7 @@ public class SearchService {
 
     public byte[] SPARQLRDFXMLQuery(String query) {
         RestTemplate restTemplate = new RestTemplate();
-        String url = "";
+        String url;
         HashMap<String, String> params = new HashMap<>();
         params.put("default-graph-uri", ConfigUtil.get("triplestore").get("defaultGraph").asText());
         params.put("query", query);
@@ -368,7 +377,7 @@ public class SearchService {
      */
     public byte[] queryOldSBHSparqlEndpoint(String WOREndpoint, String query) {
         RestTemplate restTemplate = new RestTemplate();
-        String url = "";
+        String url;
         HashMap<String, String> params = new HashMap<>();
         params.put("query", query);
         HttpHeaders httpHeaders = new HttpHeaders();
