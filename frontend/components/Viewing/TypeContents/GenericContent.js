@@ -8,6 +8,7 @@ import Members from '../../Viewing/Collection/Members';
 
 import { useSelector } from 'react-redux';
 import { Fragment } from 'react';
+import TableBuilder from './TableBuilder';
 
 export default function GenericContent(properties) {
   const pageSectionsOrder = useSelector(state => state.pageSections.order);
@@ -46,21 +47,13 @@ function getSection(sectionName, properties) {
     case 'Components':
       return (
         <Section title={sectionName}>
-          <GenericTable
-            title={sectionName}
-            type={properties.type}
-            uri={properties.uri}
-          />
+          <TableBuilder uri={properties.uri} index={1} />
         </Section>
       );
     case 'Sequence Annotations':
       return (
         <Section title={sectionName}>
-          <GenericTable
-            title={sectionName}
-            type={properties.type}
-            uri={properties.uri}
-          />
+          <TableBuilder uri={properties.uri} index={0} />
         </Section>
       );
     case 'Other Properties':
