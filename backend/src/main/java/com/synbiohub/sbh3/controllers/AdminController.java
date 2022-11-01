@@ -4,6 +4,7 @@ import com.synbiohub.sbh3.services.AdminService;
 import com.synbiohub.sbh3.services.UserService;
 import com.synbiohub.sbh3.utils.ConfigUtil;
 import lombok.AllArgsConstructor;
+import org.json.JSONObject;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -156,8 +157,8 @@ public class AdminController {
 
     @GetMapping(value = "/admin/theme")
     @ResponseBody
-    public String getTheme(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
-        return null;
+    public JSONObject getTheme() {
+        return adminService.getTheme();
     }
 
     @PostMapping(value = "/admin/theme")
