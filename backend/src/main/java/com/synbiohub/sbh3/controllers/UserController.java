@@ -95,13 +95,15 @@ public class UserController {
 
     }
 
+    // TODO: this is hardcoded, but for true setup, need interceptor for this endpoint through frontend -> Ben
     @PostMapping(value = "/setup")
     public ResponseEntity<String> setup(@RequestParam Map<String, String> allParams) throws AuthenticationException {
         if (configUtil.isLaunched()) {
             return new ResponseEntity<>(HttpStatus.OK);
         }
-        registerNewUser(allParams); // may need to change this method if mapper doesn't work correctly (params don't line up)
-        userService.setUpConfig(allParams);
+        registerNewUser(userService.registerNewAdminUser(allParams)); // assumes no users in repository, should crate admin user
+        // only first user is admin
+        userService.setUpConfig(allParams); // completely rewrites config.local.json
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

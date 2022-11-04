@@ -132,4 +132,16 @@ public class UserService {
         configUtil.setLocalConfig(allParams);
     }
 
+    public Map<String, String> registerNewAdminUser(Map<String, String> allParams) {
+        Map<String, String> registerParams = new HashMap<>();
+        registerParams.put("username", allParams.get("userName"));
+        registerParams.put("name", allParams.get("userFullName"));
+        registerParams.put("affiliation", allParams.get("affiliation"));
+        registerParams.put("email", allParams.get("userEmail"));
+        registerParams.put("password1", allParams.get("userPassword"));
+        registerParams.put("password2", allParams.get("userPasswordConfirm"));
+        return registerParams;
+
+    }
+
 }
