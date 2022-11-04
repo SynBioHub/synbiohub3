@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.synbiohub.sbh3.dto.UserRegistrationDTO;
 import com.synbiohub.sbh3.security.CustomUserService;
 import com.synbiohub.sbh3.services.UserService;
+import com.synbiohub.sbh3.utils.ConfigUtil;
 import com.synbiohub.sbh3.utils.ObjectMapperUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.Map;
+import java.util.Objects;
 
 @RestController
 @AllArgsConstructor
@@ -33,6 +35,7 @@ public class UserController {
     private final AuthenticationManager authenticationManager;
     private final UserService userService;
     private final ObjectMapper mapper;
+    private final ConfigUtil configUtil;
 
     @PostMapping(value = "/login", produces = "text/plain", consumes = "application/x-www-form-urlencoded")
     public ResponseEntity login(@RequestParam String email, @RequestParam String password, HttpServletRequest request, HttpServletResponse response) {
@@ -44,6 +47,7 @@ public class UserController {
         var securityContext = SecurityContextHolder.getContext();
         securityContext.setAuthentication(auth);
         request.getSession().setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, securityContext);
+        log.info("User logged in successfully");
         return ResponseEntity.ok(RequestContextHolder.currentRequestAttributes().getSessionId());
     }
 
@@ -63,6 +67,7 @@ public class UserController {
             e.printStackTrace();
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
+        log.info("User registered successfully");
         return new ResponseEntity(HttpStatus.OK);
     }
 
@@ -88,6 +93,16 @@ public class UserController {
     public ResponseEntity<String> updateProfile(@RequestParam Map<String, String> allParams) throws JsonProcessingException, AuthenticationException {
         return userService.updateUser(mapper, allParams);
 
+    }
+
+    @PostMapping(value = "/setup")
+    public ResponseEntity<String> setup(@RequestParam Map<String, String> allParams) throws AuthenticationException {
+        if (configUtil.isLaunched()) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        registerNewUser(allParams); // may need to change this method if mapper doesn't work correctly (params don't line up)
+        userService.setUpConfig(allParams);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 

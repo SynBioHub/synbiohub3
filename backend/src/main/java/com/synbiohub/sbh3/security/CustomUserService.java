@@ -30,9 +30,14 @@ public class CustomUserService {
         user.setName(userRegistrationDTO.getName());
 
         setEncodedPassword(user, userRegistrationDTO.getPassword1());
+        if (userRepository.count() == 0) {
+            user.setIsAdmin(true);
+            user.setIsCurator(true);
+        } else {
+            user.setIsAdmin(false);
+            user.setIsCurator(false);
+        }
 
-        user.setIsAdmin(false);
-        user.setIsCurator(false);
 
         return userRepository.save(user);
     }

@@ -32,6 +32,7 @@ public class UserService {
     private final SearchService searchService;
 
     private final CustomUserService customUserService;
+    private final ConfigUtil configUtil;
 
     public UserEntity getUserProfile() {
         Authentication authentication = checkAuthentication();
@@ -120,6 +121,15 @@ public class UserService {
             return null;
         }
         return auth;
+    }
+
+    public void setUpConfig(Map<String, String> allParams) {
+        //all Params should include values such as instanceName, userName, userFullName, userEmail, instanceURL,
+        //uriPrefix, frontPageText, userPassword, userPasswordConfirm, virtuosoINI, virtuosoDB, affiliation, color
+
+        // should take all of these values and create a new config local file
+        // also create an admin user
+        configUtil.setLocalConfig(allParams);
     }
 
 }
