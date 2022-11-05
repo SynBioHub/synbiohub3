@@ -1,17 +1,23 @@
 package com.synbiohub.sbh3.controllers;
 
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.synbiohub.sbh3.dto.PluginLoginDTO;
 import com.synbiohub.sbh3.services.PluginService;
 import com.synbiohub.sbh3.utils.ConfigUtil;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.apache.http.client.HttpClient;
+import org.json.JSONObject;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -225,6 +231,21 @@ public class PluginController {
 
 
 
+    }
+
+    @PostMapping(value = "/plugin/login", produces = "application/json")
+    @ResponseBody
+    public ResponseEntity<String> login(@RequestBody PluginLoginDTO loginInfo) {
+        RestTemplate restTemplate = new RestTemplate();
+
+        var headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("username", loginInfo.getUsername());
+        jsonObject.put("email", loginInfo.getEmail());
+        jsonObject.put("password", loginInfo.getPassword());
+        HttpEntity<String> request = new HttpEntity<>(jsonObject.toString(), headers);
+        return restTemplate.postForEntity(loginInfo.getLoginUrl(), request, String.class);
     }
 
 
