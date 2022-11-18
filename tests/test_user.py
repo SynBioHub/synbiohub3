@@ -1,10 +1,11 @@
 from unittest import TestCase
 from test_arguments import test_print
-from test_functions import compare_request, login_with, post_request, get_request
+from test_functions import compare_post_request, compare_get_request, login_with, post_request, get_request
 
 class TestUser(TestCase):
 
     def test_post_register(self):
+        headers = {"Accept": "text/plain"}
         test_print("test_post_register starting")
         data={
             'username': 'testuser2',
@@ -15,9 +16,7 @@ class TestUser(TestCase):
             'password2' : 'test1'
         }
         #compare_post_request("register", data, headers = {"Accept": "text/plain"}, test_name = "register1")
-        compare_request(post_request("register", 1, data, headers = {"Accept": "text/plain"}, route_parameters = [], files = None), post_request("register", 3, data, headers = {"Accept": "text/plain"}, route_parameters = [], files = None), "register", "post request", [], "")
-        #post_request("register", 1, data, headers = {"Accept": "text/plain"}, route_parameters = [], files = None)
-        #post_request("register", 3, data, headers = {"Accept": "text/plain"}, route_parameters = [], files = None)
+        compare_post_request("register", data, test_name = "register1", headers = headers, route_parameters = [], files = None)
 
         logininfo = {'email' : 'test2@user.synbiohub',
                      'password' : 'test1'}
@@ -25,9 +24,7 @@ class TestUser(TestCase):
         login_with(logininfo, 3)
 
         #compare_get_request("/profile")
-        get_request("profile", 1, headers = {"Accept": "text/plain"}, route_parameters = [], re_render_time = 0)
-        get_request("profile", 3, headers = {"Accept": "text/plain"}, route_parameters = [], re_render_time = 0)
-        compare_request(get_request("profile", 1, headers = {"Accept": "text/plain"}, route_parameters = [], re_render_time = 0), get_request("profile", 3, headers = {"Accept": "text/plain"}, route_parameters = [], re_render_time = 0), "profile", "get request", [], "")
+        compare_get_request("/profile", headers = headers, route_parameters = [])
 
         data={
              'name': 'ronnie',
@@ -37,9 +34,7 @@ class TestUser(TestCase):
              'password2' : 'test'
          }
         #compare_post_request("profile", data, headers = {"Accept": "text/plain"}, test_name = "profile2")
-        post_request("profile", 1, data, headers = {"Accept": "text/plain"}, route_parameters = [], files = None)
-        post_request("profile", 3, data, headers = {"Accept": "text/plain"}, route_parameters = [], files = None)
-        compare_request(post_request("profile", 1, data, headers = {"Accept": "text/plain"}, route_parameters = [], files = None),post_request("profile", 3, data, headers = {"Accept": "text/plain"}, route_parameters = [], files = None) , "profile", "post request", [], "")
+        compare_post_request("profile", data, test_name = "profile2", headers = headers, route_parameters = [], files = None)
 
         #compare_get_request("/logout")
         test_print("logout started")

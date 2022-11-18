@@ -9,7 +9,7 @@ class TestSubmit(TestCase):
         test_print("test_main_page starting")
         headers = {'Accept':'text/plain'}
         #compare_get_request("/", test_name = "after_admin_login", headers = headers)
-        get_request("", 1, headers = headers, route_parameters = [], re_render_time = 0)
+        get_request("", 1, headers = headers, route_parameters = [])
 
         test_print("test_main_page completed")
 
@@ -65,8 +65,8 @@ class TestSubmit(TestCase):
         # now remove the collections
         #compare_get_request('/user/:userId/:collectionId/:displayId/:version/removeCollection', route_parameters = ["testuser", "testid", "testid_collection", "1"])
         #compare_get_request('/user/:userId/:collectionId/:displayId/:version/removeCollection', route_parameters = ["testuser", "testid2", "testid2_collection", "1"], test_name = 'remove_second')
-        get_request('user/:userId/:collectionId/:displayId/:version/removeCollection', 1, headers = headers, route_parameters = ["testuser", "testid", "testid_collection", "1"], re_render_time = 0)
-        #TODO: make sure this is okay -> didn't work forbidden#get_request('user/:userId/:collectionId/:displayId/:version/removeCollection', 1, headers = headers, route_parameters = ["testuser", "testid2", "testid2_collection", "1"], re_render_time = 0)
+        get_request('user/:userId/:collectionId/:displayId/:version/removeCollection', 1, headers = headers, route_parameters = ["testuser", "testid", "testid_collection", "1"])
+        #TODO: make sure this is okay -> didn't work forbidden#get_request('user/:userId/:collectionId/:displayId/:version/removeCollection', 1, headers = headers, route_parameters = ["testuser", "testid2", "testid2_collection", "1"])
         
         #compare_get_request("manage", test_name = "no_submissions")
 
@@ -124,7 +124,7 @@ class TestSubmit(TestCase):
 
         # get the view
         #compare_get_request("/user/:userId/:collectionId/:displayId/:version/makePublic", route_parameters = ["testuser", "testid0", "testid0_collection", "1"])
-        get_request("user/:userId/:collectionId/:displayId/:version/makePublic", 1, headers = headers, route_parameters = ["testuser", "testid0", "testid0_collection", "1"], re_render_time = 0)
+        get_request("user/:userId/:collectionId/:displayId/:version/makePublic", 1, headers = headers, route_parameters = ["testuser", "testid0", "testid0_collection", "1"])
 
         data['tabState'] = 'new'
 

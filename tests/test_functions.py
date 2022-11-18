@@ -64,7 +64,7 @@ def get_address(request, route_parameters, version):
 
 # perform a get request, and render the javascript
 # post requests do not render the javascript
-def get_request(request, version, headers, route_parameters, re_render_time):
+def get_request(request, version, headers, route_parameters):
 
     # get the current token
     if(version == 1):
@@ -92,7 +92,7 @@ def get_request(request, version, headers, route_parameters, re_render_time):
     #print(response.text)
     return response.text
 
-def get_request_download(request, headers, route_parameters, re_render_time, version):
+def get_request_download(request, headers, route_parameters, version):
     # get the current token
     if(version == 1):
         user_token = test_state.get_authentication(1)
@@ -130,7 +130,6 @@ def post_request(request, version, data, headers, route_parameters, files):
     session = requests_html.HTMLSession()
 
     response = session.post(address, data = data, headers = headers, files = files)
-    print(address)
         
     try:
         response.raise_for_status()
@@ -150,68 +149,13 @@ def request_file_path(request, requesttype, testname):
 def request_file_path_download(request, requesttype, testname):
     return 'previousresults/' + requesttype.replace(" ", "") + "_" + request.replace("/", "-") + "_" + testname + ".xml"
 
-def compare_request(sbh1requestcontent, sbh3requestcontent, request, requesttype, route_parameters, file_path):
-    """ Checks a request against previous results or saves the result of a request.
+def compare_request(sbh1requestcontent, sbh3requestcontent, request, requesttype):
+    """ Checks a sbh3 request against a sbh1 request.
 request is the endpoint requested, such as /setup
 requesttype is the type of request performed- either 'get request' or 'post request'"""
-    # if the global state is to replace all files, do that
-    if args.resetalltests:
-        with open(file_path, 'w') as rfile:
-            rfile.write(requestcontent)
-    elif requesttype[0:8] == "get_file" and request in args.resetgetrequests:
-        test_print("resetting get_file request " + request + " and saving to file " + file_path)
-        with open(file_path, 'w') as file:
-            file.write(requestcontent)
-    elif requesttype[0:3] == "get" and request in args.resetgetrequests:
-        test_print("resetting get request " + request + " and saving to file " + file_path)
-        with open(file_path, 'w') as rfile:
-            rfile.write(requestcontent)
-    elif requesttype[0:4] == "post" and request in args.resetpostrequests:
-        test_print("resetting post request " + request + " and saving to file " + file_path)
-        with open(file_path, 'w') as rfile:
-            rfile.write(requestcontent)
-    else:
-        if requesttype[0:8] == "get_file":
-            file_diff_download(requestcontent, request, requesttype, route_parameters, file_path)
-        elif requesttype[0:3] == "get" or requesttype[0:4] == "post":
-            file_diff(sbh1requestcontent, sbh3requestcontent, request, requesttype)
-
-def file_diff_download(requestcontent, request, requesttype, route_parameters, file_path):
-    olddata = None
-
-    try:
-        with open (file_path, "r") as oldfile:
-            olddata=oldfile.read()
-    except IOError as e:
-        raise Exception("\n[synbiohub test] Could not open previous result for the " + \
-                            requesttype + " " + request + ". If the saved result has not yet been created because it is a new page, please use --resetgetrequests [requests] or --resetpostrequests [requests] to create the file.") from e
-
-    request = { 'options': {'language' : 'SBOL2',
-        'test_equality': True,
-        'check_uri_compliance': False,
-        'check_completeness': False,
-        'check_best_practices': False,
-        'fail_on_first_error': False,
-        'provide_detailed_stack_trace': False,
-        'subset_uri': '',
-        'uri_prefix': '',
-        'version': '',
-        'insert_type': False,
-        'main_file_name': 'requestcontent',
-        'diff_file_name': 'olddata',
-        },
-        'return_file': False,
-        'main_file': requestcontent,
-        'diff_file': olddata
-        }
-
-    resp = requests.post("https://validator.sbolstandard.org/validate/", json=request)
-
-    resp_json = json.loads(resp.content)
-
-    if resp_json["equal"] == False:
-        changelist = [requesttype, " ", file_path, " did not match previous results. If you are adding changes to SynBioHub that change this page, please check that the page is correct and update the file using the command line argument --resetgetrequests [requests] and --resetpostrequests [requests].\nThe following is a diff of the new files compared to the old.\n"]
-        raise ValueError(''.join(changelist))
+    
+    if requesttype[0:3] == "get" or requesttype[0:4] == "post":
+        file_diff(sbh1requestcontent, sbh3requestcontent, request, requesttype)
 
 def file_diff(sbh1requestcontent, sbh3requestcontent, request, requesttype):
     sbh1data = sbh1requestcontent
@@ -264,8 +208,7 @@ def login_with(data, version, headers = {'Accept':'text/plain'}):
     else:
         test_state.save_authentication(result, version)
 
-
-def compare_get_request(request, test_name = "", route_parameters = [], headers = {}, re_render_time = 0):
+def compare_get_request(request, test_name = "", route_parameters = [], headers = {}):
     """Complete a get request and error if it differs from previous results.
 page
     request -- string, the name of the page being requested
@@ -280,8 +223,8 @@ page
     #gives filepath for old test for 1 - sbh3 test: now using for checking which endpoints were tested
     testpath = request_file_path(request, "get request", test_name)
     test_state.add_get_request(request, testpath, test_name)
-
-    compare_request(get_request(request, 1, headers, route_parameters, re_render_time), get_request(request, 3, headers, route_parameters, re_render_time), request, "get request", route_parameters, testpath)
+    #get_request("profile", 1, headers = {"Accept": "text/plain"}, route_parameters = [], re_render_time = 0)
+    compare_request(get_request(request, 1, headers, route_parameters), get_request(request, 3, headers, route_parameters), request, "get request")
 
 def compare_get_request_download(request, test_name = "", route_parameters = [], headers = {}, re_render_time = 0):
     """Complete a get_file request and error if it differs from previous results.
@@ -298,7 +241,7 @@ def compare_get_request_download(request, test_name = "", route_parameters = [],
     testpath = request_file_path_download(request, "get_file", test_name)
     test_state.add_get_request(request, testpath, test_name)
 
-    compare_request(get_request_download(request, headers, route_parameters, re_render_time, 1), get_request_download(request, headers, route_parameters, re_render_time, 3), request, "get_file request", route_parameters, testpath)
+    compare_request(get_request_download(request, headers, route_parameters, re_render_time, 1), get_request_download(request, headers, route_parameters, re_render_time, 3), request, "get_file request")
 
 def compare_post_request(request, data, test_name = "", route_parameters = [], headers = {}, files = None):
     """Complete a post request and error if it differs from previous results.
@@ -312,11 +255,10 @@ def compare_post_request(request, data, test_name = "", route_parameters = [], h
     request = clip_request(request)
 
     testpath = request_file_path(request, "post request", test_name)
-
     test_state.add_post_request(request, testpath, test_name)
 
-
-    compare_request(post_request(request, 1, data, headers, route_parameters, files = files), post_request(request, 3, data, headers, route_parameters, files = files), request, "post request", route_parameters, testpath)
+#post_request("submit", 1, data, headers = headers, route_parameters = [], files = files)
+    compare_request(post_request(request, 1, data, headers, route_parameters, files = files), post_request(request, 3, data, headers, route_parameters, files = files), request, "post request")
 
 # TODO: make checking throw an error when all endpoints are not checked, instead of printing a warning.
 def cleanup_check():
@@ -324,7 +266,6 @@ def cleanup_check():
     Checks to make sure all endpoints were tested."""
 
     test_state.cleanup_check()
-
 
 def run_bash(command):
     process = subprocess.Popen(command.split(), stdout=subprocess.PIPE)
