@@ -219,8 +219,17 @@ def file_diff(sbh1requestcontent, sbh3requestcontent, request, requesttype):
     sbh1data = sbh1data.splitlines()
     sbh3data = sbh3requestcontent.splitlines()
 
-    changes = difflib.unified_diff(sbh1data, sbh3data)
+    # if(sbh1data == sbh3data):
+    #     print("TEST PASSED\n")
+    # else:
+    #     print("TEST FAILED\n")
+    #     print("SBH1\n")
+    #     print(sbh1data)
+    #     print("SBH3\n")
+    #     print(sbh1data)
 
+    changes = difflib.unified_diff(sbh1data, sbh3data)
+    
     # change list holds the strings to print in an error message
     changelist = [requesttype, " ", request, " did not match previous results. If you are adding changes to SynBioHub that change this page, please check that the page is correct and update the file using the command line argument --resetgetrequests [requests] and --resetpostrequests [requests].\nThe following is a diff of the new files compared to the old.\n"]
 
@@ -239,7 +248,12 @@ def file_diff(sbh1requestcontent, sbh3requestcontent, request, requesttype):
     print(numofchanges)
     if numofchanges>0:
         #raise ValueError(''.join(changelist))
+        print(changelist)
         print("TEST FAILED\n")
+        print("SBH1\n")
+        print(sbh1data)
+        print("SBH3\n")
+        print(sbh1data)
     else:
         print("TEST PASSED\n")
 
