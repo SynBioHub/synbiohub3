@@ -15,7 +15,6 @@ import getTypesRoles from '../../../sparql/getTypesRoles';
 import styles from '../../../styles/view.module.css';
 import MiniLoading from '../../Reusable/MiniLoading';
 import Table from '../../Reusable/Table/Table';
-import Section from '../Sections/Section';
 import loadTemplate from '../../../sparql/tools/loadTemplate';
 import { shortName } from '../../../namespace/namespace';
 import lookupRole from '../../../namespace/lookupRole';
@@ -27,13 +26,13 @@ const sortMethods = {
   default: ' ORDER BY ASC(concat(lcase(str(?name)),lcase(str(?displayId)))) ',
   name: ' ORDER BY ASC(concat(lcase(str(?name)))) ',
   displayId: ' ORDER BY ASC(concat(lcase(str(?displayId)))) '
-}
+};
 
 const sortOptions = [
   { value: 'default', label: 'Default' },
   { value: 'name', label: 'Name' },
   { value: 'displayId', label: 'Identifier' }
-]
+];
 
 export default function Members(properties) {
   const token = useSelector(state => state.user.token);
@@ -42,20 +41,25 @@ export default function Members(properties) {
   const [sort, setSort] = useState(sortMethods.displayId);
   const [defaultSortOption, setDefaultSortOption] = useState(sortOptions[0]);
   const [customBounds, setCustomBounds] = useState([0, 10000]);
-  const [typeFilter, setTypeFilter] = useState("Show Only Root Objects");
+  const [typeFilter, setTypeFilter] = useState('Show Only Root Objects');
 
   let preparedSearch =
     search !== ''
       ? `FILTER(CONTAINS(lcase(str(?uri)), lcase("${search}"))||CONTAINS(lcase(?displayId), lcase("${search}"))||CONTAINS(lcase(?name), lcase("${search}"))||CONTAINS(lcase(?description), lcase("${search}")))`
       : '';
 
-  if (typeFilter !== 'Show Only Root Objects' && typeFilter !== 'Show All Objects') {
-    if (typeFilter.startsWith('http://www.biopax.org/release/biopax-level3.owl#')) {
-      preparedSearch += '\n FILTER(?sbolType = <' + typeFilter + '>)'
+  if (
+    typeFilter !== 'Show Only Root Objects' &&
+    typeFilter !== 'Show All Objects'
+  ) {
+    if (
+      typeFilter.startsWith('http://www.biopax.org/release/biopax-level3.owl#')
+    ) {
+      preparedSearch += '\n FILTER(?sbolType = <' + typeFilter + '>)';
     } else if (typeFilter.startsWith('http://identifiers.org/so/')) {
-      preparedSearch += '\n FILTER(?role = <' + typeFilter + '>)'
+      preparedSearch += '\n FILTER(?role = <' + typeFilter + '>)';
     } else {
-      preparedSearch += '\n FILTER(?type = <' + typeFilter + '>)'
+      preparedSearch += '\n FILTER(?type = <' + typeFilter + '>)';
     }
   }
 
@@ -69,27 +73,40 @@ export default function Members(properties) {
     limit: ' LIMIT 10000 '
   };
 
-  const searchQuery = preparedSearch || (typeFilter !== 'Show Only Root Objects')
+  const searchQuery = preparedSearch || typeFilter !== 'Show Only Root Objects';
 
   let query = searchQuery ? getCollectionMembersSearch : getCollectionMembers;
 
-  const { members } = useMembers(query, parameters, token);
-  const { count: totalMemberCount } = useCount(CountMembersTotal, { ...parameters, search: '' }, token);
-  const { count: currentMemberCount } = useCount(searchQuery ? CountMembersTotal : CountMembers, parameters, token);
+  const { members, mutate } = useMembers(query, parameters, token);
+  const { count: totalMemberCount } = useCount(
+    CountMembersTotal,
+    { ...parameters, search: '' },
+    token
+  );
+  const { count: currentMemberCount } = useCount(
+    searchQuery ? CountMembersTotal : CountMembers,
+    parameters,
+    token
+  );
 
-  const { filters } = useFilters(getTypesRoles, { uri: properties.uri }, token)
+  useEffect(() => {
+    if (properties.refreshMembers) {
+      mutate();
+      properties.setRefreshMembers(false);
+    }
+  }, [properties.refreshMembers, mutate]);
 
-  const outOfBoundsHandle = (offset) => {
+  const { filters } = useFilters(getTypesRoles, { uri: properties.uri }, token);
+
+  const outOfBoundsHandle = offset => {
     const newBounds = getNewBounds(offset, currentMemberCount);
     setCustomBounds(newBounds);
     setOffset(newBounds[0]);
-  }
+  };
 
   return (
     <React.Fragment>
-      <FilterHeader
-        filters={filters}
-        setTypeFilter={setTypeFilter} />
+      <FilterHeader filters={filters} setTypeFilter={setTypeFilter} />
       <SearchHeader
         search={search}
         setSearch={setSearch}
@@ -154,24 +171,33 @@ function FilterHeader(properties) {
         const shortNamedFilter = shortName(filter.uri);
         return { value: filter.uri, label: shortNamedFilter };
       });
-      newFilters.sort((a, b) => (a.label > b.label) ? 1 : -1);
-      newFilters.unshift({ value: 'Show All Objects', label: 'Show All Objects' })
-      newFilters.unshift({ value: 'Show Only Root Objects', label: 'Show Only Root Objects' })
+      newFilters.sort((a, b) => (a.label > b.label ? 1 : -1));
+      newFilters.unshift({
+        value: 'Show All Objects',
+        label: 'Show All Objects'
+      });
+      newFilters.unshift({
+        value: 'Show Only Root Objects',
+        label: 'Show Only Root Objects'
+      });
       setFilters(newFilters);
     }
   }, [properties.filters]);
 
-
   return (
     <div className={styles.filtercontainer}>
       Show
-      {filters ? <Select
-        options={filters}
-        menuPortalTarget={document.body}
-        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-        className={styles.filterSelect}
-        onChange={option => properties.setTypeFilter(option.value)}
-      /> : <MiniLoading height={10} />}
+      {filters ? (
+        <Select
+          options={filters}
+          menuPortalTarget={document.body}
+          styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+          className={styles.filterSelect}
+          onChange={option => properties.setTypeFilter(option.value)}
+        />
+      ) : (
+        <MiniLoading height={10} />
+      )}
     </div>
   );
 }
@@ -211,7 +237,7 @@ function MemberTable(properties) {
         properties.setDefaultSortOption(sortOption);
       }}
       dataRowDisplay={member => {
-        var textArea = document.createElement("textarea");
+        var textArea = document.createElement('textarea');
         textArea.innerHTML = member.name;
 
         return (
@@ -225,30 +251,30 @@ function MemberTable(properties) {
             </td>
             <td>
               <Link href={member.uri.replace('https://synbiohub.org', '')}>
-                <a className={styles.memberid}>
-                  {member.displayId}
-                </a>
+                <a className={styles.memberid}>{member.displayId}</a>
               </Link>
             </td>
             <td>{getType(member)}</td>
             <td>{member.description}</td>
           </tr>
-        )
+        );
       }}
     />
   );
 }
 
 function getType(member) {
-  var memberType = member.type ? member.type.slice(member.type.lastIndexOf('#') + 1) : 'Unknown';
+  var memberType = member.type
+    ? member.type.slice(member.type.lastIndexOf('#') + 1)
+    : 'Unknown';
   if (member.sbolType) {
-    memberType = member.sbolType.slice(member.sbolType.lastIndexOf('#') + 1)
+    memberType = member.sbolType.slice(member.sbolType.lastIndexOf('#') + 1);
   }
   if (member.role) {
-    memberType = lookupRole(member.role).description.name
+    memberType = lookupRole(member.role).description.name;
   }
-  if (memberType === 'ComponentDefinition') memberType = 'Component'
-  else if (memberType === 'ModuleDefinition') memberType = 'Module'
+  if (memberType === 'ComponentDefinition') memberType = 'Component';
+  else if (memberType === 'ModuleDefinition') memberType = 'Module';
 
   return memberType;
 }
@@ -258,48 +284,40 @@ const createUrl = (query, options) => {
   return `${publicRuntimeConfig.backend}/sparql?query=${encodeURIComponent(
     query
   )}`;
-}
+};
 
 const useCount = (query, options, token) => {
   const url = createUrl(query, options, token);
-  const { data, error } = useSWR(
-    [url, token],
-    fetcher
-  );
+  const { data, error } = useSWR([url, token], fetcher);
 
-  let processedData = data ? processResults(data)[0].count : undefined
+  let processedData = data ? processResults(data)[0].count : undefined;
   return {
     count: processedData
-  }
-}
+  };
+};
 
 const useMembers = (query, options, token) => {
   const url = createUrl(query, options);
-  const { data, error } = useSWR(
-    [url, token],
-    fetcher
-  );
+  const { data, error, mutate } = useSWR([url, token], fetcher);
 
   let processedData = data ? processResults(data) : undefined;
 
   return {
-    members: processedData
-  }
-}
+    members: processedData,
+    mutate
+  };
+};
 
 const useFilters = (query, options, token) => {
   const url = createUrl(query, options);
-  const { data, error } = useSWR(
-    [url, token],
-    fetcher
-  );
+  const { data, error } = useSWR([url, token], fetcher);
 
   let processedData = data ? processResults(data) : undefined;
 
   return {
     filters: processedData
-  }
-}
+  };
+};
 
 const fetcher = (url, token) =>
   axios
@@ -311,7 +329,6 @@ const fetcher = (url, token) =>
       }
     })
     .then(response => response.data);
-
 
 const processResults = results => {
   const headers = results.head.vars;
@@ -325,15 +342,13 @@ const processResults = results => {
   });
 };
 
-
 const getNewBounds = (offset, memberCount) => {
   let low = Math.max(offset - 5000, 0);
   let high = Math.min(offset + 5000, memberCount);
   if (low == 0) {
     high = Math.min(memberCount, 10000);
-  }
-  else if (high == memberCount) {
+  } else if (high == memberCount) {
     low = Math.max(0, memberCount - 10000);
   }
   return [low, high];
-}
+};
