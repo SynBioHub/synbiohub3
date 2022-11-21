@@ -4,8 +4,10 @@ import {
   faUserLock
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import getConfig from 'next/config';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
+const { publicRuntimeConfig } = getConfig();
 
 import styles from '../../styles/submissions.module.css';
 
@@ -33,7 +35,10 @@ export default function SubmissionDisplay(properties) {
       className={styles.submission}
       onClick={() => {
         router.push(
-          properties.submission.uri.replace('https://synbiohub.org', '')
+          properties.submission.uri.replace(
+            'https://synbiohub.org',
+            publicRuntimeConfig.backend
+          )
         );
       }}
     >

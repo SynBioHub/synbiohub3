@@ -39,11 +39,9 @@ public class DownloadService {
             e.printStackTrace();
         }
 //TODO: refactor graph prefix
-//        String modifiedUri = graphPrefix + uriClass.getPath().substring(1);     // The path contains a / at the beginning, so does our graph prefix
+        String modifiedUri = graphPrefix + uriClass.getPath().substring(1);     // The path contains a / at the beginning, so does our graph prefix
         var metadataQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/GetTopLevelMetadata.sparql");
-        var args = new HashMap<String, String>();
-        args.put("uri", uriClass.toString());
-        args.put("offset", "0");
+        var args = Collections.singletonMap("uri", modifiedUri);
         String query = metadataQuery.loadTemplate(args);
         String results = searchService.SPARQLQuery(query);
         try {
@@ -61,11 +59,9 @@ public class DownloadService {
             e.printStackTrace();
         }
 //TODO: refactor graph prefix
-//        String modifiedUri = graphPrefix + uriClass.getPath().substring(1);     // The path contains a / at the beginning, so does our graph prefix
+        String modifiedUri = graphPrefix + uriClass.getPath().substring(1);     // The path contains a / at the beginning, so does our graph prefix
         var metadataQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/FetchSBOLNonRecursive.sparql");
-        var args = new HashMap<String, String>();
-        args.put("uri", uriClass.toString());
-        args.put("offset", "0");
+        var args = Collections.singletonMap("uri", modifiedUri);
         String query = metadataQuery.loadTemplate(args);
         byte[] results = searchService.SPARQLRDFXMLQuery(query);
 
@@ -88,15 +84,14 @@ public class DownloadService {
             e.printStackTrace();
         }
 
-//        String modifiedUri = graphPrefix + uriClass.getPath().substring(1);     // The path contains a / at the beginning, so does our graph prefix
+        String modifiedUri = graphPrefix + uriClass.getPath().substring(1);     // The path contains a / at the beginning, so does our graph prefix
         var metadataQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/FetchSBOLNonRecursive.sparql");
         var args = new HashMap<String, String>();
-        args.put("uri", uriClass.toString());
+        args.put("uri", modifiedUri);
         args.put("offset", "0");
         String query = metadataQuery.loadTemplate(args);
         byte[] results = searchService.SPARQLRDFXMLQuery(query);
         Model model = ModelFactory.createDefaultModel();
-        model.setNsPrefix("sbol2", "http://sbols.org/v2#");
         model.read(new ByteArrayInputStream(results), null);
         if (model.size() >= 10000) {
             int counter = 1;
@@ -144,10 +139,7 @@ public class DownloadService {
                         worUrl = next.getValue().asText();
                     }
                 }
-//                var subjectArgs = Collections.singletonMap("uri", subject);
-                HashMap<String, String> subjectArgs = new HashMap<>();
-                subjectArgs.put("uri", subject);
-                subjectArgs.put("offset", "0");
+                var subjectArgs = Collections.singletonMap("uri", subject);
                 String subjectQuery = metadataQuery.loadTemplate(subjectArgs);
                 byte[] subjectResults;
                 if (!worUrl.isEmpty()) {
@@ -203,6 +195,7 @@ public class DownloadService {
         SBOLDocument document = null;
         var modelOutput = new ByteArrayOutputStream();
         RDFDataMgr.write(modelOutput, results, RDFFormat.RDFXML_PLAIN);
+
         // Use libSBOLj to serialize and return
         try {
             document = SBOLReader.read(new ByteArrayInputStream(modelOutput.toByteArray()));

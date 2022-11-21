@@ -3,33 +3,21 @@ import Plugin from './Plugin';
 import SidePanel from './SidePanel';
 import ViewHeader from './ViewHeader';
 
-import componentJSON from './TypeContents/Component.json';
-import collectionJSON from './TypeContents/Collection.json';
+import componentJSON from "./TypeContents/Component.json";
+import collectionJSON from "./TypeContents/Collection.json";
 
 import GenericContent from './TypeContents/GenericContent';
-import { useState } from 'react';
 
 export default function Shell(properties) {
-  const [refreshMembers, setRefreshMembers] = useState(false);
   const plugins = properties.plugins;
   const metadata = properties.metadata;
 
-  const content = getContent(
-    properties.type,
-    properties.uri,
-    refreshMembers,
-    setRefreshMembers
-  );
+  const content = getContent(properties.type, properties.uri);
   const pagesInfo = getPages(properties.type);
 
   return (
     <div className={styles.container}>
-      <SidePanel
-        metadata={metadata}
-        type={properties.type}
-        uri={properties.uri}
-        pagesInfo={pagesInfo}
-      />
+      <SidePanel metadata={metadata} type={properties.type} uri={properties.uri} pagesInfo={pagesInfo} />
       <div className={styles.content}>
         <ViewHeader
           name={metadata.name}
@@ -55,15 +43,8 @@ function Plugins(properties) {
   return <div>{plugins}</div>;
 }
 
-function getContent(type, uri, refreshMembers, setRefreshMembers) {
-  return type ? (
-    <GenericContent
-      type={type}
-      uri={uri}
-      refreshMembers={refreshMembers}
-      setRefreshMembers={setRefreshMembers}
-    />
-  ) : undefined;
+function getContent(type, uri) {
+  return type ? <GenericContent type = {type} uri={uri} /> : undefined;
 }
 
 function getPages(type) {

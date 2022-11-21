@@ -58,11 +58,11 @@ public class AdminController {
         return null;
     }
 
-//    @GetMapping(value = "/admin/plugins")
-//    @ResponseBody
-//    public String getPlugins(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
-//        return ConfigUtil.get("plugins").toString();
-//    }
+    @GetMapping(value = "/admin/plugins")
+    @ResponseBody
+    public String getPlugins(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
+        return ConfigUtil.get("plugins").toString();
+    }
 
     @PostMapping(value = "/admin/savePlugin")
     @ResponseBody

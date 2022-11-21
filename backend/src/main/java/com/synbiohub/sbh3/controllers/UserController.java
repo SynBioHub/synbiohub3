@@ -18,7 +18,6 @@ import org.springframework.security.web.context.HttpSessionSecurityContextReposi
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
 
-import javax.naming.AuthenticationException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -35,9 +34,12 @@ public class UserController {
     private final ObjectMapper mapper;
 
     @PostMapping(value = "/login", produces = "text/plain", consumes = "application/x-www-form-urlencoded")
-    public ResponseEntity login(@RequestParam String email, @RequestParam String password, HttpServletRequest request, HttpServletResponse response) {
-        Authentication auth = userService.checkValidLogin(authenticationManager, email, password);
-        if (auth == null) {
+    public ResponseEntity<String> login(@RequestParam String email, @RequestParam String password, HttpServletRequest request, HttpServletResponse response) {
+        Authentication auth;
+        try {
+            auth = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(email, password));
+        } catch (Exception e) {
             log.error("Bad credentials");
             return new ResponseEntity(HttpStatus.UNAUTHORIZED);
         }
@@ -85,9 +87,11 @@ public class UserController {
     }
 
     @PostMapping(value = "/profile", produces = "text/plain")
-    public ResponseEntity<String> updateProfile(@RequestParam Map<String, String> allParams) throws JsonProcessingException, AuthenticationException {
-        return userService.updateUser(mapper, allParams);
-
+    public ResponseEntity<String> updateProfile() throws JsonProcessingException {
+        var user = userService.getUserProfile();
+        if (user == null)
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 

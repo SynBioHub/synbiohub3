@@ -17,13 +17,13 @@ import styles from '../../styles/view.module.css';
 import SectionSelector from './SectionSelector';
 import SidePanelTools from './SidePanelTools';
 
-import getConfig from 'next/config';
+import getConfig from "next/config";
 const { publicRuntimeConfig } = getConfig();
 
 /**
  * The side panel that has information about the object.
  * Has buttons for downloading, sharing, citing and deleting along with page sections.
- *
+ * 
  * @param {Any} properties Information from the parent component.
  */
 export default function SidePanel(properties) {
@@ -32,35 +32,16 @@ export default function SidePanel(properties) {
   const date = metadata.created.replace('T', ' ').replace('Z', '');
 
   return (
-    <div
-      className={
-        translation === 0
-          ? styles.sidepanelcontaineropen
-          : styles.sidepanelcontainercollapse
-      }
-    >
-      <div
-        className={styles.sidepanel}
-        style={{
-          transform: `translateX(-${translation}rem)`,
-          transition: 'transform 0.3s'
-        }}
-      >
+    <div className={translation === 0 ? styles.sidepanelcontaineropen : styles.sidepanelcontainercollapse}>
+      <div className={styles.sidepanel} style={{ transform: `translateX(-${translation}rem)`, transition: "transform 0.3s" }}>
         <div className={styles.headercontainer}>
           <div className={styles.headeroverflowcontainer}>
-            <div className={styles.titleHolder}>
-              <h2 className={styles.title}>{metadata.name}</h2>
-              <Link
-                href={`${publicRuntimeConfig.backend}/search/displayId='${metadata.displayId}'&`}
-              >
-                <a
-                  title="Find all records with the same identifier"
-                  target="_blank"
-                >
-                  <div className={styles.displayId}>({metadata.displayId})</div>
-                </a>
-              </Link>
-            </div>
+            <h2 className={styles.title}>{metadata.name}</h2>
+            <Link href = {`${publicRuntimeConfig.backend}/search/displayId='${metadata.displayId}'&`}>
+              <a title = "Find all records with the same identifier" target = "_blank">
+                <div className={styles.displayId}>({metadata.displayId})</div>
+              </a>
+            </Link>
           </div>
           <div
             className={styles.panelbutton}
@@ -72,12 +53,7 @@ export default function SidePanel(properties) {
             <FontAwesomeIcon icon={faBars} size="1x" />
           </div>
         </div>
-        <div
-          style={{
-            transform: `translateX(-${translation === 18 ? 2.5 : 0}rem)`,
-            transition: 'transform 0.3s'
-          }}
-        >
+        <div style={{ transform: `translateX(-${translation === 18 ? 2.5 : 0}rem)`, transition: "transform 0.3s" }}>
           <SidePanelTools
             creator={metadata.creator}
             type={properties.type}
@@ -102,20 +78,13 @@ export default function SidePanel(properties) {
               icon={faUserEdit}
               label="Creator"
               title={metadata.creator}
-              link={`${
-                publicRuntimeConfig.backend
-              }/user/${metadata.creator.replace(' ', '')}`}
+              link={`${publicRuntimeConfig.backend}/user/${metadata.creator.replace(" ", "")}`}
             />
             <Info
               icon={faCalendarPlus}
               label="Created"
               title={date}
-              link={`${
-                publicRuntimeConfig.backend
-              }/search/createdBefore=${date.substring(
-                0,
-                date.lastIndexOf('-') + 3
-              )}&createdAfter=${date.substring(0, date.lastIndexOf('-') + 3)}&`}
+              link={`${publicRuntimeConfig.backend}/search/createdBefore=${date.substring(0, date.lastIndexOf("-") + 3)}&createdAfter=${date.substring(0, date.lastIndexOf("-") + 3)}&`}
             />
             <Info
               icon={faRunning}
@@ -133,7 +102,7 @@ export default function SidePanel(properties) {
 
 /**
  * Component container for displaying metadata information about the object.
- *
+ * 
  * @param {Any} properties Information from the parent component.
  */
 function Info(properties) {
