@@ -13,6 +13,8 @@ const { publicRuntimeConfig } = getConfig();
 import axios from "axios";
 import parse from 'html-react-parser';
 
+import { createHTML } from '../../Plugins/html_creator'
+
 
 export default function CurationModal(properties) {
 
@@ -27,8 +29,8 @@ export default function CurationModal(properties) {
         instanceUrl: '',
         size: 0,
         type: properties.type,
-        submit_link: '',
-        eval_params: {}
+        submit_link: 'test.com',
+        eval_parameters: {}
       };
 
     useEffect(() => {
@@ -144,8 +146,13 @@ async function runPlugin(pluginName, pluginData) {
         data: pluginData
       }
     }).then(response => {
-      return response.data;
+        if(response.data.own_interface) {
+            return response.data.interface;
+        }
+        else {
+            return createHTML(response.data);
+        }
     }).catch(error => {
-      return `There was an error with ${pluginName}`;
+      return `There was an error with ${pluginName}: ${error}`;
     })
   }
