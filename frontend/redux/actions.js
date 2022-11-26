@@ -384,12 +384,10 @@ async function submitPluginHandler(pluginName, convertedFiles, files) {
 
   for (let file of files) {
     const fileURL = URL.createObjectURL(file);
-    const fileSplit = file.name.split('.');
-    const fileType = fileSplit.length > 1 ? fileSplit[fileSplit.length - 1] : '';
     evaluateManifest.manifest.files.push({
-      url: fileURL, //File url isn't working
+      url: fileURL,
       filename: file.name,
-      type: fileType,
+      type: mime.lookup(file) ? mime.lookup(file) : '',
       instanceUrl: publicRuntimeConfig.backend
     })
   }
@@ -402,7 +400,7 @@ async function submitPluginHandler(pluginName, convertedFiles, files) {
     params: {
       name: pluginName,
       endpoint: 'evaluate',
-      data: encodeURIComponent(JSON.stringify(evaluateManifest))
+      data: JSON.stringify(evaluateManifest)
     }
   }).then(async function(response) {
     
@@ -446,7 +444,7 @@ async function submitPluginHandler(pluginName, convertedFiles, files) {
       params: {
         name: pluginName,
         endpoint: 'run',
-        data: encodeURIComponent(JSON.stringify(runManifest))
+        data: JSON.stringify(runManifest)
       }
     }).then(async function (response) {
       //Need to unzip response and deal with files
