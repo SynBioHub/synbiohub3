@@ -383,10 +383,13 @@ async function submitPluginHandler(pluginName, convertedFiles, files) {
   };
 
   for (let file of files) {
+    const fileURL = URL.createObjectURL(file);
+    const fileSplit = file.name.split('.');
+    const fileType = fileSplit.length > 1 ? fileSplit[fileSplit.length - 1] : '';
     evaluateManifest.manifest.files.push({
-      url: file.url ? file.url : 'Unsuccessful', //File url isn't working
+      url: fileURL, //File url isn't working
       filename: file.name,
-      type: '',
+      type: fileType,
       instanceUrl: publicRuntimeConfig.backend
     })
   }
