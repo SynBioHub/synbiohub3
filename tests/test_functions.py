@@ -170,7 +170,7 @@ def file_diff(sbh1requestcontent, sbh3requestcontent, request, requesttype):
     #     print("SBH1\n")
     #     print(sbh1data)
     #     print("SBH3\n")
-    #     print(sbh1data)
+    #     print(sbh3data)
 
     changes = difflib.unified_diff(sbh1data, sbh3data)
     
@@ -192,14 +192,15 @@ def file_diff(sbh1requestcontent, sbh3requestcontent, request, requesttype):
     print(numofchanges)
     if numofchanges>0:
         #raise ValueError(''.join(changelist))
-        print(changelist)
+        #print(changelist)
         print("TEST FAILED\n")
         print("SBH1\n")
         print(sbh1data)
         print("SBH3\n")
-        print(sbh1data)
+        print(sbh3data)
     else:
         print("TEST PASSED\n")
+        print("SBH3\n")
 
 def login_with(data, version, headers = {'Accept':'text/plain'}):
     result = post_request("login", version, data, headers, [], files = None)
