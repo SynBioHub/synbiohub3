@@ -387,7 +387,7 @@ async function submitPluginHandler(pluginName, convertedFiles, files) {
     evaluateManifest.manifest.files.push({
       url: fileURL,
       filename: file.name,
-      type: mime.lookup(file) ? mime.lookup(file) : '',
+      type: mime.lookup(file.name) ? mime.lookup(file.name) : '',
       instanceUrl: publicRuntimeConfig.backend
     })
   }
