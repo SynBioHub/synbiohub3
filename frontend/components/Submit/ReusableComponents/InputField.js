@@ -29,9 +29,10 @@ export default function InputField(properties) {
         verified={verified}
       />
       <Input
-        type="text"
+        type={properties.customType || 'text'}
         name={properties.inputName}
         value={properties.value}
+        checked={properties.value}
         onChange={event => properties.onChange(event)}
         className={`${styles.submitinput} ${properties.customStyling}`}
         placeholder={properties.placeholder}

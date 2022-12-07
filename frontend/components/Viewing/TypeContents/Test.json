@@ -58,23 +58,10 @@
             "hide": true
          },
          {
-          "title": "ComponLink",
-          "hide": true,
-          "rootPredicateOverride": "sbol:component",
-          "predicates": ["sbol:definition"]
-         },
-         {
           "title": "Component",
-          "rootPredicateOverride": "sbol:component",
           "infoLink": "http://sbols.org/v2#component",
-          "link": "$ComponLink",
-          "predicates": ["sbol:definition", "dcterms:title"]
-         },
-         {
-          "title": "Sequence Annotation",
-          "hide": true,
-          "rootPredicateOverride": "sbol:component",
-          "predicates": ["dcterms:title"]
+          "link": "",
+          "predicates": ["sbol:component", "sbol:definition", "dcterms:title"]
          },
          {
           "title": "Role(s)",
