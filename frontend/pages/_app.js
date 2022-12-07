@@ -3,7 +3,7 @@ import '@fortawesome/fontawesome-svg-core/styles.css';
 
 import { config } from '@fortawesome/fontawesome-svg-core';
 import { Provider } from 'react-redux';
-import router, { useRouter } from 'next/router';
+import { useRouter } from 'next/router';
 import { useStore } from '../redux/store';
 config.autoAddCss = false; // Tell Font Awesome to skip adding the CSS automatically since it's being imported above
 
@@ -15,7 +15,7 @@ import { ToastContainer } from 'react-toastify';
 import axios from 'axios';
 import { useState } from 'react';
 import Loading from '../components/Reusable/Loading';
-import Setup from './setup';
+import Setup from '../specialAccess/setup';
 
 /**
  * This component is the starting component for the sbh app. Uses Provider
@@ -68,7 +68,7 @@ function MyApp({ Component, pageProps }) {
   return (
     <Provider store={store}>
       {inSetupMode ? (
-        <Setup />
+        <Setup setInSetupMode={setInSetupMode} />
       ) : (
         <Component {...pageProps} key={router.asPath} />
       )}

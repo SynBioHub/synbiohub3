@@ -6,24 +6,30 @@ import { SketchPicker } from 'react-color';
 import { useState } from 'react';
 import SubmitLabel from '../components/Submit/ReusableComponents/SubmitLabel';
 
-export default function Setup() {
+import getConfig from 'next/config';
+import ErrorMessage from '../components/Admin/Reusable/ErrorMessage';
+const { publicRuntimeConfig } = getConfig();
+
+export default function Setup({ setInSetupMode }) {
   const [instanceName, setInstanceName] = useState('');
   const [color, setColor] = useState('#D25627');
-  const [welcome, setWelcome] = useState(
+  const [frontPageText, setFrontPageText] = useState(
     `<a href="/About">SynBioHub</a> is a <i>design repository</i> for people designing biological constructs. It enables DNA and protein designs to be uploaded, then provides a shareable link to allow others to view them. SynBioHub also facilitates searching for information about existing useful parts and designs by combining data from a variety of sources.`
   );
   const [logo, setLogo] = useState(undefined);
-  const [allowPublic, setAllowPublic] = useState(true);
+  const [allowPublicSignup, setAllowPublicSignup] = useState(true);
 
   const [instanceURL, setInstanceURL] = useState('http://localhost:7777/');
-  const [instanceURI, setInstanceURI] = useState('http://localhost:7777/');
+  const [uriPrefix, setUriPrefix] = useState('http://localhost:7777/');
 
-  const [username, setUsername] = useState('');
-  const [fullName, setFullName] = useState('');
+  const [userName, setUserName] = useState('');
+  const [userFullName, setUserFullName] = useState('');
   const [affiliation, setAffiliation] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [password2, setPassword2] = useState('');
+  const [userEmail, setUserEmail] = useState('');
+  const [userPassword, setUserPassword] = useState('');
+  const [userPasswordConfirm, setUserPasswordConfirm] = useState('');
+
+  const [errors, setErrors] = useState([]);
 
   return (
     <TopLevel doNotTrack={true} navbar={<div></div>} publicPage={true}>
@@ -48,7 +54,7 @@ export default function Setup() {
                 labelText="Instance Name (try to choose something descriptive to identify the kind of parts your SynBioHub instance will store)"
                 placeholder="My SynBioHub"
                 value={instanceName}
-                onChange={event => setInstanceName(event.value)}
+                onChange={event => setInstanceName(event.target.value)}
                 inputName="Instance Name"
                 containerStyling={styles.inputcontainer}
               />
@@ -67,8 +73,8 @@ export default function Setup() {
                     placeholder="Write welcome message here..."
                     inputName="Welcome Message"
                     containerStyling={styles.inputcontainer}
-                    value={welcome}
-                    onChange={event => setWelcome(event.value)}
+                    value={frontPageText}
+                    onChange={event => setFrontPageText(event.target.value)}
                     customInput="textarea"
                   />
 
@@ -78,7 +84,7 @@ export default function Setup() {
                     containerStyling={styles.inputcontainer}
                     customType="file"
                     value={logo}
-                    onChange={event => setLogo(event.value)}
+                    onChange={event => setLogo(event.target.value)}
                   />
 
                   <InputField
@@ -86,8 +92,10 @@ export default function Setup() {
                     inputName="Allow Public"
                     containerStyling={styles.checkboxinput}
                     customType="checkbox"
-                    value={allowPublic}
-                    onChange={event => setAllowPublic(event.checked)}
+                    value={allowPublicSignup}
+                    onChange={event =>
+                      setAllowPublicSignup(event.target.checked)
+                    }
                   />
                 </div>
               </div>
@@ -102,7 +110,7 @@ export default function Setup() {
                 labelText="Instance URL: We need to know where this SynBioHub instance is hosted so we can assign URLs to your submissions. If the URL below is incorrect, please change it"
                 placeholder="Instance URL"
                 value={instanceURL}
-                onChange={event => setInstanceURL(event.value)}
+                onChange={event => setInstanceURL(event.target.value)}
                 inputName="Instance URL"
                 containerStyling={styles.inputcontainer}
               />
@@ -110,8 +118,8 @@ export default function Setup() {
               <InputField
                 labelText="URI Prefix: We need to know how to prefix URIs of objects stored in this SynBioHub. Its default is the same as the URL, and should only be changed if you are shadowing another instance."
                 placeholder="URI Prefix"
-                value={instanceURI}
-                onChange={event => setInstanceURI(event.value)}
+                value={uriPrefix}
+                onChange={event => setUriPrefix(event.target.value)}
                 inputName="URI Prefix"
                 containerStyling={styles.inputcontainer}
               />
@@ -125,8 +133,8 @@ export default function Setup() {
               <InputField
                 labelText="Username"
                 placeholder="john"
-                value={username}
-                onChange={event => setUsername(event.value)}
+                value={userName}
+                onChange={event => setUserName(event.target.value)}
                 inputName="username"
                 containerStyling={styles.inputcontainer}
               />
@@ -134,8 +142,8 @@ export default function Setup() {
               <InputField
                 labelText="Full Name"
                 placeholder="John Doe"
-                value={fullName}
-                onChange={event => setFullName(event.value)}
+                value={userFullName}
+                onChange={event => setUserFullName(event.target.value)}
                 inputName="full name"
                 containerStyling={styles.inputcontainer}
               />
@@ -144,7 +152,7 @@ export default function Setup() {
                 labelText="Affiliation"
                 placeholder="Affiliation (Optional)"
                 value={affiliation}
-                onChange={event => setAffiliation(event.value)}
+                onChange={event => setAffiliation(event.target.value)}
                 inputName="affiliation"
                 containerStyling={styles.inputcontainer}
               />
@@ -152,8 +160,8 @@ export default function Setup() {
               <InputField
                 labelText="Email"
                 placeholder="johndoe@example.com"
-                value={email}
-                onChange={event => setEmail(event.value)}
+                value={userEmail}
+                onChange={event => setUserEmail(event.target.value)}
                 inputName="email"
                 containerStyling={styles.inputcontainer}
               />
@@ -161,8 +169,8 @@ export default function Setup() {
               <InputField
                 labelText="Password"
                 placeholder=""
-                value={password}
-                onChange={event => setPassword(event.value)}
+                value={userPassword}
+                onChange={event => setUserPassword(event.target.value)}
                 inputName="password"
                 containerStyling={styles.inputcontainer}
                 customType="password"
@@ -171,8 +179,8 @@ export default function Setup() {
               <InputField
                 labelText="Password (again)"
                 placeholder=""
-                value={password2}
-                onChange={event => setPassword2(event.value)}
+                value={userPasswordConfirm}
+                onChange={event => setUserPasswordConfirm(event.target.value)}
                 inputName="password (again)"
                 containerStyling={styles.inputcontainer}
                 customType="password"
@@ -180,7 +188,57 @@ export default function Setup() {
             </div>
           }
         />
-        <div className={styles.createbutton}>Create My SynBioHub!</div>
+        <div
+          className={styles.createbutton}
+          onClick={async () => {
+            const headers = {
+              'Content-Type': 'application/json',
+              Accept: 'text/plain'
+            };
+            const body = {
+              instanceName,
+              instanceURL,
+              uriPrefix,
+              userName,
+              affiliation,
+              userFullName,
+              userEmail,
+              color,
+              userPassword,
+              userPasswordConfirm,
+              frontPageText,
+              virtuosoINI: '/etc/virtuoso-opensource-7/virtuoso.ini',
+              virtuosoDB: '/var/lib/virtuoso-opensource-7/db',
+              allowPublicSignup
+            };
+            try {
+              const result = await fetch(
+                `${publicRuntimeConfig.backend}/setup`,
+                {
+                  method: 'POST',
+                  headers,
+                  body: JSON.stringify(body)
+                }
+              );
+              if (result.status !== 200) {
+                const content = await result.json();
+                console.log(content);
+                const errorMessages = content.details.map(
+                  error => error.message
+                );
+                setErrors(errorMessages);
+              } else {
+                setErrors([]);
+                setInSetupMode(false);
+              }
+            } catch (error) {
+              console.log(error);
+            }
+          }}
+        >
+          Create My SynBioHub!
+        </div>
+        <ErrorMessages errors={errors} />
       </div>
     </TopLevel>
   );
@@ -195,4 +253,17 @@ function SetupBlock({ title, content }) {
       </div>
     </div>
   );
+}
+
+function ErrorMessages({ errors }) {
+  if (errors.length == 0) return null;
+  const renderedErrors = errors.map((error, index) => (
+    <div
+      key={index}
+      style={{ color: 'red', padding: '0.25rem 0', fontSize: '1.1rem' }}
+    >
+      {error}
+    </div>
+  ));
+  return <div style={{ paddingBottom: '2rem' }}>{renderedErrors}</div>;
 }
