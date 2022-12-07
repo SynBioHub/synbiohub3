@@ -22,6 +22,7 @@ const renderingType = 'rendering';
 const submittingType = 'submit';
 const downloadingType = 'download';
 const curatingType = 'curation';
+const authorizationType = 'authorization';
 
 const searchable = ['index', 'name', 'url'];
 const headers = ['ID', 'Name', 'URL', ''];
@@ -63,6 +64,13 @@ export default function Plugins() {
         type={curatingType}
         loading={loading}
         data={plugins ? plugins.curation : undefined}
+      />
+      <PluginTable
+        token={token}
+        title="Authorization"
+        type={authorizationType}
+        loading={loading}
+        data={plugins ? plugins.authorization : undefined}
       />
     </div>
   );
