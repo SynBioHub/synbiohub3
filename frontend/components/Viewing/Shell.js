@@ -13,6 +13,35 @@ export default function Shell(properties) {
   const metadata = properties.metadata;
 
   const json = MasterJSON[properties.metadata.type];
+
+  if (!json) {
+    return (
+      <div className={styles.container}>
+        <SidePanel
+          metadata={metadata}
+          type={properties.type}
+          uri={properties.uri}
+          pagesInfo={{ type: properties.type, order: [] }}
+        />
+        <div className={styles.content}>
+          <ViewHeader
+            name={metadata.name}
+            displayId={metadata.displayId}
+            description={metadata.description}
+            type={properties.type}
+          />
+          <div className={styles.sections}>
+            <div>
+              No structure defined for type "{properties.metadata.type}"
+            </div>
+            <Plugins plugins={plugins} type={properties.type} />
+          </div>
+        </div>
+        <div></div>
+      </div>
+    );
+  }
+
   const pagesInfo = getPagesInfo(properties.type, json.pages);
 
   return (
