@@ -14,6 +14,7 @@
    "tables": [
      {
        "icon": "faIcon",
+       "title": "Sequence Annotations",
        "rootPredicate": "sbol:sequenceAnnotation",
        "orderBy": "xsd:integer(?start)",
        "columns": [ 
@@ -60,26 +61,22 @@
          {
           "title": "ComponLink",
           "hide": true,
-          "rootPredicateOverride": "sbol:component",
-          "predicates": ["sbol:definition"]
+          "predicates": ["sbol:component", "sbol:definition"]
          },
          {
           "title": "Component",
-          "rootPredicateOverride": "sbol:component",
           "infoLink": "http://sbols.org/v2#component",
           "link": "$ComponLink",
-          "predicates": ["sbol:definition", "dcterms:title"]
+          "predicates": ["sbol:component", "sbol:definition", "dcterms:title"]
          },
          {
           "title": "Sequence Annotation",
           "hide": true,
-          "rootPredicateOverride": "sbol:component",
-          "predicates": ["dcterms:title"]
+          "predicates": ["sbol:component", "dcterms:title"]
          },
          {
           "title": "Role(s)",
           "group": true,
-          "hide": true,
           "predicates": ["sbol:role"],
           "icon": "faInfo",
           "searchLink": "role=<$Result>&",
@@ -90,6 +87,7 @@
      },
      {
       "icon": "faIcon",
+       "title": "Components",
        "rootPredicate": "sbol:component",
        "columns": [ 
          {
@@ -124,8 +122,8 @@
    ],
    "pages": [
      "Details",
-     "Components",
-     "Sequence Annotations",
+     "$TABLES[Components]",
+     "$TABLES[Sequence Annotations]",
      "Other Properties",
      "Member of these Collections",
      "Attachments"

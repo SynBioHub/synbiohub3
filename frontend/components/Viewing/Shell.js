@@ -3,10 +3,10 @@ import Plugin from './Plugin';
 import SidePanel from './SidePanel';
 import ViewHeader from './ViewHeader';
 
-import componentJSON from './TypeContents/Component.json';
-import collectionJSON from './TypeContents/Collection.json';
+import componentJSON from './PageJSON/Component.json';
+import collectionJSON from './PageJSON/Collection.json';
 
-import GenericContent from './TypeContents/GenericContent';
+import GenericContent from './PageJSON/GenericContent';
 import { useState } from 'react';
 
 export default function Shell(properties) {
@@ -14,12 +14,6 @@ export default function Shell(properties) {
   const plugins = properties.plugins;
   const metadata = properties.metadata;
 
-  const content = getContent(
-    properties.type,
-    properties.uri,
-    refreshMembers,
-    setRefreshMembers
-  );
   const pagesInfo = getPages(properties.type);
 
   return (
@@ -38,7 +32,12 @@ export default function Shell(properties) {
           type={properties.type}
         />
         <div className={styles.sections}>
-          {content}
+          <GenericContent
+            type={properties.metadata.type}
+            uri={properties.uri}
+            refreshMembers={refreshMembers}
+            setRefreshMembers={setRefreshMembers}
+          />
           <Plugins plugins={plugins} type={properties.type} />
         </div>
       </div>

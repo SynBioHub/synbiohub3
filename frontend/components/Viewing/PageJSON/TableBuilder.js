@@ -1,4 +1,3 @@
-import json from './Test.json';
 import getQueryResponse from '../../../sparql/tools/getQueryResponse';
 import loadTemplate from '../../../sparql/tools/loadTemplate';
 import { useEffect, useState } from 'react';
@@ -7,23 +6,18 @@ import Link from 'next/link';
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-export default function TableBuilder({ uri, index }) {
-  const prefixes = json.prefixes.join('\n');
-  const tables = (
-    <TableRenderer
-      uri={uri}
-      prefixes={prefixes}
-      table={json.tables[index]}
-      key={index}
-    />
-  );
+export default function TableBuilder({ uri, prefixes, table }) {
+  prefixes = prefixes.join('\n');
 
-  return <div>{tables}</div>;
+  return (
+    <div>
+      <TableRenderer uri={uri} prefixes={prefixes} table={table} />
+    </div>
+  );
 }
 
 function TableRenderer({ uri, prefixes, table }) {
   const [content, setContent] = useState([]);
-  console.log(prefixes + '\n' + getTableQuerySetup(uri, table));
   useEffect(() => {
     getQueryResponse(
       prefixes + '\n' + getTableQuerySetup(uri, table),
@@ -38,6 +32,10 @@ function TableRenderer({ uri, prefixes, table }) {
   const header = createHeader(table.columns);
 
   if (!content) return null;
+
+  if (content.length == 0) {
+    return <div>No columns to display</div>;
+  }
 
   const rows = content.map((row, index) => {
     const columns = row.map((column, index) => (
