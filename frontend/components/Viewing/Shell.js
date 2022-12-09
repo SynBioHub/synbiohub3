@@ -3,18 +3,17 @@ import Plugin from './Plugin';
 import SidePanel from './SidePanel';
 import ViewHeader from './ViewHeader';
 
-import componentJSON from './PageJSON/Component.json';
-import collectionJSON from './PageJSON/Collection.json';
-
 import GenericContent from './PageJSON/GenericContent';
 import { useState } from 'react';
+import MasterJSON from './PageJSON/Master';
 
 export default function Shell(properties) {
   const [refreshMembers, setRefreshMembers] = useState(false);
   const plugins = properties.plugins;
   const metadata = properties.metadata;
 
-  const pagesInfo = getPages(properties.type);
+  const json = MasterJSON[properties.metadata.type];
+  const pagesInfo = getPagesInfo(properties.type, json.pages);
 
   return (
     <div className={styles.container}>
@@ -33,7 +32,7 @@ export default function Shell(properties) {
         />
         <div className={styles.sections}>
           <GenericContent
-            type={properties.metadata.type}
+            json={json}
             uri={properties.uri}
             refreshMembers={refreshMembers}
             setRefreshMembers={setRefreshMembers}
@@ -54,34 +53,7 @@ function Plugins(properties) {
   return <div>{plugins}</div>;
 }
 
-function getContent(type, uri, refreshMembers, setRefreshMembers) {
-  return type ? (
-    <GenericContent
-      type={type}
-      uri={uri}
-      refreshMembers={refreshMembers}
-      setRefreshMembers={setRefreshMembers}
-    />
-  ) : undefined;
-}
-
-function getPages(type) {
-  const componentPages = componentJSON.pages;
-  const collectionPages = collectionJSON.pages;
-
-  switch (type) {
-    case 'Collection':
-      return getOrder('Collection', collectionPages);
-    case 'ComponentDefinition':
-
-    case 'Component':
-      return getOrder('Component', componentPages);
-    default:
-      return getOrder('Unknown', []);
-  }
-}
-
-function getOrder(type, pages) {
+function getPagesInfo(type, pages) {
   if (localStorage.getItem(type) === null) return { type: type, order: pages };
 
   return { type: type, order: JSON.parse(localStorage.getItem(type)).order };

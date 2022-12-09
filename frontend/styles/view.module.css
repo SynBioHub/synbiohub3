@@ -216,6 +216,7 @@
 
 .sectionheadertitle {
   margin-left: 0.5rem;
+  max-width: 13rem;
 }
 
 .sectionheadericon {

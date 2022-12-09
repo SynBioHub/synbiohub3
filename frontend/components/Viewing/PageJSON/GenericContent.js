@@ -1,66 +1,33 @@
 import Section from '../Sections/Section';
-import Details from '../Sections/Details/Details.js';
-import OtherProperties from '../Sections/OtherProperties';
-import MemberOfCollections from '../Sections/MemberOfCollections';
-import Attachments from '../Sections/Attachments/Attachments';
-import Members from '../Collection/Members';
 
 import { useSelector } from 'react-redux';
 import { Fragment } from 'react';
 import TableBuilder from './TableBuilder';
 
-import MasterJSON from './Master.js';
 import CustomComponents from './CustomComponents.js';
 
-export default function GenericContent(properties) {
-  if (properties.type) {
-    const json = MasterJSON[properties.type];
-    const pages = json.pages;
+export default function GenericContent({ json, uri }) {
+  const pages = useSelector(state => state.pageSections.order);
 
-    // <CustomComponents.Details uri={properties.uri} />
-
-    const content = pages.map((page, index) => {
-      if (page.startsWith('$TABLES[')) {
-        const title = page.substring(8, page.length - 1);
-        const table = json.tables.find(table => table.title === title);
-        return (
-          <Section title={table.title} key={index}>
-            <TableBuilder
-              uri={properties.uri}
-              prefixes={json.prefixes}
-              table={table}
-            />
-          </Section>
-        );
-      }
-      console.log(page);
-      const ComponentToRender = CustomComponents[page];
+  const content = pages.map((page, index) => {
+    if (page.startsWith('$TABLES[')) {
+      const title = page.substring(8, page.length - 1);
+      const table = json.tables.find(table => table.title === title);
       return (
-        <Section title={page} key={index}>
-          <ComponentToRender uri={properties.uri} />
+        <Section title={table.title} key={index}>
+          <TableBuilder uri={uri} prefixes={json.prefixes} table={table} />
         </Section>
       );
-    });
-
-    // const pageSectionsOrder = useSelector(state => state.pageSections.order);
-    //const sectionsOrder = generateSectionOrder(pageSectionsOrder, properties);
-
-    return <Fragment>{content}</Fragment>;
-  }
-  return null;
-}
-
-/**
- * Maps the page section names and returns the corresponding page section components.
- *
- * @param {Array} pages An array containing the current order of the page sections.
- * @param {Any} properties Component properties passed into page sections.
- * @returns The different page sections.
- */
-function generateSectionOrder(pages, properties) {
-  return pages.map((page, index) => {
-    return <Fragment key={index}>{getSection(page, properties)}</Fragment>;
+    }
+    const ComponentToRender = CustomComponents[page];
+    return (
+      <Section title={page} key={index}>
+        <ComponentToRender uri={uri} />
+      </Section>
+    );
   });
+
+  return <Fragment>{content}</Fragment>;
 }
 
 // /**

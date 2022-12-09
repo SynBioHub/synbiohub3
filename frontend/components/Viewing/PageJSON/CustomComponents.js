@@ -3,7 +3,8 @@ const CustomComponents = {
   'Member of these Collections': require('../Sections/MemberOfCollections')
     .default,
   'Other Properties': require('../Sections/OtherProperties').default,
-  Attachments: require('../Sections/Attachments/Attachments').default
+  Attachments: require('../Sections/Attachments/Attachments').default,
+  Members: require('../Collection/Members').default
 };
 
 export default CustomComponents;
