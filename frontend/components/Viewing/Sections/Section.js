@@ -18,21 +18,28 @@ sections will be minimizable and some won't be.
 
 /**
  * Handles if the section is minimized or expanded.
- * 
+ *
  * @param {Any} properties Information passed down from the parent component.
  * @returns A minimized/expanded section.
  */
 export default function Section(properties) {
   const dispatch = useDispatch();
+
+  const id = properties.id || properties.title;
+
   //The index that the section is at in the section order.
-  const sectionIndex = useSelector(state => state.pageSections.order).indexOf(properties.title);
+  const sectionIndex = useSelector(state => state.pageSections.order).indexOf(
+    id
+  );
   //The content type the section is a part of.
   const contentType = useSelector(state => state.pageSections.type);
-  
+
   const minimizedSections = useSelector(state => state.pageSections.minimized);
   const minimizedSectionsCopy = [...minimizedSections];
 
-  const [isMinimized, setIsMinimized] = useState(minimizedSections[sectionIndex]);
+  const [isMinimized, setIsMinimized] = useState(
+    minimizedSections[sectionIndex]
+  );
 
   //The content type will not be correct on the first render after changing to a page of a different content type.
   const firstUpdate = useRef(true);
@@ -62,8 +69,16 @@ export default function Section(properties) {
           setIsMinimized(!minimizedSections[sectionIndex]);
         }}
       />
-      <div className={minimizedSections[sectionIndex] ? styles.sectionclosed : styles.sectionopen}>
-        <div className={styles.sectionchildcontainer}>{properties.children}</div>
+      <div
+        className={
+          minimizedSections[sectionIndex]
+            ? styles.sectionclosed
+            : styles.sectionopen
+        }
+      >
+        <div className={styles.sectionchildcontainer}>
+          {properties.children}
+        </div>
       </div>
     </div>
   );

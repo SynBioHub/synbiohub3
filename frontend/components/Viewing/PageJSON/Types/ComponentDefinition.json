@@ -27,14 +27,14 @@
            "title": "Sequence Annotation",
            "predicates": ["dcterms:title"],
            "icon": "faInfo",
-           "link": "$Sequence Annotation Link",
+           "link": "$<Sequence Annotation Link>",
            "infoLink": "http://sbols.org/v2#SequenceAnnotation",
            "info": "Learn more about Sequence Annotations"
          },
          {
           "title": "Location",
-          "text": "$Start, $End",
-          "link": "$AnnotationLink",
+          "text": "$<Start>, $<End>",
+          "link": "$<AnnotationLink>",
           "infoLink": "http://sbols.org/v2#Location"
          },
          {
@@ -59,14 +59,14 @@
             "hide": true
          },
          {
-          "title": "ComponLink",
+          "title": "ComponentLink",
           "hide": true,
           "predicates": ["sbol:component", "sbol:definition"]
          },
          {
           "title": "Component",
           "infoLink": "http://sbols.org/v2#component",
-          "link": "$ComponLink",
+          "link": "$<ComponentLink>",
           "predicates": ["sbol:component", "sbol:definition", "dcterms:title"]
          },
          {
@@ -79,7 +79,8 @@
           "group": true,
           "predicates": ["sbol:role"],
           "icon": "faInfo",
-          "searchLink": "role=<$Result>&",
+          "link": "search/role=<$<This>>&",
+          "linkType": "search",
           "infoLink": "http://sbols.org/v2#role",
           "info": "Learn more about roles"
         }
@@ -91,12 +92,12 @@
        "rootPredicate": "sbol:component",
        "columns": [ 
          {
-          "title": "ComponLink",
+          "title": "ComponentLink",
           "hide": true,
           "predicates": ["sbol:definition"]
          },
          {
-          "title": "InstLink",
+          "title": "InstanceLink",
           "hide": true,
           "predicates": []
          },
@@ -107,14 +108,14 @@
          },
          {
           "title": "Instance",
-          "link": "$InstLink",
+          "link": "$<InstanceLink>",
           "infoLink": "http://sbols.org/v2#component",
           "predicates": ["dcterms:title"]
          }, 
          {
           "title": "Definition",
           "infoLink": "https://dissys.github.io/sbol-owl/sbol-owl.html#definition",
-          "link": "$ComponLink",
+          "link": "$<ComponentLink>",
           "predicates": ["sbol:definition", "dcterms:title"]
          }
       ]

@@ -14,7 +14,7 @@ export default function GenericContent({ json, uri }) {
       const title = page.substring(8, page.length - 1);
       const table = json.tables.find(table => table.title === title);
       return (
-        <Section title={table.title} key={index}>
+        <Section id={page} title={table.title} key={index}>
           <TableBuilder uri={uri} prefixes={json.prefixes} table={table} />
         </Section>
       );
