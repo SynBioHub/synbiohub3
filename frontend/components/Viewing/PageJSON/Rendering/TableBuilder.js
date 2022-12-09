@@ -1,29 +1,30 @@
-import json from './Test.json';
-import getQueryResponse from '../../../sparql/tools/getQueryResponse';
-import loadTemplate from '../../../sparql/tools/loadTemplate';
+import getQueryResponse from '../../../../sparql/tools/getQueryResponse';
 import { useEffect, useState } from 'react';
-import styles from '../../../styles/view.module.css';
+import styles from '../../../../styles/view.module.css';
 import Link from 'next/link';
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSearch } from '@fortawesome/free-solid-svg-icons';
 
-export default function TableBuilder({ uri, index }) {
-  const prefixes = json.prefixes.join('\n');
-  const tables = (
-    <TableRenderer
-      uri={uri}
-      prefixes={prefixes}
-      table={json.tables[index]}
-      key={index}
-    />
+/**
+ * This Component renders an individual table based on given JSON
+ * for the table. It constructs the corresponding SPARQL query as
+ * dictated by the JSON
+ * @param {*} param0
+ * @returns
+ */
+export default function TableBuilder({ uri, prefixes, table }) {
+  prefixes = prefixes.join('\n');
+
+  return (
+    <div>
+      <TableRenderer uri={uri} prefixes={prefixes} table={table} />
+    </div>
   );
-
-  return <div>{tables}</div>;
 }
 
 function TableRenderer({ uri, prefixes, table }) {
   const [content, setContent] = useState([]);
-  console.log(prefixes + '\n' + getTableQuerySetup(uri, table));
   useEffect(() => {
     getQueryResponse(
       prefixes + '\n' + getTableQuerySetup(uri, table),
@@ -39,22 +40,91 @@ function TableRenderer({ uri, prefixes, table }) {
 
   if (!content) return null;
 
-  const rows = content.map((row, index) => {
-    const columns = row.map((column, index) => (
-      <td key={index}>
+  if (content.length == 0) {
+    return <div>No columns to display</div>;
+  }
+
+  function ColumnLink({ text, link, linkType }) {
+    if (linkType === 'search') {
+      const searchStart = link.indexOf('=');
+      link =
+        link.substring(0, searchStart) +
+        encodeURIComponent(link.substring(searchStart));
+      return (
+        <div style={{ display: 'inline-block' }}>
+          <span>{text}</span>
+          {text && (
+            <Link href={link}>
+              <a target="_blank">
+                <FontAwesomeIcon
+                  icon={faSearch}
+                  size="small"
+                  className={styles.searchicon}
+                />
+              </a>
+            </Link>
+          )}
+        </div>
+      );
+    }
+    return (
+      <Link href={link}>
+        <a target="_blank" className={styles.customlink}>
+          <span>{text}</span>
+        </a>
+      </Link>
+    );
+  }
+
+  function ColumnRenderer({ column }) {
+    if (column.grouped) {
+      const items = column.text.split(', ');
+      const content = items.map((item, index) => {
+        if (column.link) {
+          return (
+            <ColumnLink
+              link={loadText(column.link, { This: item })}
+              text={`${item}${
+                index === items.length - 1 ||
+                column.linkType !== 'default' ||
+                column.linkType !== undefined
+                  ? ''
+                  : ', '
+              }`}
+              linkType={column.linkType}
+            />
+          );
+        }
+        return (
+          <span>
+            {item}
+            {index === items.length - 1 ? '' : ', '}
+          </span>
+        );
+      });
+      return <td>{content}</td>;
+    }
+    return (
+      <td>
         {column.link ? (
-          <Link href={column.link}>
-            <a target="_blank">
-              <span>{column.text}</span>
-            </a>
-          </Link>
+          <ColumnLink
+            link={loadText(column.link, { This: column.text })}
+            text={column.text}
+            linkType={column.linkType}
+          />
         ) : (
           <span>{column.text}</span>
         )}
       </td>
+    );
+  }
+
+  const rows = content.map((row, index) => {
+    const columns = row.map((column, index) => (
+      <ColumnRenderer column={column} key={index} />
     ));
     return (
-      <tr className={styles.componentsinfo} key={index}>
+      <tr key={index} className={styles.customrow}>
         {columns}
       </tr>
     );
@@ -102,8 +172,8 @@ function getTableContent(table, items) {
       title: column.title,
       id: getId(column).substring(1),
       link: column.link,
+      linkType: column.linkType,
       text: column.text,
-      searchLink: column.searchLink,
       hidden: column.hide ? true : false,
       grouped: column.group ? true : false
     };
@@ -123,22 +193,21 @@ function getTableContent(table, items) {
         const link = column.link
           ? loadText(column.link, titleToValueMap)
           : undefined;
-        const search =
-          column.searchLink && text
-            ? text
-                .split(', ')
-                .map(item => loadText(column.searchLink, { Result: item }))
-            : undefined;
+        const linkType = column.linkType || 'default';
         const grouped = column.grouped;
-        return { text, link, search, grouped };
+        return { text, link, linkType, grouped };
       })
       .filter(column => column !== undefined);
   });
   return content;
 }
 
-function loadText(text, args) {
-  return loadTemplate(text, args);
+function loadText(template, args) {
+  for (const key of Object.keys(args)) {
+    template = template.replace(new RegExp(`\\$<${key}>`, 'g'), args[key]);
+  }
+
+  return template;
 }
 
 function getTableQuerySetup(uri, tableJSON) {

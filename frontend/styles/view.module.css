@@ -216,6 +216,7 @@
 
 .sectionheadertitle {
   margin-left: 0.5rem;
+  max-width: 13rem;
 }
 
 .sectionheadericon {
@@ -533,7 +534,7 @@
 }
 
 .searchicon {
-  margin-left: 0.3rem;
+  margin: 0 0.3rem;
   cursor: pointer;
 }
 
@@ -985,6 +986,14 @@
   color: #465875;
 }
 
-.componentsinfo span:hover {
+.customlink span {
+  color: #D25627;
+}
+
+.customlink span:hover {
   text-decoration: underline;
+}
+
+.customrow {
+  /* font-weight: 500; */
 }

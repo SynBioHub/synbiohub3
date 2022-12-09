@@ -3,24 +3,17 @@ import Plugin from './Plugin';
 import SidePanel from './SidePanel';
 import ViewHeader from './ViewHeader';
 
-import componentJSON from './TypeContents/Component.json';
-import collectionJSON from './TypeContents/Collection.json';
-
-import GenericContent from './TypeContents/GenericContent';
+import GenericContent from './PageJSON/Rendering/GenericContent';
 import { useState } from 'react';
+import MasterJSON from './PageJSON/MasterJSON';
 
 export default function Shell(properties) {
   const [refreshMembers, setRefreshMembers] = useState(false);
   const plugins = properties.plugins;
   const metadata = properties.metadata;
 
-  const content = getContent(
-    properties.type,
-    properties.uri,
-    refreshMembers,
-    setRefreshMembers
-  );
-  const pagesInfo = getPages(properties.type);
+  const json = MasterJSON[properties.metadata.type];
+  const pagesInfo = getPagesInfo(properties.type, json.pages);
 
   return (
     <div className={styles.container}>
@@ -38,7 +31,12 @@ export default function Shell(properties) {
           type={properties.type}
         />
         <div className={styles.sections}>
-          {content}
+          <GenericContent
+            json={json}
+            uri={properties.uri}
+            refreshMembers={refreshMembers}
+            setRefreshMembers={setRefreshMembers}
+          />
           <Plugins plugins={plugins} type={properties.type} />
         </div>
       </div>
@@ -55,34 +53,7 @@ function Plugins(properties) {
   return <div>{plugins}</div>;
 }
 
-function getContent(type, uri, refreshMembers, setRefreshMembers) {
-  return type ? (
-    <GenericContent
-      type={type}
-      uri={uri}
-      refreshMembers={refreshMembers}
-      setRefreshMembers={setRefreshMembers}
-    />
-  ) : undefined;
-}
-
-function getPages(type) {
-  const componentPages = componentJSON.pages;
-  const collectionPages = collectionJSON.pages;
-
-  switch (type) {
-    case 'Collection':
-      return getOrder('Collection', collectionPages);
-    case 'ComponentDefinition':
-
-    case 'Component':
-      return getOrder('Component', componentPages);
-    default:
-      return getOrder('Unknown', []);
-  }
-}
-
-function getOrder(type, pages) {
+function getPagesInfo(type, pages) {
   if (localStorage.getItem(type) === null) return { type: type, order: pages };
 
   return { type: type, order: JSON.parse(localStorage.getItem(type)).order };
