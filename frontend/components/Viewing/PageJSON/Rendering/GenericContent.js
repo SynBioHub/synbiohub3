@@ -1,10 +1,10 @@
-import Section from '../Sections/Section';
+import Section from '../../Sections/Section';
 
 import { useSelector } from 'react-redux';
 import { Fragment } from 'react';
 import TableBuilder from './TableBuilder';
 
-import CustomComponents from './CustomComponents.js';
+import CustomComponents from '../CustomComponents.js';
 
 export default function GenericContent({ json, uri }) {
   const pages = useSelector(state => state.pageSections.order);
@@ -29,6 +29,9 @@ export default function GenericContent({ json, uri }) {
 
   return <Fragment>{content}</Fragment>;
 }
+
+// This is Alex's code for the previous table renderer. I'm keeping it
+// for now to keep track of custom components
 
 // /**
 //  * Returns the corresponding section component.

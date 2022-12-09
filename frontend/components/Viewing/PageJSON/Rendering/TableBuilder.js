@@ -1,11 +1,18 @@
-import getQueryResponse from '../../../sparql/tools/getQueryResponse';
-import loadTemplate from '../../../sparql/tools/loadTemplate';
+import getQueryResponse from '../../../../sparql/tools/getQueryResponse';
+import loadTemplate from '../../../../sparql/tools/loadTemplate';
 import { useEffect, useState } from 'react';
-import styles from '../../../styles/view.module.css';
+import styles from '../../../../styles/view.module.css';
 import Link from 'next/link';
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
+/**
+ * This Component renders an individual table based on given JSON
+ * for the table. It constructs the corresponding SPARQL query as
+ * dictated by the JSON
+ * @param {*} param0
+ * @returns
+ */
 export default function TableBuilder({ uri, prefixes, table }) {
   prefixes = prefixes.join('\n');
 

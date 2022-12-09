@@ -3,9 +3,9 @@ import Plugin from './Plugin';
 import SidePanel from './SidePanel';
 import ViewHeader from './ViewHeader';
 
-import GenericContent from './PageJSON/GenericContent';
+import GenericContent from './PageJSON/Rendering/GenericContent';
 import { useState } from 'react';
-import MasterJSON from './PageJSON/Master';
+import MasterJSON from './PageJSON/MasterJSON';
 
 export default function Shell(properties) {
   const [refreshMembers, setRefreshMembers] = useState(false);
