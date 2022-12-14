@@ -1,14 +1,14 @@
 package com.synbiohub.sbh3.controllers;
 
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
-import com.synbiohub.sbh3.dto.PluginLoginDTO;
+import com.synbiohub.sbh3.config.model.ConfigurationComponent;
+import com.synbiohub.sbh3.config.model.CustomConfiguration;
+import com.synbiohub.sbh3.dto.authplugindto.PluginAction;
+import com.synbiohub.sbh3.dto.authplugindto.PluginLoginDTO;
+import com.synbiohub.sbh3.dto.authplugindto.PluginServerDTO;
 import com.synbiohub.sbh3.services.PluginService;
 import com.synbiohub.sbh3.utils.ConfigUtil;
 import lombok.AllArgsConstructor;
-import org.apache.http.client.HttpClient;
 import org.json.JSONObject;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +17,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.net.*;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -25,6 +24,8 @@ import java.util.List;
 public class PluginController {
 
     private final PluginService pluginService;
+
+    private final ConfigurationComponent configurationComponent;
 
     @GetMapping(value = "/admin/plugins")
     @ResponseBody
@@ -233,19 +234,62 @@ public class PluginController {
 
     }
 
-    @PostMapping(value = "/plugin/login", produces = "application/json")
+    @PostMapping(value = "/plugin/token", produces = "application/json")
     @ResponseBody
-    public ResponseEntity<String> login(@RequestBody PluginLoginDTO loginInfo) {
+    public ResponseEntity<String> login(@RequestBody PluginLoginDTO pluginParam) {
         RestTemplate restTemplate = new RestTemplate();
 
         var headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("username", loginInfo.getUsername());
-        jsonObject.put("email", loginInfo.getEmail());
-        jsonObject.put("password", loginInfo.getPassword());
+
+        PluginAction action = PluginAction.valueOf(pluginParam.getAction().toUpperCase());
+        switch (action) {
+            case LOGIN: {
+                jsonObject.put("username", pluginParam.getUsername());
+                jsonObject.put("email", pluginParam.getEmail());
+                jsonObject.put("password", pluginParam.getPassword());
+                break;
+            }
+            case LOGOUT: {
+                jsonObject.put("login_token", pluginParam.getLoginToken());
+                break;
+            }
+            case REFRESH: {
+                jsonObject.put("refresh_token", pluginParam.getRefreshToken());
+                break;
+            }
+            default:
+                throw new RuntimeException("Incorrect action: " +  pluginParam.getAction());
+        }
         HttpEntity<String> request = new HttpEntity<>(jsonObject.toString(), headers);
-        return restTemplate.postForEntity(loginInfo.getLoginUrl(), request, String.class);
+        String url = pluginService.getExternalUrl(pluginParam.getServer(), action);
+        return restTemplate.postForEntity(url, request, String.class);
+    }
+
+    @GetMapping(value = "/plugin/status", produces = "application/json")
+    @ResponseBody
+    public ResponseEntity<String> getStatus() {
+        RestTemplate restTemplate = new RestTemplate();
+        var headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        PluginAction action = PluginAction.valueOf("STATUS");
+        String url = pluginService.getExternalUrl("testserver", action);
+        return restTemplate.getForEntity(url, String.class);
+    }
+
+    @GetMapping(value="/plugin/info", produces = "application/json")
+    public ResponseEntity getLoginInfo() {
+        RestTemplate restTemplate = new RestTemplate();
+        var headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        String url = "http://localhost:8101/login";
+        return restTemplate.getForEntity(url, String.class);
+    }
+
+    @GetMapping(value = "/plugin/servers", produces = "application/json")
+    public ResponseEntity<List<PluginServerDTO>> getPluginServers() {
+        return ResponseEntity.ok(pluginService.getPlugins());
     }
 
 

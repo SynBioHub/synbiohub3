@@ -4,8 +4,8 @@ package com.synbiohub.sbh3.services;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.synbiohub.sbh3.entities.UserEntity;
-import com.synbiohub.sbh3.repositories.UserRepository;
+import com.synbiohub.sbh3.security.model.User;
+import com.synbiohub.sbh3.security.repo.UserRepository;
 import com.synbiohub.sbh3.security.CustomUserService;
 import com.synbiohub.sbh3.sparql.SPARQLQuery;
 import com.synbiohub.sbh3.utils.ConfigUtil;
@@ -34,7 +34,7 @@ public class UserService {
     private final CustomUserService customUserService;
     private final ConfigUtil configUtil;
 
-    public UserEntity getUserProfile() {
+    public User getUserProfile() {
         Authentication authentication = checkAuthentication();
         var user = userRepository.findByUsername(authentication.getName());
         if (user.isEmpty())
@@ -82,7 +82,7 @@ public class UserService {
     public ResponseEntity<String> updateUser(ObjectMapper mapper, Map<String, String> allParams) throws JsonProcessingException, AuthenticationException {
         Authentication auth = checkValidLogin(authentication -> authentication, allParams.get("email"), allParams.get("password1"));
         customUserService.confirmPasswordsMatch(allParams.get("password1"), allParams.get("password2"));
-        UserEntity user = getUserProfile();
+        User user = getUserProfile();
         if (user == null || auth == null)
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         updateUserFields(user, allParams);
@@ -91,7 +91,7 @@ public class UserService {
         return ResponseEntity.ok(mapper.writeValueAsString(user));
     }
 
-    private void updateUserFields(UserEntity user, Map<String, String> allParams) {
+    private void updateUserFields(User user, Map<String, String> allParams) {
         if (allParams.get("name") != null) {
             user.setName(allParams.get("name"));
         }

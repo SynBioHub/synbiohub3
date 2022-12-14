@@ -1,2 +1,9 @@
 synbiohub:
   firstLaunch: false
+plugin:
+  external:
+    testserver:
+      login: http://localhost:8104/loggedinAPI
+      logout: http://localhost:8104/logoutAPI
+      refresh: http://localhost:8104/refresh
+      status: http://localhost:8104/status

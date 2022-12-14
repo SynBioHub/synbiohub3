@@ -1,12 +1,10 @@
 CREATE TABLE Users (
-    id INT NOT NULL AUTO_INCREMENT,
-    name VARCHAR,
-    username VARCHAR NOT NULL,
-    password VARCHAR NOT NULL,
-    email VARCHAR,
-    affiliation VARCHAR,
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(64),
+    username VARCHAR(64) NOT NULL,
+    password VARCHAR(64) NOT NULL,
+    email VARCHAR(128),
+    affiliation VARCHAR(256),
     isAdmin BOOLEAN DEFAULT FALSE,
-    isCurator BOOLEAN DEFAULT FALSE,
-    PRIMARY KEY (id),
-    UNIQUE (username)
+    isCurator BOOLEAN DEFAULT FALSE
 );

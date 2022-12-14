@@ -1,18 +1,17 @@
-package com.synbiohub.sbh3.entities;
+package com.synbiohub.sbh3.security.model;
 
-import lombok.Builder;
 import lombok.Data;
 
 import javax.persistence.*;
 
-@Entity(name = "USERS")
+@Entity
 @Data
-public class UserEntity {
+@Table(name="users", schema = "public")
+public class User {
 
     @Id
-    @SequenceGenerator(name= "CLIENT_SEQUENCE", sequenceName = "CLIENT_SEQUENCE_ID", initialValue=1, allocationSize = 1)
-    @GeneratedValue(strategy=GenerationType.AUTO, generator="CLIENT_SEQUENCE")
-    private Integer id;
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    private Long id;
 
     @Column(name = "name")
     private String name;

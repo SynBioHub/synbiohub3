@@ -1,9 +1,9 @@
 package com.synbiohub.sbh3.security;
 
 import com.synbiohub.sbh3.dto.UserRegistrationDTO;
-import com.synbiohub.sbh3.entities.UserEntity;
+import com.synbiohub.sbh3.security.model.User;
 import com.synbiohub.sbh3.exceptions.UserAlreadyExistsException;
-import com.synbiohub.sbh3.repositories.UserRepository;
+import com.synbiohub.sbh3.security.repo.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -17,13 +17,13 @@ public class CustomUserService {
     private final UserRepository userRepository;
 
 
-    public UserEntity registerNewUserAccount(UserRegistrationDTO userRegistrationDTO) throws AuthenticationException {
+    public User registerNewUserAccount(UserRegistrationDTO userRegistrationDTO) throws AuthenticationException {
         // If user already exists, throw an exception
-        if (userRepository.findByEmail(userRegistrationDTO.getEmail()).isPresent()) { throw new UserAlreadyExistsException(); }
+//        if (userRepository.findByEmail(userRegistrationDTO.getEmail()).isPresent()) { throw new UserAlreadyExistsException(); }
         // If the two passwords do not match, throw an exception
         confirmPasswordsMatch(userRegistrationDTO.getPassword1(), userRegistrationDTO.getPassword2());
 
-        var user = new UserEntity();
+        var user = new User();
         user.setUsername(userRegistrationDTO.getUsername());
         user.setEmail(userRegistrationDTO.getEmail());
         user.setAffiliation(userRegistrationDTO.getAffiliation());
@@ -38,11 +38,13 @@ public class CustomUserService {
             user.setIsCurator(false);
         }
 
+        user.setId(1L);
+
 
         return userRepository.save(user);
     }
 
-    public void setEncodedPassword(UserEntity user, String password) {
+    public void setEncodedPassword(User user, String password) {
         var passwordEncoder = new BCryptPasswordEncoder();
         user.setPassword(passwordEncoder.encode(password));
     }

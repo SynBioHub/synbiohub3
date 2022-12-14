@@ -1,9 +1,7 @@
 package com.synbiohub.sbh3.security;
 
-import com.synbiohub.sbh3.repositories.UserRepository;
+import com.synbiohub.sbh3.security.repo.UserRepository;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

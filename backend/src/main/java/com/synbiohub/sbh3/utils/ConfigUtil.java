@@ -3,7 +3,11 @@ package com.synbiohub.sbh3.utils;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import lombok.extern.slf4j.Slf4j;
+import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -63,6 +67,8 @@ public class ConfigUtil {
             String jsonString = "";
             Path path = Paths.get("/data/config.local.json");
             ObjectNode js = (ObjectNode) mapper.createObjectNode();
+            Gson gson = new Gson();
+
             JsonNode oldConfig = mapper.readValue(new File("src/main/resources/config.json"), JsonNode.class);
             js.put("firstLaunch", "false");
 

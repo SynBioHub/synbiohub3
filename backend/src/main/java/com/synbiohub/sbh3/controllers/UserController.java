@@ -2,6 +2,7 @@ package com.synbiohub.sbh3.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.synbiohub.sbh3.config.services.CustomConfigurationService;
 import com.synbiohub.sbh3.dto.UserRegistrationDTO;
 import com.synbiohub.sbh3.security.CustomUserService;
 import com.synbiohub.sbh3.services.UserService;
@@ -9,6 +10,7 @@ import com.synbiohub.sbh3.utils.ConfigUtil;
 import com.synbiohub.sbh3.utils.ObjectMapperUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -36,6 +38,7 @@ public class UserController {
     private final UserService userService;
     private final ObjectMapper mapper;
     private final ConfigUtil configUtil;
+    private final CustomConfigurationService configurationService;
 
     @PostMapping(value = "/login", produces = "text/plain", consumes = "application/x-www-form-urlencoded")
     public ResponseEntity login(@RequestParam String email, @RequestParam String password, HttpServletRequest request, HttpServletResponse response) {
@@ -51,6 +54,7 @@ public class UserController {
         return ResponseEntity.ok(RequestContextHolder.currentRequestAttributes().getSessionId());
     }
 
+    // TODO: change what logout does, maybe not invalidate session, but invalidate current auth token
     @PostMapping(value = "/logout")
     @ResponseStatus(HttpStatus.OK)
     public void logout(HttpSession session) {
@@ -98,12 +102,14 @@ public class UserController {
     // TODO: this is hardcoded, but for true setup, need interceptor for this endpoint through frontend -> Ben
     @PostMapping(value = "/setup")
     public ResponseEntity<String> setup(@RequestParam Map<String, String> allParams) throws AuthenticationException {
-        if (configUtil.isLaunched()) {
+        if (configurationService.isLaunched()) {
             return new ResponseEntity<>(HttpStatus.OK);
         }
+        configurationService.save(allParams);
+        configurationService.save("firstLaunch", "false");
         registerNewUser(userService.registerNewAdminUser(allParams)); // assumes no users in repository, should crate admin user
         // only first user is admin
-        userService.setUpConfig(allParams); // completely rewrites config.local.json
+        //userService.setUpConfig(allParams); // completely rewrites config.local.json
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
