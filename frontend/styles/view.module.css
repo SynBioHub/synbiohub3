@@ -137,6 +137,18 @@
   width: 100%;
 }
 
+.infogeneric {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  overflow-wrap: break-word;
+  margin-right: 2rem;
+  background-color: #D25627;
+  color: #fff;
+  padding: 0.2rem 0.5rem;
+  width: 100%;
+}
+
 .infolabel {
   font-size: 0.8rem;
   font-weight: 500;
@@ -158,6 +170,17 @@
   font-size: 0.8rem;
   overflow-wrap: break-word;
   border: 1px solid #465875;
+  width: 18rem;
+}
+
+.infotitlegeneric {
+  padding: 0.3rem;
+  margin: 0;
+  font-weight: 500;
+  color: #000;
+  font-size: 0.8rem;
+  overflow-wrap: break-word;
+  border: 1px solid #D25627;
   width: 18rem;
 }
 

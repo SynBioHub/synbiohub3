@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
+import MetadataInfo from '../../MetadataInfo';
 
 /**
  * This Component renders an individual table based on given JSON
@@ -13,17 +14,38 @@ import { faSearch } from '@fortawesome/free-solid-svg-icons';
  * @param {*} param0
  * @returns
  */
-export default function TableBuilder({ uri, prefixes, table }) {
+export default function TableBuilder({ uri, prefixes, table, metadata }) {
   prefixes = prefixes.join('\n');
 
   return (
     <div>
-      <TableRenderer uri={uri} prefixes={prefixes} table={table} />
+      <TableRenderer
+        uri={uri}
+        prefixes={prefixes}
+        table={table}
+        metadata={metadata}
+      />
     </div>
   );
 }
 
-function TableRenderer({ uri, prefixes, table }) {
+function MetadataRenderer({ title, content }) {
+  if (!content) return null;
+  return content.map(metadata => {
+    const data = metadata[0];
+    return (
+      <MetadataInfo
+        icon={faInfoCircle}
+        label={title}
+        title={data.text}
+        link={data.link}
+        specific={true}
+      />
+    );
+  });
+}
+
+function TableRenderer({ uri, prefixes, table, metadata }) {
   const [content, setContent] = useState([]);
   useEffect(() => {
     getQueryResponse(
@@ -36,9 +58,13 @@ function TableRenderer({ uri, prefixes, table }) {
     });
   }, [uri, prefixes, table]);
 
-  const header = createHeader(table.columns);
+  const header = metadata ? null : createHeader(table.sections);
 
   if (!content) return null;
+
+  if (metadata) {
+    return <MetadataRenderer title={table.title} content={content} />;
+  }
 
   if (content.length == 0) {
     return <div>No columns to display</div>;
@@ -167,7 +193,7 @@ function createHeader(columns) {
 }
 
 function getTableContent(table, items) {
-  const ids = table.columns.map(column => {
+  const ids = table.sections.map(column => {
     return {
       title: column.title,
       id: getId(column).substring(1),
@@ -214,7 +240,7 @@ function getTableQuerySetup(uri, tableJSON) {
   const rootPredicateDictionary = {};
   rootPredicateDictionary[tableJSON.rootPredicate] = [];
   const additionalSelections = [];
-  tableJSON.columns.forEach(column => {
+  tableJSON.sections.forEach(column => {
     const root = column.rootPredicateOverride || tableJSON.rootPredicate;
     if (root !== tableJSON.rootPredicate) {
       additionalSelections.push(getId(column));

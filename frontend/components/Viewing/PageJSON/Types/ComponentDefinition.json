@@ -11,13 +11,27 @@
       "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>",
       "PREFIX purl: <http://purl.obolibrary.org/obo/>"
    ],
+   "metadata": [
+      {
+        "title": "Test Extra Metadata",
+        "rootPredicate": "sbol:sequenceAnnotation",
+        "sections": [
+          {
+            "title": "Test",
+            "predicates": ["dcterms:title"],
+            "link": "<$<This>",
+            "group": true
+          }
+        ]
+      }
+   ],
    "tables": [
      {
        "icon": "faIcon",
        "title": "Sequence Annotations",
        "rootPredicate": "sbol:sequenceAnnotation",
        "orderBy": "xsd:integer(?start)",
-       "columns": [ 
+       "sections": [ 
          {
           "title": "Sequence Annotation Link",
           "predicates": [],
@@ -90,7 +104,7 @@
       "icon": "faIcon",
        "title": "Components",
        "rootPredicate": "sbol:component",
-       "columns": [ 
+       "sections": [ 
          {
           "title": "ComponentLink",
           "hide": true,

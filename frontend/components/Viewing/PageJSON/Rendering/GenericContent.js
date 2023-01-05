@@ -6,7 +6,22 @@ import TableBuilder from './TableBuilder';
 
 import CustomComponents from '../CustomComponents.js';
 
-export default function GenericContent({ json, uri }) {
+export default function GenericContent({ json, uri, metadata }) {
+  if (metadata) {
+    const content = json.metadata.map(metadata => {
+      return (
+        <TableBuilder
+          uri={uri}
+          prefixes={json.prefixes}
+          table={metadata}
+          metadata={true}
+        />
+      );
+    });
+
+    return <Fragment>{content}</Fragment>;
+  }
+
   const pages = useSelector(state => state.pageSections.order);
 
   const content = pages.map((page, index) => {
@@ -31,7 +46,8 @@ export default function GenericContent({ json, uri }) {
 }
 
 // This is Alex's code for the previous table renderer. I'm keeping it
-// for now to keep track of custom components
+// for now to keep track of custom components, but this is dead code/not valid
+// and if you delete it it's totally fine (zombie code sucks)
 
 // /**
 //  * Returns the corresponding section component.
