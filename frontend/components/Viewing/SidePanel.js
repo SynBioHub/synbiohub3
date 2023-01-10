@@ -76,6 +76,7 @@ export default function SidePanel({ metadata, type, json, uri }) {
           </div>
         </div>
         <div
+          className={styles.boundedheightforsidepanel}
           style={{
             transform: `translateX(-${translation === 18 ? 2.5 : 0}rem)`,
             transition: 'transform 0.3s'

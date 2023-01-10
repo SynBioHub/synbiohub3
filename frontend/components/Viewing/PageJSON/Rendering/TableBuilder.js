@@ -4,8 +4,8 @@ import styles from '../../../../styles/view.module.css';
 import Link from 'next/link';
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import MetadataInfo from '../../MetadataInfo';
+import SectionRenderer from './SectionRenderer';
 
 /**
  * This Component renders an individual table based on given JSON
@@ -32,16 +32,19 @@ export default function TableBuilder({ uri, prefixes, table, metadata }) {
 function MetadataRenderer({ title, content }) {
   if (!content) return null;
   return content.map(metadata => {
-    const data = metadata[0];
-    return (
-      <MetadataInfo
-        icon={faInfoCircle}
-        label={title}
-        title={data.text}
-        link={data.link}
-        specific={true}
-      />
-    );
+    return metadata.map((section, index) => {
+      console.log(section);
+      if (section.hide) return null;
+      return (
+        <MetadataInfo
+          icon={faInfoCircle}
+          label={title}
+          title={<SectionRenderer column={section} />}
+          specific={true}
+          key={index}
+        />
+      );
+    });
   });
 }
 
@@ -70,84 +73,9 @@ function TableRenderer({ uri, prefixes, table, metadata }) {
     return <div>No columns to display</div>;
   }
 
-  function ColumnLink({ text, link, linkType }) {
-    if (linkType === 'search') {
-      const searchStart = link.indexOf('=');
-      link =
-        link.substring(0, searchStart) +
-        encodeURIComponent(link.substring(searchStart));
-      return (
-        <div style={{ display: 'inline-block' }}>
-          <span>{text}</span>
-          {text && (
-            <Link href={link}>
-              <a target="_blank">
-                <FontAwesomeIcon
-                  icon={faSearch}
-                  size="small"
-                  className={styles.searchicon}
-                />
-              </a>
-            </Link>
-          )}
-        </div>
-      );
-    }
-    return (
-      <Link href={link}>
-        <a target="_blank" className={styles.customlink}>
-          <span>{text}</span>
-        </a>
-      </Link>
-    );
-  }
-
-  function ColumnRenderer({ column }) {
-    if (column.grouped) {
-      const items = column.text.split(', ');
-      const content = items.map((item, index) => {
-        if (column.link) {
-          return (
-            <ColumnLink
-              link={loadText(column.link, { This: item })}
-              text={`${item}${
-                index === items.length - 1 ||
-                column.linkType !== 'default' ||
-                column.linkType !== undefined
-                  ? ''
-                  : ', '
-              }`}
-              linkType={column.linkType}
-            />
-          );
-        }
-        return (
-          <span>
-            {item}
-            {index === items.length - 1 ? '' : ', '}
-          </span>
-        );
-      });
-      return <td>{content}</td>;
-    }
-    return (
-      <td>
-        {column.link ? (
-          <ColumnLink
-            link={loadText(column.link, { This: column.text })}
-            text={column.text}
-            linkType={column.linkType}
-          />
-        ) : (
-          <span>{column.text}</span>
-        )}
-      </td>
-    );
-  }
-
   const rows = content.map((row, index) => {
     const columns = row.map((column, index) => (
-      <ColumnRenderer column={column} key={index} />
+      <SectionRenderer column={column} key={index} />
     ));
     return (
       <tr key={index} className={styles.customrow}>

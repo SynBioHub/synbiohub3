@@ -18,8 +18,27 @@
         "sections": [
           {
             "title": "Test",
+            "text": "$<Test 2>",
             "predicates": ["dcterms:title"],
-            "link": "<$<This>",
+            "link": "$<This>",
+            "group": true
+          },
+          {
+            "title": "Test 2",
+            "predicates": ["sbol:location", "sbol:start"],
+            "link": "$<This>",
+            "group": true,
+            "hide": true
+          }
+        ]
+      },
+      {
+        "title": "Test Extra Metadata 2",
+        "rootPredicate": "sbol:component",
+        "sections": [
+          {
+            "title": "Test",
+            "predicates": ["dcterms:title"],
             "group": true
           }
         ]

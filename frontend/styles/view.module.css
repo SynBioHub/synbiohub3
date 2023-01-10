@@ -31,6 +31,12 @@
   z-index: 5;
 }
 
+
+.boundedheightforsidepanel {
+  max-height: calc(100vh - 11rem);
+  overflow: scroll;
+}
+
 .headercontainer {
   display: flex;
   margin: 1rem 1rem 0.75rem 1rem;
@@ -115,14 +121,22 @@
 }
 
 .infocontainer {
-  margin: 1rem;
+  margin: 0 1rem;
   width: 19rem;
+  padding: 1rem 0;
 }
 
 .info {
   margin: 0 0.5rem;
   overflow-wrap: break-word;
-  cursor: pointer;
+}
+
+.info:hover .infoheader {
+  background-color: #00A1E4;
+}
+
+.info:hover .infotitle {
+  border: 1px solid #00A1E4;
 }
 
 .infoheader {
@@ -135,6 +149,7 @@
   color: #fff;
   padding: 0.2rem 0.5rem;
   width: 100%;
+  cursor: pointer;
 }
 
 .infogeneric {
@@ -749,8 +764,6 @@
 }
 
 .expanded {
-  overflow: hidden;
-  height: 999px;
   padding: 5px 8.48px 0 8.48px;
   transition: height 0.20s ease-in-out;
 }
