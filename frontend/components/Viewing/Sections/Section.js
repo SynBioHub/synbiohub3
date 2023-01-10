@@ -58,7 +58,7 @@ export default function Section(properties) {
   }, [isMinimized]);
 
   return (
-    <div className={styles.section}>
+    <div className={styles.section} id={properties.title}>
       <div className={styles.sectiontitle}>{properties.title}</div>
       <FontAwesomeIcon
         icon={minimizedSections[sectionIndex] ? faPlusSquare : faMinusSquare}

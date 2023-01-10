@@ -2,6 +2,7 @@ import Link from 'next/link';
 
 import styles from '../../styles/view.module.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import RenderIcon from './PageJSON/Rendering/RenderIcon';
 
 /**
  * Component container for displaying metadata information about the object.
@@ -16,7 +17,15 @@ export default function MetadataInfo({ title, link, label, icon, specific }) {
     <div className={styles.info}>
       <div className={specific ? styles.infogeneric : styles.infoheader}>
         <div className={styles.infoiconcontainer}>
-          <FontAwesomeIcon icon={icon} size="1x" className={styles.infoicon} />
+          {!specific ? (
+            <FontAwesomeIcon
+              icon={icon}
+              size="1x"
+              className={styles.infoicon}
+            />
+          ) : (
+            <RenderIcon icon={icon} color="#fff" style={styles.infoicon} />
+          )}
         </div>
         <div className={styles.infolabel}>{label}</div>
       </div>
@@ -25,8 +34,6 @@ export default function MetadataInfo({ title, link, label, icon, specific }) {
       </div>
     </div>
   );
-
-  console.log(link);
 
   if (link)
     return (

@@ -354,7 +354,6 @@
   padding: 0.5rem;
   overflow: scroll;
   /* height: 0; */
-  overflow: hidden;
   transition: 1s;
   height: 100%;
 }

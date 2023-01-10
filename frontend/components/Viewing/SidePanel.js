@@ -129,7 +129,7 @@ export default function SidePanel({ metadata, type, json, uri }) {
             />
             <GenericContent json={json} uri={uri} metadata={true} />
           </div>
-          <SectionSelector pagesInfo={pagesInfo} />
+          <SectionSelector pagesInfo={pagesInfo} json={json} />
         </div>
       </div>
     </div>

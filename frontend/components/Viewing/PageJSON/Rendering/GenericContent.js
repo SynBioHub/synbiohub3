@@ -8,13 +8,14 @@ import CustomComponents from '../CustomComponents.js';
 
 export default function GenericContent({ json, uri, metadata }) {
   if (metadata) {
-    const content = json.metadata.map(metadata => {
+    const content = json.metadata.map((metadata, index) => {
       return (
         <TableBuilder
           uri={uri}
           prefixes={json.prefixes}
           table={metadata}
           metadata={true}
+          key={index}
         />
       );
     });

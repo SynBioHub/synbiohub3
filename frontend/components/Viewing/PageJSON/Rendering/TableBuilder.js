@@ -1,11 +1,10 @@
 import getQueryResponse from '../../../../sparql/tools/getQueryResponse';
-import { useEffect, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import styles from '../../../../styles/view.module.css';
 import Link from 'next/link';
-import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import MetadataInfo from '../../MetadataInfo';
 import SectionRenderer from './SectionRenderer';
+import RenderIcon from './RenderIcon';
 
 /**
  * This Component renders an individual table based on given JSON
@@ -32,19 +31,19 @@ export default function TableBuilder({ uri, prefixes, table, metadata }) {
 function MetadataRenderer({ title, content }) {
   if (!content) return null;
   return content.map(metadata => {
-    return metadata.map((section, index) => {
-      console.log(section);
-      if (section.hide) return null;
-      return (
-        <MetadataInfo
-          icon={faInfoCircle}
-          label={title}
-          title={<SectionRenderer column={section} />}
-          specific={true}
-          key={index}
-        />
-      );
-    });
+    return metadata
+      .filter(section => !section.hide)
+      .map((section, index) => {
+        return (
+          <MetadataInfo
+            icon={section.tableIcon}
+            label={title}
+            title={<SectionRenderer column={section} metadata={true} />}
+            specific={true}
+            key={title + index + section.text}
+          />
+        );
+      });
   });
 }
 
@@ -105,12 +104,7 @@ function createHeader(columns) {
             {column.title}
             <Link href={column.infoLink}>
               <a target="_blank" title={column.info}>
-                <FontAwesomeIcon
-                  icon={faInfoCircle}
-                  size="1x"
-                  color="#465875"
-                  className={styles.searchicon}
-                />
+                <RenderIcon icon={column.icon || 'faInfoCircle'} />
               </a>
             </Link>
           </th>
@@ -129,7 +123,9 @@ function getTableContent(table, items) {
       linkType: column.linkType,
       text: column.text,
       hidden: column.hide ? true : false,
-      grouped: column.group ? true : false
+      grouped: column.group ? true : false,
+      tableIcon: table.icon,
+      icon: column.icon
     };
   });
 
@@ -149,7 +145,14 @@ function getTableContent(table, items) {
           : undefined;
         const linkType = column.linkType || 'default';
         const grouped = column.grouped;
-        return { text, link, linkType, grouped };
+        return {
+          text,
+          link,
+          linkType,
+          grouped,
+          tableIcon: column.tableIcon,
+          icon: column.icon
+        };
       })
       .filter(column => column !== undefined);
   });

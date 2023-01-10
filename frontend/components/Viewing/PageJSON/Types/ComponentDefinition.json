@@ -14,6 +14,7 @@
    "metadata": [
       {
         "title": "Test Extra Metadata",
+        "icon": "faVials",
         "rootPredicate": "sbol:sequenceAnnotation",
         "sections": [
           {
@@ -35,6 +36,7 @@
       {
         "title": "Test Extra Metadata 2",
         "rootPredicate": "sbol:component",
+        "icon": "faVials",
         "sections": [
           {
             "title": "Test",
@@ -46,7 +48,7 @@
    ],
    "tables": [
      {
-       "icon": "faIcon",
+       "icon": "faDna",
        "title": "Sequence Annotations",
        "rootPredicate": "sbol:sequenceAnnotation",
        "orderBy": "xsd:integer(?start)",
@@ -59,7 +61,7 @@
          {
            "title": "Sequence Annotation",
            "predicates": ["dcterms:title"],
-           "icon": "faInfo",
+           "icon": "faInfoCircle",
            "link": "$<Sequence Annotation Link>",
            "infoLink": "http://sbols.org/v2#SequenceAnnotation",
            "info": "Learn more about Sequence Annotations"
@@ -72,7 +74,7 @@
          },
          {
            "title": "Start",
-           "icon": "faInfo",
+           "icon": "faInfoCircle",
            "predicates": ["sbol:location", "sbol:start"],
            "infoLink": "http://sbols.org/v2#Location",
            "info": "Learn more about Locations",
@@ -80,7 +82,7 @@
          },
          {
             "title": "End",
-            "icon": "faInfo",
+            "icon": "faInfoCircle",
             "predicates": ["sbol:location", "sbol:end"],
             "infoLink": "http://sbols.org/v2#Location",
             "info": "Learn more about Locations",
@@ -111,7 +113,7 @@
           "title": "Role(s)",
           "group": true,
           "predicates": ["sbol:role"],
-          "icon": "faInfo",
+          "icon": "faInfoCircle",
           "link": "search/role=<$<This>>&",
           "linkType": "search",
           "infoLink": "http://sbols.org/v2#role",
@@ -120,7 +122,7 @@
       ]
      },
      {
-      "icon": "faIcon",
+       "icon": "faPuzzlePiece",
        "title": "Components",
        "rootPredicate": "sbol:component",
        "sections": [ 

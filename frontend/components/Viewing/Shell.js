@@ -4,11 +4,9 @@ import SidePanel from './SidePanel';
 import ViewHeader from './ViewHeader';
 
 import GenericContent from './PageJSON/Rendering/GenericContent';
-import { useState } from 'react';
 import MasterJSON from './PageJSON/MasterJSON';
 
 export default function Shell(properties) {
-  const [refreshMembers, setRefreshMembers] = useState(false);
   const plugins = properties.plugins;
   const metadata = properties.metadata;
 
@@ -57,12 +55,7 @@ export default function Shell(properties) {
           type={properties.type}
         />
         <div className={styles.sections}>
-          <GenericContent
-            json={json}
-            uri={properties.uri}
-            // refreshMembers={refreshMembers}
-            // setRefreshMembers={setRefreshMembers}
-          />
+          <GenericContent json={json} uri={properties.uri} />
           <Plugins plugins={plugins} type={properties.type} />
         </div>
       </div>

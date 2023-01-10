@@ -11,7 +11,7 @@ function loadText(template, args) {
   return template;
 }
 
-export default function SectionRenderer({ column }) {
+export default function SectionRenderer({ column, metadata }) {
   if (column.grouped) {
     const items = column.text.split(', ');
     const content = items.map((item, index) => {
@@ -26,16 +26,20 @@ export default function SectionRenderer({ column }) {
                 : ', '
             }`}
             linkType={column.linkType}
+            key={index}
           />
         );
       }
       return (
-        <span>
+        <span key={index}>
           {item}
           {index === items.length - 1 ? '' : ', '}
         </span>
       );
     });
+    if (metadata) {
+      return <span>{content}</span>;
+    }
     return <td>{content}</td>;
   }
   return (
