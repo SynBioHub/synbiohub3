@@ -23,6 +23,7 @@ import {
   updateMinimizedSections,
   updateSelectedSections
 } from '../../redux/actions';
+import IconsMap from './PageJSON/IconsMap';
 
 /**
  * Handles making the page section elements draggable and updating the store variables
@@ -31,7 +32,7 @@ import {
  * @param {Any} properties Information passed down from the parent component.
  * @returns Draggable page sections.
  */
-export default function SectionSelector(properties) {
+export default function SectionSelector({ pagesInfo, json }) {
   const [pagesOrder, setPagesOrder] = useState([]);
   const [isMinimized, setIsMinimized] = useState(true);
   const dispatch = useDispatch();
@@ -39,39 +40,26 @@ export default function SectionSelector(properties) {
   const minimizedSections = useSelector(state => state.pageSections.minimized);
   const selectedOrder = useSelector(state => state.pageSections.selected);
 
-  const selectors = headerCreate(pageSectionsOrder, properties.pagesInfo.type);
+  const selectors = headerCreate(pageSectionsOrder, pagesInfo.type, json);
 
   //Initializes the store page sections and minimized order.
   useEffect(() => {
     let savedMinimizedValues, savedSelectedSections;
 
-    if (localStorage.getItem(properties.pagesInfo.type) === null) {
-      savedMinimizedValues = new Array(properties.pagesInfo.order.length).fill(
-        false
-      );
-      savedSelectedSections = properties.pagesInfo.order;
+    if (localStorage.getItem(pagesInfo.type) === null) {
+      savedMinimizedValues = new Array(pagesInfo.order.length).fill(false);
+      savedSelectedSections = pagesInfo.order;
     } else {
-      const savedValues = JSON.parse(
-        localStorage.getItem(properties.pagesInfo.type)
-      );
+      const savedValues = JSON.parse(localStorage.getItem(pagesInfo.type));
       savedMinimizedValues = savedValues.minimized;
       savedSelectedSections = savedValues.selected;
     }
 
-    dispatch(
-      updatePageSectionsOrder(
-        properties.pagesInfo.order,
-        properties.pagesInfo.type
-      )
-    );
-    dispatch(
-      updateMinimizedSections(savedMinimizedValues, properties.pagesInfo.type)
-    );
-    dispatch(
-      updateSelectedSections(savedSelectedSections, properties.pagesInfo.type)
-    );
+    dispatch(updatePageSectionsOrder(pagesInfo.order, pagesInfo.type));
+    dispatch(updateMinimizedSections(savedMinimizedValues, pagesInfo.type));
+    dispatch(updateSelectedSections(savedSelectedSections, pagesInfo.type));
 
-    setPagesOrder(properties.pagesInfo.order);
+    setPagesOrder(pagesInfo.order);
   }, []);
 
   /**
@@ -90,13 +78,11 @@ export default function SectionSelector(properties) {
       result.destination.index
     );
 
-    dispatch(
-      updatePageSectionsOrder(updatedPageOrder, properties.pagesInfo.type)
-    );
+    dispatch(updatePageSectionsOrder(updatedPageOrder, pagesInfo.type));
     dispatch(
       updateSelectedSections(
         updatedPageOrder.filter(page => selectedOrder.includes(page)),
-        properties.pagesInfo.type
+        pagesInfo.type
       )
     );
 
@@ -106,9 +92,7 @@ export default function SectionSelector(properties) {
       result.destination.index
     );
 
-    dispatch(
-      updateMinimizedSections(updatedMinimizedOrder, properties.pagesInfo.type)
-    );
+    dispatch(updateMinimizedSections(updatedMinimizedOrder, pagesInfo.type));
 
     setPagesOrder(updatedPageOrder);
   };
@@ -215,7 +199,7 @@ export default function SectionSelector(properties) {
  * @param {Array} pages An array containing the current page section order.
  * @returns The mapped pages.
  */
-function headerCreate(pages, type) {
+function headerCreate(pages, type, json) {
   const useDraggableInPortal = () => {
     const self = useRef({}).current;
 
@@ -255,7 +239,11 @@ function headerCreate(pages, type) {
             {...dragProvided.draggableProps}
             ref={dragProvided.innerRef}
           >
-            <SectionHeader type={type} title={page} icon={iconSelector(page)} />
+            <SectionHeader
+              type={type}
+              title={page}
+              icon={iconSelector(page, json)}
+            />
           </div>
         ))}
       </Draggable>
@@ -269,7 +257,12 @@ function headerCreate(pages, type) {
  * @param {String} page The name of the page.
  * @returns The correct icon that corresponds to the page.
  */
-function iconSelector(page) {
+function iconSelector(page, json) {
+  if (page.startsWith('$TABLES')) {
+    const tableName = page.substring(8, page.length - 1);
+    const icon = json.tables.find(table => table.title === tableName)?.icon;
+    return IconsMap[icon];
+  }
   switch (page) {
     case 'Details':
       return faAlignLeft;

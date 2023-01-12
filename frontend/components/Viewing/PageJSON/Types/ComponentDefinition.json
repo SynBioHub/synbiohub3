@@ -11,13 +11,48 @@
       "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>",
       "PREFIX purl: <http://purl.obolibrary.org/obo/>"
    ],
+   "metadata": [
+      {
+        "title": "Test Extra Metadata",
+        "icon": "faVials",
+        "rootPredicate": "sbol:sequenceAnnotation",
+        "sections": [
+          {
+            "title": "Test",
+            "text": "$<Test 2>",
+            "predicates": ["dcterms:title"],
+            "link": "$<This>",
+            "group": true
+          },
+          {
+            "title": "Test 2",
+            "predicates": ["sbol:location", "sbol:start"],
+            "link": "$<This>",
+            "group": true,
+            "hide": true
+          }
+        ]
+      },
+      {
+        "title": "Test Extra Metadata 2",
+        "rootPredicate": "sbol:component",
+        "icon": "faVials",
+        "sections": [
+          {
+            "title": "Test",
+            "predicates": ["dcterms:title"],
+            "group": true
+          }
+        ]
+      }
+   ],
    "tables": [
      {
-       "icon": "faIcon",
+       "icon": "faDna",
        "title": "Sequence Annotations",
        "rootPredicate": "sbol:sequenceAnnotation",
        "orderBy": "xsd:integer(?start)",
-       "columns": [ 
+       "sections": [ 
          {
           "title": "Sequence Annotation Link",
           "predicates": [],
@@ -26,7 +61,7 @@
          {
            "title": "Sequence Annotation",
            "predicates": ["dcterms:title"],
-           "icon": "faInfo",
+           "icon": "faInfoCircle",
            "link": "$<Sequence Annotation Link>",
            "infoLink": "http://sbols.org/v2#SequenceAnnotation",
            "info": "Learn more about Sequence Annotations"
@@ -39,7 +74,7 @@
          },
          {
            "title": "Start",
-           "icon": "faInfo",
+           "icon": "faInfoCircle",
            "predicates": ["sbol:location", "sbol:start"],
            "infoLink": "http://sbols.org/v2#Location",
            "info": "Learn more about Locations",
@@ -47,7 +82,7 @@
          },
          {
             "title": "End",
-            "icon": "faInfo",
+            "icon": "faInfoCircle",
             "predicates": ["sbol:location", "sbol:end"],
             "infoLink": "http://sbols.org/v2#Location",
             "info": "Learn more about Locations",
@@ -78,7 +113,7 @@
           "title": "Role(s)",
           "group": true,
           "predicates": ["sbol:role"],
-          "icon": "faInfo",
+          "icon": "faInfoCircle",
           "link": "search/role=<$<This>>&",
           "linkType": "search",
           "infoLink": "http://sbols.org/v2#role",
@@ -87,10 +122,10 @@
       ]
      },
      {
-      "icon": "faIcon",
+       "icon": "faPuzzlePiece",
        "title": "Components",
        "rootPredicate": "sbol:component",
-       "columns": [ 
+       "sections": [ 
          {
           "title": "ComponentLink",
           "hide": true,

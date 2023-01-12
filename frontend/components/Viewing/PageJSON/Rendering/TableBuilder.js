@@ -1,10 +1,10 @@
 import getQueryResponse from '../../../../sparql/tools/getQueryResponse';
-import { useEffect, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import styles from '../../../../styles/view.module.css';
 import Link from 'next/link';
-import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch } from '@fortawesome/free-solid-svg-icons';
+import MetadataInfo from '../../MetadataInfo';
+import SectionRenderer from './SectionRenderer';
+import RenderIcon from './RenderIcon';
 
 /**
  * This Component renders an individual table based on given JSON
@@ -13,17 +13,41 @@ import { faSearch } from '@fortawesome/free-solid-svg-icons';
  * @param {*} param0
  * @returns
  */
-export default function TableBuilder({ uri, prefixes, table }) {
+export default function TableBuilder({ uri, prefixes, table, metadata }) {
   prefixes = prefixes.join('\n');
 
   return (
     <div>
-      <TableRenderer uri={uri} prefixes={prefixes} table={table} />
+      <TableRenderer
+        uri={uri}
+        prefixes={prefixes}
+        table={table}
+        metadata={metadata}
+      />
     </div>
   );
 }
 
-function TableRenderer({ uri, prefixes, table }) {
+function MetadataRenderer({ title, content }) {
+  if (!content) return null;
+  return content.map(metadata => {
+    return metadata
+      .filter(section => !section.hide)
+      .map((section, index) => {
+        return (
+          <MetadataInfo
+            icon={section.tableIcon}
+            label={title}
+            title={<SectionRenderer column={section} metadata={true} />}
+            specific={true}
+            key={title + index + section.text}
+          />
+        );
+      });
+  });
+}
+
+function TableRenderer({ uri, prefixes, table, metadata }) {
   const [content, setContent] = useState([]);
   useEffect(() => {
     getQueryResponse(
@@ -36,92 +60,21 @@ function TableRenderer({ uri, prefixes, table }) {
     });
   }, [uri, prefixes, table]);
 
-  const header = createHeader(table.columns);
+  const header = metadata ? null : createHeader(table.sections);
 
   if (!content) return null;
+
+  if (metadata) {
+    return <MetadataRenderer title={table.title} content={content} />;
+  }
 
   if (content.length == 0) {
     return <div>No columns to display</div>;
   }
 
-  function ColumnLink({ text, link, linkType }) {
-    if (linkType === 'search') {
-      const searchStart = link.indexOf('=');
-      link =
-        link.substring(0, searchStart) +
-        encodeURIComponent(link.substring(searchStart));
-      return (
-        <div style={{ display: 'inline-block' }}>
-          <span>{text}</span>
-          {text && (
-            <Link href={link}>
-              <a target="_blank">
-                <FontAwesomeIcon
-                  icon={faSearch}
-                  size="small"
-                  className={styles.searchicon}
-                />
-              </a>
-            </Link>
-          )}
-        </div>
-      );
-    }
-    return (
-      <Link href={link}>
-        <a target="_blank" className={styles.customlink}>
-          <span>{text}</span>
-        </a>
-      </Link>
-    );
-  }
-
-  function ColumnRenderer({ column }) {
-    if (column.grouped) {
-      const items = column.text.split(', ');
-      const content = items.map((item, index) => {
-        if (column.link) {
-          return (
-            <ColumnLink
-              link={loadText(column.link, { This: item })}
-              text={`${item}${
-                index === items.length - 1 ||
-                column.linkType !== 'default' ||
-                column.linkType !== undefined
-                  ? ''
-                  : ', '
-              }`}
-              linkType={column.linkType}
-            />
-          );
-        }
-        return (
-          <span>
-            {item}
-            {index === items.length - 1 ? '' : ', '}
-          </span>
-        );
-      });
-      return <td>{content}</td>;
-    }
-    return (
-      <td>
-        {column.link ? (
-          <ColumnLink
-            link={loadText(column.link, { This: column.text })}
-            text={column.text}
-            linkType={column.linkType}
-          />
-        ) : (
-          <span>{column.text}</span>
-        )}
-      </td>
-    );
-  }
-
   const rows = content.map((row, index) => {
     const columns = row.map((column, index) => (
-      <ColumnRenderer column={column} key={index} />
+      <SectionRenderer column={column} key={index} />
     ));
     return (
       <tr key={index} className={styles.customrow}>
@@ -151,12 +104,7 @@ function createHeader(columns) {
             {column.title}
             <Link href={column.infoLink}>
               <a target="_blank" title={column.info}>
-                <FontAwesomeIcon
-                  icon={faInfoCircle}
-                  size="1x"
-                  color="#465875"
-                  className={styles.searchicon}
-                />
+                <RenderIcon icon={column.icon || 'faInfoCircle'} />
               </a>
             </Link>
           </th>
@@ -167,7 +115,7 @@ function createHeader(columns) {
 }
 
 function getTableContent(table, items) {
-  const ids = table.columns.map(column => {
+  const ids = table.sections.map(column => {
     return {
       title: column.title,
       id: getId(column).substring(1),
@@ -175,7 +123,9 @@ function getTableContent(table, items) {
       linkType: column.linkType,
       text: column.text,
       hidden: column.hide ? true : false,
-      grouped: column.group ? true : false
+      grouped: column.group ? true : false,
+      tableIcon: table.icon,
+      icon: column.icon
     };
   });
 
@@ -195,7 +145,14 @@ function getTableContent(table, items) {
           : undefined;
         const linkType = column.linkType || 'default';
         const grouped = column.grouped;
-        return { text, link, linkType, grouped };
+        return {
+          text,
+          link,
+          linkType,
+          grouped,
+          tableIcon: column.tableIcon,
+          icon: column.icon
+        };
       })
       .filter(column => column !== undefined);
   });
@@ -214,7 +171,7 @@ function getTableQuerySetup(uri, tableJSON) {
   const rootPredicateDictionary = {};
   rootPredicateDictionary[tableJSON.rootPredicate] = [];
   const additionalSelections = [];
-  tableJSON.columns.forEach(column => {
+  tableJSON.sections.forEach(column => {
     const root = column.rootPredicateOverride || tableJSON.rootPredicate;
     if (root !== tableJSON.rootPredicate) {
       additionalSelections.push(getId(column));
