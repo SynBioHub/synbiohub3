@@ -294,10 +294,12 @@ const processHeaderTitle = title => {
  */
 function SectionHeader(properties) {
   const selectedSections = useSelector(state => state.pageSections.selected);
+  const minimizedSections = useSelector(state => state.pageSections.minimized);
   const type = useSelector(state => state.pageSections.type);
   const sectionOrder = useSelector(state => state.pageSections.order);
   const dispatch = useDispatch();
 
+  const sectionIndex = sectionOrder.indexOf(properties.title);
   //Don't want to use the sections from the previous page.
   let sectionRendered =
     type === properties.type
@@ -311,8 +313,8 @@ function SectionHeader(properties) {
       <div className={styles.titleandbox}>
         <input
           type="checkbox"
-          defaultChecked={sectionRendered}
-          onClick={e => {
+          checked={!minimizedSections[sectionIndex]}
+          onChange={e => {
             const isChecked = e.target.checked;
 
             if (isChecked && !sectionRendered) {
@@ -334,6 +336,11 @@ function SectionHeader(properties) {
                 )
               );
             }
+
+            const minimizedSectionsCopy = [...minimizedSections];
+            minimizedSectionsCopy[sectionIndex] =
+              !minimizedSectionsCopy[sectionIndex];
+            dispatch(updateMinimizedSections(minimizedSectionsCopy, type));
           }}
         />
         <div className={styles.sectionheadertitle}>{processedTitle}</div>

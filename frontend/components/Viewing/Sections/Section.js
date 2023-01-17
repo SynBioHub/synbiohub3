@@ -45,6 +45,10 @@ export default function Section(properties) {
   const firstUpdate = useRef(true);
 
   useEffect(() => {
+    setIsMinimized(minimizedSections[sectionIndex]);
+  }, [minimizedSections, sectionIndex]);
+
+  useEffect(() => {
     //Makes it so the code below won't run on the first render.
     if (firstUpdate.current) {
       firstUpdate.current = false;

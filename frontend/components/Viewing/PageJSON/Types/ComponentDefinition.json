@@ -40,7 +40,7 @@
         "sections": [
           {
             "title": "Test",
-            "predicates": ["dcterms:title"],
+            "predicates": ["dcterms:tile"],
             "group": true
           }
         ]
