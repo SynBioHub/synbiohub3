@@ -34,6 +34,9 @@ function MetadataRenderer({ title, content }) {
     return metadata
       .filter(section => !section.hide)
       .map((section, index) => {
+        if (!section.text) {
+          section.text = 'No data';
+        }
         return (
           <MetadataInfo
             icon={section.tableIcon}
