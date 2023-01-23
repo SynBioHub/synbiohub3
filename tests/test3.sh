@@ -6,6 +6,10 @@ source ./testutil.sh
 
 message "Running synbiohub test suite."
 
+message "pulling backend image"
+
+docker pull synbiohub/sbh3backend:snapshot
+
 # Clone the SBOLTestRunner for necessary files
 message "pulling mehersam/SBOLTestRunner"
 if cd SBOLTestRunner; then
@@ -41,6 +45,7 @@ do
     fi
 done
 
+bash ./upload_data.sh
 
 message "Running test suite."
 

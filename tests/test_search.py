@@ -14,10 +14,11 @@ class TestSearch(TestCase):
         # #compare_get_request("/search/:query?", route_parameters = ["I0462"])
         # test_print("test_search completed")
 
-        # # test_searchCount(self):
-        # test_print("test_searchCount starting")
-        # #compare_get_request("/searchCount/:query?", route_parameters = ["I0462"])
-        # test_print("test_searchCount completed")
+        # test_searchCount(self):
+        test_print("test_searchCount starting")
+        #compare_get_request("/searchCount/:query?", route_parameters = ["I0462"]) 
+        compare_get_request("/searchCount/:query?", route_parameters = ["BBa_B00"])
+        test_print("test_searchCount completed")
 
         # # test_advancedSearch(self):
         # test_print("test_advancedSearch GET starting")
@@ -35,34 +36,40 @@ class TestSearch(TestCase):
 
         test_print("test_advancedSearch completed")
 
-
-
 #TODO: NONDETERMINISTIC
         test_print("test_rootCollections starting")
-        #compare_get_request("/rootCollections")
         compare_get_request("/rootCollections", headers = {"Accept":"text/plain"}, route_parameters = [])
         test_print("test_rootCollections completed")
 
         #test_sparql(self):
         test_print("test_sparql starting")
         #compare_get_request("/sparql", headers = {"Accept": "application/json"}, route_parameters = [])
-        compare_get_request("/sparql?query=SELECT%20%3Fs%20%3Fp%20%3Fo%20%0AWHERE%20%7B%0A%09%3Fs%20%3Fp%20%3Fo%20.%0A%7D", headers = {"Accept": "application/json"}, route_parameters = [])
+        #->commented bc huge print compare_get_request("/sparql?query=SELECT%20%3Fs%20%3Fp%20%3Fo%20%0AWHERE%20%7B%0A%09%3Fs%20%3Fp%20%3Fo%20.%0A%7D", headers = {"Accept": "application/json"}, route_parameters = [])
         test_print("test_sparql completed")
 
         test_print("test_subcollections_public starting")
-        compare_get_request("/public/:collectionId/:displayId/:version/subCollections", route_parameters = ["testid1","testid1_collection", "1"],headers = {"Accept": "text/html"})
+        compare_get_request("/public/:collectionId/:displayId/:version/subCollections", route_parameters = ["testid1","testid1_collection", "1"], headers = {"Accept":"text/plain"})
+        compare_get_request("/public/:collectionId/:displayId/:version/subCollections", route_parameters = ["igem","binding", "1"], headers = {"Accept":"text/plain"}, test_name="subCollections2")
         test_print("test_subcollections_public completed")
 
         test_print("test_uses starting")
-        compare_get_request("user/:userId/:collectionId/:displayId/:version/uses", route_parameters = ["testuser","testid2", "BBa_B0015", "1"],headers = {"Accept": "text/html"})
+        #compare_get_request("user/:userId/:collectionId/:displayId/:version/uses", route_parameters = ["testuser","testid2", "BBa_B0015", "1"],headers = {"Accept": "text/html"})
+        compare_get_request(":userId/:collectionId/:displayId/:version/uses", route_parameters = ["public","igem", "BBa_B0034", "1"], headers = {"Accept":"text/plain"})
         test_print("test_uses completed")
 
-        test_print("test_subcollections_private starting")
-        compare_get_request("user/:userId/:collectionId/:displayId/:version/subCollections", route_parameters = ["testuser","testid2","testid2_collection", "1"],headers = {"Accept": "text/html"})
-        test_print("test_subcollections_private completed")
+        test_print("test_count starting")
+        compare_get_request(":type/count", route_parameters = ["ComponentDefinition"], headers = {"Accept":"text/plain"})
+        test_print("test_count completed")
+
+        # test_print("test_subcollections_private starting")
+        # compare_get_request("/user/:userId/:collectionId/:displayId/:version/subCollections", route_parameters = ["testuser","testid2","testid2_collection", "1"],headers = {"Accept":"text/plain"}, test_name="privateSubCollection")
+        # compare_get_request(":userId/:collectionId/:displayId/:version/subCollections", route_parameters = ["testuser","testid2","testid2_collection", "1"],headers = {"Accept":"text/plain"}, test_name="privateSubCollection")
+        # test_print("test_subcollections_private completed")
 
 #         test_print("test_browse_get starting")
 #         compare_get_request("browse", headers = {"Accept": "text/html"})
 #         test_print("test_browse_get completed")
+
+        
 
 

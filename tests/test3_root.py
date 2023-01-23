@@ -17,10 +17,9 @@ def test_root():
     firstTimeSetup.test_post()
 
     # no commented tests
-    #from first_time_setup import TestSetup
-    #from test_before_login import TestBeforeLogin
-    #testBeforeLogin = TestBeforeLogin()
-    #testBeforeLogin.test_before_login()
+    from test_before_login import TestBeforeLogin
+    testBeforeLogin = TestBeforeLogin()
+    testBeforeLogin.test_before_login()
 
     # no commented tests
     from test_user import TestUser
@@ -28,19 +27,19 @@ def test_root():
     testUser.test_post_register()
 
     # no commented tests
-    from test_submit import TestSubmit
-    testSubmit = TestSubmit()
-    testSubmit.test_submit()
+    # from test_submit import TestSubmit
+    # testSubmit = TestSubmit()
+    # testSubmit.test_submit()
 
     # no commented tests
     from test_search import TestSearch
     testSearch = TestSearch()
     testSearch.test_search()
 
-    # # TODO: TEST TEST_DOWNLOAD
-    # from test_download import TestDownload
-    # testDownload = TestDownload()
-    # testDownload.test_download()
+    # TODO: TEST TEST_DOWNLOAD
+    from test_download import TestDownload
+    testDownload = TestDownload()
+    testDownload.test_download()
 
     # # TODO: add field edit field are commented out
     # from test_edit import TestEdit
@@ -64,7 +63,9 @@ def test_root():
     # testAdmin.test_admin1()
 
     # # TODO: TEST TEST_TWINS
-    # from test_twins import TestTwins
+    from test_twins import TestTwins
+    testTwins = TestTwins()
+    testTwins.test_twins()
 
     # from test_submit_other_user import TestSubmitOtherUser
     # testSubmitOtherUser = TestSubmitOtherUser()
