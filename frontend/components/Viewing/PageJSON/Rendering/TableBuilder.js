@@ -1,5 +1,5 @@
 import getQueryResponse from '../../../../sparql/tools/getQueryResponse';
-import { Fragment, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import styles from '../../../../styles/view.module.css';
 import Link from 'next/link';
 import MetadataInfo from '../../MetadataInfo';
@@ -63,7 +63,7 @@ function TableRenderer({ uri, prefixes, table, metadata }) {
     });
   }, [uri, prefixes, table]);
 
-  const header = metadata ? null : createHeader(table.sections);
+  const header = metadata ? null : createHeader(table.sections, content);
 
   if (!content) return null;
 
@@ -98,14 +98,19 @@ function TableRenderer({ uri, prefixes, table, metadata }) {
   );
 }
 
-function createHeader(columns) {
+function createHeader(columns, content) {
   return columns
     .map((column, index) => {
       if (column.title && !column.hide) {
+        const customInfoLink =
+          content &&
+          content.length > 0 &&
+          content[0][index] &&
+          content[0][index].infoLink;
         return (
           <th key={index}>
             {column.title}
-            <Link href={column.infoLink}>
+            <Link href={customInfoLink || column.infoLink || 'NA'}>
               <a target="_blank" title={column.info}>
                 <RenderIcon icon={column.icon || 'faInfoCircle'} />
               </a>
@@ -124,6 +129,7 @@ function getTableContent(table, items) {
       id: getId(column).substring(1),
       link: column.link,
       linkType: column.linkType,
+      infoLink: column.infoLink,
       text: column.text,
       hidden: column.hide ? true : false,
       grouped: column.group ? true : false,
@@ -147,11 +153,15 @@ function getTableContent(table, items) {
           ? loadText(column.link, titleToValueMap)
           : undefined;
         const linkType = column.linkType || 'default';
+        const infoLink = column.infoLink
+          ? loadText(column.infoLink, titleToValueMap)
+          : 'NA';
         const grouped = column.grouped;
         return {
           text,
           link,
           linkType,
+          infoLink,
           grouped,
           tableIcon: column.tableIcon,
           icon: column.icon

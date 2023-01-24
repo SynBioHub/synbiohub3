@@ -137,9 +137,12 @@ export default function SidePanel({ metadata, type, json, uri }) {
 }
 
 function getPagesInfo(type, json) {
-  if (json === null) return { type: type, order: [] };
-  if (localStorage.getItem(type) === null)
+  if (!json) return { type: type, order: [] };
+
+  const pages = localStorage.getItem(type);
+
+  if (pages === null || JSON.parse(pages).order.length !== json.pages.length)
     return { type: type, order: json.pages };
 
-  return { type: type, order: JSON.parse(localStorage.getItem(type)).order };
+  return { type: type, order: JSON.parse(pages).order };
 }
