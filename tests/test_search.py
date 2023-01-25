@@ -36,7 +36,7 @@ class TestSearch(TestCase):
              'description': 'BBa_B0034',
              'adv': 'Search'
         }
-        compare_post_request("advancedSearch", 1, data, headers = {"Accept":"text/plain"}, route_parameters = [], files = None)
+        compare_post_request("advancedSearch", data, test_name = "advSearchPost", headers = {"Accept":"text/plain"}, route_parameters = [], files = None)
 
         test_print("test_advancedSearch completed")
 
@@ -59,7 +59,7 @@ class TestSearch(TestCase):
         test_print("test_uses starting")
         compare_get_request("user/:userId/:collectionId/:displayId/:version/uses", route_parameters = ["testuser1","testid2", "BBa_B0015", "1"],headers = {"Accept": "text/html"})
         compare_get_request("public/:collectionId/:displayId/:version/uses", route_parameters = ["testid2", "BBa_B0015", "1"],headers = {"Accept": "text/html"})
-        compare_get_request("public/:collectionId/:displayId/:version/uses", route_parameters = ["igem", "BBa_B0034", "1"],headers = {"Accept": "text/html"})
+        compare_get_request("public/:collectionId/:displayId/:version/uses", test_name = "uses1", route_parameters = ["igem", "BBa_B0034", "1"],headers = {"Accept": "text/html"})
         test_print("test_uses completed")
 
         test_print("test_count starting")

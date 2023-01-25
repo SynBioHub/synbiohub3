@@ -88,10 +88,11 @@ def get_request(request, version, headers, route_parameters):
         #raise HTTPError("Internal server error. Content of response was \n" + response.text)
 
     print("SBH" + str(version) + "\n")
-    if("<!DOCTYPE html>" in response.text):
-        print("HTML PAGE")
-    else:
-        print(response.text) 
+    # if("<!DOCTYPE html>" in response.text):
+    #     print("HTML PAGE")
+    # else:
+    #     print(response.text) 
+    print(response.text) 
     print("\n")
 
     return response
@@ -119,10 +120,11 @@ def get_request_download(request, headers, route_parameters, version):
         #raise HTTPError("Internal server error. Content of response was \n" + response.text)
 
     print("SBH" + str(version) + "\n")
-    if("<!DOCTYPE html>" in response.text):
-        print("HTML PAGE")
-    else:
-        print(response.text) 
+    # if("<!DOCTYPE html>" in response.text):
+    #     print("HTML PAGE")
+    # else:
+    #     print(response.text) 
+    print(response.text)  
     print("\n") 
 
     return response
@@ -154,10 +156,11 @@ def post_request(request, version, data, headers, route_parameters, files):
         #print("Internal server error. Content of response was \n" + response.text)
 
     print("SBH" + str(version) + "\n")
-    if("<!DOCTYPE html>" in response.text):
-        print("HTML PAGE")
-    else:
-        print(response.text)  
+    # if("<!DOCTYPE html>" in response.text):
+    #     print("HTML PAGE")
+    # else:
+    #     print(response.text) 
+    print(response.text) 
     print("\n")
 
     return response
@@ -165,10 +168,10 @@ def post_request(request, version, data, headers, route_parameters, files):
 # creates a file path for a given request and request type
 # testname is a name to avoid collisions between tests testing the same endpoint
 def request_file_path(request, requesttype, testname):
-    return 'previousresults/' + requesttype.replace(" ", "") + "_" + request.replace("/", "-") + "_" + testname + ".html"
+    return requesttype.replace(" ", "") + "_" + request.replace("/", "-") + "_" + testname + ".html"
 
 def request_file_path_download(request, requesttype, testname):
-    return 'previousresults/' + requesttype.replace(" ", "") + "_" + request.replace("/", "-") + "_" + testname + ".xml"
+    return requesttype.replace(" ", "") + "_" + request.replace("/", "-") + "_" + testname + ".xml"
 
 def compare_request(sbh1requestcontent, sbh3requestcontent, request, requesttype):
     """ Checks a sbh3 request against a sbh1 request.
@@ -330,7 +333,6 @@ def compare_post_request(request, data, test_name = "", route_parameters = [], h
     testpath = request_file_path(request, "post request", test_name)
     test_state.add_post_request(request, testpath, test_name)
 
-#post_request("submit", 1, data, headers = headers, route_parameters = [], files = files)
     compare_request(post_request(request, 1, data, headers, route_parameters, files = files), post_request(request, 3, data, headers, route_parameters, files = files), request, "post request")
 
 # TODO: make checking throw an error when all endpoints are not checked, instead of printing a warning.
@@ -346,7 +348,6 @@ def run_bash(command):
 
 def file_tail(filename, length):
     return os.popen('tail -n ' + str(length) +' '+filename).read()
-
 
 def get_end_of_error_log(num_of_lines):
     copy_docker_log()
