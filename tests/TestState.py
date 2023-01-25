@@ -62,7 +62,7 @@ class TestState:
 
     def cleanup_check(self):
         nottestedcounter = 0
-
+        
         for e in self.all_get_endpoints:
             if not e in self.tested_get_endpoints:
                 nottestedcounter += 1
@@ -88,9 +88,37 @@ class TestState:
                 raise Exception("Endpoint " + str(e) + " does not exist")
 
         if nottestedcounter != 0:
-            test_print(str(nottestedcounter) + " endpoints not tested.")
+            #test_print(str(nottestedcounter) + " endpoints not tested.") #original keep
+            total_number_endpoints = len(self.tested_get_endpoints) + len(self.tested_post_endpoints) + len(self.all_all_endpoints) + len(self.all_get_endpoints) + len(self.all_post_endpoints)
+            tested_endpoints = total_number_endpoints - nottestedcounter
+            percent_tested = round((tested_endpoints/total_number_endpoints) * 100, 0)
+            # test_print(str(nottestedcounter) + " out of " + (str(len(self.tested_get_endpoints))) + " endpoints not tested.")
+            # test_print(str(len(self.tested_get_endpoints)) + ": " + str(self.tested_get_endpoints))
+            # test_print(str(len(self.tested_post_endpoints)) + ": " + str(self.tested_post_endpoints))
+            # test_print(str(len(self.all_all_endpoints)) + ": " + str(self.all_all_endpoints))
+            # test_print(str(len(self.all_get_endpoints)) + ": " + str(self.all_get_endpoints))
+            # test_print(str(len(self.all_post_endpoints)) + ": " + str(self.all_post_endpoints))
+            test_print("Test coverage: " + str(tested_endpoints) + " out of " + (str(total_number_endpoints)) + " endpoints tested.")
+            percent_not_tested = round((nottestedcounter/total_number_endpoints) * 100, 0)
+            progress_bar = "["
+            for i in range(int(percent_tested)//2):
+                progress_bar += "="
+            for i in range(int(percent_not_tested)//2):
+                progress_bar += " "
+            progress_bar+= "]"
+            test_print(str(percent_tested) + "%" + " of endpoints tested " + progress_bar)
+        #show_test_coverage(self.all_all_endpoints, nottestedcounter, tested_endpoints)
 
-
+    # def show_test_coverage(totalendpoints, endpointsnottested, enpointstested):
+    #     percent_tested = endpointstested/totalendpoints
+    #     percent_not_tested = endpointsnottested/totalendpoints
+    #     progress_bar = "["
+    #     for i in range(round(percent_tested, 0)):
+    #         progress_bar += "="
+    #     for i in range(round(percent_not_tested, 0)):
+    #         progress_bar += " "
+    #     progress_bar+= "]"
+    #     test_print(str(percent_tested) + "%" + " of endpoints tested " + progress_bar)
 
     def add_post_request(self, request, testpath, test_name):
 
@@ -133,8 +161,6 @@ class TestState:
             self.login_authentication_sbh3 = content.strip()
             test_print("Logging in with authentication " + str(self.login_authentication_sbh3))
         
-        
-
     def get_authentication(self, version):
         if(version == 1):
             return self.login_authentication_sbh1

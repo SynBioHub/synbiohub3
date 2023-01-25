@@ -10,9 +10,9 @@ warn: Browserslist: caniuse-lite is outdated. Please run:
   Why you should do it regularly: https://github.com/browserslist/browserslist#browsers-data-updating
 info: redirecting
 info: config: set instanceName => "Test Synbiohub"
-info: config: set sessionSecret => "98551a6e-5eb5-4149-9217-4d7fe6bdec3c"
-info: config: set shareLinkSalt => "04f0b367-3f4d-4781-83f3-992e074211ec"
-info: config: set passwordSalt => "1f25a315-fe01-4771-a08a-e4c937262937"
+info: config: set sessionSecret => "cd0ed424-ea4c-4110-8b87-76d1b2f94557"
+info: config: set shareLinkSalt => "2be40552-dc2d-464f-8fba-108dfe6d0369"
+info: config: set passwordSalt => "4e6b2038-8edf-4676-8dc3-0e4dd8eb55c9"
 info: config: set instanceUrl => "http://localhost:7777/"
 info: config: set webOfRegistries => {"https://synbiohub.org":"http://localhost:7777"}
 info: config: set databasePrefix => "http://localhost:7777/"
@@ -30,7 +30,6 @@ info:
 info: 
 info: 
 info: 
-info: 
 info: query:BBa_B00
 debug: PREFIX sbol2: <http://sbols.org/v2#>
 PREFIX dcterms: <http://purl.org/dc/terms/>
@@ -49,7 +48,7 @@ PREFIX purl: <http://purl.obolibrary.org/obo/>
 select (sum(?tempcount) as ?count) WHERE {
 {
     SELECT (count(distinct ?subject) as ?tempcount)
-    FROM <https://synbiohub.org/public> FROM <https://synbiohub.org/user/testuser1>
+    
     WHERE {
         FILTER ((CONTAINS(lcase(?displayId), lcase('BBa_B00'))||CONTAINS(lcase(?name), lcase('BBa_B00'))||CONTAINS(lcase(?description), lcase('BBa_B00'))))
 
@@ -84,7 +83,7 @@ SELECT DISTINCT
     ?name
     ?description
     ?type
-FROM <https://synbiohub.org/public> FROM <https://synbiohub.org/user/testuser1>
+
 WHERE {
     FILTER ((CONTAINS(lcase(?displayId), lcase('BBa_B00'))||CONTAINS(lcase(?name), lcase('BBa_B00'))||CONTAINS(lcase(?description), lcase('BBa_B00'))))
 
@@ -117,7 +116,7 @@ PREFIX purl: <http://purl.obolibrary.org/obo/>
 select (sum(?tempcount) as ?count) WHERE {
 {
     SELECT (count(distinct ?subject) as ?tempcount)
-    FROM <https://synbiohub.org/public> FROM <https://synbiohub.org/user/testuser1>
+    
     WHERE {
         FILTER ((CONTAINS(lcase(?displayId), lcase('BBa_B00'))||CONTAINS(lcase(?name), lcase('BBa_B00'))||CONTAINS(lcase(?description), lcase('BBa_B00'))))
 
@@ -152,7 +151,7 @@ SELECT DISTINCT
     ?name
     ?description
     ?type
-FROM <https://synbiohub.org/public> FROM <https://synbiohub.org/user/testuser1>
+
 WHERE {
     FILTER ((CONTAINS(lcase(?displayId), lcase('BBa_B00'))||CONTAINS(lcase(?name), lcase('BBa_B00'))||CONTAINS(lcase(?description), lcase('BBa_B00'))))
 
@@ -184,7 +183,7 @@ PREFIX purl: <http://purl.obolibrary.org/obo/>
 select (sum(?tempcount) as ?count) WHERE {
 {
     SELECT (count(distinct ?subject) as ?tempcount)
-    FROM <https://synbiohub.org/public> FROM <https://synbiohub.org/user/testuser1>
+    
     WHERE {
            ?subject dcterms:created ?cdate .    FILTER (xsd:dateTime(?cdate) > "undefinedT00:00:00"^^xsd:dateTime)    FILTER (xsd:dateTime(?cdate) < "undefinedT00:00:00"^^xsd:dateTime)    ?subject dcterms:modified ?mdate .    FILTER (xsd:dateTime(?mdate) > "undefinedT00:00:00"^^xsd:dateTime)    FILTER (xsd:dateTime(?mdate) < "undefinedT00:00:00"^^xsd:dateTime) FILTER (CONTAINS(lcase(?displayId), lcase('BBa_B0034'))||CONTAINS(lcase(?name), lcase('BBa_B0034'))||CONTAINS(lcase(?description), lcase('BBa_B0034')))
 
@@ -219,7 +218,7 @@ SELECT DISTINCT
     ?name
     ?description
     ?type
-FROM <https://synbiohub.org/public> FROM <https://synbiohub.org/user/testuser1>
+
 WHERE {
        ?subject dcterms:created ?cdate .    FILTER (xsd:dateTime(?cdate) > "undefinedT00:00:00"^^xsd:dateTime)    FILTER (xsd:dateTime(?cdate) < "undefinedT00:00:00"^^xsd:dateTime)    ?subject dcterms:modified ?mdate .    FILTER (xsd:dateTime(?mdate) > "undefinedT00:00:00"^^xsd:dateTime)    FILTER (xsd:dateTime(?mdate) < "undefinedT00:00:00"^^xsd:dateTime) FILTER (CONTAINS(lcase(?displayId), lcase('BBa_B0034'))||CONTAINS(lcase(?name), lcase('BBa_B0034'))||CONTAINS(lcase(?description), lcase('BBa_B0034')))
 
@@ -251,7 +250,7 @@ PREFIX purl: <http://purl.obolibrary.org/obo/>
 select (sum(?tempcount) as ?count) WHERE {
 {
     SELECT (count(distinct ?subject) as ?tempcount)
-    FROM <https://synbiohub.org/public> FROM <https://synbiohub.org/user/testuser1>
+    
     WHERE {
          { ?subject ?p <https://synbiohub.org/user/testuser1/testid2/BBa_B0015/1> } UNION { ?subject ?p ?use . ?use ?useP <https://synbiohub.org/user/testuser1/testid2/BBa_B0015/1> } . FILTER(?useP != <http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel>)# USES
 
@@ -286,7 +285,7 @@ SELECT DISTINCT
     ?name
     ?description
     ?type
-FROM <https://synbiohub.org/public> FROM <https://synbiohub.org/user/testuser1>
+
 WHERE {
      { ?subject ?p <https://synbiohub.org/user/testuser1/testid2/BBa_B0015/1> } UNION { ?subject ?p ?use . ?use ?useP <https://synbiohub.org/user/testuser1/testid2/BBa_B0015/1> } . FILTER(?useP != <http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel>)# USES
 
@@ -318,7 +317,7 @@ PREFIX purl: <http://purl.obolibrary.org/obo/>
 select (sum(?tempcount) as ?count) WHERE {
 {
     SELECT (count(distinct ?subject) as ?tempcount)
-    FROM <https://synbiohub.org/public> FROM <https://synbiohub.org/user/testuser1>
+    
     WHERE {
          { ?subject ?p <https://synbiohub.org/public/testid2/BBa_B0015/1> } UNION { ?subject ?p ?use . ?use ?useP <https://synbiohub.org/public/testid2/BBa_B0015/1> } . FILTER(?useP != <http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel>)# USES
 
@@ -353,7 +352,7 @@ SELECT DISTINCT
     ?name
     ?description
     ?type
-FROM <https://synbiohub.org/public> FROM <https://synbiohub.org/user/testuser1>
+
 WHERE {
      { ?subject ?p <https://synbiohub.org/public/testid2/BBa_B0015/1> } UNION { ?subject ?p ?use . ?use ?useP <https://synbiohub.org/public/testid2/BBa_B0015/1> } . FILTER(?useP != <http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel>)# USES
 
@@ -385,7 +384,7 @@ PREFIX purl: <http://purl.obolibrary.org/obo/>
 select (sum(?tempcount) as ?count) WHERE {
 {
     SELECT (count(distinct ?subject) as ?tempcount)
-    FROM <https://synbiohub.org/public> FROM <https://synbiohub.org/user/testuser1>
+    
     WHERE {
          { ?subject ?p <https://synbiohub.org/public/igem/BBa_B0034/1> } UNION { ?subject ?p ?use . ?use ?useP <https://synbiohub.org/public/igem/BBa_B0034/1> } . FILTER(?useP != <http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel>)# USES
 
@@ -420,7 +419,7 @@ SELECT DISTINCT
     ?name
     ?description
     ?type
-FROM <https://synbiohub.org/public> FROM <https://synbiohub.org/user/testuser1>
+
 WHERE {
      { ?subject ?p <https://synbiohub.org/public/igem/BBa_B0034/1> } UNION { ?subject ?p ?use . ?use ?useP <https://synbiohub.org/public/igem/BBa_B0034/1> } . FILTER(?useP != <http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel>)# USES
 
@@ -454,12 +453,12 @@ info: [Java] Sending result for job ID 2
 info: 1 URI(s) left to resolve
 info: 5 URI(s) left to resolve
 info: 1 URI(s) left to resolve
-info: sbol file for archive:/tmp/tmp-7BhCGjuBZIa4s
+info: sbol file for archive:/tmp/tmp-7ZzBlSPtXCp0o
 info: [Java] Received job type org.synbiohub.BuildCombineArchiveJob
 info: [Java] Sending result for job ID 3
-info: creating archive:/tmp/combine-download5055319022988630690.omex
-info: unlinking:/tmp/tmp-7BhCGjuBZIa4s
-info: unlinking:/tmp/combine-download5055319022988630690.omex
+info: creating archive:/tmp/combine-download6650676587073354290.omex
+info: unlinking:/tmp/tmp-7ZzBlSPtXCp0o
+info: unlinking:/tmp/combine-download6650676587073354290.omex
 info: finish download of combine archive
 info: 1 URI(s) left to resolve
 info: 5 URI(s) left to resolve
@@ -481,7 +480,7 @@ PREFIX purl: <http://purl.obolibrary.org/obo/>
 select (sum(?tempcount) as ?count) WHERE {
 {
     SELECT (count(distinct ?subject) as ?tempcount)
-    FROM <https://synbiohub.org/public> FROM <https://synbiohub.org/user/testuser1>
+    
     WHERE {
            ?subject sbol2:sequence ?seq .   ?seq sbol2:elements ?elements .   <https://synbiohub.org/public/igem/BBa_B0034/1> a sbol2:ComponentDefinition .   <https://synbiohub.org/public/igem/BBa_B0034/1> sbol2:sequence ?seq2 .   ?seq2 sbol2:elements ?elements2 .   FILTER(?subject != <https://synbiohub.org/public/igem/BBa_B0034/1> && ?elements = ?elements2)   # TWINS
 
@@ -516,7 +515,7 @@ SELECT DISTINCT
     ?name
     ?description
     ?type
-FROM <https://synbiohub.org/public> FROM <https://synbiohub.org/user/testuser1>
+
 WHERE {
        ?subject sbol2:sequence ?seq .   ?seq sbol2:elements ?elements .   <https://synbiohub.org/public/igem/BBa_B0034/1> a sbol2:ComponentDefinition .   <https://synbiohub.org/public/igem/BBa_B0034/1> sbol2:sequence ?seq2 .   ?seq2 sbol2:elements ?elements2 .   FILTER(?subject != <https://synbiohub.org/public/igem/BBa_B0034/1> && ?elements = ?elements2)   # TWINS
 

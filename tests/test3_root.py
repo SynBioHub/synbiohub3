@@ -26,10 +26,10 @@ def test_root():
     testUser = TestUser()
     testUser.test_post_register()
 
-    # no commented tests
-    # from test_submit import TestSubmit
-    # testSubmit = TestSubmit()
-    # testSubmit.test_submit()
+    # # no commented tests
+    # # from test_submit import TestSubmit
+    # # testSubmit = TestSubmit()
+    # # testSubmit.test_submit()
 
     # no commented tests
     from test_search import TestSearch
