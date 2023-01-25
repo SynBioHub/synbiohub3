@@ -1,0 +1,64 @@
+error: SynBioHub server is restarting
+info: config: set revision => "57f00336"
+info: [Java] Starting main loop
+info: [Java] Received job type org.synbiohub.InitializeJob
+info: [Java] Sending result for job ID 1
+info: Java initialized; JVM 1.8.0_275
+info: Resuming 0 job(s)
+warn: Browserslist: caniuse-lite is outdated. Please run:
+  npx browserslist@latest --update-db
+  Why you should do it regularly: https://github.com/browserslist/browserslist#browsers-data-updating
+info: redirecting
+info: config: set instanceName => "Test Synbiohub"
+info: config: set sessionSecret => "5e66f283-f9f3-4251-bc11-e5af28e330da"
+info: config: set shareLinkSalt => "ffc2d09b-3d64-45be-b635-89ada0934dd4"
+info: config: set passwordSalt => "10828026-1b23-48c1-9725-1c856ec7c69a"
+info: config: set instanceUrl => "http://localhost:7777/"
+info: config: set webOfRegistries => {"https://synbiohub.org":"http://localhost:7777"}
+info: config: set databasePrefix => "http://localhost:7777/"
+info: config: set themeParameters => {"default":{"baseColor":"#D25627"}}
+info: config: set frontPageText => "text"
+info: config: set allowPublicSignup => true
+info: config: set databasePrefix => "https://synbiohub.org/"
+info: config: set triplestore => {"sparqlEndpoint":"http://virtuoso:8890/sparql","graphStoreEndpoint":"http://virtuoso:8890/sparql-graph-crud-auth/","defaultGraph":"https://synbiohub.org/public","graphPrefix":"https://synbiohub.org/","username":"dba","password":"dba","virtuosoINI":"/etc/virtuoso-opensource-7/virtuoso.ini","virtuosoDB":"/var/lib/virtuoso-opensource-7/db","isql":"isql-vt"}
+info: config: set externalAuth => {"enabled":false,"provider":null,"google":{}}
+info: config: set firstLaunch => false
+info: config: set webOfRegistries => {"https://synbiohub.org":"http://localhost:7777","https://synbiohub.programmingbiology.org":"https://synbiohub.programmingbiology.org","http://sevahub.es":"http://sevahub.es"}
+info: config: set instances => [{"id":1,"uriPrefix":"https://synbiohub.org","instanceUrl":"https://synbiohub.org","description":"<a href=\"/About\">SynBioHub</a> is a <i>design repository</i> for people designing biological constructs. It enables DNA and protein designs to be uploaded, then provides a shareable link to allow others to view them. SynBioHub also facilitates searching for information about existing useful parts and designs by combining data from a variety of sources.                                                                                        ","name":"SynBioHub","approved":true,"administratorEmail":"j.a.mclaughlin@ncl.ac.uk","updateWorking":true},{"id":3,"uriPrefix":"https://synbiohub.programmingbiology.org","instanceUrl":"https://synbiohub.programmingbiology.org","description":"<a href=\"/About\">SynBioHub</a> is a <i>design repository</i> for people designing biological constructs. It enables DNA and protein designs to be uploaded, then provides a shareable link to allow others to view them. SynBioHub also facilitates searching for information about existing useful parts and designs by combining data from a variety of sources.","name":"LCP SynBioHub","approved":true,"administratorEmail":"myers@ece.utah.edu","updateWorking":true},{"id":11,"uriPrefix":"http://sevahub.es","instanceUrl":"http://sevahub.es","description":"The <a href=\"http://seva.cnb.csic.es\">SEVA database (SEVA-DB)</a> is a resource for implementation of a standard for physical assembly of vector plasmids and for their non-ambiguous nomenclature as well as the index for a repository of functional sequences and actual constructs available to the community. This resource, SEVAhub, is an instance of the <a href=\"http://wiki.synbiohub.org/\">SynBioHub</a> design repository providing access to SEVA-DB converted to the Synthetic Biology Open Language (SBOL).  ","name":"SEVAhub","approved":true,"administratorEmail":"anandgel@gmail.com","updateWorking":true}]
+info: 
+info: 
+info: 
+info: 
+info: 
+info: 
+info: query:BBa_B00
+info: query:BBa_B00
+info: 1 URI(s) left to resolve
+info: 5 URI(s) left to resolve
+info: 1 URI(s) left to resolve
+info: 1 URI(s) left to resolve
+info: 5 URI(s) left to resolve
+info: 1 URI(s) left to resolve
+info: 1 URI(s) left to resolve
+info: 5 URI(s) left to resolve
+info: 1 URI(s) left to resolve
+info: 1 URI(s) left to resolve
+info: 5 URI(s) left to resolve
+info: 1 URI(s) left to resolve
+info: -- converting to gff3
+info: [Java] Received job type org.synbiohub.ConvertToGenBankJob
+info: [Java] GFF3=true
+info: [Java] Sending result for job ID 2
+info: 1 URI(s) left to resolve
+info: 5 URI(s) left to resolve
+info: 1 URI(s) left to resolve
+info: sbol file for archive:/tmp/tmp-7aDKPBdohkcSw
+info: [Java] Received job type org.synbiohub.BuildCombineArchiveJob
+info: [Java] Sending result for job ID 3
+info: creating archive:/tmp/combine-download7822193889009302722.omex
+info: unlinking:/tmp/tmp-7aDKPBdohkcSw
+info: unlinking:/tmp/combine-download7822193889009302722.omex
+info: finish download of combine archive
+info: 1 URI(s) left to resolve
+info: 5 URI(s) left to resolve
+info: 1 URI(s) left to resolve

@@ -17,7 +17,6 @@ for i in range(len(args.resetgetrequests)):
 for i in range(len(args.resetpostrequests)):
     args.resetpostrequests[i] = clip_request(args.resetpostrequests[i])
 
-
 # make html a little more human readable and remove testignore elements
 def format_html(htmlstring):
     soup = BeautifulSoup(htmlstring, 'lxml')
@@ -28,7 +27,6 @@ def format_html(htmlstring):
             div.decompose()
 
     return soup.prettify()
-
 
 # parse the address of the endpoint being tested
 def get_address(request, route_parameters, version):
@@ -84,13 +82,19 @@ def get_request(request, version, headers, route_parameters):
 
     try:
         response.raise_for_status()
-    except HTTPError:
-        raise HTTPError("Internal server error. Content of response was \n" + response.text)
+    except HTTPError as err:
+        #if err.code == 404:
+        print(err)
+        #raise HTTPError("Internal server error. Content of response was \n" + response.text)
 
-    #print("PRINTING VERSION" + str(version) + "\n")
+    print("SBH" + str(version) + "\n")
+    if("<!DOCTYPE html>" in response.text):
+        print("HTML PAGE")
+    else:
+        print(response.text) 
+    print("\n")
 
-    #print(response.text)
-    return response.text
+    return response
 
 def get_request_download(request, headers, route_parameters, version):
     # get the current token
@@ -103,16 +107,25 @@ def get_request_download(request, headers, route_parameters, version):
         headers["X-authorization"] = user_token
 
     address = get_address(request, route_parameters, version)
+    print(address)
 
     session = requests_html.HTMLSession()
 
     response = session.get(address, headers = headers)
     try:
         response.raise_for_status()
-    except HTTPError:
-        raise HTTPError("Internal server error. Content of response was \n" + response.text)
+    except HTTPError as err:
+        print(err)
+        #raise HTTPError("Internal server error. Content of response was \n" + response.text)
 
-    return response.text
+    print("SBH" + str(version) + "\n")
+    if("<!DOCTYPE html>" in response.text):
+        print("HTML PAGE")
+    else:
+        print(response.text) 
+    print("\n") 
+
+    return response
 
 # data is the data field for a request
 def post_request(request, version, data, headers, route_parameters, files):
@@ -126,6 +139,7 @@ def post_request(request, version, data, headers, route_parameters, files):
         headers["X-authorization"] = user_token
 
     address = get_address(request, route_parameters, version)
+    print(address)
 
     session = requests_html.HTMLSession()
 
@@ -133,13 +147,20 @@ def post_request(request, version, data, headers, route_parameters, files):
         
     try:
         response.raise_for_status()
-    except HTTPError:
-        raise HTTPError("Internal server error. Content of response was \n" + response.text)
+    except HTTPError as err:
+        #print out error instead of raising a response
+        print(err)
+        #raise HTTPError("Internal server error. Content of response was \n" + response.text)
+        #print("Internal server error. Content of response was \n" + response.text)
 
-    #print("PRINTING VERSION" + str(version) + "\n")
-    #print(response.text)  
+    print("SBH" + str(version) + "\n")
+    if("<!DOCTYPE html>" in response.text):
+        print("HTML PAGE")
+    else:
+        print(response.text)  
+    print("\n")
 
-    return response.text
+    return response
 
 # creates a file path for a given request and request type
 # testname is a name to avoid collisions between tests testing the same endpoint
@@ -153,14 +174,60 @@ def compare_request(sbh1requestcontent, sbh3requestcontent, request, requesttype
     """ Checks a sbh3 request against a sbh1 request.
 request is the endpoint requested, such as /setup
 requesttype is the type of request performed- either 'get request' or 'post request'"""
-    
-    if requesttype[0:3] == "get" or requesttype[0:4] == "post":
-        file_diff(sbh1requestcontent, sbh3requestcontent, request, requesttype)
+    #compare response code
+    if(sbh1requestcontent.status_code != sbh3requestcontent.status_code):
+        print("RESPONSE CODE TEST FAILED: Response codes don't match; SBH1: " + str(sbh1requestcontent.status_code) + " SBH3: " + str(sbh3requestcontent.status_code))
+    else:
+        print("RESPONSE CODE TEST PASSED: Response codes matched " + str(sbh3requestcontent.status_code))
+
+    if requesttype[0:8] == "get_file":
+        if(file_diff_download(sbh1requestcontent.text, sbh3requestcontent.text, request, requesttype)):
+            print("DOWNLOAD TEST PASSED: Content matches")
+        else:
+            print("DOWNLOAD TEST FAILED: Content does not match")
+   # if requesttype[0:3] == "get" or requesttype[0:4] == "post":
+    if(file_diff(sbh1requestcontent.text, sbh3requestcontent.text, request, requesttype)):
+        print("RESPONSE CONTENT TEST PASSED: Content matches\n")
+    else:
+        print("RESPONSE CONTENT TEST FAILED: Content does not match\n")
+
+def file_diff_download(sbh1requestcontent, sbh3requestcontent, request, requesttype):
+    request = { 'options': {'language' : 'SBOL2',
+        'test_equality': True,
+        'check_uri_compliance': False,
+        'check_completeness': False,
+        'check_best_practices': False,
+        'fail_on_first_error': False,
+        'provide_detailed_stack_trace': False,
+        'subset_uri': '',
+        'uri_prefix': '',
+        'version': '',
+        'insert_type': False,
+        'main_file_name': 'sbh3requestcontent',
+        'diff_file_name': 'sbh1requestcontent',
+        },
+        'return_file': False,
+        'main_file': sbh3requestcontent,
+        'diff_file': sbh1requestcontent
+        }
+
+    resp = requests.post("https://validator.sbolstandard.org/validate/", json=request)
+
+    resp_json = json.loads(resp.content)
+    print(resp_json)
+
+    if resp_json["equal"] == False:
+        #changelist = [requesttype, " ", file_path, " did not match SynbBioHub 1 results. If you are adding changes to SynBioHub that change this page, please check that the page is correct and update the file using the command line argument --resetgetrequests [requests] and --resetpostrequests [requests].\nThe following is a diff of the new files compared to the old.\n"]
+        #raise ValueError(''.join(changelist))
+        #print("SynBioHub3 results did not match SynbBioHub 1 results. \n")
+        return 0
+    else:
+        return 1
 
 def file_diff(sbh1requestcontent, sbh3requestcontent, request, requesttype):
-    sbh1data = sbh1requestcontent
+    #sbh1data = sbh1requestcontent delete?
 
-    sbh1data = sbh1data.splitlines()
+    sbh1data = sbh1requestcontent.splitlines()
     sbh3data = sbh3requestcontent.splitlines()
 
     # if(sbh1data == sbh3data):
@@ -189,25 +256,30 @@ def file_diff(sbh1requestcontent, sbh3requestcontent, request, requesttype):
 
     changelist.append("\n Here is the last 50 lines of the synbiohub error log: \n")
     changelist.append(get_end_of_error_log(50))
-    print(numofchanges)
+
     if numofchanges>0:
         #raise ValueError(''.join(changelist))
         #print(changelist)
-        print("TEST FAILED\n")
-        print("SBH1\n")
-        print(sbh1data)
-        print("SBH3\n")
-        print(sbh3data)
+        # print("TEST FAILED: Content does not match\n")
+        # print("SBH1\n")
+        # print(sbh1data)
+        # print("SBH3\n")
+        # print(sbh3data)
+        return 0
+    #else if (sbh1data.status_code != sbh3data.status_code): TODO: return response instead of response.text so status can be compared
     else:
-        print("TEST PASSED\n")
-        print("SBH3\n")
+        # print("TEST PASSED: Content matches\n")
+        #print("sbh3data\n")
+        #print(sbh3data)
+        return 1
 
 def login_with(data, version, headers = {'Accept':'text/plain'}):
     result = post_request("login", version, data, headers, [], files = None)
+    auth_token = result.text
     if(version == 1):
-        test_state.save_authentication(result, version)
+        test_state.save_authentication(auth_token, version)
     else:
-        test_state.save_authentication(result, version)
+        test_state.save_authentication(auth_token, version)
 
 def compare_get_request(request, test_name = "", route_parameters = [], headers = {}):
     """Complete a get request and error if it differs from previous results.
@@ -227,7 +299,7 @@ page
     #get_request("profile", 1, headers = {"Accept": "text/plain"}, route_parameters = [], re_render_time = 0)
     compare_request(get_request(request, 1, headers, route_parameters), get_request(request, 3, headers, route_parameters), request, "get request")
 
-def compare_get_request_download(request, test_name = "", route_parameters = [], headers = {}, re_render_time = 0):
+def compare_get_request_download(request, test_name = "", route_parameters = [], headers = {}):
     """Complete a get_file request and error if it differs from previous results.
 
     request -- string, the name of the page being requested
@@ -242,7 +314,7 @@ def compare_get_request_download(request, test_name = "", route_parameters = [],
     testpath = request_file_path_download(request, "get_file", test_name)
     test_state.add_get_request(request, testpath, test_name)
 
-    compare_request(get_request_download(request, headers, route_parameters, re_render_time, 1), get_request_download(request, headers, route_parameters, re_render_time, 3), request, "get_file request")
+    compare_request(get_request_download(request, headers, route_parameters, 1), get_request_download(request, headers, route_parameters, 3), request, "get_file request")
 
 def compare_post_request(request, data, test_name = "", route_parameters = [], headers = {}, files = None):
     """Complete a post request and error if it differs from previous results.

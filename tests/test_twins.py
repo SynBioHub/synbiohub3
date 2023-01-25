@@ -19,8 +19,9 @@ class TestTwins(TestCase):
         # compare_post_request("submit", data, headers = {"Accept": "text/plain"}, files = files, test_name = "create_1_twins")
 
         # compare_get_request("user/:userId/:collectionId/:displayId/:version/twins", route_parameters = ["testuser","testid1","BBa_I0462","1"])
+        # won't work till submit is done - compare_get_request(":userId/:collectionId/:displayId/:version/twins", test_name = "twins1", headers = {"Accept": "text/plain"}, route_parameters = ["testuser1","igem","BBa_B0034","1"])
+        # when submit is done - compare_get_request(":userId/:collectionId/:displayId/:version/twins", headers = {"Accept": "text/plain"}, route_parameters = ["public","igem","BBa_B0034","1"])
+        
+        compare_get_request("public/:collectionId/:displayId/:version/twins", headers = {"Accept": "text/plain"}, route_parameters = ["igem","BBa_B0034","1"])
 
-        #http://localhost:6789/public/igem/BBa_B0034/1/twins
-        #TODO: didn't work on 3 last time I tested
-        compare_get_request(":userId/:collectionId/:displayId/:version/twins", headers = {"Accept": "text/plain"}, route_parameters = ["public","igem","BBa_B0034","1"])
         test_print("test_twins completed")
