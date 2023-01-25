@@ -1,0 +1,33 @@
+error: SynBioHub server is restarting
+info: config: set revision => "57f00336"
+info: [Java] Starting main loop
+info: [Java] Received job type org.synbiohub.InitializeJob
+info: [Java] Sending result for job ID 1
+info: Java initialized; JVM 1.8.0_275
+info: Resuming 0 job(s)
+warn: Browserslist: caniuse-lite is outdated. Please run:
+  npx browserslist@latest --update-db
+  Why you should do it regularly: https://github.com/browserslist/browserslist#browsers-data-updating
+info: redirecting
+info: config: set instanceName => "Test Synbiohub"
+info: config: set sessionSecret => "2e4d23d2-90b4-4b25-88c3-e25d83cb23fa"
+info: config: set shareLinkSalt => "8b01fa81-a020-49e8-8d51-bdb15c40f29e"
+info: config: set passwordSalt => "a248a677-442b-4893-b7a6-57b2ce5998e6"
+info: config: set instanceUrl => "http://localhost:7777/"
+info: config: set webOfRegistries => {"https://synbiohub.org":"http://localhost:7777"}
+info: config: set databasePrefix => "http://localhost:7777/"
+info: config: set themeParameters => {"default":{"baseColor":"#D25627"}}
+info: config: set frontPageText => "text"
+info: config: set allowPublicSignup => true
+info: config: set databasePrefix => "https://synbiohub.org/"
+info: config: set triplestore => {"sparqlEndpoint":"http://virtuoso:8890/sparql","graphStoreEndpoint":"http://virtuoso:8890/sparql-graph-crud-auth/","defaultGraph":"https://synbiohub.org/public","graphPrefix":"https://synbiohub.org/","username":"dba","password":"dba","virtuosoINI":"/etc/virtuoso-opensource-7/virtuoso.ini","virtuosoDB":"/var/lib/virtuoso-opensource-7/db","isql":"isql-vt"}
+info: config: set externalAuth => {"enabled":false,"provider":null,"google":{}}
+info: config: set firstLaunch => false
+info: config: set webOfRegistries => {"https://synbiohub.org":"http://localhost:7777","https://synbiohub.programmingbiology.org":"https://synbiohub.programmingbiology.org","http://sevahub.es":"http://sevahub.es"}
+info: config: set instances => [{"id":1,"uriPrefix":"https://synbiohub.org","instanceUrl":"https://synbiohub.org","description":"<a href=\"/About\">SynBioHub</a> is a <i>design repository</i> for people designing biological constructs. It enables DNA and protein designs to be uploaded, then provides a shareable link to allow others to view them. SynBioHub also facilitates searching for information about existing useful parts and designs by combining data from a variety of sources.                                                                                        ","name":"SynBioHub","approved":true,"administratorEmail":"j.a.mclaughlin@ncl.ac.uk","updateWorking":true},{"id":3,"uriPrefix":"https://synbiohub.programmingbiology.org","instanceUrl":"https://synbiohub.programmingbiology.org","description":"<a href=\"/About\">SynBioHub</a> is a <i>design repository</i> for people designing biological constructs. It enables DNA and protein designs to be uploaded, then provides a shareable link to allow others to view them. SynBioHub also facilitates searching for information about existing useful parts and designs by combining data from a variety of sources.","name":"LCP SynBioHub","approved":true,"administratorEmail":"myers@ece.utah.edu","updateWorking":true},{"id":11,"uriPrefix":"http://sevahub.es","instanceUrl":"http://sevahub.es","description":"The <a href=\"http://seva.cnb.csic.es\">SEVA database (SEVA-DB)</a> is a resource for implementation of a standard for physical assembly of vector plasmids and for their non-ambiguous nomenclature as well as the index for a repository of functional sequences and actual constructs available to the community. This resource, SEVAhub, is an instance of the <a href=\"http://wiki.synbiohub.org/\">SynBioHub</a> design repository providing access to SEVA-DB converted to the Synthetic Biology Open Language (SBOL).  ","name":"SEVAhub","approved":true,"administratorEmail":"anandgel@gmail.com","updateWorking":true}]
+info: 
+info: 
+info: 
+info: 
+info: 
+info: 

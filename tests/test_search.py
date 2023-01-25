@@ -57,7 +57,6 @@ class TestSearch(TestCase):
         test_print("test_subcollections_public completed")
 
         test_print("test_uses starting")
-        :userId/:collectionId/:displayId/:version/uses
         compare_get_request("user/:userId/:collectionId/:displayId/:version/uses", route_parameters = ["testuser1","testid2", "BBa_B0015", "1"],headers = {"Accept": "text/html"})
         compare_get_request("public/:collectionId/:displayId/:version/uses", route_parameters = ["testid2", "BBa_B0015", "1"],headers = {"Accept": "text/html"})
         compare_get_request("public/:collectionId/:displayId/:version/uses", route_parameters = ["igem", "BBa_B0034", "1"],headers = {"Accept": "text/html"})
