@@ -173,13 +173,16 @@ def request_file_path(request, requesttype, testname):
 def request_file_path_download(request, requesttype, testname):
     return requesttype.replace(" ", "") + "_" + request.replace("/", "-") + "_" + testname + ".xml"
 
-def compare_request(sbh1requestcontent, sbh3requestcontent, request, requesttype):
+def compare_request(sbh1requestcontent, sbh3requestcontent, request, requesttype, test_type):
     """ Checks a sbh3 request against a sbh1 request.
 request is the endpoint requested, such as /setup
 requesttype is the type of request performed- either 'get request' or 'post request'"""
+
+    test_passed = 1
     #compare response code
     if(sbh1requestcontent.status_code != sbh3requestcontent.status_code):
         print("RESPONSE CODE TEST FAILED: Response codes don't match; SBH1: " + str(sbh1requestcontent.status_code) + " SBH3: " + str(sbh3requestcontent.status_code))
+        test_passed = 0
     else:
         print("RESPONSE CODE TEST PASSED: Response codes matched " + str(sbh3requestcontent.status_code))
 
@@ -188,11 +191,18 @@ requesttype is the type of request performed- either 'get request' or 'post requ
             print("DOWNLOAD TEST PASSED: Content matches")
         else:
             print("DOWNLOAD TEST FAILED: Content does not match")
+            test_passed = 0
    # if requesttype[0:3] == "get" or requesttype[0:4] == "post":
     if(file_diff(sbh1requestcontent.text, sbh3requestcontent.text, request, requesttype)):
         print("RESPONSE CONTENT TEST PASSED: Content matches\n")
     else:
         print("RESPONSE CONTENT TEST FAILED: Content does not match\n")
+        test_passed = 0
+    
+    if(test_passed):
+        test_state.add_test_result(test_type, "pass")
+    else:
+        test_state.add_test_result(test_type, "fail")
 
 def file_diff_download(sbh1requestcontent, sbh3requestcontent, request, requesttype):
     request = { 'options': {'language' : 'SBOL2',
@@ -284,7 +294,7 @@ def login_with(data, version, headers = {'Accept':'text/plain'}):
     else:
         test_state.save_authentication(auth_token, version)
 
-def compare_get_request(request, test_name = "", route_parameters = [], headers = {}):
+def compare_get_request(request, test_name = "", route_parameters = [], headers = {}, test_type="All"):
     """Complete a get request and error if it differs from previous results.
 page
     request -- string, the name of the page being requested
@@ -300,9 +310,9 @@ page
     testpath = request_file_path(request, "get request", test_name)
     test_state.add_get_request(request, testpath, test_name)
     #get_request("profile", 1, headers = {"Accept": "text/plain"}, route_parameters = [], re_render_time = 0)
-    compare_request(get_request(request, 1, headers, route_parameters), get_request(request, 3, headers, route_parameters), request, "get request")
+    compare_request(get_request(request, 1, headers, route_parameters), get_request(request, 3, headers, route_parameters), request, "get request", test_type)
 
-def compare_get_request_download(request, test_name = "", route_parameters = [], headers = {}):
+def compare_get_request_download(request, test_name = "", route_parameters = [], headers = {}, test_type="All"):
     """Complete a get_file request and error if it differs from previous results.
 
     request -- string, the name of the page being requested
@@ -317,9 +327,9 @@ def compare_get_request_download(request, test_name = "", route_parameters = [],
     testpath = request_file_path_download(request, "get_file", test_name)
     test_state.add_get_request(request, testpath, test_name)
 
-    compare_request(get_request_download(request, headers, route_parameters, 1), get_request_download(request, headers, route_parameters, 3), request, "get_file request")
+    compare_request(get_request_download(request, headers, route_parameters, 1), get_request_download(request, headers, route_parameters, 3), request, "get_file request", test_type)
 
-def compare_post_request(request, data, test_name = "", route_parameters = [], headers = {}, files = None):
+def compare_post_request(request, data, test_name = "", route_parameters = [], headers = {}, files = None, test_type="All"):
     """Complete a post request and error if it differs from previous results.
 
     request-- string, the name of the page being requested
@@ -333,7 +343,7 @@ def compare_post_request(request, data, test_name = "", route_parameters = [], h
     testpath = request_file_path(request, "post request", test_name)
     test_state.add_post_request(request, testpath, test_name)
 
-    compare_request(post_request(request, 1, data, headers, route_parameters, files = files), post_request(request, 3, data, headers, route_parameters, files = files), request, "post request")
+    compare_request(post_request(request, 1, data, headers, route_parameters, files = files), post_request(request, 3, data, headers, route_parameters, files = files), request, "post request", test_type)
 
 # TODO: make checking throw an error when all endpoints are not checked, instead of printing a warning.
 def cleanup_check():
@@ -341,6 +351,12 @@ def cleanup_check():
     Checks to make sure all endpoints were tested."""
 
     test_state.cleanup_check()
+
+def show_test_results():
+    """Performs final checking after all tests have run.
+    Checks to make sure all endpoints were tested."""
+
+    test_state.show_test_results()
 
 def run_bash(command):
     process = subprocess.Popen(command.split(), stdout=subprocess.PIPE)
