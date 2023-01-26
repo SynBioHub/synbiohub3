@@ -20,6 +20,7 @@ class TestState:
         self.all_get_endpoints = []
         self.all_post_endpoints = []
         self.all_all_endpoints = []
+        self.all_test_results = {"All": {"pass": 0, "fail": 0}, "User": {"pass": 0, "fail": 0}, "Search": {"pass": 0, "fail": 0}, "Download": {"pass": 0, "fail": 0}}
 
         # scrape app.js for the endpoints
         with open("app.js", 'r') as appfile:
@@ -139,7 +140,6 @@ class TestState:
         if not request in self.tested_get_endpoints:
             self.tested_get_endpoints.append(request)
 
-
         if testpath in self.all_tested_paths:
             if test_name == "":
                 test_name = "none specified"
@@ -166,3 +166,41 @@ class TestState:
             return self.login_authentication_sbh1
         else:
             return self.login_authentication_sbh3
+
+    def add_test_result(self, endpoint, test_pass):
+        #endpoint = "user"
+        #test_pass = "pass"
+        self.all_test_results[endpoint][test_pass] +=1
+
+    def show_test_results(self):
+        #for each type of endpoint, make sure to show % of tests passed
+        total_tests = self.all_test_results["All"]["pass"] + self.all_test_results["All"]["fail"]
+
+        for test_type in self.all_test_results:
+            percent_passed = round((self.all_test_results[test_type]["pass"]/total_tests) * 100, 0)
+            percent_failed = round((self.all_test_results[test_type]["fail"]/total_tests) * 100, 0)
+            self.print_progress_bar(test_type, percent_passed, percent_failed)
+
+        # test_print("Final Test Results: ")
+        
+        # percent_passed = round((self.all_test_results["all"]["pass"]/total_tests) * 100, 0)
+        # percent_failed = round((self.all_test_results["all"]["fail"]/total_tests) * 100, 0)
+
+
+        # progress_bar = "["
+        # for i in range(int(percent_passed)//2):
+        #     progress_bar += "="
+        # for i in range(int(percent_failed)//2):
+        #     progress_bar += " "
+        # progress_bar+= "]"
+        # test_print(str(percent_passed) + "%" + " of all tests passed " + progress_bar)
+
+    def print_progress_bar(self, type, percent_passed , percent_failed):
+        progress_bar = "["
+        for i in range(int(percent_passed)//2):
+            progress_bar += "="
+        for i in range(int(percent_failed)//2):
+            progress_bar += " "
+        progress_bar+= "]"
+        test_print(str(percent_passed) + "%" + " of " + str(type) + " tests passed " + progress_bar)
+
