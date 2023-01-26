@@ -200,8 +200,10 @@ requesttype is the type of request performed- either 'get request' or 'post requ
         test_passed = 0
     
     if(test_passed):
+        test_state.add_test_result("All", "pass")
         test_state.add_test_result(test_type, "pass")
     else:
+        test_state.add_test_result("All", "fail")
         test_state.add_test_result(test_type, "fail")
 
 def file_diff_download(sbh1requestcontent, sbh3requestcontent, request, requesttype):
@@ -294,7 +296,7 @@ def login_with(data, version, headers = {'Accept':'text/plain'}):
     else:
         test_state.save_authentication(auth_token, version)
 
-def compare_get_request(request, test_name = "", route_parameters = [], headers = {}, test_type="All"):
+def compare_get_request(request, test_name = "", route_parameters = [], headers = {}, test_type="Other"):
     """Complete a get request and error if it differs from previous results.
 page
     request -- string, the name of the page being requested
@@ -312,7 +314,7 @@ page
     #get_request("profile", 1, headers = {"Accept": "text/plain"}, route_parameters = [], re_render_time = 0)
     compare_request(get_request(request, 1, headers, route_parameters), get_request(request, 3, headers, route_parameters), request, "get request", test_type)
 
-def compare_get_request_download(request, test_name = "", route_parameters = [], headers = {}, test_type="All"):
+def compare_get_request_download(request, test_name = "", route_parameters = [], headers = {}, test_type="Other"):
     """Complete a get_file request and error if it differs from previous results.
 
     request -- string, the name of the page being requested
@@ -329,7 +331,7 @@ def compare_get_request_download(request, test_name = "", route_parameters = [],
 
     compare_request(get_request_download(request, headers, route_parameters, 1), get_request_download(request, headers, route_parameters, 3), request, "get_file request", test_type)
 
-def compare_post_request(request, data, test_name = "", route_parameters = [], headers = {}, files = None, test_type="All"):
+def compare_post_request(request, data, test_name = "", route_parameters = [], headers = {}, files = None, test_type = "Other"):
     """Complete a post request and error if it differs from previous results.
 
     request-- string, the name of the page being requested

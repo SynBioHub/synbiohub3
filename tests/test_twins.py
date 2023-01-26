@@ -5,6 +5,7 @@ from test_functions import compare_get_request, compare_post_request
 
 class TestTwins(TestCase):
     def test_twins(self):
+        test_type = "Search"
         test_print("test_twins starting")
 
         #Can add back when submit works on 3
@@ -22,6 +23,6 @@ class TestTwins(TestCase):
         # won't work till submit is done - compare_get_request(":userId/:collectionId/:displayId/:version/twins", test_name = "twins1", headers = {"Accept": "text/plain"}, route_parameters = ["testuser1","igem","BBa_B0034","1"])
         # when submit is done - compare_get_request(":userId/:collectionId/:displayId/:version/twins", headers = {"Accept": "text/plain"}, route_parameters = ["public","igem","BBa_B0034","1"])
         
-        compare_get_request("public/:collectionId/:displayId/:version/twins", headers = {"Accept": "text/plain"}, route_parameters = ["igem","BBa_B0034","1"])
+        compare_get_request("public/:collectionId/:displayId/:version/twins", headers = {"Accept": "text/plain"}, route_parameters = ["igem","BBa_B0034","1"], test_type = test_type)
 
         test_print("test_twins completed")
