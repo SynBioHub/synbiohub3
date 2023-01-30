@@ -51,3 +51,7 @@ plugin:
       logout: http://localhost:8104/logoutAPI
       refresh: http://localhost:8104/refresh
       status: http://localhost:8104/status
+
+jwt:
+  private.key: classpath:app.priv
+  public.key: classpath:app.pub

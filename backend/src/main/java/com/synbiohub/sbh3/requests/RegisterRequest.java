@@ -1,27 +1,25 @@
-package com.synbiohub.sbh3.dto;
+package com.synbiohub.sbh3.requests;
 
-import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-
+import lombok.NoArgsConstructor;
 
 @Data
-public class UserRegistrationDTO {
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class RegisterRequest {
 
-    @NotBlank
     private String username;
 
-    @NotBlank
     private String name;
 
-    @NotBlank
     private String affiliation;
 
-    @NotBlank
     private String email;
 
-    @NotBlank
     private String password1;
 
-    @NotBlank
     private String password2;
 }

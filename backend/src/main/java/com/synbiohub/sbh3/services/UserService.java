@@ -16,11 +16,11 @@ import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 
-import javax.naming.AuthenticationException;
 import java.util.*;
 
 @Service
@@ -79,7 +79,7 @@ public class UserService {
         return owners.contains(ConfigUtil.get("triplestore").get("graphPrefix").asText() + "user/" + SecurityContextHolder.getContext().getAuthentication().getName());
     }
 
-    public ResponseEntity<String> updateUser(ObjectMapper mapper, Map<String, String> allParams) throws JsonProcessingException, AuthenticationException {
+    public ResponseEntity<String> updateUser(ObjectMapper mapper, Map<String, String> allParams) throws JsonProcessingException, AuthenticationException, javax.naming.AuthenticationException {
         Authentication auth = checkValidLogin(authentication -> authentication, allParams.get("email"), allParams.get("password1"));
         customUserService.confirmPasswordsMatch(allParams.get("password1"), allParams.get("password2"));
         User user = getUserProfile();
@@ -142,6 +142,25 @@ public class UserService {
         registerParams.put("password2", allParams.get("userPasswordConfirm"));
         return registerParams;
 
+    }
+
+    public User createUser(User user) {
+        return userRepository.save(user);
+    }
+
+    public User getUserByUsername(String username) {
+        Optional<User> optionalUser = userRepository.findByUsername(username);
+        return optionalUser.get();
+    }
+
+    public User getUserByEmail(String email) {
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+        return optionalUser.get();
+
+    }
+
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
     }
 
 }

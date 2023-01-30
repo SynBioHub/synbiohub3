@@ -1,4 +1,4 @@
-package com.synbiohub.sbh3.security;
+package com.synbiohub.sbh3.security.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,8 +18,8 @@ public class HttpSessionConfig {
         return new MapSessionRepository(new ConcurrentHashMap<>());
     }
 
-    @Bean
-    public HttpSessionIdResolver httpSessionIdResolver() {
-        return new HeaderHttpSessionIdResolver("X-Authorization");
-    }
+//    @Bean
+//    public HttpSessionIdResolver httpSessionIdResolver() {
+//        return new HeaderHttpSessionIdResolver("X-Authorization");
+//    }
 }

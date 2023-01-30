@@ -1,12 +1,24 @@
 package com.synbiohub.sbh3.security.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
+import lombok.NoArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Data
+@Builder
 @Table(name="users", schema = "public")
+@NoArgsConstructor
+@AllArgsConstructor
 public class User {
 
     @Id
@@ -28,9 +40,7 @@ public class User {
     @Column(name = "affiliation")
     private String affiliation;
 
-    @Column(name = "isAdmin")
-    private Boolean isAdmin;
-
-    @Column(name = "isCurator")
-    private Boolean isCurator;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role")
+    private Role role;
 }
