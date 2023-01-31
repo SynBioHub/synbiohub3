@@ -6,9 +6,9 @@ from test_functions import compare_get_request, compare_post_request
 def test_root():
 
     # no commented tests
-    #from test_tests import TestTests
-    #testTests=TestTests()
-    #testTests.test_get_address()
+    from test_tests import TestTests
+    testTests=TestTests()
+    testTests.test_get_address()
 
     # no commented tests
     from first_time_setup import TestSetup

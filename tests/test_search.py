@@ -23,25 +23,6 @@ class TestSearch(TestCase):
         compare_get_request("/searchCount/:query?", route_parameters = ["BBa_B00"], test_type = test_type)
         test_print("test_searchCount completed")
 
-        # # test_advancedSearch(self):
-        test_print("test_advancedSearch GET starting")
-        compare_get_request("/advancedSearch", test_type = test_type)
-        test_print("test_advancedSearch completed")
-
-        # test advancedSerach post
-        test_print("test_advancedSearch POST starting")
-        # data={
-        #     'description': 'BBa_I0462',
-        #     'adv': 'Search'
-        # }
-        data={
-             'description': 'BBa_B0034',
-             'adv': 'Search'
-        }
-        compare_post_request("advancedSearch", data, test_name = "advSearchPost", headers = {"Accept":"text/plain"}, route_parameters = [], files = None, test_type = test_type)
-
-        test_print("test_advancedSearch completed")
-
 #TODO: NONDETERMINISTIC
         test_print("test_rootCollections starting")
         compare_get_request("/rootCollections", headers = {"Accept":"text/plain"}, route_parameters = [], test_type = test_type)

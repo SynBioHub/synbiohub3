@@ -1,0 +1,503 @@
+error: SynBioHub server is restarting
+info: config: set revision => "57f00336"
+info: [Java] Starting main loop
+info: [Java] Received job type org.synbiohub.InitializeJob
+info: [Java] Sending result for job ID 1
+info: Java initialized; JVM 1.8.0_275
+info: Resuming 0 job(s)
+warn: Browserslist: caniuse-lite is outdated. Please run:
+  npx browserslist@latest --update-db
+  Why you should do it regularly: https://github.com/browserslist/browserslist#browsers-data-updating
+info: redirecting
+info: config: set instanceName => "Test Synbiohub"
+info: config: set sessionSecret => "40823ff9-463e-46f5-bda3-62416aade61e"
+info: config: set shareLinkSalt => "c43bdec8-352f-44d8-9f35-8d384cbdb1cf"
+info: config: set passwordSalt => "7c0fb886-c2d5-4354-9356-f9af6a98c064"
+info: config: set instanceUrl => "http://localhost:7777/"
+info: config: set webOfRegistries => {"http://localhost:7777":"http://localhost:7777"}
+info: config: set databasePrefix => "http://localhost:7777/"
+info: config: set themeParameters => {"default":{"baseColor":"#D25627"}}
+info: config: set frontPageText => "text"
+info: config: set allowPublicSignup => true
+info: config: set databasePrefix => "http://localhost:7777/"
+info: config: set triplestore => {"sparqlEndpoint":"http://virtuoso:8890/sparql","graphStoreEndpoint":"http://virtuoso:8890/sparql-graph-crud-auth/","defaultGraph":"http://localhost:7777/public","graphPrefix":"http://localhost:7777/","username":"dba","password":"dba","virtuosoINI":"/etc/virtuoso-opensource-7/virtuoso.ini","virtuosoDB":"/var/lib/virtuoso-opensource-7/db","isql":"isql-vt"}
+info: config: set externalAuth => {"enabled":false,"provider":null,"google":{}}
+info: config: set firstLaunch => false
+info: config: set webOfRegistries => {"http://localhost:7777":"http://localhost:7777","https://synbiohub.org":"https://synbiohub.org","https://synbiohub.programmingbiology.org":"https://synbiohub.programmingbiology.org","http://sevahub.es":"http://sevahub.es"}
+info: config: set instances => [{"id":1,"uriPrefix":"https://synbiohub.org","instanceUrl":"https://synbiohub.org","description":"<a href=\"/About\">SynBioHub</a> is a <i>design repository</i> for people designing biological constructs. It enables DNA and protein designs to be uploaded, then provides a shareable link to allow others to view them. SynBioHub also facilitates searching for information about existing useful parts and designs by combining data from a variety of sources.                                                                                        ","name":"SynBioHub","approved":true,"administratorEmail":"j.a.mclaughlin@ncl.ac.uk","updateWorking":true},{"id":3,"uriPrefix":"https://synbiohub.programmingbiology.org","instanceUrl":"https://synbiohub.programmingbiology.org","description":"<a href=\"/About\">SynBioHub</a> is a <i>design repository</i> for people designing biological constructs. It enables DNA and protein designs to be uploaded, then provides a shareable link to allow others to view them. SynBioHub also facilitates searching for information about existing useful parts and designs by combining data from a variety of sources.","name":"LCP SynBioHub","approved":true,"administratorEmail":"myers@ece.utah.edu","updateWorking":true},{"id":11,"uriPrefix":"http://sevahub.es","instanceUrl":"http://sevahub.es","description":"The <a href=\"http://seva.cnb.csic.es\">SEVA database (SEVA-DB)</a> is a resource for implementation of a standard for physical assembly of vector plasmids and for their non-ambiguous nomenclature as well as the index for a repository of functional sequences and actual constructs available to the community. This resource, SEVAhub, is an instance of the <a href=\"http://wiki.synbiohub.org/\">SynBioHub</a> design repository providing access to SEVA-DB converted to the Synthetic Biology Open Language (SBOL).  ","name":"SEVAhub","approved":true,"administratorEmail":"anandgel@gmail.com","updateWorking":true}]
+info: 
+info: 
+info: 
+info: 
+info: 
+info: query:BBa_B00
+debug: PREFIX sbol2: <http://sbols.org/v2#>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX ncbi: <http://www.ncbi.nlm.nih.gov#>
+PREFIX synbiohub: <http://synbiohub.org#>
+PREFIX sbh: <http://wiki.synbiohub.org/wiki/Terms/synbiohub#>
+PREFIX igem: <http://wiki.synbiohub.org/wiki/Terms/igem#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX prov: <http://www.w3.org/ns/prov#>
+PREFIX dc: <http://purl.org/dc/elements/1.1/>
+PREFIX cello: <http://cellocad.org/Terms/cello#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX purl: <http://purl.obolibrary.org/obo/>
+
+select (sum(?tempcount) as ?count) WHERE {
+{
+    SELECT (count(distinct ?subject) as ?tempcount)
+    FROM <http://localhost:7777/public> FROM <http://localhost:7777/user/testuser1>
+    WHERE {
+        FILTER ((CONTAINS(lcase(?displayId), lcase('BBa_B00'))||CONTAINS(lcase(?name), lcase('BBa_B00'))||CONTAINS(lcase(?description), lcase('BBa_B00'))))
+
+	?subject a ?type .
+        ?subject sbh:topLevel ?subject .
+        OPTIONAL { ?subject sbol2:displayId ?displayId . }
+	OPTIONAL { ?subject sbol2:version ?version . }
+	OPTIONAL { ?subject dcterms:title ?name . }		 
+        OPTIONAL { ?subject dcterms:description ?description . }	
+    }
+}
+}
+
+debug: PREFIX sbol2: <http://sbols.org/v2#>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX ncbi: <http://www.ncbi.nlm.nih.gov#>
+PREFIX synbiohub: <http://synbiohub.org#>
+PREFIX sbh: <http://wiki.synbiohub.org/wiki/Terms/synbiohub#>
+PREFIX igem: <http://wiki.synbiohub.org/wiki/Terms/igem#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX prov: <http://www.w3.org/ns/prov#>
+PREFIX dc: <http://purl.org/dc/elements/1.1/>
+PREFIX cello: <http://cellocad.org/Terms/cello#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX purl: <http://purl.obolibrary.org/obo/>
+
+SELECT DISTINCT
+    ?subject
+    ?displayId
+    ?version
+    ?name
+    ?description
+    ?type
+FROM <http://localhost:7777/public> FROM <http://localhost:7777/user/testuser1>
+WHERE {
+    FILTER ((CONTAINS(lcase(?displayId), lcase('BBa_B00'))||CONTAINS(lcase(?name), lcase('BBa_B00'))||CONTAINS(lcase(?description), lcase('BBa_B00'))))
+
+    ?subject a ?type .
+    ?subject sbh:topLevel ?subject
+    OPTIONAL { ?subject sbol2:displayId ?displayId . }
+    OPTIONAL { ?subject sbol2:version ?version . }
+    OPTIONAL { ?subject dcterms:title ?name . }
+    OPTIONAL { ?subject dcterms:description ?description . }
+} 
+
+ LIMIT 50
+
+
+info: query:BBa_B00
+debug: PREFIX sbol2: <http://sbols.org/v2#>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX ncbi: <http://www.ncbi.nlm.nih.gov#>
+PREFIX synbiohub: <http://synbiohub.org#>
+PREFIX sbh: <http://wiki.synbiohub.org/wiki/Terms/synbiohub#>
+PREFIX igem: <http://wiki.synbiohub.org/wiki/Terms/igem#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX prov: <http://www.w3.org/ns/prov#>
+PREFIX dc: <http://purl.org/dc/elements/1.1/>
+PREFIX cello: <http://cellocad.org/Terms/cello#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX purl: <http://purl.obolibrary.org/obo/>
+
+select (sum(?tempcount) as ?count) WHERE {
+{
+    SELECT (count(distinct ?subject) as ?tempcount)
+    FROM <http://localhost:7777/public> FROM <http://localhost:7777/user/testuser1>
+    WHERE {
+        FILTER ((CONTAINS(lcase(?displayId), lcase('BBa_B00'))||CONTAINS(lcase(?name), lcase('BBa_B00'))||CONTAINS(lcase(?description), lcase('BBa_B00'))))
+
+	?subject a ?type .
+        ?subject sbh:topLevel ?subject .
+        OPTIONAL { ?subject sbol2:displayId ?displayId . }
+	OPTIONAL { ?subject sbol2:version ?version . }
+	OPTIONAL { ?subject dcterms:title ?name . }		 
+        OPTIONAL { ?subject dcterms:description ?description . }	
+    }
+}
+}
+
+debug: PREFIX sbol2: <http://sbols.org/v2#>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX ncbi: <http://www.ncbi.nlm.nih.gov#>
+PREFIX synbiohub: <http://synbiohub.org#>
+PREFIX sbh: <http://wiki.synbiohub.org/wiki/Terms/synbiohub#>
+PREFIX igem: <http://wiki.synbiohub.org/wiki/Terms/igem#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX prov: <http://www.w3.org/ns/prov#>
+PREFIX dc: <http://purl.org/dc/elements/1.1/>
+PREFIX cello: <http://cellocad.org/Terms/cello#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX purl: <http://purl.obolibrary.org/obo/>
+
+SELECT DISTINCT
+    ?subject
+    ?displayId
+    ?version
+    ?name
+    ?description
+    ?type
+FROM <http://localhost:7777/public> FROM <http://localhost:7777/user/testuser1>
+WHERE {
+    FILTER ((CONTAINS(lcase(?displayId), lcase('BBa_B00'))||CONTAINS(lcase(?name), lcase('BBa_B00'))||CONTAINS(lcase(?description), lcase('BBa_B00'))))
+
+    ?subject a ?type .
+    ?subject sbh:topLevel ?subject
+    OPTIONAL { ?subject sbol2:displayId ?displayId . }
+    OPTIONAL { ?subject sbol2:version ?version . }
+    OPTIONAL { ?subject dcterms:title ?name . }
+    OPTIONAL { ?subject dcterms:description ?description . }
+} 
+
+ LIMIT 50
+
+
+debug: PREFIX sbol2: <http://sbols.org/v2#>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX ncbi: <http://www.ncbi.nlm.nih.gov#>
+PREFIX synbiohub: <http://synbiohub.org#>
+PREFIX sbh: <http://wiki.synbiohub.org/wiki/Terms/synbiohub#>
+PREFIX igem: <http://wiki.synbiohub.org/wiki/Terms/igem#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX prov: <http://www.w3.org/ns/prov#>
+PREFIX dc: <http://purl.org/dc/elements/1.1/>
+PREFIX cello: <http://cellocad.org/Terms/cello#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX purl: <http://purl.obolibrary.org/obo/>
+
+select (sum(?tempcount) as ?count) WHERE {
+{
+    SELECT (count(distinct ?subject) as ?tempcount)
+    FROM <http://localhost:7777/public> FROM <http://localhost:7777/user/testuser1>
+    WHERE {
+         { ?subject ?p <http://localhost:7777/user/testuser1/testid2/BBa_B0015/1> } UNION { ?subject ?p ?use . ?use ?useP <http://localhost:7777/user/testuser1/testid2/BBa_B0015/1> } . FILTER(?useP != <http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel>)# USES
+
+	?subject a ?type .
+        ?subject sbh:topLevel ?subject .
+        OPTIONAL { ?subject sbol2:displayId ?displayId . }
+	OPTIONAL { ?subject sbol2:version ?version . }
+	OPTIONAL { ?subject dcterms:title ?name . }		 
+        OPTIONAL { ?subject dcterms:description ?description . }	
+    }
+}
+}
+
+debug: PREFIX sbol2: <http://sbols.org/v2#>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX ncbi: <http://www.ncbi.nlm.nih.gov#>
+PREFIX synbiohub: <http://synbiohub.org#>
+PREFIX sbh: <http://wiki.synbiohub.org/wiki/Terms/synbiohub#>
+PREFIX igem: <http://wiki.synbiohub.org/wiki/Terms/igem#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX prov: <http://www.w3.org/ns/prov#>
+PREFIX dc: <http://purl.org/dc/elements/1.1/>
+PREFIX cello: <http://cellocad.org/Terms/cello#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX purl: <http://purl.obolibrary.org/obo/>
+
+SELECT DISTINCT
+    ?subject
+    ?displayId
+    ?version
+    ?name
+    ?description
+    ?type
+FROM <http://localhost:7777/public> FROM <http://localhost:7777/user/testuser1>
+WHERE {
+     { ?subject ?p <http://localhost:7777/user/testuser1/testid2/BBa_B0015/1> } UNION { ?subject ?p ?use . ?use ?useP <http://localhost:7777/user/testuser1/testid2/BBa_B0015/1> } . FILTER(?useP != <http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel>)# USES
+
+    ?subject a ?type .
+    ?subject sbh:topLevel ?subject
+    OPTIONAL { ?subject sbol2:displayId ?displayId . }
+    OPTIONAL { ?subject sbol2:version ?version . }
+    OPTIONAL { ?subject dcterms:title ?name . }
+    OPTIONAL { ?subject dcterms:description ?description . }
+} 
+
+ LIMIT 50
+
+
+debug: PREFIX sbol2: <http://sbols.org/v2#>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX ncbi: <http://www.ncbi.nlm.nih.gov#>
+PREFIX synbiohub: <http://synbiohub.org#>
+PREFIX sbh: <http://wiki.synbiohub.org/wiki/Terms/synbiohub#>
+PREFIX igem: <http://wiki.synbiohub.org/wiki/Terms/igem#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX prov: <http://www.w3.org/ns/prov#>
+PREFIX dc: <http://purl.org/dc/elements/1.1/>
+PREFIX cello: <http://cellocad.org/Terms/cello#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX purl: <http://purl.obolibrary.org/obo/>
+
+select (sum(?tempcount) as ?count) WHERE {
+{
+    SELECT (count(distinct ?subject) as ?tempcount)
+    FROM <http://localhost:7777/public> FROM <http://localhost:7777/user/testuser1>
+    WHERE {
+         { ?subject ?p <http://localhost:7777/public/testid2/BBa_B0015/1> } UNION { ?subject ?p ?use . ?use ?useP <http://localhost:7777/public/testid2/BBa_B0015/1> } . FILTER(?useP != <http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel>)# USES
+
+	?subject a ?type .
+        ?subject sbh:topLevel ?subject .
+        OPTIONAL { ?subject sbol2:displayId ?displayId . }
+	OPTIONAL { ?subject sbol2:version ?version . }
+	OPTIONAL { ?subject dcterms:title ?name . }		 
+        OPTIONAL { ?subject dcterms:description ?description . }	
+    }
+}
+}
+
+debug: PREFIX sbol2: <http://sbols.org/v2#>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX ncbi: <http://www.ncbi.nlm.nih.gov#>
+PREFIX synbiohub: <http://synbiohub.org#>
+PREFIX sbh: <http://wiki.synbiohub.org/wiki/Terms/synbiohub#>
+PREFIX igem: <http://wiki.synbiohub.org/wiki/Terms/igem#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX prov: <http://www.w3.org/ns/prov#>
+PREFIX dc: <http://purl.org/dc/elements/1.1/>
+PREFIX cello: <http://cellocad.org/Terms/cello#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX purl: <http://purl.obolibrary.org/obo/>
+
+SELECT DISTINCT
+    ?subject
+    ?displayId
+    ?version
+    ?name
+    ?description
+    ?type
+FROM <http://localhost:7777/public> FROM <http://localhost:7777/user/testuser1>
+WHERE {
+     { ?subject ?p <http://localhost:7777/public/testid2/BBa_B0015/1> } UNION { ?subject ?p ?use . ?use ?useP <http://localhost:7777/public/testid2/BBa_B0015/1> } . FILTER(?useP != <http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel>)# USES
+
+    ?subject a ?type .
+    ?subject sbh:topLevel ?subject
+    OPTIONAL { ?subject sbol2:displayId ?displayId . }
+    OPTIONAL { ?subject sbol2:version ?version . }
+    OPTIONAL { ?subject dcterms:title ?name . }
+    OPTIONAL { ?subject dcterms:description ?description . }
+} 
+
+ LIMIT 50
+
+
+debug: PREFIX sbol2: <http://sbols.org/v2#>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX ncbi: <http://www.ncbi.nlm.nih.gov#>
+PREFIX synbiohub: <http://synbiohub.org#>
+PREFIX sbh: <http://wiki.synbiohub.org/wiki/Terms/synbiohub#>
+PREFIX igem: <http://wiki.synbiohub.org/wiki/Terms/igem#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX prov: <http://www.w3.org/ns/prov#>
+PREFIX dc: <http://purl.org/dc/elements/1.1/>
+PREFIX cello: <http://cellocad.org/Terms/cello#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX purl: <http://purl.obolibrary.org/obo/>
+
+select (sum(?tempcount) as ?count) WHERE {
+{
+    SELECT (count(distinct ?subject) as ?tempcount)
+    FROM <http://localhost:7777/public> FROM <http://localhost:7777/user/testuser1>
+    WHERE {
+         { ?subject ?p <http://localhost:7777/public/igem/BBa_B0034/1> } UNION { ?subject ?p ?use . ?use ?useP <http://localhost:7777/public/igem/BBa_B0034/1> } . FILTER(?useP != <http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel>)# USES
+
+	?subject a ?type .
+        ?subject sbh:topLevel ?subject .
+        OPTIONAL { ?subject sbol2:displayId ?displayId . }
+	OPTIONAL { ?subject sbol2:version ?version . }
+	OPTIONAL { ?subject dcterms:title ?name . }		 
+        OPTIONAL { ?subject dcterms:description ?description . }	
+    }
+}
+}
+
+debug: PREFIX sbol2: <http://sbols.org/v2#>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX ncbi: <http://www.ncbi.nlm.nih.gov#>
+PREFIX synbiohub: <http://synbiohub.org#>
+PREFIX sbh: <http://wiki.synbiohub.org/wiki/Terms/synbiohub#>
+PREFIX igem: <http://wiki.synbiohub.org/wiki/Terms/igem#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX prov: <http://www.w3.org/ns/prov#>
+PREFIX dc: <http://purl.org/dc/elements/1.1/>
+PREFIX cello: <http://cellocad.org/Terms/cello#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX purl: <http://purl.obolibrary.org/obo/>
+
+SELECT DISTINCT
+    ?subject
+    ?displayId
+    ?version
+    ?name
+    ?description
+    ?type
+FROM <http://localhost:7777/public> FROM <http://localhost:7777/user/testuser1>
+WHERE {
+     { ?subject ?p <http://localhost:7777/public/igem/BBa_B0034/1> } UNION { ?subject ?p ?use . ?use ?useP <http://localhost:7777/public/igem/BBa_B0034/1> } . FILTER(?useP != <http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel>)# USES
+
+    ?subject a ?type .
+    ?subject sbh:topLevel ?subject
+    OPTIONAL { ?subject sbol2:displayId ?displayId . }
+    OPTIONAL { ?subject sbol2:version ?version . }
+    OPTIONAL { ?subject dcterms:title ?name . }
+    OPTIONAL { ?subject dcterms:description ?description . }
+} 
+
+ LIMIT 50
+
+
+debug: PREFIX sbol2: <http://sbols.org/v2#>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX ncbi: <http://www.ncbi.nlm.nih.gov#>
+PREFIX synbiohub: <http://synbiohub.org#>
+PREFIX sbh: <http://wiki.synbiohub.org/wiki/Terms/synbiohub#>
+PREFIX igem: <http://wiki.synbiohub.org/wiki/Terms/igem#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX prov: <http://www.w3.org/ns/prov#>
+PREFIX dc: <http://purl.org/dc/elements/1.1/>
+PREFIX cello: <http://cellocad.org/Terms/cello#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX purl: <http://purl.obolibrary.org/obo/>
+
+select (sum(?tempcount) as ?count) WHERE {
+{
+    SELECT (count(distinct ?subject) as ?tempcount)
+    FROM <http://localhost:7777/public> FROM <http://localhost:7777/user/testuser1>
+    WHERE {
+         { ?subject ?p <http://localhost:7777/public/igem/BBa_B0034/1> } UNION { ?subject ?p ?use . ?use ?useP <http://localhost:7777/public/igem/BBa_B0034/1> } . FILTER(?useP != <http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel>)# USES
+
+	?subject a ?type .
+        ?subject sbh:topLevel ?subject .
+        OPTIONAL { ?subject sbol2:displayId ?displayId . }
+	OPTIONAL { ?subject sbol2:version ?version . }
+	OPTIONAL { ?subject dcterms:title ?name . }		 
+        OPTIONAL { ?subject dcterms:description ?description . }	
+    }
+}
+}
+
+debug: PREFIX sbol2: <http://sbols.org/v2#>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX ncbi: <http://www.ncbi.nlm.nih.gov#>
+PREFIX synbiohub: <http://synbiohub.org#>
+PREFIX sbh: <http://wiki.synbiohub.org/wiki/Terms/synbiohub#>
+PREFIX igem: <http://wiki.synbiohub.org/wiki/Terms/igem#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX prov: <http://www.w3.org/ns/prov#>
+PREFIX dc: <http://purl.org/dc/elements/1.1/>
+PREFIX cello: <http://cellocad.org/Terms/cello#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX purl: <http://purl.obolibrary.org/obo/>
+
+SELECT DISTINCT
+    ?subject
+    ?displayId
+    ?version
+    ?name
+    ?description
+    ?type
+FROM <http://localhost:7777/public> FROM <http://localhost:7777/user/testuser1>
+WHERE {
+     { ?subject ?p <http://localhost:7777/public/igem/BBa_B0034/1> } UNION { ?subject ?p ?use . ?use ?useP <http://localhost:7777/public/igem/BBa_B0034/1> } . FILTER(?useP != <http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel>)# USES
+
+    ?subject a ?type .
+    ?subject sbh:topLevel ?subject
+    OPTIONAL { ?subject sbol2:displayId ?displayId . }
+    OPTIONAL { ?subject sbol2:version ?version . }
+    OPTIONAL { ?subject dcterms:title ?name . }
+    OPTIONAL { ?subject dcterms:description ?description . }
+} 
+
+ LIMIT 50
+
+
+debug: PREFIX sbol2: <http://sbols.org/v2#>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX ncbi: <http://www.ncbi.nlm.nih.gov#>
+PREFIX synbiohub: <http://synbiohub.org#>
+PREFIX sbh: <http://wiki.synbiohub.org/wiki/Terms/synbiohub#>
+PREFIX igem: <http://wiki.synbiohub.org/wiki/Terms/igem#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX prov: <http://www.w3.org/ns/prov#>
+PREFIX dc: <http://purl.org/dc/elements/1.1/>
+PREFIX cello: <http://cellocad.org/Terms/cello#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX purl: <http://purl.obolibrary.org/obo/>
+
+select (sum(?tempcount) as ?count) WHERE {
+{
+    SELECT (count(distinct ?subject) as ?tempcount)
+    FROM <http://localhost:7777/public> FROM <http://localhost:7777/user/testuser1>
+    WHERE {
+           ?subject sbol2:sequence ?seq .   ?seq sbol2:elements ?elements .   <http://localhost:7777/public/igem/BBa_B0034/1> a sbol2:ComponentDefinition .   <http://localhost:7777/public/igem/BBa_B0034/1> sbol2:sequence ?seq2 .   ?seq2 sbol2:elements ?elements2 .   FILTER(?subject != <http://localhost:7777/public/igem/BBa_B0034/1> && ?elements = ?elements2)   # TWINS
+
+	?subject a ?type .
+        ?subject sbh:topLevel ?subject .
+        OPTIONAL { ?subject sbol2:displayId ?displayId . }
+	OPTIONAL { ?subject sbol2:version ?version . }
+	OPTIONAL { ?subject dcterms:title ?name . }		 
+        OPTIONAL { ?subject dcterms:description ?description . }	
+    }
+}
+}
+
+debug: PREFIX sbol2: <http://sbols.org/v2#>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX ncbi: <http://www.ncbi.nlm.nih.gov#>
+PREFIX synbiohub: <http://synbiohub.org#>
+PREFIX sbh: <http://wiki.synbiohub.org/wiki/Terms/synbiohub#>
+PREFIX igem: <http://wiki.synbiohub.org/wiki/Terms/igem#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX prov: <http://www.w3.org/ns/prov#>
+PREFIX dc: <http://purl.org/dc/elements/1.1/>
+PREFIX cello: <http://cellocad.org/Terms/cello#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX purl: <http://purl.obolibrary.org/obo/>
+
+SELECT DISTINCT
+    ?subject
+    ?displayId
+    ?version
+    ?name
+    ?description
+    ?type
+FROM <http://localhost:7777/public> FROM <http://localhost:7777/user/testuser1>
+WHERE {
+       ?subject sbol2:sequence ?seq .   ?seq sbol2:elements ?elements .   <http://localhost:7777/public/igem/BBa_B0034/1> a sbol2:ComponentDefinition .   <http://localhost:7777/public/igem/BBa_B0034/1> sbol2:sequence ?seq2 .   ?seq2 sbol2:elements ?elements2 .   FILTER(?subject != <http://localhost:7777/public/igem/BBa_B0034/1> && ?elements = ?elements2)   # TWINS
+
+    ?subject a ?type .
+    ?subject sbh:topLevel ?subject
+    OPTIONAL { ?subject sbol2:displayId ?displayId . }
+    OPTIONAL { ?subject sbol2:version ?version . }
+    OPTIONAL { ?subject dcterms:title ?name . }
+    OPTIONAL { ?subject dcterms:description ?description . }
+} 
+
+ LIMIT 50
+
+

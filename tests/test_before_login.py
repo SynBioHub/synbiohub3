@@ -7,16 +7,6 @@ class TestBeforeLogin(TestCase):
 
     def test_before_login(self):
 
-        # test_get_main_page(self):
-        test_print("test_get_main_page starting")
-        compare_get_request("/")
-        test_print("test_get_main_page completed")
-
-        # test_get_login(self):
-        test_print("test_get_login starting")
-        compare_get_request("/login")
-        test_print("test_get_login completed")
-
         # test_post_bad_login(self):
         test_print("test_post_bad_login starting")
         bad_login_info = {'email' : 'bademail',

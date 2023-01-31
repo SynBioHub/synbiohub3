@@ -4,8 +4,8 @@ from test_arguments import test_print
 from test_functions import compare_get_request, compare_post_request, get_request, post_request
 
 class TestSubmit(TestCase):
-
     def test_submit(self):
+        test_type = "Submit"
         test_print("test_main_page starting")
         headers = {'Accept':'text/plain'}
         #compare_get_request("/", test_name = "after_admin_login", headers = headers)
@@ -34,7 +34,7 @@ class TestSubmit(TestCase):
         # files = {'file':("./SBOLTestRunner/src/main/resources/SBOLTestSuite/SBOL2/BBa_I0462.xml",
         #                                       open('./SBOLTestRunner/src/main/resources/SBOLTestSuite/SBOL2/BBa_I0462.xml', 'rb'))}
         # with self.assertRaises(requests.exceptions.HTTPError):
-        #     #compare_post_request("submit", data, headers = {"Accept": "text/plain"}, files = files, test_name = "missing_id")
+        #     #compare_post_request("submit", data, headers = {"Accept": "text/plain"}, files = files, test_name = "missing_id", test_type = test_type)
         #         post_request("submit", 1, data, headers = headers, route_parameters = [], files = files)
 
         # test_print("test_create_id_missing completed")
@@ -51,25 +51,25 @@ class TestSubmit(TestCase):
         files = {'file':("./SBOLTestRunner/src/main/resources/SBOLTestSuite/SBOL2/BBa_I0462.xml",
                                               open('./SBOLTestRunner/src/main/resources/SBOLTestSuite/SBOL2/BBa_I0462.xml', 'rb'))}
 
-        #compare_post_request("submit", data, headers = {"Accept": "text/plain"}, files = files, test_name = "submit_test_BBa")
+        #compare_post_request("submit", data, headers = {"Accept": "text/plain"}, files = files, test_name = "submit_test_BBa", test_type = test_type)
         post_request("submit", 1, data, headers = headers, route_parameters = [], files = files)
         with self.assertRaises(requests.exceptions.HTTPError):
-            #compare_post_request("submit", data, headers = {"Accept": "text/plain"}, files = files, test_name = "submit_already_in_use")
+            #compare_post_request("submit", data, headers = {"Accept": "text/plain"}, files = files, test_name = "submit_already_in_use", test_type = test_type)
             post_request("submit", 1, data, headers = headers, route_parameters = [], files = files)
 
 #        self.create_collection2()
 
-        #compare_get_request("manage", test_name = "two_submissions")
-        #compare_get_request("submit", test_name = "two_submissions")
+        #compare_get_request("manage", test_name = "two_submissions", test_type = test_type)
+        #compare_get_request("submit", test_name = "two_submissions", test_type = test_type)
 
 
         # now remove the collections
-        #compare_get_request('/user/:userId/:collectionId/:displayId/:version/removeCollection', route_parameters = ["testuser", "testid", "testid_collection", "1"])
-        #compare_get_request('/user/:userId/:collectionId/:displayId/:version/removeCollection', route_parameters = ["testuser", "testid2", "testid2_collection", "1"], test_name = 'remove_second')
+        #compare_get_request('/user/:userId/:collectionId/:displayId/:version/removeCollection', route_parameters = ["testuser", "testid", "testid_collection", "1"], test_type = test_type)
+        #compare_get_request('/user/:userId/:collectionId/:displayId/:version/removeCollection', route_parameters = ["testuser", "testid2", "testid2_collection", "1"], test_name = 'remove_second', test_type = test_type)
         get_request('user/:userId/:collectionId/:displayId/:version/removeCollection', 1, headers = headers, route_parameters = ["testuser", "testid", "testid_collection", "1"])
         #TODO: make sure this is okay -> didn't work forbidden#get_request('user/:userId/:collectionId/:displayId/:version/removeCollection', 1, headers = headers, route_parameters = ["testuser", "testid2", "testid2_collection", "1"])
         
-        #compare_get_request("manage", test_name = "no_submissions")
+        #compare_get_request("manage", test_name = "no_submissions", test_type = test_type)
 
         test_print("test_create_and_delete_collections completed")
 
@@ -84,11 +84,11 @@ class TestSubmit(TestCase):
         files = {'file':("./SBOLTestRunner/src/main/resources/SBOLTestSuite/SBOL2/BBa_I0462.xml",
                                               open('./SBOLTestRunner/src/main/resources/SBOLTestSuite/SBOL2/BBa_I0462.xml', 'rb'))}
 
-        #compare_post_request("submit", data, headers = {"Accept": "text/plain"}, files = files, test_name = "create_2")
+        #compare_post_request("submit", data, headers = {"Accept": "text/plain"}, files = files, test_name = "create_2", test_type = test_type)
         post_request("submit", 1, data, headers = headers, route_parameters = [], files = files)
 
         # delete collection
-        #compare_get_request("/user/testuser/testid2/testid_collection2/1/removeCollection")
+        #compare_get_request("/user/testuser/testid2/testid_collection2/1/removeCollection", test_type = test_type)
 
         test_print("create_collection2 completed")
 
@@ -104,7 +104,7 @@ class TestSubmit(TestCase):
         files = {'file':("./SBOLTestRunner/src/main/resources/SBOLTestSuite/SBOL2/toggle.xml",
                                               open('./SBOLTestRunner/src/main/resources/SBOLTestSuite/SBOL2/toggle.xml', 'rb'))}
 
-        #compare_post_request("submit", data, headers = {"Accept": "text/plain"}, files = files, test_name = "generic_collection1")
+        #compare_post_request("submit", data, headers = {"Accept": "text/plain"}, files = files, test_name = "generic_collection1", test_type = test_type)
         post_request("submit", 1, data, headers = headers, route_parameters = [], files = files)
 
         test_print("make_new_collection completed")
@@ -158,7 +158,7 @@ class TestSubmit(TestCase):
 
         # files = {'file':("./SBOLTestRunner/src/main/resources/SBOLTestSuite/SBOL2/toggle.xml", open('./SBOLTestRunner/src/main/resources/SBOLTestSuite/SBOL2/toggle.xml', 'rb'))}
 
-        # #compare_post_request("submit", data, headers = {"Accept":"text/plain"}, files = files, test_name = "collection_for_test_attachment")
+        # #compare_post_request("submit", data, headers = {"Accept":"text/plain"}, files = files, test_name = "collection_for_test_attachment", test_type = test_type)
         # post_request("submit", 1, data, headers = headers, route_parameters = [], files = files)
 
         # test_print("completed")
@@ -174,7 +174,7 @@ class TestSubmit(TestCase):
 
         # files = {'file':("./SBOLTestRunner/src/main/resources/SBOLTestSuite/SBOL2/Measure.xml", open('./SBOLTestRunner/src/main/resources/SBOLTestSuite/SBOL2/Measure.xml', 'rb'))}
 
-        # #compare_post_request("submit", data, headers = {"Accept":"text/plain"}, files = files, test_name = "collection_for_test_hash")
+        # #compare_post_request("submit", data, headers = {"Accept":"text/plain"}, files = files, test_name = "collection_for_test_hash", test_type = test_type)
         # post_request("submit", 1, data, headers = headers, route_parameters = [], files = files)
 
         # test_print("completed")
@@ -192,6 +192,5 @@ class TestSubmit(TestCase):
 #
 #        files = {'file':("./SBOLTestRunner/src/main/resources/SBOLTestSuite/SBOL2/toggle.xml", open('./SBOLTestRunner/src/main/resources/SBOLTestSuite/SBOL2/toggle.xml', 'rb'))}
 #
-#        compare_post_request("submit", data, headers = {"Accept":
-#        "text/plain"}, files = files, test_name = "second_generic_collection")
+#        compare_post_request("submit", data, headers = {"Accept": "text/plain"}, files = files, test_name = "second_generic_collection", test_type = test_type)
 #

@@ -69,9 +69,7 @@ const api = {
   search: require('./api/search'),
   sbol: require('./api/sbol'),
   sbolnr: require('./api/sbolnr'),
-  omex: require('./api/omex'),
   persistentIdentity: require('./api/persistentIdentity'),
-  summary: require('./api/summary'),
   fasta: require('./api/fasta'),
   genBank: require('./api/genBank'),
   gff3: require('./api/gff3'),
@@ -183,106 +181,21 @@ function App () {
     next()
   }
 
-  // User Endpoints
+  // User Endpoints on API docs
   if (config.get('allowPublicSignup')) {
-    app.all('/register', views.register)
+    app.post('/register', views.register)
   }
-  app.all('/login', views.login)
-  app.post('/remoteLogin', forceNoHTML, views.login)
-  app.all('/logout', views.logout)
-  app.all('/resetPassword/token/:token', actions.resetPassword)
-  app.all('/resetPassword', views.resetPassword)
+  app.post('/login', views.login)
+  app.post('/logout', views.logout)
+  app.post('/resetPassword/token/:token', actions.resetPassword)
+  app.post('/resetPassword', views.resetPassword)
   app.post('/setNewPassword', actions.setNewPassword)
   app.all('/profile', requireUser, views.profile)
 
-  // Misc. Endpoints
-  app.get('/logo*', views.logo)
-  app.get('/autocomplete/:query', api.autocomplete)
-  app.get('/api/datatables', bodyParser.urlencoded({ extended: true }), api.datatables)
-
-  // Plugin Endpoints
-  app.get('/stream/:id', views.stream)
-  app.get('/api/stream/:id', api.stream.serve)
-  app.delete('/api/stream/:id', api.stream.serve)
-  app.get('/plugins', actions.getPlugins)
-  app.post('/call', actions.callPlugin)
-
-  // Edit Mutable Fields Endpoints
-  app.post('/updateMutableDescription', requireUser, actions.updateMutableDescription)
-  app.post('/updateMutableNotes', requireUser, actions.updateMutableNotes)
-  app.post('/updateMutableSource', requireUser, actions.updateMutableSource)
-  app.post('/updateCitations', requireUser, actions.updateCitations)
-
-  app.post('/user/:userId/:collectionId/:displayId/:version/edit/:field', requireUser, api.editObject)
-  app.post('/user/:userId/:collectionId/:displayId/:version/add/:field', requireUser, api.addObject)
-  app.post('/user/:userId/:collectionId/:displayId/:version/remove/:field', requireUser, api.removeObject)
-
-  // Submission Endpoints
-  app.get('/submit/', requireUser, views.submit)
-  app.post('/submit/', requireUser, views.submit)
-  app.post('/remoteSubmit/', forceNoHTML, /* requireUser, */ views.submit) // Deprecated
-
-  // Administration Endpoints
-  app.get('/admin', requireAdmin, views.admin.status)
-  app.get('/admin/graphs', requireAdmin, views.admin.graphs)
-  app.get('/admin/log', requireAdmin, views.admin.log)
-  app.get('/admin/virtuoso', api.healthCheck)
-
-  app.get('/admin/mail', requireAdmin, views.admin.mail)
-  app.post('/admin/mail', requireAdmin, bodyParser.urlencoded({ extended: true }), views.admin.mail)
-
-  app.get('/admin/plugins', views.admin.plugins)
-  app.post('/admin/savePlugin', requireAdmin, bodyParser.urlencoded({ extended: true }), actions.admin.savePlugin)
-  app.post('/admin/deletePlugin', requireAdmin, bodyParser.urlencoded({ extended: true }), actions.admin.deletePlugin)
-
-  app.get('/admin/registries', requireAdmin, views.admin.registries)
-  app.post('/admin/saveRegistry', requireAdmin, bodyParser.urlencoded({ extended: true }), actions.admin.saveRegistry)
-  app.post('/admin/deleteRegistry', requireAdmin, bodyParser.urlencoded({ extended: true }), actions.admin.deleteRegistry)
-  app.post('/admin/setAdministratorEmail', requireAdmin, bodyParser.urlencoded({ extended: true }), actions.admin.setAdministratorEmail)
-  app.post('/admin/retrieveFromWebOfRegistries', requireAdmin, actions.admin.retrieve)
-  app.post('/admin/federate', requireAdmin, bodyParser.urlencoded({ extended: true }), actions.admin.federate)
-
-  // This endpoint is used by Web-of-Registries to update SynBioHub's list of registries
-  app.post('/updateWebOfRegistries', bodyParser.json(), api.updateWebOfRegistries)
-
-  app.get('/admin/remotes', requireAdmin, views.admin.remotes)
-  app.post('/admin/saveRemote', requireAdmin, bodyParser.urlencoded({ extended: true }), actions.admin.saveRemote)
-  app.post('/admin/deleteRemote', requireAdmin, bodyParser.urlencoded({ extended: true }), actions.admin.deleteRemote)
-
-  app.get('/admin/explorer', requireAdmin, views.admin.explorer)
-  app.post('/admin/explorer', requireAdmin, bodyParser.urlencoded({ extended: true }), views.admin.explorer)
-  app.post('/admin/explorerUpdateIndex', requireAdmin, actions.admin.explorerUpdateIndex)
-  app.all('/admin/explorerLog', requireAdmin, actions.admin.explorerLog)
-  app.all('/admin/explorerIndexingLog', requireAdmin, actions.admin.explorerIndexingLog)
-
-  app.get('/admin/sparql', requireAdmin, sparqlAdmin)
-  app.post('/admin/sparql', requireAdmin, bodyParser.urlencoded({ extended: true }), sparqlAdmin)
-
-  app.get('/admin/theme', views.admin.theme)
-  app.post('/admin/theme', requireAdmin, uploadToMemory.single('logo'), views.admin.theme)
-
-  app.get('/admin/users', requireAdmin, views.admin.users)
-  app.post('/admin/users', requireAdmin, views.admin.users)
-  app.get('/admin/newUser', requireAdmin, views.admin.newUser)
-  app.post('/admin/newUser', requireAdmin, bodyParser.urlencoded({ extended: true }), views.admin.newUser)
-  app.post('/admin/updateUser', requireAdmin, bodyParser.urlencoded({ extended: true }), actions.admin.updateUser)
-  app.post('/admin/deleteUser', requireAdmin, bodyParser.urlencoded({ extended: true }), actions.admin.deleteUser)
-
   // Search Endpoints
-  app.get('/search/:query?', views.search)
+  app.get('/search/:query?', views.search) //search metadata and search sequence
   app.get('/searchCount/:query?', views.search)
-  app.get('/remoteSearch/:query?', forceNoHTML, views.search) /// DEPRECATED, use /search
-
-  app.get('/sbsearch', views.sbsearch)
-  app.post('/sbsearch', views.sbsearch)
-
-  app.get('/advancedSearch', views.advancedSearch)
-  app.post('/advancedSearch', views.advancedSearch)
-  app.post('/createCollection', views.advancedSearch)
-
-  app.get('/:type/count', api.count)
   app.get('/rootCollections', api.rootCollections)
-
   app.get('/manage', requireUser, views.manage)
   app.get('/shared', requireUser, views.shared)
 
@@ -301,75 +214,8 @@ function App () {
   app.get('/user/:userId/:collectionId/:displayId/:version/:hash/share/uses', views.search)
   app.get('/user/:userId/:collectionId/:displayId/:version/:hash/share/similar', views.search)
 
+  app.get('/:type/count', api.count)
   app.get('/sparql', sparql)
-  app.post('/sparql', bodyParser.urlencoded({ extended: true }), sparql)
-
-  // Manage Submissions Endpoints
-  app.post('/public/:collectionId/:displayId/:version/icon', requireUser, uploadToMemory.single('collectionIcon'), actions.updateCollectionIcon)
-
-  app.get('/public/:collectionId/:displayId/:version/removeCollection', requireAdmin, actions.removeCollection)
-  app.get('/public/:collectionId/:displayId/:version/addToCollection', requireUser, views.addToCollection)
-  app.post('/public/:collectionId/:displayId/:version/addToCollection', requireUser, views.addToCollection)
-
-  app.get('/user/:userId/:collectionId/:displayId/:version/removeCollection', requireUser, actions.removeCollection)
-  app.get('/user/:userId/:collectionId/:displayId/:version/addToCollection', requireUser, views.addToCollection)
-  app.post('/user/:userId/:collectionId/:displayId/:version/addToCollection', requireUser, views.addToCollection)
-  app.get('/user/:userId/:collectionId/:displayId/:version/remove', requireUser, actions.remove)
-  app.post('/user/:userId/:collectionId/:displayId/:version/removeMembership', requireUser, actions.removeMembership)
-  app.get('/user/:userId/:collectionId/:displayId/:version/replace', requireUser, actions.replace)
-  app.get('/user/:userId/:collectionId/:displayId/:version/makePublic', requireUser, actions.makePublic)
-  app.post('/user/:userId/:collectionId/:displayId/:version/makePublic', requireUser, uploadToMemory.single('file'), actions.makePublic)
-
-  app.get('/user/:userId/:collectionId/:displayId/:version/:hash/share/remove', actions.remove)
-  app.post('/user/:userId/:collectionId/:displayId/:version/:hash/share/removeMembership', actions.removeMembership)
-  app.get('/user/:userId/:collectionId/:displayId/:version/:hash/share/replace', actions.replace)
-  app.get('/user/:userId/:collectionId/:displayId/:version/:hash/share/makePublic', actions.makePublic)
-  app.post('/user/:userId/:collectionId/:displayId/:version/:hash/share/makePublic', uploadToMemory.single('file'), actions.makePublic)
-
-  // Remote ICE/Benchling endpoints
-  app.get('/public/:collectionId/:displayId/:version/copyFromRemote', requireUser, actions.copyFromRemote)
-  app.post('/public/:collectionId/:displayId/:version/copyFromRemote', requireUser, uploadToMemory.single('file'), actions.copyFromRemote)
-
-  app.get('/public/:collectionId/:displayId/:version/createBenchlingSequence', requireUser, actions.createBenchlingSequence)
-  app.post('/public/:collectionId/:displayId/:version/createBenchlingSequence', requireUser, uploadToMemory.single('file'), actions.createBenchlingSequence)
-  app.get('/public/:collectionId/:displayId/:version/createICEPart', requireUser, actions.createICEPart)
-  app.post('/public/:collectionId/:displayId/:version/createICEPart', requireUser, uploadToMemory.single('file'), actions.createICEPart)
-
-  app.get('/user/:userId/:collectionId/:displayId/:version/createBenchlingSequence', requireUser, actions.createBenchlingSequence)
-  app.post('/user/:userId/:collectionId/:displayId/:version/createBenchlingSequence', requireUser, uploadToMemory.single('file'), actions.createBenchlingSequence)
-  app.get('/user/:userId/:collectionId/:displayId/:version/createICEPart', requireUser, actions.createICEPart)
-  app.post('/user/:userId/:collectionId/:displayId/:version/createICEPart', requireUser, uploadToMemory.single('file'), actions.createICEPart)
-
-  app.get('/user/:userId/:collectionId/:displayId/:version/:hash/share/createBenchlingSequence', actions.createBenchlingSequence)
-  app.post('/user/:userId/:collectionId/:displayId/:version/:hash/share/createBenchlingSequence', uploadToMemory.single('file'), actions.createBenchlingSequence)
-  app.get('/user/:userId/:collectionId/:displayId/:version/:hash/share/createICEPart', actions.createICEPart)
-  app.post('/user/:userId/:collectionId/:displayId/:version/:hash/share/createICEPart', uploadToMemory.single('file'), actions.createICEPart)
-
-  // Update Permissions Endpoints
-  app.get('/public/:collectionId/:displayId/:version/addOwner', requireUser, views.addOwner)
-  app.post('/public/:collectionId/:displayId/:version/addOwner', requireUser, views.addOwner)
-  app.post('/public/:collectionId/:displayId/:version/removeOwner/:username', requireUser, actions.removeOwner)
-
-  app.get('/user/:userId/:collectionId/:displayId/:version/addOwner', requireUser, views.addOwner)
-  app.post('/user/:userId/:collectionId/:displayId/:version/addOwner', requireUser, views.addOwner)
-  app.post('/user/:userId/:collectionId/:displayId/:version/removeOwner/:username', requireUser, actions.removeOwner)
-
-  app.get('/user/:userId/:collectionId/:displayId/:version/:hash/share/addOwner', views.addOwner)
-  app.post('/user/:userId/:collectionId/:displayId/:version/:hash/share/addOwner', views.addOwner)
-  app.post('/user/:userId/:collectionId/:displayId/:version/:hash/share/removeOwner/:username', actions.removeOwner)
-
-  // Attachment Endpoints
-  app.post('/public/:collectionId/:displayId/:version/attach', requireUser, actions.upload)
-  app.post('/public/:collectionId/:displayId/:version/attachUrl', requireUser, api.attachUrl)
-  app.get('/public/:collectionId/:displayId/:version/download', api.download)
-
-  app.post('/user/:userId/:collectionId/:displayId/:version/attach', requireUser, actions.upload)
-  app.post('/user/:userId/:collectionId/:displayId/:version/attachUrl', requireUser, api.attachUrl)
-  app.get('/user/:userId/:collectionId/:displayId/:version/download', requireUser, api.download)
-
-  app.post('/user/:userId/:collectionId/:displayId/:version/:hash/share/attach', actions.upload)
-  app.post('/user/:userId/:collectionId/:displayId/:version/:hash/share/attachUrl', api.attachUrl)
-  app.get('/user/:userId/:collectionId/:displayId/:version/:hash/share/download', api.download)
 
   // Download Endpoints
   app.get('/public/:collectionId/:displayId/sbol', api.persistentIdentity)
@@ -379,8 +225,6 @@ function App () {
 
   app.get('/public/:collectionId/:displayId/:version/sbol', api.sbol)
   app.get('/public/:collectionId/:displayId/:version/sbolnr', api.sbolnr)
-  app.get('/public/:collectionId/:displayId/:version/omex', api.omex)
-  app.get('/public/:collectionId/:displayId/:version/summary', api.summary)
   app.get('/public/:collectionId/:displayId/:version/fasta', api.fasta)
   app.get('/public/:collectionId/:displayId/:version/gb', api.genBank)
   app.get('/public/:collectionId/:displayId/:version/gff', api.gff3)
@@ -388,8 +232,6 @@ function App () {
 
   app.get('/user/:userId/:collectionId/:displayId/:version/sbol', api.sbol)
   app.get('/user/:userId/:collectionId/:displayId/:version/sbolnr', api.sbolnr)
-  app.get('/user/:userId/:collectionId/:displayId/:version/omex', api.omex)
-  app.get('/user/:userId/:collectionId/:displayId/:version/summary', api.summary)
   app.get('/user/:userId/:collectionId/:displayId/:version/fasta', api.fasta)
   app.get('/user/:userId/:collectionId/:displayId/:version/gb', api.genBank)
   app.get('/user/:userId/:collectionId/:displayId/:version/gff', api.gff3)
@@ -397,37 +239,101 @@ function App () {
 
   app.get('/user/:userId/:collectionId/:displayId/:version/:hash/share/sbol', api.sbol)
   app.get('/user/:userId/:collectionId/:displayId/:version/:hash/share/sbolnr', api.sbolnr)
-  app.get('/user/:userId/:collectionId/:displayId/:version/:hash/share/omex', api.omex)
-  app.get('/user/:userId/:collectionId/:displayId/:version/:hash/share/summary', api.summary)
   app.get('/user/:userId/:collectionId/:displayId/:version/:hash/share/fasta', api.fasta)
   app.get('/user/:userId/:collectionId/:displayId/:version/:hash/share/gb', api.genBank)
   app.get('/user/:userId/:collectionId/:displayId/:version/:hash/share/gff', api.gff3)
   app.get('/user/:userId/:collectionId/:displayId/:version/:hash/share/metadata', api.metadata)
 
-  app.get('/public/:collectionId/:displayId/:version/visualization', views.visualization)
-  app.get('/user/:userId/:collectionId/:displayId/:version/visualization', views.visualization)
-  app.get('/user/:userId/:collectionId/:displayId/:version/:hash/share/visualization', views.visualization)
+  app.get('/public/:collectionId/:displayId/:version/download', api.download)
+  app.get('/user/:userId/:collectionId/:displayId/:version/download', requireUser, api.download)
+  app.get('/user/:userId/:collectionId/:displayId/:version/:hash/share/download', api.download)
 
-  // View/Download Endpoints
-//   app.get('/public/:collectionId/:displayId', views.persistentIdentity)
-//   app.get('/user/:userId/:collectionId/:displayId', views.persistentIdentity)
+  // Submission Endpoints
+  app.post('/submit/', requireUser, views.submit)
+  app.post('/user/:userId/:collectionId/:displayId/:version/makePublic', requireUser, uploadToMemory.single('file'), actions.makePublic)
+  app.post('/user/:userId/:collectionId/:displayId/:version/:hash/share/makePublic', uploadToMemory.single('file'), actions.makePublic)
+  app.get('/public/:collectionId/:displayId/:version/removeCollection', requireAdmin, actions.removeCollection)
+  app.get('/user/:userId/:collectionId/:displayId/:version/removeCollection', requireUser, actions.removeCollection)
+  app.get('/user/:userId/:collectionId/:displayId/:version/remove', requireUser, actions.remove)
+  app.get('/user/:userId/:collectionId/:displayId/:version/:hash/share/remove', actions.remove)
+  app.get('/user/:userId/:collectionId/:displayId/:version/replace', requireUser, actions.replace)
+  app.get('/user/:userId/:collectionId/:displayId/:version/:hash/share/replace', actions.replace)
+  app.post('/public/:collectionId/:displayId/:version/icon', requireUser, uploadToMemory.single('collectionIcon'), actions.updateCollectionIcon)
+ 
+  // Update Permissions Endpoints
+  app.post('/public/:collectionId/:displayId/:version/addOwner', requireUser, views.addOwner)
+  app.post('/public/:collectionId/:displayId/:version/removeOwner/:username', requireUser, actions.removeOwner)
 
-//   app.get('/user/:userId/:collectionId/:displayId(*)/:version/:hash/share/full', views.topLevel)
-//   app.get('/user/:userId/:collectionId/:displayId(*)/:version/:hash/share', views.topLevel)
-//   app.post('/user/:userId/:collectionId/:displayId(*)/:version/:hash/share/full', views.topLevel)
-//   app.post('/user/:userId/:collectionId/:displayId(*)/:version/:hash/share', views.topLevel)
+  app.post('/user/:userId/:collectionId/:displayId/:version/addOwner', requireUser, views.addOwner)
+  app.post('/user/:userId/:collectionId/:displayId/:version/removeOwner/:username', requireUser, actions.removeOwner)
 
-//   app.get('/user/:userId/:collectionId/:displayId(*)/:version/full', views.topLevel)
-//   app.get('/user/:userId/:collectionId/:displayId(*)/:version', views.topLevel)
-//   app.post('/user/:userId/:collectionId/:displayId(*)/:version/full', views.topLevel)
-//   app.post('/user/:userId/:collectionId/:displayId(*)/:version', views.topLevel)
+  app.post('/user/:userId/:collectionId/:displayId/:version/:hash/share/addOwner', views.addOwner)
+  app.post('/user/:userId/:collectionId/:displayId/:version/:hash/share/removeOwner/:username', actions.removeOwner)
 
-//   app.get('/public/:collectionId/:displayId(*)/:version/full', views.topLevel)
-//   app.get('/public/:collectionId/:displayId(*)/:version', views.topLevel)
-//   app.post('/public/:collectionId/:displayId(*)/:version/full', views.topLevel)
-//   app.post('/public/:collectionId/:displayId(*)/:version', views.topLevel)
+  // Edit Mutable Fields Endpoints
+  app.post('/updateMutableDescription', requireUser, actions.updateMutableDescription)
+  app.post('/updateMutableNotes', requireUser, actions.updateMutableNotes)
+  app.post('/updateMutableSource', requireUser, actions.updateMutableSource)
+  app.post('/updateCitations', requireUser, actions.updateCitations)
 
-  app.get('/expose/:id', api.expose)
+  app.post('/user/:userId/:collectionId/:displayId/:version/edit/:field', requireUser, api.editObject)
+  app.post('/user/:userId/:collectionId/:displayId/:version/add/:field', requireUser, api.addObject)
+  app.post('/user/:userId/:collectionId/:displayId/:version/remove/:field', requireUser, api.removeObject)
+  
+  app.post('/public/:collectionId/:displayId/:version/addToCollection', requireUser, views.addToCollection)
+  app.post('/user/:userId/:collectionId/:displayId/:version/addToCollection', requireUser, views.addToCollection)
+  app.post('/user/:userId/:collectionId/:displayId/:version/removeMembership', requireUser, actions.removeMembership)
+  app.post('/user/:userId/:collectionId/:displayId/:version/:hash/share/removeMembership', actions.removeMembership)
+
+  // Attachment Endpoints
+  app.post('/public/:collectionId/:displayId/:version/attach', requireUser, actions.upload)
+  app.post('/public/:collectionId/:displayId/:version/attachUrl', requireUser, api.attachUrl)
+
+  app.post('/user/:userId/:collectionId/:displayId/:version/attach', requireUser, actions.upload)
+  app.post('/user/:userId/:collectionId/:displayId/:version/attachUrl', requireUser, api.attachUrl)
+
+  app.post('/user/:userId/:collectionId/:displayId/:version/:hash/share/attach', actions.upload)
+  app.post('/user/:userId/:collectionId/:displayId/:version/:hash/share/attachUrl', api.attachUrl)
+  
+  // Administration Endpoints
+  app.get('/admin', requireAdmin, views.admin.status)
+  app.get('/admin/virtuoso', api.healthCheck)  
+  app.get('/admin/graphs', requireAdmin, views.admin.graphs)
+  app.get('/admin/log', requireAdmin, views.admin.log)
+  app.get('/admin/mail', requireAdmin, views.admin.mail)
+  app.post('/admin/mail', requireAdmin, bodyParser.urlencoded({ extended: true }), views.admin.mail)
+  app.get('/admin/plugins', views.admin.plugins)
+  app.post('/admin/savePlugin', requireAdmin, bodyParser.urlencoded({ extended: true }), actions.admin.savePlugin)
+  app.post('/admin/deletePlugin', requireAdmin, bodyParser.urlencoded({ extended: true }), actions.admin.deletePlugin)
+
+  app.get('/admin/registries', requireAdmin, views.admin.registries)
+  app.post('/admin/saveRegistry', requireAdmin, bodyParser.urlencoded({ extended: true }), actions.admin.saveRegistry)
+  app.post('/admin/deleteRegistry', requireAdmin, bodyParser.urlencoded({ extended: true }), actions.admin.deleteRegistry)
+  app.post('/admin/setAdministratorEmail', requireAdmin, bodyParser.urlencoded({ extended: true }), actions.admin.setAdministratorEmail)
+  app.post('/admin/retrieveFromWebOfRegistries', requireAdmin, actions.admin.retrieve)
+  app.post('/admin/federate', requireAdmin, bodyParser.urlencoded({ extended: true }), actions.admin.federate)
+
+  // This endpoint is used by Web-of-Registries to update SynBioHub's list of registries
+  app.get('/admin/sparql', requireAdmin, sparqlAdmin)
+  app.post('/admin/sparql', requireAdmin, bodyParser.urlencoded({ extended: true }), sparqlAdmin)
+
+  app.get('/admin/remotes', requireAdmin, views.admin.remotes) //benchling and ice
+  app.post('/admin/saveRemote', requireAdmin, bodyParser.urlencoded({ extended: true }), actions.admin.saveRemote)
+  app.post('/admin/deleteRemote', requireAdmin, bodyParser.urlencoded({ extended: true }), actions.admin.deleteRemote)
+
+  app.get('/admin/explorerlog', requireAdmin, actions.admin.explorerLog)
+  app.get('/admin/explorer', requireAdmin, views.admin.explorer)
+  app.post('/admin/explorer', requireAdmin, bodyParser.urlencoded({ extended: true }), views.admin.explorer)
+  app.post('/admin/explorerUpdateIndex', requireAdmin, actions.admin.explorerUpdateIndex)
+ 
+  app.get('/admin/theme', views.admin.theme)
+  app.post('/admin/theme', requireAdmin, uploadToMemory.single('logo'), views.admin.theme)
+  
+  app.get('/admin/users', requireAdmin, views.admin.users)
+  app.post('/admin/users', requireAdmin, views.admin.users)
+  app.post('/admin/newUser', requireAdmin, bodyParser.urlencoded({ extended: true }), views.admin.newUser)
+  app.post('/admin/updateUser', requireAdmin, bodyParser.urlencoded({ extended: true }), actions.admin.updateUser)
+  app.post('/admin/deleteUser', requireAdmin, bodyParser.urlencoded({ extended: true }), actions.admin.deleteUser)
 
   function sparql (req, res) {
     // jena sends accept: */* and then complains when we send HTML
