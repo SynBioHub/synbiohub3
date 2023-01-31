@@ -10,9 +10,9 @@ warn: Browserslist: caniuse-lite is outdated. Please run:
   Why you should do it regularly: https://github.com/browserslist/browserslist#browsers-data-updating
 info: redirecting
 info: config: set instanceName => "Test Synbiohub"
-info: config: set sessionSecret => "40823ff9-463e-46f5-bda3-62416aade61e"
-info: config: set shareLinkSalt => "c43bdec8-352f-44d8-9f35-8d384cbdb1cf"
-info: config: set passwordSalt => "7c0fb886-c2d5-4354-9356-f9af6a98c064"
+info: config: set sessionSecret => "bd272fed-a349-4679-a294-d23dd1f0d96d"
+info: config: set shareLinkSalt => "f0c1a214-f982-47bf-87bb-b9c4a7798b4a"
+info: config: set passwordSalt => "b2d912e7-e6c8-4d9a-89ef-9f3d5b3d18c1"
 info: config: set instanceUrl => "http://localhost:7777/"
 info: config: set webOfRegistries => {"http://localhost:7777":"http://localhost:7777"}
 info: config: set databasePrefix => "http://localhost:7777/"
