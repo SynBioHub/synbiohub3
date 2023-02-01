@@ -75,14 +75,3 @@ def test_root():
     # testHash = TestHash()
     # testHash.test_hash()
 
-    # from  docker_test_setup import TestDockerSetup
-    # testDockerSetup = TestDockerSetup()
-    # testDockerSetup.test_get_register()
-    # testDockerSetup.test_create_user_and_upload()
-
-    # from docker_test import TestDocker
-    # testDocker = TestDocker()
-    # testDocker.test_dockeruser_persist()
-    # testDocker.test_public_persist()
-    # testDocker.test_admin_persist()
-
