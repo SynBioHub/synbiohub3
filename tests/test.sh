@@ -58,47 +58,6 @@ if [ $exitcode -ne 0 ]; then
     exit $exitcode
 fi
 
-#
-# now stop containers and run just persistance tests
-# message "Persistance test"
-# bash ./stop_containers.sh
-# bash ./start_containers_persist.sh
-
-# python3 test_docker_persist.py "$@"
-# exitcode=$?
-# if [ $exitcode -ne 0 ]; then
-#     message "Exiting with code $exitcode."
-#     exit $exitcode
-# fi
-
-
-# stop after test suite if the command line option is present
-# for var in "$@"
-# do
-#     if [[ $var == "--stopaftertestsuite" ]]
-#     then
-# 	echo "Stopping after test suite ran."
-# 	exit 0
-#     fi
-# done
-
-# bash ./run_sboltestrunner.sh
-# exitcode=$?
-# if [ $exitcode -ne 0 ]; then
-#     message "Exiting with code $exitcode."
-#     exit $exitcode
-# fi
-
 bash ./stop_containers.sh
 
 message "finished running tests"
-
-# test for sbh3
-#ideas 
-#1. run 1's tests, save files, run 3's tests (same as 1), save files, compare -> final result
-#2. run 1, run3, send test, compare.. till one fails or done
-#Chris: start 1 and 3
-
-
-# test for sbh3 
-#Currently: need SBH1 and 3 running at the same time because you can't submit on 3 yet, submit through 1 read in 3 to verify results
