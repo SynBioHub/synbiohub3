@@ -8,8 +8,8 @@ from test_arguments import test_print
 class TestSearch(TestCase):
 
     def test_search(self):
-#         headers = {"Accept": "text/plain"}
-#         test_type = "Search"
+        headers = {"Accept": "text/plain"}
+        test_type = "Search"
 
 #         # test_searchQuery(self):
 #         test_print("test_search starting")
