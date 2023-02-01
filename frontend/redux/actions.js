@@ -4,7 +4,7 @@ import JSZip from 'jszip';
 import getConfig from 'next/config';
 import { mutate } from 'swr';
 import FileDropzone from '../components/Submit/FileComponents/FileDropzone';
-const mime = require('mime-types')
+const mime = require('mime-types');
 
 import * as types from './types';
 const { publicRuntimeConfig } = getConfig();
@@ -93,30 +93,30 @@ export const logoutUser = () => dispatch => {
 
 export const updateUser =
   (name, affiliation, email, password, confirmPassword) =>
-    async (dispatch, getState) => {
-      const url = `${publicRuntimeConfig.backend}/profile`;
-      const token = getState().user.token;
-      const headers = {
-        Accept: 'text/plain',
-        'X-authorization': token
-      };
-
-      const parameters = new URLSearchParams();
-      parameters.append('name', name);
-      parameters.append('affiliation', affiliation);
-      parameters.append('email', email);
-      if (password) {
-        parameters.append('password1', password);
-        parameters.append('password2', confirmPassword);
-      }
-
-      const response = await fetch(url, {
-        method: 'POST',
-        headers,
-        body: parameters
-      });
-      if (response.status === 200) dispatch(fetchUserInfo());
+  async (dispatch, getState) => {
+    const url = `${publicRuntimeConfig.backend}/profile`;
+    const token = getState().user.token;
+    const headers = {
+      Accept: 'text/plain',
+      'X-authorization': token
     };
+
+    const parameters = new URLSearchParams();
+    parameters.append('name', name);
+    parameters.append('affiliation', affiliation);
+    parameters.append('email', email);
+    if (password) {
+      parameters.append('password1', password);
+      parameters.append('password2', confirmPassword);
+    }
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers,
+      body: parameters
+    });
+    if (response.status === 200) dispatch(fetchUserInfo());
+  };
 
 export const fetchUserInfo = () => async (dispatch, getState) => {
   const url = `${publicRuntimeConfig.backend}/profile`;
@@ -150,37 +150,37 @@ export const fetchUserInfo = () => async (dispatch, getState) => {
 
 export const registerUser =
   (fullName, username, affiliation, email, password, confirmPassword) =>
-    async dispatch => {
-      const url = `${publicRuntimeConfig.backend}/register`;
-      const headers = {
-        Accept: 'text/plain'
-      };
-
-      const parameters = new URLSearchParams();
-      parameters.append('name', fullName);
-      parameters.append('username', username);
-      parameters.append('affiliation', affiliation);
-      parameters.append('email', email);
-      parameters.append('password1', password);
-      parameters.append('password2', confirmPassword);
-
-      const response = await fetch(url, {
-        method: 'POST',
-        headers,
-        body: parameters
-      });
-      const message = await response.text();
-      if (response.status === 200) {
-        localStorage.setItem('userToken', message); // save the token of the user locally, change to cookie later
-        localStorage.setItem('username', username); // save the username of the user locally, change to cookie later
-        dispatch(login(username, password));
-      } else {
-        dispatch({
-          type: types.REGISTERERROR,
-          payload: message
-        });
-      }
+  async dispatch => {
+    const url = `${publicRuntimeConfig.backend}/register`;
+    const headers = {
+      Accept: 'text/plain'
     };
+
+    const parameters = new URLSearchParams();
+    parameters.append('name', fullName);
+    parameters.append('username', username);
+    parameters.append('affiliation', affiliation);
+    parameters.append('email', email);
+    parameters.append('password1', password);
+    parameters.append('password2', confirmPassword);
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers,
+      body: parameters
+    });
+    const message = await response.text();
+    if (response.status === 200) {
+      localStorage.setItem('userToken', message); // save the token of the user locally, change to cookie later
+      localStorage.setItem('username', username); // save the username of the user locally, change to cookie later
+      dispatch(login(username, password));
+    } else {
+      dispatch({
+        type: types.REGISTERERROR,
+        payload: message
+      });
+    }
+  };
 
 // SEARCHING ACTIONS
 
@@ -222,59 +222,72 @@ export const setLimit = newLimit => dispatch => {
  * @returns
  */
 export const submit =
-  (uri, files, overwriteIncrement = 0, addingToCollection = false, plugins = []) =>
-    async (dispatch, getState) => {
-      dispatch({
-        type: types.SUBMITRESET,
-        payload: true // sets submitting state to true
-      });
+  (
+    uri,
+    files,
+    overwriteIncrement = 0,
+    addingToCollection = false,
+    plugins = []
+  ) =>
+  async (dispatch, getState) => {
+    dispatch({
+      type: types.SUBMITRESET,
+      payload: true // sets submitting state to true
+    });
 
-      dispatch({
-        type: types.SHOWSUBMITPROGRESS,
-        payload: true
-      });
+    dispatch({
+      type: types.SHOWSUBMITPROGRESS,
+      payload: true
+    });
 
-      const token = getState().user.token;
+    const token = getState().user.token;
 
+    //Look for pluginName
+    if (plugins.length != 0) {
+      let unzippedFiles = [];
+      let convertedFiles = [];
+      for (let file of files) {
+        if (mime.lookup(file.name) === 'application/zip') {
+          var zip = new JSZip();
+          const result = await zip.loadAsync(file);
+          const keys = Object.keys(result.files);
 
-      //Look for pluginName
-      if (plugins.length != 0) {
-        let unzippedFiles = [];
-        let convertedFiles = [];
-        for(let file of files) {
-          if(mime.lookup(file.name) === 'application/zip') {
-            var zip = new JSZip();
-            const result = await zip.loadAsync(file);
-            const keys = Object.keys(result.files);
-
-            for (let key of keys) {
-              if(!key.includes('__MACOSX/._')) {
-                const currFile = await result.files[key].async('blob');
-                currFile.name = key
-                unzippedFiles.push(currFile);
-              }
+          for (let key of keys) {
+            if (!key.includes('__MACOSX/._')) {
+              const currFile = await result.files[key].async('blob');
+              currFile.name = key;
+              unzippedFiles.push(currFile);
             }
           }
-          else {
-            unzippedFiles.push(file);
-          }
+        } else {
+          unzippedFiles.push(file);
         }
       }
+      for (let plugin of plugins) {
+        [convertedFiles, unzippedFiles] = await submitPluginHandler(
+          plugin.value,
+          convertedFiles,
+          unzippedFiles
+        );
+      }
+      convertedFiles = convertedFiles.concat(unzippedFiles);
+      files = convertedFiles;
+    }
 
-      await uploadFiles(
-        dispatch,
-        token,
-        uri,
-        files,
-        overwriteIncrement,
-        addingToCollection
-      );
+    await uploadFiles(
+      dispatch,
+      token,
+      uri,
+      files,
+      overwriteIncrement,
+      addingToCollection
+    );
 
-      dispatch({
-        type: types.SUBMITTING,
-        payload: false
-      });
-    };
+    dispatch({
+      type: types.SUBMITTING,
+      payload: false
+    });
+  };
 
 /**
  * Helper function called by the submit action
@@ -370,8 +383,99 @@ async function uploadFiles(
 }
 
 async function submitPluginHandler(pluginName, convertedFiles, files) {
+  const evaluateManifest = {
+    manifest: {
+      files: []
+    }
+  };
 
+  for (let file of files) {
+    evaluateManifest.manifest.files.push({
+      url: file.url ? file.url : 'Unsuccessful', //File url isn't working
+      filename: file.name,
+      type: '',
+      instanceUrl: publicRuntimeConfig.backend
+    });
+  }
 
+  return axios({
+    method: 'POST',
+    url: `${publicRuntimeConfig.backend}/call`,
+    responseType: 'application/json',
+    params: {
+      name: pluginName,
+      endpoint: 'evaluate',
+      data: encodeURIComponent(JSON.stringify(evaluateManifest))
+    }
+  })
+    .then(async function (response) {
+      let returnManifest = [];
+      let acceptedFiles = [];
+      let returnFiles = [];
+
+      const requirementManifest = response.data.manifest;
+
+      for (let i = 0; i < requirementManifest.length; i++) {
+        if (requirementManifest[i].requirement === 0) {
+          returnManifest.push(evaluateManifest.manifest.files[i]);
+        } else if (requirementManifest[i] === 1) {
+          returnManifest.push(evaluateManifest.manifest.files[i]);
+          acceptedFiles.push(evaluateManifest.manifest.files[i]);
+        } else {
+          acceptedFiles.push(evaluateManifest.manifest.files[i]);
+        }
+      }
+
+      const runManifest = {
+        manifest: {
+          files: acceptedFiles
+        }
+      };
+
+      for (let rejected of returnManifest) {
+        for (let file of files) {
+          if (file.name === rejected.filename) {
+            returnFiles.push(file);
+          }
+        }
+      }
+
+      return axios({
+        method: 'POST',
+        url: `${publicRuntimeConfig.backend}/call`,
+        responseType: 'arraybuffer',
+        params: {
+          name: pluginName,
+          endpoint: 'run',
+          data: encodeURIComponent(JSON.stringify(runManifest))
+        }
+      })
+        .then(async function (response) {
+          //Need to unzip response and deal with files
+
+          const pluginZip = response.data;
+
+          var zip = new JSZip();
+          const result = await zip.loadAsync(pluginZip);
+          const keys = Object.keys(result.files);
+
+          for (let key of keys) {
+            if (key !== 'manifest.json') {
+              const currFile = await result.files[key].async('blob');
+              currFile.name = key;
+              convertedFiles.push(currFile);
+            }
+          }
+          return [convertedFiles, returnFiles];
+        })
+        .catch(error => {
+          return [files, convertedFiles];
+        });
+    })
+    .catch(error => {
+      return [files, convertedFiles];
+    });
+  //Need to make for loop to recombine files and send back to submit (maybe test first with just sending back plugin files and no default handlers)
 }
 
 export const addAttachments = (files, uri) => async (dispatch, getState) => {
@@ -453,56 +557,56 @@ export const addAttachments = (files, uri) => async (dispatch, getState) => {
 
 export const createCollection =
   (id, version, name, description, citations, overwrite_merge) =>
-    async (dispatch, getState) => {
-      dispatch({ type: types.CREATINGCOLLECTIONERRORS, payload: [] });
-      dispatch({ type: types.CREATINGCOLLECTION, payload: true });
-      dispatch({
-        type: types.CREATINGCOLLECTIONBUTTONTEXT,
-        payload: 'Creating Collection'
-      });
-      const token = getState().user.token;
-      const url = `${publicRuntimeConfig.backend}/submit`;
-      var headers = {
-        Accept: 'text/plain; charset=UTF-8',
-        'X-authorization': token
-      };
-
-      const form = new FormData();
-      form.append('id', id);
-      form.append('version', version);
-      form.append('name', name);
-      form.append('description', description);
-      form.append('citations', citations);
-      form.append('overwrite_merge', `${overwrite_merge}`);
-
-      const response = await fetch(url, {
-        method: 'POST',
-        headers,
-        body: form
-      });
-
-      if (response.status !== 200) {
-        var messages = await response.text();
-        messages = messages.charAt(0) !== '[' ? [messages] : JSON.parse(messages);
-        dispatch({ type: types.CREATINGCOLLECTIONERRORS, payload: messages });
-      } else {
-        dispatch({ type: types.CREATINGCOLLECTIONERRORS, payload: [] });
-        await dispatch(getCanSubmitTo());
-        const collections = getState().submit.canSubmitTo;
-        for (const collection of collections) {
-          if (
-            collection.displayId === id + '_collection' &&
-            collection.version === version &&
-            collection.name === name
-          ) {
-            dispatch(setSelectedCollection(collection));
-            break;
-          }
-        }
-        dispatch(setPromptNewCollection(false));
-      }
-      dispatch({ type: types.CREATINGCOLLECTION, payload: false });
+  async (dispatch, getState) => {
+    dispatch({ type: types.CREATINGCOLLECTIONERRORS, payload: [] });
+    dispatch({ type: types.CREATINGCOLLECTION, payload: true });
+    dispatch({
+      type: types.CREATINGCOLLECTIONBUTTONTEXT,
+      payload: 'Creating Collection'
+    });
+    const token = getState().user.token;
+    const url = `${publicRuntimeConfig.backend}/submit`;
+    var headers = {
+      Accept: 'text/plain; charset=UTF-8',
+      'X-authorization': token
     };
+
+    const form = new FormData();
+    form.append('id', id);
+    form.append('version', version);
+    form.append('name', name);
+    form.append('description', description);
+    form.append('citations', citations);
+    form.append('overwrite_merge', `${overwrite_merge}`);
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers,
+      body: form
+    });
+
+    if (response.status !== 200) {
+      var messages = await response.text();
+      messages = messages.charAt(0) !== '[' ? [messages] : JSON.parse(messages);
+      dispatch({ type: types.CREATINGCOLLECTIONERRORS, payload: messages });
+    } else {
+      dispatch({ type: types.CREATINGCOLLECTIONERRORS, payload: [] });
+      await dispatch(getCanSubmitTo());
+      const collections = getState().submit.canSubmitTo;
+      for (const collection of collections) {
+        if (
+          collection.displayId === id + '_collection' &&
+          collection.version === version &&
+          collection.name === name
+        ) {
+          dispatch(setSelectedCollection(collection));
+          break;
+        }
+      }
+      dispatch(setPromptNewCollection(false));
+    }
+    dispatch({ type: types.CREATINGCOLLECTION, payload: false });
+  };
 
 export const setSelectedCollection = collection => dispatch => {
   dispatch({ type: types.SELECTEDCOLLECTION, payload: collection });
@@ -576,89 +680,110 @@ export const makePublicCollection =
     collections,
     setProcessUnderway
   ) =>
-    async (dispatch, getState) => {
-      setProcessUnderway(true);
-      dispatch({ type: types.PUBLISHING, payload: true });
+  async (dispatch, getState) => {
+    setProcessUnderway(true);
+    dispatch({ type: types.PUBLISHING, payload: true });
 
-      const token = getState().user.token;
-      const url = `${publicRuntimeConfig.backend}${submissionUrl}/makePublic`;
-      const headers = {
-        Accept: 'text/plain; charset=UTF-8',
-        'X-authorization': token
-      };
-
-      const parameters = new URLSearchParams();
-      parameters.append('id', displayId);
-      parameters.append('version', version);
-      parameters.append('name', name);
-      parameters.append('description', description);
-      parameters.append('citations', citations);
-      parameters.append('tabState', tabState);
-      if (tabState === 'existing') parameters.append('collections', collections);
-
-      var response = await fetch(url, {
-        method: 'POST',
-        headers,
-        body: parameters
-      });
-
-      if (response.status === 200) {
-        mutate([`${publicRuntimeConfig.backend}/shared`, token]);
-        mutate([`${publicRuntimeConfig.backend}/manage`, token]);
-      }
-
-      setProcessUnderway(false);
-      dispatch({ type: types.PUBLISHING, payload: false });
+    const token = getState().user.token;
+    const url = `${publicRuntimeConfig.backend}${submissionUrl}/makePublic`;
+    const headers = {
+      Accept: 'text/plain; charset=UTF-8',
+      'X-authorization': token
     };
 
-export const downloadFiles = (files, pluginName = null, pluginData = null) => (dispatch, getState) => {
-  dispatch({ type: types.DOWNLOADSTATUS, payload: 'Downloading' });
-  dispatch({ type: types.DOWNLOADLIST, payload: files });
-  dispatch({ type: types.SHOWDOWNLOAD, payload: true });
+    const parameters = new URLSearchParams();
+    parameters.append('id', displayId);
+    parameters.append('version', version);
+    parameters.append('name', name);
+    parameters.append('description', description);
+    parameters.append('citations', citations);
+    parameters.append('tabState', tabState);
+    if (tabState === 'existing') parameters.append('collections', collections);
 
-  const token = getState().user.token;
-  var zip = new JSZip();
-  var zipFilename = 'sbhdownload.zip';
-
-  const zippedFilePromises = files.map((file, index) => {
-    return zippedFilePromise(file, index, token, files, dispatch, pluginName, pluginData);
-  });
-
-  Promise.allSettled(zippedFilePromises).then(results => {
-    dispatch({ type: types.DOWNLOADSTATUS, payload: 'Zipping' });
-    for (const result of results) {
-      if (result.status === 'fulfilled') {
-        var filename = `${result.value.file.displayId}.${result.value.file.type}`;
-        zip.file(filename, result.value.response.data);
-      }
-    }
-    zip.generateAsync({ type: 'blob' }).then(function (content) {
-      dispatch({ type: types.SHOWDOWNLOAD, payload: false });
-      saveAs(content, zipFilename);
-    });
-  });
-};
-
-const zippedFilePromise = (file, index, token, files, dispatch, pluginName, pluginData) => {
-  return new Promise((resolve, reject) => {
-    axios(pluginName === null ? {
-      url: file.url,
-      method: 'GET',
-      responseType: 'blob',
-      headers: {
-        'X-authorization': token
-      }
-    } : {
-      url: `${publicRuntimeConfig.backend}/call`,
+    var response = await fetch(url, {
       method: 'POST',
-      responseType: 'blob',
-      params: {
-        name: pluginName,
-        endpoint: 'run',
-        data: encodeURIComponent(JSON.stringify(pluginData))
+      headers,
+      body: parameters
+    });
+
+    if (response.status === 200) {
+      mutate([`${publicRuntimeConfig.backend}/shared`, token]);
+      mutate([`${publicRuntimeConfig.backend}/manage`, token]);
+    }
+
+    setProcessUnderway(false);
+    dispatch({ type: types.PUBLISHING, payload: false });
+  };
+
+export const downloadFiles =
+  (files, pluginName = null, pluginData = null) =>
+  (dispatch, getState) => {
+    dispatch({ type: types.DOWNLOADSTATUS, payload: 'Downloading' });
+    dispatch({ type: types.DOWNLOADLIST, payload: files });
+    dispatch({ type: types.SHOWDOWNLOAD, payload: true });
+
+    const token = getState().user.token;
+    var zip = new JSZip();
+    var zipFilename = 'sbhdownload.zip';
+
+    const zippedFilePromises = files.map((file, index) => {
+      return zippedFilePromise(
+        file,
+        index,
+        token,
+        files,
+        dispatch,
+        pluginName,
+        pluginData
+      );
+    });
+
+    Promise.allSettled(zippedFilePromises).then(results => {
+      dispatch({ type: types.DOWNLOADSTATUS, payload: 'Zipping' });
+      for (const result of results) {
+        if (result.status === 'fulfilled') {
+          var filename = `${result.value.file.displayId}.${result.value.file.type}`;
+          zip.file(filename, result.value.response.data);
+        }
       }
-      
-    })
+      zip.generateAsync({ type: 'blob' }).then(function (content) {
+        dispatch({ type: types.SHOWDOWNLOAD, payload: false });
+        saveAs(content, zipFilename);
+      });
+    });
+  };
+
+const zippedFilePromise = (
+  file,
+  index,
+  token,
+  files,
+  dispatch,
+  pluginName,
+  pluginData
+) => {
+  return new Promise((resolve, reject) => {
+    axios(
+      pluginName === null
+        ? {
+            url: file.url,
+            method: 'GET',
+            responseType: 'blob',
+            headers: {
+              'X-authorization': token
+            }
+          }
+        : {
+            url: `${publicRuntimeConfig.backend}/call`,
+            method: 'POST',
+            responseType: 'blob',
+            params: {
+              name: pluginName,
+              endpoint: 'run',
+              data: encodeURIComponent(JSON.stringify(pluginData))
+            }
+          }
+    )
       .then(response => {
         if (response.status === 200) {
           files[index].status = 'downloaded';
@@ -678,7 +803,6 @@ const zippedFilePromise = (file, index, token, files, dispatch, pluginName, plug
       });
   });
 };
-
 
 export const toggleShowDownload = () => (dispatch, getState) => {
   dispatch({
@@ -749,18 +873,23 @@ export const markPageVisited = pageVisited => dispatch => {
 
 /**
  * This action updates the order of page sections.
- * 
+ *
  * @param {Array} pageSectionOrder An array containing the order of the page sections.
  * @param {String} type The type of the element being displayed.
  */
-export const updatePageSectionsOrder = (pageSectionOrder, type)  => dispatch => {
+export const updatePageSectionsOrder = (pageSectionOrder, type) => dispatch => {
   const parsed = JSON.parse(localStorage.getItem(type));
   const minimized = parsed === null ? [] : parsed.minimized;
   const selected = parsed === null ? pageSectionOrder : parsed.selected;
 
-  localStorage.setItem(type, JSON.stringify(
-    { order: pageSectionOrder, minimized: minimized, selected: selected }
-  ));
+  localStorage.setItem(
+    type,
+    JSON.stringify({
+      order: pageSectionOrder,
+      minimized: minimized,
+      selected: selected
+    })
+  );
 
   dispatch({
     type: types.UPDATESECTIONORDER,
@@ -771,37 +900,43 @@ export const updatePageSectionsOrder = (pageSectionOrder, type)  => dispatch => 
     type: types.UPDATEPAGETYPE,
     payload: type
   });
-}
+};
 
 /**
  * This action updates which sections are minimized.
- * 
+ *
  * @param {Array} minimizedSections An array containing which sections are minimized.
  * @param {String} type The type of the element being displayed.
  */
-export const updateMinimizedSections = (minimizedSections, type) => dispatch => {
-  const parsed = JSON.parse(localStorage.getItem(type));
-  const order = parsed === null ? [] : parsed.order;
-  const selected = parsed === null ? [] : parsed.selected;
+export const updateMinimizedSections =
+  (minimizedSections, type) => dispatch => {
+    const parsed = JSON.parse(localStorage.getItem(type));
+    const order = parsed === null ? [] : parsed.order;
+    const selected = parsed === null ? [] : parsed.selected;
 
-  localStorage.setItem(type, JSON.stringify(
-    { order: order, minimized: minimizedSections, selected: selected}
-  ));
+    localStorage.setItem(
+      type,
+      JSON.stringify({
+        order: order,
+        minimized: minimizedSections,
+        selected: selected
+      })
+    );
 
-  dispatch({
-    type: types.UPDATEMINIMIZEDSECTIONS,
-    payload: minimizedSections
-  });
+    dispatch({
+      type: types.UPDATEMINIMIZEDSECTIONS,
+      payload: minimizedSections
+    });
 
-  dispatch({
-    type: types.UPDATEPAGETYPE,
-    payload: type
-  });
-}
+    dispatch({
+      type: types.UPDATEPAGETYPE,
+      payload: type
+    });
+  };
 
 /**
  * This action updates which sections are shown.
- * 
+ *
  * @param {Array} selectedSections The new sections to be shown.
  * @param {String} type The type of the element being displayed.
  */
@@ -810,15 +945,20 @@ export const updateSelectedSections = (selectedSections, type) => dispatch => {
   const order = parsed === null ? [] : parsed.order;
   const minimized = parsed === null ? [] : parsed.minimized;
 
-  localStorage.setItem(type, JSON.stringify(
-    { order: order, minimized: minimized, selected: selectedSections }
-  ));
+  localStorage.setItem(
+    type,
+    JSON.stringify({
+      order: order,
+      minimized: minimized,
+      selected: selectedSections
+    })
+  );
 
   dispatch({
     type: types.UPDATESELECTEDSECTIONS,
     payload: selectedSections
-  })
-}
+  });
+};
 
 // ATTACHMENTS SECTION
 
@@ -831,11 +971,11 @@ export const setAttachments = attachments => dispatch => {
     type: types.SETATTACHMENTS,
     payload: attachments
   });
-}
+};
 
 export const setUploadStatus = status => dispatch => {
   dispatch({
     type: types.UPLOADSTATUS,
     payload: status
   });
-}
+};

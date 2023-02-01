@@ -30,6 +30,12 @@
   z-index: 2;
 }
 
+
+.boundedheightforsidepanel {
+  max-height: calc(100vh - 11rem);
+  overflow: scroll;
+}
+
 .headercontainer {
   display: flex;
   margin: 1rem 1rem 0.75rem 1rem;
@@ -107,14 +113,22 @@
 }
 
 .infocontainer {
-  margin: 1rem;
+  margin: 0 1rem;
   width: 19rem;
+  padding: 1rem 0;
 }
 
 .info {
   margin: 0 0.5rem;
   overflow-wrap: break-word;
-  cursor: pointer;
+}
+
+.info:hover .infoheader {
+  background-color: #00A1E4;
+}
+
+.info:hover .infotitle {
+  border: 1px solid #00A1E4;
 }
 
 .infoheader {
@@ -124,6 +138,19 @@
   overflow-wrap: break-word;
   margin-right: 2rem;
   background-color: #465875;
+  color: #fff;
+  padding: 0.2rem 0.5rem;
+  width: 100%;
+  cursor: pointer;
+}
+
+.infogeneric {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  overflow-wrap: break-word;
+  margin-right: 2rem;
+  background-color: #D25627;
   color: #fff;
   padding: 0.2rem 0.5rem;
   width: 100%;
@@ -150,6 +177,17 @@
   font-size: 0.8rem;
   overflow-wrap: break-word;
   border: 1px solid #465875;
+  width: 18rem;
+}
+
+.infotitlegeneric {
+  padding: 0.3rem;
+  margin: 0;
+  font-weight: 500;
+  color: #000;
+  font-size: 0.8rem;
+  overflow-wrap: break-word;
+  border: 1px solid #D25627;
   width: 18rem;
 }
 
@@ -208,6 +246,7 @@
 
 .sectionheadertitle {
   margin-left: 0.5rem;
+  max-width: 13rem;
 }
 
 .sectionheadericon {
@@ -307,7 +346,6 @@
   padding: 0.5rem;
   overflow: scroll;
   /* height: 0; */
-  overflow: hidden;
   transition: 1s;
   height: 100%;
 }
@@ -525,7 +563,7 @@
 }
 
 .searchicon {
-  margin-left: 0.3rem;
+  margin: 0 0.3rem;
   cursor: pointer;
 }
 
@@ -717,8 +755,6 @@
 }
 
 .expanded {
-  overflow: hidden;
-  height: 999px;
   padding: 5px 8.48px 0 8.48px;
   transition: height 0.20s ease-in-out;
 }
@@ -993,6 +1029,14 @@
   color: #465875;
 }
 
-.componentsinfo span:hover {
+.customlink span {
+  color: #D25627;
+}
+
+.customlink span:hover {
   text-decoration: underline;
+}
+
+.customrow {
+  /* font-weight: 500; */
 }
