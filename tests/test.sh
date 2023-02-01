@@ -59,8 +59,6 @@ if [ $exitcode -ne 0 ]; then
 fi
 
 #
-
-
 # now stop containers and run just persistance tests
 # message "Persistance test"
 # bash ./stop_containers.sh
@@ -92,7 +90,6 @@ fi
 # fi
 
 bash ./stop_containers.sh
-
 
 message "finished running tests"
 

@@ -1,3 +1,3 @@
 function message {
-    echo "[synbiohub test] $1"
+    echo "[synbiohub3 test] $1"
 }
