@@ -21,7 +21,7 @@ public class CustomUserService {
         // If user already exists, throw an exception
         if (userRepository.findByEmail(userRegistrationDTO.getEmail()).isPresent()) { throw new UserAlreadyExistsException(); }
         // If the two passwords do not match, throw an exception
-        if (!userRegistrationDTO.getPassword1().equals(userRegistrationDTO.getPassword2())) { throw new AuthenticationException(); }
+        confirmPasswordsMatch(userRegistrationDTO.getPassword1(), userRegistrationDTO.getPassword2());
 
         var user = new UserEntity();
         user.setUsername(userRegistrationDTO.getUsername());
@@ -29,12 +29,20 @@ public class CustomUserService {
         user.setAffiliation(userRegistrationDTO.getAffiliation());
         user.setName(userRegistrationDTO.getName());
 
-        var passwordEncoder = new BCryptPasswordEncoder();
-        user.setPassword(passwordEncoder.encode(userRegistrationDTO.getPassword1()));
+        setEncodedPassword(user, userRegistrationDTO.getPassword1());
 
         user.setIsAdmin(false);
         user.setIsCurator(false);
 
         return userRepository.save(user);
+    }
+
+    public void setEncodedPassword(UserEntity user, String password) {
+        var passwordEncoder = new BCryptPasswordEncoder();
+        user.setPassword(passwordEncoder.encode(password));
+    }
+
+    public void confirmPasswordsMatch(String password1, String password2) throws AuthenticationException {
+        if (password1 == null || !password1.equals(password2)) { throw new AuthenticationException(); }
     }
 }

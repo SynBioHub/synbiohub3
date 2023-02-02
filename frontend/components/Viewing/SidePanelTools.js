@@ -197,7 +197,7 @@ export default function SidePanelTools(properties) {
 async function checkCuration(pluginData) {
   return await axios({
     method: 'GET',
-    url: `${publicRuntimeConfig.backend}/plugins`,
+    url: `${publicRuntimeConfig.backend}/admin/plugins`,
     responseType: 'application/json',
     params: {
       category: 'curation'

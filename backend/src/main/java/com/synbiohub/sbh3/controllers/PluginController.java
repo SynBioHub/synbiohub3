@@ -24,7 +24,7 @@ public class PluginController {
 
     private final PluginService pluginService;
 
-    @GetMapping(value = "/plugins", produces="application/json")
+    @GetMapping(value = "/admin/plugins", produces="application/json")
     @ResponseBody
     public String getPlugins(@RequestParam(required = false) String category) {
         if(category == null) {

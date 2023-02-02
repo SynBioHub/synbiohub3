@@ -47,7 +47,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                         "/login",
                         "/logout"
                 ).permitAll()
-                .antMatchers("/admin/*").hasRole("ADMIN")
+//                .antMatchers("/admin/*").hasRole("ADMIN")
                 .antMatchers("/h2-console/*").permitAll()
 
                 // Make H2-Console non-secured; for debug purposes

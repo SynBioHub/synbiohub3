@@ -25,7 +25,7 @@ const { publicRuntimeConfig } = getConfig();
 /**
  * The side panel that has information about the object.
  * Has buttons for downloading, sharing, citing and deleting along with page sections.
- * 
+ *
  * @param {Any} properties Information from the parent component.
  */
 export default function SidePanel({ metadata, type, json, uri }) {
@@ -35,16 +35,35 @@ export default function SidePanel({ metadata, type, json, uri }) {
   const pagesInfo = getPagesInfo(type, json);
 
   return (
-    <div className={translation === 0 ? styles.sidepanelcontaineropen : styles.sidepanelcontainercollapse}>
-      <div className={styles.sidepanel} style={{ transform: `translateX(-${translation}rem)`, transition: "transform 0.3s" }}>
+    <div
+      className={
+        translation === 0
+          ? styles.sidepanelcontaineropen
+          : styles.sidepanelcontainercollapse
+      }
+    >
+      <div
+        className={styles.sidepanel}
+        style={{
+          transform: `translateX(-${translation}rem)`,
+          transition: 'transform 0.3s'
+        }}
+      >
         <div className={styles.headercontainer}>
           <div className={styles.headeroverflowcontainer}>
-            <h2 className={styles.title}>{metadata.name}</h2>
-            <Link href = {`${publicRuntimeConfig.backend}/search/displayId='${metadata.displayId}'&`}>
-              <a title = "Find all records with the same identifier" target = "_blank">
-                <div className={styles.displayId}>({metadata.displayId})</div>
-              </a>
-            </Link>
+            <div className={styles.titleHolder}>
+              <h2 className={styles.title}>{metadata.name}</h2>
+              <Link
+                href={`${publicRuntimeConfig.backend}/search/displayId='${metadata.displayId}'&`}
+              >
+                <a
+                  title="Find all records with the same identifier"
+                  target="_blank"
+                >
+                  <div className={styles.displayId}>({metadata.displayId})</div>
+                </a>
+              </Link>
+            </div>
           </div>
           <div
             className={styles.panelbutton}
@@ -87,13 +106,20 @@ export default function SidePanel({ metadata, type, json, uri }) {
               icon={faUserEdit}
               label="Creator"
               title={metadata.creator}
-              link={`${publicRuntimeConfig.backend}/user/${metadata.creator.replace(" ", "")}`}
+              link={`${
+                publicRuntimeConfig.backend
+              }/user/${metadata.creator.replace(' ', '')}`}
             />
             <MetadataInfo
               icon={faCalendarPlus}
               label="Created"
               title={date}
-              link={`${publicRuntimeConfig.backend}/search/createdBefore=${date.substring(0, date.lastIndexOf("-") + 3)}&createdAfter=${date.substring(0, date.lastIndexOf("-") + 3)}&`}
+              link={`${
+                publicRuntimeConfig.backend
+              }/search/createdBefore=${date.substring(
+                0,
+                date.lastIndexOf('-') + 3
+              )}&createdAfter=${date.substring(0, date.lastIndexOf('-') + 3)}&`}
             />
             <MetadataInfo
               icon={faRunning}
