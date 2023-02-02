@@ -58,6 +58,12 @@ export default function Plugins() {
         loading={loading}
         data={plugins ? plugins.download : undefined}
       />
+    </div>
+  );
+}
+
+/*
+
       <PluginTable
         token={token}
         title="Curation"
@@ -71,11 +77,13 @@ export default function Plugins() {
         type={authorizationType}
         loading={loading}
         data={plugins ? plugins.authorization : undefined}
+        
       />
-    </div>
-  );
-}
 
+
+//Insert the above code into the table when curation and authorization plugins will be implemented. Other frontend code should then become functional once these plugins can be added
+
+*/
 function PluginTable(properties) {
   return (
     <div className={styles.plugintable}>
