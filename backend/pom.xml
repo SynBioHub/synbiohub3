@@ -15,7 +15,7 @@
 	<description>Backend for SBH3 written in Java and hosted with Spring</description>
 
 	<properties>
-		<java.version>11</java.version>
+		<java.version>17</java.version>
 		<!-- The main class to start by executing java -jar -->
 		<start-class>com.synbiohub.sbh3.Synbiohub3Application</start-class>
 	</properties>
