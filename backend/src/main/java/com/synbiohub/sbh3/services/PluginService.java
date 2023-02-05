@@ -136,6 +136,4 @@ public class PluginService {
                     .map(p -> new PluginServerDTO(p))
                     .collect(Collectors.toList());
         }
-
-
 }
