@@ -37,7 +37,7 @@ jobs:
         - uses: actions/checkout@v2
         - uses: actions/setup-java@v1
           with:
-            java-version: 11
+            java-version: 17
         - run: cd backend && mvn -B package --file pom.xml -DskipTests
         - run: cd backend && mkdir staging && cp target/*.jar staging
         - uses: actions/upload-artifact@v1
