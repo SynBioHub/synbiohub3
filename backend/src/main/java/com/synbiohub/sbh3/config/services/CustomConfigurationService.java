@@ -7,6 +7,9 @@ import com.synbiohub.sbh3.config.repo.CustomConfigurationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -17,24 +20,13 @@ public class CustomConfigurationService {
     @Autowired
     private CustomConfigurationRepository configurationRepository;
 
-    public List<CustomConfiguration> findAll() {
-        return configurationRepository.findAll();
-    }
-
-    public void save(String key, String value) {
-        configurationRepository.save(new CustomConfiguration(key, value));
-    }
-
-    public void save(Map<String, String> configParams) {
-        configurationRepository.saveAll(configParams.entrySet().stream()
-                .map(e -> new CustomConfiguration(e.getKey(),e.getValue()))
-                .collect(Collectors.toList()));
-    }
-
-    public Boolean isLaunched() {
-        return configurationRepository.findById("firstLaunch")
-                .map(CustomConfiguration::getValue)
-                .map(v -> v.equals("false"))
-                .orElse(false);
+    public String saveConfigurations(Path localFilePath, Path configFilePath) throws IOException {
+        String localContent = Files.readString(localFilePath);
+        String configContent = Files.readString(configFilePath);
+        CustomConfiguration localConfig = new CustomConfiguration(1L,1L, localContent, "local");
+        CustomConfiguration config = new CustomConfiguration(2L,1L, configContent, "config");
+        configurationRepository.save(localConfig);
+        configurationRepository.save(config);
+        return "saved.";
     }
 }

@@ -4,6 +4,7 @@ package com.synbiohub.sbh3.services;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.synbiohub.sbh3.security.model.Role;
 import com.synbiohub.sbh3.security.model.User;
 import com.synbiohub.sbh3.security.repo.UserRepository;
 import com.synbiohub.sbh3.security.CustomUserService;
@@ -21,6 +22,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 
+import java.sql.*;
 import java.util.*;
 
 @Service
@@ -161,6 +163,52 @@ public class UserService {
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
+    }
+
+    public void connect(String dbName) {
+        Connection conn = null;
+        ResultSet resultSet = null;
+        try {
+            // db parameters
+            String url = "jdbc:sqlite:" + dbName;
+            // create a connection to the database
+            conn = DriverManager.getConnection(url);
+
+            System.out.println("Connection to SQLite has been established.");
+
+            PreparedStatement statement = conn.prepareStatement("SELECT * FROM user");
+            resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                User user = User.builder()
+                        .id((long)resultSet.getInt("id"))
+                        .name(resultSet.getString("name"))
+                        .username(resultSet.getString("username"))
+                        .email(resultSet.getString("email"))
+                        .affiliation(resultSet.getString("affiliation"))
+                        .password("{salt}" + resultSet.getString("password"))
+                        .role(Role.USER)
+                        .build();
+                userRepository.save(user);
+            }
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        } finally {
+            try {
+                if (resultSet != null) {
+                    resultSet.close();
+                }
+            } catch (SQLException ex) {
+                System.out.println(ex.getMessage());
+            }
+            try {
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException ex) {
+                System.out.println(ex.getMessage());
+            }
+        }
     }
 
 }

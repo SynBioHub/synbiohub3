@@ -1,6 +1,7 @@
 package com.synbiohub.sbh3.config.model;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,11 +12,16 @@ import jakarta.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@Builder
 public class CustomConfiguration {
 
     @Id
     @Column
-    private String key;
+    private Long id;
+    @Column(name = "instance_id")
+    private Long instanceId;
     @Column
-    private String value;
+    private String config;
+    @Column
+    private String type;
 }
