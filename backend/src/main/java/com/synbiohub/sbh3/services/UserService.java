@@ -4,8 +4,9 @@ package com.synbiohub.sbh3.services;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.synbiohub.sbh3.entities.UserEntity;
-import com.synbiohub.sbh3.repositories.UserRepository;
+import com.synbiohub.sbh3.security.model.Role;
+import com.synbiohub.sbh3.security.model.User;
+import com.synbiohub.sbh3.security.repo.UserRepository;
 import com.synbiohub.sbh3.security.CustomUserService;
 import com.synbiohub.sbh3.sparql.SPARQLQuery;
 import com.synbiohub.sbh3.utils.ConfigUtil;
@@ -16,11 +17,12 @@ import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 
-import javax.naming.AuthenticationException;
+import java.sql.*;
 import java.util.*;
 
 @Service
@@ -32,8 +34,9 @@ public class UserService {
     private final SearchService searchService;
 
     private final CustomUserService customUserService;
+    private final ConfigUtil configUtil;
 
-    public UserEntity getUserProfile() {
+    public User getUserProfile() {
         Authentication authentication = checkAuthentication();
         var user = userRepository.findByUsername(authentication.getName());
         if (user.isEmpty())
@@ -78,10 +81,10 @@ public class UserService {
         return owners.contains(ConfigUtil.get("triplestore").get("graphPrefix").asText() + "user/" + SecurityContextHolder.getContext().getAuthentication().getName());
     }
 
-    public ResponseEntity<String> updateUser(ObjectMapper mapper, Map<String, String> allParams) throws JsonProcessingException, AuthenticationException {
+    public ResponseEntity<String> updateUser(ObjectMapper mapper, Map<String, String> allParams) throws JsonProcessingException, AuthenticationException, javax.naming.AuthenticationException {
         Authentication auth = checkValidLogin(authentication -> authentication, allParams.get("email"), allParams.get("password1"));
         customUserService.confirmPasswordsMatch(allParams.get("password1"), allParams.get("password2"));
-        UserEntity user = getUserProfile();
+        User user = getUserProfile();
         if (user == null || auth == null)
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         updateUserFields(user, allParams);
@@ -90,7 +93,7 @@ public class UserService {
         return ResponseEntity.ok(mapper.writeValueAsString(user));
     }
 
-    private void updateUserFields(UserEntity user, Map<String, String> allParams) {
+    private void updateUserFields(User user, Map<String, String> allParams) {
         if (allParams.get("name") != null) {
             user.setName(allParams.get("name"));
         }
@@ -120,6 +123,94 @@ public class UserService {
             return null;
         }
         return auth;
+    }
+
+    public void setUpConfig(Map<String, String> allParams) {
+        //all Params should include values such as instanceName, userName, userFullName, userEmail, instanceURL,
+        //uriPrefix, frontPageText, userPassword, userPasswordConfirm, virtuosoINI, virtuosoDB, affiliation, color
+
+        // should take all of these values and create a new config local file
+        // also create an admin user
+        configUtil.setLocalConfig(allParams);
+    }
+
+    public Map<String, String> registerNewAdminUser(Map<String, String> allParams) {
+        Map<String, String> registerParams = new HashMap<>();
+        registerParams.put("username", allParams.get("userName"));
+        registerParams.put("name", allParams.get("userFullName"));
+        registerParams.put("affiliation", allParams.get("affiliation"));
+        registerParams.put("email", allParams.get("userEmail"));
+        registerParams.put("password1", allParams.get("userPassword"));
+        registerParams.put("password2", allParams.get("userPasswordConfirm"));
+        return registerParams;
+
+    }
+
+    public User createUser(User user) {
+        return userRepository.save(user);
+    }
+
+    public User getUserByUsername(String username) {
+        Optional<User> optionalUser = userRepository.findByUsername(username);
+        return optionalUser.get();
+    }
+
+    public User getUserByEmail(String email) {
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+        return optionalUser.get();
+
+    }
+
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
+    public Set<User> connect(String dbName) {
+        Connection conn = null;
+        ResultSet resultSet = null;
+        Set<User> users = new HashSet<>();
+        try {
+            // db parameters
+            String url = "jdbc:sqlite:" + dbName;
+            // create a connection to the database
+            conn = DriverManager.getConnection(url);
+
+            System.out.println("Connection to SQLite has been established.");
+
+            PreparedStatement statement = conn.prepareStatement("SELECT * FROM user");
+            resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                User user = User.builder()
+                        .id((long)resultSet.getInt("id"))
+                        .name(resultSet.getString("name"))
+                        .username(resultSet.getString("username"))
+                        .email(resultSet.getString("email"))
+                        .affiliation(resultSet.getString("affiliation"))
+                        .password("{salt}" + resultSet.getString("password"))
+                        .role(Role.USER)
+                        .build();
+                users.add(user);
+            }
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        } finally {
+            try {
+                if (resultSet != null) {
+                    resultSet.close();
+                }
+            } catch (SQLException ex) {
+                System.out.println(ex.getMessage());
+            }
+            try {
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException ex) {
+                System.out.println(ex.getMessage());
+            }
+        }
+        return users;
     }
 
 }

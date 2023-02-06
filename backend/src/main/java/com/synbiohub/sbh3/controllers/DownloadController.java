@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
@@ -29,7 +28,7 @@ public class DownloadController extends AntPathMatcher {
 
     private final ObjectMapper mapper;
 
-    @GetMapping(value = "/public/{db}/{id}/{ver}/sbol")
+    @GetMapping(value = "/public/{db}/{id}/{ver}/sbol") // Separate mapping for private components /user/{username}/{db}/{id}/{ver}
     public ResponseEntity<?> getSBOLRecursiveRDF(@PathVariable String db, @PathVariable String id, @PathVariable String ver) {
 //        var uri = request.getRequestURL().toString();
 //        String splitUri = uri.split("/sbol")[0]; //TODO replace http://localhost:6789 with https://synbiohub.org

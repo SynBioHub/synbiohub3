@@ -22,4 +22,14 @@ public class AdminService {
                 .put("graphPrefix", config.get("triplestore").get("graphPrefix").asText());
         return node;
     }
+
+    public JSONObject getTheme() {
+        JSONObject obj = new JSONObject();
+        obj.put("instanceName", ConfigUtil.get("instanceName"));
+        obj.put("frontPageText", ConfigUtil.get("frontPageText"));
+        obj.put("theme", ConfigUtil.get("theme"));
+        obj.put("themeParameters", ConfigUtil.get("themeParameters"));
+        obj.put("firstLaunch", ConfigUtil.get("firstLaunch"));
+        return obj;
+    }
 }

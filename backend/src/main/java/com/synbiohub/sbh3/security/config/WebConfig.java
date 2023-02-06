@@ -1,4 +1,4 @@
-package com.synbiohub.sbh3.security;
+package com.synbiohub.sbh3.security.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,11 +10,11 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.util.UrlPathHelper;
 
 @Configuration
-public class WebConfiguration implements WebMvcConfigurer {
+public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**");
+        registry.addMapping("/**").allowedMethods("*");
     }
 
     @Bean
@@ -30,9 +30,9 @@ public class WebConfiguration implements WebMvcConfigurer {
     }
 
     @Override
-	public void configurePathMatch(PathMatchConfigurer configurer) {
-		UrlPathHelper urlPathHelper = new UrlPathHelper();
-		urlPathHelper.setUrlDecode(false);
-		configurer.setUrlPathHelper(urlPathHelper);
-	}
+    public void configurePathMatch(PathMatchConfigurer configurer) {
+        UrlPathHelper urlPathHelper = new UrlPathHelper();
+        urlPathHelper.setUrlDecode(false);
+        configurer.setUrlPathHelper(urlPathHelper);
+    }
 }

@@ -3,14 +3,16 @@ package com.synbiohub.sbh3.controllers;
 import com.synbiohub.sbh3.services.AdminService;
 import com.synbiohub.sbh3.services.UserService;
 import com.synbiohub.sbh3.utils.ConfigUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
+import org.json.JSONObject;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 @RestController
 @AllArgsConstructor
+@RequestMapping("/admin")
 public class AdminController {
 
     private final AdminService adminService;
@@ -156,8 +158,8 @@ public class AdminController {
 
     @GetMapping(value = "/admin/theme")
     @ResponseBody
-    public String getTheme(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
-        return null;
+    public JSONObject getTheme() {
+        return adminService.getTheme();
     }
 
     @PostMapping(value = "/admin/theme")

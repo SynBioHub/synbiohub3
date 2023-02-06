@@ -89,6 +89,12 @@
    margin-bottom: 3rem;
 }
 
+#pluginLoginForm {
+   display: none;
+   border: #00A1E4;
+   border-radius: 1in;
+}
+
 .actionbutton {
    background-color: #f1f1f1;
    border: 1px solid #ddd;

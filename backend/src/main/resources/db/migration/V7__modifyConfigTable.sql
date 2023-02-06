@@ -1,0 +1,1 @@
+ALTER TABLE Configurations DROP COLUMN user_id;
