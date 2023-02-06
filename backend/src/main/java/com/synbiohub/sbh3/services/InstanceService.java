@@ -5,6 +5,7 @@ import com.synbiohub.sbh3.dto.configuration.GetConfigurationRequest;
 import com.synbiohub.sbh3.dto.configuration.UpdateConfigurationRequest;
 import com.synbiohub.sbh3.dto.instance.CreateInstanceRequest;
 import com.synbiohub.sbh3.dto.instance.InstanceResponse;
+import com.synbiohub.sbh3.dto.instance.MigrationInstanceRequest;
 import com.synbiohub.sbh3.dto.instance.UpdateInstanceRequest;
 import com.synbiohub.sbh3.entities.Configurations;
 import com.synbiohub.sbh3.entities.configentities.Instance;
@@ -37,6 +38,20 @@ public class InstanceService {
         User newAdminUser = InstanceMapper.INSTANCE.toAdminUser(request);
         instance.getConfiguration().setUsers(Set.of(newAdminUser));
         userRepository.save(newAdminUser);
+        themeRepository.save(instance.getConfiguration().getTheme());
+        tripleStoreRepository.save(instance.getConfiguration().getTriplestore());
+        instanceRepository.save(instance);
+        instance.getConfiguration().setInstance(instance);
+        configurationRepository.save(instance.getConfiguration());
+        return InstanceMapper.INSTANCE.toInstanceResponse(instance);
+    }
+
+
+    @Transactional
+    public InstanceResponse create(MigrationInstanceRequest request) {
+        Instance instance = InstanceMapper.INSTANCE.toInstanceEntity(request);
+        instance.getConfiguration().setUsers(request.getUsers());
+        userRepository.saveAll(request.getUsers());
         themeRepository.save(instance.getConfiguration().getTheme());
         tripleStoreRepository.save(instance.getConfiguration().getTriplestore());
         instanceRepository.save(instance);

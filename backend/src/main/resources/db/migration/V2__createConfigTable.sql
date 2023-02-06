@@ -1,4 +1,0 @@
-CREATE TABLE CONFIG (
-    "key" VARCHAR(64) PRIMARY KEY,
-    "value" VARCHAR(64)
-);

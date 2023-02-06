@@ -165,9 +165,10 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public void connect(String dbName) {
+    public Set<User> connect(String dbName) {
         Connection conn = null;
         ResultSet resultSet = null;
+        Set<User> users = new HashSet<>();
         try {
             // db parameters
             String url = "jdbc:sqlite:" + dbName;
@@ -188,7 +189,7 @@ public class UserService {
                         .password("{salt}" + resultSet.getString("password"))
                         .role(Role.USER)
                         .build();
-                userRepository.save(user);
+                users.add(user);
             }
 
         } catch (SQLException e) {
@@ -209,6 +210,7 @@ public class UserService {
                 System.out.println(ex.getMessage());
             }
         }
+        return users;
     }
 
 }

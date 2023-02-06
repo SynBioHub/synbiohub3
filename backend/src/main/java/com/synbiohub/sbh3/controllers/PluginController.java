@@ -1,8 +1,6 @@
 package com.synbiohub.sbh3.controllers;
 
 
-import com.synbiohub.sbh3.config.model.ConfigurationComponent;
-import com.synbiohub.sbh3.config.model.CustomConfiguration;
 import com.synbiohub.sbh3.dto.authplugindto.PluginAction;
 import com.synbiohub.sbh3.dto.authplugindto.PluginLoginDTO;
 import com.synbiohub.sbh3.dto.authplugindto.PluginServerDTO;
@@ -21,7 +19,6 @@ import org.springframework.web.client.RestTemplate;
 import java.io.*;
 import java.net.*;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @AllArgsConstructor

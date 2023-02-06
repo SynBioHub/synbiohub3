@@ -12,7 +12,7 @@ public class Plugins {
     @Column
     private Long id;
 
-    @Column
+    @Column(name = "plugin_name")
     private String name;
 
     @Column(name = "login_url")

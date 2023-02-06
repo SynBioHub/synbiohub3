@@ -25,13 +25,13 @@ public class User {
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name")
+    @Column(name = "full_name")
     private String name;
 
     @Column(name = "username")
     private String username;
 
-    @Column(name = "password")
+    @Column(name = "user_password")
     private String password;
 
     @Column(name = "email")
@@ -41,6 +41,6 @@ public class User {
     private String affiliation;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "role")
+    @Column(name = "user_role")
     private Role role;
 }

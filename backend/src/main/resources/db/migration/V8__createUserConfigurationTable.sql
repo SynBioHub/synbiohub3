@@ -1,3 +1,4 @@
+drop table if exists User_Configurations cascade;
 CREATE TABLE User_Configurations (
     id SERIAL PRIMARY KEY,
     user_id BIGINT NOT NULL,

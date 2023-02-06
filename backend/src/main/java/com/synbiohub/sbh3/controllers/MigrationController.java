@@ -1,6 +1,6 @@
 package com.synbiohub.sbh3.controllers;
 
-import com.synbiohub.sbh3.config.services.CustomConfigurationService;
+import com.synbiohub.sbh3.services.MigrationService;
 import com.synbiohub.sbh3.services.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -18,8 +17,8 @@ import java.nio.file.Path;
 @AllArgsConstructor
 public class MigrationController {
 
-    private final CustomConfigurationService configurationService;
     private final UserService userService;
+    private final MigrationService migrationService;
 
     @PostMapping("/migration")
     public ResponseEntity<?> handleFileUpload(@RequestParam("localjson") MultipartFile localConfigFile, @RequestParam("configjson") MultipartFile configFile, @RequestParam("userfile") MultipartFile userFile) {
@@ -37,8 +36,9 @@ public class MigrationController {
             localConfigFile.transferTo(localPath);
             configFile.transferTo(configPath);
             userFile.transferTo(userPath);
-            configurationService.saveConfigurations(localPath, configPath);
-            userService.connect(userFileDest);
+            migrationService.migrate(localPath, configPath, userPath);
+//            configurationService.saveConfigurations(localPath, configPath);
+//            userService.connect(userFileDest);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
