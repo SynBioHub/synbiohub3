@@ -21,6 +21,8 @@ import TableInput from './Reusable/TableInput';
 const renderingType = 'rendering';
 const submittingType = 'submit';
 const downloadingType = 'download';
+const curatingType = 'curation';
+const authorizationType = 'authorization';
 
 const searchable = ['index', 'name', 'url'];
 const headers = ['ID', 'Name', 'URL', ''];
@@ -60,6 +62,28 @@ export default function Plugins() {
   );
 }
 
+/*
+
+      <PluginTable
+        token={token}
+        title="Curation"
+        type={curatingType}
+        loading={loading}
+        data={plugins ? plugins.curation : undefined}
+      />
+      <PluginTable
+        token={token}
+        title="Authorization"
+        type={authorizationType}
+        loading={loading}
+        data={plugins ? plugins.authorization : undefined}
+        
+      />
+
+
+//Insert the above code into the table when curation and authorization plugins will be implemented. Other frontend code should then become functional once these plugins can be added
+
+*/
 function PluginTable(properties) {
   return (
     <div className={styles.plugintable}>

@@ -37,7 +37,7 @@ function Submit() {
 
     axios({
       method: 'GET',
-      url: `${publicRuntimeConfig.backend}/plugins`,
+      url: `${publicRuntimeConfig.backend}/admin/plugins`,
       responseType: 'application/json',
       params: {
         category: 'submit'
