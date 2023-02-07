@@ -14,7 +14,7 @@ jobs:
       with:
         timeout_minutes: 10
         max_attempts: 3
-        command: docker build . --file backend/Dockerfile --tag synbiohub3/synbiohub:snapshot-standalone
+        command: docker build . --file backend/Dockerfile --tag synbiohub/sbh3backend:snapshot
     - name: Package image
       run: |
         docker save synbiohub/synbiohub:snapshot-standalone | gzip > sbh.tar.gz
