@@ -17,7 +17,7 @@ jobs:
         command: docker build . --file backend/Dockerfile --tag synbiohub/sbh3backend:snapshot
     - name: Package image
       run: |
-        docker save synbiohub/synbiohub:snapshot-standalone | gzip > sbh.tar.gz
+        docker save synbiohub/synbiohub3:snapshot | gzip > sbh.tar.gz
     - uses: actions/upload-artifact@v2
       name: Upload Docker image
       with:
