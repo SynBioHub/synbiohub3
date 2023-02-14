@@ -17,12 +17,12 @@ jobs:
         command: docker build . --file backend/Dockerfile --tag synbiohub/sbh3backend:snapshot
     - name: Package image
       run: |
-        docker save synbiohub/synbiohub3:snapshot | gzip > sbh.tar.gz
+        docker save synbiohub/synbiohub3:snapshot | gzip > sbh3.tar.gz
     - uses: actions/upload-artifact@v2
       name: Upload Docker image
       with:
-        name: sbh-image
-        path: sbh.tar.gz
+        name: sbh3-image
+        path: sbh3.tar.gz
   sboltests:
     name: SBOL Test Suite
     needs: build
@@ -33,10 +33,10 @@ jobs:
     - uses: actions/download-artifact@v2
       name: Download Docker image
       with:
-        name: sbh-image
+        name: sbh3-image
     - name: Import saved Docker image
       run: |
-        cat sbh.tar.gz | docker load synbiohub/synbiohub3:snapshot
+        cat sbh3.tar.gz | docker load 
     - uses: actions/setup-python@v1
       name: Install Python 
       with:
@@ -60,10 +60,10 @@ jobs:
     - uses: actions/download-artifact@v2
       name: Download Docker image
       with:
-        name: sbh-image
+        name: sbh3-image
     - name: Import saved Docker image
       run: |
-        cat sbh.tar.gz | docker load synbiohub/synbiohub3:snapshot
+        cat sbh3.tar.gz | docker load 
     - uses: actions/setup-python@v1
       name: Install Python
       with:
