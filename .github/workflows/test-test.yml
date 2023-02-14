@@ -36,7 +36,7 @@ jobs:
         name: sbh-image
     - name: Import saved Docker image
       run: |
-        cat sbh.tar.gz | docker load
+        cat sbh.tar.gz | docker load synbiohub/synbiohub3:snapshot
     - uses: actions/setup-python@v1
       name: Install Python 
       with:
@@ -63,7 +63,7 @@ jobs:
         name: sbh-image
     - name: Import saved Docker image
       run: |
-        cat sbh.tar.gz | docker load
+        cat sbh.tar.gz | docker load synbiohub/synbiohub3:snapshot
     - uses: actions/setup-python@v1
       name: Install Python
       with:
