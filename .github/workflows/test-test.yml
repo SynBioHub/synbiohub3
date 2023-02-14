@@ -63,7 +63,7 @@ jobs:
         name: sbh3-image
     - name: Import saved Docker image
       run: |
-        cat sbh3.tar.gz | docker load 
+        cat sbh3.tar.gz | docker load --input sbh3.tar.gz
     - uses: actions/setup-python@v1
       name: Install Python
       with:
