@@ -7,7 +7,7 @@ jobs:
     name: Build Docker image
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       name: Checkout source tree
     - uses: nick-invision/retry@v1
       name: Build docker image
@@ -28,9 +28,9 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       name: Checkout source tree
-    - uses: actions/download-artifact@v2
+    - uses: actions/download-artifact@v3
       name: Download Docker image
       with:
         name: sbh3-image
@@ -55,9 +55,9 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       name: Checkout source tree
-    - uses: actions/download-artifact@v2
+    - uses: actions/download-artifact@v3
       name: Download Docker image
       with:
         name: sbh3-image
