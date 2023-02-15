@@ -9,7 +9,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
       name: Checkout source tree
-    - uses: nick-invision/retry@v1
+    - uses: nick-invision/retry@v2
       name: Build docker image
       with:
         timeout_minutes: 10
@@ -18,7 +18,7 @@ jobs:
     - name: Package image
       run: |
         docker save synbiohub/synbiohub3:snapshot | gzip > sbh3.tar.gz
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v3
       name: Upload Docker image
       with:
         name: sbh3-image
@@ -44,7 +44,7 @@ jobs:
     - name: Install test dependencies
       run: |
         pip install -r tests/test_requirements.txt
-    - uses: nick-invision/retry@v1
+    - uses: nick-invision/retry@v2
       name: Run test suite
       with:
         timeout_minutes: 10
