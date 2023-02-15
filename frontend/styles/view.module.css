@@ -19,6 +19,11 @@
   transition: width 0.3s;
 }
 
+.preventoverflowmetadata {
+  margin-bottom: 0.1rem;
+  max-width: 17.2rem;
+}
+
 .sidepanel {
   background-color: rgb(242, 242, 242);
   box-shadow: 0px 0px 5px #7e7e7e;

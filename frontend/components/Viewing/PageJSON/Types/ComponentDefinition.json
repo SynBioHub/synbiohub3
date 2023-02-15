@@ -44,6 +44,30 @@
             "group": true
           }
         ]
+      },
+      {
+        "title": "Type",
+        "rootPredicate": "sbol:type",
+        "icon": "faVials",
+        "sections": [
+          {
+            "title": "Extra Work",
+            "stripAfter": "#",
+            "predicates": []
+          }
+        ]
+      },
+      {
+        "title": "Role(s)",
+        "rootPredicate": "sbol:role",
+        "icon": "faVials",
+        "sections": [
+          {
+            "title": "Extra Work",
+            "stripAfter": "#",
+            "predicates": []
+          }
+        ]
       }
    ],
    "tables": [
@@ -117,7 +141,8 @@
           "link": "search/role=<$<This>>&",
           "linkType": "search",
           "infoLink": "http://sbols.org/v2#role",
-          "info": "Learn more about roles"
+          "info": "Learn more about roles",
+          "stripAfter": "#"
         }
       ]
      },
@@ -138,8 +163,9 @@
          },
          {
           "title": "Access",
-          "text": "public",
-          "infoLink": "https://dissys.github.io/sbol-owl/sbol-owl.html#access"
+          "infoLink": "https://dissys.github.io/sbol-owl/sbol-owl.html#access",
+          "predicates": ["sbol:access"],
+          "stripAfter": "#"
          },
          {
           "title": "Instance",

@@ -6,8 +6,6 @@ const { publicRuntimeConfig } = getConfig();
 export default async function getQueryResponse(query, options, token, admin) {
   query = loadTemplate(query, options);
 
-  console.log(query);
-
   const params = admin ? '/admin/sparql?query=' : '/sparql?query=';
   const graph = ''; // '&default-graph-uri=https://synbiohub.org/user/benjhatch7';
   const url = `${publicRuntimeConfig.backend}${params}${encodeURIComponent(
@@ -27,8 +25,6 @@ export default async function getQueryResponse(query, options, token, admin) {
 
   if (response.status === 200) {
     const results = await response.json();
-    console.log(results);
-    console.log(token, processResults(results));
     return processResults(results);
   } else return;
 }

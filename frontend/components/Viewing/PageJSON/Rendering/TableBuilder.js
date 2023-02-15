@@ -30,24 +30,30 @@ export default function TableBuilder({ uri, prefixes, table, metadata }) {
 
 function MetadataRenderer({ title, content }) {
   if (!content) return null;
-  return content.map(metadata => {
+  let sectionIcon = null;
+  const contentConsolidated = content.map(metadata => {
     return metadata
       .filter(section => !section.hide)
       .map((section, index) => {
         if (!section.text) {
           section.text = 'No data';
         }
+        if (section.tableIcon) sectionIcon = section.tableIcon;
         return (
-          <MetadataInfo
-            icon={section.tableIcon}
-            label={title}
-            title={<SectionRenderer column={section} metadata={true} />}
-            specific={true}
-            key={title + index + section.text}
-          />
+          <div key={title + index + section.text}>
+            <SectionRenderer column={section} metadata={true} />
+          </div>
         );
       });
   });
+  return (
+    <MetadataInfo
+      icon={sectionIcon}
+      label={title}
+      title={contentConsolidated}
+      specific={true}
+    />
+  );
 }
 
 function TableRenderer({ uri, prefixes, table, metadata }) {
@@ -128,6 +134,7 @@ function getTableContent(table, items) {
       title: column.title,
       id: getId(column).substring(1),
       link: column.link,
+      stripAfter: column.stripAfter,
       linkType: column.linkType,
       infoLink: column.infoLink,
       text: column.text,
@@ -146,9 +153,12 @@ function getTableContent(table, items) {
     return ids
       .map(column => {
         if (column.hidden) return;
-        const text = column.text
+        let text = column.text
           ? loadText(column.text, titleToValueMap)
           : row[column.id];
+        if (column.stripAfter) {
+          text = text.slice(text.lastIndexOf(column.stripAfter) + 1);
+        }
         const link = column.link
           ? loadText(column.link, titleToValueMap)
           : undefined;

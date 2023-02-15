@@ -19,7 +19,7 @@
        "rootPredicate": "sbol:elements",
        "sections": [ 
          {
-            "title": "Sequence",
+            "title": "S",
             "infoLink": "$<Encoding>",
             "predicates": []
          },

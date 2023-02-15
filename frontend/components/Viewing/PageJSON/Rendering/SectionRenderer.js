@@ -38,7 +38,7 @@ export default function SectionRenderer({ column, metadata }) {
       );
     });
     if (metadata) {
-      return <span>{content}</span>;
+      return <div className={styles.preventoverflowmetadata}>{content}</div>;
     }
     return <td>{content}</td>;
   }
@@ -51,7 +51,9 @@ export default function SectionRenderer({ column, metadata }) {
           linkType={column.linkType}
         />
       ) : (
-        <span>{column.text}</span>
+        <div className={metadata && styles.preventoverflowmetadata}>
+          {column.text}
+        </div>
       )}
     </td>
   );
