@@ -37,10 +37,10 @@ jobs:
     - name: Import saved Docker image
       run: |
         cat sbh3.tar.gz | docker import - synbiohub/sbh3backend:snapshot
-    - uses: actions/setup-python@v1
+    - uses: actions/setup-python@v4
       name: Install Python 
       with:
-        python-version: '3.6' # To match the one in Travis
+        python-version: '3.9' 
     - name: Install test dependencies
       run: |
         pip install -r tests/test_requirements.txt
@@ -64,10 +64,10 @@ jobs:
     - name: Import saved Docker image
       run: |
         cat sbh3.tar.gz | docker import - synbiohub/sbh3backend:snapshot
-    - uses: actions/setup-python@v1
+    - uses: actions/setup-python@v4
       name: Install Python
       with:
-        python-version: '3.6' # To match the one in Travis
+        python-version: '3.9'
     - name: Install test dependencies
       run: |
         pip install -r tests/test_requirements.txt
