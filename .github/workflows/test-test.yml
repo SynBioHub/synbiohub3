@@ -36,7 +36,7 @@ jobs:
         name: sbh3-image
     - name: Import saved Docker image
       run: |
-        docker load --input backend/sbh3.tar.gz
+        docker load --input sbh3.tar.gz
     - uses: actions/setup-python@v1
       name: Install Python 
       with:
@@ -63,8 +63,7 @@ jobs:
         name: sbh3-image
     - name: Import saved Docker image
       run: |
-        cat backend/sbh3.tar.gz | docker load 
-    # --input backend/sbh3.tar.gz
+        cat sbh3.tar.gz | docker load --input sbh3.tar.gz
     - uses: actions/setup-python@v1
       name: Install Python
       with:
