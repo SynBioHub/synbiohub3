@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.synbiohub.sbh3.dto.LoginDTO;
 import com.synbiohub.sbh3.dto.UserRegistrationDTO;
+import com.synbiohub.sbh3.repo.ConfigurationRepository;
 import com.synbiohub.sbh3.security.CustomUserService;
 import com.synbiohub.sbh3.services.UserService;
 import com.synbiohub.sbh3.utils.RestClient;
@@ -27,6 +28,8 @@ public class UserController {
     private final UserService userService;
     private final RestClient restClient;
     private final ObjectMapper mapper;
+
+    private final ConfigurationRepository configurationRepository;
 //    private final ConfigUtil configUtil;
 //    private final CustomConfigurationService configurationService;
 
@@ -59,6 +62,27 @@ public class UserController {
 //    }
 
     @PostMapping(value = "/register")
+    public ResponseEntity registerNewUser(@RequestParam String username, @RequestParam String password1, @RequestParam String password2, @RequestParam String name, @RequestParam String affiliation, @RequestParam String email) {
+        try {
+            UserRegistrationDTO userRegistrationDTO = UserRegistrationDTO.builder()
+                    .username(username)
+                    .password1(password1)
+                    .password2(password2)
+                    .name(name)
+                    .affiliation(affiliation)
+                    .email(email)
+                    .build();
+            customUserService.registerNewUserAccount(userRegistrationDTO);
+        } catch (Exception e) {
+            log.error("Error creating a new account.");
+            e.printStackTrace();
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        }
+        log.info("User registered successfully");
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/registerDTO")
     public ResponseEntity registerNewUser(@RequestBody UserRegistrationDTO userRegistrationDTO) {
         try {
             customUserService.registerNewUserAccount(userRegistrationDTO);
@@ -97,7 +121,8 @@ public class UserController {
 //
 //    // TODO: this is hardcoded, but for true setup, need interceptor for this endpoint through frontend -> Ben
 //    @PostMapping(value = "/setup")
-//    public ResponseEntity<String> setup(@RequestParam Map<String, String> allParams) throws AuthenticationException {
+//    public ResponseEntity<String> setup() {
+//        if (configurationRepository)
 //        if (configurationService.isLaunched()) {
 //            return new ResponseEntity<>(HttpStatus.OK);
 //        }

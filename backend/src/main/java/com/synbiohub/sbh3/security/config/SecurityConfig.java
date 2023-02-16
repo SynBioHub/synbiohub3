@@ -51,11 +51,11 @@ import javax.sql.DataSource;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-//    @Value("${jwt.public.key}")
-//    RSAPublicKey pub;
-//
-//    @Value("${jwt.private.key}")
-//    RSAPrivateKey priv;
+    @Value("${jwt.public.key}")
+    RSAPublicKey pub;
+
+    @Value("${jwt.private.key}")
+    RSAPrivateKey priv;
 //
 //    @Autowired
 //    private UserRepository userRepository;
@@ -89,15 +89,15 @@ public class SecurityConfig {
         return http.build();
     }
 
-//    @Bean
-//    JwtDecoder jwtDecoder() {
-//        return NimbusJwtDecoder.withPublicKey(this.pub).build();
-//    }
-//
-//    @Bean
-//    JwtEncoder jwtEncoder() {
-//        JWK jwk = new RSAKey.Builder(this.pub).privateKey(this.priv).build();
-//        JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
-//        return new NimbusJwtEncoder(jwks);
-//    }
+    @Bean
+    JwtDecoder jwtDecoder() {
+        return NimbusJwtDecoder.withPublicKey(this.pub).build();
+    }
+
+    @Bean
+    JwtEncoder jwtEncoder() {
+        JWK jwk = new RSAKey.Builder(this.pub).privateKey(this.priv).build();
+        JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
+        return new NimbusJwtEncoder(jwks);
+    }
 }

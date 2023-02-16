@@ -17,29 +17,29 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.Instant;
 import java.util.stream.Collectors;
 
-@RestController
-@AllArgsConstructor
-@Slf4j
+//@RestController
+//@AllArgsConstructor
+//@Slf4j
 public class TokenController {
 
-    @Autowired
-    JwtEncoder encoder;
-
-    @PostMapping("/token")
-    public String token(Authentication authentication, @RequestHeader HttpHeaders headers) {
-        Instant now = Instant.now();
-        long expiration = 600L;  //10 minutes?
-        String scope = authentication.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(" "));
-        JwtClaimsSet claims = JwtClaimsSet.builder()
-                .issuer("self")
-                .issuedAt(now)
-                .expiresAt(now.plusSeconds(expiration))
-                .subject(authentication.getName())
-                .claim("scope", scope)
-                .build();
-        return this.encoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
-    }
+//    @Autowired
+//    JwtEncoder encoder;
+//
+//    @PostMapping("/token")
+//    public String token(Authentication authentication, @RequestHeader HttpHeaders headers) {
+//        Instant now = Instant.now();
+//        long expiration = 600L;  //10 minutes?
+//        String scope = authentication.getAuthorities().stream()
+//                .map(GrantedAuthority::getAuthority)
+//                .collect(Collectors.joining(" "));
+//        JwtClaimsSet claims = JwtClaimsSet.builder()
+//                .issuer("self")
+//                .issuedAt(now)
+//                .expiresAt(now.plusSeconds(expiration))
+//                .subject(authentication.getName())
+//                .claim("scope", scope)
+//                .build();
+//        return this.encoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+//    }
 
 }
