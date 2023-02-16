@@ -13,8 +13,8 @@
   "webOfRegistriesUrl" : "https://wor.synbiohub.org",
   "port": 6789,
   "triplestore": {
-      "sparqlEndpoint": "http://virtuoso:8890/sparql",
-      "graphStoreEndpoint": "http://virtuoso:8890/sparql-graph-crud-auth/",
+      "sparqlEndpoint": "http://virtuoso3:8890/sparql",
+      "graphStoreEndpoint": "http://virtuoso3:8890/sparql-graph-crud-auth/",
       "defaultGraph": "https://synbiohub.org/public",
       "graphPrefix": "https://synbiohub.org/",
       "username": "dba",
@@ -23,8 +23,8 @@
       "virtuosoDB": "/var/lib/virtuoso-opensource-7/db",
       "isql": "isql-vt"
   },
-  "SBOLExplorerEndpoint": "http://virtuoso:13162/",
-  "useSBOLExplorer": false,
+  "SBOLExplorerEndpoint": "http://localhost:13162/",
+  "useSBOLExplorer": true,
   "databasePrefix": "http://synbiohub.org/",
   "sessionSecret": "synbiohub_change_me",
   "shareLinkSalt": "synbiohub_change_me",

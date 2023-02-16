@@ -3,32 +3,37 @@ package com.synbiohub.sbh3.controllers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.synbiohub.sbh3.services.DownloadService;
+import com.synbiohub.sbh3.utils.ConfigUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.sbolstandard.core2.SBOLDocument;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-public class DownloadController {
+public class DownloadController extends AntPathMatcher {
 
     private final DownloadService downloadService;
 
     private final ObjectMapper mapper;
 
-    @GetMapping(value = "*/sbol")
-    public ResponseEntity<?> getSBOLRecursiveRDF(HttpServletRequest request) {
-        var uri = request.getRequestURL().toString();
-        String splitUri = uri.split("/sbol")[0];
+    @GetMapping(value = "/public/{db}/{id}/{ver}/sbol") // Separate mapping for private components /user/{username}/{db}/{id}/{ver}
+    public ResponseEntity<?> getSBOLRecursiveRDF(@PathVariable String db, @PathVariable String id, @PathVariable String ver) {
+//        var uri = request.getRequestURL().toString();
+//        String splitUri = uri.split("/sbol")[0]; //TODO replace http://localhost:6789 with https://synbiohub.org
+        String splitUri = ConfigUtil.get("triplestore").get("defaultGraph").toString().replace("\"","") + "/" + db + "/" + id + "/" + ver;
+        String uri = splitUri + "/sbol";
 
         var sbolDocument = downloadService.getSBOLRecursive(splitUri);
         var byteOutput = new ByteArrayOutputStream();
@@ -48,10 +53,10 @@ public class DownloadController {
                 .body(new InputStreamResource(new ByteArrayInputStream(byteOutput.toByteArray())));
     }
 
-    @GetMapping(value = "*/sbolnr")
-    public ResponseEntity<?> getSBOLNonRecursive(HttpServletRequest request) throws JsonProcessingException {
-        var uri = request.getRequestURL().toString();
-        String splitUri = uri.split("/sbolnr")[0];
+    @GetMapping(value = "/public/{db}/{id}/{ver}/sbolnr")
+    public ResponseEntity<?> getSBOLNonRecursive(@PathVariable String db, @PathVariable String id, @PathVariable String ver) throws JsonProcessingException {
+        String splitUri = ConfigUtil.get("triplestore").get("defaultGraph").toString().replace("\"","") + "/" + db + "/" + id + "/" + ver;
+        String uri = splitUri + "/sbolnr";
         var results = downloadService.getSBOLNonRecursive(splitUri);
         //byte[] buf = mapper.writeValueAsBytes(results);
         var outputStream = new ByteArrayOutputStream();
@@ -71,10 +76,10 @@ public class DownloadController {
                 .body(new InputStreamResource(new ByteArrayInputStream(outputStream.toByteArray())));
     }
 
-    @GetMapping(value = "*/metadata")
-    public ResponseEntity<?> getMetadata(HttpServletRequest request) throws JsonProcessingException {
-        var uri = request.getRequestURL().toString();
-        String splitUri = uri.split("/metadata")[0];
+    @GetMapping(value = "/public/{db}/{id}/{ver}/metadata")
+    public ResponseEntity<?> getMetadata(@PathVariable String db, @PathVariable String id, @PathVariable String ver) throws JsonProcessingException {
+        String splitUri = ConfigUtil.get("triplestore").get("defaultGraph").toString().replace("\"","") + "/" + db + "/" + id + "/" + ver;
+        String uri = splitUri + "/metadata";
         String results = downloadService.getMetadata(splitUri);
         byte[] buf = mapper.writeValueAsBytes(mapper.readTree(results));
 
@@ -88,10 +93,10 @@ public class DownloadController {
                 .body(new InputStreamResource(new ByteArrayInputStream(buf)));
     }
 
-    @GetMapping(value = "*/gb")
-    public ResponseEntity<?> getSBOLRecursiveGenbank(HttpServletRequest request) {
-        var uri = request.getRequestURL().toString();
-        String splitUri = uri.split("/gb")[0];
+    @GetMapping(value = "/public/{db}/{id}/{ver}/gb")
+    public ResponseEntity<?> getSBOLRecursiveGenbank(@PathVariable String db, @PathVariable String id, @PathVariable String ver) {
+        String splitUri = ConfigUtil.get("triplestore").get("defaultGraph").toString().replace("\"","") + "/" + db + "/" + id + "/" + ver;
+        String uri = splitUri + "/gb";
 
         var sbolDocument = downloadService.getSBOLRecursive(splitUri);
         var byteOutput = new ByteArrayOutputStream();
@@ -111,10 +116,10 @@ public class DownloadController {
                 .body(new InputStreamResource(new ByteArrayInputStream(byteOutput.toByteArray())));
     }
 
-    @GetMapping(value = "*/fasta")
-    public ResponseEntity<?> getSBOLRecursiveFasta(HttpServletRequest request) {
-        var uri = request.getRequestURL().toString();
-        String splitUri = uri.split("/fasta")[0];
+    @GetMapping(value = "/public/{db}/{id}/{ver}/fasta")
+    public ResponseEntity<?> getSBOLRecursiveFasta(@PathVariable String db, @PathVariable String id, @PathVariable String ver) {
+        String splitUri = ConfigUtil.get("triplestore").get("defaultGraph").toString().replace("\"","") + "/" + db + "/" + id + "/" + ver;
+        String uri = splitUri + "/fasta";
 
         var sbolDocument = downloadService.getSBOLRecursive(splitUri);
         var byteOutput = new ByteArrayOutputStream();
@@ -134,10 +139,10 @@ public class DownloadController {
                 .body(new InputStreamResource(new ByteArrayInputStream(byteOutput.toByteArray())));
     }
 
-    @GetMapping(value = "*/gff")
-    public ResponseEntity<?> getSBOLRecursiveGff3(HttpServletRequest request) {
-        var uri = request.getRequestURL().toString();
-        String splitUri = uri.split("/gff")[0];
+    @GetMapping(value = "/public/{db}/{id}/{ver}/gff")
+    public ResponseEntity<?> getSBOLRecursiveGff3(@PathVariable String db, @PathVariable String id, @PathVariable String ver) {
+        String splitUri = ConfigUtil.get("triplestore").get("defaultGraph").toString().replace("\"","") + "/" + db + "/" + id + "/" + ver;
+        String uri = splitUri + "/gff";
 
         var sbolDocument = downloadService.getSBOLRecursive(splitUri);
         var byteOutput = new ByteArrayOutputStream();
