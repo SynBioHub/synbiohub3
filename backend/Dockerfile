@@ -1,9 +1,9 @@
-FROM maven:3-openjdk-11-slim AS build
+FROM maven:3-openjdk-17-slim AS build
 WORKDIR /synbiohub3
 COPY backend/pom.xml /synbiohub3
 COPY backend/src /synbiohub3/src/
 RUN mvn -B package --file pom.xml -DskipTests
-FROM openjdk:11-slim
+FROM openjdk:17-slim
 WORKDIR /synbiohub3
 # Copy src directory over
 COPY --from=build /synbiohub3/src/main/ src/main/
