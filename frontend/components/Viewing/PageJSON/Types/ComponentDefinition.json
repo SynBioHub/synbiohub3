@@ -13,39 +13,6 @@
    ],
    "metadata": [
       {
-        "title": "Test Extra Metadata",
-        "icon": "faVials",
-        "rootPredicate": "sbol:sequenceAnnotation",
-        "sections": [
-          {
-            "title": "Test",
-            "text": "$<Test 2>",
-            "predicates": ["dcterms:title"],
-            "link": "$<This>",
-            "group": true
-          },
-          {
-            "title": "Test 2",
-            "predicates": ["sbol:location", "sbol:start"],
-            "link": "$<This>",
-            "group": true,
-            "hide": true
-          }
-        ]
-      },
-      {
-        "title": "Test Extra Metadata 2",
-        "rootPredicate": "sbol:component",
-        "icon": "faVials",
-        "sections": [
-          {
-            "title": "Test",
-            "predicates": ["dcterms:tile"],
-            "group": true
-          }
-        ]
-      },
-      {
         "title": "Type",
         "rootPredicate": "sbol:type",
         "icon": "faVials",

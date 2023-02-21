@@ -1026,6 +1026,10 @@
   color: #465875;
 }
 
+.customlink {
+  word-break: break-all;
+}
+
 .customlink span {
   color: #D25627;
 }
