@@ -1,0 +1,24 @@
+synbiohub:
+  firstLaunch: false
+plugin:
+  external:
+    testserver:
+      login: http://localhost:8104/loggedinAPI
+      logout: http://localhost:8104/logoutAPI
+      refresh: http://localhost:8104/refresh
+      status: http://localhost:8104/status
+spring:
+  jpa:
+    database: POSTGRESQL
+    show-sql: true
+    hibernate:
+      ddl-auto: none
+      use-new-id-generator-mappings: false
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+  datasource:
+    platform: postgres
+    url: jdbc:postgresql://localhost:5432/synbiohub3
+    username: postgres
+    password: password
+    driverClassName: org.postgresql.Driver

@@ -1,0 +1,2 @@
+insert into Plugins (plugin_name, login_url, logout_url, refresh_url, status_url)
+values ('testserver1',  'http://localhost:8104/loggedinAPI', 'http://localhost:8104/logoutAPI', 'http://localhost:8104/refresh', 'http://localhost:8104/status');

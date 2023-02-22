@@ -9,8 +9,6 @@ spring:
     url: jdbc:h2:./data/sbhdb
     username: sa
     password:
-
-
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
@@ -26,3 +24,16 @@ spring:
 logging:
   file:
     path: ./data
+synbiohub:
+  firstLaunch: true
+plugin:
+  external:
+    testserver:
+      login: http://localhost:8104/loggedinAPI
+      logout: http://localhost:8104/logoutAPI
+      refresh: http://localhost:8104/refresh
+      status: http://localhost:8104/status
+
+jwt:
+  private.key: classpath:app.priv
+  public.key: classpath:app.pub

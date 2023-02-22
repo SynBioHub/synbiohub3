@@ -11,14 +11,15 @@ import getConfig from "next/config";
 const { publicRuntimeConfig } = getConfig();
 
 import { useDispatch } from "react-redux";
-import { downloadFiles } from "../../../redux/actions";
+import { downloadFiles, downloadFilesPlugin } from "../../../redux/actions";
+import axios from "axios";
 
 /**
  * A modal that lets the user choose what format they want to download the object in.
  * 
  * @param {Any} properties Information passed in from the parent component.
  */
-export default function ShareModal(properties) {
+export default function DownloadModal(properties) {
   const [selectedOption, setSelectedOption] = useState();
   const [submitted, setSubmitted] = useState(false);
   const [submittable, setSubmittable] = useState(false);
@@ -27,7 +28,7 @@ export default function ShareModal(properties) {
   //Checks if the modal has been submitted and downloads in the format the user chose.
   useEffect(() => {
     if (submitted) {
-      download(selectedOption.value);
+        download(selectedOption.value, selectedOption.label);
     }
   }, [submitted]);
 
@@ -36,7 +37,9 @@ export default function ShareModal(properties) {
    * 
    * @param {String} type The download endpoint the user has chosen.
    */
-  const download = (type) => {
+  const download = (type, pluginName) => {
+    
+    if (type != 'plugin') {
     const item = {
       url: `${publicRuntimeConfig.backend}${properties.url}/${type}`,
       name: properties.name,
@@ -46,6 +49,28 @@ export default function ShareModal(properties) {
     };
 
     dispatch(downloadFiles([item]));
+  }
+
+  else {
+    const item = {
+      name: properties.name,
+      displayId: properties.displayId,
+      type: "xml", //needs to be changed to the type specified by the plugin
+      status: "downloading"
+    };
+
+    const pluginData = {
+      complete_sbol: '',
+      shallow_sbol: '',
+      genbank: '',
+      top_level: '',
+      instanceUrl: '',
+      size: 0,
+      type: properties.type
+    };
+
+    dispatch(downloadFiles([item], pluginName, pluginData));
+  }
   }
 
   /**
@@ -67,6 +92,35 @@ export default function ShareModal(properties) {
     if (properties.type === "Sequence") selectOptions.push({ value: "fasta", label: "Download FASTA" });
     if (properties.type === "Module") selectOptions.push({ value: "image", label: "Download Image" });
     if (properties.type === "Attachment") selectOptions.push({ value: "download", label: "Download Attachment" });
+
+
+    axios({
+      method: 'GET',
+      url: `${publicRuntimeConfig.backend}/admin/plugins`,
+      responseType: 'application/json',
+      params: {
+        category: 'download'
+      }
+    }).then(response => {
+      const downloadPlugins = response.data;
+
+      for(let plugin of downloadPlugins) {
+        axios({
+          method: 'POST',
+          url: `${publicRuntimeConfig.backend}/call`,
+          params: {
+            name: plugin.name,
+            endpoint: 'evaluate',
+            data: {
+              type: properties.type
+            }
+          }
+          
+        }).then(response => {
+          if (response.status === 200) selectOptions.push({ value: "plugin", label: plugin.name});
+        }).catch(error => {return;});
+      }
+    }).catch(error => {return;});
 
     return selectOptions;
   }
@@ -104,6 +158,7 @@ export default function ShareModal(properties) {
               options={getSelectOptions()}
               menuPortalTarget={document.body}
               styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+              getOptionValue={option => option.label}
             />
           </div>
         </React.Fragment>

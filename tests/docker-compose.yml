@@ -1,0 +1,84 @@
+version: '3.2'
+
+services:
+    autoheal: 
+        restart: always
+        image: willfarrell/autoheal
+        environment: 
+            - AUTOHEAL_CONTAINER_LABEL=all
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+    virtuoso:
+        image: tenforce/virtuoso:virtuoso7.2.5
+        volumes: 
+            - type: volume
+              source: virtuoso-db
+              target: /data
+        ports:
+            - "8890:8890"
+        restart: always  
+        labels:
+            - "autoheal=true"
+    virtuoso3:
+        image: tenforce/virtuoso:virtuoso7.2.5
+        volumes:
+            - type: volume
+              source: virtuoso-db
+              target: /data3
+        ports:
+            - "8891:8890"
+        restart: always
+        labels:
+            - "autoheal=true"
+    synbiohubbackend:
+        image: synbiohub/sbh3backend:snapshot
+        depends_on: 
+            virtuoso3:
+                condition: service_started
+        ports:
+            - "6789:6789"
+        volumes:
+            - type: volume
+              source: sbh
+              target: /mnt
+            - type: volume
+              source: virtuoso-db
+              target: /virtuoso3
+        dns: 8.8.8.8
+        restart: always
+    synbiohubFrontend:
+        image: synbiohub/sbh3frontend:snapshot
+        depends_on: 
+            - virtuoso3
+        ports:
+            - "3333:3333"
+        volumes:
+            - type: volume
+              source: sbh
+              target: /mnt
+            - type: volume
+              source: virtuoso-db
+              target: /virtuoso3
+        dns: 8.8.8.8
+        restart: always
+        environment: 
+            - backend=http://synbiohubbackend:6789
+    synbiohub:
+        image: synbiohub/synbiohub:1.6.1-standalone
+        depends_on: 
+            - virtuoso
+        ports:
+            - "7777:7777"
+        volumes:
+            - type: volume
+              source: sbh
+              target: /mnt
+            - type: volume
+              source: virtuoso-db
+              target: /virtuoso
+        dns: 8.8.8.8
+        restart: always
+
+volumes:
+    virtuoso-db:
+    sbh:

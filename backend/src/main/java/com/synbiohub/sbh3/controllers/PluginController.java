@@ -1,29 +1,41 @@
 package com.synbiohub.sbh3.controllers;
 
 
+import com.synbiohub.sbh3.dto.authplugindto.PluginAction;
+import com.synbiohub.sbh3.dto.authplugindto.PluginLoginDTO;
+import com.synbiohub.sbh3.dto.authplugindto.PluginServerDTO;
 import com.synbiohub.sbh3.services.PluginService;
 import com.synbiohub.sbh3.utils.ConfigUtil;
 import lombok.AllArgsConstructor;
+
+import org.json.JSONObject;
+import org.springframework.http.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
+import org.springframework.web.client.RestTemplate;
 import java.io.*;
 import java.net.*;
 import java.util.List;
 
 @RestController
 @AllArgsConstructor
+@Slf4j
 public class PluginController {
 
     private final PluginService pluginService;
 
-    @GetMapping(value = "/plugins")
+    @GetMapping(value = "/admin/plugins", produces="application/json")
     @ResponseBody
-    public String getPlugins() {
-        return ConfigUtil.get("plugins").toString();
+    public String getPlugins(@RequestParam(required = false) String category) {
+        if(category == null) {
+            return ConfigUtil.get("plugins").toString();
+        }
+        else {
+            return ConfigUtil.get("plugins").get(category).toString();
+        }
     }
     //Returns a string of all the current plugins in the instance of synbiohub
 
@@ -63,7 +75,7 @@ public class PluginController {
 
 
     @PostMapping(value = "/evaluate")
-    public ResponseEntity evaluate(@RequestParam String name, @RequestParam(required = false) List<MultipartFile> attached, @RequestParam(required = false) String type, @RequestParam(required = false) String data) {
+    public ResponseEntity evaluate(@RequestParam String name, @RequestParam(required = false) String data) {
 
         //Name can be the name or url of the target plugin
         //Attached is used to store files to be used for Submit plugins, will be sent to PluginService to create a manifest
@@ -88,20 +100,11 @@ public class PluginController {
 
         category = pluginService.getCategory(name);
 
-        if (attached == null) { //Used to convert send to a single string from attached/data based on which is used
-
-            if (type == null) {
-                send = data;
-            }
-            else {
-                send = pluginService.buildType(type).toString();
-            }
-
+        try {
+            send = URLDecoder.decode(data, "UTF-8");
+        } catch (IOException e) {
+                return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
-        else {
-            send = pluginService.buildManifest(attached).toString();
-        }
-
 
 
         try {
@@ -148,9 +151,8 @@ public class PluginController {
 
     }
 
-
-    @PostMapping(value = "/run", produces = "application/zip")
-    public ResponseEntity run(@RequestParam String name, @RequestParam(required = false) List<MultipartFile> attached, @RequestParam(required = false) String data) {
+    @PostMapping(value = "/run")
+    public ResponseEntity run(@RequestParam String name, @RequestParam(required = false) String data) {
 
         //All code should have the same uses as in the /evaluate endpoint
 
@@ -172,12 +174,10 @@ public class PluginController {
 
         category = pluginService.getCategory(name);
 
-        if (attached == null) {
-            send = data;
-
-        }
-        else {
-            send = pluginService.buildManifest(attached).toString();
+        try {
+            send = URLDecoder.decode(data, "UTF-8");
+        } catch (IOException e) {
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
 
 
@@ -227,6 +227,64 @@ public class PluginController {
 
     }
 
+    @PostMapping(value = "/plugin/token", produces = "application/json")
+    @ResponseBody
+    public ResponseEntity<String> login(@RequestBody PluginLoginDTO pluginParam) {
+        RestTemplate restTemplate = new RestTemplate();
+
+        var headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        JSONObject jsonObject = new JSONObject();
+
+        PluginAction action = PluginAction.valueOf(pluginParam.getAction().toUpperCase());
+        switch (action) {
+            case LOGIN: {
+                jsonObject.put("username", pluginParam.getUsername());
+                jsonObject.put("email", pluginParam.getEmail());
+                jsonObject.put("password", pluginParam.getPassword());
+                break;
+            }
+            case LOGOUT: {
+                jsonObject.put("login_token", pluginParam.getLoginToken());
+                break;
+            }
+            case REFRESH: {
+                jsonObject.put("refresh_token", pluginParam.getRefreshToken());
+                break;
+            }
+            default:
+                throw new RuntimeException("Incorrect action: " +  pluginParam.getAction());
+        }
+        HttpEntity<String> request = new HttpEntity<>(jsonObject.toString(), headers);
+        String url = pluginService.getExternalUrl(pluginParam.getServer(), action);
+        return restTemplate.postForEntity(url, request, String.class);
+    }
+
+    @GetMapping(value = "/plugin/status", produces = "application/json")
+    @ResponseBody
+    public ResponseEntity<String> getStatus() {
+        RestTemplate restTemplate = new RestTemplate();
+        var headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        PluginAction action = PluginAction.valueOf("STATUS");
+        String url = pluginService.getExternalUrl("testserver", action);
+        return restTemplate.getForEntity(url, String.class);
+    }
+
+    @GetMapping(value="/plugin/info", produces = "application/json")
+    public ResponseEntity getLoginInfo() {
+        RestTemplate restTemplate = new RestTemplate();
+        var headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        String url = "http://localhost:8101/login";
+        return restTemplate.getForEntity(url, String.class);
+    }
+
+    @GetMapping(value = "/plugin/servers", produces = "application/json")
+    public ResponseEntity<List<PluginServerDTO>> getPluginServers() {
+        return ResponseEntity.ok(pluginService.getPlugins());
+    }
+
 
 /*
     @PostMapping(value = "/save")
@@ -243,15 +301,17 @@ public class PluginController {
 
 
     @PostMapping(value = "/call")
-    public ResponseEntity callPlugin(@RequestParam(required = false) String token, @RequestParam String name, @RequestParam(required = false) List<MultipartFile> attached, @RequestParam(required = false) String type, @RequestParam String endpoint, @RequestParam(required = false) String data) {
+    public ResponseEntity callPlugin(@RequestParam(required = false) String token, @RequestParam String name, @RequestParam String endpoint, @RequestParam(required = false) String data) {
+
+
 
         switch(endpoint) {
             case "status":
                 return status(name);
             case "evaluate":
-                return evaluate(name, attached, type, data);
+                return evaluate(name, data);
             case "run":
-                return run(name, attached, data);
+                return  run(name, data);
             default :
                 return new ResponseEntity("Unsuccessful", HttpStatus.BAD_REQUEST);
         }
