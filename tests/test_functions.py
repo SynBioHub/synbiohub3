@@ -84,8 +84,8 @@ def get_request(request, version, headers, route_parameters):
         response.raise_for_status()
     except HTTPError as err:
         #if err.code == 404:
-        #print(err)
-        raise HTTPError("Internal server error. Content of response was \n" + response.text)
+        print(err)
+        #raise HTTPError("Internal server error. Content of response was \n" + response.text)
 
     print("SBH" + str(version) + "\n")
     # if("<!DOCTYPE html>" in response.text):
@@ -116,8 +116,8 @@ def get_request_download(request, headers, route_parameters, version):
     try:
         response.raise_for_status()
     except HTTPError as err:
-        #print(err)
-        raise HTTPError("Internal server error. Content of response was \n" + response.text)
+        print(err)
+        #raise HTTPError("Internal server error. Content of response was \n" + response.text)
 
     print("SBH" + str(version) + "\n")
     # if("<!DOCTYPE html>" in response.text):
@@ -151,8 +151,8 @@ def post_request(request, version, data, headers, route_parameters, files):
         response.raise_for_status()
     except HTTPError as err:
         #print out error instead of raising a response
-        #print(err)
-        raise HTTPError("Internal server error. Content of response was \n" + response.text)
+        print(err)
+        #raise HTTPError("Internal server error. Content of response was \n" + response.text)
         #print("Internal server error. Content of response was \n" + response.text)
 
     print("SBH" + str(version) + "\n")
