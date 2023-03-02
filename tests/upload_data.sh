@@ -4,7 +4,7 @@ source ./testutil.sh
 
 message "Uploading igem data"
 
-cd igem-to-sbol-script
+cd add-igem-data
 node upload1.js
 node upload3.js
 
