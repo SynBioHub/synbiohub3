@@ -47,17 +47,19 @@ done
 
 bash ./upload_data.sh
 
-# message "Running test suite."
+message "Running test suite."
 
-# # run the set up script
+# run the set up script
 
-# python3 test_suite.py "$@"
-# exitcode=$?
-# if [ $exitcode -ne 0 ]; then
-#     message "Exiting with code $exitcode."
-#     exit $exitcode
-# fi
+python3 test_suite.py "$@"
+exitcode=$?
+if [ $exitcode -ne 0 ]; then
+    message "Exiting with code $exitcode."
+    exit $exitcode
+fi
 
 bash ./stop_containers.sh
+
+bash ./purge_all_docker_containers.sh
 
 message "finished running tests"
