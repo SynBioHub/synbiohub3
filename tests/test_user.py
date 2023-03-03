@@ -19,9 +19,9 @@ class TestUser(TestCase):
         }
 
         #Uncomment when register works 
-        #compare_post_request("register", data, test_name = "register1", headers = headers, route_parameters = [], files = None, test_type = test_type) #error - account already in use? - FAIL CASE for 1
+        compare_post_request("register", data, test_name = "register1", headers = headers, route_parameters = [], files = None, test_type = test_type) #error - account already in use? - FAIL CASE for 1
         post_request("register", 1, data, headers = {"Accept": "text/plain"}, route_parameters = [], files = None)
-        #post_request("register", 3, data, headers = {"Accept": "text/plain"}, route_parameters = [], files = None)
+        post_request("register", 3, data, headers = {"Accept": "text/plain"}, route_parameters = [], files = None)
 
         #logininfo = {'email' : 'test2@user.synbiohub',
                      #'password' : 'test1'}

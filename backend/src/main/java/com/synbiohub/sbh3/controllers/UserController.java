@@ -40,7 +40,7 @@ public class UserController {
         } else {
             url = url + tokenPath;
         }
-        return restClient.post(url, Map.of(), String.class, restClient.createHeaders(loginDTO.getUsername(), loginDTO.getPassword()));
+        return restClient.post(url, Map.of(), String.class, restClient.createHeaders(loginDTO.getEmail(), loginDTO.getPassword()));
 //        Authentication auth = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginDTO.getUsernameOrEmail(), loginDTO.getPassword()));
 //        if (auth == null) {
 //            log.error("Bad credentials");
@@ -58,9 +58,32 @@ public class UserController {
 //        http.logout().logoutSuccessUrl("/login").invalidateHttpSession(true).deleteCookies("JSESSIONID");
 //    }
 
+//    @PostMapping(value = "/register")
+//    public ResponseEntity registerNewUser(@RequestBody UserRegistrationDTO userRegistrationDTO) {
+//        try {
+//            customUserService.registerNewUserAccount(userRegistrationDTO);
+//        } catch (Exception e) {
+//            log.error("Error creating a new account.");
+//            e.printStackTrace();
+//            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+//        }
+//        log.info("User registered successfully");
+//        return ResponseEntity.ok("User registered successfully");
+//    }
+
     @PostMapping(value = "/register")
-    public ResponseEntity registerNewUser(@RequestBody UserRegistrationDTO userRegistrationDTO) {
+    public ResponseEntity registerNewUser(@RequestParam String username, @RequestParam String name, @RequestParam String affiliation, @RequestParam String email, @RequestParam String password1, @RequestParam String password2) {
         try {
+            log.info("Registering a new user.");
+            System.out.println("Registering a new user.");
+            UserRegistrationDTO userRegistrationDTO = UserRegistrationDTO.builder()
+                    .username(username)
+                    .name(name)
+                    .affiliation(affiliation)
+                    .email(email)
+                    .password1(password1)
+                    .password2(password2)
+                    .build();
             customUserService.registerNewUserAccount(userRegistrationDTO);
         } catch (Exception e) {
             log.error("Error creating a new account.");
@@ -68,7 +91,7 @@ public class UserController {
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
         log.info("User registered successfully");
-        return new ResponseEntity(HttpStatus.OK);
+        return ResponseEntity.ok("User registered successfully");
     }
 //
 //    @PostMapping(value = "/resetPassword")
