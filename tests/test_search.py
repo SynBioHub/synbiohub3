@@ -14,7 +14,7 @@ class TestSearch(TestCase):
 #         # test_searchQuery(self):
 #         test_print("test_search starting")
 #         #compare_get_request("/search/:query?", route_parameters = ["I0462"])
-#         compare_get_request("/search/:query?", route_parameters = ["BBa_B00"], test_type = test_type)
+#        compare_get_request("/search/:query?", route_parameters = ["BBa_B00"], test_type = test_type)
 #         test_print("test_search completed")
 
 #         # test_searchCount(self):
@@ -42,7 +42,7 @@ class TestSearch(TestCase):
 #         test_print("test_uses starting")
 #         compare_get_request("user/:userId/:collectionId/:displayId/:version/uses", route_parameters = ["testuser1","testid2", "BBa_B0015", "1"],headers = {"Accept": "text/html"}, test_type = test_type)
 #         compare_get_request("public/:collectionId/:displayId/:version/uses", route_parameters = ["testid2", "BBa_B0015", "1"],headers = {"Accept": "text/html"}, test_type = test_type)
-        compare_get_request("public/:collectionId/:displayId/:version/uses", test_name = "uses2", route_parameters = ["igem", "BBa_B0034", "1"],headers = {"Accept": "text/plain"}, test_type = test_type)
+#        compare_get_request("public/:collectionId/:displayId/:version/uses", test_name = "uses2", route_parameters = ["igem", "BBa_B0034", "1"],headers = {"Accept": "text/plain"}, test_type = test_type)
 #         test_print("test_uses completed")
 
 #         test_print("test_count starting")

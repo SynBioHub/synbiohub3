@@ -27,7 +27,7 @@ class TestSetup(TestCase):
             'userPasswordConfirm': 'test',
             'instanceName': 'Test Synbiohub',
             'instanceURL': 'http://localhost:7777/',
-            'uriPrefix': 'http://localhost:7777/',
+            'uriPrefix': 'https://synbiohub.org/',
             'color': '#D25627',
             'frontPageText': 'text',
             'virtuosoINI': '/etc/virtuoso-opensource-7/virtuoso.ini',
