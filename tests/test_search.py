@@ -53,11 +53,6 @@ class TestSearch(TestCase):
         # compare_get_request("/user/:userId/:collectionId/:displayId/:version/subCollections", route_parameters = ["testuser","testid2","testid2_collection", "1"],headers = {"Accept":"text/plain"}, test_name="privateSubCollection")
         # compare_get_request(":userId/:collectionId/:displayId/:version/subCollections", route_parameters = ["testuser","testid2","testid2_collection", "1"],headers = {"Accept":"text/plain"}, test_name="privateSubCollection")
         # test_print("test_subcollections_private completed")
-
-#         test_print("test_browse_get starting")
-#         compare_get_request("browse", headers = {"Accept": "text/html"})
-#         test_print("test_browse_get completed")
-
         
 
 
