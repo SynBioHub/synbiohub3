@@ -59,7 +59,8 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests()
-                .requestMatchers("/token/**", "/public/**", "/login/**", "/register/**", "/search/**", "/migration/**", "/rootCollections/**", "/h2-console/**").permitAll()
+                .requestMatchers("/**").permitAll()
+//                .requestMatchers("/token/**", "/public/**", "/login/**", "/register/**", "/search/**", "/migration/**", "/rootCollections/**", "/h2-console/**").permitAll()
 //                .and()
 //                .authorizeHttpRequests().requestMatchers("/makePublic/**").hasAuthority("CURATOR")
                 .and()
