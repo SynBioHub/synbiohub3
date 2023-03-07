@@ -60,6 +60,4 @@ fi
 
 bash ./stop_containers.sh
 
-bash ./purge_all_docker_containers.sh
-
 message "finished running tests"
