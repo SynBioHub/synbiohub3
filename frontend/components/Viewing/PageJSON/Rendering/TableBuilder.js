@@ -129,7 +129,7 @@ function createHeader(columns, content) {
 }
 
 function getTableContent(table, items) {
-  const ids = table.sections.map(column => {
+  let ids = table.sections.map(column => {
     return {
       title: column.title,
       id: getId(column).substring(1),
@@ -145,6 +145,9 @@ function getTableContent(table, items) {
     };
   });
 
+  ids = ids.filter(
+    (value, index, self) => index === self.findIndex(t => t.id === value.id)
+  );
   let content = items.map(row => {
     const titleToValueMap = {};
     ids.forEach(id => {
@@ -189,6 +192,19 @@ function loadText(template, args) {
 
   return template;
 }
+
+const tableFork = tableJSON => {
+  console.log(tableJSON);
+  tableJSON.sections.forEach(section => {
+    if (section.predicates) {
+      section.predicates.forEach(predicate => {
+        if (predicate.includes('|')) {
+          console.log(predicate);
+        }
+      });
+    }
+  });
+};
 
 function getTableQuerySetup(uri, tableJSON) {
   const rootPredicateDictionary = {};

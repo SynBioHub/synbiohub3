@@ -18,9 +18,19 @@
         "rootPredicate": "sbol:built",
         "sections": [
           {
-            "title": "built",
+            "title": "name",
+            "predicates": ["dcterms:title"],
+            "link": "$<link>"
+          },
+          {
+            "title": "name",
+            "predicates": ["sbol:displayId"],
+            "link": "$<link>"
+          },
+          {
+            "title": "link",
             "predicates": [],
-            "link": "$<This>"
+            "hide": true
           }
         ]
       }
