@@ -91,7 +91,7 @@ public class UserController {
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
         log.info("User registered successfully");
-        return ResponseEntity.ok("User registered successfully.");
+        return ResponseEntity.ok("User registered successfully");
     }
 //
 //    @PostMapping(value = "/resetPassword")
