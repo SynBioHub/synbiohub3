@@ -62,10 +62,10 @@ def test_root():
     # testAdmin = TestAdmin()
     # testAdmin.test_admin1()
 
-    # # TODO: TEST TEST_TWINS
-    # from test_twins import TestTwins
-    # testTwins = TestTwins()
-    # testTwins.test_twins()
+    # TODO: TEST TEST_TWINS
+    from test_twins import TestTwins
+    testTwins = TestTwins()
+    testTwins.test_twins()
 
     # from test_submit_other_user import TestSubmitOtherUser
     # testSubmitOtherUser = TestSubmitOtherUser()
