@@ -28,9 +28,25 @@
             "link": "$<link>"
           },
           {
+            "title": "name",
+            "predicates": [],
+            "link": "$<link>"
+          },
+          {
             "title": "link",
             "predicates": [],
             "hide": true
+          }
+        ]
+      },
+      {
+        "title": "Derived",
+        "icon": "faVials",
+        "rootPredicate": "prov:wasDerivedFrom",
+        "sections": [
+          {
+            "title": "external",
+            "predicates": ["sbol:displayId"]
           }
         ]
       }
