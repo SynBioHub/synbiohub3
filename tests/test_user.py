@@ -31,7 +31,7 @@ class TestUser(TestCase):
         logininfo = {'email' : 'test1@user.synbiohub',
                       'password' : 'test'}
         login_with(logininfo, 1)
-        #login_with(logininfo, 3)
+        login_with(logininfo, 3)
 
         #uncomment when profile works
         #compare_get_request("/profile", headers = headers, route_parameters = [], test_type = test_type)

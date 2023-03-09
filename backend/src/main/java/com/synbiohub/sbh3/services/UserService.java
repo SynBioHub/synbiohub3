@@ -4,6 +4,10 @@ package com.synbiohub.sbh3.services;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.synbiohub.sbh3.dto.LoginDTO;
+import com.synbiohub.sbh3.dto.UserRegistrationDTO;
+import com.synbiohub.sbh3.security.customsecurity.AuthenticationResponse;
+import com.synbiohub.sbh3.security.customsecurity.JwtService;
 import com.synbiohub.sbh3.security.model.Role;
 import com.synbiohub.sbh3.security.model.User;
 import com.synbiohub.sbh3.security.repo.UserRepository;
@@ -19,11 +23,13 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 
 import java.sql.*;
 import java.util.*;
+import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
@@ -35,6 +41,61 @@ public class UserService {
 
     private final CustomUserService customUserService;
     private final ConfigUtil configUtil;
+    private final JwtService jwtService;
+    private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
+
+    public AuthenticationResponse register(UserRegistrationDTO userRegistrationDTO) {
+        if (!verifyPasswords(userRegistrationDTO.getPassword1(), userRegistrationDTO.getPassword2())) {
+            return AuthenticationResponse
+                    .builder()
+                    .token("User registration failed")
+                    .build();
+        }
+        var user = User
+                    .builder()
+                    .username(userRegistrationDTO.getUsername())
+                    .name(userRegistrationDTO.getName())
+                    .email(userRegistrationDTO.getEmail())
+                    .affiliation(userRegistrationDTO.getAffiliation())
+                    .password(passwordEncoder.encode(userRegistrationDTO.getPassword1()))
+                    .role(Role.ADMIN)
+                    .build();
+        userRepository.save(user);
+        var jwtToken = jwtService.generateToken(user);
+        return AuthenticationResponse
+                .builder()
+                .token("User registered successfully")
+                .build();
+    }
+
+    public AuthenticationResponse authenticate(LoginDTO loginDTO) {
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        loginDTO.getUsername(),
+                        loginDTO.getPassword()
+                ));
+                var user = userRepository.findByUsername(loginDTO.getUsername())
+                        .orElseThrow();
+                var jwtToken = jwtService.generateToken(user);
+                return AuthenticationResponse
+                        .builder()
+                        .token(jwtToken)
+                        .build();
+    }
+
+    public boolean isValidEmail(String email)
+    {
+        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."+
+                "[a-zA-Z0-9_+&*-]+)*@" +
+                "(?:[a-zA-Z0-9-]+\\.)+[a-z" +
+                "A-Z]{2,17}$";
+
+        Pattern pat = Pattern.compile(emailRegex);
+        if (email == null)
+            return false;
+        return pat.matcher(email).matches();
+    }
 
     public User getUserProfile() {
         Authentication authentication = checkAuthentication();
@@ -144,6 +205,10 @@ public class UserService {
         registerParams.put("password2", allParams.get("userPasswordConfirm"));
         return registerParams;
 
+    }
+
+    private Boolean verifyPasswords(String password1, String password2) {
+        return password1.equals(password2);
     }
 
     public User createUser(User user) {
