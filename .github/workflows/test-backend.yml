@@ -36,7 +36,7 @@ jobs:
         name: sbh3-image
     - name: Import saved Docker image
       run: |
-        cat sbh3.tar.gz | docker import - synbiohub/sbh3backend:snapshot
+        cat sbh3.tar.gz | docker load
     - uses: actions/setup-python@v4
       name: Install Python
       with:
