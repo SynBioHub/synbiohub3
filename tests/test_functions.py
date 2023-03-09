@@ -183,6 +183,7 @@ requesttype is the type of request performed- either 'get request' or 'post requ
     if(sbh1requestcontent.status_code != sbh3requestcontent.status_code):
         print("RESPONSE CODE TEST FAILED: Response codes don't match; SBH1: " + str(sbh1requestcontent.status_code) + " SBH3: " + str(sbh3requestcontent.status_code))
         test_passed = 0
+        raise Exception("RESPONSE CODE TEST FAILED: Response codes don't match")
     else:
         print("RESPONSE CODE TEST PASSED: Response codes matched " + str(sbh3requestcontent.status_code))
 
@@ -192,12 +193,14 @@ requesttype is the type of request performed- either 'get request' or 'post requ
         else:
             print("DOWNLOAD TEST FAILED: Content does not match")
             test_passed = 0
+            raise Exception("DOWNLOAD TEST FAILED: Content does not match")
    # if requesttype[0:3] == "get" or requesttype[0:4] == "post":
     if(file_diff(sbh1requestcontent.text, sbh3requestcontent.text, request, requesttype)):
         print("RESPONSE CONTENT TEST PASSED: Content matches\n")
     else:
         print("RESPONSE CONTENT TEST FAILED: Content does not match\n")
         test_passed = 0
+        raise Exception("RESPONSE CONTENT TEST FAILED: Content does not match\n")
     
     if(test_passed):
         test_state.add_test_result("All", "pass")
