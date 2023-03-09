@@ -8,7 +8,7 @@ message "Running synbiohub test suite."
 
 message "pulling backend image"
 
-docker pull synbiohub/sbh3backend:snapshot
+#docker pull synbiohub/sbh3backend:snapshot
 
 # Clone the SBOLTestRunner for necessary files
 message "pulling mehersam/SBOLTestRunner"

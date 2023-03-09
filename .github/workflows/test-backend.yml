@@ -17,7 +17,7 @@ jobs:
         command: docker build ./backend --tag synbiohub/sbh3backend:snapshot
     - name: Package image
       run: |
-        docker save synbiohub/synbiohub3:snapshot | gzip > sbh3.tar.gz
+        docker save synbiohub/sbh3backend:snapshot | gzip > sbh3.tar.gz
     - uses: actions/upload-artifact@v3
       name: Upload Docker image
       with:
@@ -36,7 +36,7 @@ jobs:
         name: sbh3-image
     - name: Import saved Docker image
       run: |
-        cat sbh3.tar.gz | docker import - synbiohub/sbh3backend:snapshot
+        cat sbh3.tar.gz | docker load
     - uses: actions/setup-python@v4
       name: Install Python
       with:

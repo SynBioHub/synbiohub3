@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.synbiohub.sbh3.dto.LoginDTO;
 import com.synbiohub.sbh3.dto.UserRegistrationDTO;
 import com.synbiohub.sbh3.security.CustomUserService;
+import com.synbiohub.sbh3.security.model.User;
 import com.synbiohub.sbh3.services.UserService;
 import com.synbiohub.sbh3.utils.RestClient;
 import jakarta.servlet.http.HttpServletRequest;
@@ -58,17 +59,39 @@ public class UserController {
 //        http.logout().logoutSuccessUrl("/login").invalidateHttpSession(true).deleteCookies("JSESSIONID");
 //    }
 
+//    @PostMapping(value = "/register")
+//    public ResponseEntity registerNewUser(@RequestBody UserRegistrationDTO userRegistrationDTO) {
+//        try {
+//            customUserService.registerNewUserAccount(userRegistrationDTO);
+//        } catch (Exception e) {
+//            log.error("Error creating a new account.");
+//            e.printStackTrace();
+//            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+//        }
+//        log.info("User registered successfully");
+//        return new ResponseEntity(HttpStatus.OK);
+//    }
+
     @PostMapping(value = "/register")
-    public ResponseEntity registerNewUser(@RequestBody UserRegistrationDTO userRegistrationDTO) {
+    public ResponseEntity registerNewUser(@RequestParam String username, @RequestParam String name, @RequestParam String affiliation, @RequestParam String email, @RequestParam String password1, @RequestParam String password2) {
         try {
-            customUserService.registerNewUserAccount(userRegistrationDTO);
+            log.info("Registering a new user.");
+            UserRegistrationDTO userRegistrationDTO = UserRegistrationDTO
+                    .builder()
+                    .username(username)
+                    .name(name)
+                    .affiliation(affiliation)
+                    .email(email)
+                    .password1(password1)
+                    .password2(password2)
+                    .build();
         } catch (Exception e) {
             log.error("Error creating a new account.");
             e.printStackTrace();
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
         log.info("User registered successfully");
-        return new ResponseEntity(HttpStatus.OK);
+        return ResponseEntity.ok("User registered successfully");
     }
 //
 //    @PostMapping(value = "/resetPassword")
