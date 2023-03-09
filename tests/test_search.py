@@ -40,11 +40,11 @@ class TestSearch(TestCase):
         #compare_get_request("/public/:collectionId/:displayId/:version/subCollections", route_parameters = ["igem","categories", "1"], headers = {"Accept":"text/plain"}, test_name="subCollectionsCategories", test_type = test_type)
         test_print("test_subcollections_public completed")
 
-        # test_print("test_uses starting")
+        test_print("test_uses starting")
         # # need user - compare_get_request("user/:userId/:collectionId/:displayId/:version/uses", route_parameters = ["testuser1","testid2", "BBa_B0015", "1"],headers = {"Accept": "text/html"}, test_type = test_type)
         # # need accounts to work first - compare_get_request("public/:collectionId/:displayId/:version/uses", route_parameters = ["testid2", "BBa_B0015", "1"],headers = {"Accept": "text/html"}, test_type = test_type)
-        # compare_get_request("public/:collectionId/:displayId/:version/uses", test_name = "uses2", route_parameters = ["igem", "BBa_B0034", "1"],headers = {"Accept": "text/plain"}, test_type = test_type)
-        # test_print("test_uses completed")
+        compare_get_request("public/:collectionId/:displayId/:version/uses", test_name = "uses2", route_parameters = ["igem", "BBa_B0034", "1"],headers = {"Accept": "text/plain"}, test_type = test_type)
+        test_print("test_uses completed")
 
         # test_print("test_count starting")
         # compare_get_request(":type/count", route_parameters = ["ComponentDefinition"], headers = {"Accept":"text/plain"}, test_type = test_type)
