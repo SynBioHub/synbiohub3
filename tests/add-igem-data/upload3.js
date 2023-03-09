@@ -18,9 +18,7 @@ var files = [];
 walk('./out', function(filename) {
 
     //console.log(filename)
-    if(filename.includes("BBa_B00") || filename.includes("BBa_J0")){
-      files.push(filename);
-    }
+    files.push(filename);
 });
 
 //console.log(JSON.stringify(files, null, 2))
