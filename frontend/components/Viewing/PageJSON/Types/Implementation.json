@@ -40,14 +40,21 @@
         ]
       },
       {
-        "title": "Derived",
+        "title": "Source",
         "icon": "faVials",
         "rootPredicate": "prov:wasDerivedFrom",
         "sections": [
           {
-            "title": "external",
-            "predicates": ["sbol:displayId"]
+            "title": "name",
+            "predicates": ["sbol:displayId"],
+            "link": "$<link>"
+          },
+          {
+            "title": "link",
+            "predicates": [],
+            "hide": true
           }
+
         ]
       }
    ],

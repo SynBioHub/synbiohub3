@@ -8,9 +8,6 @@ export default function MetadataRenderer({ title, content }) {
     return metadata
       .filter(section => !section.hide)
       .map((section, index) => {
-        if (!section.text) {
-          section.text = 'No data';
-        }
         if (section.tableIcon) sectionIcon = section.tableIcon;
         return (
           <div key={title + index + section.text}>

@@ -1,16 +1,25 @@
+import axios from 'axios';
 import getConfig from 'next/config';
 
 import loadTemplate from './loadTemplate';
 const { publicRuntimeConfig } = getConfig();
 
-export default async function getQueryResponse(query, options, token, admin) {
+export default async function getQueryResponse(
+  query,
+  options,
+  token,
+  admin,
+  urlOverride
+) {
   query = loadTemplate(query, options);
 
   const params = admin ? '/admin/sparql?query=' : '/sparql?query=';
-  const graph = '&default-graph-uri=https://synbiohub.org/user/benjhatch7';
-  const url = `${publicRuntimeConfig.backend}${params}${encodeURIComponent(
-    query
-  )}${graph}`;
+  const graph = urlOverride
+    ? ''
+    : '&default-graph-uri=https://synbiohub.org/user/benjhatch7';
+  const url = `${
+    urlOverride || publicRuntimeConfig.backend
+  }${params}${encodeURIComponent(query)}${graph}`;
 
   const headers = {
     'Content-Type': 'application/json',
@@ -18,15 +27,14 @@ export default async function getQueryResponse(query, options, token, admin) {
     'X-authorization': token
   };
 
-  const response = await fetch(url, {
-    method: 'GET',
-    headers
-  });
+  // if the uri lives in an external sbh, use proxy to
+  // circumvent cors errors
+  const response = urlOverride
+    ? await axios.post('/api/wor-proxy', { url, headers })
+    : await axios.get(url, { headers });
 
   if (response.status === 200) {
-    const results = await response.json();
-    // console.log(results);
-    return processResults(results);
+    return processResults(response.data);
   } else return;
 }
 

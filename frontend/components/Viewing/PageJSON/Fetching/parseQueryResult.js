@@ -1,8 +1,6 @@
-import MiniLoading from '../../../Reusable/MiniLoading';
-import buildQuery from './buildQuery';
 import getId from './getId';
 
-export default function parseQueryResult(table, items) {
+export default function parseQueryResult(table, items, prefixes) {
   let ids = table.sections.map((column, index) => {
     return {
       title: column.title,
@@ -45,13 +43,9 @@ export default function parseQueryResult(table, items) {
           ? loadText(column.infoLink, titleToValueMap)
           : 'NA';
         const grouped = column.grouped;
+        let externalFetch = null;
         if (!text) {
-          const attemptURIDeref = getStackTrace(table, column.index, row);
-          if (attemptURIDeref) {
-            text = <MiniLoading height={10} width={50} />;
-            console.log(attemptURIDeref);
-            console.log(buildQuery(attemptURIDeref.uri, attemptURIDeref.table));
-          }
+          externalFetch = getStackTrace(table, column.index, row, prefixes);
         }
         return {
           text,
@@ -59,6 +53,7 @@ export default function parseQueryResult(table, items) {
           linkType,
           infoLink,
           grouped,
+          externalFetch,
           sectionIndex: column.index,
           tableIcon: column.tableIcon,
           icon: column.icon,
@@ -70,7 +65,7 @@ export default function parseQueryResult(table, items) {
   return content;
 }
 
-function getStackTrace(table, sectionIndex, results) {
+function getStackTrace(table, sectionIndex, results, prefixes) {
   const section = table.sections[sectionIndex];
   // start at rootPredicate, then go down predicate tree until no result
   const currRootPredicate =
@@ -90,7 +85,8 @@ function getStackTrace(table, sectionIndex, results) {
           ...table,
           rootPredicate: section.predicates[i],
           sections: [newSection]
-        }
+        },
+        prefixes
       };
     }
     failedAtPredicate = nextPredicate;

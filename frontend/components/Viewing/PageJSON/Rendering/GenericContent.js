@@ -3,37 +3,10 @@ import Section from '../../Sections/Section';
 import { useSelector } from 'react-redux';
 import { Fragment } from 'react';
 import TableBuilder from './TableBuilder';
-import useSWR from 'swr';
 
 import CustomComponents from '../CustomComponents.js';
 
-import getConfig from 'next/config';
-import axios from 'axios';
-
-const { publicRuntimeConfig } = getConfig();
-
-export const fetcher = url =>
-  axios.get(url, { headers: { accept: 'text/plain' } }).then(res => res.data);
-
-const useRegistries = () => {
-  const { data, error } = useSWR(
-    `${publicRuntimeConfig.backend}/admin/registries`,
-    fetcher
-  );
-  return {
-    registries: data,
-    loading: !error && !data,
-    error: error
-  };
-};
-
 export default function GenericContent({ json, uri, metadata }) {
-  const { registries, loading, error } = useRegistries();
-
-  if (!loading && !error) {
-    // console.log(registries.registries[0]);
-  }
-
   if (metadata) {
     if (!json || !json.metadata) return null;
     const content = json.metadata.map((metadata, index) => {

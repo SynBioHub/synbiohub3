@@ -35,7 +35,7 @@ function TableRenderer({ uri, prefixes, table, metadata }) {
   const [content, setContent] = useState([]);
   useEffect(() => {
     executeQueryFromTableJSON(uri, prefixes, table).then(response => {
-      setContent(parseQueryResult(table, response));
+      setContent(parseQueryResult(table, response, prefixes));
     });
   }, [uri, prefixes, table]);
 
