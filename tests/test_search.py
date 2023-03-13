@@ -35,9 +35,9 @@ class TestSearch(TestCase):
         # test_print("test_sparql completed")
 
         test_print("test_subcollections_public starting")
-        compare_get_request("/public/:collectionId/:displayId/:version/subCollections", route_parameters = ["testid1","testid1_collection", "1"], headers = {"Accept":"text/plain"}, test_type = test_type)
+        #compare_get_request("/public/:collectionId/:displayId/:version/subCollections", route_parameters = ["testid1","testid1_collection", "1"], headers = {"Accept":"text/plain"}, test_type = test_type)
         #https://synbiohub.org/public/igem/categories/1/subCollections
-        #compare_get_request("/public/:collectionId/:displayId/:version/subCollections", route_parameters = ["igem","categories", "1"], headers = {"Accept":"text/plain"}, test_name="subCollectionsCategories", test_type = test_type)
+        compare_get_request("/public/:collectionId/:displayId/:version/subCollections", route_parameters = ["igem","categories", "1"], headers = {"Accept":"text/plain"}, test_name="subCollectionsCategories", test_type = test_type)
         test_print("test_subcollections_public completed")
 
         # test_print("test_uses starting")
