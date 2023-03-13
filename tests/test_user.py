@@ -34,7 +34,7 @@ class TestUser(TestCase):
         login_with(logininfo, 3)
 
         #uncomment when profile works
-        #compare_get_request("/profile", headers = headers, route_parameters = [], test_type = test_type)
+        # compare_get_request("/profile", headers = headers, route_parameters = [], test_type = test_type)
 
         data={
              'name': 'ronnie',
@@ -44,7 +44,7 @@ class TestUser(TestCase):
              'password2' : 'test'
         }
         #uncomment when profile works
-        #compare_post_request("profile", data, test_name = "profile2", headers = headers, route_parameters = [], files = None, test_type = test_type)
+        # compare_post_request("profile", data, test_name = "profile2", headers = headers, route_parameters = [], files = None, test_type = test_type)
 
         #compare_get_request("/logout")
         # test_print("logout started")

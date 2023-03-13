@@ -99,14 +99,11 @@ public class UserService {
 
     public User getUserProfile() {
         Authentication authentication = checkAuthentication();
-        var user = userRepository.findByUsername(authentication.getName());
-        if (user.isEmpty())
+        if (authentication == null) {
             return null;
-
-        var userGet = user.get();
-        userGet.setPassword("");
-        return userGet;
-
+        }
+        User user = userRepository.findByUsername(authentication.getName()).orElseThrow();
+        return user;
     }
 
     /**
@@ -171,7 +168,7 @@ public class UserService {
 
     private Authentication checkAuthentication() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication instanceof AnonymousAuthenticationToken) return null;
+        if (authentication instanceof AnonymousAuthenticationToken || authentication == null) return null;
         return authentication;
     }
 
