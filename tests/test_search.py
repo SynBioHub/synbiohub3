@@ -11,7 +11,7 @@ class TestSearch(TestCase):
         headers = {"Accept": "text/plain"}
         test_type = "Search"
 
-        # # test_searchQuery(self):
+        # test_searchQuery(self):
         # test_print("test_search starting")
         # #compare_get_request("/search/:query?", route_parameters = ["I0462"])
         # compare_get_request("/search/:query?", headers = headers, route_parameters = ["BBa_B00"], test_type = test_type)
@@ -46,9 +46,9 @@ class TestSearch(TestCase):
         # compare_get_request("public/:collectionId/:displayId/:version/uses", test_name = "uses2", route_parameters = ["igem", "BBa_B0034", "1"],headers = {"Accept": "text/plain"}, test_type = test_type)
         # test_print("test_uses completed")
 
-        # test_print("test_count starting")
-        # compare_get_request(":type/count", route_parameters = ["ComponentDefinition"], headers = {"Accept":"text/plain"}, test_type = test_type)
-        # test_print("test_count completed")
+        test_print("test_count starting")
+        compare_get_request(":type/count", route_parameters = ["ComponentDefinition"], headers = {"Accept":"text/plain"}, test_type = test_type)
+        test_print("test_count completed")
 
         # test_print("test_subcollections_private starting")
         # compare_get_request("/user/:userId/:collectionId/:displayId/:version/subCollections", route_parameters = ["testuser","testid2","testid2_collection", "1"],headers = {"Accept":"text/plain"}, test_name="privateSubCollection")
