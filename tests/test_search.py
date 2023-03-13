@@ -17,11 +17,11 @@ class TestSearch(TestCase):
         # compare_get_request("/search/:query?", headers = headers, route_parameters = ["BBa_B00"], test_type = test_type)
         # test_print("test_search completed")
 
-        # # test_searchCount(self):
-        # test_print("test_searchCount starting")
+        # test_searchCount(self):
+        test_print("test_searchCount starting")
         # #compare_get_request("/searchCount/:query?", route_parameters = ["I0462"]) 
-        # compare_get_request("/searchCount/:query?", headers = headers, route_parameters = ["BBa_B00"], test_type = test_type)
-        # test_print("test_searchCount completed")
+        compare_get_request("/searchCount/:query?", headers = headers, route_parameters = ["BBa_B00"], test_type = test_type)
+        test_print("test_searchCount completed")
 
 #TODO: NONDETERMINISTIC
         test_print("test_rootCollections starting")
