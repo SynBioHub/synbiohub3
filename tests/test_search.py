@@ -11,11 +11,11 @@ class TestSearch(TestCase):
         headers = {"Accept": "text/plain"}
         test_type = "Search"
 
-        # # test_searchQuery(self):
-        # test_print("test_search starting")
+        # test_searchQuery(self):
+        test_print("test_search starting")
         # #compare_get_request("/search/:query?", route_parameters = ["I0462"])
-        # compare_get_request("/search/:query?", headers = headers, route_parameters = ["BBa_B00"], test_type = test_type)
-        # test_print("test_search completed")
+        compare_get_request("/search/:query?", headers = headers, route_parameters = ["BBa_B00"], test_type = test_type)
+        test_print("test_search completed")
 
         # # test_searchCount(self):
         # test_print("test_searchCount starting")
