@@ -31,7 +31,7 @@ class TestUser(TestCase):
         login_with(logininfo, 3)
 
         #uncomment when profile works
-        #compare_get_request("/profile", headers = headers, route_parameters = [], test_type = test_type)
+        compare_get_request("/profile", headers = headers, route_parameters = [], test_type = test_type)
 
         data={
              'name': 'ronnie',
