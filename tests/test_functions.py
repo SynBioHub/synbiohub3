@@ -83,15 +83,10 @@ def get_request(request, version, headers, route_parameters):
     try:
         response.raise_for_status()
     except HTTPError as err:
-        #if err.code == 404:
         #print(err)
         raise HTTPError("Internal server error. Content of response was \n" + response.text)
 
     print("SBH" + str(version) + "\n")
-    # if("<!DOCTYPE html>" in response.text):
-    #     print("HTML PAGE")
-    # else:
-    #     print(response.text) 
     print(response.text) 
     print("\n")
 
@@ -120,10 +115,6 @@ def get_request_download(request, headers, route_parameters, version):
         raise HTTPError("Internal server error. Content of response was \n" + response.text)
 
     print("SBH" + str(version) + "\n")
-    # if("<!DOCTYPE html>" in response.text):
-    #     print("HTML PAGE")
-    # else:
-    #     print(response.text) 
     print(response.text)  
     print("\n") 
 
@@ -150,16 +141,10 @@ def post_request(request, version, data, headers, route_parameters, files):
     try:
         response.raise_for_status()
     except HTTPError as err:
-        #print out error instead of raising a response
         #print(err)
         raise HTTPError("Internal server error. Content of response was \n" + response.text)
-        #print("Internal server error. Content of response was \n" + response.text)
 
-    print("SBH" + str(version) + "\n")
-    # if("<!DOCTYPE html>" in response.text):
-    #     print("HTML PAGE")
-    # else:
-    #     print(response.text) 
+    print("SBH" + str(version) + "\n") 
     print(response.text) 
     print("\n")
 
@@ -202,12 +187,35 @@ requesttype is the type of request performed- either 'get request' or 'post requ
         test_passed = 0
         raise Exception("RESPONSE CONTENT TEST FAILED: Content does not match\n")
     
-    if(test_passed):
+    add_test_results(test_passed, test_type)
+
+def compare_json(sbh1requestcontent, sbh3requestcontent, request, requesttype, test_type, fields):
+    test_passed = 1
+    #compare response code
+    if(sbh1requestcontent.status_code != sbh3requestcontent.status_code):
+        print("RESPONSE CODE TEST FAILED: Response codes don't match; SBH1: " + str(sbh1requestcontent.status_code) + " SBH3: " + str(sbh3requestcontent.status_code))
+        test_passed = 0
+        raise Exception("RESPONSE CODE TEST FAILED: Response codes don't match")
+    else:
+        print("RESPONSE CODE TEST PASSED: Response codes matched " + str(sbh3requestcontent.status_code))
+
+    sbh1_json = json.loads(sbh1requestcontent.text)
+    sbh3_json = json.loads(sbh3requestcontent.text)
+    for f in fields:
+        if(sbh1_json[f] != sbh3_json[f]):
+            test_passed = 0
+            raise Exception("RESPONSE CONTENT TEST FAILED: Content does not match\n")
+
+    add_test_results(test_passed, test_type)
+
+def add_test_results(test_pass, test_type):
+    if(test_pass):
         test_state.add_test_result("All", "pass")
         test_state.add_test_result(test_type, "pass")
     else:
         test_state.add_test_result("All", "fail")
         test_state.add_test_result(test_type, "fail")
+
 
 def file_diff_download(sbh1requestcontent, sbh3requestcontent, request, requesttype):
     request = { 'options': {'language' : 'SBOL2',
@@ -252,10 +260,6 @@ def file_diff(sbh1requestcontent, sbh3requestcontent, request, requesttype):
     #     print("TEST PASSED\n")
     # else:
     #     print("TEST FAILED\n")
-    #     print("SBH1\n")
-    #     print(sbh1data)
-    #     print("SBH3\n")
-    #     print(sbh3data)
 
     changes = difflib.unified_diff(sbh1data, sbh3data)
     
@@ -267,8 +271,6 @@ def file_diff(sbh1requestcontent, sbh3requestcontent, request, requesttype):
 
     for c in changes:
         numofchanges += 1
-
-        # print the diff
         changelist.append(c)
         changelist.append("\n")
 
@@ -276,19 +278,8 @@ def file_diff(sbh1requestcontent, sbh3requestcontent, request, requesttype):
     changelist.append(get_end_of_error_log(50))
 
     if numofchanges>0:
-        #raise ValueError(''.join(changelist))
-        #print(changelist)
-        # print("TEST FAILED: Content does not match\n")
-        # print("SBH1\n")
-        # print(sbh1data)
-        # print("SBH3\n")
-        # print(sbh3data)
         return 0
-    #else if (sbh1data.status_code != sbh3data.status_code): TODO: return response instead of response.text so status can be compared
     else:
-        # print("TEST PASSED: Content matches\n")
-        #print("sbh3data\n")
-        #print(sbh3data)
         return 1
 
 def login_with(data, version, headers = {'Accept':'text/plain'}):
@@ -316,6 +307,24 @@ page
     test_state.add_get_request(request, testpath, test_name)
     #get_request("profile", 1, headers = {"Accept": "text/plain"}, route_parameters = [], re_render_time = 0)
     compare_request(get_request(request, 1, headers, route_parameters), get_request(request, 3, headers, route_parameters), request, "get request", test_type)
+
+def compare_get_request_json(request, test_name = "", route_parameters = [], headers = {}, test_type="Other", fields = []):
+    """Complete a get request and error if the json fields differs from previous results.
+page
+    request -- string, the name of the page being requested
+    route_parameters -- a ordered lists of the parameters for the endpoint
+    test_name -- a name to make the request unique from another test of this endpoint
+    headers -- a dictionary of headers to include in the request
+    re_render_time -- time to wait in milliseconds before rendering javascript again"""
+
+    # remove any leading forward slashes for consistency
+    request = clip_request(request)
+
+    #gives filepath for old test for 1 - sbh3 test: now using for checking which endpoints were tested
+    testpath = request_file_path(request, "get request", test_name)
+    test_state.add_get_request(request, testpath, test_name)
+    #get_request("profile", 1, headers = {"Accept": "text/plain"}, route_parameters = [], re_render_time = 0)
+    compare_json(get_request(request, 1, headers, route_parameters), get_request(request, 3, headers, route_parameters), request, "get request", test_type, fields)
 
 def compare_get_request_download(request, test_name = "", route_parameters = [], headers = {}, test_type="Other"):
     """Complete a get_file request and error if it differs from previous results.
