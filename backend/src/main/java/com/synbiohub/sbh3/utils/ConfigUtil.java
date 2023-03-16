@@ -24,9 +24,11 @@ import java.util.Map;
 public class ConfigUtil {
 
     private static JsonNode json;
+    private static JsonNode localjson;
     private static ObjectMapper mapper = new ObjectMapper();
 
     public ConfigUtil() {
+        localjson = null;
         json = null;
 //        try {
 //            // Initialize config.local.dup.json
@@ -40,7 +42,12 @@ public class ConfigUtil {
 //            log.error("Error intializing config file!");
 //        }
         try {
-            json = mapper.readValue(new File("data/config.local.json"), JsonNode.class);
+            json = mapper.readValue(new File("src/main/resources/config.json"), JsonNode.class);
+            if (Files.exists(new File("data/config.local.json").toPath())) {
+                localjson = mapper.readValue(new File("data/config.local.json"), JsonNode.class);
+            } else {
+                localjson = mapper.createObjectNode();
+            }
         } catch (Exception e) {
             log.error("Error initializing config file!");
         }
@@ -50,12 +57,10 @@ public class ConfigUtil {
         if (key.isEmpty())
             return json;
         try {
-            var item = json.get(key);
+            var item = localjson.get(key);
             if (item != null && !item.isNull()) {
                 return item;
             } else {
-                // Go to regular config if item not in local
-                json = mapper.readValue(new File("src/main/resources/config.json"), JsonNode.class);
                 return json.get(key);
             }
         } catch (Exception e) {

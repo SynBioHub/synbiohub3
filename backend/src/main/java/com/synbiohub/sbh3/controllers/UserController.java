@@ -186,6 +186,8 @@ public class UserController {
 
         try {
             if (file.createNewFile()) {
+                allParams.put("sparqlEndpoint", "http://virtuoso3:8890/sparql");
+                allParams.put("graphStoreEndpoint", "http://virtuoso3:8890/sparql-graph-crud-auth/");
                 String json = mapper.writeValueAsString(allParams);
                 FileWriter fw = new FileWriter(file.getAbsoluteFile());
                 BufferedWriter bw = new BufferedWriter(fw);
