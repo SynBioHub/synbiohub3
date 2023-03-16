@@ -25,17 +25,17 @@ public class ConfigUtil {
 
     public ConfigUtil() {
         json = null;
-        try {
-            // Initialize config.local.json
-            if (!Files.exists(new File("data/config.local.json").toPath())) {
-                Files.copy(new File("src/main/resources/config.json").toPath(), new File("data/config.local.json").toPath());
-                json = mapper.readValue(new File("data/config.local.json"), JsonNode.class);
-            } else
-                json = mapper.readValue(new File("data/config.local.json"), JsonNode.class);
-
-        } catch (Exception e) {
-            log.error("Error intializing config file!");
-        }
+//        try {
+//            // Initialize config.local.dup.json
+//            if (!Files.exists(new File("data/config.local.dup.json").toPath())) {
+//                Files.copy(new File("src/main/resources/config.json").toPath(), new File("data/config.local.dup.json").toPath());
+//                json = mapper.readValue(new File("data/config.local.dup.json"), JsonNode.class);
+//            } else
+//                json = mapper.readValue(new File("data/config.local.dup.json"), JsonNode.class);
+//
+//        } catch (Exception e) {
+//            log.error("Error intializing config file!");
+//        }
     }
 
     public static JsonNode get(String key) {
@@ -65,7 +65,7 @@ public class ConfigUtil {
     public void setLocalConfig(Map<String, String> params) {
         try {
             String jsonString = "";
-            Path path = Paths.get("/data/config.local.json");
+            Path path = Paths.get("/data/config.local.dup.json");
             ObjectNode js = (ObjectNode) mapper.createObjectNode();
             Gson gson = new Gson();
 
