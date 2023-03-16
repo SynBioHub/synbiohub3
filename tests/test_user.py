@@ -1,6 +1,6 @@
 from unittest import TestCase
 from test_arguments import test_print
-from test_functions import compare_post_request, compare_get_request, login_with, post_request, get_request
+from test_functions import compare_post_request, compare_get_request, login_with, post_request, get_request, compare_get_request_json
 
 class TestUser(TestCase):
 
