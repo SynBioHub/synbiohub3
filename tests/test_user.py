@@ -32,7 +32,7 @@ class TestUser(TestCase):
         login_with(logininfo, 3)
 
         #uncomment when profile works
-        #compare_get_request_json("/profile", headers = headers, route_parameters = [], test_type = test_type, fields=["name", "username", "email", "affiliation", "graphUri"])
+        compare_get_request_json("/profile", headers = headers, route_parameters = [], test_type = test_type, fields=["name", "username", "email", "affiliation", "graphUri"])
 
         data={
              'name': 'ronnie',

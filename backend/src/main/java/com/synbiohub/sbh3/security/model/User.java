@@ -44,6 +44,18 @@ public class User implements UserDetails{
     @Column(name = "user_role")
     private Role role;
 
+    @Column(name = "graph_uri")
+    private String graphUri;
+
+    @Column(name = "is_admin")
+    private Boolean isAdmin;
+
+    @Column(name = "is_curator")
+    private Boolean isCurator;
+
+    @Column(name = "is_member")
+    private Boolean isMember;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));
