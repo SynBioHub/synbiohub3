@@ -63,7 +63,7 @@ public class SearchService {
 
         String userGraph = getPrivateGraph();
         if (!userGraph.isEmpty()) {
-            String defaultGraph = ConfigUtil.get("triplestore").get("defaultGraph").toString();
+            String defaultGraph = ConfigUtil.get("defaultGraph").toString();
             sparqlArgs.replace("from", "FROM <" + defaultGraph.substring(1,defaultGraph.length()-1) + ">\nFROM NAMED <" + userGraph + ">");
         }
 
@@ -329,13 +329,13 @@ public class SearchService {
         String url;
         // Encoding the SPARQL query to be sent to Explorer/SPARQL
         HashMap<String, String> params = new HashMap<>();
-        params.put("default-graph-uri", ConfigUtil.get("triplestore").get("defaultGraph").asText());
+        params.put("default-graph-uri", ConfigUtil.get("defaultGraph").asText());
         params.put("query", query);
 
         if (ConfigUtil.get("useSBOLExplorer").asBoolean() && query.length() > 0)
             url = ConfigUtil.get("SBOLExplorerEndpoint").asText()  + "?default-graph-uri={default-graph-uri}&query={query}&";
         else
-            url = ConfigUtil.get("triplestore").get("sparqlEndpoint").asText() + "?default-graph-uri={default-graph-uri}&query={query}&format=json&";
+            url = ConfigUtil.get("sparqlEndpoint").asText() + "?default-graph-uri={default-graph-uri}&query={query}&format=json&";
 
         return restTemplate.getForObject(url, String.class, params);
     }
@@ -344,10 +344,10 @@ public class SearchService {
         RestTemplate restTemplate = new RestTemplate();
         String url;
         HashMap<String, String> params = new HashMap<>();
-        params.put("default-graph-uri", ConfigUtil.get("triplestore").get("defaultGraph").asText());
+        params.put("default-graph-uri", ConfigUtil.get("defaultGraph").asText());
         params.put("query", query);
 
-        url = ConfigUtil.get("triplestore").get("sparqlEndpoint").asText() + "?default-graph-uri={default-graph-uri}&query={query}&format=json&";
+        url = ConfigUtil.get("sparqlEndpoint").asText() + "?default-graph-uri={default-graph-uri}&query={query}&format=json&";
 
         return restTemplate.getForObject(url, String.class, params);
     }
@@ -356,14 +356,14 @@ public class SearchService {
         RestTemplate restTemplate = new RestTemplate();
         String url;
         HashMap<String, String> params = new HashMap<>();
-        params.put("default-graph-uri", ConfigUtil.get("triplestore").get("defaultGraph").asText());
+        params.put("default-graph-uri", ConfigUtil.get("defaultGraph").asText());
         params.put("query", query);
         params.put("format", "application/rdf+xml");
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add("Accept", "application/rdf+xml");
         HttpEntity entity = new HttpEntity(httpHeaders);
 
-        url = ConfigUtil.get("triplestore").get("sparqlEndpoint").asText() + "?default-graph-uri={default-graph-uri}&query={query}";
+        url = ConfigUtil.get("sparqlEndpoint").asText() + "?default-graph-uri={default-graph-uri}&query={query}";
 
         var rest = restTemplate.exchange(url, HttpMethod.GET, entity, byte[].class, params);
         return rest.getBody();
@@ -398,7 +398,7 @@ public class SearchService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication instanceof AnonymousAuthenticationToken) return "";
         //var user = authentication.getPrincipal();
-        return ConfigUtil.get("triplestore").get("graphPrefix").asText() + "/user/" + authentication.getName();
+        return ConfigUtil.get("graphPrefix").asText() + "/user/" + authentication.getName();
     }
 
     // Method to encode a string value using `UTF-8` encoding scheme

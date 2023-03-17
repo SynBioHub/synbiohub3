@@ -2,6 +2,7 @@ package com.synbiohub.sbh3.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.synbiohub.sbh3.dto.LoginDTO;
 import com.synbiohub.sbh3.dto.UserRegistrationDTO;
 import com.synbiohub.sbh3.security.CustomUserService;
@@ -18,6 +19,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.net.URL;
 import java.util.Map;
 
 @RestController
@@ -156,6 +162,11 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         return ResponseEntity.ok(mapper.writeValueAsString(user));
     }
+
+    @GetMapping(value = "/profile1", produces = "text/plain")
+    public ResponseEntity<String> getProfile1() throws JsonProcessingException {
+        return ResponseEntity.ok("test");
+    }
 //
 //    @PostMapping(value = "/profile", produces = "text/plain")
 //    public ResponseEntity<String> updateProfile(@RequestParam Map<String, String> allParams) throws JsonProcessingException, AuthenticationException {
@@ -163,9 +174,35 @@ public class UserController {
 //
 //    }
 //
-//    // TODO: this is hardcoded, but for true setup, need interceptor for this endpoint through frontend -> Ben
-//    @PostMapping(value = "/setup")
-//    public ResponseEntity<String> setup(@RequestParam Map<String, String> allParams) throws AuthenticationException {
+    // TODO: this is hardcoded, but for true setup, need interceptor for this endpoint through frontend -> Ben
+    @PostMapping(value = "/setup")
+    public ResponseEntity<String> setup(@RequestBody Map<String, String> allParams) {
+        String fileName = "config.local.json";
+        String workingDirectory = System.getProperty("user.dir") + "/data";
+        File file = new File(workingDirectory + File.separator + fileName);
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.enable(SerializationFeature.INDENT_OUTPUT);
+
+        try {
+            if (file.createNewFile()) {
+                allParams.put("sparqlEndpoint", "http://virtuoso3:8890/sparql");
+                allParams.put("graphStoreEndpoint", "http://virtuoso3:8890/sparql-graph-crud-auth/");
+                String json = mapper.writeValueAsString(allParams);
+                FileWriter fw = new FileWriter(file.getAbsoluteFile());
+                BufferedWriter bw = new BufferedWriter(fw);
+                bw.write(json);
+                bw.close();
+                return ResponseEntity.ok("File created successfully!");
+            } else {
+                return ResponseEntity.ok("File already exists!");
+            }
+        } catch (IOException e) {
+            return ResponseEntity.ok("Failed to create file!");
+        }
+
+
+
 //        if (configurationService.isLaunched()) {
 //            return new ResponseEntity<>(HttpStatus.OK);
 //        }
@@ -173,9 +210,18 @@ public class UserController {
 //        configurationService.save("firstLaunch", "false");
 //        registerNewUser(userService.registerNewAdminUser(allParams)); // assumes no users in repository, should crate admin user
 //        // only first user is admin
-//        //userService.setUpConfig(allParams); // completely rewrites config.local.json
+//        //userService.setUpConfig(allParams); // completely rewrites config.local.dup.json
 //        return new ResponseEntity<>(HttpStatus.OK);
-//    }
+    }
+
+    @GetMapping("/firstLaunched")
+    public Boolean checkFirstLaunch() {
+        String fileName = "config.local.dup.json";
+        String workingDirectory = System.getProperty("user.dir");
+        File file = new File(workingDirectory + File.separator + fileName);
+
+        return file.exists();
+    }
 
     @GetMapping("/public/demotest1")
     public String publicTest() {
