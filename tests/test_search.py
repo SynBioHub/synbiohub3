@@ -1,6 +1,6 @@
 import requests
 from unittest import TestCase
-from test_functions import compare_get_request, compare_post_request, get_request, post_request
+from test_functions import compare_get_request, compare_post_request, get_request, post_request, compare_get_request_json
 from test_arguments import test_print
 
 # "/manage" is tested within test_submit.py
@@ -29,7 +29,7 @@ class TestSearch(TestCase):
 
         # #test_sparql(self):
         # test_print("test_sparql starting")
-        #compare_get_request("/sparql?query=SELECT+%3Fsubject+%3Fpredicate+%3Fobject+WHERE+%7B+%3Fsubject+%3Fpredicate+%3Fobject+.+FILTER+%28str%28%3Fobject%29+%3D+%22BBa_B0034%22%29%7D", headers = {"Accept":"text/plain"}, route_parameters = [])
+        compare_get_request_json("/sparql?query=:query", headers = {"Accept":"application/json"}, route_parameters = ["SELECT+%3Fsubject+%3Fpredicate+%3Fobject+WHERE+%7B+%3Fsubject+%3Fpredicate+%3Fobject+.+FILTER+%28str%28%3Fobject%29+%3D+%22BBa_B0034%22%29%7D"])
         # test_print("test_sparql completed")
 
         test_print("test_subcollections_public starting")

@@ -201,10 +201,16 @@ def compare_json(sbh1requestcontent, sbh3requestcontent, request, requesttype, t
 
     sbh1_json = json.loads(sbh1requestcontent.text)
     sbh3_json = json.loads(sbh3requestcontent.text)
-    for f in fields:
-        if(sbh1_json[f] != sbh3_json[f]):
+    if(fields == []):
+        if(sorted(sbh1_json) != sorted(sbh3_json)):
             test_passed = 0
             raise Exception("RESPONSE CONTENT TEST FAILED: Content does not match\n")
+    else:
+        for f in fields:
+            if(sbh1_json[f] != sbh3_json[f]):
+                test_passed = 0
+                raise Exception("RESPONSE CONTENT TEST FAILED: Content does not match\n")
+    print("RESPONSE CONTENT TEST PASSED: Content matches\n")
 
     add_test_results(test_passed, test_type)
 
