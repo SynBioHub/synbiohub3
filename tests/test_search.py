@@ -14,7 +14,7 @@ class TestSearch(TestCase):
         # test_searchQuery(self):
         test_print("test_search starting")
         # #compare_get_request("/search/:query?", route_parameters = ["I0462"])
-        compare_get_request("/search/:query?", headers = headers, route_parameters = ["BBa_B00"], test_type = test_type)
+        compare_get_request_json("/search/:query?", headers = headers, route_parameters = ["BBa_B00"], test_type = test_type)
         test_print("test_search completed")
 
         # test_searchCount(self):
