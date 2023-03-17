@@ -215,7 +215,7 @@ function App () {
   app.get('/user/:userId/:collectionId/:displayId/:version/:hash/share/similar', views.search)
 
   app.get('/:type/count', api.count)
-  app.get('/sparql', sparql)
+  app.get('/sparql?query=:query', sparql)
 
   // Download Endpoints
   app.get('/public/:collectionId/:displayId/sbol', api.persistentIdentity)
