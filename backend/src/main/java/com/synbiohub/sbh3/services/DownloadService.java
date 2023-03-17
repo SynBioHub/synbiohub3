@@ -31,7 +31,7 @@ public class DownloadService {
 
 
     public String getMetadata(String uri) {
-        String graphPrefix = ConfigUtil.get("triplestore").get("graphPrefix").asText();
+        String graphPrefix = ConfigUtil.get("graphPrefix").asText();
         URI uriClass = null;
         try {
             uriClass = new URI(uri);
@@ -53,7 +53,7 @@ public class DownloadService {
     }
 
     public SBOLDocument getSBOLNonRecursive(String uri) {
-        String graphPrefix = ConfigUtil.get("triplestore").get("graphPrefix").asText();
+        String graphPrefix = ConfigUtil.get("graphPrefix").asText();
         URI uriClass = null;
         try {
             uriClass = new URI(uri);
@@ -80,7 +80,7 @@ public class DownloadService {
     }
 
     public Model getRecursiveModel(String uri) {
-        String graphPrefix = ConfigUtil.get("triplestore").get("graphPrefix").asText();
+        String graphPrefix = ConfigUtil.get("graphPrefix").asText();
         URI uriClass = null;
         try {
             uriClass = new URI(uri);
