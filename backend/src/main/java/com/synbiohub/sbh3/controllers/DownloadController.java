@@ -32,7 +32,7 @@ public class DownloadController extends AntPathMatcher {
     public ResponseEntity<?> getSBOLRecursiveRDF(@PathVariable String db, @PathVariable String id, @PathVariable String ver) {
 //        var uri = request.getRequestURL().toString();
 //        String splitUri = uri.split("/sbol")[0]; //TODO replace http://localhost:6789 with https://synbiohub.org
-        String splitUri = ConfigUtil.get("triplestore").get("defaultGraph").toString().replace("\"","") + "/" + db + "/" + id + "/" + ver;
+        String splitUri = ConfigUtil.get("defaultGraph").toString().replace("\"","") + "/" + db + "/" + id + "/" + ver;
         String uri = splitUri + "/sbol";
 
         var sbolDocument = downloadService.getSBOLRecursive(splitUri);
@@ -55,7 +55,7 @@ public class DownloadController extends AntPathMatcher {
 
     @GetMapping(value = "/public/{db}/{id}/{ver}/sbolnr")
     public ResponseEntity<?> getSBOLNonRecursive(@PathVariable String db, @PathVariable String id, @PathVariable String ver) throws JsonProcessingException {
-        String splitUri = ConfigUtil.get("triplestore").get("defaultGraph").toString().replace("\"","") + "/" + db + "/" + id + "/" + ver;
+        String splitUri = ConfigUtil.get("defaultGraph").toString().replace("\"","") + "/" + db + "/" + id + "/" + ver;
         String uri = splitUri + "/sbolnr";
         var results = downloadService.getSBOLNonRecursive(splitUri);
         //byte[] buf = mapper.writeValueAsBytes(results);
@@ -78,7 +78,7 @@ public class DownloadController extends AntPathMatcher {
 
     @GetMapping(value = "/public/{db}/{id}/{ver}/metadata")
     public ResponseEntity<?> getMetadata(@PathVariable String db, @PathVariable String id, @PathVariable String ver) throws JsonProcessingException {
-        String splitUri = ConfigUtil.get("triplestore").get("defaultGraph").toString().replace("\"","") + "/" + db + "/" + id + "/" + ver;
+        String splitUri = ConfigUtil.get("defaultGraph").toString().replace("\"","") + "/" + db + "/" + id + "/" + ver;
         String uri = splitUri + "/metadata";
         String results = downloadService.getMetadata(splitUri);
         byte[] buf = mapper.writeValueAsBytes(mapper.readTree(results));
@@ -95,7 +95,7 @@ public class DownloadController extends AntPathMatcher {
 
     @GetMapping(value = "/public/{db}/{id}/{ver}/gb")
     public ResponseEntity<?> getSBOLRecursiveGenbank(@PathVariable String db, @PathVariable String id, @PathVariable String ver) {
-        String splitUri = ConfigUtil.get("triplestore").get("defaultGraph").toString().replace("\"","") + "/" + db + "/" + id + "/" + ver;
+        String splitUri = ConfigUtil.get("defaultGraph").toString().replace("\"","") + "/" + db + "/" + id + "/" + ver;
         String uri = splitUri + "/gb";
 
         var sbolDocument = downloadService.getSBOLRecursive(splitUri);
@@ -118,7 +118,7 @@ public class DownloadController extends AntPathMatcher {
 
     @GetMapping(value = "/public/{db}/{id}/{ver}/fasta")
     public ResponseEntity<?> getSBOLRecursiveFasta(@PathVariable String db, @PathVariable String id, @PathVariable String ver) {
-        String splitUri = ConfigUtil.get("triplestore").get("defaultGraph").toString().replace("\"","") + "/" + db + "/" + id + "/" + ver;
+        String splitUri = ConfigUtil.get("defaultGraph").toString().replace("\"","") + "/" + db + "/" + id + "/" + ver;
         String uri = splitUri + "/fasta";
 
         var sbolDocument = downloadService.getSBOLRecursive(splitUri);
@@ -141,7 +141,7 @@ public class DownloadController extends AntPathMatcher {
 
     @GetMapping(value = "/public/{db}/{id}/{ver}/gff")
     public ResponseEntity<?> getSBOLRecursiveGff3(@PathVariable String db, @PathVariable String id, @PathVariable String ver) {
-        String splitUri = ConfigUtil.get("triplestore").get("defaultGraph").toString().replace("\"","") + "/" + db + "/" + id + "/" + ver;
+        String splitUri = ConfigUtil.get("defaultGraph").toString().replace("\"","") + "/" + db + "/" + id + "/" + ver;
         String uri = splitUri + "/gff";
 
         var sbolDocument = downloadService.getSBOLRecursive(splitUri);
