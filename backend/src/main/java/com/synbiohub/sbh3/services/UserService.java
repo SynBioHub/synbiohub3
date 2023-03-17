@@ -53,14 +53,22 @@ public class UserService {
                     .build();
         }
         var user = User
-                    .builder()
-                    .username(userRegistrationDTO.getUsername())
-                    .name(userRegistrationDTO.getName())
-                    .email(userRegistrationDTO.getEmail())
-                    .affiliation(userRegistrationDTO.getAffiliation())
-                    .password(passwordEncoder.encode(userRegistrationDTO.getPassword1()))
-                    .role(Role.ADMIN)
-                    .build();
+                .builder()
+                .username(userRegistrationDTO.getUsername())
+                .name(userRegistrationDTO.getName())
+                .email(userRegistrationDTO.getEmail())
+                .affiliation(userRegistrationDTO.getAffiliation())
+                .password(passwordEncoder.encode(userRegistrationDTO.getPassword1()))
+                .role(Role.ADMIN)
+                .isMember(true)
+                .isCurator(false)
+                .build();
+        user.setGraphUri("https://synbiohub.org/user/" + user.getUsername());
+        if (user.getRole().equals(Role.ADMIN)) {
+            user.setIsAdmin(true);
+        } else {
+            user.setIsAdmin(false);
+        }
         userRepository.save(user);
         var jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse
@@ -99,14 +107,12 @@ public class UserService {
 
     public User getUserProfile() {
         Authentication authentication = checkAuthentication();
-        var user = userRepository.findByUsername(authentication.getName());
-        if (user.isEmpty())
+        if (authentication == null) {
             return null;
-
-        var userGet = user.get();
-        userGet.setPassword("");
-        return userGet;
-
+        }
+        User user = userRepository.findByUsername(authentication.getName()).orElseThrow();
+        user.setPassword("");
+        return user;
     }
 
     /**
@@ -139,7 +145,7 @@ public class UserService {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return owners.contains(ConfigUtil.get("triplestore").get("graphPrefix").asText() + "user/" + SecurityContextHolder.getContext().getAuthentication().getName());
+        return owners.contains(ConfigUtil.get("graphPrefix").asText() + "user/" + SecurityContextHolder.getContext().getAuthentication().getName());
     }
 
     public ResponseEntity<String> updateUser(ObjectMapper mapper, Map<String, String> allParams) throws JsonProcessingException, AuthenticationException, javax.naming.AuthenticationException {
@@ -171,7 +177,7 @@ public class UserService {
 
     private Authentication checkAuthentication() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication instanceof AnonymousAuthenticationToken) return null;
+        if (authentication instanceof AnonymousAuthenticationToken || authentication == null) return null;
         return authentication;
     }
 
