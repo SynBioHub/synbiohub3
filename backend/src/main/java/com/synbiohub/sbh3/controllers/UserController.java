@@ -178,7 +178,7 @@ public class UserController {
     @PostMapping(value = "/setup")
     public ResponseEntity<String> setup(@RequestBody Map<String, String> allParams) {
         String fileName = "config.local.json";
-        String workingDirectory = System.getProperty("user.dir");
+        String workingDirectory = System.getProperty("user.dir") + "/data";
         File file = new File(workingDirectory + File.separator + fileName);
 
         ObjectMapper mapper = new ObjectMapper();
@@ -186,6 +186,8 @@ public class UserController {
 
         try {
             if (file.createNewFile()) {
+                allParams.put("sparqlEndpoint", "http://virtuoso3:8890/sparql");
+                allParams.put("graphStoreEndpoint", "http://virtuoso3:8890/sparql-graph-crud-auth/");
                 String json = mapper.writeValueAsString(allParams);
                 FileWriter fw = new FileWriter(file.getAbsoluteFile());
                 BufferedWriter bw = new BufferedWriter(fw);
@@ -208,13 +210,13 @@ public class UserController {
 //        configurationService.save("firstLaunch", "false");
 //        registerNewUser(userService.registerNewAdminUser(allParams)); // assumes no users in repository, should crate admin user
 //        // only first user is admin
-//        //userService.setUpConfig(allParams); // completely rewrites config.local.json
+//        //userService.setUpConfig(allParams); // completely rewrites config.local.dup.json
 //        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/firstLaunched")
     public Boolean checkFirstLaunch() {
-        String fileName = "config.local.json";
+        String fileName = "config.local.dup.json";
         String workingDirectory = System.getProperty("user.dir");
         File file = new File(workingDirectory + File.separator + fileName);
 
