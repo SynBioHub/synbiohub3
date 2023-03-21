@@ -16,14 +16,12 @@ import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.URL;
 import java.util.Map;
 
 @RestController
@@ -36,57 +34,7 @@ public class UserController {
     private final UserService userService;
     private final RestClient restClient;
     private final ObjectMapper mapper;
-//    private final ConfigUtil configUtil;
-//    private final CustomConfigurationService configurationService;
 
-//    @PostMapping(value = "/login", produces = "text/plain")
-//    public ResponseEntity login(@RequestBody LoginDTO loginDTO, HttpServletRequest request) {
-//        final String loginPath = "/login";
-//        final String tokenPath = "/token";
-//        String url = String.valueOf(request.getRequestURL());
-//        if (url.endsWith(loginPath)) {
-//            url = url.substring(0,url.length()-6) + tokenPath;
-//        } else {
-//            url = url + tokenPath;
-//        }
-//        return restClient.post(url, Map.of(), String.class, restClient.createHeaders(loginDTO.getUsername(), loginDTO.getPassword()));
-//        Authentication auth = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginDTO.getUsernameOrEmail(), loginDTO.getPassword()));
-//        if (auth == null) {
-//            log.error("Bad credentials");
-//            return new ResponseEntity(HttpStatus.UNAUTHORIZED);
-//        }
-//        SecurityContextHolder.getContext().setAuthentication(auth);
-//        log.info("User logged in successfully");
-//        return ResponseEntity.ok(RequestContextHolder.currentRequestAttributes().getSessionId());
-//    }
-
-//    @PostMapping(value = "/login", produces = "text/plain")
-//    public ResponseEntity login(@RequestParam String email, @RequestParam String password, HttpServletRequest request) {
-//        LoginDTO loginDTO = LoginDTO
-//                .builder()
-//                .email(email)
-//                .password(password)
-//                .build();
-//        final String loginPath = "/login";
-//        final String tokenPath = "/token";
-//        String url = String.valueOf(request.getRequestURL());
-//        if (url.endsWith(loginPath)) {
-//            url = url.substring(0, url.length() - 6) + tokenPath;
-//        } else {
-//            url = url + tokenPath;
-//        }
-//        return restClient.post(url, Map.of(), String.class, restClient.createHeaders(loginDTO.getEmail(), loginDTO.getPassword()));
-//    }
-
-//    @PostMapping(value = "/login", produces = "text/plain")
-//    public ResponseEntity login(@RequestParam String email, @RequestParam String password) {
-//        LoginDTO loginRequest = LoginDTO
-//                .builder()
-//                .email(email)
-//                .password(password)
-//                .build();
-//        return ResponseEntity.ok(userService.authenticate(loginRequest));
-//    }
 
     @PostMapping(value = "/login", produces = "text/plain")
     public ResponseEntity login(@RequestParam String email, @RequestParam String password) {
@@ -108,19 +56,6 @@ public class UserController {
 //    @ResponseStatus(HttpStatus.OK)
 //    public void logout(HttpSecurity http) throws Exception {
 //        http.logout().logoutSuccessUrl("/login").invalidateHttpSession(true).deleteCookies("JSESSIONID");
-//    }
-
-//    @PostMapping(value = "/register")
-//    public ResponseEntity registerNewUser(@RequestBody UserRegistrationDTO userRegistrationDTO) {
-//        try {
-//            customUserService.registerNewUserAccount(userRegistrationDTO);
-//        } catch (Exception e) {
-//            log.error("Error creating a new account.");
-//            e.printStackTrace();
-//            return new ResponseEntity(HttpStatus.BAD_REQUEST);
-//        }
-//        log.info("User registered successfully");
-//        return new ResponseEntity(HttpStatus.OK);
 //    }
 
     @PostMapping(value = "/register")
@@ -156,27 +91,27 @@ public class UserController {
 //    }
 //
     @GetMapping(value = "/profile", produces = "text/plain")
-    public ResponseEntity<String> getProfile() throws JsonProcessingException {
+    public ResponseEntity<String> getProfile() throws JsonProcessingException, CloneNotSupportedException {
         var user = userService.getUserProfile();
         if (user == null)
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         return ResponseEntity.ok(mapper.writeValueAsString(user));
     }
 
-    @GetMapping(value = "/profile1", produces = "text/plain")
-    public ResponseEntity<String> getProfile1() throws JsonProcessingException {
-        return ResponseEntity.ok("test");
+    // Only updates the fields name, email, and affiliation currently
+    @PostMapping(value = "/profile", produces = "text/plain")
+    public ResponseEntity<String> updateProfile(@RequestParam Map<String, String> allParams) throws JsonProcessingException, CloneNotSupportedException {
+        User updatedUser = userService.updateUser(allParams);
+        if (updatedUser == null) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        User copyUser = (User) updatedUser.clone();
+        copyUser.setPassword("");
+        return ResponseEntity.ok("Profile updated successfully");
     }
-//
-//    @PostMapping(value = "/profile", produces = "text/plain")
-//    public ResponseEntity<String> updateProfile(@RequestParam Map<String, String> allParams) throws JsonProcessingException, AuthenticationException {
-//        return userService.updateUser(mapper, allParams);
-//
-//    }
-//
-    // TODO: this is hardcoded, but for true setup, need interceptor for this endpoint through frontend -> Ben
+
     @PostMapping(value = "/setup")
-    public ResponseEntity<String> setup(@RequestBody Map<String, String> allParams) {
+    public ResponseEntity<String> setup(@RequestParam Map<String, String> allParams) {
         String fileName = "config.local.json";
         String workingDirectory = System.getProperty("user.dir") + "/data";
         File file = new File(workingDirectory + File.separator + fileName);
@@ -200,18 +135,6 @@ public class UserController {
         } catch (IOException e) {
             return ResponseEntity.ok("Failed to create file!");
         }
-
-
-
-//        if (configurationService.isLaunched()) {
-//            return new ResponseEntity<>(HttpStatus.OK);
-//        }
-//        configurationService.save(allParams);
-//        configurationService.save("firstLaunch", "false");
-//        registerNewUser(userService.registerNewAdminUser(allParams)); // assumes no users in repository, should crate admin user
-//        // only first user is admin
-//        //userService.setUpConfig(allParams); // completely rewrites config.local.dup.json
-//        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/firstLaunched")
@@ -222,15 +145,4 @@ public class UserController {
 
         return file.exists();
     }
-
-    @GetMapping("/public/demotest1")
-    public String publicTest() {
-        return "public test worked.";
-    }
-
-    @GetMapping("/test/demotest2")
-    public String privateTest(Authentication authentication) {
-        return "Hello, " + authentication.getName() + "!";
-    }
-
 }
