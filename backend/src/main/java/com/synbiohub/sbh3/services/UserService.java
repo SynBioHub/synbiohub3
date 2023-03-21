@@ -105,14 +105,15 @@ public class UserService {
         return pat.matcher(email).matches();
     }
 
-    public User getUserProfile() {
+    public User getUserProfile() throws CloneNotSupportedException {
         Authentication authentication = checkAuthentication();
         if (authentication == null) {
             return null;
         }
         User user = userRepository.findByUsername(authentication.getName()).orElseThrow();
-        user.setPassword("");
-        return user;
+        User copyUser = (User) user.clone();
+        copyUser.setPassword("");
+        return copyUser;
     }
 
     /**
@@ -148,16 +149,15 @@ public class UserService {
         return owners.contains(ConfigUtil.get("graphPrefix").asText() + "user/" + SecurityContextHolder.getContext().getAuthentication().getName());
     }
 
-    public ResponseEntity<String> updateUser(ObjectMapper mapper, Map<String, String> allParams) throws JsonProcessingException, AuthenticationException, javax.naming.AuthenticationException {
-        Authentication auth = checkValidLogin(authentication -> authentication, allParams.get("email"), allParams.get("password1"));
-        customUserService.confirmPasswordsMatch(allParams.get("password1"), allParams.get("password2"));
-        User user = getUserProfile();
-        if (user == null || auth == null)
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        updateUserFields(user, allParams);
-        userRepository.save(user);
-        user.setPassword("");
-        return ResponseEntity.ok(mapper.writeValueAsString(user));
+    public User updateUser(Map<String, String> allParams) throws AuthenticationException, CloneNotSupportedException {
+        ObjectMapper mapper = new ObjectMapper();
+        Authentication auth = checkAuthentication();
+        User existingUser = getUserProfile();
+        if (existingUser == null || auth == null) {
+            return null;
+        }
+        updateUserFields(existingUser, allParams);
+        return existingUser;
     }
 
     private void updateUserFields(User user, Map<String, String> allParams) {
@@ -169,9 +169,6 @@ public class UserService {
         }
         if (allParams.get("affiliation") != null) {
             user.setAffiliation(allParams.get("affiliation"));
-        }
-        if (allParams.get("password1") != null) {
-            customUserService.setEncodedPassword(user, allParams.get("password1"));
         }
     }
 
