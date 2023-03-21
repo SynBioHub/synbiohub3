@@ -19,7 +19,7 @@ import java.util.List;
 @Table(name="users", schema = "public")
 @NoArgsConstructor
 @AllArgsConstructor
-public class User implements UserDetails{
+public class User implements UserDetails, Cloneable{
 
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -79,5 +79,10 @@ public class User implements UserDetails{
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
     }
 }
