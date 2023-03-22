@@ -1,6 +1,6 @@
 import requests
 from unittest import TestCase
-from test_functions import compare_get_request, compare_post_request, get_request, post_request, compare_get_request_json
+from test_functions import compare_get_request, compare_post_request, get_request, post_request, compare_get_request_json, compare_get_request_json_list
 from test_arguments import test_print
 
 # "/manage" is tested within test_submit.py
@@ -14,7 +14,7 @@ class TestSearch(TestCase):
         # test_searchQuery(self):
         test_print("test_search starting")
         # #compare_get_request("/search/:query?", route_parameters = ["I0462"])
-        compare_get_request_json("/search/:query?", headers = headers, route_parameters = ["BBa_B00"], test_type = test_type)
+        compare_get_request_json_list("/search/:query?", headers = headers, route_parameters = ["BBa_B00"], test_type = test_type, fields=["uri", "displayId", "version", "name", "description", "type"])
         test_print("test_search completed")
 
         # test_searchCount(self):
