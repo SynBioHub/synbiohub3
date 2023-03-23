@@ -68,8 +68,20 @@ function createKeyToValueMap(
   const sectionsToRender = [];
   Object.keys(sections).forEach(key => {
     let currentSection = sections[key];
-    currentSection.some((possibility, index) => {
-      if (!possibility.value) {
+    const foundData = currentSection.some((possibility, index) => {
+      const titleKey = possibility.section.title;
+      if (
+        possibility.section &&
+        !possibility.section.predicates &&
+        possibility.section.text
+      ) {
+        map[titleKey] = {
+          value: possibility.section.text,
+          index
+        };
+        sectionsToRender.push({ ...possibility.section, key: titleKey });
+        return true;
+      } else if (!possibility.value) {
         const stackTrace = getQueryStackTrace(
           possibility.table,
           possibility.section,
@@ -89,14 +101,33 @@ function createKeyToValueMap(
           );
         }
       } else {
-        map[key] = { value: possibility.value, index };
-        sectionsToRender.push({ ...possibility.section, key });
+        map[titleKey] = { value: possibility.value, index };
+        sectionsToRender.push({ ...possibility.section, key: titleKey });
         return true;
       }
     });
+    if (!foundData && currentSection.length > 0) {
+      const titleKey = currentSection[0].section.title;
+      map[titleKey] = { value: '', index: 0 };
+      sectionsToRender.push({ ...currentSection[0].section, key: titleKey });
+    }
   });
   setSectionsToRender(sectionsToRender);
+  Object.keys(map).forEach(key => {
+    map[key].value = loadText(map[key].value, map);
+  });
   setTitleToValueMap(map);
+}
+
+function loadText(template, args) {
+  for (const key of Object.keys(args)) {
+    template = template.replace(
+      new RegExp(`\\$<${key}>`, 'g'),
+      args[key].value
+    );
+  }
+
+  return template;
 }
 
 export default function RowWrapper({ sections, metadata }) {
@@ -140,7 +171,6 @@ export default function RowWrapper({ sections, metadata }) {
         );
       })
       .filter(section => !section.hidden);
-    console.log(toRender);
     const newContent = toRender.map(section => {
       return (
         <SectionRenderer

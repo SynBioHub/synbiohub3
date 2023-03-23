@@ -38,6 +38,41 @@
       }
    ],
    "tables": [
+    {
+      "icon": "faPuzzlePiece",
+      "title": "Components",
+      "rootPredicate": "sbol:component",
+      "sections": [ 
+        {
+         "title": "ComponentLink",
+         "hide": true,
+         "predicates": ["sbol:definition"]
+        },
+        {
+         "title": "InstanceLink",
+         "hide": true,
+         "predicates": []
+        },
+        {
+         "title": "Access",
+         "infoLink": "https://dissys.github.io/sbol-owl/sbol-owl.html#access",
+         "predicates": ["sbol:access"],
+         "stripAfter": "#"
+        },
+        {
+         "title": "Instance",
+         "link": "$<InstanceLink>",
+         "infoLink": "http://sbols.org/v2#component",
+         "predicates": ["dcterms:title"]
+        }, 
+        {
+         "title": "Definition",
+         "infoLink": "https://dissys.github.io/sbol-owl/sbol-owl.html#definition",
+         "link": "$<ComponentLink>",
+         "predicates": ["sbol:definition", "dcterms:title"]
+        }
+     ]
+    },
      {
        "icon": "faDna",
        "title": "Sequence Annotations",
@@ -60,7 +95,7 @@
          {
           "title": "Location",
           "text": "$<Start>, $<End>",
-          "link": "$<AnnotationLink>",
+          "link": "$<Annotation Link>",
           "infoLink": "http://sbols.org/v2#Location"
          },
          {
@@ -80,7 +115,7 @@
             "hide": true
          },
          {
-            "title": "AnnotationLink",
+            "title": "Annotation Link",
             "predicates": ["sbol:location", "sbol:persistentIdentity"],
             "hide": true
          },
@@ -94,11 +129,6 @@
           "infoLink": "http://sbols.org/v2#component",
           "link": "$<ComponentLink>",
           "predicates": ["sbol:component", "sbol:definition", "dcterms:title"]
-         },
-         {
-          "title": "Sequence Annotation",
-          "hide": true,
-          "predicates": ["sbol:component", "dcterms:title"]
          },
          {
           "title": "Role(s)",
@@ -116,6 +146,7 @@
    ],
    "pages": [
      "Details",
+     "$TABLES[Components]",
      "$TABLES[Sequence Annotations]",
      "Other Properties",
      "Member of these Collections",
