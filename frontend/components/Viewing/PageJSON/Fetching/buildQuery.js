@@ -1,6 +1,8 @@
+import compileTableSections from './compileTableSections';
 import getId from './getId';
 
 export default function buildQuery(uri, tableJSON) {
+  compileTableSections(tableJSON);
   const rootPredicateDictionary = {};
   rootPredicateDictionary[tableJSON.rootPredicate] = [];
   const additionalSelections = [];

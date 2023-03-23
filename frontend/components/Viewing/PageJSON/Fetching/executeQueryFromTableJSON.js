@@ -7,6 +7,7 @@ export default function executeQueryFromTableJSON(
   table,
   urlOverride
 ) {
+  // console.log(prefixes + '\n' + buildQuery(uri, table));
   return getQueryResponse(
     prefixes + '\n' + buildQuery(uri, table),
     {},

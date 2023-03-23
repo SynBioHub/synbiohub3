@@ -5,8 +5,9 @@ import Link from 'next/link';
 import SectionRenderer from './SectionRenderer';
 import RenderIcon from './RenderIcon';
 import MetadataRenderer from './MetadataRenderer';
-import buildQuery from '../Fetching/buildQuery';
-import parseQueryResult from '../Fetching/parseQueryResult';
+import parseQueryResult, {
+  parseQueryResult2
+} from '../Fetching/parseQueryResult';
 import executeQueryFromTableJSON from '../Fetching/executeQueryFromTableJSON';
 
 /**
@@ -33,9 +34,11 @@ export default function TableBuilder({ uri, prefixes, table, metadata }) {
 
 function TableRenderer({ uri, prefixes, table, metadata }) {
   const [content, setContent] = useState([]);
+  const [content2, setContent2] = useState(null);
   useEffect(() => {
     executeQueryFromTableJSON(uri, prefixes, table).then(response => {
       setContent(parseQueryResult(table, response, prefixes));
+      setContent2(parseQueryResult2(table, response, prefixes));
     });
   }, [uri, prefixes, table]);
 
@@ -44,7 +47,13 @@ function TableRenderer({ uri, prefixes, table, metadata }) {
   if (!content) return null;
 
   if (metadata) {
-    return <MetadataRenderer title={table.title} content={content} />;
+    return (
+      <MetadataRenderer
+        title={table.title}
+        content={content}
+        content2={content2}
+      />
+    );
   }
 
   if (content.length == 0) {

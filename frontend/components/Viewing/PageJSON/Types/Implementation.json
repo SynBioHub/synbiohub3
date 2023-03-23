@@ -46,8 +46,23 @@
         "sections": [
           {
             "title": "name",
+            "predicates": ["dcterms:title"],
+            "link": "$<link>"
+          },
+          {
+            "title": "name",
             "predicates": ["sbol:displayId"],
             "link": "$<link>"
+          },
+          {
+            "title": "name",
+            "predicates": [],
+            "link": "$<link>"
+          },
+          {
+            "title": "link",
+            "predicates": [],
+            "hide": true
           }
         ]
       }

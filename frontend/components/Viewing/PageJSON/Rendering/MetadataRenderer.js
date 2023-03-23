@@ -1,20 +1,11 @@
 import MetadataInfo from '../../MetadataInfo';
-import SectionRenderer from './SectionRenderer';
+import RowWrapper from './RowWrapper';
 
-export default function MetadataRenderer({ title, content }) {
-  if (!content) return null;
+export default function MetadataRenderer({ title, content2 }) {
+  if (!content2) return null;
   let sectionIcon = null;
-  const contentConsolidated = content.map(metadata => {
-    return metadata
-      .filter(section => !section.hide)
-      .map((section, index) => {
-        if (section.tableIcon) sectionIcon = section.tableIcon;
-        return (
-          <div key={title + index + section.text}>
-            <SectionRenderer column={section} metadata={true} />
-          </div>
-        );
-      });
+  const contentConsolidated = content2.map((row, index) => {
+    return <RowWrapper sections={row} key={index} />;
   });
   return (
     <MetadataInfo

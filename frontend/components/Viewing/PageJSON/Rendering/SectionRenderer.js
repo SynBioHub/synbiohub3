@@ -2,11 +2,6 @@ import styles from '../../../../styles/view.module.css';
 import Link from 'next/link';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
-import useRegistries from '../Fetching/useRegistries';
-import MiniLoading from '../../../Reusable/MiniLoading';
-import executeQueryFromTableJSON from '../Fetching/executeQueryFromTableJSON';
-import parseQueryResult from '../Fetching/parseQueryResult';
-import { useEffect, useState } from 'react';
 
 function loadText(template, args) {
   for (const key of Object.keys(args)) {
@@ -16,69 +11,7 @@ function loadText(template, args) {
   return template;
 }
 
-export default function SectionRenderer({ column, metadata }) {
-  const [section, setSection] = useState(column);
-  const { registries, loading, error } = useRegistries();
-
-  useEffect(() => {
-    if (section.externalFetch && !error && !loading) {
-      const queryUrl = registries.find(registry => {
-        return section.externalFetch.uri.startsWith(registry.uri);
-      })?.url;
-      if (queryUrl) {
-        executeQueryFromTableJSON(
-          section.externalFetch.uri,
-          section.externalFetch.prefixes,
-          section.externalFetch.table,
-          queryUrl
-        ).then(result => {
-          try {
-            console.log(
-              parseQueryResult(
-                section.externalFetch.table,
-                result,
-                section.externalFetch.prefixes
-              )
-            );
-            const [[fetchedSection]] = parseQueryResult(
-              section.externalFetch.table,
-              result,
-              section.externalFetch.prefixes
-            );
-            if (fetchedSection) {
-              if (!fetchedSection.text && metadata) {
-                fetchedSection.text = 'No Data';
-              }
-              setSection(fetchedSection);
-            }
-          } catch (error) {
-            const newSection = {
-              ...section,
-              externalFetch: null,
-              text: 'No Data'
-            };
-            setSection(newSection);
-          }
-        });
-      } else {
-        const newSection = { ...section, externalFetch: null, text: 'No Data' };
-        setSection(newSection);
-      }
-    }
-  }, [section, registries, loading, error, metadata]);
-
-  if (section.externalFetch && error) {
-    setSection({
-      ...section,
-      externalFetch: null,
-      text: 'Error while fetching data'
-    });
-  }
-
-  if (section.externalFetch) {
-    return <MiniLoading height={10} width={50} />;
-  }
-
+export default function SectionRenderer({ section, metadata }) {
   if (section.grouped) {
     const items = section.text.split(', ');
     const content = items.map((item, index) => {
