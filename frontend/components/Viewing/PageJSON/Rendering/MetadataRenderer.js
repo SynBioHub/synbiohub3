@@ -1,10 +1,10 @@
 import MetadataInfo from '../../MetadataInfo';
 import RowWrapper from './RowWrapper';
 
-export default function MetadataRenderer({ title, content2 }) {
-  if (!content2) return null;
+export default function MetadataRenderer({ title, content }) {
+  if (!content) return null;
   let sectionIcon = null;
-  const contentConsolidated = content2.map((row, index) => {
+  const contentConsolidated = content.map((row, index) => {
     return <RowWrapper sections={row} key={index} />;
   });
   return (

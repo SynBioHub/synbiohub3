@@ -9,6 +9,7 @@ import parseQueryResult, {
   parseQueryResult2
 } from '../Fetching/parseQueryResult';
 import executeQueryFromTableJSON from '../Fetching/executeQueryFromTableJSON';
+import RowWrapper from './RowWrapper';
 
 /**
  * This Component renders an individual table based on given JSON
@@ -33,12 +34,10 @@ export default function TableBuilder({ uri, prefixes, table, metadata }) {
 }
 
 function TableRenderer({ uri, prefixes, table, metadata }) {
-  const [content, setContent] = useState([]);
-  const [content2, setContent2] = useState(null);
+  const [content, setContent] = useState(null);
   useEffect(() => {
     executeQueryFromTableJSON(uri, prefixes, table).then(response => {
-      setContent(parseQueryResult(table, response, prefixes));
-      setContent2(parseQueryResult2(table, response, prefixes));
+      setContent(parseQueryResult2(table, response, prefixes));
     });
   }, [uri, prefixes, table]);
 
@@ -47,28 +46,17 @@ function TableRenderer({ uri, prefixes, table, metadata }) {
   if (!content) return null;
 
   if (metadata) {
-    return (
-      <MetadataRenderer
-        title={table.title}
-        content={content}
-        content2={content2}
-      />
-    );
+    return <MetadataRenderer title={table.title} content={content} />;
   }
+
+  console.log(content);
 
   if (content.length == 0) {
     return <div>No columns to display</div>;
   }
 
   const rows = content.map((row, index) => {
-    const columns = row.map((column, index) => (
-      <SectionRenderer column={column} key={index} />
-    ));
-    return (
-      <tr key={index} className={styles.customrow}>
-        {columns}
-      </tr>
-    );
+    return <RowWrapper sections={row} key={index} metadata={false} />;
   });
 
   return (

@@ -64,9 +64,6 @@ export default function parseQueryResult(table, items, prefixes) {
       icon: column.icon
     };
   });
-  // ids = ids.filter(
-  //   (value, index, self) => index === self.findIndex(t => t.id === value.id)
-  // );
   let content = items.map(row => {
     const titleToValueMap = {};
     ids.forEach(id => {

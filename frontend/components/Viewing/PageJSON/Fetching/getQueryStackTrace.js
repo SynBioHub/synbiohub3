@@ -7,6 +7,7 @@ export default function getQueryStackTrace(
   prefixes,
   showHides = false
 ) {
+  if (!section.predicates) return null;
   // start at rootPredicate, then go down predicate tree until no result
   const currRootPredicate =
     section.rootPredicateOverride || table.rootPredicate;

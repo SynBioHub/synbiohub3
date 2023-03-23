@@ -112,46 +112,10 @@
           "stripAfter": "#"
         }
       ]
-     },
-     {
-       "icon": "faPuzzlePiece",
-       "title": "Components",
-       "rootPredicate": "sbol:component",
-       "sections": [ 
-         {
-          "title": "ComponentLink",
-          "hide": true,
-          "predicates": ["sbol:definition"]
-         },
-         {
-          "title": "InstanceLink",
-          "hide": true,
-          "predicates": []
-         },
-         {
-          "title": "Access",
-          "infoLink": "https://dissys.github.io/sbol-owl/sbol-owl.html#access",
-          "predicates": ["sbol:access"],
-          "stripAfter": "#"
-         },
-         {
-          "title": "Instance",
-          "link": "$<InstanceLink>",
-          "infoLink": "http://sbols.org/v2#component",
-          "predicates": ["dcterms:title"]
-         }, 
-         {
-          "title": "Definition",
-          "infoLink": "https://dissys.github.io/sbol-owl/sbol-owl.html#definition",
-          "link": "$<ComponentLink>",
-          "predicates": ["sbol:definition", "dcterms:title"]
-         }
-      ]
      }
    ],
    "pages": [
      "Details",
-     "$TABLES[Components]",
      "$TABLES[Sequence Annotations]",
      "Other Properties",
      "Member of these Collections",

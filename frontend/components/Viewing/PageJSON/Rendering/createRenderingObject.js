@@ -23,6 +23,7 @@ export default function createRenderingObject(column, value, titleToValueMap) {
 
 function loadText(template, args) {
   for (const key of Object.keys(args)) {
+    if (!args[key]) console.log(key, args[key]);
     template = template.replace(
       new RegExp(`\\$<${key}>`, 'g'),
       args[key].value

@@ -14,9 +14,8 @@ export default async function getQueryResponse(
   query = loadTemplate(query, options);
 
   const params = admin ? '/admin/sparql?query=' : '/sparql?query=';
-  const graph = urlOverride
-    ? ''
-    : '&default-graph-uri=https://synbiohub.org/user/benjhatch7';
+  const graph = urlOverride ? '' : '';
+  // &default-graph-uri=https://synbiohub.org/user/benjhatch7
   const url = `${
     urlOverride || publicRuntimeConfig.backend
   }${params}${encodeURIComponent(query)}${graph}`;

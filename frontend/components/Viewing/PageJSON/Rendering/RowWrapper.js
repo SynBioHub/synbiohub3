@@ -68,7 +68,6 @@ function createKeyToValueMap(
   const sectionsToRender = [];
   Object.keys(sections).forEach(key => {
     let currentSection = sections[key];
-    map[key] = undefined;
     currentSection.some((possibility, index) => {
       if (!possibility.value) {
         const stackTrace = getQueryStackTrace(
@@ -141,6 +140,7 @@ export default function RowWrapper({ sections, metadata }) {
         );
       })
       .filter(section => !section.hidden);
+    console.log(toRender);
     const newContent = toRender.map(section => {
       return (
         <SectionRenderer
@@ -156,5 +156,5 @@ export default function RowWrapper({ sections, metadata }) {
   if (loading) {
     return <MiniLoading height={10} width={50} />;
   }
-  return <Fragment>{content}</Fragment>;
+  return <tr>{content}</tr>;
 }
