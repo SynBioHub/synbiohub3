@@ -1,5 +1,7 @@
 package com.synbiohub.sbh3.controllers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.synbiohub.sbh3.services.AdminService;
 import com.synbiohub.sbh3.services.UserService;
 import com.synbiohub.sbh3.utils.ConfigUtil;
@@ -157,7 +159,7 @@ public class AdminController {
 
     @GetMapping(value = "/admin/theme")
     @ResponseBody
-    public JSONObject getTheme() {
+    public String getTheme() throws JsonProcessingException {
         return adminService.getTheme();
     }
 

@@ -7,8 +7,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.synbiohub.sbh3.controllers.SearchController;
 import com.synbiohub.sbh3.sparql.SPARQLQuery;
 import com.synbiohub.sbh3.utils.ConfigUtil;
-import com.synbiohub.sbh3.utils.ObjectMapperUtils;
-import org.json.JSONObject;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -35,7 +33,6 @@ public class SearchService {
      * Returns the metadata for the object from the specified search query
      * @param allParams Key/Value pairs of the query
      * @return String containing SPARQL query
-     * @see SearchController#getResults(Map, HttpServletRequest)
      */
     public String getMetadataQuerySPARQL(Map<String,String> allParams) throws UnsupportedEncodingException {
         SPARQLQuery searchQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/search.sparql");
@@ -280,10 +277,17 @@ public class SearchService {
         ArrayList<ObjectNode> listOfParts = new ArrayList<>();
         for(JsonNode node : rawTree.get("results").get("bindings")) {
             ObjectNode part = mapper.createObjectNode();
-
+            Set<String> keySet = new HashSet<>();
             for (Iterator<Map.Entry<String, JsonNode>> it = node.fields(); it.hasNext(); ) {
                 Map.Entry<String, JsonNode> subNode = it.next();
-                part.put((subNode.getKey().equals("subject")? "uri" : subNode.getKey()), subNode.getValue().get("value"));
+                part.set((subNode.getKey().equals("subject")? "uri" : subNode.getKey()), subNode.getValue().get("value"));
+                keySet.add(subNode.getKey());
+            }
+            if (!keySet.contains("name")) {
+                part.set("name", part.get("displayId"));
+            }
+            if (!keySet.contains("description")) {
+                part.put("description", "");
             }
             listOfParts.add(part);
         }

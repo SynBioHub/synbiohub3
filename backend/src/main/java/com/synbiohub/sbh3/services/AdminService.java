@@ -1,10 +1,15 @@
 package com.synbiohub.sbh3.services;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.synbiohub.sbh3.utils.ConfigUtil;
 import lombok.NoArgsConstructor;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
+
+import java.util.Objects;
 
 @Service
 @NoArgsConstructor
@@ -23,13 +28,15 @@ public class AdminService {
         return node;
     }
 
-    public JSONObject getTheme() {
-        JSONObject obj = new JSONObject();
-        obj.put("instanceName", ConfigUtil.get("instanceName"));
-        obj.put("frontPageText", ConfigUtil.get("frontPageText"));
-        obj.put("theme", ConfigUtil.get("theme"));
-        obj.put("themeParameters", ConfigUtil.get("themeParameters"));
-        obj.put("firstLaunch", ConfigUtil.get("firstLaunch"));
-        return obj;
+    public String getTheme() throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectNode json = mapper.createObjectNode();
+        json.set("instanceName", ConfigUtil.get("instanceName"));
+        json.set("frontPageText", ConfigUtil.get("frontPageText"));
+        json.set("theme", ConfigUtil.get("theme"));
+        json.set("themeParameters", ConfigUtil.get("themeParameters"));
+        json.set("firstLaunch", ConfigUtil.get("firstLaunch"));
+        String result = mapper.writeValueAsString(json);
+        return result;
     }
 }
