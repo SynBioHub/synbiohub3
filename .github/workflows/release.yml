@@ -12,7 +12,7 @@ jobs:
       - name: Build the frontend Docker image
         run: |
           RELEASE=$(echo $GITHUB_REF | cut -d'/' -f 3)
-          docker build . --build-arg TEST_VAR=production ./frontend --tag synbiohub/sbh3frontend:$RELEASE-standalone
+          docker build . --build-arg TEST_VAR=production ./frontend --tag synbiohub/sbh3frontend:$RELEASE-release
       - uses: azure/docker-login@v1
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
@@ -20,17 +20,17 @@ jobs:
       - name: Push the frontend release image to Docker Hub
         run: |
           RELEASE=$(echo $GITHUB_REF | cut -d'/' -f 3)
-          docker push synbiohub/sbh3frontend:$RELEASE-standalone
+          docker push synbiohub/sbh3frontend:$RELEASE-release
       - name: Build the backend Docker image
         run: |
-          docker build ./backend --tag synbiohub/sbh3backend:$RELEASE-standalone
+          docker build ./backend --tag synbiohub/sbh3backend:$RELEASE-release
       - uses: azure/docker-login@v1
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Push the backend image to Docker Hub
         run: |
-          docker push synbiohub/sbh3backend:$RELEASE-standalone
+          docker push synbiohub/sbh3backend:$RELEASE-release
   update-compose:
     runs-on: ubuntu-latest
     steps:
@@ -42,8 +42,8 @@ jobs:
       - name: Change tag
         run: |
           RELEASE=$(echo $GITHUB_REF | cut -d'/' -f 3)
-          sed -i "s/synbiohub\/sbh3backend:.*-standalone/synbiohub\/sbh3backend:$RELEASE-standalone/g" docker-compose.yml docker-compose.version.yml
-          sed -i "s/synbiohub\/sbh3frontend:.*-standalone/synbiohub\/sbh3frontend:$RELEASE-standalone/g" docker-compose.yml docker-compose.version.yml
+          sed -i "s/synbiohub\/sbh3backend:.*-release/synbiohub\/sbh3backend:$RELEASE-release/g" docker-compose.yml
+          sed -i "s/synbiohub\/sbh3frontend:.*-release/synbiohub\/sbh3frontend:$RELEASE-release/g" docker-compose.yml
       - name: Commit tag change
         uses: zwaldowski/git-commit-action@v1
       - name: Push changes
