@@ -12,7 +12,6 @@ import java.util.Map;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/admin")
 public class AdminController {
 
     private final AdminService adminService;

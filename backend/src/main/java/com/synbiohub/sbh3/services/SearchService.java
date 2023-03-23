@@ -289,6 +289,9 @@ public class SearchService {
             if (!keySet.contains("name")) {
                 part.set("name", part.get("displayId"));
             }
+            if (!keySet.contains("description")) {
+                part.set("description", mapper.createObjectNode());
+            }
             listOfParts.add(part);
         }
         return listOfParts.toString();
