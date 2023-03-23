@@ -280,10 +280,14 @@ public class SearchService {
         ArrayList<ObjectNode> listOfParts = new ArrayList<>();
         for(JsonNode node : rawTree.get("results").get("bindings")) {
             ObjectNode part = mapper.createObjectNode();
-
+            Set<String> keySet = new HashSet<>();
             for (Iterator<Map.Entry<String, JsonNode>> it = node.fields(); it.hasNext(); ) {
                 Map.Entry<String, JsonNode> subNode = it.next();
-                part.put((subNode.getKey().equals("subject")? "uri" : subNode.getKey()), subNode.getValue().get("value"));
+                part.set((subNode.getKey().equals("subject")? "uri" : subNode.getKey()), subNode.getValue().get("value"));
+                keySet.add(subNode.getKey());
+            }
+            if (!keySet.contains("name")) {
+                part.set("name", part.get("displayId"));
             }
             listOfParts.add(part);
         }
