@@ -7,7 +7,6 @@ function loadText(template, args) {
   for (const key of Object.keys(args)) {
     template = template.replace(new RegExp(`\\$<${key}>`, 'g'), args[key]);
   }
-
   return template;
 }
 

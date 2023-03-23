@@ -1,6 +1,11 @@
 import compileTableSections from './compileTableSections';
 import getId from './getId';
-
+/**
+ * Builds a SPARQL query from a tableJSON object
+ * @param {*} uri
+ * @param {*} tableJSON
+ * @returns
+ */
 export default function buildQuery(uri, tableJSON) {
   compileTableSections(tableJSON);
   const rootPredicateDictionary = {};

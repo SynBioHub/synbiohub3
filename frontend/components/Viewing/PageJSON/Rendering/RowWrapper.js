@@ -1,8 +1,8 @@
-import { Fragment, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import MiniLoading from '../../../Reusable/MiniLoading';
 import executeQueryFromTableJSON from '../Fetching/executeQueryFromTableJSON';
 import getQueryStackTrace from '../Fetching/getQueryStackTrace';
-import { parseQueryResult2 } from '../Fetching/parseQueryResult';
+import parseQueryResult from '../Fetching/parseQueryResult';
 import useRegistries from '../Fetching/useRegistries';
 import createRenderingObject from './createRenderingObject';
 import SectionRenderer from './SectionRenderer';
@@ -30,7 +30,7 @@ function handleExternalFetch(
         queryUrl
       ).then(result => {
         try {
-          let [fetchedSection] = parseQueryResult2(
+          let [fetchedSection] = parseQueryResult(
             stackTrace.table,
             result,
             stackTrace.prefixes
@@ -79,7 +79,11 @@ function createKeyToValueMap(
           value: possibility.section.text,
           index
         };
-        sectionsToRender.push({ ...possibility.section, key: titleKey });
+        sectionsToRender.push({
+          ...possibility.section,
+          key: titleKey,
+          tableIcon: possibility.table.icon
+        });
         return true;
       } else if (!possibility.value) {
         const stackTrace = getQueryStackTrace(
@@ -102,14 +106,22 @@ function createKeyToValueMap(
         }
       } else {
         map[titleKey] = { value: possibility.value, index };
-        sectionsToRender.push({ ...possibility.section, key: titleKey });
+        sectionsToRender.push({
+          ...possibility.section,
+          key: titleKey,
+          tableIcon: possibility.table.icon
+        });
         return true;
       }
     });
     if (!foundData && currentSection.length > 0) {
       const titleKey = currentSection[0].section.title;
       map[titleKey] = { value: '', index: 0 };
-      sectionsToRender.push({ ...currentSection[0].section, key: titleKey });
+      sectionsToRender.push({
+        ...currentSection[0].section,
+        key: titleKey,
+        tableIcon: currentSection[0].table.icon
+      });
     }
   });
   setSectionsToRender(sectionsToRender);
@@ -130,7 +142,7 @@ function loadText(template, args) {
   return template;
 }
 
-export default function RowWrapper({ sections, metadata }) {
+export default function RowWrapper({ sections, metadata, setSectionIcon }) {
   // go through each of the sections in the and attempt to resolve what the section's value should be
   const [sectionsToParse, setSectionsToParse] = useState(sections);
   const [loading, setLoading] = useState(false);
@@ -162,6 +174,7 @@ export default function RowWrapper({ sections, metadata }) {
   }, [sectionsToParse, registries, registriesLoading, error]);
 
   useEffect(() => {
+    let sectionIcon = null;
     const toRender = sectionsToRender
       .map(section => {
         return createRenderingObject(
@@ -172,6 +185,9 @@ export default function RowWrapper({ sections, metadata }) {
       })
       .filter(section => !section.hidden);
     const newContent = toRender.map(section => {
+      if (section.tableIcon) {
+        sectionIcon = section.tableIcon;
+      }
       return (
         <SectionRenderer
           section={section}
@@ -181,6 +197,7 @@ export default function RowWrapper({ sections, metadata }) {
       );
     });
     setContent(newContent);
+    if (metadata) setSectionIcon(sectionIcon);
   }, [titleToValueMap, sectionsToRender]);
 
   if (loading) {

@@ -13,10 +13,19 @@ export default async function getQueryResponse(
 ) {
   query = loadTemplate(query, options);
 
+  const currentURL = window.location.href;
+  const isPublic = currentURL.includes('/public/');
+  let graphEx = '';
+  const regex = /\/user\/([^/]+)\//;
+  if (!isPublic) {
+    const result = regex.exec(currentURL)[0];
+    const lastSlash = result.lastIndexOf('/');
+    const graphURL = result.substring(0, lastSlash);
+    graphEx = `&default-graph-uri=https://synbiohub.org${graphURL}`;
+  }
+
   const params = admin ? '/admin/sparql?query=' : '/sparql?query=';
-  const graph = urlOverride
-    ? ''
-    : '&default-graph-uri=https://synbiohub.org/user/benjhatch7';
+  const graph = urlOverride ? '' : graphEx;
   const url = `${
     urlOverride || publicRuntimeConfig.backend
   }${params}${encodeURIComponent(query)}${graph}`;
@@ -26,6 +35,8 @@ export default async function getQueryResponse(
     Accept: 'application/json',
     'X-authorization': token
   };
+
+  console.log(url);
 
   // if the uri lives in an external sbh, use proxy to
   // circumvent cors errors

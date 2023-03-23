@@ -5,9 +5,7 @@ import Link from 'next/link';
 import SectionRenderer from './SectionRenderer';
 import RenderIcon from './RenderIcon';
 import MetadataRenderer from './MetadataRenderer';
-import parseQueryResult, {
-  parseQueryResult2
-} from '../Fetching/parseQueryResult';
+import parseQueryResult from '../Fetching/parseQueryResult';
 import executeQueryFromTableJSON from '../Fetching/executeQueryFromTableJSON';
 import RowWrapper from './RowWrapper';
 
@@ -37,7 +35,7 @@ function TableRenderer({ uri, prefixes, table, metadata }) {
   const [content, setContent] = useState(null);
   useEffect(() => {
     executeQueryFromTableJSON(uri, prefixes, table).then(response => {
-      setContent(parseQueryResult2(table, response, prefixes));
+      setContent(parseQueryResult(table, response, prefixes));
     });
   }, [uri, prefixes, table]);
 

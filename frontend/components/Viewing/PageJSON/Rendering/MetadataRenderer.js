@@ -1,11 +1,19 @@
+import { useState } from 'react';
 import MetadataInfo from '../../MetadataInfo';
 import RowWrapper from './RowWrapper';
 
 export default function MetadataRenderer({ title, content }) {
   if (!content) return null;
-  let sectionIcon = null;
+  const [sectionIcon, setSectionIcon] = useState(null);
   const contentConsolidated = content.map((row, index) => {
-    return <RowWrapper sections={row} key={index} />;
+    return (
+      <RowWrapper
+        sections={row}
+        metadata={true}
+        setSectionIcon={setSectionIcon}
+        key={index}
+      />
+    );
   });
   return (
     <MetadataInfo
