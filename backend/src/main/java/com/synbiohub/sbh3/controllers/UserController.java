@@ -123,16 +123,20 @@ public class UserController {
             if (file.createNewFile()) {
                 allParams.put("sparqlEndpoint", "http://virtuoso3:8890/sparql");
                 allParams.put("graphStoreEndpoint", "http://virtuoso3:8890/sparql-graph-crud-auth/");
+                allParams.put("firstLaunch", "false");
                 String json = mapper.writeValueAsString(allParams);
                 FileWriter fw = new FileWriter(file.getAbsoluteFile());
                 BufferedWriter bw = new BufferedWriter(fw);
                 bw.write(json);
                 bw.close();
+                log.info("Setup successful!");
                 return ResponseEntity.ok("File created successfully!");
             } else {
+                log.info("Local file already exists. Setup proceeds.");
                 return ResponseEntity.ok("File already exists!");
             }
         } catch (IOException e) {
+            log.error("Setup failed.");
             return ResponseEntity.ok("Failed to create file!");
         }
     }
