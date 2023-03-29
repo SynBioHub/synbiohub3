@@ -7,25 +7,24 @@ function loadText(template, args) {
   for (const key of Object.keys(args)) {
     template = template.replace(new RegExp(`\\$<${key}>`, 'g'), args[key]);
   }
-
   return template;
 }
 
-export default function SectionRenderer({ column, metadata }) {
-  if (column.grouped) {
-    const items = column.text.split(', ');
+export default function SectionRenderer({ section, metadata }) {
+  if (section.grouped) {
+    const items = section.text.split(', ');
     const content = items.map((item, index) => {
-      if (column.link && item) {
+      if (section.link && item) {
         return (
           <ColumnLink
-            link={loadText(column.link, { This: item })}
+            link={loadText(section.link, { This: item })}
             text={`${item}${
               index === items.length - 1 ||
-              (column.linkType !== 'default' && column.linkType !== undefined)
+              (section.linkType !== 'default' && section.linkType !== undefined)
                 ? ''
                 : ', '
             }`}
-            linkType={column.linkType}
+            linkType={section.linkType}
             key={index}
           />
         );
@@ -38,20 +37,22 @@ export default function SectionRenderer({ column, metadata }) {
       );
     });
     if (metadata) {
-      return <span>{content}</span>;
+      return <div className={styles.preventoverflowmetadata}>{content}</div>;
     }
     return <td>{content}</td>;
   }
   return (
     <td>
-      {column.link ? (
+      {section.link ? (
         <ColumnLink
-          link={loadText(column.link, { This: column.text })}
-          text={column.text}
-          linkType={column.linkType}
+          link={loadText(section.link, { This: section.text })}
+          text={section.text}
+          linkType={section.linkType}
         />
       ) : (
-        <span>{column.text}</span>
+        <div className={metadata && styles.preventoverflowmetadata}>
+          {section.text}
+        </div>
       )}
     </td>
   );

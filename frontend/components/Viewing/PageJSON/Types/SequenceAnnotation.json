@@ -1,5 +1,5 @@
 {
-   "type": "http://sbols.org/v2#ComponentDefintion",
+   "type": "http://sbols.org/v2#SequenceAnnotation",
    "prefixes": [
       "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>",
       "PREFIX dcterms: <http://purl.org/dc/terms/>",
@@ -13,66 +13,40 @@
    ],
    "metadata": [
       {
-        "title": "Type",
-        "rootPredicate": "sbol:type",
+        "title": "Test Extra Metadata",
         "icon": "faVials",
+        "rootPredicate": "sbol:sequenceAnnotation",
         "sections": [
           {
-            "title": "Extra Work",
-            "stripAfter": "#",
-            "predicates": []
+            "title": "Component",
+            "text": "$<Test 2>",
+            "predicates": ["dcterms:title"],
+            "link": "$<This>",
+            "group": true
+          },
+          {
+            "title": "Test 2",
+            "predicates": ["sbol:location", "sbol:start"],
+            "link": "$<This>",
+            "group": true,
+            "hide": true
           }
         ]
       },
       {
-        "title": "Role(s)",
-        "rootPredicate": "sbol:role",
+        "title": "Test Extra Metadata 2",
+        "rootPredicate": "sbol:component",
         "icon": "faVials",
         "sections": [
           {
-            "title": "Extra Work",
-            "stripAfter": "#",
-            "predicates": []
+            "title": "Test",
+            "predicates": ["dcterms:tile"],
+            "group": true
           }
         ]
       }
    ],
    "tables": [
-    {
-      "icon": "faPuzzlePiece",
-      "title": "Components",
-      "rootPredicate": "sbol:component",
-      "sections": [ 
-        {
-         "title": "ComponentLink",
-         "hide": true,
-         "predicates": ["sbol:definition"]
-        },
-        {
-         "title": "InstanceLink",
-         "hide": true,
-         "predicates": []
-        },
-        {
-         "title": "Access",
-         "infoLink": "https://dissys.github.io/sbol-owl/sbol-owl.html#access",
-         "predicates": ["sbol:access"],
-         "stripAfter": "#"
-        },
-        {
-         "title": "Instance",
-         "link": "$<InstanceLink>",
-         "infoLink": "http://sbols.org/v2#component",
-         "predicates": ["dcterms:title"]
-        }, 
-        {
-         "title": "Definition",
-         "infoLink": "https://dissys.github.io/sbol-owl/sbol-owl.html#definition",
-         "link": "$<ComponentLink>",
-         "predicates": ["sbol:definition", "dcterms:title"]
-        }
-     ]
-    },
      {
        "icon": "faDna",
        "title": "Sequence Annotations",
@@ -95,7 +69,7 @@
          {
           "title": "Location",
           "text": "$<Start>, $<End>",
-          "link": "$<Annotation Link>",
+          "link": "$<AnnotationLink>",
           "infoLink": "http://sbols.org/v2#Location"
          },
          {
@@ -115,7 +89,7 @@
             "hide": true
          },
          {
-            "title": "Annotation Link",
+            "title": "AnnotationLink",
             "predicates": ["sbol:location", "sbol:persistentIdentity"],
             "hide": true
          },
@@ -131,6 +105,11 @@
           "predicates": ["sbol:component", "sbol:definition", "dcterms:title"]
          },
          {
+          "title": "Sequence Annotation",
+          "hide": true,
+          "predicates": ["sbol:component", "dcterms:title"]
+         },
+         {
           "title": "Role(s)",
           "group": true,
           "predicates": ["sbol:role"],
@@ -138,9 +117,42 @@
           "link": "search/role=<$<This>>&",
           "linkType": "search",
           "infoLink": "http://sbols.org/v2#role",
-          "info": "Learn more about roles",
-          "stripAfter": "#"
+          "info": "Learn more about roles"
         }
+      ]
+     },
+     {
+       "icon": "faPuzzlePiece",
+       "title": "Components",
+       "rootPredicate": "sbol:component",
+       "sections": [ 
+         {
+          "title": "ComponentLink",
+          "hide": true,
+          "predicates": ["sbol:definition"]
+         },
+         {
+          "title": "InstanceLink",
+          "hide": true,
+          "predicates": []
+         },
+         {
+          "title": "Access",
+          "text": "public",
+          "infoLink": "https://dissys.github.io/sbol-owl/sbol-owl.html#access"
+         },
+         {
+          "title": "Instance",
+          "link": "$<InstanceLink>",
+          "infoLink": "http://sbols.org/v2#component",
+          "predicates": ["dcterms:title"]
+         }, 
+         {
+          "title": "Definition",
+          "infoLink": "https://dissys.github.io/sbol-owl/sbol-owl.html#definition",
+          "link": "$<ComponentLink>",
+          "predicates": ["sbol:definition", "dcterms:title"]
+         }
       ]
      }
    ],
