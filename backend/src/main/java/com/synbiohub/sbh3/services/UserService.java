@@ -27,6 +27,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 
+import java.io.IOException;
 import java.sql.*;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -130,7 +131,7 @@ public class UserService {
      * The user's graph is the default graph + "/user" + their username.
      * @return True if it matches, false otherwise.
      */
-    public Boolean isOwnedBy(String topLevelUri) {
+    public Boolean isOwnedBy(String topLevelUri) throws IOException {
         SPARQLQuery query = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/GetOwnedBy.sparql");
         String results = searchService.SPARQLQuery(query.loadTemplate(Collections.singletonMap("topLevel", topLevelUri)));
         ArrayList<String> owners = new ArrayList<>();
@@ -187,15 +188,6 @@ public class UserService {
             return null;
         }
         return auth;
-    }
-
-    public void setUpConfig(Map<String, String> allParams) {
-        //all Params should include values such as instanceName, userName, userFullName, userEmail, instanceURL,
-        //uriPrefix, frontPageText, userPassword, userPasswordConfirm, virtuosoINI, virtuosoDB, affiliation, color
-
-        // should take all of these values and create a new config local file
-        // also create an admin user
-        configUtil.setLocalConfig(allParams);
     }
 
     public Map<String, String> registerNewAdminUser(Map<String, String> allParams) {

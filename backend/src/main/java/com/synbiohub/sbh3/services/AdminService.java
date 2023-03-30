@@ -9,13 +9,14 @@ import lombok.NoArgsConstructor;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.Objects;
 
 @Service
 @NoArgsConstructor
 public class AdminService {
 
-    public JSONObject getStatus() {
+    public JSONObject getStatus() throws IOException {
         var config = ConfigUtil.get("");
         var node = new JSONObject()
                 .put("version", config.get("version").asText())
@@ -28,7 +29,7 @@ public class AdminService {
         return node;
     }
 
-    public String getTheme() throws JsonProcessingException {
+    public String getTheme() throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode json = mapper.createObjectNode();
         json.set("instanceName", ConfigUtil.get("instanceName"));

@@ -9,6 +9,7 @@ import com.synbiohub.sbh3.security.CustomUserService;
 import com.synbiohub.sbh3.security.customsecurity.AuthenticationResponse;
 import com.synbiohub.sbh3.security.model.User;
 import com.synbiohub.sbh3.services.UserService;
+import com.synbiohub.sbh3.utils.ConfigUtil;
 import com.synbiohub.sbh3.utils.RestClient;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -123,12 +124,13 @@ public class UserController {
             if (file.createNewFile()) {
                 allParams.put("sparqlEndpoint", "http://virtuoso3:8890/sparql");
                 allParams.put("graphStoreEndpoint", "http://virtuoso3:8890/sparql-graph-crud-auth/");
-                allParams.put("firstLaunch", "false");
+                allParams.put("firstLaunch", "false"); // TODO: make it so this is a boolean and not a string
                 String json = mapper.writeValueAsString(allParams);
                 FileWriter fw = new FileWriter(file.getAbsoluteFile());
                 BufferedWriter bw = new BufferedWriter(fw);
                 bw.write(json);
                 bw.close();
+                ConfigUtil.refreshLocalJson();
                 log.info("Setup successful!");
                 return ResponseEntity.ok("File created successfully!");
             } else {
