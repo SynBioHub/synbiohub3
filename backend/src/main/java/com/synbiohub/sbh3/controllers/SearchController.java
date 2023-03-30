@@ -9,6 +9,7 @@ import org.json.JSONObject;
 import org.springframework.web.bind.annotation.*;
 
 import javax.json.Json;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
@@ -28,7 +29,7 @@ public class SearchController {
      */
     @GetMapping(value = "/search")
     @ResponseBody
-    public String getResults(@RequestParam Map<String,String> allParams, HttpServletRequest request) throws JsonProcessingException, UnsupportedEncodingException {
+    public String getResults(@RequestParam Map<String,String> allParams, HttpServletRequest request) throws IOException {
         String sparqlQuery = searchService.getMetadataQuerySPARQL(allParams);
         return searchService.rawJSONToOutput(searchService.SPARQLOrExplorerQuery(sparqlQuery));
     }
@@ -42,7 +43,7 @@ public class SearchController {
      * @return Redirect to search controller
      */
     @GetMapping(value = "/search/**", produces = "text/plain")
-    public String redirectOldSearch(HttpServletRequest request, @RequestParam Map<String,String> allParams) throws JsonProcessingException, UnsupportedEncodingException {
+    public String redirectOldSearch(HttpServletRequest request, @RequestParam Map<String,String> allParams) throws IOException {
         String requestURL = request.getRequestURL().toString();
         String[] uriArr = requestURL.split("/");
         String keyword = uriArr[uriArr.length - 1].split("\\?")[0];
@@ -58,7 +59,7 @@ public class SearchController {
      */
     @GetMapping(value = "/searchCount")
     @ResponseBody
-    public String getSearchCount(@RequestParam Map<String,String> allParams) throws JsonProcessingException, UnsupportedEncodingException {
+    public String getSearchCount(@RequestParam Map<String,String> allParams) throws IOException {
         String sparqlQuery = searchService.getSearchCountSPARQL(allParams);
         return searchService.JSONToCount(searchService.SPARQLOrExplorerQuery(sparqlQuery));
     }
@@ -72,7 +73,7 @@ public class SearchController {
      * @return Redirect to search count controller
      */
     @GetMapping(value = "/searchCount/**", produces = "text/plain")
-    public String redirectOldSearchCount(HttpServletRequest request, @RequestParam Map<String,String> allParams) throws JsonProcessingException, UnsupportedEncodingException {
+    public String redirectOldSearchCount(HttpServletRequest request, @RequestParam Map<String,String> allParams) throws IOException {
         String requestURL = request.getRequestURL().toString();
         String[] uriArr = requestURL.split("/");
         String keyword = uriArr[uriArr.length - 1].split("\\?")[0];
@@ -86,7 +87,7 @@ public class SearchController {
      * @return All root collections
      */
     @GetMapping(value = "/rootCollections")
-    public String getRootCollections() throws JsonProcessingException {
+    public String getRootCollections() throws IOException {
         String sparqlQuery = searchService.getRootCollectionsSPARQL();
         log.info("Getting root collections");
         return searchService.collectionToOutput(searchService.SPARQLQuery(sparqlQuery));
@@ -118,7 +119,7 @@ public class SearchController {
     @GetMapping("/{visibility:.+}/{collectionID:.+}/{displayID:.+}/{version:.+}/subCollections")
     public String getSubCollections(@PathVariable("visibility") String visibility, @PathVariable("collectionID") String collectionID,
                            @PathVariable("displayID") String displayID, @PathVariable("version") String version,
-                           HttpServletRequest request) throws JsonProcessingException {
+                           HttpServletRequest request) throws IOException {
 
         String collectionInfo = String.format("%s/%s/%s/%s", visibility, collectionID, displayID, version);
         String sparqlQuery = searchService.getSubCollectionsSPARQL(collectionInfo);
@@ -133,7 +134,7 @@ public class SearchController {
     @GetMapping("/{visibility:.+}/{collectionID:.+}/{displayID:.+}/{version:.+}/twins")
     public String getTwins(@PathVariable("visibility") String visibility, @PathVariable("collectionID") String collectionID,
                            @PathVariable("displayID") String displayID, @PathVariable("version") String version,
-                           HttpServletRequest request) throws JsonProcessingException {
+                           HttpServletRequest request) throws IOException {
 
         String collectionInfo = String.format("%s/%s/%s/%s", visibility, collectionID, displayID, version);
 
@@ -151,7 +152,7 @@ public class SearchController {
     @GetMapping("/{visibility:.+}/{collectionID:.+}/{displayID:.+}/{version:.+}/similar")
     public String getSimilar(@PathVariable("visibility") String visibility, @PathVariable("collectionID") String collectionID,
                            @PathVariable("displayID") String displayID, @PathVariable("version") String version,
-                           HttpServletRequest request) throws JsonProcessingException {
+                           HttpServletRequest request) throws IOException {
 
         String collectionInfo = String.format("%s/%s/%s/%s", visibility, collectionID, displayID, version);
 
@@ -169,7 +170,7 @@ public class SearchController {
     @GetMapping("/{visibility:.+}/{collectionID:.+}/{displayID:.+}/{version:.+}/uses")
     public String getUses(@PathVariable("visibility") String visibility, @PathVariable("collectionID") String collectionID,
                           @PathVariable("displayID") String displayID, @PathVariable("version") String version,
-                          HttpServletRequest request) throws JsonProcessingException {
+                          HttpServletRequest request) throws IOException {
 
         String collectionInfo = String.format("%s/%s/%s/%s", visibility, collectionID, displayID, version);
 
@@ -184,7 +185,7 @@ public class SearchController {
      * @return A count in plaintext
      */
     @GetMapping("/{type:.+}/count")
-    public String getTypeCount(@PathVariable("type") String type, HttpServletRequest request) throws JsonProcessingException {
+    public String getTypeCount(@PathVariable("type") String type, HttpServletRequest request) throws IOException {
 
         String sparqlQuery = searchService.getTypeCountSPARQL(type);
         return searchService.JSONToCount(searchService.SPARQLQuery(sparqlQuery));
@@ -198,7 +199,7 @@ public class SearchController {
      */
     @RequestMapping(value = "/sparql", headers = "Accept=application/json")
     @ResponseBody
-    public String getSPARQL(@RequestParam String query)  {
+    public String getSPARQL(@RequestParam String query) throws IOException {
         return searchService.SPARQLQuery(query);
     }
 

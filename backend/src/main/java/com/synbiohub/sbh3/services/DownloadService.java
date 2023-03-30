@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Collections;
@@ -30,7 +31,7 @@ public class DownloadService {
     private final SearchService searchService;
 
 
-    public String getMetadata(String uri) {
+    public String getMetadata(String uri) throws IOException {
         String graphPrefix = ConfigUtil.get("graphPrefix").asText();
         URI uriClass = null;
         try {
@@ -52,7 +53,7 @@ public class DownloadService {
         return results;
     }
 
-    public SBOLDocument getSBOLNonRecursive(String uri) {
+    public SBOLDocument getSBOLNonRecursive(String uri) throws IOException {
         String graphPrefix = ConfigUtil.get("graphPrefix").asText();
         URI uriClass = null;
         try {
@@ -79,7 +80,7 @@ public class DownloadService {
         return document;
     }
 
-    public Model getRecursiveModel(String uri) {
+    public Model getRecursiveModel(String uri) throws IOException {
         String graphPrefix = ConfigUtil.get("graphPrefix").asText();
         URI uriClass = null;
         try {
@@ -196,7 +197,7 @@ public class DownloadService {
         return model;
     }
 
-    public SBOLDocument getSBOLRecursive(String uri) {
+    public SBOLDocument getSBOLRecursive(String uri) throws IOException {
         var results = getRecursiveModel(uri);
 
         // Write RDF Model to byte stream

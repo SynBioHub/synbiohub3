@@ -10,6 +10,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
 import java.util.HashMap;
 
 @Service
@@ -21,7 +22,7 @@ public class EditService {
      * @param query SPARQL Query to send
      * @return Virtuoso response
      */
-    public String AuthSPARQLQuery(String query) {
+    public String AuthSPARQLQuery(String query) throws IOException {
         String sparqlAuthEndpoint = ConfigUtil.get("sparqlAuthEndpoint").asText();
         String adminUsername = ConfigUtil.get("username").asText();
         String adminPassword = ConfigUtil.get("password").asText();

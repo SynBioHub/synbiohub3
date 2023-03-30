@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import org.json.JSONObject;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.Map;
 
 @RestController
@@ -27,7 +28,7 @@ public class AdminController {
 
     @GetMapping(value = "/admin")
     @ResponseBody
-    public String status(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
+    public String status(@RequestParam Map<String,String> allParams, HttpServletRequest request) throws IOException {
         return adminService.getStatus().toString();
     }
 
@@ -159,7 +160,7 @@ public class AdminController {
 
     @GetMapping(value = "/admin/theme")
     @ResponseBody
-    public String getTheme() throws JsonProcessingException {
+    public String getTheme() throws IOException {
         return adminService.getTheme();
     }
 
