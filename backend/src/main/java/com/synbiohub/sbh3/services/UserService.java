@@ -173,7 +173,7 @@ public class UserService {
         }
     }
 
-    private Authentication checkAuthentication() {
+    public Authentication checkAuthentication() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication instanceof AnonymousAuthenticationToken || authentication == null) return null;
         return authentication;

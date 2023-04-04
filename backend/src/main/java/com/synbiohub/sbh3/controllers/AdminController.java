@@ -1,15 +1,19 @@
 package com.synbiohub.sbh3.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.synbiohub.sbh3.services.AdminService;
+import com.synbiohub.sbh3.services.SearchService;
 import com.synbiohub.sbh3.services.UserService;
 import com.synbiohub.sbh3.utils.ConfigUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.json.JSONObject;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import javax.json.Json;
 import java.io.IOException;
 import java.util.Map;
 
@@ -19,11 +23,17 @@ public class AdminController {
 
     private final AdminService adminService;
     private final UserService userService;
+    private final SearchService searchService;
+
 
     @GetMapping(value = "/admin/sparql")
     @ResponseBody
-    public String runAdminSparqlQuery(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
-        return null;
+    public String runAdminSparqlQuery(@RequestParam String query) throws IOException {
+        Authentication auth = userService.checkAuthentication();
+        if (auth == null) {
+            return null;
+        }
+        return searchService.SPARQLQuery(query);
     }
 
     @GetMapping(value = "/admin")
@@ -41,12 +51,14 @@ public class AdminController {
     @GetMapping(value = "/admin/graphs")
     @ResponseBody
     public String getGraph(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
+        // Returns graphUri and Count of Triples in the graph
         return null;
     }
 
     @GetMapping(value = "/admin/log")
     @ResponseBody
     public String getLog(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
+        // prints the spring.log?
         return null;
     }
 
@@ -82,20 +94,21 @@ public class AdminController {
 
     @GetMapping(value = "/admin/registries")
     @ResponseBody
-    public String getRegistries(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
-        return null;
+    public JsonNode getRegistries() throws IOException {
+        return ConfigUtil.get("webOfRegistries");
+
     }
 
     @PostMapping(value = "/admin/saveRegistry")
     @ResponseBody
-    public String saveRegistry(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
-        return null;
+    public void saveRegistry(@RequestBody Map<String, String> newWebOfRegistry) {
+        // TODO: need to check format of web of registries
     }
 
     @PostMapping(value = "/admin/deleteRegistry")
     @ResponseBody
-    public String deleteRegistry(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
-        return null;
+    public void deleteRegistry(@RequestBody String webOfRegistryName) {
+        // TODO: need to check format of web of registries
     }
 
     @PostMapping(value = "/admin/setAdministratorEmail")
@@ -119,24 +132,25 @@ public class AdminController {
     @GetMapping(value = "/admin/remotes")
     @ResponseBody
     public String getRemotes(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
+        // TODO: need to check format of remotes
         return null;
     }
 
     @PostMapping(value = "/admin/saveRemote") //benchling and ice remotes have different params
     @ResponseBody
-    public String saveRemote(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
-        return null;
+    public void saveRemote(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
+        // TODO: need to check format of remotes
     }
 
     @PostMapping(value = "/admin/deleteRemote")
     @ResponseBody
-    public String deleteRemote(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
-        return null;
+    public void deleteRemote(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
+        // TODO: need to check format of remotes
     }
 
     @GetMapping(value = "/admin/explorerlog")
     @ResponseBody
-    public String getExplorerLog(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
+    public String getExplorerLog() {
         return null;
     }
 
