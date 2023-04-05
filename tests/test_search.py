@@ -1,6 +1,6 @@
 import requests
 from unittest import TestCase
-from test_functions import compare_get_request, compare_post_request, get_request, post_request, compare_get_request_json
+from test_functions import compare_get_request, compare_post_request, get_request, post_request, compare_get_request_json, compare_get_request_json_list
 from test_arguments import test_print
 
 # "/manage" is tested within test_submit.py
@@ -12,10 +12,10 @@ class TestSearch(TestCase):
         test_type = "Search"
 
         # test_searchQuery(self):
-        # test_print("test_search starting")
+        test_print("test_search starting")
         # #compare_get_request("/search/:query?", route_parameters = ["I0462"])
-        # compare_get_request("/search/:query?", headers = headers, route_parameters = ["BBa_B00"], test_type = test_type)
-        # test_print("test_search completed")
+        compare_get_request_json_list("/search/:query?", headers = headers, route_parameters = ["BBa_B00"], test_type = test_type, fields=["uri", "displayId", "version", "name", "description", "type"])
+        test_print("test_search completed")
 
         # test_searchCount(self):
         test_print("test_searchCount starting")
@@ -28,9 +28,9 @@ class TestSearch(TestCase):
         test_print("test_rootCollections completed")
 
         # #test_sparql(self):
-        # test_print("test_sparql starting")
+        test_print("test_sparql starting")
         compare_get_request_json("/sparql?query=:query", headers = {"Accept":"application/json"}, route_parameters = ["SELECT+%3Fsubject+%3Fpredicate+%3Fobject+WHERE+%7B+%3Fsubject+%3Fpredicate+%3Fobject+.+FILTER+%28str%28%3Fobject%29+%3D+%22BBa_B0034%22%29%7D"])
-        # test_print("test_sparql completed")
+        test_print("test_sparql completed")
 
         #test_print("test_subcollections_public starting")
         # need user - compare_get_request("/public/:collectionId/:displayId/:version/subCollections", route_parameters = ["testid1","testid1_collection", "1"], headers = {"Accept":"text/plain"}, test_type = test_type)

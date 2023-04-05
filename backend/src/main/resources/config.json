@@ -23,7 +23,7 @@
   "isql": "isql-vt",
   "SBOLExplorerEndpoint": "http://localhost:13162/",
   "useSBOLExplorer": false,
-  "databasePrefix": "http://synbiohub.org/",
+  "databasePrefix": "https://synbiohub.org/",
   "sessionSecret": "synbiohub_change_me",
   "shareLinkSalt": "synbiohub_change_me",
   "passwordSalt": "synbiohub_change_me",
