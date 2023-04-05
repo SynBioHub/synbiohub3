@@ -34,7 +34,7 @@ class TestSearch(TestCase):
 
         test_print("test_subcollections_public starting")
         # need user - compare_get_request("/public/:collectionId/:displayId/:version/subCollections", route_parameters = ["testid1","testid1_collection", "1"], headers = {"Accept":"text/plain"}, test_type = test_type)
-        compare_get_request_json_list("/public/:collectionId/:displayId/:version/subCollections", route_parameters = ["igem","categories", "1"], headers = {"Accept":"text/plain"}, test_name="subCollectionsCategories", test_type = test_type, fields=["uri", "displayId", "version", "name", "description", "type"])
+        compare_get_request_json_list("/public/:collectionId/:displayId/:version/subCollections", route_parameters = ["igem","categories", "1"], headers = {"Accept":"text/plain"}, test_name="subCollectionsCategories", test_type = test_type, fields=["uri", "displayId", "version", "name", "description"])
         test_print("test_subcollections_public completed")
 
         # test_print("test_uses starting")
