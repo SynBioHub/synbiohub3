@@ -1,5 +1,7 @@
 package com.synbiohub.sbh3.controllers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.synbiohub.sbh3.services.AdminService;
 import com.synbiohub.sbh3.services.UserService;
 import com.synbiohub.sbh3.utils.ConfigUtil;
@@ -8,11 +10,11 @@ import lombok.AllArgsConstructor;
 import org.json.JSONObject;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.Map;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/admin")
 public class AdminController {
 
     private final AdminService adminService;
@@ -26,7 +28,7 @@ public class AdminController {
 
     @GetMapping(value = "/admin")
     @ResponseBody
-    public String status(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
+    public String status(@RequestParam Map<String,String> allParams, HttpServletRequest request) throws IOException {
         return adminService.getStatus().toString();
     }
 
@@ -158,7 +160,7 @@ public class AdminController {
 
     @GetMapping(value = "/admin/theme")
     @ResponseBody
-    public JSONObject getTheme() {
+    public String getTheme() throws IOException {
         return adminService.getTheme();
     }
 

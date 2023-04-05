@@ -137,3 +137,7 @@ config.json
 .DS_Store
 
 frontend/package-lock.json
+
+.vscode
+
+.metals

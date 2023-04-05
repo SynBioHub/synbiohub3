@@ -12,6 +12,9 @@ export default function Shell(properties) {
 
   const json = MasterJSON[properties.metadata.type];
 
+  if (metadata && !metadata.name && metadata.displayId)
+    metadata.name = metadata.displayId;
+
   if (!json) {
     return (
       <div className={styles.container}>

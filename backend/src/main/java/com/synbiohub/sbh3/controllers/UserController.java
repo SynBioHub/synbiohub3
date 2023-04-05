@@ -9,6 +9,7 @@ import com.synbiohub.sbh3.security.CustomUserService;
 import com.synbiohub.sbh3.security.customsecurity.AuthenticationResponse;
 import com.synbiohub.sbh3.security.model.User;
 import com.synbiohub.sbh3.services.UserService;
+import com.synbiohub.sbh3.utils.ConfigUtil;
 import com.synbiohub.sbh3.utils.RestClient;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -111,7 +113,7 @@ public class UserController {
     }
 
     @PostMapping(value = "/setup")
-    public ResponseEntity<String> setup(@RequestParam Map<String, String> allParams) {
+    public ResponseEntity<String> setup(@RequestBody Map<String, Object> allParams) {
         String fileName = "config.local.json";
         String workingDirectory = System.getProperty("user.dir") + "/data";
         File file = new File(workingDirectory + File.separator + fileName);
@@ -119,20 +121,45 @@ public class UserController {
         ObjectMapper mapper = new ObjectMapper();
         mapper.enable(SerializationFeature.INDENT_OUTPUT);
 
+        Map<String, String> userParams = new HashMap<>();
+        UserRegistrationDTO userRegistrationDTO = UserRegistrationDTO
+                .builder()
+                .username((String) allParams.get("userName"))
+                .name((String) allParams.get("userFullName"))
+                .affiliation((String) allParams.get("affiliation"))
+                .email((String) allParams.get("userEmail"))
+                .password1((String) allParams.get("userPassword"))
+                .password2((String) allParams.get("userPasswordConfirm"))
+                .build();
+        userService.register(userRegistrationDTO);
+
+        allParams.remove("userName");
+        allParams.remove("userFullName");
+        allParams.remove("affiliation");
+        allParams.remove("userEmail");
+        allParams.remove("userPassword");
+        allParams.remove("userPasswordConfirm");
+        //TODO: take out admin user stuff from params, and create new Admin user
+
         try {
             if (file.createNewFile()) {
                 allParams.put("sparqlEndpoint", "http://virtuoso3:8890/sparql");
                 allParams.put("graphStoreEndpoint", "http://virtuoso3:8890/sparql-graph-crud-auth/");
+                allParams.put("firstLaunch", false); // TODO: make it so this is a boolean and not a string
                 String json = mapper.writeValueAsString(allParams);
                 FileWriter fw = new FileWriter(file.getAbsoluteFile());
                 BufferedWriter bw = new BufferedWriter(fw);
                 bw.write(json);
                 bw.close();
+                ConfigUtil.refreshLocalJson();
+                log.info("Setup successful!");
                 return ResponseEntity.ok("File created successfully!");
             } else {
+                log.info("Local file already exists. Setup proceeds.");
                 return ResponseEntity.ok("File already exists!");
             }
         } catch (IOException e) {
+            log.error("Setup failed.");
             return ResponseEntity.ok("Failed to create file!");
         }
     }
