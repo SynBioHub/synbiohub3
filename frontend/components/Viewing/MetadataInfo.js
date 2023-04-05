@@ -35,11 +35,11 @@ export default function MetadataInfo({ title, link, label, icon, specific }) {
     </div>
   );
 
-  if (link)
+  if (link) {
     return (
       <Link href={link}>
         <a target="_blank">{renderedSection}</a>
       </Link>
     );
-  else return renderedSection;
+  } else return renderedSection;
 }

@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 
+import java.io.IOException;
 import java.net.URLConnection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,7 +32,7 @@ public class PluginService {
         private PluginsRepository pluginsRepository;
 
 
-        public String getURL(String name) throws NullPointerException{ // Function to find a plugin by name or URL from the config.json file
+        public String getURL(String name) throws NullPointerException, IOException { // Function to find a plugin by name or URL from the config.json file
             JsonNode plugins = ConfigUtil.get("plugins");
             JsonNode target = null;
 
@@ -48,7 +49,7 @@ public class PluginService {
             //Redundant if the URL was given, but a way to standardize without other checks
         }
 
-        public String getCategory(String name) {
+        public String getCategory(String name) throws IOException {
             JsonNode plugins = ConfigUtil.get("plugins");
 
             JsonNode category = plugins.get("submit");
@@ -71,7 +72,7 @@ public class PluginService {
         }
 
 
-        public JsonNode buildManifest(List<MultipartFile> attached) {
+        public JsonNode buildManifest(List<MultipartFile> attached) throws IOException {
             ObjectMapper mapper = new ObjectMapper();
             ObjectNode manifest =  mapper.createObjectNode();
             ObjectNode files = mapper.createObjectNode();
