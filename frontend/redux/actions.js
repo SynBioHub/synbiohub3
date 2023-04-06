@@ -248,6 +248,7 @@ export const submit =
 
     const token = getState().user.token;
 
+    /*
     //Look for pluginName
     if (plugins.length != 0) {
       let unzippedFiles = [];
@@ -279,6 +280,7 @@ export const submit =
       convertedFiles = convertedFiles.concat(unzippedFiles);
       files = convertedFiles;
     }
+    */
 
     await uploadFiles(
       dispatch,
@@ -388,6 +390,7 @@ async function uploadFiles(
   }
 }
 
+/*
 async function submitPluginHandler(pluginName, convertedFiles, files) {
   const evaluateManifest = {
     manifest: {
@@ -483,6 +486,7 @@ async function submitPluginHandler(pluginName, convertedFiles, files) {
     });
   //Need to make for loop to recombine files and send back to submit (maybe test first with just sending back plugin files and no default handlers)
 }
+*/
 
 export const addAttachments = (files, uri) => async (dispatch, getState) => {
   var newFailedFiles = getState().submit.failedFiles;
