@@ -224,7 +224,6 @@ export default function Setup({ setInSetupMode }) {
               );
               if (result.status !== 200) {
                 const content = await result.json();
-                console.log(content);
                 const errorMessages = content.details.map(
                   error => error.message
                 );
