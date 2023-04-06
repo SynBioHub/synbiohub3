@@ -6,6 +6,14 @@ import styles from '../../styles/error.module.css';
  * @returns
  */
 export default function Error({ error }) {
+  let responseData = '';
+  if (error.response) {
+    try {
+      responseData = JSON.stringify(error.response.data);
+    } catch (error) {
+      responseData = 'Unable to parse response data';
+    }
+  }
   return (
     <div className={styles.errorInfoContainer}>
       <div className={styles.customMessage}>{error.customMessage}</div>
@@ -15,6 +23,8 @@ export default function Error({ error }) {
       <p>{error.name}</p>
       <h4>Message</h4>
       <p>{error.message}</p>
+      <h4>Response Data</h4>
+      <p>{responseData}</p>
       <h4>Stack</h4>
       <p>{error.stack}</p>
     </div>

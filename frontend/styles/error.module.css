@@ -52,7 +52,7 @@
    display: flex;
    z-index: 99999;
    flex-direction: column;
-   position: absolute;
+   position: fixed;
    top: 5rem;
    bottom: 5rem;
    left: 50%;
