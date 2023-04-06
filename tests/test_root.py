@@ -58,9 +58,9 @@ def test_root():
 
     # # TODO: test new user commented out
     # # ALL ASIDE FROM TEST_NEWUSER SHOULD WAIT UNTIL LATER
-    # from test_admin import TestAdmin
-    # testAdmin = TestAdmin()
-    # testAdmin.test_admin1()
+    from test_admin import TestAdmin
+    testAdmin = TestAdmin()
+    testAdmin.test_admin1()
 
     # # TODO: TEST TEST_TWINS
     # from test_twins import TestTwins
