@@ -224,13 +224,12 @@ def compare_json_list(sbh1requestcontent, sbh3requestcontent, test_type, fields)
         test_passed = 0
         raise Exception("RESPONSE CONTENT TEST FAILED: Content does not match\n")
     for i in range(len(sorted_sbh1_list)):
-        print(sorted_sbh1_list[i])
-        print(sorted_sbh3_list[i])
         for f in fields:
             if(sorted_sbh1_list[i][f] != sorted_sbh3_list[i][f]):
                 test_passed = 0
                 raise Exception("RESPONSE CONTENT TEST FAILED: Content does not match\n")
-
+                
+    print("RESPONSE CONTENT TEST PASSED: Content matches\n")
     add_test_results(test_passed, test_type)
 
 
