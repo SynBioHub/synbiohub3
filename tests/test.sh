@@ -51,7 +51,7 @@ for var in "$@"
 do
     if [[ $var == "--stopaftersetup" ]]
     then
-    python3 test_setup.py
+    	python3 test_setup.py
 	echo "Exiting after starting up test servers and completing setup."
 	exit 1
     fi
