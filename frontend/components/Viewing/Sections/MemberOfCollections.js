@@ -8,6 +8,7 @@ import Loading from '../../Reusable/Loading';
 import Link from 'next/link';
 
 import styles from '../../../styles/view.module.css';
+import { useDispatch } from 'react-redux';
 
 /**
  * @param {Any} properties Information passed down from parent component.
@@ -15,10 +16,13 @@ import styles from '../../../styles/view.module.css';
  */
 export default function MemberOfCollections(properties) {
   const [otherProps, setOtherProps] = useState();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (otherProps == undefined)
-      getQueryResponse(getOtherProperties, { uri: properties.uri }).then(props => {
+      getQueryResponse(dispatch, getOtherProperties, {
+        uri: properties.uri
+      }).then(props => {
         if (props.length > 0) setOtherProps(props);
       });
   }, [otherProps]);
@@ -28,16 +32,14 @@ export default function MemberOfCollections(properties) {
   return (
     <div>
       <table className={styles.table}>
-        <tbody>
-          {generateRows()}
-        </tbody>
+        <tbody>{generateRows()}</tbody>
       </table>
     </div>
   );
 
   /**
    * Maps the query information and gets x number of rows.
-   * 
+   *
    * @returns All the returned collection info mapped into rows.
    */
   function generateRows() {
@@ -56,11 +58,13 @@ export default function MemberOfCollections(properties) {
       <tr key={key}>
         <td>
           <span className={styles.link}>
-            <Link href={collection.subject} >
-              {collection.title}
-            </Link>
+            <Link href={collection.subject}>{collection.title}</Link>
           </span>
-          <Link href={`/search/collection=<${encodeURIComponent(collection.subject)}>&`} >
+          <Link
+            href={`/search/collection=<${encodeURIComponent(
+              collection.subject
+            )}>&`}
+          >
             <a>
               <FontAwesomeIcon
                 icon={faSearch}

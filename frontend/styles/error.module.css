@@ -146,6 +146,7 @@
    font-weight: 500;
    color: #555;
    margin-bottom: 2rem;
+   white-space: pre-wrap;
 }
 
 .errorInformationHeader {

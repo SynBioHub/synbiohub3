@@ -8,7 +8,7 @@ import {
 import axios from 'axios';
 import getConfig from 'next/config';
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import useSWR, { mutate } from 'swr';
 
 import styles from '../../styles/admin.module.css';
@@ -16,6 +16,7 @@ import Table from '../Reusable/Table/Table';
 import ActionButton from './Reusable/ActionButton';
 import Checkbox from './Reusable/CheckBox';
 import TableInput from './Reusable/TableInput';
+import { addError } from '../../redux/actions';
 const { publicRuntimeConfig } = getConfig();
 
 /* eslint sonarjs/cognitive-complexity: "off" */
@@ -37,7 +38,8 @@ const headers = [
 
 export default function Users() {
   const token = useSelector(state => state.user.token);
-  const { users, loading } = useUsers(token);
+  const dispatch = useDispatch();
+  const { users, loading } = useUsers(token, dispatch);
 
   return (
     <div className={styles.plugintable}>
@@ -413,9 +415,9 @@ const sortMethods = {
   curator: (user1, user2) => compareBools(user1.isCurator, user2.isCurator)
 };
 
-const useUsers = token => {
+const useUsers = (token, dispatch) => {
   const { data, error } = useSWR(
-    [`${publicRuntimeConfig.backend}/admin/users`, token],
+    [`${publicRuntimeConfig.backend}/admin/users`, token, dispatch],
     fetcher
   );
   return {
@@ -425,7 +427,7 @@ const useUsers = token => {
   };
 };
 
-const fetcher = (url, token) =>
+const fetcher = (url, token, dispatch) =>
   axios
     .get(url, {
       headers: {
@@ -434,4 +436,9 @@ const fetcher = (url, token) =>
         'X-authorization': token
       }
     })
-    .then(response => response.data);
+    .then(response => response.data)
+    .catch(error => {
+      error.customMessage = 'Request failed for GET /admin/users';
+      error.fullUrl = url;
+      dispatch(addError(error));
+    });

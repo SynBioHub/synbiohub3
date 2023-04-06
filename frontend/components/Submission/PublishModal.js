@@ -10,7 +10,7 @@ import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import useSWR from 'swr';
 
-import { makePublicCollection } from '../../redux/actions';
+import { addError, makePublicCollection } from '../../redux/actions';
 import styles from '../../styles/modal.module.css';
 import SelectorButton from '../Reusable/SelectorButton';
 import Table from '../Reusable/Table/Table';
@@ -22,13 +22,12 @@ const EXISTING = 'to Existing';
 const NEW = 'as New';
 
 export default function PublishModal(properties) {
-  const { collections, loading } = useRootCollections();
+  const dispatch = useDispatch();
+  const { collections, loading } = useRootCollections(dispatch);
   const [selected, setSelected] = useState(EXISTING);
   const [selectedCollection, setSelectedCollection] = useState();
   const [collectionIndex, setCollectionIndex] = useState(0);
   const [toPublish, setToPublish] = useState(properties.toPublish);
-
-  const dispatch = useDispatch();
 
   useEffect(() => {
     setToPublish(properties.toPublish);
@@ -212,9 +211,9 @@ const sortMethods = {
   }
 };
 
-const useRootCollections = () => {
+const useRootCollections = dispatch => {
   const { data, error } = useSWR(
-    [`${publicRuntimeConfig.backend}/rootCollections`],
+    [`${publicRuntimeConfig.backend}/rootCollections`, dispatch],
     fetcher
   );
   return {
@@ -224,7 +223,7 @@ const useRootCollections = () => {
   };
 };
 
-const fetcher = url =>
+const fetcher = (url, dispatch) =>
   axios
     .get(url, {
       headers: {
@@ -232,4 +231,10 @@ const fetcher = url =>
         Accept: 'text/plain'
       }
     })
-    .then(response => response.data);
+    .then(response => response.data)
+    .catch(error => {
+      error.customMessage =
+        'Request failed while fetching collections, see URL below for details';
+      error.fullUrl = url;
+      dispatch(addError(error));
+    });

@@ -13,7 +13,7 @@ import axios from 'axios';
 
 import InputField from '../components/Login/InputField';
 import TopLevel from '../components/TopLevel';
-import { login, logoutUser, updateUser } from '../redux/actions';
+import { addError, login, logoutUser, updateUser } from '../redux/actions';
 import styles from '../styles/login.module.css';
 import ActionButton from '../components/Admin/Reusable/ActionButton';
 import SimpleTable from '../components/Reusable/Table/SimpleTable';
@@ -157,10 +157,19 @@ function Profile() {
 
 function PluginTable(properties) {
   const [fetchedData, setFetchedData] = useState([]);
+  const dispatch = useDispatch();
   useEffect(() => {
     const getData = async () => {
-      const data = await axios.get('http://localhost:6789/plugin/servers');
-      setFetchedData(data);
+      const url = 'http://localhost:6789/plugin/servers';
+      try {
+        const data = await axios.get(url);
+        setFetchedData(data);
+      } catch (error) {
+        error.customMessage =
+          'Request and/or processing failed for GET /plugin/servers';
+        error.fullUrl = url;
+        dispatch(addError(error));
+      }
     };
     getData();
   }, []);
