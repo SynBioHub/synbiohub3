@@ -8,10 +8,15 @@ import styles from '../../styles/error.module.css';
 export default function Error({ error }) {
   return (
     <div className={styles.errorInfoContainer}>
-      <h1>{error.customMessage}</h1>
-      <h1>{error.name}</h1>
-      <h1>{error.message}</h1>
-      <h1>{error.stack}</h1>
+      <div className={styles.customMessage}>{error.customMessage}</div>
+      <div className={styles.fullUrl}>{error.fullUrl}</div>
+      <h2 className={styles.errorInformationHeader}>Error Information:</h2>
+      <h4>Name</h4>
+      <p>{error.name}</p>
+      <h4>Message</h4>
+      <p>{error.message}</p>
+      <h4>Stack</h4>
+      <p>{error.stack}</p>
     </div>
   );
 }

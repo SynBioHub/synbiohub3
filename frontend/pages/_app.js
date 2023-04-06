@@ -27,12 +27,11 @@ function MyApp({ Component, pageProps }) {
   const store = useStore(pageProps.initialReduxState);
   const [isInitializing, setIsInitializing] = useState(true);
   const [inSetupMode, setInSetupMode] = useState(false);
-  const [errorsOverride, setErrorsOverride] = useState([]);
   const router = useRouter();
 
   useEffect(() => {
     axios
-      .get(`${publicRuntimeConfig.backend}/admin/themes`, {
+      .get(`${publicRuntimeConfig.backend}/admin/theme`, {
         headers: {
           'Content-Type': 'application/json',
           Accept: 'text/plain'
@@ -47,7 +46,10 @@ function MyApp({ Component, pageProps }) {
         setIsInitializing(false);
       })
       .catch(error => {
-        setErrorsOverride([...errorsOverride, error]);
+        error.customMessage =
+          'Request and/or processing failed for GET /admin/theme';
+        error.fullUrl = `${publicRuntimeConfig.backend}/admin/theme`;
+        store.dispatch(addError(error));
       });
   }, []);
 
@@ -55,18 +57,20 @@ function MyApp({ Component, pageProps }) {
 
   if (isInitializing) {
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: '100vh'
-        }}
-      >
-        <Errors errorsOverride={errorsOverride} />
-        <Loading />
-      </div>
+      <Provider store={store}>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '100vh'
+          }}
+        >
+          <Errors />
+          <Loading />
+        </div>
+      </Provider>
     );
   }
 

@@ -1,3 +1,12 @@
+.layoutContainer {
+   background-color: #f00;
+   position: absolute;
+   top: 0;
+   bottom: 0;
+   right: 0;
+   left: 0;
+}
+
 .header {
    font-size: 1.1rem;
    font-weight: 500;
@@ -46,6 +55,8 @@
    position: absolute;
    top: 5rem;
    bottom: 5rem;
+   left: 50%;
+   transform: translateX(-50%);
    max-width: 80%;
    width: 50rem;
    border-radius: 0.5rem;
@@ -59,6 +70,7 @@
    overflow: scroll;
    z-index: 99999;
    background-color: #fff;
+   padding: 0 1rem;
 }
 
 .zIndex {
@@ -96,6 +108,14 @@
    cursor: pointer;
 }
 
+.reportIssue {
+   color: #000;
+}
+
+.reportIssue:hover {
+   text-decoration: underline;
+}
+
 .clearButton:hover {
    background-color: #d50000;
 }
@@ -111,4 +131,26 @@
 
 .clearAllButton:hover {
    background-color: rgba(255, 0, 0, 0.153);
+}
+
+.customMessage {
+   margin-top: 1rem;
+   margin-bottom: 1rem;
+   font-size: 1.2rem;
+   font-weight: 600;
+   color: #f00;
+}
+
+.fullUrl {
+   font-size: 0.9rem;
+   font-weight: 500;
+   color: #555;
+   margin-bottom: 2rem;
+}
+
+.errorInformationHeader {
+   font-size: 1.2rem;
+   font-weight: 600;
+   margin-top: 1rem;
+   margin-bottom: 1rem;
 }

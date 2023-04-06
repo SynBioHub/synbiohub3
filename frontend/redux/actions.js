@@ -1005,3 +1005,11 @@ export const removeError = error => (dispatch, getState) => {
     payload: newErrors
   });
 };
+
+export const removeErrorByIndex = index => (dispatch, getState) => {
+  const newErrors = getState().errors.errors.filter((e, i) => i !== index);
+  dispatch({
+    type: types.SETERRORS,
+    payload: newErrors
+  });
+};
