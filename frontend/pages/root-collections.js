@@ -6,12 +6,18 @@ import SearchHeader from '../components/Search/SearchHeader/SearchHeader';
 import ResultTable from '../components/Search/StandardSearch/ResultTable/ResultTable';
 import TopLevel from '../components/TopLevel';
 import styles from '../styles/standardsearch.module.css';
+import { addError } from '../redux/actions';
+import { useDispatch } from 'react-redux';
 const { publicRuntimeConfig } = getConfig();
 
 /**
  * This page renders the default search for the /search url
  */
-export default function RootCollections({ data }) {
+export default function RootCollections({ data, error }) {
+  const dispatch = useDispatch();
+  if (error) {
+    dispatch(addError(error));
+  }
   const [query, setQuery] = useState('');
   const [filteredData, setFilteredData] = useState(data);
 
@@ -57,17 +63,33 @@ export default function RootCollections({ data }) {
 // eslint-disable-next-line unicorn/prevent-abbreviations
 export async function getServerSideProps() {
   // Fetch rootCollections from sbh
-  const url = `${publicRuntimeConfig.backend}/rootCollections`;
-  const headers = {
-    Accept: 'text/plain; charset=UTF-8'
-  };
+  try {
+    const url = `${publicRuntimeConfig.backend}/rootCollections`;
+    const headers = {
+      Accept: 'text/plain; charset=UTF-8'
+    };
 
-  const response = await fetch(url, {
-    method: 'GET',
-    headers
-  });
+    const response = await fetch(url, {
+      method: 'GET',
+      headers
+    });
 
-  const data = await response.json();
+    const data = await response.json();
 
-  return { props: { data } };
+    return { props: { data } };
+  } catch (error) {
+    return {
+      props: {
+        error: {
+          customMessage:
+            'Request and/or processing failed for GET /rootCollections',
+          fullUrl: `${publicRuntimeConfig.backend}/rootCollections`,
+          message: error.message,
+          name: 'Server side error',
+          stack: error.stack
+        },
+        data: []
+      }
+    };
+  }
 }

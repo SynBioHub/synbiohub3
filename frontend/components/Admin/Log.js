@@ -2,16 +2,18 @@ import axios from 'axios';
 import he from 'he';
 import getConfig from 'next/config';
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import useSWR from 'swr';
 const { publicRuntimeConfig } = getConfig();
 
 import styles from '../../styles/admin.module.css';
 import Loading from '../Reusable/Loading';
+import { addError } from '../../redux/actions';
 
 export default function Log() {
   const token = useSelector(state => state.user.token);
-  const { log, loading } = useLog(token);
+  const dispatch = useDispatch();
+  const { log, loading } = useLog(token, dispatch);
   const [logDisplay, setLogDisplay] = useState();
   const [viewing, setViewing] = useState('error');
 
@@ -68,9 +70,9 @@ const decodeHtml = (line, index) => {
   });
 };
 
-const useLog = token => {
+const useLog = (token, dispatch) => {
   const { data, error } = useSWR(
-    [`${publicRuntimeConfig.backend}/admin/log`, token],
+    [`${publicRuntimeConfig.backend}/admin/log`, token, dispatch],
     fetcher
   );
   return {
@@ -79,7 +81,7 @@ const useLog = token => {
   };
 };
 
-const fetcher = (url, token) =>
+const fetcher = (url, token, dispatch) =>
   axios
     .get(url, {
       headers: {
@@ -87,4 +89,9 @@ const fetcher = (url, token) =>
         'X-authorization': token
       }
     })
-    .then(response => response.data);
+    .then(response => response.data)
+    .catch(error => {
+      error.customMessage = 'Request failed for GET /admin/log';
+      error.fullUrl = url;
+      dispatch(addError(error));
+    });

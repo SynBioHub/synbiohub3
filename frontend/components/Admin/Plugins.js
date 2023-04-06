@@ -9,7 +9,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import useSWR, { mutate } from 'swr';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -28,13 +28,15 @@ const searchable = ['index', 'name', 'url'];
 const headers = ['ID', 'Name', 'URL', ''];
 
 import getConfig from 'next/config';
+import { addError } from '../../redux/actions';
 const { publicRuntimeConfig } = getConfig();
 
 /* eslint sonarjs/no-duplicate-string: "off" */
 
 export default function Plugins() {
   const token = useSelector(state => state.user.token);
-  const { plugins, loading } = usePlugins(token);
+  const dispatch = useDispatch();
+  const { plugins, loading } = usePlugins(token, dispatch);
   return (
     <div>
       <PluginTable
@@ -163,12 +165,11 @@ function PluginDisplay(properties) {
     setName(properties.plugin.name);
     setUrl(properties.plugin.url);
 
-      const checkStatus = async () => {
-        const hidden = await fetchStatus(properties.plugin);
-        setStatus(hidden);
-      };
-      checkStatus();
-
+    const checkStatus = async () => {
+      const hidden = await fetchStatus(properties.plugin);
+      setStatus(hidden);
+    };
+    checkStatus();
   }, [properties.plugin.name, properties.plugin.url]);
 
   return !editMode ? (
@@ -177,20 +178,27 @@ function PluginDisplay(properties) {
       <td>{properties.plugin.name}</td>
       <td>
         <code>{properties.plugin.url}</code>
-        {!status ? <span><FontAwesomeIcon icon={faExclamationCircle} color={'#FB4C27'}></FontAwesomeIcon> Plugin is not Running</span>
-          : null}
+        {!status ? (
+          <span>
+            <FontAwesomeIcon
+              icon={faExclamationCircle}
+              color={'#FB4C27'}
+            ></FontAwesomeIcon>{' '}
+            Plugin is not Running
+          </span>
+        ) : null}
       </td>
       <td>
-        <ActionButton 
-        action="Refresh Plugin Status"
-        icon={faRedo}
-        onClick={() => {
-          const checkStatus = async () => {
-            const hidden = await fetchStatus(properties.plugin);
-            setStatus(hidden);
-          };
-          checkStatus();
-        }}
+        <ActionButton
+          action="Refresh Plugin Status"
+          icon={faRedo}
+          onClick={() => {
+            const checkStatus = async () => {
+              const hidden = await fetchStatus(properties.plugin);
+              setStatus(hidden);
+            };
+            checkStatus();
+          }}
         />
       </td>
       <td>
@@ -336,9 +344,9 @@ const sortMethods = {
   url: (plugin1, plugin2) => compareStrings(plugin1.name, plugin2.name)
 };
 
-const usePlugins = token => {
+const usePlugins = (token, dispatch) => {
   const { data, error } = useSWR(
-    [`${publicRuntimeConfig.backend}/admin/plugins`, token],
+    [`${publicRuntimeConfig.backend}/admin/plugins`, token, dispatch],
     fetcher
   );
   return {
@@ -348,7 +356,6 @@ const usePlugins = token => {
   };
 };
 
-
 async function fetchStatus(plugin) {
   return await axios({
     method: 'POST',
@@ -357,14 +364,16 @@ async function fetchStatus(plugin) {
       name: plugin.name,
       endpoint: 'status'
     }
-  }).then(response => {
-    return response.status === 200;
-  }).catch(error => {
-    return false;
-  });
+  })
+    .then(response => {
+      return response.status === 200;
+    })
+    .catch(error => {
+      return false;
+    });
 }
 
-const fetcher = (url, token) => 
+const fetcher = (url, token, dispatch) =>
   axios
     .get(url, {
       headers: {
@@ -373,5 +382,9 @@ const fetcher = (url, token) =>
         'X-authorization': token
       }
     })
-    .then(response => response.data);
-
+    .then(response => response.data)
+    .catch(error => {
+      error.customMessage = 'Error fetching plugins';
+      error.fullUrl = url;
+      dispatch(addError(error));
+    });

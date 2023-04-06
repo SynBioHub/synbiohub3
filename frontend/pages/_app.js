@@ -13,9 +13,11 @@ const { publicRuntimeConfig } = getConfig();
 
 import { ToastContainer } from 'react-toastify';
 import axios from 'axios';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Loading from '../components/Reusable/Loading';
 import Setup from '../specialAccess/setup';
+import { addError } from '../redux/actions';
+import Errors from '../components/Error/Errors';
 
 /**
  * This component is the starting component for the sbh app. Uses Provider
@@ -27,7 +29,7 @@ function MyApp({ Component, pageProps }) {
   const [inSetupMode, setInSetupMode] = useState(false);
   const router = useRouter();
 
-  try {
+  useEffect(() => {
     axios
       .get(`${publicRuntimeConfig.backend}/admin/theme`, {
         headers: {
@@ -42,26 +44,33 @@ function MyApp({ Component, pageProps }) {
           setInSetupMode(false);
         }
         setIsInitializing(false);
+      })
+      .catch(error => {
+        error.customMessage =
+          'Request and/or processing failed for GET /admin/theme';
+        error.fullUrl = `${publicRuntimeConfig.backend}/admin/theme`;
+        store.dispatch(addError(error));
       });
-  } catch (error) {
-    console.log(error);
-  }
+  }, []);
 
   /* eslint no-console: "off" */
 
   if (isInitializing) {
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: '100vh'
-        }}
-      >
-        <Loading />
-      </div>
+      <Provider store={store}>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '100vh'
+          }}
+        >
+          <Errors />
+          <Loading />
+        </div>
+      </Provider>
     );
   }
 

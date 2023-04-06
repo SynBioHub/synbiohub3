@@ -8,13 +8,14 @@ import {
 import axios from 'axios';
 import getConfig from 'next/config';
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import useSWR, { mutate } from 'swr';
 
 import styles from '../../styles/admin.module.css';
 import Table from '../Reusable/Table/Table';
 import ActionButton from './Reusable/ActionButton';
 import TableInput from './Reusable/TableInput';
+import { addError } from '../../redux/actions';
 const { publicRuntimeConfig } = getConfig();
 
 /* eslint sonarjs/cognitive-complexity: "off" */
@@ -26,7 +27,8 @@ const headers = ['URI Prefix', 'SynBioHub URL', ''];
 
 export default function Registries() {
   const token = useSelector(state => state.user.token);
-  const { registries, loading } = useRegistries(token);
+  const dispatch = useDispatch();
+  const { registries, loading } = useRegistries(token, dispatch);
 
   return (
     <div className={styles.plugintable}>
@@ -223,9 +225,9 @@ const sortMethods = {
   url: (registry1, registry2) => compareStrings(registry1.url, registry2.url)
 };
 
-const useRegistries = token => {
+const useRegistries = (token, dispatch) => {
   const { data, error } = useSWR(
-    [`${publicRuntimeConfig.backend}/admin/registries`, token],
+    [`${publicRuntimeConfig.backend}/admin/registries`, token, dispatch],
     fetcher
   );
   return {
@@ -235,7 +237,7 @@ const useRegistries = token => {
   };
 };
 
-const fetcher = (url, token) =>
+const fetcher = (url, token, dispatch) =>
   axios
     .get(url, {
       headers: {
@@ -244,4 +246,9 @@ const fetcher = (url, token) =>
         'X-authorization': token
       }
     })
-    .then(response => response.data);
+    .then(response => response.data)
+    .catch(error => {
+      error.customMessage = 'Error fetching registries';
+      error.fullUrl = url;
+      dispatch(addError(error));
+    });
