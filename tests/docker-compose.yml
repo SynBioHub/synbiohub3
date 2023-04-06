@@ -55,7 +55,7 @@ services:
         environment: 
             - backend=http://synbiohubbackend:6789
     synbiohub:
-        image: synbiohub/synbiohub:1.6.1-standalone
+        image: synbiohub/synbiohub:snapshot-standalone
         depends_on: 
             - virtuoso
         ports:
