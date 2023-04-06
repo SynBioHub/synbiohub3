@@ -114,6 +114,7 @@ public class UserController {
 
     @PostMapping(value = "/setup")
     public ResponseEntity<String> setup(@RequestBody Map<String, Object> allParams) {
+        log.info(String.valueOf(allParams));
         String fileName = "config.local.json";
         String workingDirectory = System.getProperty("user.dir") + "/data";
         File file = new File(workingDirectory + File.separator + fileName);
@@ -154,7 +155,7 @@ public class UserController {
                 bw.close();
                 ConfigUtil.refreshLocalJson();
                 log.info("Setup successful!");
-                return ResponseEntity.ok("File created successfully!");
+                return ResponseEntity.ok("Setup Successful");
             } else {
                 log.info("Local file already exists. Setup proceeds.");
                 return ResponseEntity.ok("File already exists!");
