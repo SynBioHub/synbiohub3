@@ -1,14 +1,16 @@
 import axios from 'axios';
 import getConfig from 'next/config';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import useSWR from 'swr';
 const { publicRuntimeConfig } = getConfig();
 
 import Table from '../Reusable/Table/Table';
+import { addError } from '../../redux/actions';
 
 export default function Graphs() {
   const token = useSelector(state => state.user.token);
-  const { graphs, loading } = useGraphs(token);
+  const dispatch = useDispatch();
+  const { graphs, loading } = useGraphs(token, dispatch);
   return (
     <Table
       data={graphs}
@@ -45,9 +47,9 @@ const sortMethods = {
   }
 };
 
-const useGraphs = token => {
+const useGraphs = (token, dispatch) => {
   const { data, error } = useSWR(
-    [`${publicRuntimeConfig.backend}/admin/graphs`, token],
+    [`${publicRuntimeConfig.backend}/admin/graphs`, token, dispatch],
     fetcher
   );
   return {
@@ -57,7 +59,7 @@ const useGraphs = token => {
   };
 };
 
-const fetcher = (url, token) =>
+const fetcher = (url, token, dispatch) =>
   axios
     .get(url, {
       headers: {
@@ -66,4 +68,9 @@ const fetcher = (url, token) =>
         'X-authorization': token
       }
     })
-    .then(response => response.data);
+    .then(response => response.data)
+    .catch(error => {
+      error.customMessage = 'Error loading graphs';
+      error.fullUrl = url;
+      dispatch(addError(error));
+    });

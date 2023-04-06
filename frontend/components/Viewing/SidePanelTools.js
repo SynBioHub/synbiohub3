@@ -38,13 +38,16 @@ export default function SidePanelTools(properties) {
   const [curationAvailable, setCurationAvailable] = useState(false);
 
   useEffect(() => {
+    /*
     const checkCurateAvailability = async () => {
       const available = await checkCuration(pluginData);
       setCurationAvailable(available);
     }
     checkCurateAvailability();
+    */
   })
 
+  /*
   const pluginData = {
     complete_sbol: '',
     shallow_sbol: '',
@@ -55,6 +58,7 @@ export default function SidePanelTools(properties) {
     type: properties.type,
     submit_link: ''
   }
+  */
 
   //The styles for the toast saying the citation has been copied.
   const copyToast = (message) => toast(
@@ -117,13 +121,15 @@ export default function SidePanelTools(properties) {
                 url={properties.url}
                 setModal={setModal}
               />
-              : 
+              : null
+              /*
               modal === "Curation" ?
                 <CurationModal
                   setModal={setModal}
                   type={properties.type}
                 />
                 : null
+                */
       }
       <div className={styles.id}>
         <Link href={`http://sbols.org/v2#${properties.type}`}>
@@ -154,7 +160,8 @@ export default function SidePanelTools(properties) {
             setModal("Download");
           }}
         />
-        {curationAvailable ?
+        
+        {/*curationAvailable ?
         <FontAwesomeIcon
           icon={faFunnelDollar}
           size="1x"
@@ -162,7 +169,7 @@ export default function SidePanelTools(properties) {
           onClick={() => {
             setModal("Curation");
           }}
-        /> : null }
+        /> : null */}
         <FontAwesomeIcon
           icon={faQuoteRight}
           size="1x"
@@ -193,7 +200,7 @@ export default function SidePanelTools(properties) {
   );
 }
 
-
+/*
 async function checkCuration(pluginData) {
   return await axios({
     method: 'GET',
@@ -234,3 +241,4 @@ async function checkCuration(pluginData) {
   }).catch(error => {return false;});
 
 }
+*/

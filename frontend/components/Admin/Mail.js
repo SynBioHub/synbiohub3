@@ -2,7 +2,7 @@ import { faEnvelope, faKey } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 import getConfig from 'next/config';
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import useSWR, { mutate } from 'swr';
 const { publicRuntimeConfig } = getConfig();
 
@@ -11,12 +11,14 @@ import InputField from '../Login/InputField';
 import Loading from '../Reusable/Loading';
 import ErrorMessage from './Reusable/ErrorMessage';
 import SaveButton from './Reusable/SaveButton';
+import { addError } from '../../redux/actions';
 
 export default function Mail() {
   const token = useSelector(state => state.user.token);
+  const dispatch = useDispatch();
   const [apiKey, setApiKey] = useState('');
   const [sendGridEmail, setSendGridEmail] = useState('');
-  const { email, loading } = useEmail(token);
+  const { email, loading } = useEmail(token, dispatch);
   const [error, setError] = useState('');
 
   const [actualApiKey, setActualApiKey] = useState('');
@@ -92,9 +94,9 @@ export default function Mail() {
   }
 }
 
-const useEmail = token => {
+const useEmail = (token, dispatch) => {
   const { data, error } = useSWR(
-    [`${publicRuntimeConfig.backend}/admin/mail`, token],
+    [`${publicRuntimeConfig.backend}/admin/mail`, token, dispatch],
     fetcher
   );
   return {
@@ -104,7 +106,7 @@ const useEmail = token => {
   };
 };
 
-const fetcher = (url, token) =>
+const fetcher = (url, token, dispatch) =>
   axios
     .get(url, {
       headers: {
@@ -113,7 +115,12 @@ const fetcher = (url, token) =>
         'X-authorization': token
       }
     })
-    .then(response => response.data);
+    .then(response => response.data)
+    .catch(error => {
+      error.customMessage = 'Error fetching email';
+      error.fullUrl = url;
+      dispatch(addError(error));
+    });
 
 const updateEmail = async (
   apiKey,

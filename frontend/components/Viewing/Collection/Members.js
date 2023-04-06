@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import useSWR from 'swr';
 import axios from 'axios';
 import Select from 'react-select';
@@ -19,6 +19,7 @@ import loadTemplate from '../../../sparql/tools/loadTemplate';
 import { shortName } from '../../../namespace/namespace';
 import lookupRole from '../../../namespace/lookupRole';
 import Link from 'next/link';
+import { addError } from '../../../redux/actions';
 
 /* eslint sonarjs/cognitive-complexity: "off" */
 
@@ -42,6 +43,7 @@ export default function Members(properties) {
   const [defaultSortOption, setDefaultSortOption] = useState(sortOptions[0]);
   const [customBounds, setCustomBounds] = useState([0, 10000]);
   const [typeFilter, setTypeFilter] = useState('Show Only Root Objects');
+  const dispatch = useDispatch();
 
   let preparedSearch =
     search !== ''
@@ -77,16 +79,18 @@ export default function Members(properties) {
 
   let query = searchQuery ? getCollectionMembersSearch : getCollectionMembers;
 
-  const { members, mutate } = useMembers(query, parameters, token);
+  const { members, mutate } = useMembers(query, parameters, token, dispatch);
   const { count: totalMemberCount } = useCount(
     CountMembersTotal,
     { ...parameters, search: '' },
-    token
+    token,
+    dispatch
   );
   const { count: currentMemberCount } = useCount(
     searchQuery ? CountMembersTotal : CountMembers,
     parameters,
-    token
+    token,
+    dispatch
   );
 
   useEffect(() => {
@@ -96,7 +100,12 @@ export default function Members(properties) {
     }
   }, [properties.refreshMembers, mutate]);
 
-  const { filters } = useFilters(getTypesRoles, { uri: properties.uri }, token);
+  const { filters } = useFilters(
+    getTypesRoles,
+    { uri: properties.uri },
+    token,
+    dispatch
+  );
 
   const outOfBoundsHandle = offset => {
     const newBounds = getNewBounds(offset, currentMemberCount);
@@ -286,9 +295,9 @@ const createUrl = (query, options) => {
   )}`;
 };
 
-const useCount = (query, options, token) => {
+const useCount = (query, options, token, dispatch) => {
   const url = createUrl(query, options, token);
-  const { data, error } = useSWR([url, token], fetcher);
+  const { data, error } = useSWR([url, token, dispatch], fetcher);
 
   let processedData = data ? processResults(data)[0].count : undefined;
   return {
@@ -296,9 +305,9 @@ const useCount = (query, options, token) => {
   };
 };
 
-const useMembers = (query, options, token) => {
+const useMembers = (query, options, token, dispatch) => {
   const url = createUrl(query, options);
-  const { data, error, mutate } = useSWR([url, token], fetcher);
+  const { data, error, mutate } = useSWR([url, token, dispatch], fetcher);
 
   let processedData = data ? processResults(data) : undefined;
 
@@ -308,9 +317,9 @@ const useMembers = (query, options, token) => {
   };
 };
 
-const useFilters = (query, options, token) => {
+const useFilters = (query, options, token, dispatch) => {
   const url = createUrl(query, options);
-  const { data, error } = useSWR([url, token], fetcher);
+  const { data, error } = useSWR([url, token, dispatch], fetcher);
 
   let processedData = data ? processResults(data) : undefined;
 
@@ -319,7 +328,7 @@ const useFilters = (query, options, token) => {
   };
 };
 
-const fetcher = (url, token) =>
+const fetcher = (url, token, dispatch) =>
   axios
     .get(url, {
       headers: {
@@ -328,7 +337,13 @@ const fetcher = (url, token) =>
         'X-authorization': token
       }
     })
-    .then(response => response.data);
+    .then(response => response.data)
+    .catch(error => {
+      error.customMessage =
+        'Request failed while getting collection members info';
+      error.fullUrl = url;
+      dispatch(addError(error));
+    });
 
 const processResults = results => {
   const headers = results.head.vars;

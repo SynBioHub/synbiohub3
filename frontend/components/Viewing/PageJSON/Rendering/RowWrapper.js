@@ -6,8 +6,10 @@ import parseQueryResult from '../Fetching/parseQueryResult';
 import useRegistries from '../Fetching/useRegistries';
 import createRenderingObject from './createRenderingObject';
 import SectionRenderer from './SectionRenderer';
+import { useDispatch } from 'react-redux';
 
 function handleExternalFetch(
+  dispatch,
   stackTrace,
   key,
   sectionIndex,
@@ -24,6 +26,7 @@ function handleExternalFetch(
     })?.url;
     if (queryUrl) {
       executeQueryFromTableJSON(
+        dispatch,
         stackTrace.uri,
         stackTrace.prefixes,
         stackTrace.table,
@@ -55,6 +58,7 @@ function handleExternalFetch(
 }
 
 function createKeyToValueMap(
+  dispatch,
   sections,
   updateSectionsToParse,
   setTitleToValueMap,
@@ -94,6 +98,7 @@ function createKeyToValueMap(
         );
         if (stackTrace) {
           handleExternalFetch(
+            dispatch,
             stackTrace,
             key,
             index,
@@ -149,8 +154,13 @@ export default function RowWrapper({ sections, metadata, setSectionIcon }) {
   const [titleToValueMap, setTitleToValueMap] = useState({});
   const [sectionsToRender, setSectionsToRender] = useState([]);
   const [content, setContent] = useState(null);
+  const dispatch = useDispatch();
 
-  const { registries, loading: registriesLoading, error } = useRegistries();
+  const {
+    registries,
+    loading: registriesLoading,
+    error
+  } = useRegistries(dispatch);
 
   const updateSectionsToParse = (key, index, newSection) => {
     const newSections = { ...sectionsToParse };
@@ -161,6 +171,7 @@ export default function RowWrapper({ sections, metadata, setSectionIcon }) {
   useEffect(() => {
     if (sectionsToParse) {
       createKeyToValueMap(
+        dispatch,
         sectionsToParse,
         updateSectionsToParse,
         setTitleToValueMap,

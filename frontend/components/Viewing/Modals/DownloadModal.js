@@ -59,6 +59,7 @@ export default function DownloadModal(properties) {
       status: "downloading"
     };
 
+    /*
     const pluginData = {
       complete_sbol: '',
       shallow_sbol: '',
@@ -68,6 +69,7 @@ export default function DownloadModal(properties) {
       size: 0,
       type: properties.type
     };
+    */
 
     dispatch(downloadFiles([item], pluginName, pluginData));
   }
@@ -93,7 +95,7 @@ export default function DownloadModal(properties) {
     if (properties.type === "Module") selectOptions.push({ value: "image", label: "Download Image" });
     if (properties.type === "Attachment") selectOptions.push({ value: "download", label: "Download Attachment" });
 
-
+    /*
     axios({
       method: 'GET',
       url: `${publicRuntimeConfig.backend}/admin/plugins`,
@@ -121,6 +123,7 @@ export default function DownloadModal(properties) {
         }).catch(error => {return;});
       }
     }).catch(error => {return;});
+    */
 
     return selectOptions;
   }

@@ -122,6 +122,36 @@ def get_request_download(request, headers, route_parameters, version):
     return response
 
 # data is the data field for a request
+def post_json_request(request, version, data, headers, route_parameters, files):
+    # get the current token
+    if(version == 1):
+        user_token = test_state.get_authentication(1)
+    else:
+        user_token = test_state.get_authentication(3)
+
+    if user_token != None:
+        headers["X-authorization"] = user_token
+
+    address = get_address(request, route_parameters, version)
+    print(address)
+
+    session = requests_html.HTMLSession()
+
+    response = session.post(address, json = data, headers = headers, files = files)
+        
+    try:
+        response.raise_for_status()
+    except HTTPError as err:
+        #print(err)
+        raise HTTPError("Internal server error. Content of response was \n" + response.text)
+
+    print("SBH" + str(version) + "\n") 
+    print(response.text) 
+    print("\n")
+
+    return response
+
+# data is the data field for a request
 def post_request(request, version, data, headers, route_parameters, files):
     # get the current token
     if(version == 1):
@@ -224,13 +254,12 @@ def compare_json_list(sbh1requestcontent, sbh3requestcontent, test_type, fields)
         test_passed = 0
         raise Exception("RESPONSE CONTENT TEST FAILED: Content does not match\n")
     for i in range(len(sorted_sbh1_list)):
-        print(sorted_sbh1_list[i])
-        print(sorted_sbh3_list[i])
         for f in fields:
             if(sorted_sbh1_list[i][f] != sorted_sbh3_list[i][f]):
                 test_passed = 0
                 raise Exception("RESPONSE CONTENT TEST FAILED: Content does not match\n")
-
+                
+    print("RESPONSE CONTENT TEST PASSED: Content matches\n")
     add_test_results(test_passed, test_type)
 
 
