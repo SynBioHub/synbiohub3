@@ -139,7 +139,6 @@ public class UserController {
         allParams.remove("userEmail");
         allParams.remove("userPassword");
         allParams.remove("userPasswordConfirm");
-        //TODO: take out admin user stuff from params, and create new Admin user
 
         try {
             if (file.createNewFile()) {
@@ -147,6 +146,7 @@ public class UserController {
                 allParams.put("graphStoreEndpoint", "http://virtuoso3:8890/sparql-graph-crud-auth/");
                 allParams.put("firstLaunch", false);
                 allParams.put("version", 1);
+                // TODO: Setup should add a local version to web of registries
                 String json = mapper.writeValueAsString(allParams);
                 FileWriter fw = new FileWriter(file.getAbsoluteFile());
                 BufferedWriter bw = new BufferedWriter(fw);
