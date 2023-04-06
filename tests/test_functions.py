@@ -122,6 +122,36 @@ def get_request_download(request, headers, route_parameters, version):
     return response
 
 # data is the data field for a request
+def post_json_request(request, version, data, headers, route_parameters, files):
+    # get the current token
+    if(version == 1):
+        user_token = test_state.get_authentication(1)
+    else:
+        user_token = test_state.get_authentication(3)
+
+    if user_token != None:
+        headers["X-authorization"] = user_token
+
+    address = get_address(request, route_parameters, version)
+    print(address)
+
+    session = requests_html.HTMLSession()
+
+    response = session.post(address, json = data, headers = headers, files = files)
+        
+    try:
+        response.raise_for_status()
+    except HTTPError as err:
+        #print(err)
+        raise HTTPError("Internal server error. Content of response was \n" + response.text)
+
+    print("SBH" + str(version) + "\n") 
+    print(response.text) 
+    print("\n")
+
+    return response
+
+# data is the data field for a request
 def post_request(request, version, data, headers, route_parameters, files):
     # get the current token
     if(version == 1):
