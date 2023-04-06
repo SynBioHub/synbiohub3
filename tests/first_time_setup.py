@@ -40,7 +40,6 @@ class TestSetup(TestCase):
         post_json_request("setup", 1, setup, headers = {"Accept": "text/plain", "Content-Type": "application/json"}, route_parameters = [], files = None)
         post_json_request("setup", 3, setup, headers = {"Accept": "text/plain", "Content-Type": "application/json"}, route_parameters = [], files = None)
 
-
         test_print("test_setup_post completed")
 
 
