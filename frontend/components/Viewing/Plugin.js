@@ -10,14 +10,18 @@ export default function Plugin(properties) {
   const [status, setStatus] = useState(null);
   const [content, setContent] = useState("");
   
+  const uri = properties.uri;
+  
   const pluginData = {
-    complete_sbol: '',
-    shallow_sbol: '',
-    genbank: '',
-    top_level: '',
-    instanceUrl: '',
-    size: 0,
-    type: ''
+    uri: uri,
+    complete_sbol: `${uri}/sbol`,
+    shallow_sbol: `${uri}/sbolnr`,
+    genbank: `${uri}/gb`,
+    top_level: uri,
+    instanceUrl: `${publicRuntimeConfig.backend}/`,
+    size: 1,
+    instanceUrl: `${publicRuntimeConfig.backend}/`,
+    type: properties.type
   };
 
   useEffect(() => {
@@ -26,7 +30,7 @@ export default function Plugin(properties) {
     }
     else if (status) {
       const downloadContent = async () => {
-       const toRender = await runPlugin(properties.plugin, pluginData);
+       const toRender = await runPlugin(properties.plugin, pluginData, uri, properties.type);
        setContent(toRender);
       };
       downloadContent();
@@ -71,14 +75,16 @@ async function evaluatePlugin(plugin, type) {
     });
 }
 
-async function runPlugin(plugin, pluginData) {
+async function runPlugin(plugin, pluginData, uri, type) {
   return await axios({
     method: 'POST',
     url: `${publicRuntimeConfig.backend}/call`,
     params: {
       name: plugin.name,
       endpoint: 'run',
-      data: pluginData
+      data: pluginData,
+      uri: uri,
+      type: type
     }
   }).then(response => {
     return response.data;

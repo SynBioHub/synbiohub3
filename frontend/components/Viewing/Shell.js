@@ -31,7 +31,7 @@ export default function Shell(properties) {
             <div>
               No structure defined for type "{properties.metadata.type}"
             </div>
-            <Plugins plugins={plugins} type={properties.type} />
+            <Plugins plugins={plugins} type={properties.type} uri={properties.uri} />
           </div>
         </div>
         <div></div>
@@ -56,7 +56,7 @@ export default function Shell(properties) {
         />
         <div className={styles.sections}>
           <GenericContent json={json} uri={properties.uri} />
-          <Plugins plugins={plugins} type={properties.type} />
+          <Plugins plugins={plugins} type={properties.type} uri={properties.uri} />
         </div>
       </div>
       <div></div>
@@ -66,7 +66,7 @@ export default function Shell(properties) {
 
 function Plugins(properties) {
   const plugins = properties.plugins.rendering.map(plugin => {
-    return <Plugin plugin={plugin} type={properties.type} key={plugin.index} />;
+    return <Plugin plugin={plugin} type={properties.type} key={plugin.index} uri={properties.uri} />;
   });
 
   return <div>{plugins}</div>;
