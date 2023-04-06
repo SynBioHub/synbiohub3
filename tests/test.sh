@@ -40,12 +40,22 @@ for var in "$@"
 do
     if [[ $var == "--stopafterstart" ]]
     then
-	echo "Exiting after starting up test server."
+	echo "Exiting after starting up test servers."
 	exit 1
     fi
 done
 
 bash ./upload_data.sh
+
+for var in "$@"
+do
+    if [[ $var == "--stopaftersetup" ]]
+    then
+    python3 test_setup.py
+	echo "Exiting after starting up test servers and completing setup."
+	exit 1
+    fi
+done
 
 message "Running test suite."
 

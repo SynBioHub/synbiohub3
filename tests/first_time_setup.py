@@ -35,9 +35,8 @@ class TestSetup(TestCase):
             'allowPublicSignup': 'true',
         }
 
-        #uncomment when setup works on 3
-        # compare_post_request('setup', setup, headers = {"Accept": "text/plain"}, route_parameters = [], files = None)
-        post_request("setup", 1, setup, headers = {"Accept": "text/plain"}, route_parameters = [], files = None)
+        compare_post_request('setup', setup, headers = {"Accept": "text/plain"}, route_parameters = [], files = None)
+        #post_request("setup", 1, setup, headers = {"Accept": "text/plain"}, route_parameters = [], files = None)
 
 
         test_print("test_setup_post completed")
