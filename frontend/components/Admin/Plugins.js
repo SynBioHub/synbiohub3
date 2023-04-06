@@ -165,11 +165,14 @@ function PluginDisplay(properties) {
     setName(properties.plugin.name);
     setUrl(properties.plugin.url);
 
+
+    /*
     const checkStatus = async () => {
       const hidden = await fetchStatus(properties.plugin);
       setStatus(hidden);
     };
     checkStatus();
+    */
   }, [properties.plugin.name, properties.plugin.url]);
 
   return !editMode ? (
@@ -188,6 +191,7 @@ function PluginDisplay(properties) {
           </span>
         ) : null}
       </td>
+      {/*
       <td>
         <ActionButton
           action="Refresh Plugin Status"
@@ -201,6 +205,7 @@ function PluginDisplay(properties) {
           }}
         />
       </td>
+        */}
       <td>
         <div className={styles.actionbuttonscontainer}>
           <div className={styles.actionbuttonslayout}>
@@ -356,6 +361,7 @@ const usePlugins = (token, dispatch) => {
   };
 };
 
+/*
 async function fetchStatus(plugin) {
   return await axios({
     method: 'POST',
@@ -372,6 +378,8 @@ async function fetchStatus(plugin) {
       return false;
     });
 }
+
+*/
 
 const fetcher = (url, token, dispatch) =>
   axios
