@@ -979,3 +979,29 @@ export const setUploadStatus = status => dispatch => {
     payload: status
   });
 };
+
+// ERROR ACTIONS
+
+export const addError = error => (dispatch, getState) => {
+  dispatch({
+    type: types.SETERRORS,
+    payload: [...getState().errors.errors, error]
+  });
+};
+
+export const clearErrors = () => dispatch => {
+  dispatch({
+    type: types.SETERRORS,
+    payload: []
+  });
+};
+
+export const removeError = error => (dispatch, getState) => {
+  const newErrors = getState().errors.errors.filter(
+    e => e.message !== error.message
+  );
+  dispatch({
+    type: types.SETERRORS,
+    payload: newErrors
+  });
+};

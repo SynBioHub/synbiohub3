@@ -7,7 +7,6 @@ import { useState } from 'react';
 import SubmitLabel from '../components/Submit/ReusableComponents/SubmitLabel';
 
 import getConfig from 'next/config';
-import ErrorMessage from '../components/Admin/Reusable/ErrorMessage';
 const { publicRuntimeConfig } = getConfig();
 
 export default function Setup({ setInSetupMode }) {

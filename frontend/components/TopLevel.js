@@ -8,6 +8,7 @@ import styles from '../styles/layout.module.css';
 import Footer from './Footer';
 import Navbar from './Navbar/Navbar';
 import DownloadStatus from './Reusable/Download/DownloadStatus';
+import Errors from './Error/Errors';
 
 /* eslint sonarjs/cognitive-complexity: "off" */
 
@@ -48,7 +49,7 @@ export default function TopLevel(properties) {
 
           <link href="/favicon.ico" rel="icon" />
         </Head>
-
+        <Errors />
         <div className={styles.container}>
           <div className={!properties.hideFooter ? styles.content : ''}>
             {properties.navbar ? properties.navbar : <Navbar />}

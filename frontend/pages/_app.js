@@ -13,9 +13,11 @@ const { publicRuntimeConfig } = getConfig();
 
 import { ToastContainer } from 'react-toastify';
 import axios from 'axios';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Loading from '../components/Reusable/Loading';
 import Setup from '../specialAccess/setup';
+import { addError } from '../redux/actions';
+import Errors from '../components/Error/Errors';
 
 /**
  * This component is the starting component for the sbh app. Uses Provider
@@ -25,11 +27,12 @@ function MyApp({ Component, pageProps }) {
   const store = useStore(pageProps.initialReduxState);
   const [isInitializing, setIsInitializing] = useState(true);
   const [inSetupMode, setInSetupMode] = useState(false);
+  const [errorsOverride, setErrorsOverride] = useState([]);
   const router = useRouter();
 
-  try {
+  useEffect(() => {
     axios
-      .get(`${publicRuntimeConfig.backend}/admin/theme`, {
+      .get(`${publicRuntimeConfig.backend}/admin/themes`, {
         headers: {
           'Content-Type': 'application/json',
           Accept: 'text/plain'
@@ -42,10 +45,11 @@ function MyApp({ Component, pageProps }) {
           setInSetupMode(false);
         }
         setIsInitializing(false);
+      })
+      .catch(error => {
+        setErrorsOverride([...errorsOverride, error]);
       });
-  } catch (error) {
-    console.log(error);
-  }
+  }, []);
 
   /* eslint no-console: "off" */
 
@@ -60,6 +64,7 @@ function MyApp({ Component, pageProps }) {
           height: '100vh'
         }}
       >
+        <Errors errorsOverride={errorsOverride} />
         <Loading />
       </div>
     );

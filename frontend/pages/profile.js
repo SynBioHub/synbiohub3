@@ -16,17 +16,7 @@ import TopLevel from '../components/TopLevel';
 import { login, logoutUser, updateUser } from '../redux/actions';
 import styles from '../styles/login.module.css';
 import ActionButton from '../components/Admin/Reusable/ActionButton';
-import useSWR, { mutate } from 'swr';
-
-import Table from '../components/Reusable/Table/Table';
 import SimpleTable from '../components/Reusable/Table/SimpleTable';
-
-import getConfig from 'next/config';
-const { publicRuntimeConfig } = getConfig();
-
-const headers = ['ID', 'Name', ''];
-const searchable = ['Name'];
-const options = [];
 
 function Profile() {
   const [name, setName] = useState('');
@@ -169,9 +159,7 @@ function PluginTable(properties) {
   const [fetchedData, setFetchedData] = useState([]);
   useEffect(() => {
     const getData = async () => {
-      const data = await axios.get(
-        "http://localhost:6789/plugin/servers"
-      );
+      const data = await axios.get('http://localhost:6789/plugin/servers');
       setFetchedData(data);
     };
     getData();
@@ -231,7 +219,7 @@ function PluginDisplay(properties) {
         </div>
       </td>
     </tr>
-  ); 
+  );
 }
 
 // this.state = {
@@ -242,16 +230,15 @@ function PluginDisplay(properties) {
 // };
 
 var state = {
-  data: ""
+  data: ''
 };
 
-const loadPluginData = (token) => {
+const loadPluginData = token => {
   var axiosresult;
-  axios.get(temp)
-  .then(res => {
+  axios.get(temp).then(res => {
     axiosresult = res.data;
   });
-  
+
   // const axiostemp = await axios({
   //   method: 'get',
   //   url: temp,
@@ -271,8 +258,8 @@ const loadPluginData = (token) => {
   // };
   return {
     plugins: axiosresult,
-    loading: false,
-  }
+    loading: false
+  };
 };
 
 const fetcher = (url, token) => {
@@ -286,7 +273,6 @@ const fetcher = (url, token) => {
     })
     .then(response => response.data);
 };
-
 
 export default function ProfileWrapped() {
   return (
