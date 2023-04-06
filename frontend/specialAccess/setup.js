@@ -7,9 +7,12 @@ import { useState } from 'react';
 import SubmitLabel from '../components/Submit/ReusableComponents/SubmitLabel';
 
 import getConfig from 'next/config';
+import { useDispatch } from 'react-redux';
+import { addError } from '../redux/actions';
 const { publicRuntimeConfig } = getConfig();
 
 export default function Setup({ setInSetupMode }) {
+  const dispatch = useDispatch();
   const [instanceName, setInstanceName] = useState('');
   const [color, setColor] = useState('#D25627');
   const [frontPageText, setFrontPageText] = useState(
@@ -231,7 +234,10 @@ export default function Setup({ setInSetupMode }) {
                 setInSetupMode(false);
               }
             } catch (error) {
-              console.log(error);
+              error.customMessage =
+                'Request and/or processing failed for POST /setup';
+              error.fullUrl = `${publicRuntimeConfig.backend}/setup`;
+              dispatch(addError(error));
             }
           }}
         >
