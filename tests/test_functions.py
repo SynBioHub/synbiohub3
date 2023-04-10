@@ -432,6 +432,23 @@ def compare_post_request(request, data, test_name = "", route_parameters = [], h
 
     compare_request(post_request(request, 1, data, headers, route_parameters, files = files), post_request(request, 3, data, headers, route_parameters, files = files), request, "post request", test_type)
 
+def compare_post_json_request(request, data, test_name = "", route_parameters = [], headers = {}, files = None, test_type = "Other"):
+    """Complete a post request and error if it differs from previous results.
+
+    request-- string, the name of the page being requested
+    data -- data to send in the post request
+    route_parameters -- a list of parameters for the url endpoint
+    test_name -- a name for the test to make multiple tests for the same endpoint unique"""
+
+    # remove any leading forward slashes for consistency
+    request = clip_request(request)
+
+    testpath = request_file_path(request, "post request", test_name)
+    test_state.add_post_request(request, testpath, test_name)
+
+    compare_request(post_json_request("setup", 1, data, headers = {"Accept": "text/plain", "Content-Type": "application/json"}, route_parameters = [], files = None), post_json_request(request, 3, data, headers, route_parameters, files = files), request, "post request", test_type)
+
+
 # TODO: make checking throw an error when all endpoints are not checked, instead of printing a warning.
 def cleanup_check():
     """Performs final checking after all tests have run.
