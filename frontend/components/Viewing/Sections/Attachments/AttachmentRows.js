@@ -73,11 +73,11 @@ export default function AttachmentRows(properties) {
             onClick={() => {
               //The attachment was uploaded from a URL so it must be handled differently.
               if (attachment.size === '') {
-                getQueryResponse(getSource, { uri: attachment.topLevel }).then(
-                  source => {
-                    window.open(source[0].source, '_blank');
-                  }
-                );
+                getQueryResponse(dispatch, getSource, {
+                  uri: attachment.topLevel
+                }).then(source => {
+                  window.open(source[0].source, '_blank');
+                });
               } else {
                 const item = {
                   url: `${
@@ -121,6 +121,7 @@ export default function AttachmentRows(properties) {
 
                 dispatch(setAttachments(copy));
                 await getQueryResponse(
+                  dispatch,
                   deleteAttachment,
                   { uri: deletedAttachment[0].topLevel },
                   token,

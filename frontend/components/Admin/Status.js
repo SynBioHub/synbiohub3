@@ -1,15 +1,17 @@
 import axios from 'axios';
 import getConfig from 'next/config';
 import Loader from 'react-loader-spinner';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import useSWR from 'swr';
 const { publicRuntimeConfig } = getConfig();
 
 import styles from '../../styles/defaulttable.module.css';
+import { addError } from '../../redux/actions';
 
 export default function Status() {
+  const dispatch = useDispatch();
   const token = useSelector(state => state.user.token);
-  const { status, loading } = useStatus(token);
+  const { status, loading } = useStatus(token, dispatch);
   if (status) {
     return (
       <div className={styles.statuscontainer}>
@@ -82,9 +84,9 @@ export default function Status() {
   }
 }
 
-const useStatus = token => {
+const useStatus = (token, dispatch) => {
   const { data, error } = useSWR(
-    [`${publicRuntimeConfig.backend}/admin`, token],
+    [`${publicRuntimeConfig.backend}/admin`, token, dispatch],
     fetcher
   );
   return {
@@ -94,7 +96,7 @@ const useStatus = token => {
   };
 };
 
-const fetcher = (url, token) =>
+const fetcher = (url, token, dispatch) =>
   axios
     .get(url, {
       headers: {
@@ -103,4 +105,9 @@ const fetcher = (url, token) =>
         'X-authorization': token
       }
     })
-    .then(response => response.data);
+    .then(response => response.data)
+    .catch(error => {
+      error.customMessage = 'Error fetching status';
+      error.fullUrl = url;
+      dispatch(addError(error));
+    });

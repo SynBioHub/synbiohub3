@@ -2,9 +2,11 @@ import axios from 'axios';
 import getConfig from 'next/config';
 
 import loadTemplate from './loadTemplate';
+import { addError } from '../../redux/actions';
 const { publicRuntimeConfig } = getConfig();
 
 export default async function getQueryResponse(
+  dispatch,
   query,
   options,
   token,
@@ -36,17 +38,21 @@ export default async function getQueryResponse(
     'X-authorization': token
   };
 
-  console.log(url);
+  try {
+    // if the uri lives in an external sbh, use proxy to
+    // circumvent cors errors
+    const response = urlOverride
+      ? await axios.post('/api/wor-proxy', { url, headers })
+      : await axios.get(url, { headers });
 
-  // if the uri lives in an external sbh, use proxy to
-  // circumvent cors errors
-  const response = urlOverride
-    ? await axios.post('/api/wor-proxy', { url, headers })
-    : await axios.get(url, { headers });
-
-  if (response.status === 200) {
-    return processResults(response.data);
-  } else return;
+    if (response.status === 200) {
+      return processResults(response.data);
+    } else return;
+  } catch (error) {
+    error.customMessage = `Request and/or processing failed for SPARQL query`;
+    error.fullUrl = `===QUERY===\n\n${query}\n\n===URL===\n\n${url}`;
+    dispatch(addError(error));
+  }
 }
 
 const processResults = results => {

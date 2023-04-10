@@ -8,13 +8,18 @@ import Loading from '../../Reusable/Loading';
 import Link from 'next/link';
 
 import styles from '../../../styles/view.module.css';
+import { useDispatch } from 'react-redux';
 
 export default function OtherProperties(properties) {
   const [otherProps, setOtherProps] = useState();
 
+  const dispatch = useDispatch();
+
   useEffect(() => {
     if (otherProps == undefined)
-      getQueryResponse(getOtherProperties, { uri: properties.uri }).then(props => {
+      getQueryResponse(dispatch, getOtherProperties, {
+        uri: properties.uri
+      }).then(props => {
         if (props.length > 0) setOtherProps(props);
       });
   }, [otherProps]);
@@ -24,9 +29,7 @@ export default function OtherProperties(properties) {
   return (
     <div>
       <table className={styles.table}>
-        <tbody>
-          {/* {generateRows()} */}
-        </tbody>
+        <tbody>{/* {generateRows()} */}</tbody>
       </table>
     </div>
   );
@@ -38,16 +41,23 @@ export default function OtherProperties(properties) {
   }
 
   function getRow(key, name, value) {
-    const isUri = value.includes("http");
+    const isUri = value.includes('http');
     const valueSearch = isUri
       ? `/search/<${encodeURIComponent(name)}>=<${encodeURIComponent(value)}>&`
-        : `/search/<${encodeURIComponent(name)}>='${encodeURIComponent(value.replace("'", "\\'"))}'&`;
-    const parsedValue = value.replace(name + "/", "").slice(value.slice(0, value.lastIndexOf("/")).lastIndexOf("/") + 1, value.length);
+      : `/search/<${encodeURIComponent(name)}>='${encodeURIComponent(
+          value.replace("'", "\\'")
+        )}'&`;
+    const parsedValue = value
+      .replace(name + '/', '')
+      .slice(
+        value.slice(0, value.lastIndexOf('/')).lastIndexOf('/') + 1,
+        value.length
+      );
 
     return (
       <tr key={key}>
         <td>
-          {name.split("/").pop()}
+          {name.split('/').pop()}
           <Link href={name}>
             <a>
               <FontAwesomeIcon
@@ -60,9 +70,7 @@ export default function OtherProperties(properties) {
           </Link>
         </td>
         <td>
-          <span>
-            {parsedValue}
-          </span>
+          <span>{parsedValue}</span>
           {isUri && (
             <Link href={value}>
               <a>

@@ -7,10 +7,13 @@ import { useState } from 'react';
 import SubmitLabel from '../components/Submit/ReusableComponents/SubmitLabel';
 
 import getConfig from 'next/config';
-import ErrorMessage from '../components/Admin/Reusable/ErrorMessage';
+import { useDispatch } from 'react-redux';
+import { addError } from '../redux/actions';
+import axios from 'axios';
 const { publicRuntimeConfig } = getConfig();
 
 export default function Setup({ setInSetupMode }) {
+  const dispatch = useDispatch();
   const [instanceName, setInstanceName] = useState('');
   const [color, setColor] = useState('#D25627');
   const [frontPageText, setFrontPageText] = useState(
@@ -195,44 +198,43 @@ export default function Setup({ setInSetupMode }) {
               'Content-Type': 'application/json',
               Accept: 'text/plain'
             };
-            const body = {
-              instanceName,
-              instanceURL,
-              uriPrefix,
-              userName,
-              affiliation,
-              userFullName,
-              userEmail,
-              color,
-              userPassword,
-              userPasswordConfirm,
-              frontPageText,
-              virtuosoINI: '/etc/virtuoso-opensource-7/virtuoso.ini',
-              virtuosoDB: '/var/lib/virtuoso-opensource-7/db',
-              allowPublicSignup
-            };
             try {
-              const result = await fetch(
+              await axios.post(
                 `${publicRuntimeConfig.backend}/setup`,
                 {
-                  method: 'POST',
-                  headers,
-                  body: JSON.stringify(body)
+                  instanceName,
+                  instanceURL,
+                  uriPrefix,
+                  userName,
+                  affiliation,
+                  userFullName,
+                  userEmail,
+                  color,
+                  userPassword,
+                  userPasswordConfirm,
+                  frontPageText,
+                  virtuosoINI: '/etc/virtuoso-opensource-7/virtuoso.ini',
+                  virtuosoDB: '/var/lib/virtuoso-opensource-7/db',
+                  allowPublicSignup
+                },
+                {
+                  headers
                 }
               );
-              if (result.status !== 200) {
-                const content = await result.json();
-                console.log(content);
-                const errorMessages = content.details.map(
+              setErrors([]);
+              setInSetupMode(false);
+            } catch (error) {
+              if (error.response.status === 400) {
+                const errorMessages = error.response.data.details.map(
                   error => error.message
                 );
                 setErrors(errorMessages);
-              } else {
-                setErrors([]);
-                setInSetupMode(false);
+                return;
               }
-            } catch (error) {
-              console.log(error);
+              error.customMessage =
+                'Request and/or processing failed for POST /setup';
+              error.fullUrl = `${publicRuntimeConfig.backend}/setup`;
+              dispatch(addError(error));
             }
           }}
         >

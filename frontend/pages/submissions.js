@@ -1,7 +1,7 @@
 import axios from 'axios';
 import getConfig from 'next/config';
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import useSWR from 'swr';
 const { publicRuntimeConfig } = getConfig();
 
@@ -11,13 +11,18 @@ import SubmissionDisplay from '../components/Submission/SubmissionDisplay';
 import TableButtons from '../components/Submission/TableButtons';
 import TopLevel from '../components/TopLevel';
 import styles from '../styles/submissions.module.css';
+import { addError } from '../redux/actions';
 
 const searchable = ['name', 'displayId', 'type', 'description', 'privacy'];
 
 function Submissions() {
   const token = useSelector(state => state.user.token);
-  const { submissions, isMySubmissionsLoading } = useMySubmissions(token);
-  const { shared, isSharedLoading } = useSharedSubmissions(token);
+  const dispatch = useDispatch();
+  const { submissions, isMySubmissionsLoading } = useMySubmissions(
+    token,
+    dispatch
+  );
+  const { shared, isSharedLoading } = useSharedSubmissions(token, dispatch);
   const [processedData, setProcessedData] = useState([]);
   const [selected, setSelected] = useState(new Map());
   const [selectAll, setSelectAll] = useState(false);
@@ -139,9 +144,9 @@ const sortMethods = {
     compareStrings(submission1.privacy, submission2.privacy)
 };
 
-const useMySubmissions = token => {
+const useMySubmissions = (token, dispatch) => {
   const { data, error } = useSWR(
-    [`${publicRuntimeConfig.backend}/manage`, token],
+    [`${publicRuntimeConfig.backend}/manage`, token, dispatch],
     fetcher
   );
 
@@ -152,9 +157,9 @@ const useMySubmissions = token => {
   };
 };
 
-const useSharedSubmissions = token => {
+const useSharedSubmissions = (token, dispatch) => {
   const { data, error } = useSWR(
-    [`${publicRuntimeConfig.backend}/shared`, token],
+    [`${publicRuntimeConfig.backend}/shared`, token, dispatch],
     fetcher
   );
 
@@ -200,7 +205,7 @@ export default function SubmissionsWrapped() {
   );
 }
 
-const fetcher = (url, token) =>
+const fetcher = (url, token, dispatch) =>
   axios
     .get(url, {
       headers: {
@@ -209,4 +214,10 @@ const fetcher = (url, token) =>
         'X-authorization': token
       }
     })
-    .then(response => response.data);
+    .then(response => response.data)
+    .catch(error => {
+      error.customMessage =
+        'Request(s) failed for submissions data. Check the URL to see which one failed';
+      error.fullUrl = url;
+      dispatch(addError(error));
+    });

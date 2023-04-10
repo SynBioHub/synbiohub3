@@ -2,7 +2,7 @@ import axios from 'axios';
 import getConfig from 'next/config';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 const { publicRuntimeConfig } = getConfig();
 
 import Loading from '../components/Reusable/Loading';
@@ -10,8 +10,13 @@ import TopLevel from '../components/TopLevel';
 import Shell from '../components/Viewing/Shell';
 import getMetadata from '../sparql/getMetadata';
 import getQueryResponse from '../sparql/tools/getQueryResponse';
+import { addError } from '../redux/actions';
 
-export default function View({ data }) {
+export default function View({ data, error }) {
+  const dispatch = useDispatch();
+  if (error) {
+    dispatch(addError(error));
+  }
   const router = useRouter();
   const { view } = router.query;
   const token = useSelector(state => state.user.token);
@@ -22,8 +27,8 @@ export default function View({ data }) {
 
   useEffect(() => {
     if (!metadata)
-      getQueryResponse(getMetadata, { uri: uri }, token).then(metadata =>
-        setMetadata(metadata)
+      getQueryResponse(dispatch, getMetadata, { uri: uri }, token).then(
+        metadata => setMetadata(metadata)
       );
   }, [metadata, token]);
 
@@ -56,19 +61,35 @@ export default function View({ data }) {
 // eslint-disable-next-line unicorn/prevent-abbreviations
 export async function getServerSideProps() {
   // Fetch data from external API
-  const response = await axios.get(
-    `${publicRuntimeConfig.backend}/admin/plugins`,
-    {
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'text/plain'
+  try {
+    const response = await axios.get(
+      `${publicRuntimeConfig.backend}/admin/plugins`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'text/plain'
+        }
       }
-    }
-  );
+    );
 
-  const data = response.data;
-  // Pass data to the page via props
-  return { props: { data } };
+    const data = response.data;
+    // Pass data to the page via props
+    return { props: { data } };
+  } catch (error) {
+    return {
+      props: {
+        error: {
+          customMessage:
+            'Request and/or processing failed for GET /admin/plugins',
+          fullUrl: `${publicRuntimeConfig.backend}/admin/plugins`,
+          message: error.message,
+          name: 'Server side error',
+          stack: error.stack
+        },
+        data: []
+      }
+    };
+  }
 }
 
 const getType = type => {

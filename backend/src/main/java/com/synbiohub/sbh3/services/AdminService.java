@@ -4,29 +4,41 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.gson.JsonObject;
 import com.synbiohub.sbh3.utils.ConfigUtil;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.json.JSONObject;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.Objects;
 
 @Service
-@NoArgsConstructor
+@RequiredArgsConstructor
 public class AdminService {
 
-    public JSONObject getStatus() throws IOException {
-        var config = ConfigUtil.get("");
-        var node = new JSONObject()
-                .put("version", config.get("version").asText())
-                .put("instanceName", config.get("instanceName").asText())
-                .put("port", config.get("port").asText())
-                .put("sparqlEndpoint", config.get("triplestore").get("sparqlEndpoint").asText())
-                .put("graphStoreEndpoint", config.get("triplestore").get("graphStoreEndpoint").asText())
-                .put("defaultGraph", config.get("triplestore").get("defaultGraph").asText())
-                .put("graphPrefix", config.get("triplestore").get("graphPrefix").asText());
-        return node;
+    private final UserService userService;
+    private ObjectMapper mapper = new ObjectMapper();
+
+    public JsonNode getStatus() throws IOException {
+        Authentication authentication = userService.checkAuthentication();
+        if (authentication == null) {
+            return null;
+        }
+        ObjectNode status = mapper.createObjectNode();
+        status.set("version", ConfigUtil.get("version"));
+        status.set("instanceName", ConfigUtil.get("instanceName"));
+        status.set("port", ConfigUtil.get("port"));
+        status.set("sparqlEndpoint", ConfigUtil.get("sparqlEndpoint"));
+        status.set("graphStoreEndpoint", ConfigUtil.get("graphStoreEndpoint"));
+        status.set("defaultGraph", ConfigUtil.get("defaultGraph"));
+        status.set("graphPrefix", ConfigUtil.get("graphPrefix"));
+        status.set("firstLaunch", ConfigUtil.get("firstLaunch"));
+
+        return (JsonNode) status;
     }
 
     public String getTheme() throws IOException {

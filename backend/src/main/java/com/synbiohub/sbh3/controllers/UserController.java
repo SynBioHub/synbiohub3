@@ -114,6 +114,7 @@ public class UserController {
 
     @PostMapping(value = "/setup")
     public ResponseEntity<String> setup(@RequestBody Map<String, Object> allParams) {
+        log.info(String.valueOf(allParams));
         String fileName = "config.local.json";
         String workingDirectory = System.getProperty("user.dir") + "/data";
         File file = new File(workingDirectory + File.separator + fileName);
@@ -139,13 +140,14 @@ public class UserController {
         allParams.remove("userEmail");
         allParams.remove("userPassword");
         allParams.remove("userPasswordConfirm");
-        //TODO: take out admin user stuff from params, and create new Admin user
 
         try {
             if (file.createNewFile()) {
                 allParams.put("sparqlEndpoint", "http://virtuoso3:8890/sparql");
                 allParams.put("graphStoreEndpoint", "http://virtuoso3:8890/sparql-graph-crud-auth/");
-                allParams.put("firstLaunch", false); // TODO: make it so this is a boolean and not a string
+                allParams.put("firstLaunch", false);
+                allParams.put("version", 1);
+                // TODO: Setup should add a local version to web of registries
                 String json = mapper.writeValueAsString(allParams);
                 FileWriter fw = new FileWriter(file.getAbsoluteFile());
                 BufferedWriter bw = new BufferedWriter(fw);
@@ -153,7 +155,7 @@ public class UserController {
                 bw.close();
                 ConfigUtil.refreshLocalJson();
                 log.info("Setup successful!");
-                return ResponseEntity.ok("File created successfully!");
+                return ResponseEntity.ok("Setup Successful");
             } else {
                 log.info("Local file already exists. Setup proceeds.");
                 return ResponseEntity.ok("File already exists!");

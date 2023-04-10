@@ -9,7 +9,11 @@ const { publicRuntimeConfig } = getConfig();
 export default function Plugin(properties) {
   const [status, setStatus] = useState(null);
   const [content, setContent] = useState("");
+
+  return <Section title={properties.plugin.name}>{`${properties.plugin.name}`}</Section>;
+}
   
+  /*
   const pluginData = {
     complete_sbol: '',
     shallow_sbol: '',
@@ -21,6 +25,10 @@ export default function Plugin(properties) {
   };
 
   useEffect(() => {
+    return <Section title={properties.plugin.name}>{`${properties.plugin.name}`}</Section>;
+
+    
+    
     if (status == null) {
       evaluatePlugin(properties.plugin, properties.type).then(status => setStatus(status));
     }
@@ -39,8 +47,10 @@ export default function Plugin(properties) {
   else {
     return <Section title={properties.plugin.name}>{`${properties.plugin.name} is not working`}</Section>; //return null for it not to be loaded
   }
+  
 }
 
+/*
 async function evaluatePlugin(plugin, type) {
     return await axios({
       method: 'POST',
@@ -85,4 +95,6 @@ async function runPlugin(plugin, pluginData) {
   }).catch(error => {
     return `There was an error with ${plugin.name}`;
   })
+  
 }
+*/

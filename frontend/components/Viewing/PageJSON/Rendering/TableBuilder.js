@@ -8,6 +8,7 @@ import MetadataRenderer from './MetadataRenderer';
 import parseQueryResult from '../Fetching/parseQueryResult';
 import executeQueryFromTableJSON from '../Fetching/executeQueryFromTableJSON';
 import RowWrapper from './RowWrapper';
+import { useDispatch } from 'react-redux';
 
 /**
  * This Component renders an individual table based on given JSON
@@ -33,8 +34,9 @@ export default function TableBuilder({ uri, prefixes, table, metadata }) {
 
 function TableRenderer({ uri, prefixes, table, metadata }) {
   const [content, setContent] = useState(null);
+  const dispatch = useDispatch();
   useEffect(() => {
-    executeQueryFromTableJSON(uri, prefixes, table).then(response => {
+    executeQueryFromTableJSON(dispatch, uri, prefixes, table).then(response => {
       setContent(parseQueryResult(table, response, prefixes));
     });
   }, [uri, prefixes, table]);

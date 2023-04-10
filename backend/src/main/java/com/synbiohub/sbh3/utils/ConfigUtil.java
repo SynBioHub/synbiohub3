@@ -1,24 +1,16 @@
 package com.synbiohub.sbh3.utils;
 
-import com.fasterxml.jackson.core.exc.StreamReadException;
-import com.fasterxml.jackson.databind.DatabindException;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import lombok.extern.slf4j.Slf4j;
-import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.json.Json;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Map;
 
 @Slf4j
 @Component
@@ -31,17 +23,6 @@ public class ConfigUtil {
     public ConfigUtil() {
         localjson = null;
         json = null;
-//        try {
-//            // Initialize config.local.dup.json
-//            if (!Files.exists(new File("data/config.local.dup.json").toPath())) {
-//                Files.copy(new File("src/main/resources/config.json").toPath(), new File("data/config.local.dup.json").toPath());
-//                json = mapper.readValue(new File("data/config.local.dup.json"), JsonNode.class);
-//            } else
-//                json = mapper.readValue(new File("data/config.local.dup.json"), JsonNode.class);
-//
-//        } catch (Exception e) {
-//            log.error("Error intializing config file!");
-//        }
         try {
             json = mapper.readValue(new File("src/main/resources/config.json"), JsonNode.class);
             if (Files.exists(new File("data/config.local.json").toPath())) {
@@ -71,7 +52,31 @@ public class ConfigUtil {
         return null;
     }
 
-    // TODO : Add set method
+    public static JsonNode getJson() {
+        return json;
+    }
+
+    public static JsonNode getLocaljson() {
+        return localjson;
+    }
+
+    public static void set(String key, Object value) {
+        try {
+            JsonNode valueNode = null;
+            if (value instanceof Boolean) {
+                valueNode = JsonNodeFactory.instance.booleanNode((Boolean) value);
+            } else if (value instanceof String) {
+                valueNode = JsonNodeFactory.instance.textNode((String) value);
+            }
+
+            if (valueNode != null) {
+                ((ObjectNode) localjson).set(key, valueNode);
+            }
+        } catch (Exception e) {
+            log.error("Error setting key: " + key + " in local config.");
+        }
+
+    }
 
     public static JsonNode refreshLocalJson() throws IOException {
         if (new File("data/config.local.json").exists()) {
@@ -82,6 +87,9 @@ public class ConfigUtil {
 
 
     public Boolean isLaunched() {
+        if (localjson.has("firstLaunch")) {
+            return localjson.get("firstLaunch").asBoolean();
+        }
         return json.get("firstLaunch").asBoolean();
     }
 }
