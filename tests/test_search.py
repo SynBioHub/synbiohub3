@@ -21,6 +21,7 @@ class TestSearch(TestCase):
         test_print("test_searchCount starting")
         # #compare_get_request("/searchCount/:query?", route_parameters = ["I0462"]) 
         compare_get_request("/searchCount/:query?", headers = headers, route_parameters = ["BBa_B00"], test_type = test_type)
+        compare_get_request("/searchCount/:query?", headers = headers, test_name = "searchCount0", route_parameters = ["abcdefg"], test_type = test_type)
         test_print("test_searchCount completed")
 
         test_print("test_rootCollections starting")
@@ -45,6 +46,7 @@ class TestSearch(TestCase):
 
         test_print("test_count starting")
         compare_get_request(":type/count", route_parameters = ["ComponentDefinition"], headers = {"Accept":"text/plain"}, test_type = test_type)
+        compare_get_request(":type/count", route_parameters = ["xxx"], test_name="count0",headers = {"Accept":"text/plain"}, test_type = test_type)
         test_print("test_count completed")
 
         # test_print("test_subcollections_private starting")
