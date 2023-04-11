@@ -1,19 +1,15 @@
 package com.synbiohub.sbh3.controllers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.synbiohub.sbh3.services.AdminService;
 import com.synbiohub.sbh3.services.SearchService;
 import com.synbiohub.sbh3.services.UserService;
 import com.synbiohub.sbh3.utils.ConfigUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
-import org.json.JSONObject;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import javax.json.Json;
 import java.io.IOException;
 import java.util.Map;
 

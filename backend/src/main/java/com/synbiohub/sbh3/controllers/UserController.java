@@ -2,6 +2,7 @@ package com.synbiohub.sbh3.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.synbiohub.sbh3.dto.LoginDTO;
 import com.synbiohub.sbh3.dto.UserRegistrationDTO;
@@ -12,11 +13,13 @@ import com.synbiohub.sbh3.services.UserService;
 import com.synbiohub.sbh3.utils.ConfigUtil;
 import com.synbiohub.sbh3.utils.RestClient;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.BufferedWriter;
@@ -40,25 +43,36 @@ public class UserController {
 
     @PostMapping(value = "/login", produces = "text/plain")
     public ResponseEntity login(@RequestParam String email, @RequestParam String password) {
-        String username = email;
-        if (userService.isValidEmail(email)) {
-            username = userService.getUserByEmail(email).getUsername();
+        try {
+            String username = email;
+            if (userService.isValidEmail(email)) {
+                username = userService.getUserByEmail(email).getUsername();
+            }
+            LoginDTO loginRequest = LoginDTO
+                    .builder()
+                    .username(username)
+                    .password(password)
+                    .build();
+            AuthenticationResponse response = userService.authenticate(loginRequest);
+            return ResponseEntity.ok(response.getToken());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Your e-mail address was not recognized.");
         }
-        LoginDTO loginRequest = LoginDTO
-                .builder()
-                .username(username)
-                .password(password)
-                .build();
-        AuthenticationResponse response = userService.authenticate(loginRequest);
-        return ResponseEntity.ok(response.getToken());
+
     }
 
     // TODO: change what logout does, maybe not invalidate session, but invalidate current auth token
-//    @PostMapping(value = "/logout")
-//    @ResponseStatus(HttpStatus.OK)
-//    public void logout(HttpSecurity http) throws Exception {
-//        http.logout().logoutSuccessUrl("/login").invalidateHttpSession(true).deleteCookies("JSESSIONID");
-//    }
+    @PostMapping(value = "/logout")
+    public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        log.info("Received logout request");
+        Authentication auth = userService.checkAuthentication();
+        if (auth != null) {
+            new SecurityContextLogoutHandler().logout(request, response, auth);
+            return ResponseEntity.ok("User logged out successfully");
+        } else {
+            throw new Exception("No user is currently logged in.");
+        }
+    }
 
     @PostMapping(value = "/register")
     public ResponseEntity registerNewUser(@RequestParam String username, @RequestParam String name, @RequestParam String affiliation, @RequestParam String email, @RequestParam String password1, @RequestParam String password2) {
@@ -147,8 +161,16 @@ public class UserController {
                 allParams.put("graphStoreEndpoint", "http://virtuoso3:8890/sparql-graph-crud-auth/");
                 allParams.put("firstLaunch", false);
                 allParams.put("version", 1);
+                Map<String, Object> themeParams = new HashMap<>();
+                themeParams.put("default", allParams.get("color"));
+                allParams.put("themeParameters", themeParams);
+                allParams.remove("color");
                 // TODO: Setup should add a local version to web of registries
-                String json = mapper.writeValueAsString(allParams);
+
+                ObjectMapper objectMapper = new ObjectMapper();
+                objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+                ObjectWriter writer = objectMapper.writerWithDefaultPrettyPrinter();
+                String json = writer.writeValueAsString(allParams);
                 FileWriter fw = new FileWriter(file.getAbsoluteFile());
                 BufferedWriter bw = new BufferedWriter(fw);
                 bw.write(json);
