@@ -32,6 +32,8 @@ class TestUser(TestCase):
         logininfo = {'email' : 'test1@user.synbiohub',
                       'password' : 'test'}
         login_with(logininfo, 1)
+        test_print("test_post_login completed")
+        
         test_print("test_post_register starting")
         compare_get_request_json("/profile", headers = headers, route_parameters = [], test_type = test_type, fields=["name", "username", "email", "affiliation", "graphUri"])
 
