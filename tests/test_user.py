@@ -24,12 +24,15 @@ class TestUser(TestCase):
                      #'password' : 'test1'}
         #login_with(logininfo, 1)
         #login_with(logininfo, 3)
+        test_print("test_post_login starting")
+        logininfo = {'email' : 'test7@user.synbiohub',
+                      'password' : 'test'}
+        login_with(logininfo, 0)
 
         logininfo = {'email' : 'test1@user.synbiohub',
                       'password' : 'test'}
         login_with(logininfo, 1)
-        login_with(logininfo, 3)
-
+        test_print("test_post_register starting")
         compare_get_request_json("/profile", headers = headers, route_parameters = [], test_type = test_type, fields=["name", "username", "email", "affiliation", "graphUri"])
 
         data={
