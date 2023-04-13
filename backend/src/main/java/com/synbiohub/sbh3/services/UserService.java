@@ -1,7 +1,6 @@
 package com.synbiohub.sbh3.services;
 
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.synbiohub.sbh3.dto.LoginDTO;
@@ -15,8 +14,6 @@ import com.synbiohub.sbh3.security.CustomUserService;
 import com.synbiohub.sbh3.sparql.SPARQLQuery;
 import com.synbiohub.sbh3.utils.ConfigUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -173,12 +170,6 @@ public class UserService {
         }
     }
 
-    public Authentication checkAuthentication() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication instanceof AnonymousAuthenticationToken || authentication == null) return null;
-        return authentication;
-    }
-
     public Authentication checkValidLogin(AuthenticationManager authenticationManager, String email, String password) {
         Authentication auth;
         try {
@@ -200,6 +191,12 @@ public class UserService {
         registerParams.put("password2", allParams.get("userPasswordConfirm"));
         return registerParams;
 
+    }
+
+    public Authentication checkAuthentication() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication instanceof AnonymousAuthenticationToken || authentication == null) return null;
+        return authentication;
     }
 
     private Boolean verifyPasswords(String password1, String password2) {
