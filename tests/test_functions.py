@@ -296,6 +296,9 @@ def file_diff_download(sbh1requestcontent, sbh3requestcontent, request, requestt
 
     resp_json = json.loads(resp.content)
     print(resp_json)
+    
+    if("Conversion failed." in resp_json["errors"]):
+        return 0
 
     if resp_json["equal"] == False:
         #changelist = [requesttype, " ", file_path, " did not match SynbBioHub 1 results. If you are adding changes to SynBioHub that change this page, please check that the page is correct and update the file using the command line argument --resetgetrequests [requests] and --resetpostrequests [requests].\nThe following is a diff of the new files compared to the old.\n"]
