@@ -17,24 +17,19 @@ class TestUser(TestCase):
             'password1' : 'test',
             'password2' : 'test'
         }
-
+        
         compare_post_request("register", data, test_name = "register1", headers = headers, route_parameters = [], files = None, test_type = test_type) #error - account already in use? - FAIL CASE for 1
+        test_print("test_post_register completed")
 
-        #logininfo = {'email' : 'test2@user.synbiohub',
-                     #'password' : 'test1'}
-        #login_with(logininfo, 1)
-        #login_with(logininfo, 3)
         test_print("test_post_login starting")
-        logininfo = {'email' : 'test7@user.synbiohub',
-                      'password' : 'test'}
-        login_with(logininfo, 0)
 
         logininfo = {'email' : 'test1@user.synbiohub',
                       'password' : 'test'}
         login_with(logininfo, 1)
-        test_print("test_post_login completed")
         
-        test_print("test_post_register starting")
+        test_print("test_post_login completed")
+
+        test_print("test_post_profile starting")
         compare_get_request_json("/profile", headers = headers, route_parameters = [], test_type = test_type, fields=["name", "username", "email", "affiliation", "graphUri"])
 
         data={
@@ -45,9 +40,8 @@ class TestUser(TestCase):
              'password2' : 'test'
         }
 
-        #uncomment when profile works
         compare_post_request("profile", data, test_name = "profile2", headers = headers, route_parameters = [], files = None, test_type = test_type)
-
+        test_print("test_post_profile completed")
         #compare_get_request("/logout")
         # test_print("logout started")
         # data={
