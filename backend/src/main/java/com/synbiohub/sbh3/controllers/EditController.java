@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.Map;
 
 @RestController
@@ -31,7 +32,7 @@ public class EditController {
      */
     @PostMapping(value = "/updateMutableDescription")
     @ResponseBody
-    public ResponseEntity<String> updateMutableDescription(@RequestParam Map<String, String> allParams, @RequestHeader("X-authorization") String xauth, HttpServletRequest request) throws JsonProcessingException {
+    public ResponseEntity<String> updateMutableDescription(@RequestParam Map<String, String> allParams, @RequestHeader("X-authorization") String xauth, HttpServletRequest request) throws IOException {
         String topLevelUri = allParams.get("uri");
         String value = allParams.get("value");
         if (!userService.validateXAuth(xauth) || !userService.isOwnedBy(topLevelUri))

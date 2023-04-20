@@ -25,9 +25,13 @@ walk('./out', function(filename) {
 
 //var i = parseInt(fs.readFileSync('last') + '');
 var i = 0;
+var len = files.length
 
 function next() {
 
+    if(i == len){
+        return;
+    }
     var filename = files[i];
     i++;
 

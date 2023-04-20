@@ -1,7 +1,6 @@
 package com.synbiohub.sbh3.services;
 
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.synbiohub.sbh3.dto.LoginDTO;
@@ -15,8 +14,6 @@ import com.synbiohub.sbh3.security.CustomUserService;
 import com.synbiohub.sbh3.sparql.SPARQLQuery;
 import com.synbiohub.sbh3.utils.ConfigUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -27,6 +24,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 
+import java.io.IOException;
 import java.sql.*;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -130,7 +128,7 @@ public class UserService {
      * The user's graph is the default graph + "/user" + their username.
      * @return True if it matches, false otherwise.
      */
-    public Boolean isOwnedBy(String topLevelUri) {
+    public Boolean isOwnedBy(String topLevelUri) throws IOException {
         SPARQLQuery query = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/GetOwnedBy.sparql");
         String results = searchService.SPARQLQuery(query.loadTemplate(Collections.singletonMap("topLevel", topLevelUri)));
         ArrayList<String> owners = new ArrayList<>();
@@ -172,12 +170,6 @@ public class UserService {
         }
     }
 
-    private Authentication checkAuthentication() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication instanceof AnonymousAuthenticationToken || authentication == null) return null;
-        return authentication;
-    }
-
     public Authentication checkValidLogin(AuthenticationManager authenticationManager, String email, String password) {
         Authentication auth;
         try {
@@ -187,15 +179,6 @@ public class UserService {
             return null;
         }
         return auth;
-    }
-
-    public void setUpConfig(Map<String, String> allParams) {
-        //all Params should include values such as instanceName, userName, userFullName, userEmail, instanceURL,
-        //uriPrefix, frontPageText, userPassword, userPasswordConfirm, virtuosoINI, virtuosoDB, affiliation, color
-
-        // should take all of these values and create a new config local file
-        // also create an admin user
-        configUtil.setLocalConfig(allParams);
     }
 
     public Map<String, String> registerNewAdminUser(Map<String, String> allParams) {
@@ -208,6 +191,12 @@ public class UserService {
         registerParams.put("password2", allParams.get("userPasswordConfirm"));
         return registerParams;
 
+    }
+
+    public Authentication checkAuthentication() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication instanceof AnonymousAuthenticationToken || authentication == null) return null;
+        return authentication;
     }
 
     private Boolean verifyPasswords(String password1, String password2) {

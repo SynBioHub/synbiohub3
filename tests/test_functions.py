@@ -122,6 +122,36 @@ def get_request_download(request, headers, route_parameters, version):
     return response
 
 # data is the data field for a request
+def post_json_request(request, version, data, headers, route_parameters, files):
+    # get the current token
+    if(version == 1):
+        user_token = test_state.get_authentication(1)
+    else:
+        user_token = test_state.get_authentication(3)
+
+    if user_token != None:
+        headers["X-authorization"] = user_token
+
+    address = get_address(request, route_parameters, version)
+    print(address)
+
+    session = requests_html.HTMLSession()
+
+    response = session.post(address, json = data, headers = headers, files = files)
+        
+    try:
+        response.raise_for_status()
+    except HTTPError as err:
+        #print(err)
+        raise HTTPError("Internal server error. Content of response was \n" + response.text)
+
+    print("SBH" + str(version) + "\n") 
+    print(response.text) 
+    print("\n")
+
+    return response
+
+# data is the data field for a request
 def post_request(request, version, data, headers, route_parameters, files):
     # get the current token
     if(version == 1):
@@ -142,8 +172,8 @@ def post_request(request, version, data, headers, route_parameters, files):
     try:
         response.raise_for_status()
     except HTTPError as err:
-        #print(err)
-        raise HTTPError("Internal server error. Content of response was \n" + response.text)
+        print(err)
+        #raise HTTPError("Internal server error. Content of response was \n" + response.text)
 
     print("SBH" + str(version) + "\n") 
     print(response.text) 
@@ -164,9 +194,9 @@ def compare_status_codes(sbh1requestcontent, sbh3requestcontent):
     if(sbh1requestcontent.status_code != sbh3requestcontent.status_code):
         print("RESPONSE CODE TEST FAILED: Response codes don't match; SBH1: " + str(sbh1requestcontent.status_code) + " SBH3: " + str(sbh3requestcontent.status_code))
         test_passed = 0
-        raise Exception("RESPONSE CODE TEST FAILED: Response codes don't match")
+        raise Exception("RESPONSE CODE TEST FAILED")
     else:
-        print("RESPONSE CODE TEST PASSED: Response codes matched " + str(sbh3requestcontent.status_code))
+        print("RESPONSE CODE TEST PASSED: Status Code: " + str(sbh3requestcontent.status_code))
         return 1
 
 def compare_request(sbh1requestcontent, sbh3requestcontent, request, requesttype, test_type):
@@ -178,18 +208,18 @@ requesttype is the type of request performed- either 'get request' or 'post requ
 
     if requesttype[0:8] == "get_file":
         if(file_diff_download(sbh1requestcontent.text, sbh3requestcontent.text, request, requesttype)):
-            print("DOWNLOAD TEST PASSED: Content matches")
+            print("DOWNLOAD TEST PASSED")
         else:
-            print("DOWNLOAD TEST FAILED: Content does not match")
+            print("DOWNLOAD TEST FAILED")
             test_passed = 0
-            raise Exception("DOWNLOAD TEST FAILED: Content does not match")
+            raise Exception("DOWNLOAD TEST FAILED")
    # if requesttype[0:3] == "get" or requesttype[0:4] == "post":
     if(file_diff(sbh1requestcontent.text, sbh3requestcontent.text, request, requesttype)):
-        print("RESPONSE CONTENT TEST PASSED: Content matches\n")
+        print("RESPONSE CONTENT TEST PASSED\n")
     else:
-        print("RESPONSE CONTENT TEST FAILED: Content does not match\n")
+        print("RESPONSE CONTENT TEST FAILED\n")
         test_passed = 0
-        raise Exception("RESPONSE CONTENT TEST FAILED: Content does not match\n")
+        raise Exception("RESPONSE CONTENT TEST FAILED\n")
     
     add_test_results(test_passed, test_type)
 
@@ -224,13 +254,12 @@ def compare_json_list(sbh1requestcontent, sbh3requestcontent, test_type, fields)
         test_passed = 0
         raise Exception("RESPONSE CONTENT TEST FAILED: Content does not match\n")
     for i in range(len(sorted_sbh1_list)):
-        print(sorted_sbh1_list[i])
-        print(sorted_sbh3_list[i])
         for f in fields:
             if(sorted_sbh1_list[i][f] != sorted_sbh3_list[i][f]):
                 test_passed = 0
                 raise Exception("RESPONSE CONTENT TEST FAILED: Content does not match\n")
-
+                
+    print("RESPONSE CONTENT TEST PASSED: Content matches\n")
     add_test_results(test_passed, test_type)
 
 
@@ -267,6 +296,9 @@ def file_diff_download(sbh1requestcontent, sbh3requestcontent, request, requestt
 
     resp_json = json.loads(resp.content)
     print(resp_json)
+    
+    if("Conversion failed." in resp_json["errors"]):
+        return 0
 
     if resp_json["equal"] == False:
         #changelist = [requesttype, " ", file_path, " did not match SynbBioHub 1 results. If you are adding changes to SynBioHub that change this page, please check that the page is correct and update the file using the command line argument --resetgetrequests [requests] and --resetpostrequests [requests].\nThe following is a diff of the new files compared to the old.\n"]
@@ -302,19 +334,26 @@ def file_diff(sbh1requestcontent, sbh3requestcontent, request, requesttype):
 
     changelist.append("\n Here is the last 50 lines of the synbiohub error log: \n")
     changelist.append(get_end_of_error_log(50))
-
+    
     if numofchanges>0:
         return 0
     else:
         return 1
 
-def login_with(data, version, headers = {'Accept':'text/plain'}):
-    result = post_request("login", version, data, headers, [], files = None)
-    auth_token = result.text
-    if(version == 1):
-        test_state.save_authentication(auth_token, version)
+def login_with(data, valid, headers = {'Accept':'text/plain'}):
+    resultSBH1 = post_request("login", 1, data, headers, [], files = None)
+    resultSBH3 = post_request("login", 3, data, headers, [], files = None)
+    auth_tokenSBH1 = resultSBH1.text
+    auth_tokenSBH3 = resultSBH3.text
+    if(valid):
+        test_state.save_authentication(auth_tokenSBH1, 1)
+        test_state.save_authentication(auth_tokenSBH3, 3)
     else:
-        test_state.save_authentication(auth_token, version)
+        if(auth_tokenSBH1 != auth_tokenSBH3):
+            raise Exception("RESPONSE CONTENT TEST FAILED: Content does not match\n")
+    if(resultSBH1.status_code != resultSBH3.status_code):
+        raise Exception("RESPONSE CONTENT TEST FAILED: Content does not match\n")
+    print("RESPONSE CODE TEST PASSED: Status Code: " + str(resultSBH3.status_code))
 
 def compare_get_request(request, test_name = "", route_parameters = [], headers = {}, test_type="Other"):
     """Complete a get request and error if it differs from previous results.
@@ -402,6 +441,23 @@ def compare_post_request(request, data, test_name = "", route_parameters = [], h
     test_state.add_post_request(request, testpath, test_name)
 
     compare_request(post_request(request, 1, data, headers, route_parameters, files = files), post_request(request, 3, data, headers, route_parameters, files = files), request, "post request", test_type)
+
+def compare_post_json_request(request, data, test_name = "", route_parameters = [], headers = {}, files = None, test_type = "Other"):
+    """Complete a post request and error if it differs from previous results.
+
+    request-- string, the name of the page being requested
+    data -- data to send in the post request
+    route_parameters -- a list of parameters for the url endpoint
+    test_name -- a name for the test to make multiple tests for the same endpoint unique"""
+
+    # remove any leading forward slashes for consistency
+    request = clip_request(request)
+
+    testpath = request_file_path(request, "post request", test_name)
+    test_state.add_post_request(request, testpath, test_name)
+
+    compare_request(post_request(request, 1, data, headers, route_parameters, files = files), post_json_request(request, 3, data, headers, route_parameters, files = files), request, "post request", test_type)
+
 
 # TODO: make checking throw an error when all endpoints are not checked, instead of printing a warning.
 def cleanup_check():

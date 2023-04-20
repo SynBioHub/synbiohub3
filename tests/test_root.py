@@ -37,9 +37,9 @@ def test_root():
     testSearch.test_search()
 
     #TODO: TEST TEST_DOWNLOAD
-    # from test_download import TestDownload
-    # testDownload = TestDownload()
-    # testDownload.test_download()
+    from test_download import TestDownload
+    testDownload = TestDownload()
+    testDownload.test_download()
 
     # # TODO: add field edit field are commented out
     # from test_edit import TestEdit
@@ -62,10 +62,10 @@ def test_root():
     # testAdmin = TestAdmin()
     # testAdmin.test_admin1()
 
-    # # TODO: TEST TEST_TWINS
-    # from test_twins import TestTwins
-    # testTwins = TestTwins()
-    # testTwins.test_twins()
+    # TODO: TEST TEST_TWINS
+    from test_twins import TestTwins
+    testTwins = TestTwins()
+    testTwins.test_twins()
 
     # from test_submit_other_user import TestSubmitOtherUser
     # testSubmitOtherUser = TestSubmitOtherUser()

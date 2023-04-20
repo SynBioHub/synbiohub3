@@ -29,7 +29,7 @@ public class PluginController {
 
     @GetMapping(value = "/admin/plugins", produces="application/json")
     @ResponseBody
-    public String getPlugins(@RequestParam(required = false) String category) {
+    public String getPlugins(@RequestParam(required = false) String category) throws IOException {
         if(category == null) {
             return ConfigUtil.get("plugins").toString();
         }
@@ -55,6 +55,8 @@ public class PluginController {
         }
         catch (NullPointerException e) {
             return new ResponseEntity(HttpStatus.NOT_FOUND); //If the plugin doesn't exist, a nullpointerexception will be caught
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
 
         try { //Used to open a connection with the status endpoint of the plugin
@@ -75,7 +77,7 @@ public class PluginController {
 
 
     @PostMapping(value = "/evaluate")
-    public ResponseEntity evaluate(@RequestParam String name, @RequestParam(required = false) String data) {
+    public ResponseEntity evaluate(@RequestParam String name, @RequestParam(required = false) String data) throws IOException {
 
         //Name can be the name or url of the target plugin
         //Attached is used to store files to be used for Submit plugins, will be sent to PluginService to create a manifest
@@ -94,7 +96,7 @@ public class PluginController {
         try {
             pluginURL = pluginService.getURL(name);
         }
-        catch (NullPointerException e) {
+        catch (NullPointerException | IOException e) {
             return new ResponseEntity(HttpStatus.NOT_FOUND);
         }
 
@@ -152,7 +154,7 @@ public class PluginController {
     }
 
     @PostMapping(value = "/run")
-    public ResponseEntity run(@RequestParam String name, @RequestParam(required = false) String data) {
+    public ResponseEntity run(@RequestParam String name, @RequestParam(required = false) String data) throws IOException {
 
         //All code should have the same uses as in the /evaluate endpoint
 
@@ -168,7 +170,7 @@ public class PluginController {
         try {
             pluginURL = pluginService.getURL(name);
         }
-        catch (NullPointerException e) {
+        catch (NullPointerException | IOException e) {
             return new ResponseEntity(HttpStatus.NOT_FOUND);
         }
 
@@ -301,7 +303,7 @@ public class PluginController {
 
 
     @PostMapping(value = "/call")
-    public ResponseEntity callPlugin(@RequestParam(required = false) String token, @RequestParam String name, @RequestParam String endpoint, @RequestParam(required = false) String data) {
+    public ResponseEntity callPlugin(@RequestParam(required = false) String token, @RequestParam String name, @RequestParam String endpoint, @RequestParam(required = false) String data) throws IOException {
 
 
 
