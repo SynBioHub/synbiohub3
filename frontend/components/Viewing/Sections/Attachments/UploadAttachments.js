@@ -183,7 +183,7 @@ export default function UploadAttachments(properties) {
                   dispatch(setUploadStatus(''));
 
                   //Query all the attachments so the store can be updated.
-                  getQueryResponse(getAttachments, {
+                  getQueryResponse(dispatch, getAttachments, {
                     uri: properties.uri
                   }).then(allAttachments => {
                     dispatch(setAttachments(allAttachments));

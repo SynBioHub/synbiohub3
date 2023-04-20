@@ -12,7 +12,7 @@ services:
         image: tenforce/virtuoso:virtuoso7.2.5
         volumes: 
             - type: volume
-              source: virtuoso-db
+              source: virtuoso-db1
               target: /data
         ports:
             - "8890:8890"
@@ -23,8 +23,8 @@ services:
         image: tenforce/virtuoso:virtuoso7.2.5
         volumes:
             - type: volume
-              source: virtuoso-db
-              target: /data3
+              source: virtuoso-db3
+              target: /data
         ports:
             - "8891:8890"
         restart: always
@@ -39,46 +39,39 @@ services:
             - "6789:6789"
         volumes:
             - type: volume
-              source: sbh
+              source: sbh3
               target: /mnt
             - type: volume
-              source: virtuoso-db
-              target: /virtuoso3
+              source: virtuoso-db3
+              target: /virtuoso
         dns: 8.8.8.8
         restart: always
     synbiohubFrontend:
         image: synbiohub/sbh3frontend:snapshot
-        depends_on: 
-            - virtuoso3
         ports:
             - "3333:3333"
-        volumes:
-            - type: volume
-              source: sbh
-              target: /mnt
-            - type: volume
-              source: virtuoso-db
-              target: /virtuoso3
         dns: 8.8.8.8
         restart: always
         environment: 
-            - backend=http://synbiohubbackend:6789
+            - backend=http://localhost:6789
     synbiohub:
-        image: synbiohub/synbiohub:1.6.1-standalone
+        image: synbiohub/synbiohub:snapshot-standalone
         depends_on: 
             - virtuoso
         ports:
             - "7777:7777"
         volumes:
             - type: volume
-              source: sbh
+              source: sbh1
               target: /mnt
             - type: volume
-              source: virtuoso-db
+              source: virtuoso-db1
               target: /virtuoso
         dns: 8.8.8.8
         restart: always
 
 volumes:
-    virtuoso-db:
-    sbh:
+    virtuoso-db1:
+    virtuoso-db3:
+    sbh1:
+    sbh3:

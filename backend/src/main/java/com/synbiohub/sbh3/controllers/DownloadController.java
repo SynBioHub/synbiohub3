@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor
@@ -29,7 +30,7 @@ public class DownloadController extends AntPathMatcher {
     private final ObjectMapper mapper;
 
     @GetMapping(value = "/public/{db}/{id}/{ver}/sbol") // Separate mapping for private components /user/{username}/{db}/{id}/{ver}
-    public ResponseEntity<?> getSBOLRecursiveRDF(@PathVariable String db, @PathVariable String id, @PathVariable String ver) {
+    public ResponseEntity<?> getSBOLRecursiveRDF(@PathVariable String db, @PathVariable String id, @PathVariable String ver) throws IOException {
 //        var uri = request.getRequestURL().toString();
 //        String splitUri = uri.split("/sbol")[0]; //TODO replace http://localhost:6789 with https://synbiohub.org
         String splitUri = ConfigUtil.get("defaultGraph").toString().replace("\"","") + "/" + db + "/" + id + "/" + ver;
@@ -54,7 +55,7 @@ public class DownloadController extends AntPathMatcher {
     }
 
     @GetMapping(value = "/public/{db}/{id}/{ver}/sbolnr")
-    public ResponseEntity<?> getSBOLNonRecursive(@PathVariable String db, @PathVariable String id, @PathVariable String ver) throws JsonProcessingException {
+    public ResponseEntity<?> getSBOLNonRecursive(@PathVariable String db, @PathVariable String id, @PathVariable String ver) throws IOException {
         String splitUri = ConfigUtil.get("defaultGraph").toString().replace("\"","") + "/" + db + "/" + id + "/" + ver;
         String uri = splitUri + "/sbolnr";
         var results = downloadService.getSBOLNonRecursive(splitUri);
@@ -77,7 +78,7 @@ public class DownloadController extends AntPathMatcher {
     }
 
     @GetMapping(value = "/public/{db}/{id}/{ver}/metadata")
-    public ResponseEntity<?> getMetadata(@PathVariable String db, @PathVariable String id, @PathVariable String ver) throws JsonProcessingException {
+    public ResponseEntity<?> getMetadata(@PathVariable String db, @PathVariable String id, @PathVariable String ver) throws IOException {
         String splitUri = ConfigUtil.get("defaultGraph").toString().replace("\"","") + "/" + db + "/" + id + "/" + ver;
         String uri = splitUri + "/metadata";
         String results = downloadService.getMetadata(splitUri);
@@ -94,7 +95,7 @@ public class DownloadController extends AntPathMatcher {
     }
 
     @GetMapping(value = "/public/{db}/{id}/{ver}/gb")
-    public ResponseEntity<?> getSBOLRecursiveGenbank(@PathVariable String db, @PathVariable String id, @PathVariable String ver) {
+    public ResponseEntity<?> getSBOLRecursiveGenbank(@PathVariable String db, @PathVariable String id, @PathVariable String ver) throws IOException {
         String splitUri = ConfigUtil.get("defaultGraph").toString().replace("\"","") + "/" + db + "/" + id + "/" + ver;
         String uri = splitUri + "/gb";
 
@@ -117,7 +118,7 @@ public class DownloadController extends AntPathMatcher {
     }
 
     @GetMapping(value = "/public/{db}/{id}/{ver}/fasta")
-    public ResponseEntity<?> getSBOLRecursiveFasta(@PathVariable String db, @PathVariable String id, @PathVariable String ver) {
+    public ResponseEntity<?> getSBOLRecursiveFasta(@PathVariable String db, @PathVariable String id, @PathVariable String ver) throws IOException {
         String splitUri = ConfigUtil.get("defaultGraph").toString().replace("\"","") + "/" + db + "/" + id + "/" + ver;
         String uri = splitUri + "/fasta";
 
@@ -140,7 +141,7 @@ public class DownloadController extends AntPathMatcher {
     }
 
     @GetMapping(value = "/public/{db}/{id}/{ver}/gff")
-    public ResponseEntity<?> getSBOLRecursiveGff3(@PathVariable String db, @PathVariable String id, @PathVariable String ver) {
+    public ResponseEntity<?> getSBOLRecursiveGff3(@PathVariable String db, @PathVariable String id, @PathVariable String ver) throws IOException {
         String splitUri = ConfigUtil.get("defaultGraph").toString().replace("\"","") + "/" + db + "/" + id + "/" + ver;
         String uri = splitUri + "/gff";
 

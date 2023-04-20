@@ -5,6 +5,9 @@ import { createFilter } from 'react-windowed-select';
 
 import styles from '../../../styles/advancedsearch.module.css';
 import Loading from '../../Reusable/MiniLoading';
+import { useDispatch } from 'react-redux';
+import { addError } from '../../../redux/actions';
+import axios from 'axios';
 const { publicRuntimeConfig } = getConfig();
 
 const customFilter = createFilter({ ignoreAccents: false });
@@ -13,6 +16,7 @@ export default function SelectLoader(properties) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [data, setData] = useState([]);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (!properties.result) {
@@ -21,7 +25,8 @@ export default function SelectLoader(properties) {
         setLoading,
         setData,
         properties.sparql,
-        setError
+        setError,
+        dispatch
       );
     } else {
       processResults(
@@ -60,35 +65,43 @@ const fetchOptions = async (
   setLoading,
   setData,
   sparql,
-  setError
+  setError,
+  dispatch
 ) => {
-  const results = await submitQuery(sparql);
+  const results = await submitQuery(sparql, dispatch);
   if (results === 'error') {
     setError(true);
   }
   const newData = [];
-  for (const result of results.results.bindings) {
-    newData.push(parseResult(result));
+  if (results && results.results && results.results.bindings) {
+    for (const result of results.results.bindings) {
+      newData.push(parseResult(result));
+    }
   }
   setData(newData);
   setLoading(false);
 };
 
-const submitQuery = async query => {
+const submitQuery = async (query, dispatch) => {
   const url = `${publicRuntimeConfig.backend}/sparql?query=${encodeURIComponent(
     query
   )}`;
-  const headers = {
-    'Content-Type': 'application/json',
-    Accept: 'application/json'
-  };
+  try {
+    const headers = {
+      'Content-Type': 'application/json',
+      Accept: 'application/json'
+    };
 
-  const response = await fetch(url, {
-    method: 'GET',
-    headers
-  });
+    const response = await axios.get(url, {
+      headers
+    });
 
-  return response.status === 200 ? await response.json() : 'error';
+    return response.status === 200 ? response.data : 'error';
+  } catch (error) {
+    error.customMessage = 'Error fetching options for Advanced Search';
+    error.fullUrl = `Query:\n\n${query}\n\n\nUrl:\n\n${url}`;
+    dispatch(addError(error));
+  }
 };
 
 const processResults = (result, setLoading, setData, setError, parseResult) => {

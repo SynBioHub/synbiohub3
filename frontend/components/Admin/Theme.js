@@ -4,10 +4,13 @@ import useSWR from 'swr';
 
 import styles from '../../styles/defaulttable.module.css';
 import Loading from '../Reusable/Loading';
+import { addError } from '../../redux/actions';
+import { useDispatch } from 'react-redux';
 const { publicRuntimeConfig } = getConfig();
 
 export default function Theme() {
-  const { theme, loading } = useTheme();
+  const dispatch = useDispatch();
+  const { theme, loading } = useTheme(dispatch);
   if (loading) return <Loading />;
   return (
     <div>
@@ -39,9 +42,9 @@ export default function Theme() {
   );
 }
 
-const useTheme = () => {
+const useTheme = dispatch => {
   const { data, error } = useSWR(
-    [`${publicRuntimeConfig.backend}/admin/theme`],
+    [`${publicRuntimeConfig.backend}/admin/theme`, dispatch],
     fetcher
   );
   return {
@@ -50,11 +53,16 @@ const useTheme = () => {
   };
 };
 
-const fetcher = url =>
+const fetcher = (url, dispatch) =>
   axios
     .get(url, {
       headers: {
         Accept: 'application/json'
       }
     })
-    .then(response => response.data);
+    .then(response => response.data)
+    .catch(error => {
+      error.customMessage = 'Request failed for GET /admin/theme';
+      error.fullUrl = url;
+      dispatch(addError(error));
+    });
