@@ -172,17 +172,17 @@ class TestAdmin(TestCase):
         compare_post_request("/admin/deleteRemote", data, headers = {"Accept": "text/plain"}, test_name = "admin_deleteRemoteICE", test_type = test_type)
         test_print("test_admin_deleteRemoteICE completed")
 
-        #TODO: hangs up the code
+        #TODO: hangs up the code, Need SBOL Explorer ON to test?
         # test_print("test_admin_explorerlog starting")
         # compare_get_request_json("/admin/explorerlog", headers = {"Accept":"text/plain"}, test_type = test_type, fields=["instanceName", "frontPageText"])
         # test_print("test_admin_explorerlog completed")
 
-        # TODO: FIGURE OUT ANOTHER WAY TO TEST THIS --check
+        # Need SBOL Explorer ON to test
         test_print("test_admin_explorer starting")
         compare_get_request("/admin/explorer", headers = {"Accept": "text/plain"}, test_type = test_type)
         test_print("test_admin_explorer completed")
 
-        # TODO: doesn't work 500 on sbh1
+        # Need SBOL Explorer ON to test
         test_print("test_admin_status starting")
         data={
             'useSBOLExplorer': 'True',
