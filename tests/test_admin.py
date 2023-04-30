@@ -13,7 +13,7 @@ class TestAdmin(TestCase):
 
         # TODO: breaking, add query
         test_print("test_admin_sparql starting")
-        compare_get_request("/admin/sparql", headers = {"Accept":"text/plain"}, test_type = test_type)
+        compare_get_request("/admin/sparql?query=:query", headers = {"Accept":"text/plain"}, route_parameters = ["SELECT+%3Fsubject+%3Fpredicate+%3Fobject+WHERE+%7B+%3Fsubject+%3Fpredicate+%3Fobject+.+FILTER+%28str%28%3Fobject%29+%3D+%22BBa_B0034%22%29%7D"], test_type = test_type)
         test_print("test_admin_sparql completed")
 
         test_print("test_admin_status starting")
