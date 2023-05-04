@@ -82,7 +82,8 @@ export default function Mail() {
                 setApiKey,
                 setSendGridEmail,
                 actualApiKey,
-                actualSendGridEmail
+                actualSendGridEmail,
+                dispatch
               )
             }
           />
@@ -130,7 +131,8 @@ const updateEmail = async (
   setApiKey,
   setSendGridEmail,
   actualApiKey,
-  actualSendGridEmail
+  actualSendGridEmail,
+  dispatch
 ) => {
   const url = `${publicRuntimeConfig.backend}/admin/mail`;
   const headers = {
@@ -155,6 +157,6 @@ const updateEmail = async (
     setSendGridEmail(actualSendGridEmail);
   } else {
     setError('');
-    mutate([`${publicRuntimeConfig.backend}/admin/mail`, token]);
+    mutate([`${publicRuntimeConfig.backend}/admin/mail`, token, dispatch]);
   }
 };
