@@ -64,7 +64,7 @@ export default function RootCollections({ data, error }) {
 export async function getServerSideProps() {
   // Fetch rootCollections from sbh
   try {
-    const url = `${publicRuntimeConfig.backend}/rootCollections`;
+    const url = `${publicRuntimeConfig.backendSS}/rootCollections`;
     const headers = {
       Accept: 'text/plain; charset=UTF-8'
     };
@@ -83,7 +83,7 @@ export async function getServerSideProps() {
         error: {
           customMessage:
             'Request and/or processing failed for GET /rootCollections',
-          fullUrl: `${publicRuntimeConfig.backend}/rootCollections`,
+          fullUrl: `${publicRuntimeConfig.backendSS}/rootCollections`,
           message: error.message,
           name: 'Server side error',
           stack: error.stack
