@@ -1,6 +1,9 @@
 import { combineReducers } from 'redux';
 
 import * as types from './types';
+import { persistReducer } from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
+
 
 /*
 This file contains the reducers that redux uses to initialize and update
@@ -398,10 +401,15 @@ const errorsReducer = (state = initialErrors, { type, payload }) => {
   }
 };
 
+const persistConfig = {
+    key: 'root',
+    storage
+};
+
 // COMBINED REDUCERS
 // combine all reducers for sbh to use
 const reducers = {
-  user: userReducer,
+  user: persistReducer(persistConfig, userReducer),
   search: searchReducer,
   submit: submitReducer,
   collectionCreate: collectionCreateReducer,
