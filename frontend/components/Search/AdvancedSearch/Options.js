@@ -193,7 +193,7 @@ const fetchPredicates = async dispatch => {
       headers
     });
 
-    return response.status === 200 ? await response.json() : 'error';
+    return response.status === 200 ? response.data : 'error';
   } catch (error) {
     error.customMessage = 'Error fetching predicates';
     error.fullUrl = `Query: ${getPredicates} \n\n\n URL: ${url}`;
