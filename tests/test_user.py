@@ -20,10 +20,6 @@ class TestUser(TestCase):
 
         compare_post_request("register", data, test_name = "register1", headers = headers, route_parameters = [], files = None, test_type = test_type) #error - account already in use? - FAIL CASE for 1
 
-        #logininfo = {'email' : 'test2@user.synbiohub',
-                     #'password' : 'test1'}
-        #login_with(logininfo, 1)
-        #login_with(logininfo, 3)
         test_print("test_post_login starting")
         logininfo = {'email' : 'test7@user.synbiohub',
                       'password' : 'test'}
@@ -45,8 +41,20 @@ class TestUser(TestCase):
              'password2' : 'test'
         }
 
-        #uncomment when profile works
         compare_post_request("profile", data, test_name = "profile2", headers = headers, route_parameters = [], files = None, test_type = test_type)
+
+        #login as admin to test admin profile endpoint
+        logininfo = {'email' : 'test@user.synbiohub',
+                      'password' : 'test'}
+        login_with(logininfo, 1)
+        
+        compare_get_request_json("/profile", headers = headers, route_parameters = [], test_type = test_type, test_name="admin_get_profile", fields=["name", "username", "email", "affiliation", "graphUri"])
+
+        #log back in as a regular user
+        logininfo = {'email' : 'test1@user.synbiohub',
+                      'password' : 'test'}
+        login_with(logininfo, 1)
+        test_print("test_post_login completed")
 
         #compare_get_request("/logout")
         # test_print("logout started")
