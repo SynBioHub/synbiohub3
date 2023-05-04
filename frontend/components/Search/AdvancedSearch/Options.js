@@ -25,7 +25,6 @@ const { publicRuntimeConfig } = getConfig();
 /* eslint sonarjs/no-identical-functions: "off" */
 
 export default function Options(properties) {
-  const [filterDisplay, setFilterDisplay] = useState([]);
   const [predicates, setPredicates] = useState('loading');
   const dispatch = useDispatch();
 
@@ -33,21 +32,17 @@ export default function Options(properties) {
     loadPredicates(setPredicates, dispatch);
   }, []);
 
-  useEffect(() => {
-    setFilterDisplay(
-      properties.extraFilters.map((element, index) => {
-        return (
-          <AdditionalFilter
-            predicates={predicates}
-            key={index}
-            index={index}
-            extraFilters={properties.extraFilters}
-            setExtraFilters={properties.setExtraFilters}
-          />
-        );
-      })
+  const filterDisplay = properties.extraFilters.map((element, index) => {
+    return (
+      <AdditionalFilter
+        predicates={predicates}
+        key={index}
+        index={index}
+        extraFilters={properties.extraFilters}
+        setExtraFilters={properties.setExtraFilters}
+      />
     );
-  }, [properties.extraFilters, predicates]);
+  });
 
   return (
     <div>

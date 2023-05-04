@@ -5,10 +5,13 @@ import configureQuery from '../../../sparql/configureQuery';
 import searchObject from '../../../sparql/searchObject';
 import styles from '../../../styles/advancedsearch.module.css';
 import SelectLoader from './SelectLoader';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTimesCircle } from '@fortawesome/free-solid-svg-icons';
 
 export default function AdditionalFilter(properties) {
   const [selectedPredicate, setSelectedPredicate] = useState();
   const [selectedValue, setSelectedValue] = useState();
+  const [hidden, setHidden] = useState(false);
 
   useEffect(() => {
     const newFilters = [...properties.extraFilters];
@@ -18,6 +21,8 @@ export default function AdditionalFilter(properties) {
     };
     properties.setExtraFilters(newFilters);
   }, [selectedPredicate, selectedValue, properties.index]);
+
+  if (hidden) return null;
 
   return (
     <div className={styles.inputsection}>
@@ -50,6 +55,24 @@ export default function AdditionalFilter(properties) {
           }}
         />
       )}
+      <div
+        style={{
+          padding: '0.6rem 0.5rem 0.6rem 0.7rem',
+          marginLeft: '0.3rem',
+          cursor: 'pointer'
+        }}
+        onClick={() => {
+          const newFilters = [...properties.extraFilters];
+          newFilters[properties.index] = {
+            filter: selectedPredicate,
+            value: undefined
+          };
+          properties.setExtraFilters(newFilters);
+          setHidden(true);
+        }}
+      >
+        <FontAwesomeIcon icon={faTimesCircle} size="1x" color="red" />
+      </div>
     </div>
   );
 }
