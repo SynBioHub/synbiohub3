@@ -96,7 +96,7 @@ const submitQuery = async (query, dispatch) => {
       headers
     });
 
-    return response.status === 200 ? await response.json() : 'error';
+    return response.status === 200 ? response.data : 'error';
   } catch (error) {
     error.customMessage = 'Error fetching options for Advanced Search';
     error.fullUrl = `Query:\n\n${query}\n\n\nUrl:\n\n${url}`;

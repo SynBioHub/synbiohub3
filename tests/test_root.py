@@ -37,9 +37,9 @@ def test_root():
     testSearch.test_search()
 
     #TODO: TEST TEST_DOWNLOAD
-    # from test_download import TestDownload
-    # testDownload = TestDownload()
-    # testDownload.test_download()
+    from test_download import TestDownload
+    testDownload = TestDownload()
+    testDownload.test_download()
 
     # # TODO: add field edit field are commented out
     # from test_edit import TestEdit
