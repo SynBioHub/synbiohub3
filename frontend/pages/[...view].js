@@ -63,7 +63,7 @@ export async function getServerSideProps() {
   // Fetch data from external API
   try {
     const response = await axios.get(
-      `${publicRuntimeConfig.backend}/admin/plugins`,
+      `${publicRuntimeConfig.backendSS}/admin/plugins`,
       {
         headers: {
           'Content-Type': 'application/json',
@@ -81,7 +81,7 @@ export async function getServerSideProps() {
         error: {
           customMessage:
             'Request and/or processing failed for GET /admin/plugins',
-          fullUrl: `${publicRuntimeConfig.backend}/admin/plugins`,
+          fullUrl: `${publicRuntimeConfig.backendSS}/admin/plugins`,
           message: error.message,
           name: 'Server side error',
           stack: error.stack
