@@ -1,8 +1,6 @@
 // Next.config.js
 module.exports = {
   env: {
-    backendUrl: process.env.backendUrl,
-    backendUrlSS: process.env.backendUrlSS,
     test: process.env.test
   },
   publicRuntimeConfig: {
