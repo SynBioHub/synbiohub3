@@ -316,6 +316,7 @@ function App () {
   // This endpoint is used by Web-of-Registries to update SynBioHub's list of registries
   app.get('/admin/sparql', requireAdmin, sparqlAdmin)
   app.post('/admin/sparql', requireAdmin, bodyParser.urlencoded({ extended: true }), sparqlAdmin)
+  app.get('/admin/sparql?query=:query', requireAdmin, sparqlAdmin)
 
   app.get('/admin/remotes', requireAdmin, views.admin.remotes) //benchling and ice
   app.post('/admin/saveRemote', requireAdmin, bodyParser.urlencoded({ extended: true }), actions.admin.saveRemote)
