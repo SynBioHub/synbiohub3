@@ -33,6 +33,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -60,11 +61,18 @@ public class UserController {
                     .password(password)
                     .build();
             AuthenticationResponse response = userService.authenticate(loginRequest);
-            AuthCodes authCode = AuthCodes.builder()
-                    .name(username)
-                    .auth(response.getToken())
-                    .build();
-            authRepository.save(authCode);
+            Optional<AuthCodes> existingAuthCode = authRepository.findByName(username);
+            if (authRepository.findByName(username).isPresent()) {
+                AuthCodes authCode = authRepository.findByName(username).get();
+                authCode.setAuth(response.getToken());
+                authRepository.save(authCode);
+            } else {
+                AuthCodes authCode = AuthCodes.builder()
+                        .name(username)
+                        .auth(response.getToken())
+                        .build();
+                authRepository.save(authCode);
+            }
             return ResponseEntity.ok(response.getToken());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Your e-mail address was not recognized.");
@@ -76,29 +84,29 @@ public class UserController {
     @GetMapping(value = "/do_logout")
     public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response) throws Exception {
         log.info("Received logout request");
-        Authentication auth = userService.checkAuthentication();
+//        Authentication auth = userService.checkAuthentication();
         HttpSession session = request.getSession(false);
         if (session != null && session.getId() != null) {
             // Invalidate the user's session
             session.invalidate();
         }
-        if (auth != null) {
-            new SecurityContextLogoutHandler().logout(request, response, auth);
-            Cookie jsessionidCookie = new Cookie("JSESSIONID", null);
-            jsessionidCookie.setMaxAge(0);
-            jsessionidCookie.setPath("/");
-            response.addCookie(jsessionidCookie);
-
-            Cookie authorizationCookie = new Cookie("authorization", null);
-            authorizationCookie.setMaxAge(0);
-            authorizationCookie.setPath("/");
-            response.addCookie(authorizationCookie);
+//        if (auth != null) {
+//            new SecurityContextLogoutHandler().logout(request, response, auth);
+//            Cookie jsessionidCookie = new Cookie("JSESSIONID", null);
+//            jsessionidCookie.setMaxAge(0);
+//            jsessionidCookie.setPath("/");
+//            response.addCookie(jsessionidCookie);
+//
+//            Cookie authorizationCookie = new Cookie("authorization", null);
+//            authorizationCookie.setMaxAge(0);
+//            authorizationCookie.setPath("/");
+//            response.addCookie(authorizationCookie);
 //            authRepository.delete(authRepository.findByName(auth.getName()).orElseThrow());
 
             return ResponseEntity.ok("User logged out successfully");
-        } else {
-            throw new Exception("No user is currently logged in.");
-        }
+//        } else {
+//            throw new Exception("No user is currently logged in.");
+//        }
     }
 
     @PostMapping(value = "/register")
@@ -134,8 +142,9 @@ public class UserController {
 //    }
 //
     @GetMapping(value = "/profile", produces = "text/plain")
-    public ResponseEntity<String> getProfile() throws JsonProcessingException, CloneNotSupportedException {
-        var user = userService.getUserProfile();
+    public ResponseEntity<String> getProfile(HttpServletRequest request) throws Exception {
+        String inputToken = request.getHeader("X-authorization");
+        var user = userService.getUserProfile(inputToken);
         if (user == null)
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         return ResponseEntity.ok(mapper.writeValueAsString(user));
@@ -143,8 +152,9 @@ public class UserController {
 
     // Only updates the fields name, email, and affiliation currently
     @PostMapping(value = "/profile", produces = "text/plain")
-    public ResponseEntity<String> updateProfile(@RequestParam Map<String, String> allParams) throws JsonProcessingException, CloneNotSupportedException {
-        User updatedUser = userService.updateUser(allParams);
+    public ResponseEntity<String> updateProfile(@RequestParam Map<String, String> allParams, HttpServletRequest request) throws Exception {
+        String inputToken = request.getHeader("X-authorization");
+        User updatedUser = userService.updateUser(allParams, inputToken);
         if (updatedUser == null) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }

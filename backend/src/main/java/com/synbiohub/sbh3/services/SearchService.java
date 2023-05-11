@@ -10,6 +10,7 @@ import com.synbiohub.sbh3.utils.ConfigUtil;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -383,12 +384,17 @@ public class SearchService {
         RestTemplate restTemplate = new RestTemplate();
         String url;
         HashMap<String, String> params = new HashMap<>();
+        params.put("default-graph-uri", ConfigUtil.get("defaultGraph").asText());
         params.put("query", query);
+        params.put("format", "application/rdf+xml");
         HttpHeaders httpHeaders = new HttpHeaders();
+//        httpHeaders.add("Accept", "application/json");
         httpHeaders.add("Accept", "application/rdf+xml");
-        HttpEntity entity = new HttpEntity(httpHeaders);
+        HttpEntity entity = new HttpEntity<>("body", httpHeaders);
 
-        url = WOREndpoint + "/sparql?query={query}";
+//        url = WOREndpoint + "/sparql?query="+query;
+//        var result = restTemplate.getForObject(url, String.class);
+        url = WOREndpoint + "/sparql?default-graph-uri={default-graph-uri}&query={query}";
         var rest = restTemplate.exchange(url, HttpMethod.GET, entity, String.class, params); // TODO: This is causing a 406 error no body
         return rest.getBody().getBytes(StandardCharsets.UTF_8);
     }
