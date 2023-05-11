@@ -73,7 +73,7 @@ function createKeyToValueMap(
   Object.keys(sections).forEach(key => {
     let currentSection = sections[key];
     const foundData = currentSection.some((possibility, index) => {
-      const titleKey = possibility.section.title;
+      const titleKey = possibility.section.title.split('__')[0];
       if (
         possibility.section &&
         !possibility.section.predicates &&
@@ -110,6 +110,7 @@ function createKeyToValueMap(
           );
         }
       } else {
+        if (map[titleKey]) return true;
         map[titleKey] = { value: possibility.value, index };
         sectionsToRender.push({
           ...possibility.section,
