@@ -9,6 +9,7 @@ import com.synbiohub.sbh3.security.customsecurity.AuthenticationResponse;
 import com.synbiohub.sbh3.security.customsecurity.JwtService;
 import com.synbiohub.sbh3.security.model.Role;
 import com.synbiohub.sbh3.security.model.User;
+import com.synbiohub.sbh3.security.repo.AuthRepository;
 import com.synbiohub.sbh3.security.repo.UserRepository;
 import com.synbiohub.sbh3.security.CustomUserService;
 import com.synbiohub.sbh3.sparql.SPARQLQuery;
@@ -42,6 +43,8 @@ public class UserService {
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
+
+    private final AuthRepository authRepository;
 
     public AuthenticationResponse register(UserRegistrationDTO userRegistrationDTO) {
         if (!verifyPasswords(userRegistrationDTO.getPassword1(), userRegistrationDTO.getPassword2())) {
@@ -196,6 +199,7 @@ public class UserService {
     public Authentication checkAuthentication() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication instanceof AnonymousAuthenticationToken || authentication == null) return null;
+        authRepository.findByName(authentication.getName());
         return authentication;
     }
 

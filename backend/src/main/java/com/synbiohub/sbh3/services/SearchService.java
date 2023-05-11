@@ -388,10 +388,8 @@ public class SearchService {
         httpHeaders.add("Accept", "application/rdf+xml");
         HttpEntity entity = new HttpEntity(httpHeaders);
 
-        url = ConfigUtil.get("webOfRegistries").get(WOREndpoint).asText() + "/sparql?query={query}";
-
-        var rest = restTemplate.exchange(url, HttpMethod.GET, entity, String.class, params);
-
+        url = WOREndpoint + "/sparql?query={query}";
+        var rest = restTemplate.exchange(url, HttpMethod.GET, entity, String.class, params); // TODO: This is causing a 406 error no body
         return rest.getBody().getBytes(StandardCharsets.UTF_8);
     }
 
