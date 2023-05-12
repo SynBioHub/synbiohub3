@@ -24,8 +24,9 @@ public class AdminController {
 
     @GetMapping(value = "/admin/sparql")
     @ResponseBody
-    public String runAdminSparqlQuery(@RequestParam String query) throws IOException {
-        Authentication auth = userService.checkAuthentication();
+    public String runAdminSparqlQuery(@RequestParam String query, HttpServletRequest request) throws Exception {
+        String inputToken = request.getHeader("X-authorization");
+        Authentication auth = userService.checkAuthentication(inputToken);
         if (auth == null) {
             return null;
         }
@@ -34,8 +35,8 @@ public class AdminController {
 
     @GetMapping(value = "/admin")
     @ResponseBody
-    public String status(@RequestParam Map<String,String> allParams, HttpServletRequest request) throws IOException {
-        return adminService.getStatus().toString();
+    public String status(@RequestParam Map<String,String> allParams, HttpServletRequest request) throws Exception {
+        return adminService.getStatus(request).toString();
     }
 
     @GetMapping(value = "/admin/virtuoso")

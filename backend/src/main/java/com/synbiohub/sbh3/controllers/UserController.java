@@ -8,17 +8,22 @@ import com.synbiohub.sbh3.dto.LoginDTO;
 import com.synbiohub.sbh3.dto.UserRegistrationDTO;
 import com.synbiohub.sbh3.security.CustomUserService;
 import com.synbiohub.sbh3.security.customsecurity.AuthenticationResponse;
+import com.synbiohub.sbh3.security.model.AuthCodes;
 import com.synbiohub.sbh3.security.model.User;
+import com.synbiohub.sbh3.security.repo.AuthRepository;
 import com.synbiohub.sbh3.services.UserService;
 import com.synbiohub.sbh3.utils.ConfigUtil;
 import com.synbiohub.sbh3.utils.RestClient;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,6 +33,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -39,6 +45,7 @@ public class UserController {
     private final UserService userService;
     private final RestClient restClient;
     private final ObjectMapper mapper;
+    private final AuthRepository authRepository;
 
 
     @PostMapping(value = "/login", produces = "text/plain")
@@ -54,6 +61,18 @@ public class UserController {
                     .password(password)
                     .build();
             AuthenticationResponse response = userService.authenticate(loginRequest);
+            Optional<AuthCodes> existingAuthCode = authRepository.findByName(username);
+            if (authRepository.findByName(username).isPresent()) {
+                AuthCodes authCode = authRepository.findByName(username).get();
+                authCode.setAuth(response.getToken());
+                authRepository.save(authCode);
+            } else {
+                AuthCodes authCode = AuthCodes.builder()
+                        .name(username)
+                        .auth(response.getToken())
+                        .build();
+                authRepository.save(authCode);
+            }
             return ResponseEntity.ok(response.getToken());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Your e-mail address was not recognized.");
@@ -62,16 +81,32 @@ public class UserController {
     }
 
     // TODO: change what logout does, maybe not invalidate session, but invalidate current auth token
-    @PostMapping(value = "/logout")
+    @GetMapping(value = "/do_logout")
     public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response) throws Exception {
         log.info("Received logout request");
-        Authentication auth = userService.checkAuthentication();
-        if (auth != null) {
-            new SecurityContextLogoutHandler().logout(request, response, auth);
-            return ResponseEntity.ok("User logged out successfully");
-        } else {
-            throw new Exception("No user is currently logged in.");
+//        Authentication auth = userService.checkAuthentication();
+        HttpSession session = request.getSession(false);
+        if (session != null && session.getId() != null) {
+            // Invalidate the user's session
+            session.invalidate();
         }
+//        if (auth != null) {
+//            new SecurityContextLogoutHandler().logout(request, response, auth);
+//            Cookie jsessionidCookie = new Cookie("JSESSIONID", null);
+//            jsessionidCookie.setMaxAge(0);
+//            jsessionidCookie.setPath("/");
+//            response.addCookie(jsessionidCookie);
+//
+//            Cookie authorizationCookie = new Cookie("authorization", null);
+//            authorizationCookie.setMaxAge(0);
+//            authorizationCookie.setPath("/");
+//            response.addCookie(authorizationCookie);
+//            authRepository.delete(authRepository.findByName(auth.getName()).orElseThrow());
+
+            return ResponseEntity.ok("User logged out successfully");
+//        } else {
+//            throw new Exception("No user is currently logged in.");
+//        }
     }
 
     @PostMapping(value = "/register")
@@ -107,8 +142,9 @@ public class UserController {
 //    }
 //
     @GetMapping(value = "/profile", produces = "text/plain")
-    public ResponseEntity<String> getProfile() throws JsonProcessingException, CloneNotSupportedException {
-        var user = userService.getUserProfile();
+    public ResponseEntity<String> getProfile(HttpServletRequest request) throws Exception {
+        String inputToken = request.getHeader("X-authorization");
+        var user = userService.getUserProfile(inputToken);
         if (user == null)
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         return ResponseEntity.ok(mapper.writeValueAsString(user));
@@ -116,8 +152,9 @@ public class UserController {
 
     // Only updates the fields name, email, and affiliation currently
     @PostMapping(value = "/profile", produces = "text/plain")
-    public ResponseEntity<String> updateProfile(@RequestParam Map<String, String> allParams) throws JsonProcessingException, CloneNotSupportedException {
-        User updatedUser = userService.updateUser(allParams);
+    public ResponseEntity<String> updateProfile(@RequestParam Map<String, String> allParams, HttpServletRequest request) throws Exception {
+        String inputToken = request.getHeader("X-authorization");
+        User updatedUser = userService.updateUser(allParams, inputToken);
         if (updatedUser == null) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
@@ -161,6 +198,9 @@ public class UserController {
                 allParams.put("graphStoreEndpoint", "http://virtuoso3:8890/sparql-graph-crud-auth/");
                 allParams.put("firstLaunch", false);
                 allParams.put("version", 1);
+                Map<String, String> wor = new HashMap<>();
+                wor.put("https://synbiohub.org", "http://localhost:6789");
+                allParams.put("webOfRegistries", wor);
                 Map<String, Object> themeParams = new HashMap<>();
                 themeParams.put("default", allParams.get("color"));
                 allParams.put("themeParameters", themeParams);
