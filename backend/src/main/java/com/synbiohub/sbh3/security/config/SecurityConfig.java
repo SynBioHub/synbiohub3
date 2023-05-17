@@ -26,6 +26,7 @@ import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.channel.ChannelProcessingFilter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
@@ -56,6 +57,12 @@ public class SecurityConfig {
                 .authorizeHttpRequests((auth) -> auth.anyRequest().authenticated())
                 .csrf((csrf) -> csrf.disable())
                 .httpBasic(Customizer.withDefaults())
+//                .logout()
+//                    .logoutUrl("/do_logout")
+//                    .logoutRequestMatcher(new AntPathRequestMatcher("/do_logout", "POST"))
+//                    .invalidateHttpSession(true)
+//                    .deleteCookies("JSESSIONID")
+//                .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
