@@ -51,12 +51,20 @@ public class UserController {
 
     @PostMapping(value = "/login", produces = "text/plain")
     public ResponseEntity login(@RequestParam String email, @RequestParam String password) {
+        if (email.isEmpty() || password.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Please enter your e-mail address and password.");
+        }
         try {
             String username = email;
             if (userService.isValidEmail(email)) {
-                username = userService.getUserByEmail(email).getUsername();
+                try {
+                    username = userService.getUserByEmail(email).getUsername();
+                } catch (Exception e) {
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Your e-mail address was not recognized.");
+                }
+
             } else {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Your e-mail address was not recognized.");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please enter a valid email address.");
             }
             LoginDTO loginRequest = LoginDTO
                     .builder()
