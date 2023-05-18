@@ -43,7 +43,7 @@ public class ConfigUtil {
             var item = localjson.get(key); // TODO: need to rebuild the object into memory every time it is written to
             if (item != null && !item.isNull()) {
                 return item;
-            } else {w
+            } else {
                 return json.get(key);
             }
         } catch (Exception e) {
@@ -86,7 +86,7 @@ public class ConfigUtil {
     }
 
 
-    public Boolean isLaunched() {
+    public static Boolean isLaunched() {
         if (localjson.has("firstLaunch")) {
             return localjson.get("firstLaunch").asBoolean();
         }
