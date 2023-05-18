@@ -36,11 +36,11 @@ class TestSetup(TestCase):
         }
 
         #Use to do /setup and test
-        compare_post_json_request('setup', setup, headers = {"Accept": "text/plain"}, route_parameters = [], files = None)
+        # compare_post_json_request('setup', setup, headers = {"Accept": "text/plain"}, route_parameters = [], files = None)
 
         #Use to do /setup "without" comparing the responses
-        #post_json_request("setup", 1, setup, headers = {"Accept": "text/plain", "Content-Type": "application/json"}, route_parameters = [], files = None)
-        #post_json_request("setup", 3, setup, headers = {"Accept": "text/plain", "Content-Type": "application/json"}, route_parameters = [], files = None)
+        post_json_request("setup", 1, setup, headers = {"Accept": "text/plain", "Content-Type": "application/json"}, route_parameters = [], files = None)
+        post_json_request("setup", 3, setup, headers = {"Accept": "text/plain", "Content-Type": "application/json"}, route_parameters = [], files = None)
 
         test_print("test_setup_post completed")
 

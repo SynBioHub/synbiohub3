@@ -32,6 +32,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -54,6 +55,8 @@ public class UserController {
             String username = email;
             if (userService.isValidEmail(email)) {
                 username = userService.getUserByEmail(email).getUsername();
+            } else {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Your e-mail address was not recognized.");
             }
             LoginDTO loginRequest = LoginDTO
                     .builder()
@@ -75,20 +78,23 @@ public class UserController {
             }
             return ResponseEntity.ok(response.getToken());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Your e-mail address was not recognized.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Your password was not recognized.");
         }
 
     }
-
-    // TODO: change what logout does, maybe not invalidate session, but invalidate current auth token
-    @GetMapping(value = "/do_logout")
+    @PostMapping(value = "/do_logout")
     public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response) throws Exception {
         log.info("Received logout request");
-//        Authentication auth = userService.checkAuthentication();
-        HttpSession session = request.getSession(false);
+        String token = request.getHeader("X-authorization");
+        Authentication auth = userService.checkAuthentication(token);
+        // to get the authentication, we need the inputToken, which means that logout requires the token as a parameter
+        // Check with Chris if this is the way to go
+        HttpSession session = request.getSession();
+//        HttpSession session = request.getSession(false);
         if (session != null && session.getId() != null) {
             // Invalidate the user's session
             session.invalidate();
+            authRepository.delete(authRepository.findByName(auth.getName()).orElseThrow());
         }
 //        if (auth != null) {
 //            new SecurityContextLogoutHandler().logout(request, response, auth);
@@ -226,6 +232,12 @@ public class UserController {
             log.error("Setup failed.");
             return ResponseEntity.ok("Failed to create file!");
         }
+    }
+
+    @DeleteMapping(value = "/cleanAuthRepo")
+    public String cleanAuthRepo() {
+        authRepository.deleteAll();
+        return "Cleaned.";
     }
 
     @GetMapping("/firstLaunched")

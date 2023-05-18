@@ -202,7 +202,7 @@ public class UserService {
         if (authentication instanceof AnonymousAuthenticationToken || authentication == null) return null;
         String name = authentication.getName();
         var authCode = authRepository.findByName(authentication.getName())
-                .orElseThrow(() -> new RuntimeException("Authentication not found"));
+                .orElseThrow(() -> new RuntimeException("Authentication not found")); // TODO: requires error handling, find out what SBH1 returns
         if (inputToken.equals(authCode.getAuth())) {
             return authentication;
         } else {
