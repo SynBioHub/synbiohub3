@@ -7,8 +7,10 @@ import com.synbiohub.sbh3.dto.LoginDTO;
 import com.synbiohub.sbh3.dto.UserRegistrationDTO;
 import com.synbiohub.sbh3.security.customsecurity.AuthenticationResponse;
 import com.synbiohub.sbh3.security.customsecurity.JwtService;
+import com.synbiohub.sbh3.security.model.AuthCodes;
 import com.synbiohub.sbh3.security.model.Role;
 import com.synbiohub.sbh3.security.model.User;
+import com.synbiohub.sbh3.security.repo.AuthRepository;
 import com.synbiohub.sbh3.security.repo.UserRepository;
 import com.synbiohub.sbh3.security.CustomUserService;
 import com.synbiohub.sbh3.sparql.SPARQLQuery;
@@ -42,6 +44,8 @@ public class UserService {
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
+
+    private final AuthRepository authRepository;
 
     public AuthenticationResponse register(UserRegistrationDTO userRegistrationDTO) {
         if (!verifyPasswords(userRegistrationDTO.getPassword1(), userRegistrationDTO.getPassword2())) {
@@ -103,8 +107,8 @@ public class UserService {
         return pat.matcher(email).matches();
     }
 
-    public User getUserProfile() throws CloneNotSupportedException {
-        Authentication authentication = checkAuthentication();
+    public User getUserProfile(String inputToken) throws Exception {
+        Authentication authentication = checkAuthentication(inputToken);
         if (authentication == null) {
             return null;
         }
@@ -147,10 +151,10 @@ public class UserService {
         return owners.contains(ConfigUtil.get("graphPrefix").asText() + "user/" + SecurityContextHolder.getContext().getAuthentication().getName());
     }
 
-    public User updateUser(Map<String, String> allParams) throws AuthenticationException, CloneNotSupportedException {
+    public User updateUser(Map<String, String> allParams, String inputToken) throws Exception {
         ObjectMapper mapper = new ObjectMapper();
-        Authentication auth = checkAuthentication();
-        User existingUser = getUserProfile();
+        Authentication auth = checkAuthentication(inputToken);
+        User existingUser = getUserProfile(inputToken);
         if (existingUser == null || auth == null) {
             return null;
         }
@@ -193,10 +197,18 @@ public class UserService {
 
     }
 
-    public Authentication checkAuthentication() {
+    public Authentication checkAuthentication(String inputToken) throws Exception {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication instanceof AnonymousAuthenticationToken || authentication == null) return null;
-        return authentication;
+        String name = authentication.getName();
+        var authCode = authRepository.findByName(authentication.getName())
+                .orElseThrow(() -> new RuntimeException("Authentication not found")); // TODO: requires error handling, find out what SBH1 returns
+        if (inputToken.equals(authCode.getAuth())) {
+            return authentication;
+        } else {
+            throw new Exception("Authentication failed.");
+        }
+
     }
 
     private Boolean verifyPasswords(String password1, String password2) {

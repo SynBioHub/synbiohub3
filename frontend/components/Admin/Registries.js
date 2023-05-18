@@ -58,6 +58,7 @@ export default function Registries() {
 function NewRegistryRow(properties) {
   const [uri, setUri] = useState('');
   const [url, setUrl] = useState('');
+  const dispatch = useDispatch();
   return (
     <tr key="New">
       <td>
@@ -82,7 +83,7 @@ function NewRegistryRow(properties) {
               icon={faPlusCircle}
               color="#1C7C54"
               onClick={() => {
-                saveRegistry(uri, url, properties.token);
+                saveRegistry(uri, url, properties.token, dispatch);
                 setUri('');
                 setUrl('');
               }}
@@ -97,6 +98,7 @@ function NewRegistryRow(properties) {
 function RegistryDisplay(properties) {
   const [editMode, setEditMode] = useState(false);
   const [url, setUrl] = useState(properties.registry.url);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     setUrl(properties.registry.url);
@@ -122,7 +124,11 @@ function RegistryDisplay(properties) {
               icon={faTrashAlt}
               color="#FF3C38"
               onClick={() =>
-                deleteRegistry(properties.registry.uri, properties.token)
+                deleteRegistry(
+                  properties.registry.uri,
+                  properties.token,
+                  dispatch
+                )
               }
             />
           </div>
@@ -148,7 +154,12 @@ function RegistryDisplay(properties) {
               icon={faSave}
               color="#1C7C54"
               onClick={() => {
-                saveRegistry(properties.registry.uri, url, properties.token);
+                saveRegistry(
+                  properties.registry.uri,
+                  url,
+                  properties.token,
+                  dispatch
+                );
                 setEditMode(false);
               }}
             />
@@ -168,7 +179,7 @@ function RegistryDisplay(properties) {
   );
 }
 
-const deleteRegistry = async (uri, token) => {
+const deleteRegistry = async (uri, token, dispatch) => {
   const url = `${publicRuntimeConfig.backend}/admin/deleteRegistry`;
   const headers = {
     Accept: 'text/plain',
@@ -185,11 +196,15 @@ const deleteRegistry = async (uri, token) => {
   });
 
   if (response.status === 200) {
-    mutate([`${publicRuntimeConfig.backend}/admin/registries`, token]);
+    mutate([
+      `${publicRuntimeConfig.backend}/admin/registries`,
+      token,
+      dispatch
+    ]);
   }
 };
 
-const saveRegistry = async (uri, sbhUrl, token) => {
+const saveRegistry = async (uri, sbhUrl, token, dispatch) => {
   const url = `${publicRuntimeConfig.backend}/admin/saveRegistry`;
   const headers = {
     Accept: 'text/plain',
@@ -207,7 +222,11 @@ const saveRegistry = async (uri, sbhUrl, token) => {
   });
 
   if (response.status === 200) {
-    mutate([`${publicRuntimeConfig.backend}/admin/registries`, token]);
+    mutate([
+      `${publicRuntimeConfig.backend}/admin/registries`,
+      token,
+      dispatch
+    ]);
   }
 };
 

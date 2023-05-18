@@ -731,8 +731,8 @@ export const makePublicCollection =
       });
 
       if (response.status === 200) {
-        mutate([`${publicRuntimeConfig.backend}/shared`, token]);
-        mutate([`${publicRuntimeConfig.backend}/manage`, token]);
+        mutate([`${publicRuntimeConfig.backend}/shared`, token, dispatch]);
+        mutate([`${publicRuntimeConfig.backend}/manage`, token, dispatch]);
       }
 
       setProcessUnderway(false);
