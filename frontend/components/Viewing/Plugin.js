@@ -30,8 +30,8 @@ export default function Plugin(properties) {
     }
     else if (status) {
       const downloadContent = async () => {
-       const toRender = await runPlugin(properties.plugin, pluginData, uri, properties.type);
-       setContent(toRender);
+      const toRender = await runPlugin(properties.plugin, pluginData, uri, properties.type);
+      setContent(toRender);
       };
       downloadContent();
     }
@@ -40,39 +40,31 @@ export default function Plugin(properties) {
   if (status) {
     return <Section title={properties.plugin.name}>{parse(`${content}`)}</Section>;
   }
+  
   else {
-    return <Section title={properties.plugin.name}>{`${properties.plugin.name} is not working`}</Section>; //return null for it not to be loaded
+    //return <Section title={properties.plugin.name}>{`${properties.plugin.name} is not working`}</Section>; //return null for it not to be loaded
+    return null
   }
+  
 }
 
 async function evaluatePlugin(plugin, type) {
-    return await axios({
-      method: 'POST',
-      url: `${publicRuntimeConfig.backend}/call`,
-      params: {
-        name: plugin.name,
-        endpoint: 'status'
+  return await axios({
+    method: 'POST',
+    url: `${publicRuntimeConfig.backend}/call`,
+    params: {
+      name: plugin.name,
+      endpoint: 'evaluate',
+      data: {
+        type: type
       }
-    }).then(response => {
-      if(response.status != 200) {
-        return false;
-      }
-      return axios({
-        method: 'POST',
-        url: `${publicRuntimeConfig.backend}/call`,
-        params: {
-          name: plugin.name,
-          endpoint: 'evaluate',
-          data: {
-            type: type
-          }
-        }
-      }).then(response => {
-        return response.status === 200;
-      })
-    }).catch(error => {
-      return false;
-    });
+    }
+  }).then(response => {
+    return response.status === 200;
+  })
+  .catch(error => {
+    return false;
+  });
 }
 
 async function runPlugin(plugin, pluginData, uri, type) {
