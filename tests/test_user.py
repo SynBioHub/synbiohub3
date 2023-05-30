@@ -23,6 +23,12 @@ class TestUser(TestCase):
 
         test_print("test_post_login starting")
 
+        #bad password
+        logininfo = {'email' : 'test1@user.synbiohub',
+                      'password' : 'password'}
+        login_with(logininfo, 0)
+
+        #correct login
         logininfo = {'email' : 'test1@user.synbiohub',
                       'password' : 'test'}
         login_with(logininfo, 1)
