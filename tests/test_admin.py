@@ -54,27 +54,27 @@ class TestAdmin(TestCase):
         compare_get_request_json("/admin/plugins", headers = {"Accept":"text/plain"}, test_type = test_type, fields=["rendering", "download", "submit"])
         test_print("test_admin_plgins completed")
 
-        # test_print("test_admin_savePlugin starting")
-        # data={
-        #     'id': 'New',
-        #     'category' : 'download',
-        #     'name' : 'test_plugin',
-        #     'url' : 'jimmy',
-        # }
-        # compare_post_request("/admin/savePlugin", data, headers = {"Accept": "text/plain"}, test_name = "admin_savePlugin", test_type = test_type)
-        # test_print("test_admin_savePlugin completed")
+        test_print("test_admin_savePlugin starting")
+        data={
+            'id': 'New',
+            'category' : 'download',
+            'name' : 'test_plugin',
+            'url' : 'jimmy',
+        }
+        compare_post_request("/admin/savePlugin", data, headers = {"Accept": "text/plain"}, test_name = "admin_savePlugin", test_type = test_type)
+        test_print("test_admin_savePlugin completed")
 
-        # test_print("test_admin_plugins starting")
-        # compare_get_request_json("/admin/plugins", headers = {"Accept":"text/plain"}, test_name="testPluginAfterSave", test_type = test_type, fields=["rendering", "download", "submit"])
-        # test_print("test_admin_plgins completed")
+        test_print("test_admin_plugins starting")
+        compare_get_request_json("/admin/plugins", headers = {"Accept":"text/plain"}, test_name="testPluginAfterSave", test_type = test_type, fields=["rendering", "download", "submit"])
+        test_print("test_admin_plgins completed")
 
-        # test_print("test_admin_deletePlugin starting")
-        # data={
-        #     'id': '1',
-        #     'category' : 'download',
-        # }
-        # compare_post_request("/admin/deletePlugin", data, headers = {"Accept": "text/plain"}, test_name = "admin_deletePlugin", test_type = test_type)
-        # test_print("test_admin_deletePlugin completed")
+        test_print("test_admin_deletePlugin starting")
+        data={
+            'id': '1',
+            'category' : 'download',
+        }
+        compare_post_request("/admin/deletePlugin", data, headers = {"Accept": "text/plain"}, test_name = "admin_deletePlugin", test_type = test_type)
+        test_print("test_admin_deletePlugin completed")
 
         # test_print("test_admin_registries starting")
         # #will throw error until we get a response from SBH3
