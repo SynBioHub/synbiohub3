@@ -73,13 +73,13 @@ public class UserService {
 
     public String logoutUser(HttpServletRequest request) throws Exception {
         String token = request.getHeader("X-authorization");
-        Authentication auth = checkAuthentication(token);
+//        Authentication auth = checkAuthentication(token);
         // TODO: to get the authentication, we need the inputToken, which means that logout requires the token as a parameter
         // Check with Chris if this is the way to go
         HttpSession session = request.getSession();
         if (session != null && session.getId() != null) {
             session.invalidate();
-            authRepository.delete(authRepository.findByName(auth.getName()).orElseThrow());
+            authRepository.delete(authRepository.findByName(token).orElseThrow());
         }
         return "User logged out successfully";
     }
@@ -107,10 +107,13 @@ public class UserService {
     /**
      * This is the main method to check one's authentication.
      * It will check both the security context and the authTokens table to verify the user is logged in.
+     *
+     * Currently not used. Eventually will be deprecated out and deleted.
      * @param inputToken
      * @return
      * @throws Exception
      */
+    //TODO: either delete this or put inside filter when filter is done
     public Authentication checkAuthentication(String inputToken) throws Exception {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication instanceof AnonymousAuthenticationToken || authentication == null) return null;
@@ -176,18 +179,20 @@ public class UserService {
     }
 
     public User getUserProfile(String inputToken) throws Exception {
-        Authentication authentication = checkAuthentication(inputToken);
-        if (authentication == null) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//        Authentication authentication = checkAuthentication(inputToken);
+        if (auth == null) {
             return null;
         }
-        User user = userRepository.findByUsername(authentication.getName()).orElseThrow();
+        User user = userRepository.findByUsername(auth.getName()).orElseThrow();
         User copyUser = (User) user.clone();
         copyUser.setPassword("");
         return copyUser;
     }
 
     public User updateUserProfile(Map<String, String> allParams, String inputToken) throws Exception {
-        Authentication auth = checkAuthentication(inputToken);
+//        Authentication auth = checkAuthentication(inputToken);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User existingUser = getUserProfile(inputToken);
         if (existingUser == null || auth == null) {
             return null;

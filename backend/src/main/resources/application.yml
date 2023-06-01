@@ -37,3 +37,27 @@ plugin:
 jwt:
   private.key: classpath:app.priv
   public.key: classpath:app.pub
+
+roleToEndpointPermissions:
+  USER: ["/profile", "/do_logout", "/submit", "/makePublic", "/rootCollections", "/setup", "/login", "/register", "/search", "/search/**", "/searchCount", "/searchCount/**", "/twins", "/uses", "/similar", "/sbol", "/sbolnr", "/metadata", "/gb", "/fasta", "/gff", "/download", "/public/**", "/sparql", "/ComponentDefinition/**", "/**/count", "/count"]
+  CURATOR: []
+  ADMIN: ['/admin/sparql', '/admin', '/admin/virtuoso', '/admin/graphs', '/admin/log', '/admin/mail', '/admin/plugins', '/admin/savePlugin', '/admin/deletePlugin', '/admin/registries', '/admin/saveRegistry', '/admin/deleteRegistry', '/admin/setAdministratorEmail', '/admin/retrieveFromWebOfRegistries', '/admin/federate', '/admin/remotes', '/admin/saveRemote', '/admin/deleteRemote', '/admin/explorerlog', '/admin/explorer', '/admin/explorerUpdateIndex', '/admin/theme', '/admin/users', '/admin/newUser', '/admin/updateUser', '/admin/deleteUser']
+
+#  login: /login
+#  logout: /do_logout
+#  register: /register
+#  resetPassword: /resetPassword
+#  setNewPassword: /setNewPassword
+#  profile: /profile
+#  search: /search/**
+#  searchCount: /searchCount/**
+#  rootCollections: /rootCollections
+#  submissions: /manage
+#  shared: /shared
+#  subCollections: /subCollections
+#  twins: /twins
+#  similar: /similar
+#  uses: /uses
+#  sbol: /sbol
+#  sbolnr: /sbolnr
+#  metadata: /metadata
