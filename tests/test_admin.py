@@ -23,9 +23,9 @@ class TestAdmin(TestCase):
         compare_get_request_json("/admin", headers = {"Accept":"text/plain"}, test_type = test_type, fields=["instanceName", "defaultGraph", "graphPrefix"])
         test_print("test_admin_status completed")
 
-        # test_print("test_admin_virtuoso starting")
-        # compare_get_request("/admin/virtuoso", headers = {"Accept":"text/plain"}, test_type = test_type)
-        # test_print("test_admin_virtuoso completed")
+        test_print("test_admin_virtuoso starting")
+        compare_get_request("/admin/virtuoso", headers = {"Accept":"text/plain"}, test_type = test_type)
+        test_print("test_admin_virtuoso completed")
 
         # test_print("test_admin_graphs starting")
         # #will throw error until we get a response from SBH3
