@@ -28,18 +28,15 @@ class TestAdmin(TestCase):
         # test_print("test_admin_virtuoso completed")
 
         # test_print("test_admin_graphs starting")
-        # #will throw error until we get a response from SBH3
-        # #compare_get_request_json_list("/admin/graphs", headers = {"Accept":"text/plain"}, test_type = test_type, fields=["graphUri", "numTriples"])
+        # compare_get_request_json_list("/admin/graphs", headers = {"Accept":"text/plain"}, test_type = test_type, fields=["graphUri", "numTriples"], key='graphUri')
         # test_print("test_admin_graphs completed")
 
         # test_print("test_admin_log starting")
-        # #will throw error until we get a response from SBH3
-        # #compare_get_request_json_list("admin/log", headers = {"Accept":"text/plain"}, test_type = test_type, fields=["level", "line"])
+        # compare_get_request_json_list("admin/log", headers = {"Accept":"text/plain"}, test_type = test_type, fields=["level", "line"], key='line')
         # test_print("test_admin_log completed")
 
         # test_print("test_admin_mail starting")
-        # #will throw error until we get a response from SBH3
-        # #compare_get_request_json("/admin/mail", headers = {"Accept":"text/plain"}, test_type = test_type, fields=["sendGridApiKey", "sendGridFromEmail"])
+        # compare_get_request_json("/admin/mail", headers = {"Accept":"text/plain"}, test_type = test_type, fields=["sendGridApiKey", "sendGridFromEmail"])
         # test_print("test_admin_mail completed")
 
         # test_print("test_post_admin_mail starting")
@@ -77,8 +74,8 @@ class TestAdmin(TestCase):
         # test_print("test_admin_deletePlugin completed")
 
         # test_print("test_admin_registries starting")
-        # #will throw error until we get a response from SBH3
-        # #compare_get_request_json("admin/registries", headers = {"Accept": "text/plain"}, test_type = test_type, fields=["registries", "errors"])
+        # #SBH3 throws error
+        # compare_get_request_json("admin/registries", headers = {"Accept": "text/plain"}, test_type = test_type, fields=["registries", "errors"])
         # test_print("test_admin_registries completed")
 
         # test_print("test_admin_saveRegistry starting")
@@ -120,8 +117,7 @@ class TestAdmin(TestCase):
         # test_print("test_admin_federate completed")
 
         # test_print("test_admin_remotes starting")
-        # #will throw error until we get a response from SBH3
-        # #compare_get_request_json_list("/admin/remotes", headers = {"Accept":"text/plain"}, test_type = test_type, fields=["remotes", "remoteTypes"])
+        # compare_get_request_json("/admin/remotes", headers = {"Accept":"text/plain"}, test_type = test_type, fields=["remotes", "remoteTypes"])
         # test_print("test_admin_remotes completed")
 
         # test_print("test_saveRemoteICE starting")
@@ -184,12 +180,12 @@ class TestAdmin(TestCase):
         # # compare_get_request_json("/admin/explorerlog", headers = {"Accept":"text/plain"}, test_type = test_type, fields=["instanceName", "frontPageText"])
         # # test_print("test_admin_explorerlog completed")
 
-        # # Need SBOL Explorer ON to test
+        # #TODO: Need SBOL Explorer ON to test
         # test_print("test_admin_explorer starting")
         # compare_get_request("/admin/explorer", headers = {"Accept": "text/plain"}, test_type = test_type)
         # test_print("test_admin_explorer completed")
 
-        # # Need SBOL Explorer ON to test
+        # #TODO: Need SBOL Explorer ON to test
         # test_print("test_admin_status starting")
         # data={
         #     'useSBOLExplorer': 'True',
@@ -211,9 +207,9 @@ class TestAdmin(TestCase):
         # compare_post_request("/admin/explorerUpdateIndex", data, headers = {"Accept": "text/plain"}, test_name = "admin_explorerUpdateIndex", test_type = test_type)
         # test_print("test_explorerUpdateIndex completed")
 
-        # test_print("test_admin_theme starting")
-        # compare_get_request_json("/admin/theme", headers = {"Accept":"text/plain"}, test_type = test_type, fields=["instanceName", "frontPageText"])
-        # test_print("test_admin_theme completed")
+        test_print("test_admin_theme starting")
+        compare_get_request_json("/admin/theme", headers = {"Accept":"text/plain"}, test_type = test_type, fields=["instanceName", "frontPageText"])
+        test_print("test_admin_theme completed")
 
         # test_print("test_admin_updateTheme starting")
         # logo = os.path.basename('./logo.jpg');
@@ -230,8 +226,7 @@ class TestAdmin(TestCase):
         # test_print("test_admin_updateTheme completed")
 
         # test_print("test_get_admin_users starting")
-        # #will throw error until we get a response from SBH3
-        # #compare_get_request_json("/admin/users", headers = {"Accept":"text/plain"}, test_type = test_type, fields=["users", "graphUri", "isAdmin"])
+        # compare_get_request_json("/admin/users", headers = {"Accept":"text/plain"}, test_type = test_type, fields=["users", "graphUri", "isAdmin"])
         # test_print("test_get_admin_users completed")
 
         # test_print("test_post_admin_users starting")

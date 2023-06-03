@@ -3,6 +3,7 @@ from requests.exceptions import HTTPError
 import requests_html, difflib, sys, requests, json
 from bs4 import BeautifulSoup
 from operator import itemgetter
+from json.decoder import JSONDecodeError
 
 from test_arguments import args, test_print
 from TestState import TestState, clip_request
@@ -199,6 +200,7 @@ def compare_status_codes(sbh1requestcontent, sbh3requestcontent):
         print("RESPONSE CODE TEST PASSED: Status Code: " + str(sbh3requestcontent.status_code))
         return 1
 
+#Compare text data, exact match
 def compare_request(sbh1requestcontent, sbh3requestcontent, request, requesttype, test_type):
     """ Checks a sbh3 request against a sbh1 request.
 request is the endpoint requested, such as /setup
@@ -223,12 +225,25 @@ requesttype is the type of request performed- either 'get request' or 'post requ
     
     add_test_results(test_passed, test_type)
 
+#Compare JSON data: {}
 def compare_json(sbh1requestcontent, sbh3requestcontent, test_type, fields):
     
     test_passed = compare_status_codes(sbh1requestcontent, sbh3requestcontent)
 
-    sbh1_json = json.loads(sbh1requestcontent.text)
-    sbh3_json = json.loads(sbh3requestcontent.text)
+    try:
+        sbh1_json = json.loads(sbh1requestcontent.text)
+    except JSONDecodeError as e:
+        sbh1_json = []
+    try:
+        sbh3_json = json.loads(sbh3requestcontent.text)
+    except JSONDecodeError as e:
+        sbh3_json = []
+    if(sbh1_json != [] and sbh3_json == []):
+        test_passed = 0
+        raise Exception("RESPONSE CONTENT TEST FAILED: Content does not match\n")
+    if(sbh1_json == [] and sbh3_json != []):
+        test_passed = 0
+        raise Exception("RESPONSE CONTENT TEST FAILED: Content does not match\n")
     if(fields == []):
         if(sorted(sbh1_json) != sorted(sbh3_json)):
             test_passed = 0
@@ -242,14 +257,20 @@ def compare_json(sbh1requestcontent, sbh3requestcontent, test_type, fields):
 
     add_test_results(test_passed, test_type)
 
-def compare_json_list(sbh1requestcontent, sbh3requestcontent, test_type, fields):
+#Compare a list of JSON data: [{}]
+def compare_json_list(sbh1requestcontent, sbh3requestcontent, test_type, fields, key):
 
     test_passed = compare_status_codes(sbh1requestcontent, sbh3requestcontent)
-
-    sbh1resultlist = json.loads(sbh1requestcontent.text)
-    sbh3resultlist = json.loads(sbh3requestcontent.text)
-    sorted_sbh1_list = sorted(sbh1resultlist, key=itemgetter('uri'))
-    sorted_sbh3_list = sorted(sbh3resultlist, key=itemgetter('uri'))
+    try:
+        sbh1resultlist = json.loads(sbh1requestcontent.text)
+    except JSONDecodeError as e:
+        sbh1resultlist = []
+    try:
+        sbh3resultlist = json.loads(sbh3requestcontent.text)
+    except JSONDecodeError as e:
+        sbh3resultlist = []
+    sorted_sbh1_list = sorted(sbh1resultlist, key=itemgetter(key))
+    sorted_sbh3_list = sorted(sbh3resultlist, key=itemgetter(key))
     if(len(sorted_sbh1_list) != len(sorted_sbh3_list)):
         test_passed = 0
         raise Exception("RESPONSE CONTENT TEST FAILED: Content does not match\n")
@@ -391,7 +412,7 @@ page
     #get_request("profile", 1, headers = {"Accept": "text/plain"}, route_parameters = [], re_render_time = 0)
     compare_json(get_request(request, 1, headers, route_parameters), get_request(request, 3, headers, route_parameters), test_type, fields)
 
-def compare_get_request_json_list(request, test_name = "", route_parameters = [], headers = {}, test_type="Other", fields = []):
+def compare_get_request_json_list(request, test_name = "", route_parameters = [], headers = {}, test_type="Other", fields = [], key=''):
     """Complete a get request and error if the json fields differs from previous results.
 page
     request -- string, the name of the page being requested
@@ -407,7 +428,7 @@ page
     testpath = request_file_path(request, "get request", test_name)
     test_state.add_get_request(request, testpath, test_name)
     #get_request("profile", 1, headers = {"Accept": "text/plain"}, route_parameters = [], re_render_time = 0)
-    compare_json_list(get_request(request, 1, headers, route_parameters), get_request(request, 3, headers, route_parameters), test_type, fields)
+    compare_json_list(get_request(request, 1, headers, route_parameters), get_request(request, 3, headers, route_parameters), test_type, fields, key)
 
 def compare_get_request_download(request, test_name = "", route_parameters = [], headers = {}, test_type="Other"):
     """Complete a get_file request and error if it differs from previous results.

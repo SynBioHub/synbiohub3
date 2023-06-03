@@ -23,6 +23,6 @@ class TestTwins(TestCase):
         # won't work till submit is done - compare_get_request(":userId/:collectionId/:displayId/:version/twins", test_name = "twins1", headers = {"Accept": "text/plain"}, route_parameters = ["testuser1","igem","BBa_B0034","1"])
         # when submit is done - compare_get_request(":userId/:collectionId/:displayId/:version/twins", headers = {"Accept": "text/plain"}, route_parameters = ["public","igem","BBa_B0034","1"])
         
-        compare_get_request_json_list("public/:collectionId/:displayId/:version/twins", headers = {"Accept": "text/plain"}, route_parameters = ["igem","BBa_B0034","1"], test_type = test_type, fields=["uri", "displayId", "version", "name", "description", "type"])
+        compare_get_request_json_list("public/:collectionId/:displayId/:version/twins", headers = {"Accept": "text/plain"}, route_parameters = ["igem","BBa_B0034","1"], test_type = test_type, fields=["uri", "displayId", "version", "name", "description", "type"], key='uri')
 
         test_print("test_twins completed")
