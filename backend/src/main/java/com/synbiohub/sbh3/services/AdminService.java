@@ -7,6 +7,7 @@ import com.synbiohub.sbh3.utils.ConfigUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -20,8 +21,9 @@ public class AdminService {
 
     public JsonNode getStatus(HttpServletRequest request) throws Exception {
         String inputToken = request.getHeader("X-authorization");
-        Authentication authentication = userService.checkAuthentication(inputToken);
-        if (authentication == null) {
+//        Authentication authentication = userService.checkAuthentication(inputToken);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null) {
             return null;
         }
         ObjectNode status = mapper.createObjectNode();
