@@ -37,18 +37,18 @@ class TestAdmin(TestCase):
         # #compare_get_request_json_list("admin/log", headers = {"Accept":"text/plain"}, test_type = test_type, fields=["level", "line"])
         # test_print("test_admin_log completed")
 
-        # test_print("test_admin_mail starting")
-        # #will throw error until we get a response from SBH3
-        # #compare_get_request_json("/admin/mail", headers = {"Accept":"text/plain"}, test_type = test_type, fields=["sendGridApiKey", "sendGridFromEmail"])
-        # test_print("test_admin_mail completed")
+        test_print("test_admin_mail starting")
+        #will throw error until we get a response from SBH3
+        compare_get_request_json("/admin/mail", headers = {"Accept":"text/plain"}, test_type = test_type, fields=["sendGridApiKey", "sendGridFromEmail"])
+        test_print("test_admin_mail completed")
 
-        # test_print("test_post_admin_mail starting")
-        # data={
-        #     'key': 'SG.Dummy_Token',
-        #     'fromEmail' : 'synbiohub@synbiohub.utah.edu',
-        # }
-        # compare_post_request("/admin/mail", data, headers = {"Accept": "text/plain"}, test_name = "admin_mail", test_type = test_type)
-        # test_print("test_post_admin_mail completed")
+        test_print("test_post_admin_mail starting")
+        data={
+            'key': 'SG.Dummy_Token',
+            'fromEmail' : 'synbiohub@synbiohub.utah.edu',
+        }
+        compare_post_request("/admin/mail", data, headers = {"Accept": "text/plain"}, test_name = "admin_mail", test_type = test_type)
+        test_print("test_post_admin_mail completed")
 
         test_print("test_admin_plugins starting")
         compare_get_request_json("/admin/plugins", headers = {"Accept":"text/plain"}, test_type = test_type, fields=["rendering", "download", "submit"])
