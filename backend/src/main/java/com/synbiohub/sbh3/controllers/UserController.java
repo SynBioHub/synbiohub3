@@ -1,81 +1,72 @@
 package com.synbiohub.sbh3.controllers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.synbiohub.sbh3.dto.LoginDTO;
 import com.synbiohub.sbh3.dto.UserRegistrationDTO;
-import com.synbiohub.sbh3.security.CustomUserService;
 import com.synbiohub.sbh3.security.customsecurity.AuthenticationResponse;
 import com.synbiohub.sbh3.security.model.User;
+import com.synbiohub.sbh3.security.repo.AuthRepository;
 import com.synbiohub.sbh3.services.UserService;
 import com.synbiohub.sbh3.utils.ConfigUtil;
 import com.synbiohub.sbh3.utils.RestClient;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
 @Slf4j
 public class UserController {
-
-    private final CustomUserService customUserService;
-//    private final AuthenticationManager authenticationManager;
     private final UserService userService;
     private final RestClient restClient;
     private final ObjectMapper mapper;
-
+    private final AuthRepository authRepository;
 
     @PostMapping(value = "/login", produces = "text/plain")
-    public ResponseEntity login(@RequestParam String email, @RequestParam String password) {
-        try {
-            String username = email;
-            if (userService.isValidEmail(email)) {
-                username = userService.getUserByEmail(email).getUsername();
-            }
-            LoginDTO loginRequest = LoginDTO
-                    .builder()
-                    .username(username)
-                    .password(password)
-                    .build();
-            AuthenticationResponse response = userService.authenticate(loginRequest);
-            return ResponseEntity.ok(response.getToken());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Your e-mail address was not recognized.");
+    public ResponseEntity<String> login(@RequestParam String email, @RequestParam String password) {
+        if (email.isEmpty() || password.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Please enter your e-mail address and password.");
         }
-
+        try {
+            String username;
+            if (userService.isValidEmail(email)) {
+                try {
+                    username = userService.getUserByEmail(email).getUsername();
+                } catch (Exception e) {
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Your e-mail address was not recognized.");
+                }
+            } else {
+                try {
+                    username = userService.getUserByUsername(email).getUsername();
+                } catch (Exception e) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please enter a valid email address or username.");
+                }
+            }
+            return ResponseEntity.ok(userService.loginUser(username, password));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Your password was not recognized.");
+        }
     }
 
-    // TODO: change what logout does, maybe not invalidate session, but invalidate current auth token
-    @PostMapping(value = "/logout")
-    public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    /**
+     * Logs the current user out of SBH.
+     * Endpoint cannot be /logout as this gets intercepted by security configuration and doesn't go through here
+     * @param request
+     * @return
+     * @throws Exception
+     */
+    @PostMapping(value = "/do_logout")
+    public ResponseEntity<String> logout(HttpServletRequest request) throws Exception {
         log.info("Received logout request");
-        Authentication auth = userService.checkAuthentication();
-        if (auth != null) {
-            new SecurityContextLogoutHandler().logout(request, response, auth);
-            return ResponseEntity.ok("User logged out successfully");
-        } else {
-            throw new Exception("No user is currently logged in.");
-        }
+        return ResponseEntity.ok(userService.logoutUser(request));
     }
 
     @PostMapping(value = "/register")
-    public ResponseEntity registerNewUser(@RequestParam String username, @RequestParam String name, @RequestParam String affiliation, @RequestParam String email, @RequestParam String password1, @RequestParam String password2) {
+    public ResponseEntity<String> registerNewUser(@RequestParam String username, @RequestParam String name, @RequestParam String affiliation, @RequestParam String email, @RequestParam String password1, @RequestParam String password2) {
         try {
             log.info("Registering a new user.");
             UserRegistrationDTO userRegistrationDTO = UserRegistrationDTO
@@ -90,11 +81,11 @@ public class UserController {
             AuthenticationResponse response = userService.register(userRegistrationDTO);
             return ResponseEntity.ok(response.getToken());
         } catch (Exception e) {
-            log.error("Error creating a new account.");
-            e.printStackTrace();
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+            log.error("Error registering a new account.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error registering a new account.");
         }
     }
+
 //
 //    @PostMapping(value = "/resetPassword")
 //    public ResponseEntity<String> resetPassword(@RequestParam Map<String, String> allParams) {
@@ -105,95 +96,58 @@ public class UserController {
 //    public ResponseEntity<String> setNewPassword(@RequestParam Map<String, String> allParams) {
 //        return new ResponseEntity<>(HttpStatus.OK);
 //    }
-//
+
     @GetMapping(value = "/profile", produces = "text/plain")
-    public ResponseEntity<String> getProfile() throws JsonProcessingException, CloneNotSupportedException {
-        var user = userService.getUserProfile();
+    public ResponseEntity<String> getProfile(HttpServletRequest request) throws Exception {
+        String inputToken = request.getHeader("X-authorization");
+        var user = userService.getUserProfile(inputToken);
         if (user == null)
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Error retrieving user profile.");
         return ResponseEntity.ok(mapper.writeValueAsString(user));
     }
 
-    // Only updates the fields name, email, and affiliation currently
+    /**
+     * Changes user's profile fields.
+     * Only updates the fields name, email, and affiliation currently
+      */
     @PostMapping(value = "/profile", produces = "text/plain")
-    public ResponseEntity<String> updateProfile(@RequestParam Map<String, String> allParams) throws JsonProcessingException, CloneNotSupportedException {
-        User updatedUser = userService.updateUser(allParams);
-        if (updatedUser == null) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+    public ResponseEntity<String> updateProfile(@RequestParam Map<String, String> allParams, HttpServletRequest request) throws Exception {
+        User updatedUser;
+        try {
+            String inputToken = request.getHeader("X-authorization");
+            updatedUser = userService.updateUserProfile(allParams, inputToken);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found.");
         }
         User copyUser = (User) updatedUser.clone();
         copyUser.setPassword("");
+        log.info(copyUser.toString());
         return ResponseEntity.ok("Profile updated successfully");
     }
 
+    /**
+     * First time setup of Synbiohub
+     * @param allParams
+     * @return
+     */
     @PostMapping(value = "/setup")
     public ResponseEntity<String> setup(@RequestBody Map<String, Object> allParams) {
         log.info(String.valueOf(allParams));
-        String fileName = "config.local.json";
-        String workingDirectory = System.getProperty("user.dir") + "/data";
-        File file = new File(workingDirectory + File.separator + fileName);
+        return ResponseEntity.ok(userService.setupInstance(allParams));
+    }
 
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.enable(SerializationFeature.INDENT_OUTPUT);
-
-        Map<String, String> userParams = new HashMap<>();
-        UserRegistrationDTO userRegistrationDTO = UserRegistrationDTO
-                .builder()
-                .username((String) allParams.get("userName"))
-                .name((String) allParams.get("userFullName"))
-                .affiliation((String) allParams.get("affiliation"))
-                .email((String) allParams.get("userEmail"))
-                .password1((String) allParams.get("userPassword"))
-                .password2((String) allParams.get("userPasswordConfirm"))
-                .build();
-        userService.register(userRegistrationDTO);
-
-        allParams.remove("userName");
-        allParams.remove("userFullName");
-        allParams.remove("affiliation");
-        allParams.remove("userEmail");
-        allParams.remove("userPassword");
-        allParams.remove("userPasswordConfirm");
-
-        try {
-            if (file.createNewFile()) {
-                allParams.put("sparqlEndpoint", "http://virtuoso3:8890/sparql");
-                allParams.put("graphStoreEndpoint", "http://virtuoso3:8890/sparql-graph-crud-auth/");
-                allParams.put("firstLaunch", false);
-                allParams.put("version", 1);
-                Map<String, Object> themeParams = new HashMap<>();
-                themeParams.put("default", allParams.get("color"));
-                allParams.put("themeParameters", themeParams);
-                allParams.remove("color");
-                // TODO: Setup should add a local version to web of registries
-
-                ObjectMapper objectMapper = new ObjectMapper();
-                objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-                ObjectWriter writer = objectMapper.writerWithDefaultPrettyPrinter();
-                String json = writer.writeValueAsString(allParams);
-                FileWriter fw = new FileWriter(file.getAbsoluteFile());
-                BufferedWriter bw = new BufferedWriter(fw);
-                bw.write(json);
-                bw.close();
-                ConfigUtil.refreshLocalJson();
-                log.info("Setup successful!");
-                return ResponseEntity.ok("Setup Successful");
-            } else {
-                log.info("Local file already exists. Setup proceeds.");
-                return ResponseEntity.ok("File already exists!");
-            }
-        } catch (IOException e) {
-            log.error("Setup failed.");
-            return ResponseEntity.ok("Failed to create file!");
-        }
+    /**
+     * Logs out all users from current instance of SBH
+     * @return
+     */
+    @DeleteMapping(value = "/cleanAuthRepo")
+    public String cleanAuthRepo() {
+        authRepository.deleteAll();
+        return "Cleaned.";
     }
 
     @GetMapping("/firstLaunched")
     public Boolean checkFirstLaunch() {
-        String fileName = "config.local.dup.json";
-        String workingDirectory = System.getProperty("user.dir");
-        File file = new File(workingDirectory + File.separator + fileName);
-
-        return file.exists();
+        return ConfigUtil.isLaunched();
     }
 }

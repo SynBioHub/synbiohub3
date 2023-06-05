@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RDFFormat;
 import org.sbolstandard.core2.SBOLDocument;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Collections;
@@ -157,7 +159,13 @@ public class DownloadService {
                     subjectResults = searchService.SPARQLRDFXMLQuery(subjectQuery);
                 }
                 Model tempModel = ModelFactory.createDefaultModel();
-                tempModel.read(new ByteArrayInputStream(subjectResults), null);
+                if (subjectResults.length == 0) {
+                    InputStream inputStream = new ByteArrayInputStream(subjectResults);
+                    RDFDataMgr.read(model, inputStream, Lang.TURTLE);
+                } else {
+                    tempModel.read(new ByteArrayInputStream(subjectResults), null);
+                }
+
                 if (model.size() > 10000) {
                     int counter = 1;
                     var offset = model.size();
