@@ -376,14 +376,17 @@ def login_with(data, valid, headers = {'Accept':'text/plain'}):
         raise Exception("RESPONSE CONTENT TEST FAILED: Content does not match\n")
     print("RESPONSE CODE TEST PASSED: Status Code: " + str(resultSBH3.status_code))
 
-def compare_get_request(request, test_name = "", route_parameters = [], headers = {}, test_type="Other"):
+def compare_get_request(request, test_name = "", route_parameters = [], headers = {}, test_type="Other", comparison_type="text", fields = [], key=''):
     """Complete a get request and error if it differs from previous results.
 page
     request -- string, the name of the page being requested
-    route_parameters -- a ordered lists of the parameters for the endpoint
     test_name -- a name to make the request unique from another test of this endpoint
+    route_parameters -- a ordered lists of the parameters for the endpoint
     headers -- a dictionary of headers to include in the request
-    re_render_time -- time to wait in milliseconds before rendering javascript again"""
+    test_type -- string, the type/category of the endpoint based on the api docs
+    comparison_type -- string, the type of comparison
+    fields -- list of strings, specify fields to compare for json and json list comparisons if needed
+    key -- string, key to sort by for json list comparison"""
 
     # remove any leading forward slashes for consistency
     request = clip_request(request)
@@ -392,43 +395,12 @@ page
     testpath = request_file_path(request, "get request", test_name)
     test_state.add_get_request(request, testpath, test_name)
     #get_request("profile", 1, headers = {"Accept": "text/plain"}, route_parameters = [], re_render_time = 0)
-    compare_request(get_request(request, 1, headers, route_parameters), get_request(request, 3, headers, route_parameters), request, "get request", test_type)
-
-def compare_get_request_json(request, test_name = "", route_parameters = [], headers = {}, test_type="Other", fields = []):
-    """Complete a get request and error if the json fields differs from previous results.
-page
-    request -- string, the name of the page being requested
-    route_parameters -- a ordered lists of the parameters for the endpoint
-    test_name -- a name to make the request unique from another test of this endpoint
-    headers -- a dictionary of headers to include in the request
-    re_render_time -- time to wait in milliseconds before rendering javascript again"""
-
-    # remove any leading forward slashes for consistency
-    request = clip_request(request)
-
-    #gives filepath for old test for 1 - sbh3 test: now using for checking which endpoints were tested
-    testpath = request_file_path(request, "get request", test_name)
-    test_state.add_get_request(request, testpath, test_name)
-    #get_request("profile", 1, headers = {"Accept": "text/plain"}, route_parameters = [], re_render_time = 0)
-    compare_json(get_request(request, 1, headers, route_parameters), get_request(request, 3, headers, route_parameters), test_type, fields)
-
-def compare_get_request_json_list(request, test_name = "", route_parameters = [], headers = {}, test_type="Other", fields = [], key=''):
-    """Complete a get request and error if the json fields differs from previous results.
-page
-    request -- string, the name of the page being requested
-    route_parameters -- a ordered lists of the parameters for the endpoint
-    test_name -- a name to make the request unique from another test of this endpoint
-    headers -- a dictionary of headers to include in the request
-    re_render_time -- time to wait in milliseconds before rendering javascript again"""
-
-    # remove any leading forward slashes for consistency
-    request = clip_request(request)
-
-    #gives filepath for old test for 1 - sbh3 test: now using for checking which endpoints were tested
-    testpath = request_file_path(request, "get request", test_name)
-    test_state.add_get_request(request, testpath, test_name)
-    #get_request("profile", 1, headers = {"Accept": "text/plain"}, route_parameters = [], re_render_time = 0)
-    compare_json_list(get_request(request, 1, headers, route_parameters), get_request(request, 3, headers, route_parameters), test_type, fields, key)
+    if(comparison_type == "text"):
+        compare_request(get_request(request, 1, headers, route_parameters), get_request(request, 3, headers, route_parameters), request, "get request", test_type)
+    if(comparison_type == "json"):
+        compare_json(get_request(request, 1, headers, route_parameters), get_request(request, 3, headers, route_parameters), test_type, fields)
+    if(comparison_type == "jsonlist"):
+        compare_json_list(get_request(request, 1, headers, route_parameters), get_request(request, 3, headers, route_parameters), test_type, fields, key)
 
 def compare_get_request_download(request, test_name = "", route_parameters = [], headers = {}, test_type="Other"):
     """Complete a get_file request and error if it differs from previous results.
@@ -437,7 +409,7 @@ def compare_get_request_download(request, test_name = "", route_parameters = [],
     route_parameters -- a ordered lists of the parameters for the endpoint
     test_name -- a name to make the request unique from another test of this endpoint
     headers -- a dictionary of headers to include in the request
-    re_render_time -- time to wait in milliseconds before rendering javascript again"""
+    test_type -- string, the type/category of the endpoint based on the api docs"""
 
     # remove any leading forward slashes for consistency
     request = clip_request(request)
@@ -447,13 +419,17 @@ def compare_get_request_download(request, test_name = "", route_parameters = [],
 
     compare_request(get_request_download(request, headers, route_parameters, 1), get_request_download(request, headers, route_parameters, 3), request, "get_file request", test_type)
 
-def compare_post_request(request, data, test_name = "", route_parameters = [], headers = {}, files = None, test_type = "Other"):
+def compare_post_request(request, data, test_name = "", route_parameters = [], headers = {}, files = None, test_type = "Other", comparison_type="text"):
     """Complete a post request and error if it differs from previous results.
 
-    request-- string, the name of the page being requested
+    request -- string, the name of the page being requested
     data -- data to send in the post request
-    route_parameters -- a list of parameters for the url endpoint
-    test_name -- a name for the test to make multiple tests for the same endpoint unique"""
+    test_name -- a name to make the request unique from another test of this endpoint
+    route_parameters -- a ordered lists of the parameters for the endpoint
+    headers -- a dictionary of headers to include in the request
+    files -- path of file
+    test_type -- string, the type/category of the endpoint based on the api docs
+    comparison_type -- string, the type of comparison"""
 
     # remove any leading forward slashes for consistency
     request = clip_request(request)
@@ -461,24 +437,10 @@ def compare_post_request(request, data, test_name = "", route_parameters = [], h
     testpath = request_file_path(request, "post request", test_name)
     test_state.add_post_request(request, testpath, test_name)
 
-    compare_request(post_request(request, 1, data, headers, route_parameters, files = files), post_request(request, 3, data, headers, route_parameters, files = files), request, "post request", test_type)
-
-def compare_post_json_request(request, data, test_name = "", route_parameters = [], headers = {}, files = None, test_type = "Other"):
-    """Complete a post request and error if it differs from previous results.
-
-    request-- string, the name of the page being requested
-    data -- data to send in the post request
-    route_parameters -- a list of parameters for the url endpoint
-    test_name -- a name for the test to make multiple tests for the same endpoint unique"""
-
-    # remove any leading forward slashes for consistency
-    request = clip_request(request)
-
-    testpath = request_file_path(request, "post request", test_name)
-    test_state.add_post_request(request, testpath, test_name)
-
-    compare_request(post_request(request, 1, data, headers, route_parameters, files = files), post_json_request(request, 3, data, headers, route_parameters, files = files), request, "post request", test_type)
-
+    if(comparison_type == "text"):
+        compare_request(post_request(request, 1, data, headers, route_parameters, files = files), post_request(request, 3, data, headers, route_parameters, files = files), request, "post request", test_type)
+    if(comparison_type == "json"):
+        compare_request(post_request(request, 1, data, headers, route_parameters, files = files), post_json_request(request, 3, data, headers, route_parameters, files = files), request, "post request", test_type)
 
 # TODO: make checking throw an error when all endpoints are not checked, instead of printing a warning.
 def cleanup_check():
