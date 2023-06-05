@@ -3,6 +3,8 @@ package com.synbiohub.sbh3.services;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.synbiohub.sbh3.dto.LoginDTO;
 import com.synbiohub.sbh3.dto.UserRegistrationDTO;
 import com.synbiohub.sbh3.security.customsecurity.AuthenticationResponse;
@@ -12,20 +14,25 @@ import com.synbiohub.sbh3.security.model.Role;
 import com.synbiohub.sbh3.security.model.User;
 import com.synbiohub.sbh3.security.repo.AuthRepository;
 import com.synbiohub.sbh3.security.repo.UserRepository;
-import com.synbiohub.sbh3.security.CustomUserService;
 import com.synbiohub.sbh3.sparql.SPARQLQuery;
 import com.synbiohub.sbh3.utils.ConfigUtil;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.*;
 import java.util.*;
@@ -33,20 +40,97 @@ import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserService {
 
     private final UserRepository userRepository;
-
     private final SearchService searchService;
-
-    private final CustomUserService customUserService;
-    private final ConfigUtil configUtil;
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
-
     private final AuthRepository authRepository;
 
+    public String loginUser(String username, String password) {
+        LoginDTO loginRequest = LoginDTO
+                .builder()
+                .username(username)
+                .password(password)
+                .build();
+        AuthenticationResponse response = authenticate(loginRequest);
+        if (authRepository.findByName(username).isPresent()) {
+            AuthCodes authCode = authRepository.findByName(username).get();
+            authCode.setAuth(response.getToken());
+            authRepository.save(authCode);
+        } else {
+            AuthCodes authCode = AuthCodes.builder()
+                    .name(username)
+                    .auth(response.getToken())
+                    .build();
+            authRepository.save(authCode);
+        }
+        return response.getToken();
+    }
+
+    public String logoutUser(HttpServletRequest request) throws Exception {
+        String token = request.getHeader("X-authorization");
+//        Authentication auth = checkAuthentication(token);
+        // TODO: to get the authentication, we need the inputToken, which means that logout requires the token as a parameter
+        // Check with Chris if this is the way to go
+        HttpSession session = request.getSession();
+        if (session != null && session.getId() != null) {
+            session.invalidate();
+            authRepository.delete(authRepository.findByName(token).orElseThrow());
+        }
+        return "User logged out successfully";
+    }
+
+    /**
+     * This function, during login, will take in the loginDTO and generate the jwtToken.
+     * @param loginDTO
+     * @return
+     */
+    public AuthenticationResponse authenticate(LoginDTO loginDTO) {
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        loginDTO.getUsername(),
+                        loginDTO.getPassword()
+                ));
+        var user = userRepository.findByUsername(loginDTO.getUsername())
+                .orElseThrow();
+        var jwtToken = jwtService.generateToken(user);
+        return AuthenticationResponse
+                .builder()
+                .token(jwtToken)
+                .build();
+    }
+
+    /**
+     * This is the main method to check one's authentication.
+     * It will check both the security context and the authTokens table to verify the user is logged in.
+     *
+     * Currently not used. Eventually will be deprecated out and deleted.
+     * @param inputToken
+     * @return
+     * @throws Exception
+     */
+    //TODO: either delete this or put inside filter when filter is done
+    public Authentication checkAuthentication(String inputToken) throws Exception {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication instanceof AnonymousAuthenticationToken || authentication == null) return null;
+        var authCode = authRepository.findByName(authentication.getName())
+                .orElseThrow(() -> new RuntimeException("Authentication not found")); // TODO: requires error handling, find out what SBH1 returns
+        if (inputToken.equals(authCode.getAuth())) {
+            return authentication;
+        } else {
+            throw new Exception("Authentication failed.");
+        }
+    }
+
+    /**
+     * Helper function for registering a new user.
+     * @param userRegistrationDTO
+     * @return
+     */
     public AuthenticationResponse register(UserRegistrationDTO userRegistrationDTO) {
         if (!verifyPasswords(userRegistrationDTO.getPassword1(), userRegistrationDTO.getPassword2())) {
             return AuthenticationResponse
@@ -66,11 +150,7 @@ public class UserService {
                 .isCurator(false)
                 .build();
         user.setGraphUri("https://synbiohub.org/user/" + user.getUsername());
-        if (user.getRole().equals(Role.ADMIN)) {
-            user.setIsAdmin(true);
-        } else {
-            user.setIsAdmin(false);
-        }
+        user.setIsAdmin(user.getRole().equals(Role.ADMIN));
         userRepository.save(user);
         var jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse
@@ -79,21 +159,12 @@ public class UserService {
                 .build();
     }
 
-    public AuthenticationResponse authenticate(LoginDTO loginDTO) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        loginDTO.getUsername(),
-                        loginDTO.getPassword()
-                ));
-                var user = userRepository.findByUsername(loginDTO.getUsername())
-                        .orElseThrow();
-                var jwtToken = jwtService.generateToken(user);
-                return AuthenticationResponse
-                        .builder()
-                        .token(jwtToken)
-                        .build();
-    }
-
+    /**
+     * This function checks if the inputted string is a valid email address.
+     *
+     * @param email
+     * @return
+     */
     public boolean isValidEmail(String email)
     {
         String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."+
@@ -108,14 +179,87 @@ public class UserService {
     }
 
     public User getUserProfile(String inputToken) throws Exception {
-        Authentication authentication = checkAuthentication(inputToken);
-        if (authentication == null) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//        Authentication authentication = checkAuthentication(inputToken);
+        if (auth == null) {
             return null;
         }
-        User user = userRepository.findByUsername(authentication.getName()).orElseThrow();
+        User user = userRepository.findByUsername(auth.getName()).orElseThrow();
         User copyUser = (User) user.clone();
         copyUser.setPassword("");
         return copyUser;
+    }
+
+    public User updateUserProfile(Map<String, String> allParams, String inputToken) throws Exception {
+//        Authentication auth = checkAuthentication(inputToken);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User existingUser = getUserProfile(inputToken);
+        if (existingUser == null || auth == null) {
+            return null;
+        }
+        updateUserFields(existingUser, allParams);
+        return existingUser;
+    }
+
+    public String setupInstance(Map<String, Object> allParams) {
+        String fileName = "config.local.json";
+        String workingDirectory = System.getProperty("user.dir") + "/data";
+        File file = new File(workingDirectory + File.separator + fileName);
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.enable(SerializationFeature.INDENT_OUTPUT);
+
+        Map<String, String> userParams = new HashMap<>();
+        UserRegistrationDTO userRegistrationDTO = UserRegistrationDTO
+                .builder()
+                .username((String) allParams.get("userName"))
+                .name((String) allParams.get("userFullName"))
+                .affiliation((String) allParams.get("affiliation"))
+                .email((String) allParams.get("userEmail"))
+                .password1((String) allParams.get("userPassword"))
+                .password2((String) allParams.get("userPasswordConfirm"))
+                .build();
+        register(userRegistrationDTO);
+
+        allParams.remove("userName");
+        allParams.remove("userFullName");
+        allParams.remove("affiliation");
+        allParams.remove("userEmail");
+        allParams.remove("userPassword");
+        allParams.remove("userPasswordConfirm");
+
+        try {
+            if (file.createNewFile()) {
+                allParams.put("sparqlEndpoint", "http://virtuoso3:8890/sparql");
+                allParams.put("graphStoreEndpoint", "http://virtuoso3:8890/sparql-graph-crud-auth/");
+                allParams.put("firstLaunch", false);
+                allParams.put("version", 1);
+                Map<String, String> wor = new HashMap<>();
+                wor.put("https://synbiohub.org", "http://localhost:6789");
+                allParams.put("webOfRegistries", wor);// TODO: Make sure web of registries is correct
+                Map<String, Object> themeParams = new HashMap<>();
+                themeParams.put("default", allParams.get("color"));
+                allParams.put("themeParameters", themeParams);
+                allParams.remove("color");
+                ObjectMapper objectMapper = new ObjectMapper();
+                objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+                ObjectWriter writer = objectMapper.writerWithDefaultPrettyPrinter();
+                String json = writer.writeValueAsString(allParams);
+                FileWriter fw = new FileWriter(file.getAbsoluteFile());
+                BufferedWriter bw = new BufferedWriter(fw);
+                bw.write(json);
+                bw.close();
+                ConfigUtil.refreshLocalJson();
+                log.info("Setup successful!");
+                return "Setup Successful";
+            } else {
+                log.info("Local file already exists. Setup proceeds.");
+                return "File already exists!";
+            }
+        } catch (IOException e) {
+            log.error("Setup failed.");
+            return "Failed to create file!";
+        }
     }
 
     /**
@@ -151,17 +295,6 @@ public class UserService {
         return owners.contains(ConfigUtil.get("graphPrefix").asText() + "user/" + SecurityContextHolder.getContext().getAuthentication().getName());
     }
 
-    public User updateUser(Map<String, String> allParams, String inputToken) throws Exception {
-        ObjectMapper mapper = new ObjectMapper();
-        Authentication auth = checkAuthentication(inputToken);
-        User existingUser = getUserProfile(inputToken);
-        if (existingUser == null || auth == null) {
-            return null;
-        }
-        updateUserFields(existingUser, allParams);
-        return existingUser;
-    }
-
     private void updateUserFields(User user, Map<String, String> allParams) {
         if (allParams.get("name") != null) {
             user.setName(allParams.get("name"));
@@ -172,17 +305,6 @@ public class UserService {
         if (allParams.get("affiliation") != null) {
             user.setAffiliation(allParams.get("affiliation"));
         }
-    }
-
-    public Authentication checkValidLogin(AuthenticationManager authenticationManager, String email, String password) {
-        Authentication auth;
-        try {
-            auth = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(email, password));
-        } catch (Exception e) {
-            return null;
-        }
-        return auth;
     }
 
     public Map<String, String> registerNewAdminUser(Map<String, String> allParams) {
@@ -197,20 +319,6 @@ public class UserService {
 
     }
 
-    public Authentication checkAuthentication(String inputToken) throws Exception {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication instanceof AnonymousAuthenticationToken || authentication == null) return null;
-        String name = authentication.getName();
-        var authCode = authRepository.findByName(authentication.getName())
-                .orElseThrow(() -> new RuntimeException("Authentication not found"));
-        if (inputToken.equals(authCode.getAuth())) {
-            return authentication;
-        } else {
-            throw new Exception("Authentication failed.");
-        }
-
-    }
-
     private Boolean verifyPasswords(String password1, String password2) {
         return password1.equals(password2);
     }
@@ -221,12 +329,12 @@ public class UserService {
 
     public User getUserByUsername(String username) {
         Optional<User> optionalUser = userRepository.findByUsername(username);
-        return optionalUser.get();
+        return optionalUser.orElse(null);
     }
 
     public User getUserByEmail(String email) {
         Optional<User> optionalUser = userRepository.findByEmail(email);
-        return optionalUser.get();
+        return optionalUser.orElse(null);
 
     }
 
