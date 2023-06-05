@@ -118,6 +118,7 @@ function PluginTable(properties) {
 function NewPluginRow(properties) {
   const [name, setName] = useState('');
   const [url, setUrl] = useState('');
+  const dispatch = useDispatch();
   return (
     <tr key="New">
       <td>New</td>
@@ -143,7 +144,14 @@ function NewPluginRow(properties) {
               icon={faPlusCircle}
               color="#1C7C54"
               onClick={() => {
-                savePlugin('New', properties.type, name, url, properties.token);
+                savePlugin(
+                  'New',
+                  properties.type,
+                  name,
+                  url,
+                  properties.token,
+                  dispatch
+                );
                 setName('');
                 setUrl('');
               }}
@@ -161,10 +169,11 @@ function PluginDisplay(properties) {
   const [url, setUrl] = useState(properties.plugin.url);
   const [status, setStatus] = useState(true);
 
+  const dispatch = useDispatch();
+
   useEffect(() => {
     setName(properties.plugin.name);
     setUrl(properties.plugin.url);
-
 
     /*
     const checkStatus = async () => {
@@ -223,7 +232,8 @@ function PluginDisplay(properties) {
                 deletePlugin(
                   properties.plugin.index + 1,
                   properties.type,
-                  properties.token
+                  properties.token,
+                  dispatch
                 )
               }
             />
@@ -263,7 +273,8 @@ function PluginDisplay(properties) {
                   properties.type,
                   name,
                   url,
-                  properties.token
+                  properties.token,
+                  dispatch
                 );
                 setEditMode(false);
               }}
@@ -285,7 +296,7 @@ function PluginDisplay(properties) {
   );
 }
 
-const deletePlugin = async (id, type, token) => {
+const deletePlugin = async (id, type, token, dispatch) => {
   const url = `${publicRuntimeConfig.backend}/admin/deletePlugin`;
   const headers = {
     Accept: 'text/plain',
@@ -303,11 +314,11 @@ const deletePlugin = async (id, type, token) => {
   });
 
   if (response.status === 200) {
-    mutate([`${publicRuntimeConfig.backend}/admin/plugins`, token]);
+    mutate([`${publicRuntimeConfig.backend}/admin/plugins`, token, dispatch]);
   }
 };
 
-const savePlugin = async (id, type, name, pluginUrl, token) => {
+const savePlugin = async (id, type, name, pluginUrl, token, dispatch) => {
   const url = `${publicRuntimeConfig.backend}/admin/savePlugin`;
   const headers = {
     Accept: 'text/plain',
@@ -327,7 +338,7 @@ const savePlugin = async (id, type, name, pluginUrl, token) => {
   });
 
   if (response.status === 200) {
-    mutate([`${publicRuntimeConfig.backend}/admin/plugins`, token]);
+    mutate([`${publicRuntimeConfig.backend}/admin/plugins`, token, dispatch]);
   }
 };
 

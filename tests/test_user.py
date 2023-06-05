@@ -20,15 +20,18 @@ class TestUser(TestCase):
 
         compare_post_request("register", data, test_name = "register1", headers = headers, route_parameters = [], files = None, test_type = test_type) #error - account already in use? - FAIL CASE for 1
 
-        #logininfo = {'email' : 'test2@user.synbiohub',
-                     #'password' : 'test1'}
-        #login_with(logininfo, 1)
-        #login_with(logininfo, 3)
         test_print("test_post_login starting")
+        #not registered user
         logininfo = {'email' : 'test7@user.synbiohub',
                       'password' : 'test'}
         login_with(logininfo, 0)
 
+        #bad password
+        logininfo = {'email' : 'test1@user.synbiohub',
+                      'password' : 'password'}
+        login_with(logininfo, 0)
+
+        #correct login
         logininfo = {'email' : 'test1@user.synbiohub',
                       'password' : 'test'}
         login_with(logininfo, 1)
@@ -45,7 +48,6 @@ class TestUser(TestCase):
              'password2' : 'test'
         }
 
-        #uncomment when profile works
         compare_post_request("profile", data, test_name = "profile2", headers = headers, route_parameters = [], files = None, test_type = test_type)
 
         #compare_get_request("/logout")

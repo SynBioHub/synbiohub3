@@ -86,7 +86,7 @@ public class ConfigUtil {
     }
 
 
-    public Boolean isLaunched() {
+    public static Boolean isLaunched() {
         if (localjson.has("firstLaunch")) {
             return localjson.get("firstLaunch").asBoolean();
         }
