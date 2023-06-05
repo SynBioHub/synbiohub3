@@ -205,11 +205,11 @@ class TestAdmin(TestCase):
         # compare_post_request("/admin/explorer", data, headers = {"Accept": "text/plain"}, test_name = "admin_updateExplorerConfig", test_type = test_type)
         # test_print("test_admin_status completed")
 
-        # test_print("test_explorerUpdateIndex starting")
-        # data={
-        # }
-        # compare_post_request("/admin/explorerUpdateIndex", data, headers = {"Accept": "text/plain"}, test_name = "admin_explorerUpdateIndex", test_type = test_type)
-        # test_print("test_explorerUpdateIndex completed")
+        test_print("test_explorerUpdateIndex starting")
+        data={
+        }
+        compare_post_request("/admin/explorerUpdateIndex", data, headers = {"Accept": "text/plain"}, test_name = "admin_explorerUpdateIndex", test_type = test_type)
+        test_print("test_explorerUpdateIndex completed")
 
         # test_print("test_admin_theme starting")
         # compare_get_request_json("/admin/theme", headers = {"Accept":"text/plain"}, test_type = test_type, fields=["instanceName", "frontPageText"])
