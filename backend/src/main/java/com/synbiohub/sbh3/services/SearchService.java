@@ -386,11 +386,10 @@ public class SearchService {
         HashMap<String, String> params = new HashMap<>();
 //        params.put("default-graph-uri", ConfigUtil.get("defaultGraph").asText());
         params.put("query", query);
-//        params.put("format", "application/rdf+xml");
+        params.put("format", "application/rdf+xml");
         HttpHeaders httpHeaders = new HttpHeaders();
 //        httpHeaders.add("Accept", "application/json");
-//        httpHeaders.add("Accept", "application/rdf+xml");
-        httpHeaders.add("Accept", "application/json");
+        httpHeaders.add("Accept", "application/rdf+xml");
         HttpEntity entity = new HttpEntity<>("body", httpHeaders);
 
 //        url = WOREndpoint + "/sparql?query="+query;
@@ -399,7 +398,7 @@ public class SearchService {
         url = WOREndpoint + "/sparql?query={query}";
         ResponseEntity<String> rest;
         try {
-            rest = restTemplate.exchange(url, HttpMethod.GET, entity, String.class, params);
+            rest = restTemplate.getForEntity(url, String.class, entity);
         } catch (HttpClientErrorException e) {
             if (e.getStatusCode() == HttpStatus.NOT_ACCEPTABLE) {
                 byte[] emptyByteArray = new byte[0];

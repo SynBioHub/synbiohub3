@@ -7,7 +7,6 @@ import com.synbiohub.sbh3.services.UserService;
 import com.synbiohub.sbh3.utils.ConfigUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -40,10 +39,17 @@ public class AdminController {
         return adminService.getStatus(request).toString();
     }
 
+    /**
+     * This will just run a basic query on Virtuoso. If the result exists, return "Alive". Otherwise, return "Dead".
+     * @param allParams
+     * @param request
+     * @return
+     */
     @GetMapping(value = "/admin/virtuoso")
     @ResponseBody
     public String getVirtuosoStatus(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
-        return null;
+        boolean vStatus = adminService.getDatabaseStatus();
+        return vStatus ? "Alive" : "Dead";
     }
 
     @GetMapping(value = "/admin/graphs")
@@ -72,6 +78,7 @@ public class AdminController {
         return null;
     }
 
+    //TODO: get admin plugins needs to be public, post admin plugins need to be admin only
     @GetMapping(value = "/admin/plugins")
     @ResponseBody
     public String getPlugins(@RequestParam Map<String,String> allParams, HttpServletRequest request) throws IOException {
@@ -124,7 +131,7 @@ public class AdminController {
     @PostMapping(value = "/admin/federate")
     @ResponseBody
     public String sendFederateRequest(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
-        return null;
+        return "This is send Federate Request. It is not yet implemented.";
     }
 
     @GetMapping(value = "/admin/remotes")
@@ -170,6 +177,7 @@ public class AdminController {
         return null;
     }
 
+    //TODO: get admin theme needs to be public, post admin theme needs to be admin only
     @GetMapping(value = "/admin/theme")
     @ResponseBody
     public String getTheme() throws IOException {
