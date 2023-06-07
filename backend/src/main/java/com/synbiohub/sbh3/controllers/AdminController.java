@@ -41,13 +41,11 @@ public class AdminController {
 
     /**
      * This will just run a basic query on Virtuoso. If the result exists, return "Alive". Otherwise, return "Dead".
-     * @param allParams
-     * @param request
      * @return
      */
     @GetMapping(value = "/admin/virtuoso")
     @ResponseBody
-    public String getVirtuosoStatus(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
+    public String getVirtuosoStatus() {
         boolean vStatus = adminService.getDatabaseStatus();
         return vStatus ? "Alive" : "Dead";
     }
@@ -62,8 +60,11 @@ public class AdminController {
     @GetMapping(value = "/admin/log")
     @ResponseBody
     public String getLog(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
-        // prints the spring.log?
-        return null;
+        try {
+            return adminService.getLogs();
+        } catch (Exception e) {
+            return "Error reading spring.log file " + e.getMessage();
+        }
     }
 
     @GetMapping(value = "/admin/mail")
