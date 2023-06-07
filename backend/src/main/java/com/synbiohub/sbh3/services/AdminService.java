@@ -3,6 +3,7 @@ package com.synbiohub.sbh3.services;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.synbiohub.sbh3.sparql.SPARQLQuery;
 import com.synbiohub.sbh3.utils.ConfigUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ import java.io.IOException;
 public class AdminService {
 
     private final UserService userService;
+    private final SearchService searchService;
     private ObjectMapper mapper = new ObjectMapper();
 
     public JsonNode getStatus(HttpServletRequest request) throws Exception {
@@ -49,5 +51,19 @@ public class AdminService {
         json.set("firstLaunch", ConfigUtil.get("firstLaunch"));
         String result = mapper.writeValueAsString(json);
         return result;
+    }
+
+    public Boolean getDatabaseStatus() {
+        SPARQLQuery statusQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/GetDatabaseStatus.sparql");
+        try {
+            var result = searchService.SPARQLQuery(statusQuery.getQuery());
+            if (result.getBytes().length > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception e) {
+            return false;
+        }
     }
 }
