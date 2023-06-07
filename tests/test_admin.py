@@ -23,9 +23,9 @@ class TestAdmin(TestCase):
         compare_get_request("/admin", headers = {"Accept":"text/plain"}, test_type = test_type, comparison_type="json", fields=["instanceName", "defaultGraph", "graphPrefix"])
         test_print("test_admin_status completed")
 
-        # test_print("test_admin_virtuoso starting")
-        # compare_get_request("/admin/virtuoso", headers = {"Accept":"text/plain"}, test_type = test_type)
-        # test_print("test_admin_virtuoso completed")
+        test_print("test_admin_virtuoso starting")
+        compare_get_request("/admin/virtuoso", headers = {"Accept":"text/plain"}, test_type = test_type)
+        test_print("test_admin_virtuoso completed")
 
         # test_print("test_admin_graphs starting")
         # compare_get_request("/admin/graphs", headers = {"Accept":"text/plain"}, test_type = test_type, comparison_type="jsonlist", fields=["graphUri", "numTriples"], key='graphUri')
