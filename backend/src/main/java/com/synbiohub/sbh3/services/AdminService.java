@@ -12,6 +12,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 @Service
 @RequiredArgsConstructor
@@ -65,5 +67,10 @@ public class AdminService {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    public String getLogs() throws IOException {
+        String logPath = System.getProperty("user.dir") + "/data/spring.log";
+        return new String(Files.readAllBytes(Paths.get(logPath)));
     }
 }
