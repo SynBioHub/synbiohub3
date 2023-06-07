@@ -1,6 +1,6 @@
 from unittest import TestCase
 from test_arguments import test_print
-from test_functions import compare_post_request, compare_get_request, login_with, post_request, get_request, compare_get_request_json
+from test_functions import compare_post_request, compare_get_request, login_with
 
 class TestUser(TestCase):
 
@@ -40,9 +40,9 @@ class TestUser(TestCase):
         test_print("test_login completed")
         
         test_print("test_get_profile starting")
-        compare_get_request_json("/profile", headers = headers, route_parameters = [], test_type = test_type, fields=["name", "username", "email", "affiliation", "graphUri"])
-        test_print("test_get_profilecompleted")
-        
+        compare_get_request("/profile", headers = headers, route_parameters = [], test_type = test_type, comparison_type="json", fields=["name", "username", "email", "affiliation", "graphUri"])
+        test_print("test_get_profile completed")
+       
         test_print("test_post_profile starting")
         data={
              'name': 'ronnie',
@@ -53,7 +53,6 @@ class TestUser(TestCase):
         }
 
         compare_post_request("profile", data, test_name = "profile2", headers = headers, route_parameters = [], files = None, test_type = test_type)
-
         test_print("test_post_profile completed")
 
         test_print("logout started")
