@@ -69,6 +69,7 @@ function NewUserRow(properties) {
   const [member, setMember] = useState(false);
   const [curator, setCurator] = useState(false);
   const [admin, setAdmin] = useState(false);
+  const dispatch = useDispatch();
   return (
     <tr key="New">
       <td>New</td>
@@ -125,7 +126,8 @@ function NewUserRow(properties) {
                   member,
                   curator,
                   admin,
-                  properties.token
+                  properties.token,
+                  dispatch
                 );
                 setUsername('');
                 setName('');
@@ -157,6 +159,8 @@ function UserDisplay(properties) {
   const [isAdmin, setIsAdmin] = useState(
     properties.user.isAdmin ? true : false
   );
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     setName(properties.user.name);
@@ -203,7 +207,9 @@ function UserDisplay(properties) {
               action="Delete"
               icon={faTrashAlt}
               color="#FF3C38"
-              onClick={() => deleteUser(properties.user.id, properties.token)}
+              onClick={() =>
+                deleteUser(properties.user.id, properties.token, dispatch)
+              }
             />
           </div>
         </div>
@@ -262,7 +268,8 @@ function UserDisplay(properties) {
                   isMember,
                   isCurator,
                   isAdmin,
-                  properties.token
+                  properties.token,
+                  dispatch
                 );
                 setEditMode(false);
               }}
@@ -288,7 +295,7 @@ function UserDisplay(properties) {
   );
 }
 
-const deleteUser = async (id, token) => {
+const deleteUser = async (id, token, dispatch) => {
   const url = `${publicRuntimeConfig.backend}/admin/deleteUser`;
   const headers = {
     Accept: 'text/plain',
@@ -305,7 +312,7 @@ const deleteUser = async (id, token) => {
   });
 
   if (response.status === 200) {
-    mutate([`${publicRuntimeConfig.backend}/admin/users`, token]);
+    mutate([`${publicRuntimeConfig.backend}/admin/users`, token, dispatch]);
   }
 };
 
@@ -317,7 +324,8 @@ const saveUser = async (
   isMember,
   isCurator,
   isAdmin,
-  token
+  token,
+  dispatch
 ) => {
   const url = `${publicRuntimeConfig.backend}/admin/updateUser`;
   const headers = {
@@ -341,7 +349,7 @@ const saveUser = async (
   });
 
   if (response.status === 200) {
-    mutate([`${publicRuntimeConfig.backend}/admin/users`, token]);
+    mutate([`${publicRuntimeConfig.backend}/admin/users`, token, dispatch]);
   }
 };
 
@@ -353,7 +361,8 @@ const createUser = async (
   isMember,
   isCurator,
   isAdmin,
-  token
+  token,
+  dispatch
 ) => {
   const url = `${publicRuntimeConfig.backend}/admin/newUser`;
   const headers = {
@@ -376,8 +385,11 @@ const createUser = async (
     body: parameters
   });
 
+  const responseText = await response.text();
+  console.log(responseText);
+
   if (response.status === 200) {
-    mutate([`${publicRuntimeConfig.backend}/admin/users`, token]);
+    mutate([`${publicRuntimeConfig.backend}/admin/users`, token, dispatch]);
   }
 };
 
