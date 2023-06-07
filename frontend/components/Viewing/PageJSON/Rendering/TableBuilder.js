@@ -1,14 +1,13 @@
-import getQueryResponse from '../../../../sparql/tools/getQueryResponse';
 import { useEffect, useState } from 'react';
 import styles from '../../../../styles/view.module.css';
 import Link from 'next/link';
-import SectionRenderer from './SectionRenderer';
 import RenderIcon from './RenderIcon';
 import MetadataRenderer from './MetadataRenderer';
 import parseQueryResult from '../Fetching/parseQueryResult';
 import executeQueryFromTableJSON from '../Fetching/executeQueryFromTableJSON';
 import RowWrapper from './RowWrapper';
 import { useDispatch } from 'react-redux';
+import { parseTableHeaders } from '../Parsing/parseTableHeaders';
 
 /**
  * This Component renders an individual table based on given JSON
@@ -49,8 +48,6 @@ function TableRenderer({ uri, prefixes, table, metadata }) {
     return <MetadataRenderer title={table.title} content={content} />;
   }
 
-  console.log(content);
-
   if (content.length == 0) {
     return <div>No columns to display</div>;
   }
@@ -72,9 +69,14 @@ function TableRenderer({ uri, prefixes, table, metadata }) {
 }
 
 function createHeader(columns, content) {
+  parseTableHeaders(columns);
+
+  const columnsProcessed = {};
+
   return columns
     .map((column, index) => {
-      if (column.title && !column.hide) {
+      if (column.title && !column.hide && !columnsProcessed[column.title]) {
+        columnsProcessed[column.title] = true;
         const customInfoLink =
           content &&
           content.length > 0 &&

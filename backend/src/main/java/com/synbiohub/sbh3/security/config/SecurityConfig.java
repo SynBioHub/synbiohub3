@@ -48,21 +48,16 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final AuthenticationProvider authenticationProvider;
 
+    //TODO: ADD isOwnedBy method
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests()
-                .requestMatchers("/**").permitAll()
+                .requestMatchers("/setup", "/login", "/register", "/search", "/search/**", "/searchCount", "/searchCount/**", "/twins", "/uses", "/similar", "/sbol", "/sbolnr", "/metadata", "/gb", "/fasta", "/gff", "/download", "/public/**", "/sparql", "/ComponentDefinition/**", "/**/count", "/count").permitAll()
+                .anyRequest().authenticated()
                 .and()
-                .authorizeHttpRequests((auth) -> auth.anyRequest().authenticated())
-                .csrf((csrf) -> csrf.disable())
+                .csrf().disable()
                 .httpBasic(Customizer.withDefaults())
-//                .logout()
-//                    .logoutUrl("/do_logout")
-//                    .logoutRequestMatcher(new AntPathRequestMatcher("/do_logout", "POST"))
-//                    .invalidateHttpSession(true)
-//                    .deleteCookies("JSESSIONID")
-//                .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()

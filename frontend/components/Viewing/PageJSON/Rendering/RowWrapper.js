@@ -73,7 +73,7 @@ function createKeyToValueMap(
   Object.keys(sections).forEach(key => {
     let currentSection = sections[key];
     const foundData = currentSection.some((possibility, index) => {
-      const titleKey = possibility.section.title;
+      const titleKey = possibility.section.title.split('__')[0];
       if (
         possibility.section &&
         !possibility.section.predicates &&
@@ -110,26 +110,54 @@ function createKeyToValueMap(
           );
         }
       } else {
+        if (map[titleKey] && map[titleKey].value !== '') return true;
         map[titleKey] = { value: possibility.value, index };
-        sectionsToRender.push({
-          ...possibility.section,
-          key: titleKey,
-          tableIcon: possibility.table.icon
-        });
+        // check if already in sectionsToRender, overwrite if that's the case
+        const index = sectionsToRender.findIndex(
+          section => section.key === titleKey
+        );
+        if (index === -1) {
+          sectionsToRender.push({
+            ...possibility.section,
+            key: titleKey,
+            tableIcon: possibility.table.icon
+          });
+        } else {
+          sectionsToRender[index] = {
+            ...possibility.section,
+            key: titleKey,
+            tableIcon: possibility.table.icon
+          };
+        }
         return true;
       }
     });
     if (!foundData && currentSection.length > 0) {
       const titleKey = currentSection[0].section.title;
-      map[titleKey] = { value: '', index: 0 };
-      sectionsToRender.push({
-        ...currentSection[0].section,
-        key: titleKey,
-        tableIcon: currentSection[0].table.icon
-      });
+      if (!(map[titleKey] && map[titleKey].value !== '')) {
+        map[titleKey] = { value: '', index: 0 };
+        const index = sectionsToRender.findIndex(
+          section => section.key === titleKey
+        );
+        if (index == -1) {
+          sectionsToRender.push({
+            ...currentSection[0].section,
+            key: titleKey,
+            tableIcon: currentSection[0].table.icon
+          });
+        } else {
+          sectionsToRender[index] = {
+            ...currentSection[0].section,
+            key: titleKey,
+            tableIcon: currentSection[0].table.icon
+          };
+        }
+      }
     }
   });
   setSectionsToRender(sectionsToRender);
+  console.log([...sectionsToRender]);
+  console.log({ ...map });
   Object.keys(map).forEach(key => {
     map[key].value = loadText(map[key].value, map);
   });

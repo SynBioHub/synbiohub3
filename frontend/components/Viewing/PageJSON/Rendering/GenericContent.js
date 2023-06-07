@@ -5,10 +5,12 @@ import { Fragment } from 'react';
 import TableBuilder from './TableBuilder';
 
 import CustomComponents from '../CustomComponents.js';
+import { compileFile } from '../Parsing/compileFile';
 
 export default function GenericContent({ json, uri, metadata }) {
   if (metadata) {
     if (!json || !json.metadata) return null;
+    compileFile(json);
     const content = json.metadata.map((metadata, index) => {
       return (
         <TableBuilder

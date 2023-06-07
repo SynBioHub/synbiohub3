@@ -7,7 +7,9 @@ import com.synbiohub.sbh3.services.UserService;
 import com.synbiohub.sbh3.utils.ConfigUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -20,13 +22,12 @@ public class AdminController {
     private final AdminService adminService;
     private final UserService userService;
     private final SearchService searchService;
-
-
     @GetMapping(value = "/admin/sparql")
     @ResponseBody
     public String runAdminSparqlQuery(@RequestParam String query, HttpServletRequest request) throws Exception {
         String inputToken = request.getHeader("X-authorization");
-        Authentication auth = userService.checkAuthentication(inputToken);
+//        Authentication auth = userService.checkAuthentication(inputToken);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth == null) {
             return null;
         }
