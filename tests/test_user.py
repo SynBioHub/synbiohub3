@@ -55,7 +55,7 @@ class TestUser(TestCase):
                       'password' : 'test'}
         login_with(logininfo, 1)
         
-        compare_get_request_json("/profile", headers = headers, route_parameters = [], test_type = test_type, test_name="admin_get_profile", fields=["name", "username", "email", "affiliation", "graphUri"])
+        compare_get_request("/profile", headers = headers, route_parameters = [], test_type = test_type, comparison_type = "json", test_name="admin_get_profile", fields=["name", "username", "email", "affiliation", "graphUri"])
 
         #log back in as a regular user
         logininfo = {'email' : 'test1@user.synbiohub',
