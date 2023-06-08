@@ -93,7 +93,7 @@ public class AdminController {
 
     @PostMapping(value = "/admin/savePlugin")
     @ResponseBody
-    public String savePlugin(@RequestBody Map<String,String> allParams, HttpServletRequest request) throws IOException {
+    public String savePlugin(@RequestParam Map<String,String> allParams, HttpServletRequest request) throws IOException {
         if (!ConfigUtil.checkLocalJson("plugins")) {
             ConfigUtil.set(ConfigUtil.getLocaljson(),"plugins", ConfigUtil.get("plugins"));
         }
