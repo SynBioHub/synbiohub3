@@ -23,9 +23,9 @@ class TestAdmin(TestCase):
         compare_get_request("/admin", headers = {"Accept":"text/plain"}, test_type = test_type, comparison_type="json", fields=["instanceName", "defaultGraph", "graphPrefix"])
         test_print("test_admin_status completed")
 
-        # test_print("test_admin_virtuoso starting")
-        # compare_get_request("/admin/virtuoso", headers = {"Accept":"text/plain"}, test_type = test_type)
-        # test_print("test_admin_virtuoso completed")
+        test_print("test_admin_virtuoso starting")
+        compare_get_request("/admin/virtuoso", headers = {"Accept":"text/plain"}, test_type = test_type)
+        test_print("test_admin_virtuoso completed")
 
         # test_print("test_admin_graphs starting")
         # compare_get_request("/admin/graphs", headers = {"Accept":"text/plain"}, test_type = test_type, comparison_type="jsonlist", fields=["graphUri", "numTriples"], key='graphUri')
@@ -93,12 +93,12 @@ class TestAdmin(TestCase):
         # compare_post_request("/admin/deleteRegistry", data, headers = {"Accept": "text/plain"}, test_name = "admin_deleteRegistry", test_type = test_type)
         # test_print("test_admin_deleteRegistry completed")
 
-        # test_print("test_admin_setAdministratorEmail starting")
-        # data={
-        #     'administratorEmail': 'test@synbiohub.org',
-        # }
-        # compare_post_request("/admin/setAdministratorEmail", data, headers = {"Accept": "text/plain"}, test_name = "admin_setAdministratorEmail", test_type = test_type)
-        # test_print("test_admin_setAdministratorEmail completed")
+        test_print("test_admin_setAdministratorEmail starting")
+        data={
+            'administratorEmail': 'test@synbiohub.org',
+        }
+        compare_post_request("/admin/setAdministratorEmail", data, headers = {"Accept": "text/plain"}, test_name = "admin_setAdministratorEmail", test_type = test_type)
+        test_print("test_admin_setAdministratorEmail completed")
 
         # test_print("test_admin_retrieveFromWebOfRegistries starting")
         # data={
