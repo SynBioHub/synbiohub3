@@ -73,4 +73,8 @@ public class AdminService {
         String logPath = System.getProperty("user.dir") + "/data/spring.log";
         return new String(Files.readAllBytes(Paths.get(logPath)));
     }
+
+    public Boolean getSBOLExplorerStatus() throws IOException {
+        return ConfigUtil.get("useSBOLExplorer").asBoolean();
+    }
 }
