@@ -1,6 +1,8 @@
 package com.synbiohub.sbh3.controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.synbiohub.sbh3.security.model.User;
 import com.synbiohub.sbh3.services.AdminService;
 import com.synbiohub.sbh3.services.SearchService;
@@ -12,6 +14,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -90,8 +93,24 @@ public class AdminController {
 
     @PostMapping(value = "/admin/savePlugin")
     @ResponseBody
-    public String savePlugin(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
-        return null;
+    public String savePlugin(@RequestBody Map<String,String> allParams, HttpServletRequest request) throws IOException {
+        if (!ConfigUtil.checkLocalJson("plugins")) {
+            ConfigUtil.set(ConfigUtil.getLocaljson(),"plugins", ConfigUtil.get("plugins"));
+        }
+        ObjectMapper mapper = new ObjectMapper();
+        if (allParams.get("id").equals("New")) {
+            int pluginArraySize = ConfigUtil.get("plugins").get(allParams.get("category")).size();
+            ArrayNode pluginArray = adminService.saveNewPlugin(allParams);
+            if (pluginArraySize != pluginArray.size()) {
+                mapper.writerWithDefaultPrettyPrinter().writeValue(new File("data/config.local.json"), ConfigUtil.getLocaljson());
+                return "Plugin (New, " + allParams.get("name") + ", " + allParams.get("url") + ", " + ConfigUtil.get("plugins").get("category") + ") saved successfully";
+            } else {
+                return "Error saving new plugin: " + allParams.get("name");
+            }
+        } else {
+            adminService.updatePlugin(allParams);
+            return "Plugin " + allParams.get("name") + " updated.";
+        }
     }
 
     @PostMapping(value = "/admin/deletePlugin")
