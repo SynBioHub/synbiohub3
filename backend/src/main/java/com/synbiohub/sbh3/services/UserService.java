@@ -20,7 +20,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -178,9 +177,8 @@ public class UserService {
         return pat.matcher(email).matches();
     }
 
-    public User getUserProfile(String inputToken) throws Exception {
+    public User getUserProfile() throws Exception {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-//        Authentication authentication = checkAuthentication(inputToken);
         if (auth == null) {
             return null;
         }
@@ -190,10 +188,10 @@ public class UserService {
         return copyUser;
     }
 
-    public User updateUserProfile(Map<String, String> allParams, String inputToken) throws Exception {
+    public User updateUserProfile(Map<String, String> allParams) throws Exception {
 //        Authentication auth = checkAuthentication(inputToken);
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        User existingUser = getUserProfile(inputToken);
+        User existingUser = getUserProfile();
         if (existingUser == null || auth == null) {
             return null;
         }

@@ -1,6 +1,7 @@
 package com.synbiohub.sbh3.controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.synbiohub.sbh3.security.model.User;
 import com.synbiohub.sbh3.services.AdminService;
 import com.synbiohub.sbh3.services.SearchService;
 import com.synbiohub.sbh3.services.UserService;
@@ -12,6 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -119,8 +121,19 @@ public class AdminController {
 
     @PostMapping(value = "/admin/setAdministratorEmail")
     @ResponseBody
-    public String setAdminEmail(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
-        return null;
+    public String setAdminEmail(String newEmail) throws Exception {
+        User adminUser = userService.getUserProfile();
+        try {
+            if (adminUser.getIsAdmin()) {
+                Map<String, String> params = new HashMap<>();
+                params.put("email", newEmail);
+                userService.updateUserProfile(params);
+                return "Updated administrator email";
+            }
+        } catch (Exception e) {
+            return "Unable to update administrator email " + e.getMessage();
+        }
+        return "Unable to update administrator email, but no error was thrown";
     }
 
     @PostMapping(value = "/admin/retrieveFromWebOfRegistries")
@@ -137,9 +150,9 @@ public class AdminController {
 
     @GetMapping(value = "/admin/remotes")
     @ResponseBody
-    public String getRemotes(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
+    public String getRemotes() throws IOException {
         // TODO: need to check format of remotes
-        return null;
+        return ConfigUtil.get("remotes").toString();
     }
 
     @PostMapping(value = "/admin/saveRemote") //benchling and ice remotes have different params
@@ -172,10 +185,16 @@ public class AdminController {
         return null;
     }
 
+    /**
+     * I am not sure what this should be. It is a post request, but right now, all it's doing is getting the status
+     * @return
+     */
+    // TODO: check if this method should be returning SBOL Explorer status
     @PostMapping(value = "/admin/explorerUpdateIndex")
     @ResponseBody
-    public String updateExplorerIndex(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
-        return null;
+    public String updateExplorerIndex() throws IOException {
+        boolean SBOLExplorerStatus = adminService.getSBOLExplorerStatus();
+        return SBOLExplorerStatus ? "SBOLExplorer is not enabled" : "SBOLExplorer is enabled";
     }
 
     //TODO: get admin theme needs to be public, post admin theme needs to be admin only
