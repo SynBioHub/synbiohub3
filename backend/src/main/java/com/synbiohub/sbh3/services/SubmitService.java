@@ -31,24 +31,11 @@ public class SubmitService {
         String description = parseDescription(submitRequest);
         int version = parseVersion(submitRequest);
         List<Integer> citations = parseCitations(submitRequest);
+
         Collection<File> allFiles = new ArrayList<>();
         Collection<File> attachmentFiles = new ArrayList<>();
-        String fileType = FilenameUtils.getExtension(submitRequest.getFiles().get(0).getAbsolutePath()); // currently, only one file can be submitted at a time, may change in the future
-        if (fileType.equalsIgnoreCase(".xlsx")) {
-            //send to excel2sbol plugin
-        }
-        if ((fileType.equalsIgnoreCase(".omex")) || fileType.equals(".zip")) {
-            // parse out files and keep sbol ones but send other ones to become attachment files
-        }
+        manageFiles(allFiles, attachmentFiles, submitRequest);
 
-        allFiles.forEach(file -> {
-            if (checkForSBOL(file)) {
-                verifyFile(file);
-            } else {
-                attachmentFiles.add(file);
-                allFiles.remove(file);
-            }
-        });
         SBOLDocument doc = new SBOLDocument();
         String URIPrefix = createURIPrefix(""); //TODO: get URI prefix from submitRequest
         doc.setDefaultURIprefix(URIPrefix);
@@ -107,13 +94,39 @@ public class SubmitService {
         return Integer.parseInt(submitRequest.getVersion());
     }
 
+    //TODO: make sure that integers are added to sbol document as a list of integers
     private List<Integer> parseCitations(SubmitRequest submitRequest) {
         return handleCitations(submitRequest.getCitations());
     }
 
+    private void manageFiles(Collection<File> allFiles, Collection<File> attachmentFiles, SubmitRequest submitRequest) {
+        if (!submitRequest.getFiles().isEmpty()) {
+            String fileType = FilenameUtils.getExtension(submitRequest.getFiles().get(0).getAbsolutePath()); // currently, only one file can be submitted at a time, may change in the future
+            if (fileType.equalsIgnoreCase(".xlsx")) {
+                //send to excel2sbol plugin
+            }
+            if ((fileType.equalsIgnoreCase(".omex")) || fileType.equals(".zip")) {
+                // parse out files and keep sbol ones but send other ones to become attachment files
+            }
+
+            allFiles.forEach(file -> {
+                if (checkForSBOL(file)) {
+                    verifyFile(file);
+                } else {
+                    attachmentFiles.add(file);
+                    allFiles.remove(file);
+                }
+            });
+        }
+    }
 
     public List<Integer> handleCitations(String citations) { //change the inputted string of citations into a list of citations
-        return null;
+        List<Integer> citationList = new ArrayList<>();
+        String[] citationValues = citations.split(",");
+        for (String citation : citationValues) {
+            citationList.add(Integer.parseInt(citation));
+        }
+        return citationList;
     }
 
 
