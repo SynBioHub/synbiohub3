@@ -201,9 +201,11 @@ async function checkCuration(pluginData) {
   return await axios({
     method: 'GET',
     url: `${publicRuntimeConfig.backend}/admin/plugins`,
-    responseType: 'application/json',
     params: {
       category: 'curation'
+    },
+    headers: {
+      Accept: 'application/json'
     }
   }).then(async function (response) {
     const curatePlugins = response.data;

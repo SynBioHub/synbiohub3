@@ -38,12 +38,14 @@ function Submit() {
     axios({
       method: 'GET',
       url: `${publicRuntimeConfig.backend}/admin/plugins`,
-      responseType: 'application/json',
       params: {
         category: 'submit'
+      },
+      headers: {
+        Accept: 'application/json'
       }
     }).then(response => {
-      const submitPlugins = response.data;
+      const submitPlugins = response.data.submit;
 
       for(let plugin of submitPlugins) {
         axios({

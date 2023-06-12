@@ -97,12 +97,14 @@ export default function DownloadModal(properties) {
     axios({
       method: 'GET',
       url: `${publicRuntimeConfig.backend}/admin/plugins`,
-      responseType: 'application/json',
       params: {
         category: 'download'
+      },
+      headers: {
+        Accept: 'application/json'
       }
     }).then(response => {
-      const downloadPlugins = response.data;
+      const downloadPlugins = response.data.download;
 
       for(let plugin of downloadPlugins) {
         axios({
