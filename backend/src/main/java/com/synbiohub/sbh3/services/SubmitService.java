@@ -56,7 +56,7 @@ public class SubmitService {
         try {
             rootCollection = doc.createCollection(URIPrefix, id, String.valueOf(version)); //not sure what to do with rootCollection here
         } catch (Exception e) {
-            System.out.println("This exact collection already exists.");
+            System.out.println("This collection already exists.");
             return null;
         }
         updateAnnotations(doc);
@@ -79,7 +79,16 @@ public class SubmitService {
     }
 
     public SubmitRequest createSubmitRequest(Map<String, String> allParams) { //maps the request params to the fields listed above
-        return null;
+        return SubmitRequest.builder()
+                .id(allParams.get("id"))
+                .name(allParams.get("name"))
+                .description(allParams.get("description"))
+                .version(allParams.get("version"))
+                .citations(allParams.get("citations"))
+//                .files(allParams.get("files")) // TODO: figure out how files are submitted in
+                .overwriteMerge(allParams.get("overwriteMerge"))
+                .plugins(allParams.get("plugins"))
+                .build();
     }
 
     private String parseID(SubmitRequest submitRequest) {
