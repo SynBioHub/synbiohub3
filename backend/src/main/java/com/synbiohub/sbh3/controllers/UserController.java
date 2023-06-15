@@ -100,7 +100,7 @@ public class UserController {
     @GetMapping(value = "/profile", produces = "text/plain")
     public ResponseEntity<String> getProfile(HttpServletRequest request) throws Exception {
         String inputToken = request.getHeader("X-authorization");
-        var user = userService.getUserProfile(inputToken);
+        var user = userService.getUserProfile();
         if (user == null)
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Error retrieving user profile.");
         return ResponseEntity.ok(mapper.writeValueAsString(user));
@@ -115,7 +115,7 @@ public class UserController {
         User updatedUser;
         try {
             String inputToken = request.getHeader("X-authorization");
-            updatedUser = userService.updateUserProfile(allParams, inputToken);
+            updatedUser = userService.updateUserProfile(allParams);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found.");
         }
