@@ -50,12 +50,12 @@ class TestUser(TestCase):
 
         compare_post_request("profile", data, test_name = "profile2", headers = headers, route_parameters = [], files = None, test_type = test_type)
 
-        #login as admin to test admin profile endpoint
+        #login as admin to tes profile endpoint for an admin user
         logininfo = {'email' : 'test@user.synbiohub',
                       'password' : 'test'}
         login_with(logininfo, 1)
         
-        compare_get_request("/profile", headers = headers, route_parameters = [], test_type = test_type, comparison_type = "json", test_name="admin_get_profile", fields=["name", "username", "email", "affiliation", "graphUri"])
+        compare_get_request("/profile", headers = headers, route_parameters = [], test_type = test_type, comparison_type = "json", test_name="admin_get_profile", fields=["name", "username", "password", "email", "affiliation", "graphUri", "isAdmin", "isCurator", "isMember"])
 
         #log back in as a regular user
         logininfo = {'email' : 'test1@user.synbiohub',
