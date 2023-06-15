@@ -93,6 +93,24 @@ public class AdminService {
         return pluginArray;
     }
 
+    public ArrayNode deletePlugin(String category, String id) throws IOException {
+        JsonNode plugins = ConfigUtil.get("plugins").get(category);
+
+        ArrayNode pluginArray = mapper.createArrayNode();
+        if (plugins.isArray()) {
+            pluginArray = (ArrayNode) plugins;
+            for (int i = 0; i < pluginArray.size(); i++) {
+                JsonNode innerNode = pluginArray.get(i);
+                var temp1 = innerNode.get("index");
+                if (innerNode.get("index").asInt() == (Integer.parseInt(id))) {
+                    pluginArray.remove(i);
+                    break;
+                }
+            }
+        }
+        return pluginArray;
+    }
+
     public String updatePlugin(Map<String, String> allParams) throws IOException {
         return "Plugin updated";
     }

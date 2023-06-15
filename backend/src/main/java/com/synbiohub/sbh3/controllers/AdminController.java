@@ -96,6 +96,7 @@ public class AdminController {
     public String savePlugin(@RequestParam Map<String,String> allParams, HttpServletRequest request) throws IOException {
         if (!ConfigUtil.checkLocalJson("plugins")) {
             ConfigUtil.set(ConfigUtil.getLocaljson(),"plugins", ConfigUtil.get("plugins"));
+            ConfigUtil.refreshLocalJson();
         }
         ObjectMapper mapper = new ObjectMapper();
         if (allParams.get("id").equals("New")) {
@@ -103,7 +104,7 @@ public class AdminController {
             ArrayNode pluginArray = adminService.saveNewPlugin(allParams);
             if (pluginArraySize != pluginArray.size()) {
                 mapper.writerWithDefaultPrettyPrinter().writeValue(new File("data/config.local.json"), ConfigUtil.getLocaljson());
-                return "Plugin (New, " + allParams.get("name") + ", " + allParams.get("url") + ", " + ConfigUtil.get("plugins").get("category") + ") saved successfully";
+                return "Plugin (New, " + allParams.get("name") + ", " + allParams.get("url") + "/, " + allParams.get("category") + ") saved successfully";
             } else {
                 return "Error saving new plugin: " + allParams.get("name");
             }
@@ -116,7 +117,14 @@ public class AdminController {
     @PostMapping(value = "/admin/deletePlugin")
     @ResponseBody
     public String deletePlugin(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
-        return null;
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            adminService.deletePlugin(allParams.get("category"), allParams.get("id"));
+            mapper.writerWithDefaultPrettyPrinter().writeValue(new File("data/config.local.json"), ConfigUtil.getLocaljson());
+            return "Plugin ("+ allParams.get("id") + ", " + allParams.get("category") + ") deleted successfully";
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @GetMapping(value = "/admin/registries")
