@@ -20,6 +20,8 @@ Ubuntu:\
 
 Then build a docker image from the local version of synbiohub using
 `docker build -t synbiohub/synbiohub:snapshot-standalone -f docker/Dockerfile .`
+
+Build a docker image of synbiohub3 backend using
 `docker build ./backend --tag synbiohub/sbh3backend:snapshot` (need to test)
 
 Finally, run the test suite using
