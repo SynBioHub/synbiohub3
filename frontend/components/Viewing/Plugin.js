@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import parse, { domToReact } from 'html-react-parser';
+import { ReactDOM } from 'react';
 
 import Section from './Sections/Section';
 import getConfig from 'next/config';
@@ -55,11 +56,25 @@ export default function Plugin(properties) {
             <>{domToReact(domNode.children, options)}</>
           );
         }
+
+        if(domNode.type === 'script') {
+          var script = document.createElement('script');
+          if(domNode.attribs.src) {
+            script.src = domNode.attribs.src;
+          }
+          script.type = 'text/javascript';
+          script.innerText = `${domToReact(domNode.children, options)}`;
+          document.getElementById(`${properties.plugin.name}`).appendChild(script);
+          return <></>;
+        }
+
       }
     }
 
-
-    return <Section title={properties.plugin.name}>{parse(`${content}`, options)}</Section>;
+    return (
+    <Section title={properties.plugin.name} id={properties.plugin.name}>
+      {parse(`${content}`, options)}
+    </Section>);
   }
   
   else {
