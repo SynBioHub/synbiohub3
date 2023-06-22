@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import parse from 'html-react-parser';
+import parse, { domToReact } from 'html-react-parser';
 
 import Section from './Sections/Section';
 import getConfig from 'next/config';
@@ -38,7 +38,28 @@ export default function Plugin(properties) {
   }, [status]);
 
   if (status) {
-    return <Section title={properties.plugin.name}>{parse(`${content}`)}</Section>;
+
+
+    const options = {
+      replace: domNode => {
+        if(!domNode.attribs) {
+          return;
+        }
+
+        if(domNode.name === '!doctype html') {
+          return <></>;
+        }
+
+        if(domNode.name === 'html' || domNode.name === 'head' || domNode.name === 'body') {
+          return (
+            <>{domToReact(domNode.children, options)}</>
+          );
+        }
+      }
+    }
+
+
+    return <Section title={properties.plugin.name}>{parse(`${content}`, options)}</Section>;
   }
   
   else {
