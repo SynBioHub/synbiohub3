@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import parse, { domToReact } from 'html-react-parser';
-import { ReactDOM } from 'react';
 
 import Section from './Sections/Section';
 import getConfig from 'next/config';
