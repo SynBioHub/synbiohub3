@@ -14,13 +14,9 @@ export default function Plugin(properties) {
   
   const pluginData = {
     uri: uri,
-    complete_sbol: `${uri}/sbol`,
-    shallow_sbol: `${uri}/sbolnr`,
-    genbank: `${uri}/gb`,
     top_level: uri,
     instanceUrl: `${publicRuntimeConfig.backend}/`,
     size: 1,
-    instanceUrl: `${publicRuntimeConfig.backend}/`,
     type: properties.type
   };
 
@@ -110,8 +106,6 @@ async function runPlugin(plugin, pluginData, uri, type) {
       name: plugin.name,
       endpoint: 'run',
       data: pluginData,
-      uri: uri,
-      type: type
     }
   }).then(response => {
     return response.data;
