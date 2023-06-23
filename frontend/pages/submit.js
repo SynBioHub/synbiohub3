@@ -53,7 +53,8 @@ function Submit() {
           url: `${publicRuntimeConfig.backend}/call`,
           params: {
             name: plugin.name,
-            endpoint: 'status'
+            endpoint: 'status',
+            category: 'submit'
           }
         }).then(response => {
           if(response.status === 200) selectOptions.push({value: plugin.name, label: plugin.name});

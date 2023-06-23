@@ -405,7 +405,8 @@ async function submitPluginHandler(pluginName, convertedFiles, files) {
     params: {
       name: pluginName,
       endpoint: 'evaluate',
-      data: encodeURIComponent(JSON.stringify(evaluateManifest))
+      data: encodeURIComponent(JSON.stringify(evaluateManifest)),
+      category: 'submit'
     }
   })
     .then(async function (response) {
@@ -447,7 +448,8 @@ async function submitPluginHandler(pluginName, convertedFiles, files) {
         params: {
           name: pluginName,
           endpoint: 'run',
-          data: encodeURIComponent(JSON.stringify(runManifest))
+          data: encodeURIComponent(JSON.stringify(runManifest)),
+          category: 'submit'
         }
       })
         .then(async function (response) {
@@ -780,7 +782,8 @@ const zippedFilePromise = (
             params: {
               name: pluginName,
               endpoint: 'run',
-              data: encodeURIComponent(JSON.stringify(pluginData))
+              data: encodeURIComponent(JSON.stringify(pluginData)),
+              category: 'submit'
             }
           }
     )

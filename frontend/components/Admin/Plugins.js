@@ -18,7 +18,7 @@ import Table from '../Reusable/Table/Table';
 import ActionButton from './Reusable/ActionButton';
 import TableInput from './Reusable/TableInput';
 
-const renderingType = 'rendering';
+const visualType = 'visual';
 const submittingType = 'submit';
 const downloadingType = 'download';
 const curatingType = 'curation';
@@ -39,8 +39,8 @@ export default function Plugins() {
     <div>
       <PluginTable
         token={token}
-        title="Rendering"
-        type={renderingType}
+        title="Visual"
+        type={visualType}
         loading={loading}
         data={plugins ? plugins.rendering : undefined}
       />
@@ -164,7 +164,7 @@ function PluginDisplay(properties) {
     setUrl(properties.plugin.url);
 
       const checkStatus = async () => {
-        const hidden = await fetchStatus(properties.plugin);
+        const hidden = await fetchStatus(properties.plugin, properties.type);
         setStatus(hidden);
       };
       checkStatus();
@@ -186,7 +186,7 @@ function PluginDisplay(properties) {
         icon={faRedo}
         onClick={() => {
           const checkStatus = async () => {
-            const hidden = await fetchStatus(properties.plugin);
+            const hidden = await fetchStatus(properties.plugin, properties.type);
             setStatus(hidden);
           };
           checkStatus();
@@ -349,13 +349,14 @@ const usePlugins = token => {
 };
 
 
-async function fetchStatus(plugin) {
+async function fetchStatus(plugin, type) {
   return await axios({
     method: 'POST',
     url: `${publicRuntimeConfig.backend}/call`,
     params: {
       name: plugin.name,
-      endpoint: 'status'
+      endpoint: 'status',
+      category: type
     }
   }).then(response => {
     return response.status === 200;

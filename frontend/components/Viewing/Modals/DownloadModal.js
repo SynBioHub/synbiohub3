@@ -113,6 +113,7 @@ export default function DownloadModal(properties) {
           params: {
             name: plugin.name,
             endpoint: 'evaluate',
+            category: 'download',
             data: {
               type: properties.type
             }
