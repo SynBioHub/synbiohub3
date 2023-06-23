@@ -18,7 +18,7 @@ import Table from '../Reusable/Table/Table';
 import ActionButton from './Reusable/ActionButton';
 import TableInput from './Reusable/TableInput';
 
-const visualType = 'visual';
+const renderingType = 'rendering';
 const submittingType = 'submit';
 const downloadingType = 'download';
 const curatingType = 'curation';
@@ -39,8 +39,8 @@ export default function Plugins() {
     <div>
       <PluginTable
         token={token}
-        title="Visual"
-        type={visualType}
+        title="Rendering"
+        type={renderingType}
         loading={loading}
         data={plugins ? plugins.rendering : undefined}
       />
@@ -53,7 +53,7 @@ export default function Plugins() {
       />
       <PluginTable
         token={token}
-        title="Download"
+        title="Downloading"
         type={downloadingType}
         loading={loading}
         data={plugins ? plugins.download : undefined}

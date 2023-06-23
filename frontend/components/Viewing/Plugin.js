@@ -86,7 +86,7 @@ async function evaluatePlugin(plugin, type) {
     params: {
       name: plugin.name,
       endpoint: 'evaluate',
-      category: 'visual',
+      category: 'rendering',
       data: {
         type: type
       }
@@ -107,7 +107,7 @@ async function runPlugin(plugin, pluginData, uri, type) {
       name: plugin.name,
       endpoint: 'run',
       data: pluginData,
-      category: 'visual'
+      category: 'rendering'
     }
   }).then(response => {
     return response.data;
