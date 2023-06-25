@@ -14,7 +14,6 @@ export default function Plugin(properties) {
   
   const pluginData = {
     uri: uri,
-    top_level: uri,
     instanceUrl: `${publicRuntimeConfig.backend}/`,
     size: 1,
     type: properties.type

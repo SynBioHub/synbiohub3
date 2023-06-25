@@ -46,7 +46,7 @@ export default function SidePanelTools(properties) {
     }
     checkCurateAvailability();
   })
-  */
+  
 
   const pluginData = {
     complete_sbol: '',
@@ -59,6 +59,7 @@ export default function SidePanelTools(properties) {
     submit_link: ''
   }
 
+  */
   //The styles for the toast saying the citation has been copied.
   const copyToast = (message) => toast(
     <div>
@@ -113,6 +114,7 @@ export default function SidePanelTools(properties) {
               displayId={properties.displayId}
               url={properties.url}
               setModal={setModal}
+              uri={properties.uri}
             />
             :
             modal === "AddToCollection" ?

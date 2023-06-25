@@ -88,6 +88,7 @@ export default function SidePanel({ metadata, type, json, uri }) {
             displayId={metadata.displayId}
             name={metadata.name}
             url={uri.replace('https://synbiohub.org', '')}
+            uri={uri}
           />
           <div className={styles.infocontainer}>
             <MetadataInfo

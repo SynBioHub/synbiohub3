@@ -718,7 +718,7 @@ export const makePublicCollection =
   };
 
 export const downloadFiles =
-  (files, pluginName = null, pluginData = null) =>
+  (files, plugin = false, pluginName = null, pluginData = null) =>
   (dispatch, getState) => {
     dispatch({ type: types.DOWNLOADSTATUS, payload: 'Downloading' });
     dispatch({ type: types.DOWNLOADLIST, payload: files });
@@ -735,6 +735,7 @@ export const downloadFiles =
         token,
         files,
         dispatch,
+        plugin,
         pluginName,
         pluginData
       );
@@ -761,13 +762,29 @@ const zippedFilePromise = (
   token,
   files,
   dispatch,
+  plugin,
   pluginName,
   pluginData
 ) => {
   return new Promise((resolve, reject) => {
     axios(
-      pluginName === null
+      plugin
         ? {
+          headers: {
+            'Accept': 'application/octet-stream'
+          },
+          url: `${publicRuntimeConfig.backend}/call`,
+          method: 'POST',
+          responseType: 'blob',
+          params: {
+            name: pluginName,
+            endpoint: 'run',
+            data: encodeURIComponent(JSON.stringify(pluginData)),
+            category: 'download'
+          }
+        }
+        :
+        {
             url: file.url,
             method: 'GET',
             responseType: 'blob',
@@ -775,22 +792,18 @@ const zippedFilePromise = (
               'X-authorization': token
             }
           }
-        : {
-            url: `${publicRuntimeConfig.backend}/call`,
-            method: 'POST',
-            responseType: 'blob',
-            params: {
-              name: pluginName,
-              endpoint: 'run',
-              data: encodeURIComponent(JSON.stringify(pluginData)),
-              category: 'submit'
-            }
-          }
+        
     )
       .then(response => {
         if (response.status === 200) {
           files[index].status = 'downloaded';
+          if(plugin) {
+            const filename = response.headers['content-disposition'].split('=')[1];
+            const extension = filename.split('.').pop().replace('"', '');
+            file.type = extension
+          }
           resolve({ file, response });
+          
         } else {
           files[index].status = 'failed';
           files[index].errors = 'Sorry, this file could not be downloaded';
