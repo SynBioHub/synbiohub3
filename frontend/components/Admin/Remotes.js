@@ -11,7 +11,7 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import useSWR, { mutate } from 'swr';
 
-import Dropdown from 'react-bootstrap/Dropdown';
+//import Dropdown from 'react-bootstrap/Dropdown';
 
 import styles from '../../styles/admin.module.css';
 import Table from '../Reusable/Table/Table';
@@ -108,11 +108,11 @@ function RemoteDisplay(properties) {
       <td>{properties.remote.id}</td>
 
       <td>
-  <DropdownButton title="Select an option" id="dropdown-menu">
+  {/* <DropdownButton title="Select an option" id="dropdown-menu">
     <Dropdown.Item eventKey="1">Option 1</Dropdown.Item>
     <Dropdown.Item eventKey="2">Option 2</Dropdown.Item>
     <Dropdown.Item eventKey="3">Option 3</Dropdown.Item>
-  </DropdownButton>
+  </DropdownButton> */}
 </td>
      
       <td>{properties.remote.url}</td>
@@ -254,7 +254,7 @@ const options = [
 ];
 
 const compareStrings = (string1, string2) => {
-  return (string1.toLowerCase() > string2.toLowerCase() && 1) || -1;
+  return (string1?.toLowerCase() > string2?.toLowerCase() && 1) || -1;
 };
 
 const sortMethods = {
