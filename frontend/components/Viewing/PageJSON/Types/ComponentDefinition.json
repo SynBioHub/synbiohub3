@@ -1,5 +1,5 @@
 {
-    "type": "http://sbols.org/v2#ComponentDefintion",
+    "type": "http://sbols.org/v2#ComponentDefinition",
 
     "prefixes": [
         "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>",
@@ -107,7 +107,7 @@
                     "title": "Instance",
                     "infoLink": "https://dissys.github.io/sbol-owl/sbol-owl.html#Component",
                     "predicates": [
-                        "sbol:component","dcterms:title"
+                        "sbol:component","sbol:displayId"
                     ],
                     "link": "$<InstanceLink>"
                 },
@@ -144,7 +144,7 @@
                     "title": "Sequence Annotation",
                     "infoLink": "https://dissys.github.io/sbol-owl/sbol-owl.html#SequenceAnnotation",
                     "predicates": [
-                        "dcterms:title"
+                        "sbol:displayId"
                     ],
                     "link": "$<SequenceAnnotationLink>"
                 },
