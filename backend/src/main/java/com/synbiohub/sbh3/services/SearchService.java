@@ -7,13 +7,12 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.synbiohub.sbh3.controllers.SearchController;
 import com.synbiohub.sbh3.sparql.SPARQLQuery;
 import com.synbiohub.sbh3.utils.ConfigUtil;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
+import org.springframework.http.*;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
@@ -353,6 +352,8 @@ public class SearchService {
         params.put("query", query);
 
         url = ConfigUtil.get("sparqlEndpoint").asText() + "?default-graph-uri={default-graph-uri}&query={query}&format=json&";
+//        url = ConfigUtil.get("sparqlEndpoint").asText() + "?default-graph-uri={default-graph-uri}&query={query}";
+        // has to be the first one. without format json, getting root collections fails
 
         return restTemplate.getForObject(url, String.class, params);
     }
@@ -383,15 +384,29 @@ public class SearchService {
         RestTemplate restTemplate = new RestTemplate();
         String url;
         HashMap<String, String> params = new HashMap<>();
+//        params.put("default-graph-uri", ConfigUtil.get("defaultGraph").asText());
         params.put("query", query);
+        params.put("format", "application/rdf+xml");
         HttpHeaders httpHeaders = new HttpHeaders();
+//        httpHeaders.add("Accept", "application/json");
         httpHeaders.add("Accept", "application/rdf+xml");
-        HttpEntity entity = new HttpEntity(httpHeaders);
+        HttpEntity entity = new HttpEntity<>("body", httpHeaders);
 
-        url = ConfigUtil.get("webOfRegistries").get(WOREndpoint).asText() + "/sparql?query={query}";
-
-        var rest = restTemplate.exchange(url, HttpMethod.GET, entity, String.class, params);
-
+//        url = WOREndpoint + "/sparql?query="+query;
+//        var result = restTemplate.getForObject(url, String.class);
+//        url = WOREndpoint + "/sparql?default-graph-uri={default-graph-uri}&query={query}";
+        url = WOREndpoint + "/sparql?query={query}";
+        ResponseEntity<String> rest;
+        try {
+            rest = restTemplate.getForEntity(url, String.class, entity);
+        } catch (HttpClientErrorException e) {
+            if (e.getStatusCode() == HttpStatus.NOT_ACCEPTABLE) {
+                byte[] emptyByteArray = new byte[0];
+                return emptyByteArray;
+            } else {
+                throw e;
+            }
+        }
         return rest.getBody().getBytes(StandardCharsets.UTF_8);
     }
 

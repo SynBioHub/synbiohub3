@@ -3,7 +3,6 @@ package com.synbiohub.sbh3.utils;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -60,18 +59,13 @@ public class ConfigUtil {
         return localjson;
     }
 
-    public static void set(String key, Object value) {
+    public static void set(JsonNode rootNode, String key, Object value) {
         try {
-            JsonNode valueNode = null;
-            if (value instanceof Boolean) {
-                valueNode = JsonNodeFactory.instance.booleanNode((Boolean) value);
-            } else if (value instanceof String) {
-                valueNode = JsonNodeFactory.instance.textNode((String) value);
-            }
+            ObjectMapper mapper = new ObjectMapper();
+            ObjectNode objectNode = (ObjectNode) rootNode;
+            objectNode.putPOJO(key, value);
 
-            if (valueNode != null) {
-                ((ObjectNode) localjson).set(key, valueNode);
-            }
+            mapper.writerWithDefaultPrettyPrinter().writeValue(new File("data/config.local.json"), objectNode);
         } catch (Exception e) {
             log.error("Error setting key: " + key + " in local config.");
         }
@@ -86,10 +80,14 @@ public class ConfigUtil {
     }
 
 
-    public Boolean isLaunched() {
+    public static Boolean isLaunched() {
         if (localjson.has("firstLaunch")) {
             return localjson.get("firstLaunch").asBoolean();
         }
         return json.get("firstLaunch").asBoolean();
+    }
+
+    public static Boolean checkLocalJson(String fieldName) {
+        return localjson.has(fieldName);
     }
 }
