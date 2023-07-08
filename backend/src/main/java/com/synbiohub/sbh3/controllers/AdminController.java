@@ -1,6 +1,9 @@
 package com.synbiohub.sbh3.controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.synbiohub.sbh3.security.model.User;
 import com.synbiohub.sbh3.services.AdminService;
 import com.synbiohub.sbh3.services.SearchService;
 import com.synbiohub.sbh3.services.UserService;
@@ -8,9 +11,12 @@ import com.synbiohub.sbh3.utils.ConfigUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -20,12 +26,12 @@ public class AdminController {
     private final AdminService adminService;
     private final UserService userService;
     private final SearchService searchService;
-
-
     @GetMapping(value = "/admin/sparql")
     @ResponseBody
-    public String runAdminSparqlQuery(@RequestParam String query) throws IOException {
-        Authentication auth = userService.checkAuthentication();
+    public String runAdminSparqlQuery(@RequestParam String query, HttpServletRequest request) throws Exception {
+        String inputToken = request.getHeader("X-authorization");
+//        Authentication auth = userService.checkAuthentication(inputToken);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth == null) {
             return null;
         }
@@ -34,14 +40,19 @@ public class AdminController {
 
     @GetMapping(value = "/admin")
     @ResponseBody
-    public String status(@RequestParam Map<String,String> allParams, HttpServletRequest request) throws IOException {
-        return adminService.getStatus().toString();
+    public String status(@RequestParam Map<String,String> allParams, HttpServletRequest request) throws Exception {
+        return adminService.getStatus(request).toString();
     }
 
+    /**
+     * This will just run a basic query on Virtuoso. If the result exists, return "Alive". Otherwise, return "Dead".
+     * @return
+     */
     @GetMapping(value = "/admin/virtuoso")
     @ResponseBody
-    public String getVirtuosoStatus(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
-        return null;
+    public String getVirtuosoStatus() {
+        boolean vStatus = adminService.getDatabaseStatus();
+        return vStatus ? "Alive" : "Dead";
     }
 
     @GetMapping(value = "/admin/graphs")
@@ -54,8 +65,11 @@ public class AdminController {
     @GetMapping(value = "/admin/log")
     @ResponseBody
     public String getLog(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
-        // prints the spring.log?
-        return null;
+        try {
+            return adminService.getLogs();
+        } catch (Exception e) {
+            return "Error reading spring.log file " + e.getMessage();
+        }
     }
 
     @GetMapping(value = "/admin/mail")
@@ -70,6 +84,7 @@ public class AdminController {
         return null;
     }
 
+    //TODO: get admin plugins needs to be public, post admin plugins need to be admin only
     @GetMapping(value = "/admin/plugins")
     @ResponseBody
     public String getPlugins(@RequestParam Map<String,String> allParams, HttpServletRequest request) throws IOException {
@@ -78,14 +93,38 @@ public class AdminController {
 
     @PostMapping(value = "/admin/savePlugin")
     @ResponseBody
-    public String savePlugin(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
-        return null;
+    public String savePlugin(@RequestParam Map<String,String> allParams, HttpServletRequest request) throws IOException {
+        if (!ConfigUtil.checkLocalJson("plugins")) {
+            ConfigUtil.set(ConfigUtil.getLocaljson(),"plugins", ConfigUtil.get("plugins"));
+            ConfigUtil.refreshLocalJson();
+        }
+        ObjectMapper mapper = new ObjectMapper();
+        if (allParams.get("id").equals("New")) {
+            int pluginArraySize = ConfigUtil.get("plugins").get(allParams.get("category")).size();
+            ArrayNode pluginArray = adminService.saveNewPlugin(allParams);
+            if (pluginArraySize != pluginArray.size()) {
+                mapper.writerWithDefaultPrettyPrinter().writeValue(new File("data/config.local.json"), ConfigUtil.getLocaljson());
+                return "Plugin (New, " + allParams.get("name") + ", " + allParams.get("url") + "/, " + allParams.get("category") + ") saved successfully";
+            } else {
+                return "Error saving new plugin: " + allParams.get("name");
+            }
+        } else {
+            adminService.updatePlugin(allParams);
+            return "Plugin " + allParams.get("name") + " updated.";
+        }
     }
 
     @PostMapping(value = "/admin/deletePlugin")
     @ResponseBody
     public String deletePlugin(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
-        return null;
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            adminService.deletePlugin(allParams.get("category"), allParams.get("id"));
+            mapper.writerWithDefaultPrettyPrinter().writeValue(new File("data/config.local.json"), ConfigUtil.getLocaljson());
+            return "Plugin ("+ allParams.get("id") + ", " + allParams.get("category") + ") deleted successfully";
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @GetMapping(value = "/admin/registries")
@@ -109,8 +148,19 @@ public class AdminController {
 
     @PostMapping(value = "/admin/setAdministratorEmail")
     @ResponseBody
-    public String setAdminEmail(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
-        return null;
+    public String setAdminEmail(String newEmail) throws Exception {
+        User adminUser = userService.getUserProfile();
+        try {
+            if (adminUser.getIsAdmin()) {
+                Map<String, String> params = new HashMap<>();
+                params.put("email", newEmail);
+                userService.updateUserProfile(params);
+                return "Updated administrator email";
+            }
+        } catch (Exception e) {
+            return "Unable to update administrator email " + e.getMessage();
+        }
+        return "Unable to update administrator email, but no error was thrown";
     }
 
     @PostMapping(value = "/admin/retrieveFromWebOfRegistries")
@@ -122,14 +172,14 @@ public class AdminController {
     @PostMapping(value = "/admin/federate")
     @ResponseBody
     public String sendFederateRequest(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
-        return null;
+        return "This is send Federate Request. It is not yet implemented.";
     }
 
     @GetMapping(value = "/admin/remotes")
     @ResponseBody
-    public String getRemotes(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
+    public String getRemotes() throws IOException {
         // TODO: need to check format of remotes
-        return null;
+        return ConfigUtil.get("remotes").toString();
     }
 
     @PostMapping(value = "/admin/saveRemote") //benchling and ice remotes have different params
@@ -162,12 +212,19 @@ public class AdminController {
         return null;
     }
 
+    /**
+     * I am not sure what this should be. It is a post request, but right now, all it's doing is getting the status
+     * @return
+     */
+    // TODO: check if this method should be returning SBOL Explorer status
     @PostMapping(value = "/admin/explorerUpdateIndex")
     @ResponseBody
-    public String updateExplorerIndex(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
-        return null;
+    public String updateExplorerIndex() throws IOException {
+        boolean SBOLExplorerStatus = adminService.getSBOLExplorerStatus();
+        return SBOLExplorerStatus ? "SBOLExplorer is not enabled" : "SBOLExplorer is enabled";
     }
 
+    //TODO: get admin theme needs to be public, post admin theme needs to be admin only
     @GetMapping(value = "/admin/theme")
     @ResponseBody
     public String getTheme() throws IOException {

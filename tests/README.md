@@ -5,8 +5,9 @@
 Steps to run the test suite using Docker
 1. Download Docker Desktop
 2. Downlad tests folder and open in terminal
-3. cd ..
-4. tests/test.sh
+3. In terminal: `cd ..`
+4. Pull the updated docker image, in terminal: `docker pull synbiohub/sbh3backend:snapshot`
+5. In terminal: `tests/test.sh`
 
 ## Running the test suite manually
 
@@ -20,8 +21,11 @@ Ubuntu:\
 Then build a docker image from the local version of synbiohub using
 `docker build -t synbiohub/synbiohub:snapshot-standalone -f docker/Dockerfile .`
 
+Build a docker image of synbiohub3 backend using
+`docker build ./backend --tag synbiohub/sbh3backend:snapshot` (need to test)
+
 Finally, run the test suite using
-`bash tests/test3.sh`
+`bash tests/test.sh`
 
 ## Writing new tests
 
