@@ -6,6 +6,9 @@ import ModuleDefinition from './Types/ModuleDefinition.json';
 import Implementation from './Types/Implementation.json';
 import Range from './Types/Range.json';
 import Experiment from './Types/Experiment.json';
+import ExperimentalData from './Types/ExperimentalData.json';
+import Attachment from './Types/Attachment.json';
+
 
 const TypeToJson = {
   'http://sbols.org/v2#ComponentDefinition': ComponentDefinition,
@@ -15,7 +18,9 @@ const TypeToJson = {
   'http://sbols.org/v2#ModuleDefinition': ModuleDefinition,
   'http://sbols.org/v2#Implementation': Implementation,
   'http://sbols.org/v2#Range': Range,
-  'http://sbols.org/v2#Experiment': Experiment
+  'http://sbols.org/v2#Experiment': Experiment,
+  'http://sbols.org/v2#ExperimentalData': ExperimentalData,
+  'http://sbols.org/v2#Attachment': Attachment
 };
 
 export default TypeToJson;
