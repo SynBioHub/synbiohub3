@@ -1,6 +1,5 @@
 {
-    "type": "http://sbols.org/v2#ComponentDefinition",
-
+    "type": "http://sbols.org/v2#Component",
     "prefixes": [
         "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>",
         "PREFIX dcterms: <http://purl.org/dc/terms/>",
@@ -11,85 +10,34 @@
         "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>",
         "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>",
         "PREFIX purl: <http://purl.obolibrary.org/obo/>"
-     ],
-
-     "metadata": [
+    ],
+    "metadata": [
         {
-          "title": "Type",
-          "rootPredicate": "sbol:type",
-          "icon": "faVials",
-          "sections": [
-            {
-              "title": "Extra Work",
-              "stripAfter": "#",
-              "predicates": []
-            }
-          ]
+            "title": "Role(s)",
+            "rootPredicate": "sbol:role",
+            "icon": "faVials",
+            "sections": [
+                {
+                    "title": "Extra Work",
+                    "stripAfter": "#",
+                    "predicates": []
+                }
+            ]
         },
         {
-          "title": "Role(s)",
-          "rootPredicate": "sbol:role",
-          "icon": "faVials",
-          "sections": [
-            {
-              "title": "Extra Work",
-              "stripAfter": "#",
-              "predicates": [
-              ]
-            }
-        ]
-        },
-        {
-         "title": "Sequence(s)",
-          "rootPredicate": "sbol:sequence",
-          "icon": "faVials",
-          "sections": [
-            {
-              "title": "Extra Work",
-              "stripAfter": "#",
-              "predicates": []
-            }
-          ]
-        },
-        {
-            "title": "Description",
-             "rootPredicate": "sbh:mutableDescription",
-             "icon":"faInfoCircle",
-             "sections": [
-               {
-                 "title": "Extra Work",
-                 "stripAfter": "#",
-                 "predicates": []
-               }
-             ]
-           },
-           {
-            "title": "Notes",
-             "rootPredicate": "sbh:mutableNotes",
-             "icon":"faInfoCircle",
-             "sections": [
-               {
-                 "title": "Extra Work",
-                 "stripAfter": "#",
-                 "predicates": []
-               }
-             ]
-           },
-           {
-            "title": "Source",
-             "rootPredicate": "sbh:mutableProvenance",
-             "icon":"faInfoCircle",
-             "sections": [
-               {
-                 "title": "Extra Work",
-                 "stripAfter": "#",
-                 "predicates": []
-               }
-             ]
-           }
-       ],
-
-     "tables": [
+            "title": "roleIntegration",
+            "rootPredicate": "sbol:roleIntegration",
+            "icon": "faVials",
+            "sections": [
+                {
+                    "title": "Extra Work",
+                    "stripAfter": "#",
+                    "predicates": []
+                }
+            ]
+        }
+    ],
+    "tables": [
         {
             "icon": "faVials",
             "title": "Components",
@@ -107,7 +55,8 @@
                     "title": "Instance",
                     "infoLink": "https://dissys.github.io/sbol-owl/sbol-owl.html#Component",
                     "predicates": [
-                        "sbol:component","sbol:displayId"
+                        "sbol:component",
+                        "sbol:displayId"
                     ],
                     "link": "$<InstanceLink>"
                 },
@@ -115,7 +64,8 @@
                     "title": "Definition",
                     "infoLink": "https://dissys.github.io/sbol-owl/sbol-owl.html#definition",
                     "predicates": [
-                        "sbol:definition","dcterms:title"
+                        "sbol:definition",
+                        "dcterms:title"
                     ],
                     "link": "$<DefinitionLink>"
                 },
@@ -150,27 +100,31 @@
                 },
                 {
                     "title": "SequenceAnnotationLink",
-                    "predicates": [
-                    ],
+                    "predicates": [],
                     "hide": true
                 },
                 {
                     "title": "Location",
                     "infoLink": "https://dissys.github.io/sbol-owl/sbol-owl.html#Location",
                     "text": "$<Start>, $<End>",
-                    "predicates": [
-                    ],
-                    "link":"$<LocationLink>"
+                    "predicates": [],
+                    "link": "$<LocationLink>"
                 },
-                {  
+                {
                     "title": "Start",
-                    "predicates": ["sbol:location", "sbol:start"],
-                    "hide" : true
+                    "predicates": [
+                        "sbol:location",
+                        "sbol:start"
+                    ],
+                    "hide": true
                 },
-                {  
+                {
                     "title": "End",
-                    "predicates": ["sbol:location", "sbol:end"],
-                    "hide" : true
+                    "predicates": [
+                        "sbol:location",
+                        "sbol:end"
+                    ],
+                    "hide": true
                 },
                 {
                     "title": "LocationLink",
@@ -183,21 +137,26 @@
                     "title": "Component",
                     "infoLink": "https://dissys.github.io/sbol-owl/sbol-owl.html#component",
                     "predicates": [
-                        "sbol:component", "sbol:definition", "dcterms:title"
+                        "sbol:component",
+                        "sbol:definition",
+                        "dcterms:title"
                     ],
                     "link": "$<Component/Role Link>"
                 },
                 {
                     "title": "Component/Role Link",
                     "predicates": [
-                        "sbol:component", "sbol:definition"
+                        "sbol:component",
+                        "sbol:definition"
                     ],
                     "hide": true
                 },
                 {
                     "title": "Role(s)",
                     "group": true,
-                    "predicates": ["sbol:role"],
+                    "predicates": [
+                        "sbol:role"
+                    ],
                     "icon": "faInfoCircle",
                     "link": "search/role=<$<This>>&",
                     "linkType": "search",
@@ -214,9 +173,7 @@
             "sections": [
                 {
                     "title": "igem#experience",
-                    "predicates": [
-
-                    ]
+                    "predicates": []
                 }
             ]
         },
@@ -224,25 +181,20 @@
             "icon": "faVials",
             "title": "Members of these Collections",
             "rootPredicate": "sbol:componentDefinition",
-            "sections": [
-
-            ]
+            "sections": []
         },
-            {
-                "icon": "faVials",
-                "title": "Attachments",
-                "rootPredicate": "sbol:componentDefinition",
-                "sections": [
-    
-                ]
-            }
-     ],
-
-     "pages": [
+        {
+            "icon": "faVials",
+            "title": "Attachments",
+            "rootPredicate": "sbol:componentDefinition",
+            "sections": []
+        }
+    ],
+    "pages": [
         "$TABLES[Components]",
         "$TABLES[Sequence Annotations]",
-        "Other Properties",
-        "Member of these Collections",
-        "Attachments"
-     ]
+        "$TABLES[Other Properties]",
+        "$TABLES[Members of these Collections]",
+        "$TABLES[Attachments]"
+    ]
 }

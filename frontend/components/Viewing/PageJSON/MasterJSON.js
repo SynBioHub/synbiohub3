@@ -8,6 +8,7 @@ import Range from './Types/Range.json';
 import Experiment from './Types/Experiment.json';
 import ExperimentalData from './Types/ExperimentalData.json';
 import Attachment from './Types/Attachment.json';
+import Component from './Types/Component.json';
 
 
 const TypeToJson = {
@@ -20,7 +21,8 @@ const TypeToJson = {
   'http://sbols.org/v2#Range': Range,
   'http://sbols.org/v2#Experiment': Experiment,
   'http://sbols.org/v2#ExperimentalData': ExperimentalData,
-  'http://sbols.org/v2#Attachment': Attachment
+  'http://sbols.org/v2#Attachment': Attachment,
+  'http://sbols.org/v2#Component': Component
 };
 
 export default TypeToJson;
