@@ -9,6 +9,7 @@ import Experiment from './Types/Experiment.json';
 import ExperimentalData from './Types/ExperimentalData.json';
 import Attachment from './Types/Attachment.json';
 import Component from './Types/Component.json';
+import MapsTo from './Types/MapsTo.json';
 
 
 const TypeToJson = {
@@ -22,7 +23,8 @@ const TypeToJson = {
   'http://sbols.org/v2#Experiment': Experiment,
   'http://sbols.org/v2#ExperimentalData': ExperimentalData,
   'http://sbols.org/v2#Attachment': Attachment,
-  'http://sbols.org/v2#Component': Component
+  'http://sbols.org/v2#Component': Component,
+  'http://sbols.org/v2#MapsTo': MapsTo
 };
 
 export default TypeToJson;
