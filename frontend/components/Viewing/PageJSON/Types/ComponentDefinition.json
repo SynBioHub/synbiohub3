@@ -1,155 +1,248 @@
 {
-  "type": "http://sbols.org/v2#ComponentDefintion",
-  "prefixes": [
-    "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>",
-    "PREFIX dcterms: <http://purl.org/dc/terms/>",
-    "PREFIX dc: <http://purl.org/dc/elements/1.1/>",
-    "PREFIX sbh: <http://wiki.synbiohub.org/wiki/Terms/synbiohub#>",
-    "PREFIX prov: <http://www.w3.org/ns/prov#>",
-    "PREFIX sbol: <http://sbols.org/v2#>",
-    "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>",
-    "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>",
-    "PREFIX purl: <http://purl.obolibrary.org/obo/>"
-  ],
-  "metadata": [
-    {
-      "title": "Type",
-      "rootPredicate": "sbol:type",
-      "icon": "faVials",
-      "sections": [
+    "type": "http://sbols.org/v2#ComponentDefinition",
+
+    "prefixes": [
+        "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>",
+        "PREFIX dcterms: <http://purl.org/dc/terms/>",
+        "PREFIX dc: <http://purl.org/dc/elements/1.1/>",
+        "PREFIX sbh: <http://wiki.synbiohub.org/wiki/Terms/synbiohub#>",
+        "PREFIX prov: <http://www.w3.org/ns/prov#>",
+        "PREFIX sbol: <http://sbols.org/v2#>",
+        "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>",
+        "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>",
+        "PREFIX purl: <http://purl.obolibrary.org/obo/>"
+     ],
+
+     "metadata": [
         {
-          "title": "Extra Work",
-          "stripAfter": "#",
-          "predicates": []
-        }
-      ]
-    },
-    {
-      "title": "Role(s)",
-      "rootPredicate": "sbol:role",
-      "icon": "faVials",
-      "sections": [
-        {
-          "title": "Extra Work",
-          "stripAfter": "#",
-          "predicates": []
-        }
-      ]
-    }
-  ],
-  "tables": [
-    {
-      "icon": "faPuzzlePiece",
-      "title": "Components",
-      "rootPredicate": "sbol:component",
-      "sections": [
-        {
-          "title": "ComponentLink",
-          "hide": true,
-          "predicates": ["sbol:definition"]
-        },
-        {
-          "title": "InstanceLink",
-          "hide": true,
-          "predicates": []
-        },
-        {
-          "title": "Access",
-          "infoLink": "https://dissys.github.io/sbol-owl/sbol-owl.html#access",
-          "predicates": ["sbol:access"],
-          "stripAfter": "#"
-        },
-        {
-          "title": "Instance",
-          "link": "$<InstanceLink>",
-          "infoLink": "http://sbols.org/v2#component",
-          "predicates": ["dcterms:title"]
-        },
-        {
-          "title": "Definition",
-          "infoLink": "https://dissys.github.io/sbol-owl/sbol-owl.html#definition",
-          "link": "$<ComponentLink>",
-          "predicates": ["sbol:definition", "dcterms:title"]
-        }
-      ]
-    },
-    {
-      "icon": "faDna",
-      "title": "Sequence Annotations",
-      "rootPredicate": "sbol:sequenceAnnotation",
-      "orderBy": "xsd:integer(?start)",
-      "sections": [
-        {
-          "title": "Sequence Annotation Link",
-          "predicates": [],
-          "hide": true
-        },
-        {
-          "title": "Sequence Annotation",
-          "predicates": ["dcterms:title"],
-          "icon": "faInfoCircle",
-          "link": "$<Sequence Annotation Link>",
-          "infoLink": "http://sbols.org/v2#SequenceAnnotation",
-          "info": "Learn more about Sequence Annotations"
-        },
-        {
-          "title": "Location",
-          "text": "$<Start>, $<End>",
-          "link": "$<Annotation Link>",
-          "infoLink": "http://sbols.org/v2#Location"
-        },
-        {
-          "title": "Start",
-          "icon": "faInfoCircle",
-          "predicates": ["sbol:location", "sbol:start"],
-          "infoLink": "http://sbols.org/v2#Location",
-          "info": "Learn more about Locations",
-          "hide": true
-        },
-        {
-          "title": "End",
-          "icon": "faInfoCircle",
-          "predicates": ["sbol:location", "sbol:end"],
-          "infoLink": "http://sbols.org/v2#Location",
-          "info": "Learn more about Locations",
-          "hide": true
-        },
-        {
-          "title": "Annotation Link",
-          "predicates": ["sbol:location", "sbol:persistentIdentity"],
-          "hide": true
-        },
-        {
-          "title": "ComponentLink",
-          "hide": true,
-          "predicates": ["sbol:component", "sbol:definition"]
-        },
-        {
-          "title": "Component",
-          "infoLink": "http://sbols.org/v2#component",
-          "link": "$<ComponentLink>",
-          "predicates": ["sbol:component", "sbol:definition", "dcterms:title"]
+          "title": "Type",
+          "rootPredicate": "sbol:type",
+          "icon": "faVials",
+          "sections": [
+            {
+              "title": "Extra Work",
+              "stripAfter": "#",
+              "predicates": []
+            }
+          ]
         },
         {
           "title": "Role(s)",
-          "group": true,
-          "predicates": ["sbol:role"],
-          "icon": "faInfoCircle",
-          "link": "search/role=<$<This>>&",
-          "linkType": "search",
-          "infoLink": "http://sbols.org/v2#role",
-          "info": "Learn more about roles",
-          "stripAfter": "#"
-        }
-      ]
-    }
-  ],
-  "pages": [
-    "Details",
-    "$TABLES[Components]",
-    "$TABLES[Sequence Annotations]",
-    "Other Properties",
-    "Member of these Collections",
-    "Attachments"
-  ]
+          "rootPredicate": "sbol:role",
+          "icon": "faVials",
+          "sections": [
+            {
+              "title": "Extra Work",
+              "stripAfter": "#",
+              "predicates": [
+              ]
+            }
+        ]
+        },
+        {
+         "title": "Sequence(s)",
+          "rootPredicate": "sbol:sequence",
+          "icon": "faVials",
+          "sections": [
+            {
+              "title": "Extra Work",
+              "stripAfter": "#",
+              "predicates": []
+            }
+          ]
+        },
+        {
+            "title": "Description",
+             "rootPredicate": "sbh:mutableDescription",
+             "icon":"faInfoCircle",
+             "sections": [
+               {
+                 "title": "Extra Work",
+                 "stripAfter": "#",
+                 "predicates": []
+               }
+             ]
+           },
+           {
+            "title": "Notes",
+             "rootPredicate": "sbh:mutableNotes",
+             "icon":"faInfoCircle",
+             "sections": [
+               {
+                 "title": "Extra Work",
+                 "stripAfter": "#",
+                 "predicates": []
+               }
+             ]
+           },
+           {
+            "title": "Source",
+             "rootPredicate": "sbh:mutableProvenance",
+             "icon":"faInfoCircle",
+             "sections": [
+               {
+                 "title": "Extra Work",
+                 "stripAfter": "#",
+                 "predicates": []
+               }
+             ]
+           }
+       ],
+
+     "tables": [
+        {
+            "icon": "faVials",
+            "title": "Components",
+            "rootPredicate": "sbol:component",
+            "sections": [
+                {
+                    "title": "Access",
+                    "infoLink": "https://dissys.github.io/sbol-owl/sbol-owl.html#access",
+                    "predicates": [
+                        "sbol:access"
+                    ],
+                    "stripAfter": "#"
+                },
+                {
+                    "title": "Instance",
+                    "infoLink": "https://dissys.github.io/sbol-owl/sbol-owl.html#Component",
+                    "predicates": [
+                        "sbol:component","sbol:displayId"
+                    ],
+                    "link": "$<InstanceLink>"
+                },
+                {
+                    "title": "Definition",
+                    "infoLink": "https://dissys.github.io/sbol-owl/sbol-owl.html#definition",
+                    "predicates": [
+                        "sbol:definition","dcterms:title"
+                    ],
+                    "link": "$<DefinitionLink>"
+                },
+                {
+                    "title": "DefinitionLink",
+                    "predicates": [
+                        "sbol:definition"
+                    ],
+                    "hide": true
+                },
+                {
+                    "title": "InstanceLink",
+                    "predicates": [
+                        "sbol:definition"
+                    ],
+                    "hide": true
+                }
+            ]
+        },
+        {
+            "icon": "faVials",
+            "title": "Sequence Annotations",
+            "rootPredicate": "sbol:sequenceAnnotation",
+            "sections": [
+                {
+                    "title": "Sequence Annotation",
+                    "infoLink": "https://dissys.github.io/sbol-owl/sbol-owl.html#SequenceAnnotation",
+                    "predicates": [
+                        "sbol:displayId"
+                    ],
+                    "link": "$<SequenceAnnotationLink>"
+                },
+                {
+                    "title": "SequenceAnnotationLink",
+                    "predicates": [
+                    ],
+                    "hide": true
+                },
+                {
+                    "title": "Location",
+                    "infoLink": "https://dissys.github.io/sbol-owl/sbol-owl.html#Location",
+                    "text": "$<Start>, $<End>",
+                    "predicates": [
+                    ],
+                    "link":"$<LocationLink>"
+                },
+                {  
+                    "title": "Start",
+                    "predicates": ["sbol:location", "sbol:start"],
+                    "hide" : true
+                },
+                {  
+                    "title": "End",
+                    "predicates": ["sbol:location", "sbol:end"],
+                    "hide" : true
+                },
+                {
+                    "title": "LocationLink",
+                    "predicates": [
+                        "sbol:location"
+                    ],
+                    "hide": true
+                },
+                {
+                    "title": "Component",
+                    "infoLink": "https://dissys.github.io/sbol-owl/sbol-owl.html#component",
+                    "predicates": [
+                        "sbol:component", "sbol:definition", "dcterms:title"
+                    ],
+                    "link": "$<Component/Role Link>"
+                },
+                {
+                    "title": "Component/Role Link",
+                    "predicates": [
+                        "sbol:component", "sbol:definition"
+                    ],
+                    "hide": true
+                },
+                {
+                    "title": "Role(s)",
+                    "group": true,
+                    "predicates": ["sbol:role"],
+                    "icon": "faInfoCircle",
+                    "link": "search/role=<$<This>>&",
+                    "linkType": "search",
+                    "infoLink": "http://sbols.org/v2#role",
+                    "info": "Learn more about roles",
+                    "stripAfter": "#"
+                }
+            ]
+        },
+        {
+            "icon": "faVials",
+            "title": "Other Properties",
+            "rootPredicate": "sbol:componentDefinition",
+            "sections": [
+                {
+                    "title": "igem#experience",
+                    "predicates": [
+
+                    ]
+                }
+            ]
+        },
+        {
+            "icon": "faVials",
+            "title": "Members of these Collections",
+            "rootPredicate": "sbol:componentDefinition",
+            "sections": [
+
+            ]
+        },
+            {
+                "icon": "faVials",
+                "title": "Attachments",
+                "rootPredicate": "sbol:componentDefinition",
+                "sections": [
+    
+                ]
+            }
+     ],
+
+     "pages": [
+        "$TABLES[Components]",
+        "$TABLES[Sequence Annotations]",
+        "$TABLES[Other Properties]",
+        "$TABLES[Members of these Collections]",
+        "$TABLES[Attachments]"
+     ]
 }
