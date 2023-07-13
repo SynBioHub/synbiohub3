@@ -1,0 +1,112 @@
+{
+    "type": "http://sbols.org/v2#CombinatorialDerivation",
+    "prefixes": [
+        "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>",
+        "PREFIX dcterms: <http://purl.org/dc/terms/>",
+        "PREFIX dc: <http://purl.org/dc/elements/1.1/>",
+        "PREFIX sbh: <http://wiki.synbiohub.org/wiki/Terms/synbiohub#>",
+        "PREFIX prov: <http://www.w3.org/ns/prov#>",
+        "PREFIX sbol: <http://sbols.org/v2#>",
+        "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>",
+        "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>",
+        "PREFIX purl: <http://purl.obolibrary.org/obo/>"
+    ],
+    "metadata": [
+        {
+            "title": "Template",
+            "rootPredicate": "sbol:template",
+            "icon": "faVials",
+            "sections": [
+                {
+                    "title": "Extra Work",
+                    "stripAfter": "#",
+                    "predicates": []
+                }
+            ]
+        },
+        {
+            "title": "Strategy",
+            "rootPredicate": "sbol:strategy",
+            "icon": "faVials",
+            "sections": [
+                {
+                    "title": "Extra Work",
+                    "stripAfter": "#",
+                    "predicates": []
+                }
+            ]
+        }
+    ],
+    "tables": [
+        {
+            "title": "Variable Components",
+            "rootPredicate": "sbol:variableComponent",
+            "icon": "faVials",
+            "sections": [
+                {
+                    "title": "Variable Components",
+                    "infoLink": "https://dissys.github.io/sbol-owl/sbol-owl.html#VariableComponent",
+                    "predicates": [
+                        "sbol:displayId"
+                    ],
+                    "link": "$<VariableComponentsLink>"
+                },
+
+                {
+                    "title": "VariableComponentsLink",
+                    "predicates": [
+                        "sbol:persistentIdentity"
+                    ],
+                    "hide": true
+                },
+
+                {
+                    "title": "Variable",
+                    "infoLink": "https://dissys.github.io/sbol-owl/sbol-owl.html#variable",
+                    "predicates": [
+                        "sbol:variable"
+                    ],
+                    "link": "$<VariableLink>"
+                },
+
+                {
+                    "title": "VariableLink",
+                    "predicates": [
+                        "sbol:variable"
+                    ],
+                    "hide": true
+                },
+                {
+                    "title": "Operator",
+                    "infoLink": "https://dissys.github.io/sbol-owl/sbol-owl.html#operator",
+                    "predicates": [
+                        "sbol:operator"
+                    ],
+                    "stripAfter": "#"
+                },
+                {
+                    "title": "Variant",
+                    "infoLink": "https://dissys.github.io/sbol-owl/sbol-owl.html#variant",
+                    "predicates": [
+                        "sbol:variant", "sbol:displayId"
+                    ],
+                    "link": "$<VariantLink>"
+                },
+                {
+                    "title": "VariantLink",
+                    "predicates": [
+                        "sbol:variant"
+                    ],
+                    "hide": true
+                }
+            ]
+        }
+    ],
+
+    "pages": [
+        "$TABLES[Variable Components]",
+        "Other Properties",
+        "Member of these Collections",
+        "Attachments"
+    ]
+}

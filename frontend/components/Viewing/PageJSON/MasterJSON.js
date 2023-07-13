@@ -11,6 +11,7 @@ import Attachment from './Types/Attachment.json';
 import Component from './Types/Component.json';
 import MapsTo from './Types/MapsTo.json';
 import FunctionalComponent from './Types/FunctionalComponent.json';
+import CombinatorialDerivation from './Types/CombinatorialDerivation.json';
 
 
 const TypeToJson = {
@@ -26,7 +27,8 @@ const TypeToJson = {
   'http://sbols.org/v2#Attachment': Attachment,
   'http://sbols.org/v2#Component': Component,
   'http://sbols.org/v2#MapsTo': MapsTo,
-  'http://sbols.org/v2#FunctionalComponent': FunctionalComponent
+  'http://sbols.org/v2#FunctionalComponent': FunctionalComponent,
+  'http://sbols.org/v2#CombinatorialDerivation': CombinatorialDerivation
 };
 
 export default TypeToJson;
