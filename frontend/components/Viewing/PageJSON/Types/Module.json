@@ -1,0 +1,94 @@
+{
+    "type": "http://sbols.org/v2#Module",
+    "prefixes": [
+      "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>",
+      "PREFIX dcterms: <http://purl.org/dc/terms/>",
+      "PREFIX dc: <http://purl.org/dc/elements/1.1/>",
+      "PREFIX sbh: <http://wiki.synbiohub.org/wiki/Terms/synbiohub#>",
+      "PREFIX prov: <http://www.w3.org/ns/prov#>",
+      "PREFIX sbol: <http://sbols.org/v2#>",
+      "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>",
+      "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>",
+      "PREFIX purl: <http://purl.obolibrary.org/obo/>"
+    ],
+    "metadata": [
+      {
+        "title": "Role",
+        "icon": "faVials",
+        "rootPredicate": "sbol:role",
+        "sections": [
+          {
+            "title": "role",
+            "predicates": [],
+            "stripAfter": "/"
+          }
+        ]
+      }
+    ],
+    "tables": [
+      {
+        "title": "modules",
+        "rootPredicate": "sbol:module",
+        "icon": "faVials",
+        "sections": [
+          {
+            "title": "Extra Work",
+            "stripAfter": "#",
+            "predicates": []
+          }
+        ]
+      },
+      {
+        "title": "models",
+        "rootPredicate": "sbol:model",
+        "icon": "faVials",
+        "sections": [
+          {
+            "title": "Extra Work",
+            "stripAfter": "#",
+            "predicates": []
+          }
+        ]
+      },
+      {
+        "title": "functional components",
+        "rootPredicate": "sbol:functionalComponent",
+        "icon": "faVials",
+        "sections": [
+          {
+            "title": "Components",
+            "stripAfter": "#",
+            "predicates": [],
+            "link": "$<FunctionalComponentLink>"
+          },
+          {
+            "title": "FunctionalComponentLink",
+            "predicates": [],
+            "hide": true
+        }
+        ]
+      },
+      {
+        "title": "interactions",
+        "rootPredicate": "sbol:interaction",
+        "icon": "faVials",
+        "sections": [
+          {
+            "title": "Extra Work",
+            "stripAfter": "#",
+            "predicates": []
+          }
+        ]
+      }
+    ],
+    "pages": [
+      "Details",
+      "$TABLES[modules]",
+      "$TABLES[models]",
+      "$TABLES[functional components]",
+      "$TABLES[interactions]",
+      "Other Properties",
+      "Member of these Collections",
+      "Attachments"
+    ]
+  }
