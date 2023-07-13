@@ -13,7 +13,7 @@
   ],
   "metadata": [
     {
-      "title": "Role",
+      "title": "Role(s)",
       "icon": "faVials",
       "rootPredicate": "sbol:role",
       "sections": [
@@ -21,6 +21,26 @@
           "title": "role",
           "predicates": [],
           "stripAfter": "/"
+        }
+      ]
+    },
+    {
+      "title": "Model(s)",
+      "rootPredicate": "sbol:model",
+      "icon": "faVials",
+      "sections": [
+        {
+          "title": "Models",
+          "predicates": [
+            "sbol:displayId"
+          ],
+          "link": "$<ModelLink>"
+        },
+        {
+          "title": "ModelLink",
+          "predicates" : [
+          ],
+          "hide": true
         }
       ]
     }
@@ -32,21 +52,38 @@
       "icon": "faVials",
       "sections": [
         {
-          "title": "Extra Work",
-          "stripAfter": "#",
-          "predicates": []
-        }
-      ]
-    },
-    {
-      "title": "models",
-      "rootPredicate": "sbol:model",
-      "icon": "faVials",
-      "sections": [
+          "title": "Instance",
+          "infoLink": "https://dissys.github.io/sbol-owl/sbol-owl.html#Module",
+          "predicates": [
+            "sbol:displayId"
+          ],
+          "link" :"$<InstanceLink>"
+        },
         {
-          "title": "Extra Work",
-          "stripAfter": "#",
-          "predicates": []
+          "title" : "InstanceLink",
+          "predicates": [
+          ],
+          "hide" : true
+        },
+        {
+          "title": "Definition",
+          "infoLink": "https://dissys.github.io/sbol-owl/sbol-owl.html#definition",
+          "predicates": [
+            "sbol:definition", "sbol:displayId"
+          ],
+          "link" : "$<DefinitionLink>"
+        },
+        {
+          "title" : "DefinitionLink",
+          "predicates": [
+          ],
+          "hide" : true
+        },
+        {
+          "title": "MapsTos",
+          "infoLink": "https://dissys.github.io/sbol-owl/sbol-owl.html#MapsTo",
+          "predicates": [
+          ]
         }
       ]
     },
@@ -56,16 +93,59 @@
       "icon": "faVials",
       "sections": [
         {
-          "title": "Components",
-          "stripAfter": "#",
-          "predicates": [],
-          "link": "$<FunctionalComponentLink>"
+          "title": "Access",
+          "infoLink": "https://dissys.github.io/sbol-owl/sbol-owl.html#access",
+          "predicates": [
+            "sbol:access"
+          ],
+          "stripAfter" : "#"
         },
         {
-          "title": "FunctionalComponentLink",
-          "predicates": [],
+          "title": "Direction",
+          "infoLink": "https://dissys.github.io/sbol-owl/sbol-owl.html#direction",
+          "predicates": [
+            "sbol:direction"
+          ],
+          "stripAfter" : "#"
+        },
+         {
+          "title": "Instance",
+          "infoLink": "#",
+          "predicates": [
+            "sbol:displayId"
+          ],
+          "link": "$<InstanceLink>"
+        },
+        {
+          "title": "InstanceLink",
+          "predicates" :[
+            "sbol:persistentIdentity"
+          ],
           "hide": true
-      }
+        },
+        {
+          "title": "Definition",
+          "infoLink": "#",
+          "predicates": [
+            "sbol:displayId"
+          ],
+          "link": "$<DefinitionLink>"
+        },
+        {
+          "title": "DefinitionLink",
+          "predicates" :[
+            "sbol:definition"
+          ],
+          "hide": true
+        },
+
+        {
+          "title": "MapsTos",
+          "infoLink": "#",
+          "predicates": [
+            "sbol:mapsTo"
+          ]
+        }
       ]
     },
     {
@@ -82,9 +162,7 @@
     }
   ],
   "pages": [
-    "Details",
     "$TABLES[modules]",
-    "$TABLES[models]",
     "$TABLES[functional components]",
     "$TABLES[interactions]",
     "Other Properties",

@@ -282,8 +282,8 @@ function getType(member) {
   if (member.role) {
     memberType = lookupRole(member.role).description.name;
   }
-  if (memberType === 'ComponentDefinition') memberType = 'Component';
-  else if (memberType === 'ModuleDefinition') memberType = 'Module';
+  // if (memberType === 'ComponentDefinition') memberType = 'Component';
+  // else if (memberType === 'ModuleDefinition') memberType = 'Module';
 
   return memberType;
 }

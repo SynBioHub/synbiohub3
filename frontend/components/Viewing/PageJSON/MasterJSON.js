@@ -12,6 +12,7 @@ import Component from './Types/Component.json';
 import MapsTo from './Types/MapsTo.json';
 import FunctionalComponent from './Types/FunctionalComponent.json';
 import CombinatorialDerivation from './Types/CombinatorialDerivation.json';
+import Module from './Types/Module.json';
 
 
 const TypeToJson = {
@@ -28,7 +29,9 @@ const TypeToJson = {
   'http://sbols.org/v2#Component': Component,
   'http://sbols.org/v2#MapsTo': MapsTo,
   'http://sbols.org/v2#FunctionalComponent': FunctionalComponent,
-  'http://sbols.org/v2#CombinatorialDerivation': CombinatorialDerivation
+  'http://sbols.org/v2#CombinatorialDerivation': CombinatorialDerivation,
+  'http://sbols.org/v2#Module': Module
+
 };
 
 export default TypeToJson;
