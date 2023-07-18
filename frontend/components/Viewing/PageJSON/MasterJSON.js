@@ -14,6 +14,7 @@ import FunctionalComponent from './Types/FunctionalComponent.json';
 import CombinatorialDerivation from './Types/CombinatorialDerivation.json';
 import Module from './Types/Module.json';
 import Interaction from './Types/Interaction.json';
+import Participation from './Types/Participation.json';
 
 
 const TypeToJson = {
@@ -32,7 +33,8 @@ const TypeToJson = {
   'http://sbols.org/v2#FunctionalComponent': FunctionalComponent,
   'http://sbols.org/v2#CombinatorialDerivation': CombinatorialDerivation,
   'http://sbols.org/v2#Module': Module,
-  'http://sbols.org/v2#Interaction': Interaction
+  'http://sbols.org/v2#Interaction': Interaction,
+  'http://sbols.org/v2#Participation': Participation
 
 };
 

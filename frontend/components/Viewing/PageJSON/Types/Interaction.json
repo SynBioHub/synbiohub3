@@ -68,10 +68,19 @@
             ]
         }
     ]
-        }
+},
+    {
+        "title": "Measures",
+        "rootPredicate": "sbol:participation",
+        "icon": "faVials",
+        "sections": [ 
+
+    ]
+    }
     ],
     "pages": [
         "$TABLES[Participations]",
+        "$TABLES[Measures]",
         "Other Properties"
     ]
 }
