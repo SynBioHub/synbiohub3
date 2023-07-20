@@ -157,6 +157,7 @@
      }
    ],
    "pages": [
+     "Details",
      "$TABLES[Components]",
      "$TABLES[Sequence Annotations]",
      "Other Properties",

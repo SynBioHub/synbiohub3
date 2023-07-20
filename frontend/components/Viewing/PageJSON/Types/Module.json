@@ -82,6 +82,7 @@
       }
     ],
     "pages": [
+      "Details",
       "$TABLES[modules]",
       "$TABLES[models]",
       "$TABLES[functional components]",
