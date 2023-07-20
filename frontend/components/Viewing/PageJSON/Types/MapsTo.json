@@ -67,7 +67,6 @@
         "Details",
         "$TABLES[ComponentInstance]",
         "Other Properties",
-        "Member of these Collections",
         "Attachments"
     ]
 }
