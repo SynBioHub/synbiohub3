@@ -22,7 +22,7 @@ const { publicRuntimeConfig } = getConfig();
 function Submit() {
   const [files, setFiles] = useState([]);
   const [overwriteCollection, setOverwriteCollection] = useState(false);
-  const [selectedHandlers, setSelectedHandlers] = useState([]);
+  const [selectedHandlers, setSelectedHandlers] = useState(null);
   let pluginsAvailable = false;
 
   const showSubmitProgress = useSelector(
@@ -33,7 +33,13 @@ function Submit() {
   dispatch(getCanSubmitTo());
 
   const getSelectOptions = () => {
-    const selectOptions = [];
+    let selectOptions;
+    if(selectedHandlers === null) {
+       selectOptions = [];
+    }
+    else {
+       selectOptions = [{value: 'default', label: 'Default Handler'}];
+    }
 
     axios({
       method: 'GET',
@@ -90,14 +96,19 @@ function Submit() {
             className={styles.ownerselectcontainer}
             value={selectedHandlers}
             onChange={(e) => {
-                setSelectedHandlers(e);
+                if(e.value === 'default') {
+                  setSelectedHandlers(null);
+                }
+                else {
+                  setSelectedHandlers(e);
+                }
             }}
             options={getSelectOptions()}
-            isMulti={true}
+            isMulti={false}
             menuPortalTarget={document.body}
             styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
             getOptionValue={option => option.label}
-            placeholder='Submit Handler...'
+            placeholder='Submit Plugin Handler...'
           />
         <ChooseCollection label="Select Destination Collection" />
         <OverwriteObjects

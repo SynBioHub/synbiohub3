@@ -227,7 +227,7 @@ export const submit =
     files,
     overwriteIncrement = 0,
     addingToCollection = false,
-    plugins = []
+    plugins = null
   ) =>
   async (dispatch, getState) => {
     dispatch({
@@ -242,43 +242,39 @@ export const submit =
 
     const token = getState().user.token;
 
-    //Look for pluginName
-    if (plugins.length != 0) {
-      let unzippedFiles = [];
-      let convertedFiles = [];
-      for (let file of files) {
-        if (mime.lookup(file.name) === 'application/zip') {
-          var zip = new JSZip();
-          const result = await zip.loadAsync(file);
-          const keys = Object.keys(result.files);
+    let unzippedFiles = [];
 
-          for (let key of keys) {
-            if (!key.includes('__MACOSX/._')) {
-              const currFile = await result.files[key].async('blob');
-              currFile.name = key;
-              unzippedFiles.push(currFile);
-            }
+    for (let file of files) {
+      if (mime.lookup(file.name) === 'application/zip') {
+        var zip = new JSZip();
+        const result = await zip.loadAsync(file);
+
+        for(let [filename, zipFile] of Object.entries(result.files)) {
+          if (!filename.includes('__MACOSX/._')) {
+            const currFileBlob = await zipFile.async('blob');
+            const currFile = new File([currFileBlob], filename);
+
+            unzippedFiles.push(currFile)
           }
-        } else {
-          unzippedFiles.push(file);
+
         }
       }
-      for (let plugin of plugins) {
-        [convertedFiles, unzippedFiles] = await submitPluginHandler(
-          plugin.value,
-          convertedFiles,
-          unzippedFiles
-        );
+      else {
+        unzippedFiles.push(file)
       }
-      convertedFiles = convertedFiles.concat(unzippedFiles);
-      files = convertedFiles;
     }
+
+
+    const convertedFiles = await submitPluginHandler(unzippedFiles, plugins);
+
+
+
 
     await uploadFiles(
       dispatch,
       token,
       uri,
-      files,
+      convertedFiles,
       overwriteIncrement,
       addingToCollection
     );
@@ -288,6 +284,149 @@ export const submit =
       payload: false
     });
   };
+
+
+  async function submitPluginHandler(files, plugin) {
+
+    if(plugin === null) {
+      return files;
+    }
+
+    let evaluateFilesManifest = [];
+    let returnFiles = [];
+
+
+    for (let file of files) {
+
+      file.url = URL.createObjectURL(file)
+
+      
+      await axios({
+        method: 'POST',
+        url: `${publicRuntimeConfig.backend}/call`,
+        params: {
+          category: 'message'
+        },
+        data: {
+          message: file.url
+        }
+      })
+      
+
+      evaluateFilesManifest.push({
+        url: file.url,
+        filename: file.name,
+        type: mime.lookup(file.name)
+      })
+    }
+
+    const evaluateManifest = {
+      manifest: {
+        files: evaluateFilesManifest
+      }
+    };
+
+    return axios({
+      headers: {
+        'Content-Type': 'application/json',
+        'Accepts': 'application/json'
+      },
+      method: 'POST',
+      url: `${publicRuntimeConfig.backend}/call`,
+      params: {
+        name: plugin.value,
+        endpoint: 'evaluate',
+        category: 'submit',
+        data: encodeURIComponent(JSON.stringify(evaluateManifest))
+      }
+    }).then(async (response) => {
+      const requirementManifest = response.data.manifest;
+      let pluginFiles = [];
+
+      for(let file of requirementManifest) {
+        if(file.requirement === 0) {
+          returnFiles.push(findFile(files, file.filename))
+        }
+        else {
+          pluginFiles.push(findFile(files, file.filename))
+        }
+      }
+
+      let runFilesManifest = [];
+      for(let file of pluginFiles) {
+        runFilesManifest.push({
+          url: file.url,
+          filename: file.name,
+          type: mime.lookup(file.name),
+          instanceUrl: publicRuntimeConfig.backend
+        })
+      }
+
+      const runManifest = {
+        manifest: {
+          files: runFilesManifest
+        }
+      }
+
+      return axios({
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/zip'
+        },
+        method: 'POST',
+        url: `${publicRuntimeConfig.backend}/call`,
+        responseType: 'arraybuffer',
+        responseEncoding: 'binary',
+        params: {
+          name: plugin.value,
+          endpoint: 'run',
+          category: 'submit',
+          data: encodeURIComponent(JSON.stringify(runManifest))
+        }
+
+      }).then(async (response) => {
+
+
+        for (let file of files) {
+          URL.revokeObjectURL(file.url)
+        }
+
+        const pluginZip = response.data;
+
+        var zip = new JSZip();
+        const result = await zip.loadAsync(pluginZip);
+
+        //const jsonFile = await result.file('manifest.json').async('text')
+        //const jsonManifest = JSON.parse(jsonFile);
+        result.remove('manifest.json');
+
+        for(let [filename, zipFile] of Object.entries(result.files)) {
+
+          const currFileBlob = await zipFile.async('blob');
+          const currFile = new File([currFileBlob], filename);
+
+          returnFiles.push(currFile)
+          
+          
+        }
+
+        return returnFiles;
+        
+      })
+
+
+    })
+
+
+  }
+
+  function findFile (files, filename) {
+    for(let file of files) {
+      if(file.name === filename) {
+        return file;
+      }
+    }
+  }
 
 /**
  * Helper function called by the submit action
@@ -308,6 +447,7 @@ async function uploadFiles(
   const failedFiles = [];
 
   for (const file of files) {
+
     filesUploading.push({
       file: file,
       name: file.name,
@@ -315,6 +455,8 @@ async function uploadFiles(
       status: 'pending',
       errors: []
     });
+
+    
   }
 
   dispatch({
@@ -382,103 +524,6 @@ async function uploadFiles(
   }
 }
 
-async function submitPluginHandler(pluginName, convertedFiles, files) {
-  const evaluateManifest = {
-    manifest: {
-      files: []
-    }
-  };
-
-  for (let file of files) {
-    evaluateManifest.manifest.files.push({
-      url: file.url ? file.url : 'Unsuccessful', //File url isn't working
-      filename: file.name,
-      type: '',
-      instanceUrl: publicRuntimeConfig.backend
-    });
-  }
-
-  return axios({
-    method: 'POST',
-    url: `${publicRuntimeConfig.backend}/call`,
-    responseType: 'application/json',
-    params: {
-      name: pluginName,
-      endpoint: 'evaluate',
-      data: encodeURIComponent(JSON.stringify(evaluateManifest)),
-      category: 'submit'
-    }
-  })
-    .then(async function (response) {
-      let returnManifest = [];
-      let acceptedFiles = [];
-      let returnFiles = [];
-
-      const requirementManifest = response.data.manifest;
-
-      for (let i = 0; i < requirementManifest.length; i++) {
-        if (requirementManifest[i].requirement === 0) {
-          returnManifest.push(evaluateManifest.manifest.files[i]);
-        } else if (requirementManifest[i] === 1) {
-          returnManifest.push(evaluateManifest.manifest.files[i]);
-          acceptedFiles.push(evaluateManifest.manifest.files[i]);
-        } else {
-          acceptedFiles.push(evaluateManifest.manifest.files[i]);
-        }
-      }
-
-      const runManifest = {
-        manifest: {
-          files: acceptedFiles
-        }
-      };
-
-      for (let rejected of returnManifest) {
-        for (let file of files) {
-          if (file.name === rejected.filename) {
-            returnFiles.push(file);
-          }
-        }
-      }
-
-      return axios({
-        method: 'POST',
-        url: `${publicRuntimeConfig.backend}/call`,
-        responseType: 'arraybuffer',
-        params: {
-          name: pluginName,
-          endpoint: 'run',
-          data: encodeURIComponent(JSON.stringify(runManifest)),
-          category: 'submit'
-        }
-      })
-        .then(async function (response) {
-          //Need to unzip response and deal with files
-
-          const pluginZip = response.data;
-
-          var zip = new JSZip();
-          const result = await zip.loadAsync(pluginZip);
-          const keys = Object.keys(result.files);
-
-          for (let key of keys) {
-            if (key !== 'manifest.json') {
-              const currFile = await result.files[key].async('blob');
-              currFile.name = key;
-              convertedFiles.push(currFile);
-            }
-          }
-          return [convertedFiles, returnFiles];
-        })
-        .catch(error => {
-          return [files, convertedFiles];
-        });
-    })
-    .catch(error => {
-      return [files, convertedFiles];
-    });
-  //Need to make for loop to recombine files and send back to submit (maybe test first with just sending back plugin files and no default handlers)
-}
 
 export const addAttachments = (files, uri) => async (dispatch, getState) => {
   var newFailedFiles = getState().submit.failedFiles;
