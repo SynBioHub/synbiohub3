@@ -1,10 +1,8 @@
 import { faCloudUploadAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import axios from 'axios';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
-import Select from "react-select";
 
 import ChooseCollection from '../components/Submit/ChooseCollection/ChooseCollection';
 import UploadFileSection from '../components/Submit/FileComponents/UploadFileSection';
@@ -16,14 +14,14 @@ import TopLevel from '../components/TopLevel';
 import { getCanSubmitTo } from '../redux/actions';
 import styles from '../styles/submit.module.css';
 
-import getConfig from "next/config";
-const { publicRuntimeConfig } = getConfig();
+import ConfigureModal from '../components/Viewing/Modals/ConfigureModal';
+import SubmissionHandler from '../components/Submit/ReusableComponents/SubmissionHandler';
 
 function Submit() {
   const [files, setFiles] = useState([]);
   const [overwriteCollection, setOverwriteCollection] = useState(false);
-  const [selectedHandlers, setSelectedHandlers] = useState(null);
-  let pluginsAvailable = false;
+  const [selectedHandler, setSelectedHandler] = useState({value: 'default', label: 'Default Handler'});
+  const [modal, setModal] = useState();
 
   const showSubmitProgress = useSelector(
     state => state.submit.showSubmitProgress
@@ -32,45 +30,10 @@ function Submit() {
   const dispatch = useDispatch();
   dispatch(getCanSubmitTo());
 
-  const getSelectOptions = () => {
-    let selectOptions;
-    if(selectedHandlers === null) {
-       selectOptions = [];
+  const handleClick = () => {
+    if(selectedHandler.value === 'configure') {
+      setModal('configure')
     }
-    else {
-       selectOptions = [{value: 'default', label: 'Default Handler'}];
-    }
-
-    axios({
-      method: 'GET',
-      url: `${publicRuntimeConfig.backend}/admin/plugins`,
-      params: {
-        category: 'submit'
-      },
-      headers: {
-        Accept: 'application/json'
-      }
-    }).then(response => {
-      const submitPlugins = response.data.submit;
-
-      for(let plugin of submitPlugins) {
-        axios({
-          method: 'POST',
-          url: `${publicRuntimeConfig.backend}/call`,
-          params: {
-            name: plugin.name,
-            endpoint: 'status',
-            category: 'submit'
-          }
-        }).then(response => {
-          if(response.status === 200) selectOptions.push({value: plugin.name, label: plugin.name});
-          pluginsAvailable = true;
-        }).catch(error => {return;});
-      }
-
-    }).catch(error => {return;});
-
-    return selectOptions;
   }
 
   if (showSubmitProgress) {
@@ -78,6 +41,15 @@ function Submit() {
   }
   return (
     <div className={styles.container}>
+      {modal === 'configure' ?
+        (
+          <ConfigureModal
+            setModal={setModal}
+            files={files}
+            overwriteCollection={overwriteCollection}
+          />
+        )
+      : null}
       <div className={styles.submitpanel}>
         <SubmitHeader
           icon={
@@ -92,30 +64,19 @@ function Submit() {
             uploaded into an existing or new collection."
         />
         <UploadFileSection files={files} setFiles={setFiles} />
-          <Select 
-            className={styles.ownerselectcontainer}
-            value={selectedHandlers}
-            onChange={(e) => {
-                if(e.value === 'default') {
-                  setSelectedHandlers(null);
-                }
-                else {
-                  setSelectedHandlers(e);
-                }
-            }}
-            options={getSelectOptions()}
-            isMulti={false}
-            menuPortalTarget={document.body}
-            styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-            getOptionValue={option => option.label}
-            placeholder='Submit Plugin Handler...'
+          <SubmissionHandler 
+            selectedHandler={selectedHandler}
+            setSelectedHandler={setSelectedHandler}
+            configureOption={true}
+            
+          
           />
         <ChooseCollection label="Select Destination Collection" />
         <OverwriteObjects
           checked={overwriteCollection}
           setChecked={setOverwriteCollection}
         />
-        <SubmitButton files={files} overwriteCollection={overwriteCollection} submitHandlers={selectedHandlers} />
+        <SubmitButton files={files} overwriteCollection={overwriteCollection} submitHandler={selectedHandler} change={handleClick} />
         
       </div>
     </div>

@@ -23,20 +23,25 @@ export default function SubmitButton(properties) {
       }`}
       role="button"
       onClick={() => {
+        
         if (!canSubmit)
           alert(
             'You must select one or more files and a destination collection before you can submit.'
           );
-        else 
+        else if (properties.submitHandler.value === 'configure') {
+          properties.change()
+        }
+        else
           dispatch(
             submit(
               selectedCollection.uri,
               properties.files,
               properties.overwriteCollection ? 1 : 0,
               properties.addingToCollection ? true : false,
-              properties.submitHandlers
+              properties.submitHandler
             )
           );
+          
       }}
     >
       <FontAwesomeIcon

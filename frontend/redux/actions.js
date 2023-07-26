@@ -227,7 +227,7 @@ export const submit =
     files,
     overwriteIncrement = 0,
     addingToCollection = false,
-    plugins = null
+    plugin = null
   ) =>
   async (dispatch, getState) => {
     dispatch({
@@ -241,6 +241,53 @@ export const submit =
     });
 
     const token = getState().user.token;
+
+
+    const convertedFiles = await submitPluginHandler(files, plugin);
+
+
+
+
+    await uploadFiles(
+      dispatch,
+      token,
+      uri,
+      convertedFiles,
+      overwriteIncrement,
+      addingToCollection
+    );
+
+    dispatch({
+      type: types.SUBMITTING,
+      payload: false
+    });
+  };
+
+
+  async function submitPluginHandler(files, plugin) {
+
+    if (plugin.value === 'configure') {
+      const returnFiles = [];
+
+      for (let [key, value] of plugin.pluginBundles) {
+          const convertedFiles = await singlePluginHandler(value, key.value)
+          returnFiles.push(...convertedFiles)
+
+      }
+      return returnFiles
+    }
+
+    else {
+      return await singlePluginHandler(files, plugin.value)
+    }
+
+  }
+
+  async function singlePluginHandler(files, plugin) {
+
+    if(plugin === 'default') {
+      return files
+    }
 
     let unzippedFiles = [];
 
@@ -264,39 +311,11 @@ export const submit =
       }
     }
 
-
-    const convertedFiles = await submitPluginHandler(unzippedFiles, plugins);
-
-
+    const evaluateFilesManifest = [];
+    const returnFiles = [];
 
 
-    await uploadFiles(
-      dispatch,
-      token,
-      uri,
-      convertedFiles,
-      overwriteIncrement,
-      addingToCollection
-    );
-
-    dispatch({
-      type: types.SUBMITTING,
-      payload: false
-    });
-  };
-
-
-  async function submitPluginHandler(files, plugin) {
-
-    if(plugin === null) {
-      return files;
-    }
-
-    let evaluateFilesManifest = [];
-    let returnFiles = [];
-
-
-    for (let file of files) {
+    for (let file of unzippedFiles) {
 
       file.url = URL.createObjectURL(file)
 
@@ -334,25 +353,25 @@ export const submit =
       method: 'POST',
       url: `${publicRuntimeConfig.backend}/call`,
       params: {
-        name: plugin.value,
+        name: plugin,
         endpoint: 'evaluate',
         category: 'submit',
         data: encodeURIComponent(JSON.stringify(evaluateManifest))
       }
     }).then(async (response) => {
       const requirementManifest = response.data.manifest;
-      let pluginFiles = [];
+      const pluginFiles = [];
 
       for(let file of requirementManifest) {
         if(file.requirement === 0) {
-          returnFiles.push(findFile(files, file.filename))
+          returnFiles.push(findFile(unzippedFiles, file.filename))
         }
         else {
-          pluginFiles.push(findFile(files, file.filename))
+          pluginFiles.push(findFile(unzippedFiles, file.filename))
         }
       }
 
-      let runFilesManifest = [];
+      const runFilesManifest = [];
       for(let file of pluginFiles) {
         runFilesManifest.push({
           url: file.url,
@@ -378,7 +397,7 @@ export const submit =
         responseType: 'arraybuffer',
         responseEncoding: 'binary',
         params: {
-          name: plugin.value,
+          name: plugin,
           endpoint: 'run',
           category: 'submit',
           data: encodeURIComponent(JSON.stringify(runManifest))
@@ -387,7 +406,7 @@ export const submit =
       }).then(async (response) => {
 
 
-        for (let file of files) {
+        for (let file of unzippedFiles) {
           URL.revokeObjectURL(file.url)
         }
 
