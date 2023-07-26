@@ -408,3 +408,32 @@
   margin: 0 auto;
   padding: 1rem 0 1rem 0;
 }
+
+.configuremodalcontainer {
+   width: 70%;
+  text-align: left;
+  margin: 0 auto;
+  padding: 0rem 0 4rem 0;
+  max-height: 20rem;
+   overflow: scroll;
+}
+
+.modalicon {
+   display: block;
+   margin-left: auto;
+   margin-right: auto;
+   font-size: 3rem;
+   margin-bottom: 1rem;
+   color: #2C3E50;
+ }
+
+ .configurefile {
+   display: inline;
+ }
+
+ .configurefilename {
+   margin: 0.5rem 0 0 0;
+   padding: 0;
+   font-size: 1rem;
+   color: #575757
+}

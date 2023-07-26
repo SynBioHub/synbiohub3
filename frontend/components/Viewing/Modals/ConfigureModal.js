@@ -1,4 +1,4 @@
-import styles from "../../../styles/view.module.css";
+import styles from '../../../styles/submit.module.css';
 import { faCloudUploadAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import JSZip from 'jszip';
@@ -68,8 +68,8 @@ export default function ConfigureModal(properties) {
 
 
     const filesDisplay = properties.files.map(file => (
-        <div key={file.name}>
-            <p className={styles.introexplanation}>{file.name}</p>
+        <div key={file.name} className={styles.configurefile}>
+            <p className={styles.configurefilename}>{file.name}</p>
             <SubmissionHandler 
                 selectedHandler={fileMap.get(file)}
                 setSelectedHandler={(e) => {
@@ -100,7 +100,7 @@ export default function ConfigureModal(properties) {
         }
         content={
             <React.Fragment>
-            <div className={styles.downloadmodalcontainer}>
+            <div className={styles.configuremodalcontainer}>
                 <h5>Select a submission handler for each file:</h5>
                 {filesDisplay}
             </div>
