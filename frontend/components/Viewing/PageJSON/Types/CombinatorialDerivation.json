@@ -19,8 +19,8 @@
             "sections": [
                 {
                     "title": "Extra Work",
-                    "stripAfter": "#",
-                    "predicates": []
+                    "predicates": [
+                    ]
                 }
             ]
         },

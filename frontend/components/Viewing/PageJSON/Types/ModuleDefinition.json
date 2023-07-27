@@ -88,7 +88,7 @@
       ]
     },
     {
-      "title": "functional components",
+      "title": "Functional Components",
       "rootPredicate": "sbol:functionalComponent",
       "icon": "faVials",
       "sections": [
@@ -163,7 +163,7 @@
   ],
   "pages": [
     "$TABLES[modules]",
-    "$TABLES[functional components]",
+    "$TABLES[Functional Components]",
     "$TABLES[interactions]",
     "Other Properties",
     "Member of these Collections",
