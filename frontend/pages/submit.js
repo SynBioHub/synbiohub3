@@ -47,6 +47,7 @@ function Submit() {
             setModal={setModal}
             files={files}
             overwriteCollection={overwriteCollection}
+            failed={false}
           />
         )
       : null}
@@ -68,7 +69,7 @@ function Submit() {
             selectedHandler={selectedHandler}
             setSelectedHandler={setSelectedHandler}
             configureOption={true}
-            
+            failed={false}
           
           />
         <ChooseCollection label="Select Destination Collection" />

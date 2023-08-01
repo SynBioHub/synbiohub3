@@ -47,6 +47,10 @@ export default function SubmissionHandler(properties) {
         if(properties.configureOption) {
             selectOptions.push({value: 'configure', label: 'Advanced (configure on next step)'});
         }
+
+        if(properties.failed) {
+          selectOptions.push({value: 'null', label: 'Do Not Reupload'});
+        }
     
         return selectOptions;
       }

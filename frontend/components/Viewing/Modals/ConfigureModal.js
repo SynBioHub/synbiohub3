@@ -38,30 +38,37 @@ export default function ConfigureModal(properties) {
         if(submitted) {
             const pluginBundles = new Map();
             fileMap.forEach((value, key) => {
-                if(pluginBundles.has(value)) {
-                    pluginBundles.get(value).push(key)
-                }
-                else {
-                    const fileList = [];
-                    fileList.push(key)
-                    pluginBundles.set(value, fileList)
+                if(value.value !== 'null') {
+                    if(pluginBundles.has(value)) {
+                        pluginBundles.get(value).push(key)
+                    }
+                    else {
+                        const fileList = [];
+                        fileList.push(key)
+                        pluginBundles.set(value, fileList)
+                    }
                 }
             })
 
-            const pluginObject = {
-                value: 'configure',
-                pluginBundles: pluginBundles
+            if(pluginBundles.size !== 0) {
+                const pluginObject = {
+                    value: 'configure',
+                    pluginBundles: pluginBundles
+                }
+    
+                dispatch(
+                    submit(
+                      selectedCollection.uri,
+                      properties.files,
+                      properties.overwriteCollection ? 1 : 0,
+                      properties.addingToCollection ? true : false,
+                      pluginObject,
+                      properties.failed
+                    )
+                  );
             }
 
-            dispatch(
-                submit(
-                  selectedCollection.uri,
-                  properties.files,
-                  properties.overwriteCollection ? 1 : 0,
-                  properties.addingToCollection ? true : false,
-                  pluginObject
-                )
-              );
+            
         }
     },[submitted])
 
@@ -76,6 +83,7 @@ export default function ConfigureModal(properties) {
                     setFileMap(new Map(fileMap.set(file, e)));
                 }}
                 configureOption={false}
+                failed={properties.failed}
             
             />
         </div>

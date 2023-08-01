@@ -227,13 +227,38 @@ export const submit =
     files,
     overwriteIncrement = 0,
     addingToCollection = false,
-    plugin = null
+    plugin = null,
+    resubmit = false
   ) =>
   async (dispatch, getState) => {
-    dispatch({
-      type: types.SUBMITRESET,
-      payload: true // sets submitting state to true
-    });
+    if(!resubmit){
+      dispatch({
+        type: types.SUBMITRESET,
+        payload: true // sets submitting state to true
+      });
+    }
+    else {
+      dispatch({
+        type: types.SUBMITTING,
+        payload: true
+      })
+
+      var failedFiles = getState().submit.failedFiles
+
+      for(let file of files) {
+        failedFiles = failedFiles.filter(failedFile => file.name !== failedFile.name)
+      }
+      dispatch({
+        type: types.FAILEDFILES,
+        payload: failedFiles
+      })
+      if(failedFiles.length === 0) {
+        dispatch({
+          type: types.FILEFAILED,
+          payload: false
+        })
+      }
+    }
 
     dispatch({
       type: types.SHOWSUBMITPROGRESS,
@@ -243,13 +268,14 @@ export const submit =
     const token = getState().user.token;
 
 
-    const convertedFiles = await submitPluginHandler(files, plugin);
+    const convertedFiles = await submitPluginHandler(files, plugin, dispatch, getState);
 
 
 
 
     await uploadFiles(
       dispatch,
+      getState,
       token,
       uri,
       convertedFiles,
@@ -264,13 +290,13 @@ export const submit =
   };
 
 
-  async function submitPluginHandler(files, plugin) {
+  async function submitPluginHandler(files, plugin, dispatch, getState) {
 
     if (plugin.value === 'configure') {
       const returnFiles = [];
 
       for (let [key, value] of plugin.pluginBundles) {
-          const convertedFiles = await singlePluginHandler(value, key.value)
+          const convertedFiles = await singlePluginHandler(value, key.value, dispatch, getState)
           returnFiles.push(...convertedFiles)
 
       }
@@ -278,12 +304,12 @@ export const submit =
     }
 
     else {
-      return await singlePluginHandler(files, plugin.value)
+      return await singlePluginHandler(files, plugin.value, dispatch, getState)
     }
 
   }
 
-  async function singlePluginHandler(files, plugin) {
+  async function singlePluginHandler(files, plugin, dispatch, getState) {
 
     if(plugin === 'default') {
       return files
@@ -320,16 +346,6 @@ export const submit =
       file.url = URL.createObjectURL(file)
 
       
-      await axios({
-        method: 'POST',
-        url: `${publicRuntimeConfig.backend}/call`,
-        params: {
-          category: 'message'
-        },
-        data: {
-          message: file.url
-        }
-      })
       
 
       evaluateFilesManifest.push({
@@ -415,8 +431,12 @@ export const submit =
         var zip = new JSZip();
         const result = await zip.loadAsync(pluginZip);
 
-        //const jsonFile = await result.file('manifest.json').async('text')
-        //const jsonManifest = JSON.parse(jsonFile);
+        const jsonFile = await result.file('manifest.json').async('string')
+
+        const jsonFileFixed = jsonFile.replaceAll("'", '"')
+        
+        
+        const jsonManifest = JSON.parse(jsonFileFixed);
         result.remove('manifest.json');
 
         for(let [filename, zipFile] of Object.entries(result.files)) {
@@ -424,16 +444,77 @@ export const submit =
           const currFileBlob = await zipFile.async('blob');
           const currFile = new File([currFileBlob], filename);
 
-          returnFiles.push(currFile)
-          
+          returnFiles.push(currFile)    
           
         }
 
+        const convertedFiles = getState().submit.convertedFiles
+
+          for(let fileResult of jsonManifest.results) {
+            const fileSources = [];
+            for(let filename of fileResult.sources) {
+              fileSources.push(findFile(unzippedFiles, filename))
+            }
+
+            convertedFiles.push(
+              {
+                convertedFileName: fileResult.filename,
+                fileSources: fileSources
+              }
+            )
+          }
+
+          dispatch({
+            type: types.CONVERTEDFILES,
+            payload: convertedFiles
+          })
+
         return returnFiles;
         
+      }).catch(error => {
+
+        const failedFiles = [];
+
+        for(let file of unzippedFiles) {
+          failedFiles.push({
+            file: file,
+            name: file.name,
+            url: file.url,
+            status: 'failed',
+            errors: ['Error using ' + plugin + ': ' + error.message]
+          })
+        }
+
+        dispatch({ type: types.FILEFAILED, payload: true });
+        dispatch({
+          type: types.FAILEDFILES,
+          payload: [...failedFiles]
+        });
+
+        return returnFiles;
       })
 
 
+    }).catch(error => {
+      const failedFiles = [];
+
+        for(let file of unzippedFiles) {
+          failedFiles.push({
+            file: file,
+            name: file.name,
+            url: file.url,
+            status: 'failed',
+            errors: ['Error using ' + plugin + ': ' + error.message]
+          })
+        }
+
+        dispatch({ type: types.FILEFAILED, payload: true });
+        dispatch({
+          type: types.FAILEDFILES,
+          payload: [...failedFiles]
+        });
+
+        return [];
     })
 
 
@@ -456,14 +537,15 @@ export const submit =
  */
 async function uploadFiles(
   dispatch,
+  getState,
   token,
   uri,
   files,
   overwriteIncrement = 0,
   addingToCollection = false
 ) {
-  const filesUploading = [];
-  const failedFiles = [];
+  const filesUploading = getState().submit.filesUploading;
+  const failedFiles = getState().submit.failedFiles;
 
   for (const file of files) {
 
@@ -519,15 +601,66 @@ async function uploadFiles(
 
     if (response.status === 200) {
       filesUploading[fileIndex].status = 'successful';
+      
+      var convertedFiles = getState().submit.convertedFiles
+      await axios(({
+        method: 'POST',
+        url: `${publicRuntimeConfig.backend}/call`,
+        params: {
+          category: 'message'
+        },
+        data: {
+          message: 'Before state Change for ' + filesUploading[fileIndex].name +  ':      ' + JSON.stringify(convertedFiles)
+        }
+      }))
+      convertedFiles = convertedFiles.filter(item => item["convertedFileName"] !== filesUploading[fileIndex].name)
+
+      dispatch({
+        type: types.CONVERTEDFILES,
+        payload: convertedFiles
+      })
+      
     } else {
       var fileErrorMessages = await response.text();
       fileErrorMessages =
         fileErrorMessages.charAt(0) !== '['
           ? [fileErrorMessages]
           : JSON.parse(fileErrorMessages);
-      filesUploading[fileIndex].status = 'failed';
-      filesUploading[fileIndex].errors = fileErrorMessages;
-      failedFiles.push(filesUploading[fileIndex]);
+
+
+      var convertedFiles = getState().submit.convertedFiles
+      let origFiles = null;
+      for (let item of convertedFiles) {
+        if(item.convertedFileName === filesUploading[fileIndex].name) {
+              origFiles = item.fileSources
+            }
+          }
+
+
+      if(origFiles !== null) {
+        
+        for(let file of origFiles) {
+          failedFiles.push({
+            file: file,
+            name: file.name,
+            url: file.url,
+            status: 'failed',
+            errors: fileErrorMessages
+          })
+        }
+
+        convertedFiles = convertedFiles.filter(item => item["convertedFileName"] !== filesUploading[fileIndex].name)
+        dispatch({
+          type: types.CONVERTEDFILES,
+          payload: convertedFiles
+        })
+        
+      }
+      else {
+        filesUploading[fileIndex].status = 'failed';
+        filesUploading[fileIndex].errors = fileErrorMessages;
+        failedFiles.push(filesUploading[fileIndex]);
+      }
       filesUploading.splice(fileIndex, 1);
       fileIndex -= 1;
       dispatch({ type: types.FILEFAILED, payload: true });
@@ -541,6 +674,24 @@ async function uploadFiles(
       payload: [...filesUploading]
     });
   }
+}
+
+function retrieveConvertedFile(dispatch, getState, filename) {
+  var convertedFiles = getState().submit.convertedFiles
+  let targetFiles = null;
+  for (let item of convertedFiles) {
+    if(item.convertedFileName === filename) {
+      targetFiles = item.fileSources
+    }
+  }
+  convertedFiles = convertedFiles.filter(item => item["convertedFileName"] !== filename)
+      dispatch({
+        type: types.CONVERTEDFILES,
+        payload: convertedFiles
+      })
+
+
+  return targetFiles
 }
 
 
