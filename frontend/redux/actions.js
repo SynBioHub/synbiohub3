@@ -603,16 +603,6 @@ async function uploadFiles(
       filesUploading[fileIndex].status = 'successful';
       
       var convertedFiles = getState().submit.convertedFiles
-      await axios(({
-        method: 'POST',
-        url: `${publicRuntimeConfig.backend}/call`,
-        params: {
-          category: 'message'
-        },
-        data: {
-          message: 'Before state Change for ' + filesUploading[fileIndex].name +  ':      ' + JSON.stringify(convertedFiles)
-        }
-      }))
       convertedFiles = convertedFiles.filter(item => item["convertedFileName"] !== filesUploading[fileIndex].name)
 
       dispatch({
@@ -960,7 +950,14 @@ export const downloadFiles =
       dispatch({ type: types.DOWNLOADSTATUS, payload: 'Zipping' });
       for (const result of results) {
         if (result.status === 'fulfilled') {
-          var filename = `${result.value.file.displayId}.${result.value.file.type}`;
+          let filename;
+          if(plugin) {
+            filename = `${result.value.file.pluginName}`;
+          }
+          else {
+            filename = `${result.value.file.displayId}.${result.value.file.type}`;
+          }
+          
           zip.file(filename, result.value.response.data);
         }
       }
@@ -1016,6 +1013,7 @@ const zippedFilePromise = (
             const filename = response.headers['content-disposition'].split('=')[1];
             const extension = filename.split('.').pop().replace('"', '');
             file.type = extension
+            file.pluginName = filename.replaceAll('"','');
           }
           resolve({ file, response });
           
