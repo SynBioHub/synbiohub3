@@ -28,11 +28,11 @@ const { publicRuntimeConfig } = getConfig();
  *
  * @param {Any} properties Information from the parent component.
  */
-export default function SidePanel({ metadata, type, json, uri }) {
+export default function SidePanel({ metadata, type, json, uri, plugins }) {
   const [translation, setTranslation] = useState(0);
   const date = metadata.created.replace('T', ' ').replace('Z', '');
 
-  const pagesInfo = getPagesInfo(type, json);
+  const pagesInfo = getPagesInfo(type, json, plugins);
 
   return (
     <div
@@ -137,10 +137,17 @@ export default function SidePanel({ metadata, type, json, uri }) {
   );
 }
 
-function getPagesInfo(type, json) {
+function getPagesInfo(type, json, plugins) {
   if (json === null) return { type: type, order: [] };
-  if (localStorage.getItem(type) === null)
+  if (localStorage.getItem(type) === null) {
+    
+    const order = json.pages
+    for(let plugin of plugins.rendering) {
+      order.push('PLUGIN: ' + plugin.name)
+    }
+    
     return { type: type, order: json.pages };
+  }
 
   return { type: type, order: JSON.parse(localStorage.getItem(type)).order };
 }

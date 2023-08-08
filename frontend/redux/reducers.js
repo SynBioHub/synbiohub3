@@ -323,11 +323,12 @@ const initialPageSectionsOrder = {
   type: "",
   order: [],
   minimized: [],
-  selected: []
+  selected: [],
+  hiddenSections: []
 };
 
 /**
- * This reducer tracks the order of the page sections the minimized sections.
+ * This reducer tracks the order of the page sections and the minimized sections.
  */
 const pageSectionsReducer = (state = initialPageSectionsOrder, { type, payload }) => {
   switch (type) {
@@ -350,6 +351,11 @@ const pageSectionsReducer = (state = initialPageSectionsOrder, { type, payload }
       return {
         ...state,
         selected: payload
+      }
+    case types.UPDATEHIDDENSECTIONS:
+      return {
+        ...state,
+        hiddenSections: payload
       }
     default:
       return state;

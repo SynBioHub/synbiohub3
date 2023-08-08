@@ -1,14 +1,20 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import parse, { domToReact } from 'html-react-parser';
+import React from 'react';
 
-import Section from './Sections/Section';
 import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
+import { useSelector, useDispatch } from 'react-redux';
+import { updateHiddenSections } from '../../redux/actions';
 
 export default function Plugin(properties) {
   const [status, setStatus] = useState(null);
   const [content, setContent] = useState("");
+  const pageSectionsOrder = useSelector(state => state.pageSections.order);
+  const hiddenSections = useSelector(state => state.pageSections.hiddenSections)
+
+  const dispatch = useDispatch();
   
   const uri = properties.uri;
   
@@ -20,17 +26,32 @@ export default function Plugin(properties) {
   };
 
   useEffect(() => {
-    if (status == null) {
+    if (status === null) {
       evaluatePlugin(properties.plugin, properties.type).then(status => setStatus(status));
     }
     else if (status) {
       const downloadContent = async () => {
-      const toRender = await runPlugin(properties.plugin, pluginData, uri, properties.type);
+      const toRender = await runPlugin(properties.plugin, pluginData);
       setContent(toRender);
       };
       downloadContent();
     }
-  }, [status]);
+  }, [status, pageSectionsOrder]);
+
+  useEffect(() => {
+    if(status === false) {
+      hiddenSections.push('PLUGIN: ' + properties.plugin.name)
+      dispatch(
+        updateHiddenSections(hiddenSections)
+      )
+    }
+    else if (status === true) {
+      const updatedHiddenSections = hiddenSections.filter(str => str !== 'PLUGIN: ' + properties.plugin.name)
+      dispatch(
+        updateHiddenSections(updatedHiddenSections)
+      )
+    }
+  }, [status])
 
   if (status) {
 
@@ -66,9 +87,10 @@ export default function Plugin(properties) {
     }
 
     return (
-    <Section title={properties.plugin.name} id={properties.plugin.name}>
-      {parse(`${content}`, options)}
-    </Section>);
+      <div id={properties.plugin.name}>
+        {parse(`${content}`, options)}
+      </div>
+    );
   }
   
   else {
@@ -98,7 +120,7 @@ async function evaluatePlugin(plugin, type) {
   });
 }
 
-async function runPlugin(plugin, pluginData, uri, type) {
+async function runPlugin(plugin, pluginData) {
   return await axios({
     method: 'POST',
     url: `${publicRuntimeConfig.backend}/call`,

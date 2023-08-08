@@ -3,7 +3,6 @@ import { saveAs } from 'file-saver';
 import JSZip from 'jszip';
 import getConfig from 'next/config';
 import { mutate } from 'swr';
-import FileDropzone from '../components/Submit/FileComponents/FileDropzone';
 const mime = require('mime-types');
 
 import * as types from './types';
@@ -1188,6 +1187,13 @@ export const updateSelectedSections = (selectedSections, type) => dispatch => {
     payload: selectedSections
   });
 };
+
+export const updateHiddenSections = hiddenSections => dispatch => {
+  dispatch({
+    type: types.UPDATEHIDDENSECTIONS,
+    payload: hiddenSections
+  })
+}
 
 // ATTACHMENTS SECTION
 
