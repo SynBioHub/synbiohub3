@@ -25,7 +25,7 @@ sections will be minimizable and some won't be.
 export default function Section(properties) {
   const dispatch = useDispatch();
 
-  const id = properties.id || properties.title;
+  const id = properties.pluginID || (properties.id || properties.title);
 
   //The index that the section is at in the section order.
   const sectionIndex = useSelector(state => state.pageSections.order).indexOf(

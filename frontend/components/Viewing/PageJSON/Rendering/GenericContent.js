@@ -43,7 +43,7 @@ export default function GenericContent({ json, uri, metadata, plugins, type }) {
         const title = page.substring(8, page.length)
         const plugin = plugins.rendering.filter(plugin => plugin.name === title)[0]
         return(
-          <Section title={title} key={index} >
+          <Section title={title} key={index} pluginID={page} >
             <Plugin plugin={plugin} type={type} uri={uri} />
           </Section>
         );
