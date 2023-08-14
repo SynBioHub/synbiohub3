@@ -20,7 +20,15 @@
                 {
                     "title": "Extra Work",
                     "stripAfter": "#",
-                    "predicates": []
+                    "predicates": [
+                        "sbol:displayId"
+                    ],
+                    "link": "$<typeLink>"
+                },
+                {
+                    "title": "typeLink",
+                    "predicates": [],
+                    "hide": true
                 }
             ]
         }
@@ -47,8 +55,9 @@
         },
         {
             "title": "Participant Definition",
-            "infoLink": "https://dissys.github.io/sbol-owl/sbol-owl.html#definition",
+            "infoLink": "https://sbols.org/v2#definition",
             "predicates": [
+                "sbol:participant",
                 "sbol:displayId"
             ],
             "link": "$<ParticipationDefinitionLink>"
@@ -56,13 +65,13 @@
         {
             "title": "ParticipationDefinitionLink",
             "predicates":[  
-
+                "sbol:participant"
             ],
             "hide": true
         },
         {
             "title": "Role",
-            "infoLink": "https://dissys.github.io/sbol-owl/sbol-owl.html#role",
+            "infoLink": "https://sbols.org/v2#role",
             "predicates": [
                 "sbol:participation", "sbol:role"
             ]

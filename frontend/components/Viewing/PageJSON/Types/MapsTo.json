@@ -20,19 +20,35 @@
                 {
                     "title": "Extra Work",
                     "stripAfter": "#",
-                    "predicates": []
+                    "predicates": [],
+                    "link": "$<refinementLink>"
+                },
+                {
+                    "title": "refinementLink",
+                    "predicates": [],
+                    "hide": true
                 }
             ]
         },
         {
             "title": "Remote",
-            "rootPredicate": "sbol:remote",
+            "rootPredicate": [
+                "sbol:remote"
+            ],
             "icon": "faVials",
             "sections": [
                 {
                     "title": "Extra Work",
                     "stripAfter": "#",
-                    "predicates": []
+                    "predicates": [
+                        "sbol:displayId"
+                    ],
+                    "link": "$<remoteLink>"
+                },
+                {
+                    "title": "remoteLink",
+                    "predicates": [],
+                    "hide": true
                 }
             ]
         },
@@ -44,28 +60,23 @@
                 {
                     "title": "Extra Work",
                     "stripAfter": "#",
-                    "predicates": []
+                    "predicates": [
+                        "sbol:displayId"
+                    ],
+                    "link": "$<localLink>"
+                },
+                {
+                    "title": "localLink",
+                    "predicates": [],
+                    "hide": true
                 }
             ]
         }
     ],
     "tables": [
-        {
-            "title": "ComponentInstance",
-            "rootPredicate": "sbol:componentinstance",
-            "icon": "faVials",
-            "sections": [
-                {
-                    "title": "Extra Work",
-                    "stripAfter": "#",
-                    "predicates": []
-                }
-            ]
-        }
     ],
     "pages": [
         "Details",
-        "$TABLES[ComponentInstance]",
         "Other Properties",
         "Attachments"
     ]

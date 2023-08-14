@@ -13,6 +13,47 @@
     ],
     "metadata": [
         {
+            "title": "Access",
+            "rootPredicate": "sbol:access",
+            "infoLink": "https://sbols.org/v2#access",
+            "icon": "faVials",
+            "sections": [
+                {
+                    "title": "Extra Work",
+                    "stripAfter": "#",
+                    "predicates": [
+                    ],
+                    "link": "$<accessLink>"
+                },
+                {
+                    "title": "accessLink",
+                    "predicates": [],
+                    "hide": true
+                }
+            ]
+        },
+        {
+            "title": "Definition",
+            "rootPredicate": "sbol:definition",
+            "infoLink": "https://sbols.org/v2#definition",
+            "icon": "faVials",
+            "sections": [
+                {
+                    "title": "Extra Work",
+                    "stripAfter": "#",
+                    "predicates": [
+                        "sbol:displayId"
+                    ],
+                    "link": "$<definitionLink>"
+                },
+                {
+                    "title": "definitionLink",
+                    "predicates": [],
+                    "hide": true
+                }
+            ]
+        },
+        {
             "title": "Role(s)",
             "rootPredicate": "sbol:role",
             "icon": "faVials",
@@ -39,12 +80,38 @@
         {
             "title": "sourceLocations",
             "rootPredicate": "sbol:sourceLocation",
+            "infoLink": "https://sbols.org/v2#Location",
             "icon": "faVials",
             "sections": [
                 {
-                    "title": "Extra Work",
+                    "title": "Location",
                     "stripAfter": "#",
-                    "predicates": []
+                    "predicates": [
+                        "sbol:Range",
+                        "sbol:displayId"
+                    ],
+                    "text": "$<Start>, $<End>",
+                    "link": "$<locationLink>"
+                },
+                {
+                    "title": "Start",
+                    "predicates": [
+                        "sbol:start"
+                    ],
+                    "hide": true
+                },
+                {
+                    "title": "End",
+                    "predicates": [
+                        "sbol:end"
+                    ],
+                    "hide": true
+                },
+                {
+                    "title": "locationLink",
+                    "predicates": [
+                    ],
+                    "hide": true
                 }
             ]
         }
@@ -53,7 +120,6 @@
     "pages": [
         "Details",
         "Other Properties",
-        "Member of these Collections",
         "Attachments"
     ]
 }

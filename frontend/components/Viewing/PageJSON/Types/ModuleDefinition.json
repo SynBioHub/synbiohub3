@@ -12,38 +12,6 @@
     "PREFIX purl: <http://purl.obolibrary.org/obo/>"
   ],
   "metadata": [
-    {
-      "title": "Role(s)",
-      "icon": "faVials",
-      "rootPredicate": "sbol:role",
-      "sections": [
-        {
-          "title": "role",
-          "predicates": [],
-          "stripAfter": "/"
-        }
-      ]
-    },
-    {
-      "title": "Model(s)",
-      "rootPredicate": "sbol:model",
-      "icon": "faVials",
-      "sections": [
-        {
-          "title": "Models",
-          "predicates": [
-            "sbol:displayId"
-          ],
-          "link": "$<ModelLink>"
-        },
-        {
-          "title": "ModelLink",
-          "predicates" : [
-          ],
-          "hide": true
-        }
-      ]
-    }
   ],
   "tables": [
     {
@@ -53,37 +21,48 @@
       "sections": [
         {
           "title": "Instance",
-          "infoLink": "https://dissys.github.io/sbol-owl/sbol-owl.html#Module",
+          "infoLink": "https://sbols.org/v2#Module",
           "predicates": [
             "sbol:displayId"
           ],
-          "link" :"$<InstanceLink>"
+          "link": "$<InstanceLink>"
         },
         {
-          "title" : "InstanceLink",
-          "predicates": [
-          ],
-          "hide" : true
+          "title": "InstanceLink",
+          "predicates": [],
+          "hide": true
         },
         {
           "title": "Definition",
-          "infoLink": "https://dissys.github.io/sbol-owl/sbol-owl.html#definition",
+          "infoLink": "https://sbols.org/v2#definition",
           "predicates": [
-            "sbol:definition", "sbol:displayId"
+            "sbol:definition",
+            "sbol:displayId"
           ],
-          "link" : "$<DefinitionLink>"
+          "link": "$<DefinitionLink>"
         },
         {
-          "title" : "DefinitionLink",
+          "title": "DefinitionLink",
           "predicates": [
+            "sbol:definition"
           ],
-          "hide" : true
+          "hide": true
         },
         {
           "title": "MapsTos",
-          "infoLink": "https://dissys.github.io/sbol-owl/sbol-owl.html#MapsTo",
+          "infoLink": "https://sbols.org/v2#MapsTo",
           "predicates": [
-          ]
+            "sbol:mapsTo",
+            "sbol:displayId"
+          ],
+          "link": "$<mapsToLink>"
+        },
+        {
+          "title": "mapsToLink",
+          "predicates": [
+            "sbol:mapsTo"
+          ],
+          "hide": true
         }
       ]
     },
@@ -94,23 +73,39 @@
       "sections": [
         {
           "title": "Access",
-          "infoLink": "https://dissys.github.io/sbol-owl/sbol-owl.html#access",
+          "infoLink": "https://sbols.org/v2#access",
           "predicates": [
             "sbol:access"
           ],
-          "stripAfter" : "#"
+          "stripAfter": "#",
+          "link": "$<accessLink>"
+        },
+        {
+          "title": "accessLink",
+          "predicates": [
+            "sbol:access"
+          ],
+          "hide": true
         },
         {
           "title": "Direction",
-          "infoLink": "https://dissys.github.io/sbol-owl/sbol-owl.html#direction",
+          "infoLink": "https://sbols.org/v2#direction",
           "predicates": [
             "sbol:direction"
           ],
-          "stripAfter" : "#"
+          "stripAfter": "#",
+          "link": "$<directionLink>"
         },
-         {
+        {
+          "title": "directionLink",
+          "predicates": [
+            "sbol:direction"
+          ],
+          "hide": true
+        },
+        {
           "title": "Instance",
-          "infoLink": "#",
+          "infoLink": "https://sbols.org/v2#Module",
           "predicates": [
             "sbol:displayId"
           ],
@@ -118,14 +113,13 @@
         },
         {
           "title": "InstanceLink",
-          "predicates" :[
-            "sbol:persistentIdentity"
+          "predicates": [
           ],
           "hide": true
         },
         {
           "title": "Definition",
-          "infoLink": "#",
+          "infoLink": "https://sbols.org/v2#definition",
           "predicates": [
             "sbol:displayId"
           ],
@@ -133,18 +127,26 @@
         },
         {
           "title": "DefinitionLink",
-          "predicates" :[
+          "predicates": [
             "sbol:definition"
           ],
           "hide": true
         },
-
         {
           "title": "MapsTos",
-          "infoLink": "#",
+          "infoLink": "https://sbols.org/v2#MapsTo",
+          "predicates": [
+            "sbol:mapsTo",
+            "sbol:displayId"
+          ],
+          "link": "$<mapsToLink>"
+        },
+        {
+          "title": "mapsToLink",
           "predicates": [
             "sbol:mapsTo"
-          ]
+          ],
+          "hide": true
         }
       ]
     },
@@ -155,52 +157,95 @@
       "sections": [
         {
           "title": "Interaction",
-          "infoLink": "https://dissys.github.io/sbol-owl/sbol-owl.html#Interaction",
+          "infoLink": "https://sbols.org/v2#Interaction",
+          "stripAfter": "#",
           "predicates": [
             "sbol:displayId"
           ],
-          "link": "$<InteractionLink>"
+          "link": "$<interactionLink>"
         },
         {
-          "title": "InteractionLink",
-          "predicates":[],
+          "title": "interactionLink",
+          "predicates": [
+
+          ],
           "hide": true
         },
         {
-          "title": "Participation",
-          "infoLink": "https://dissys.github.io/sbol-owl/sbol-owl.html#Participation",
+          "title": "Type",
+          "infoLink": "https://sbols.org/v2#type",
+          "stripAfter": "#",
           "predicates": [
-            "sbol:participation", "sbol:displayId"
+            "sbol:Interaction",
+            "sbol:type",
+            "sbol:displayId"
           ],
-          "link": "$<ParticipationLink>"
+          "link": "$<typeLink>"
         },
         {
-          "title": "ParticipationLink",
-          "predicates":[
-            "sbol:displayId","sbol:participation"
+          "title": "typeLink",
+          "predicates": [
+          ],
+          "hide": true
+        }
+      ]
+    },
+    {
+      "title": "Participation",
+      "rootPredicate": "sbol:interaction",
+      "icon": "faVials",
+      "sections": [
+        {
+          "title": "Participation",
+          "infoLink": "https://sbols.org/v2#Participation",
+          "stripAfter": "#",
+          "predicates": [
+            "sbol:participation",
+            "sbol:displayId"
+          ],
+          "link": "$<participationLink>"
+        },
+        {
+          "title": "participationLink",
+          "predicates": [
+            "sbol:participation"
           ],
           "hide": true
         },
         {
           "title": "Participant Definition",
-          "infoLink": "https://dissys.github.io/sbol-owl/sbol-owl.html#definition",
+          "infoLink": "https://sbols.org/v2#definition",
+          "stripAfter": "#",
           "predicates": [
-            "sbol:participation", "sbol:displayId"
-          ]
+            "sbol:participation",
+            "sbol:participant",
+            "sbol:displayId"
+          ],
+          "link": "$<participantDefLink>"
         },
         {
-          "title": "Type",
-          "infoLink": "https://dissys.github.io/sbol-owl/sbol-owl.html#type",
+          "title": "participantDefLink",
           "predicates": [
-            "sbol:type"
-          ]
+          ],
+          "hide": true
         },
         {
           "title": "Role",
-          "infoLink": "https://dissys.github.io/sbol-owl/sbol-owl.html#role",
+          "infoLink": "https://sbols.org/v2#role",
+          "stripAfter": "#",
+          "predicates": [
+            "sbol:participation",
+            "sbol:role",
+            "sbol:displayId"
+          ],
+          "link": "$<roleLink>"
+        },
+        {
+          "title": "roleLink",
           "predicates": [
             "sbol:role"
-          ]
+          ],
+          "hide": true
         }
       ]
     }
@@ -209,6 +254,7 @@
     "$TABLES[Modules]",
     "$TABLES[Functional Components]",
     "$TABLES[Interactions]",
+    "$TABLES[Participation]",
     "Other Properties",
     "Member of these Collections",
     "Attachments"

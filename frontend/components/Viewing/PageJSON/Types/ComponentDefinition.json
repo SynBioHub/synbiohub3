@@ -20,7 +20,14 @@
                 {
                     "title": "Extra Work",
                     "stripAfter": "#",
-                    "predicates": []
+                    "predicates": [
+                    ],
+                    "link": "$<typeLink>"
+                },
+                {
+                    "title": "typeLink",
+                    "predicates": [],
+                    "hide": true
                 }
             ]
         },
@@ -32,24 +39,34 @@
                 {
                     "title": "Extra Work",
                     "stripAfter": "#",
-                    "predicates": []
+                    "predicates": [],
+                    "link": "$<roleLink>"
+                },
+                {
+                    "title": "roleLink",
+                    "predicates": [],
+                    "hide": true
                 }
             ]
         },
         {
             "title": "Source",
-            "rootPredicate": "sbh:mutableProvenance",
+            "rootPredicate": "prov:wasDerivedFrom",
             "icon": "faInfoCircle",
             "sections": [
                 {
                     "title": "Extra Work",
                     "stripAfter": "#",
-                    "predicates": []
+                    "predicates": [],
+                    "link": "$<sourceLink>"
+                },
+                {
+                    "title": "sourceLink",
+                    "predicates": [],
+                    "hide": true
                 }
             ]
-        }
-    ],
-    "tables": [
+        },
         {
             "title": "Sequence(s)",
             "rootPredicate": "sbol:sequence",
@@ -58,7 +75,9 @@
                 {
                     "title": "Sequence",
                     "stripAfter": "#",
-                    "predicates": [],
+                    "predicates": [
+                        "sbol:displayId"
+                    ],
                     "link": "$<SequenceLink>"
                 },
                 {
@@ -67,7 +86,9 @@
                     "hide": true
                 }
             ]
-        },
+        }
+    ],
+    "tables": [
         {
             "icon": "faVials",
             "title": "Components",
@@ -75,24 +96,31 @@
             "sections": [
                 {
                     "title": "Access",
-                    "infoLink": "https://dissys.github.io/sbol-owl/sbol-owl.html#access",
+                    "infoLink": "https://sbols.org/v2#access",
                     "predicates": [
                         "sbol:access"
                     ],
-                    "stripAfter": "#"
+                    "stripAfter": "#",
+                    "link": "$<accessLink>"
+                },
+                {
+                    "title": "accessLink",
+                    "predicates": [
+                        "sbol:access"
+                    ],
+                    "hide": true
                 },
                 {
                     "title": "Instance",
-                    "infoLink": "https://dissys.github.io/sbol-owl/sbol-owl.html#Component",
+                    "infoLink": "https://sbols.org/v2#Component",
                     "predicates": [
-                        "sbol:component",
                         "sbol:displayId"
                     ],
                     "link": "$<InstanceLink>"
                 },
                 {
                     "title": "Definition",
-                    "infoLink": "https://dissys.github.io/sbol-owl/sbol-owl.html#definition",
+                    "infoLink": "https://sbols.org/v2#definition",
                     "predicates": [
                         "sbol:definition",
                         "sbol:displayId"
@@ -109,7 +137,6 @@
                 {
                     "title": "InstanceLink",
                     "predicates": [
-                        "sbol:definition"
                     ],
                     "hide": true
                 }
@@ -122,7 +149,7 @@
             "sections": [
                 {
                     "title": "Sequence Annotation",
-                    "infoLink": "https://dissys.github.io/sbol-owl/sbol-owl.html#SequenceAnnotation",
+                    "infoLink": "https://sbols.org/v2#SequenceAnnotation",
                     "predicates": [
                         "sbol:displayId"
                     ],
@@ -135,7 +162,7 @@
                 },
                 {
                     "title": "Location",
-                    "infoLink": "https://dissys.github.io/sbol-owl/sbol-owl.html#Location",
+                    "infoLink": "https://sbols.org/v2#Location",
                     "text": "$<Start>, $<End>",
                     "predicates": [],
                     "link": "$<LocationLink>"
@@ -165,7 +192,7 @@
                 },
                 {
                     "title": "Component",
-                    "infoLink": "https://dissys.github.io/sbol-owl/sbol-owl.html#component",
+                    "infoLink": "https://sbols.org/v2#component",
                     "predicates": [
                         "sbol:component",
                         "sbol:definition",
@@ -259,7 +286,6 @@
     ],
     "pages": [
         "Details",
-        "$TABLES[Sequence(s)]",
         "$TABLES[Components]",
         "$TABLES[Sequence Annotations]",
         "$TABLES[Sequence Constraints]",
