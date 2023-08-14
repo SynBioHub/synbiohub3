@@ -47,7 +47,7 @@
   ],
   "tables": [
     {
-      "title": "modules",
+      "title": "Modules",
       "rootPredicate": "sbol:module",
       "icon": "faVials",
       "sections": [
@@ -88,7 +88,7 @@
       ]
     },
     {
-      "title": "functional components",
+      "title": "Functional Components",
       "rootPredicate": "sbol:functionalComponent",
       "icon": "faVials",
       "sections": [
@@ -149,22 +149,66 @@
       ]
     },
     {
-      "title": "interactions",
+      "title": "Interactions",
       "rootPredicate": "sbol:interaction",
       "icon": "faVials",
       "sections": [
         {
-          "title": "Extra Work",
-          "stripAfter": "#",
-          "predicates": []
+          "title": "Interaction",
+          "infoLink": "https://dissys.github.io/sbol-owl/sbol-owl.html#Interaction",
+          "predicates": [
+            "sbol:displayId"
+          ],
+          "link": "$<InteractionLink>"
+        },
+        {
+          "title": "InteractionLink",
+          "predicates":[],
+          "hide": true
+        },
+        {
+          "title": "Participation",
+          "infoLink": "https://dissys.github.io/sbol-owl/sbol-owl.html#Participation",
+          "predicates": [
+            "sbol:participation", "sbol:displayId"
+          ],
+          "link": "$<ParticipationLink>"
+        },
+        {
+          "title": "ParticipationLink",
+          "predicates":[
+            "sbol:displayId","sbol:participation"
+          ],
+          "hide": true
+        },
+        {
+          "title": "Participant Definition",
+          "infoLink": "https://dissys.github.io/sbol-owl/sbol-owl.html#definition",
+          "predicates": [
+            "sbol:participation", "sbol:displayId"
+          ]
+        },
+        {
+          "title": "Type",
+          "infoLink": "https://dissys.github.io/sbol-owl/sbol-owl.html#type",
+          "predicates": [
+            "sbol:type"
+          ]
+        },
+        {
+          "title": "Role",
+          "infoLink": "https://dissys.github.io/sbol-owl/sbol-owl.html#role",
+          "predicates": [
+            "sbol:role"
+          ]
         }
       ]
     }
   ],
   "pages": [
-    "$TABLES[modules]",
-    "$TABLES[functional components]",
-    "$TABLES[interactions]",
+    "$TABLES[Modules]",
+    "$TABLES[Functional Components]",
+    "$TABLES[Interactions]",
     "Other Properties",
     "Member of these Collections",
     "Attachments"

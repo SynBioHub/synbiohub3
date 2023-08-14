@@ -31,7 +31,10 @@ export default function GenericContent({ json, uri, metadata }) {
   const content = pages.map((page, index) => {
     if (page.startsWith('$TABLES[')) {
       const title = page.substring(8, page.length - 1);
-      const table = json.tables.find(table => table.title === title);
+      const table = json.tables.find(table => table.title.toLowerCase() === title.toLowerCase());
+      if(!table) {
+        return null;
+      }
       return (
         <Section id={page} title={table.title} key={index}>
           <TableBuilder uri={uri} prefixes={json.prefixes} table={table} />
