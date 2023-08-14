@@ -16,6 +16,8 @@ import Module from './Types/Module.json';
 import Interaction from './Types/Interaction.json';
 import Participation from './Types/Participation.json';
 import SequenceConstraint from './Types/SequenceConstraint.json';
+import Datasheet from './Types/Datasheet.json';
+import Plan from './Types/Plan.json';
 
 
 const TypeToJson = {
@@ -36,7 +38,9 @@ const TypeToJson = {
   'http://sbols.org/v2#Module': Module,
   'http://sbols.org/v2#Interaction': Interaction,
   'http://sbols.org/v2#Participation': Participation,
-  'http://sbols.org/v2#SequenceConstraint': SequenceConstraint
+  'http://sbols.org/v2#SequenceConstraint': SequenceConstraint,
+  'http://www.myapp.org/Datasheet': Datasheet,
+  'http://www.w3.org/ns/prov#Plan' : Plan
 
 };
 

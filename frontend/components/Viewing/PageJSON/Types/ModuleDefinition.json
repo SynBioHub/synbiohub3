@@ -15,7 +15,7 @@
   ],
   "tables": [
     {
-      "title": "modules",
+      "title": "Modules",
       "rootPredicate": "sbol:module",
       "icon": "faVials",
       "sections": [
@@ -67,7 +67,7 @@
       ]
     },
     {
-      "title": "functional components",
+      "title": "Functional Components",
       "rootPredicate": "sbol:functionalComponent",
       "icon": "faVials",
       "sections": [
@@ -151,7 +151,7 @@
       ]
     },
     {
-      "title": "interactions",
+      "title": "Interactions",
       "rootPredicate": "sbol:interaction",
       "icon": "faVials",
       "sections": [
@@ -251,10 +251,9 @@
     }
   ],
   "pages": [
-    "Details",
-    "$TABLES[modules]",
-    "$TABLES[functional components]",
-    "$TABLES[interactions]",
+    "$TABLES[Modules]",
+    "$TABLES[Functional Components]",
+    "$TABLES[Interactions]",
     "$TABLES[Participation]",
     "Other Properties",
     "Member of these Collections",

@@ -44,8 +44,7 @@
          "sections": [
            {
              "title": "mfile",
-             "predicates": [],
-             "link": "$<This>"
+             "predicates": []
            }
          ]
        }

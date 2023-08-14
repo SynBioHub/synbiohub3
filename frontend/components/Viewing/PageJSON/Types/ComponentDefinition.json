@@ -123,7 +123,7 @@
                     "infoLink": "https://sbols.org/v2#definition",
                     "predicates": [
                         "sbol:definition",
-                        "dcterms:title"
+                        "sbol:displayId"
                     ],
                     "link": "$<DefinitionLink>"
                 },
@@ -229,9 +229,57 @@
             "icon": "faVials",
             "sections": [
                 {
-                    "title": "Extra Work",
-                    "stripAfter": "#",
-                    "predicates": []
+                    "title": "Sequence Constraint",
+                    "infoLink": "https://dissys.github.io/sbol-owl/sbol-owl.html#SequenceConstraint",
+                    "predicates": [
+                        "sbol:displayId"
+                    ],
+                    "link": "$<SequenceLink>"
+                },
+                {
+                    "title": "SequenceLink",
+                    "hide": true,
+                    "predicates": [
+
+                    ]
+                },
+                {
+                    "title": "Subject",
+                    "infoLink": "https://dissys.github.io/sbol-owl/sbol-owl.html#subject",
+                    "predicates": [
+                        "sbol:subject","sbol:displayId"
+                    ],
+                    "link": "$<SubjectLink>"
+                },
+                {
+                    "title": "SubjectLink",
+                    "hide": true,
+                    "predicates": [
+                        "sbol:subject"
+                    ]
+                },
+                {
+                    "title": "Predicate",
+                    "infoLink": "https://dissys.github.io/sbol-owl/sbol-owl.html#restriction",
+                    "predicates": [
+                        "sbol:restriction"
+                    ],
+                    "stripAfter": "#"
+                },
+                {
+                    "title": "Object",
+                    "infoLink": "https://dissys.github.io/sbol-owl/sbol-owl.html#object",
+                    "predicates": [
+                        "sbol:object","sbol:displayId"
+                    ],
+                    "link": "$<ObjectLink>"
+                },
+                {
+                    "title": "ObjectLink",
+                    "predicates": [
+                        "sbol:object"
+                    ],
+                    "hide": true
                 }
             ]
         }
