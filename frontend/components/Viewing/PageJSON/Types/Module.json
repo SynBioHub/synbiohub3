@@ -13,64 +13,97 @@
     ],
     "metadata": [
       {
-        "title": "Role",
+        "title": "Definition",
         "icon": "faVials",
-        "rootPredicate": "sbol:role",
+        "rootPredicate": "sbol:definition",
         "sections": [
           {
             "title": "role",
+            "predicates": ["sbol:displayId"],
+            "stripAfter": "/",
+            "link": "$<definitionLink>"
+          },
+          {
+            "title": "definitionLink",
             "predicates": [],
-            "stripAfter": "/"
-          }
+            "hide": true
+        }
         ]
       }
     ],
     "tables": [
       {
-        "title": "modules",
-        "rootPredicate": "sbol:module",
+        "title": "Mappings",
+        "rootPredicate": "sbol:mapsTo",
         "icon": "faVials",
         "sections": [
           {
-            "title": "Extra Work",
-            "stripAfter": "#",
-            "predicates": []
-          }
-        ]
-      },
-      {
-        "title": "models",
-        "rootPredicate": "sbol:model",
-        "icon": "faVials",
-        "sections": [
-          {
-            "title": "Extra Work",
-            "stripAfter": "#",
-            "predicates": []
-          }
-        ]
-      },
-      {
-        "title": "functional components",
-        "rootPredicate": "sbol:functionalComponent",
-        "icon": "faVials",
-        "sections": [
-          {
-            "title": "Components",
-            "stripAfter": "#",
-            "predicates": [],
-            "link": "$<FunctionalComponentLink>"
+            "title": "Mapping",
+            "predicates": [
+              "sbol:displayId"
+            ],
+            "link": "$<mapsToLink>"
           },
           {
-            "title": "FunctionalComponentLink",
-            "predicates": [],
+            "title": "mapsToLink",
+            "predicates" :[
+            ],
             "hide": true
-        }
+          },
+          {
+            "title": "Local",
+            "predicates": [
+              "sbol:local",
+              "sbol:displayId"
+            ],
+            "link": "$<localLink>",
+            "stripAfter" : "#"
+          },
+          {
+            "title": "localLink",
+            "predicates": [
+              "sbol:local"
+            ],
+            "hide": true
+          },
+          {
+            "title": "Refinement",
+            "infoLink": "https://sbols.org/v2#refinement",
+            "predicates": [
+              "sbol:refinement"
+            ],
+            "link": "$<refinementLink>",
+            "stripAfter" : "#"
+          },
+          {
+            "title": "refinementLink",
+            "predicates": [
+              "sbol:refinement"
+            ],
+            "hide": true
+          },
+          {
+            "title": "Remote",
+            "infoLink": "sbols.org/v2#remote",
+            "predicates": [
+              "sbol:remote",
+              "sbol:displayId"
+            ],
+            "link": "$<remoteLink>",
+            "stripAfter" : "#"
+          },
+          {
+            "title": "remoteLink",
+            "predicates": [
+              "sbol:remote"
+            ],
+            "hide": true
+          }
         ]
       },
       {
-        "title": "interactions",
-        "rootPredicate": "sbol:interaction",
+        "title": "Measures",
+        "rootPredicate": "sbol:measure",
         "icon": "faVials",
         "sections": [
           {
@@ -83,12 +116,9 @@
     ],
     "pages": [
       "Details",
-      "$TABLES[modules]",
-      "$TABLES[models]",
-      "$TABLES[functional components]",
-      "$TABLES[interactions]",
+      "$TABLES[Mappings]",
+      "$TABLES[Measures]",
       "Other Properties",
-      "Member of these Collections",
       "Attachments"
     ]
   }

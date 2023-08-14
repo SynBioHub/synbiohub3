@@ -33,6 +33,7 @@ export default function buildQuery(uri, tableJSON) {
     rootPredicateDictionary
   )) {
     queryToReturn += `{\n${getTableQuery(uri, columns, rootPredicate, true)}}`;
+    console.log(queryToReturn);
   }
   return (
     queryToReturn +
