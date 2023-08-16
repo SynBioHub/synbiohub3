@@ -19,7 +19,8 @@
         "sections": [
           {
             "title": "lang",
-            "predicates": [],
+            "predicates": [
+            ],
             "link": "$<This>"
           }
         ]
@@ -44,7 +45,8 @@
          "sections": [
            {
              "title": "mfile",
-             "predicates": []
+             "predicates": [],
+             "link": "$<This>"
            }
          ]
        }

@@ -230,7 +230,7 @@
             "sections": [
                 {
                     "title": "Sequence Constraint",
-                    "infoLink": "https://dissys.github.io/sbol-owl/sbol-owl.html#SequenceConstraint",
+                    "infoLink": "https://sbols.org/v2#SequenceConstraint",
                     "predicates": [
                         "sbol:displayId"
                     ],
@@ -245,7 +245,7 @@
                 },
                 {
                     "title": "Subject",
-                    "infoLink": "https://dissys.github.io/sbol-owl/sbol-owl.html#subject",
+                    "infoLink": "https://sbols.org/v2#subject",
                     "predicates": [
                         "sbol:subject","sbol:displayId"
                     ],
@@ -260,15 +260,23 @@
                 },
                 {
                     "title": "Predicate",
-                    "infoLink": "https://dissys.github.io/sbol-owl/sbol-owl.html#restriction",
+                    "infoLink": "https://sbols.org/v2#restriction",
                     "predicates": [
                         "sbol:restriction"
                     ],
-                    "stripAfter": "#"
+                    "stripAfter": "#",
+                    "link": "$<predicateLink>"
+                },
+                {
+                    "title": "predicateLink",
+                    "predicates": [
+                        "sbol:displayId"
+                    ],
+                    "hide": true
                 },
                 {
                     "title": "Object",
-                    "infoLink": "https://dissys.github.io/sbol-owl/sbol-owl.html#object",
+                    "infoLink": "https://sbols.org/v2#object",
                     "predicates": [
                         "sbol:object","sbol:displayId"
                     ],

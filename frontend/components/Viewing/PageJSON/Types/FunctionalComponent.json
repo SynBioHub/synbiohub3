@@ -19,8 +19,16 @@
             "sections": [
                 {
                     "title": "Definitions",
+                    "predicates": [
+                        "sbol:displayId"
+                    ],
+                    "stripAfter": "#",
+                    "link": "$<definitionLink>"
+                },
+                {
+                    "title": "definitionLink",
                     "predicates": [],
-                    "stripAfter": "#"
+                    "hide": true
                 }
             ]
         },
@@ -30,9 +38,15 @@
             "rootPredicate": "sbol:access",
             "sections": [
                 {
-                    "title": "Roles",
+                    "title": "access",
                     "predicates": [],
-                    "stripAfter": "#"
+                    "stripAfter": "#",
+                    "link": "$<accessLink>"
+                },
+                {
+                    "title": "accessLink",
+                    "predicates": [],
+                    "hide": true
                 }
             ]
         },
@@ -44,7 +58,13 @@
                 {
                     "title": "Directions",
                     "predicates": [],
-                    "stripAfter": "#"
+                    "stripAfter": "#",
+                    "link": "$<directionLink>"
+                },
+                {
+                    "title": "directionLink",
+                    "predicates": [],
+                    "hide": true
                 }
             ]
         }

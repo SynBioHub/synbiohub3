@@ -21,7 +21,13 @@
                     "title": "Extra Work",
                     "stripAfter": "#",
                     "predicates": [
-                    ]
+                    ],
+                    "link": "$<roleLink>"
+                },
+                {
+                    "title": "roleLink",
+                    "predicates": [],
+                    "hide": true
                 }
             ]
         },
