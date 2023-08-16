@@ -20,7 +20,8 @@
                 {
                     "title": "Extra Work",
                     "stripAfter": "#",
-                    "predicates": []
+                    "predicates": [],
+                    "link": "$<This>"
                 }
             ]
         },

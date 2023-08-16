@@ -39,9 +39,14 @@
                    {
                        "title": "Restriction",
                        "stripAfter": "#",
-                       "infoLink": "",
+                       "link": "$<restrictionLink>",
                        "predicates": [
                        ]
+                   },
+                   {
+                    "title": "restrictionLink",
+                    "predicates": [],
+                    "hide": true
                    }
                ]
          },

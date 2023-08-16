@@ -19,14 +19,16 @@
        "rootPredicate": "sbol:elements",
        "sections": [ 
          {
-            "title": "S",
+            "title": "Sequence",
             "infoLink": "$<Encoding>",
             "predicates": []
          },
          {
             "title": "Encoding",
             "rootPredicateOverride": "sbol:encoding",
-            "predicates": [],
+            "predicates": [
+               "rdf:resource"
+            ],
             "hide": true
          }
       ]
