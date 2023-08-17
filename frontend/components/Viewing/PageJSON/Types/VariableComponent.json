@@ -1,0 +1,80 @@
+{
+    "type": "http://sbols.org/v2#VariableComponent",
+    "prefixes": [
+        "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>",
+        "PREFIX dcterms: <http://purl.org/dc/terms/>",
+        "PREFIX dc: <http://purl.org/dc/elements/1.1/>",
+        "PREFIX sbh: <http://wiki.synbiohub.org/wiki/Terms/synbiohub#>",
+        "PREFIX prov: <http://www.w3.org/ns/prov#>",
+        "PREFIX sbol: <http://sbols.org/v2#>",
+        "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>",
+        "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>",
+        "PREFIX purl: <http://purl.obolibrary.org/obo/>"
+    ],
+    "metadata": [
+        {
+            "title": "Variable",
+            "icon": "faVials",
+            "rootPredicate": "sbol:variable",
+            "sections": [
+                {
+                    "title": "variable",
+                    "predicates": [
+                    ],
+                    "link": "$<variableLink>"
+                },
+                {
+                    "title": "variableLink",
+                    "predicates": [],
+                    "hide": true
+                }
+            ]
+        },
+        {
+            "title": "Operator",
+            "icon": "faVials",
+            "rootPredicate": "sbol:operator",
+            "sections": [
+                {
+                    "title": "operator",
+                    "predicates": [],
+                    "stripAfter": "#",
+                    "link": "$<operatorLink>"
+                },
+                {
+                    "title": "operatorLink",
+                    "predicates": [],
+                    "hide": true
+                }
+            ]
+        }
+    ],
+    "tables": [
+        {
+            "title": "Variants",
+            "rootPredicate": "sbol:variant",
+            "icon": "faVials",
+            "sections": [
+                {
+                    "title": "Variant",
+                    "infoLink": "https://sbols.org/v2#variant",
+                    "predicates": [
+                        "sbol:displayId"
+                    ],
+                    "link": "$<variantLink>"
+                },
+                {
+                    "title": "variantLink",
+                    "predicates": [],
+                    "hide": true
+                }
+            ]
+        }
+    ],
+    "pages": [
+        "Details",
+        "$TABLES[Variants]",
+        "Other Properties",
+        "Attachments"
+    ]
+}

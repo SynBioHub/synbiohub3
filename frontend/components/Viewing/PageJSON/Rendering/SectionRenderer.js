@@ -11,6 +11,11 @@ function loadText(template, args) {
 }
 
 export default function SectionRenderer({ section, metadata }) {
+  console.log(section)
+  const graphPrefix = "https://synbiohub.org/";
+  console.log(section.link);
+  section.link = replaceBeginning("" + section.link, graphPrefix, "/");
+  console.log(section.link);
   if (section.grouped) {
     const items = section.text.split(', ');
     const content = items.map((item, index) => {
@@ -18,12 +23,11 @@ export default function SectionRenderer({ section, metadata }) {
         return (
           <ColumnLink
             link={loadText(section.link, { This: item })}
-            text={`${item}${
-              index === items.length - 1 ||
+            text={`${item}${index === items.length - 1 ||
               (section.linkType !== 'default' && section.linkType !== undefined)
-                ? ''
-                : ', '
-            }`}
+              ? ''
+              : ', '
+              }`}
             linkType={section.linkType}
             key={index}
           />
@@ -31,7 +35,7 @@ export default function SectionRenderer({ section, metadata }) {
       }
       return (
         <span key={index}>
-          {item}
+          "{item}"
           {index === items.length - 1 ? '' : ', '}
         </span>
       );
@@ -57,6 +61,14 @@ export default function SectionRenderer({ section, metadata }) {
     </td>
   );
 }
+
+function replaceBeginning(original, oldBeginning, newBeginning) {
+  if (original.startsWith(oldBeginning)) {
+    return newBeginning + original.slice(oldBeginning.length);
+  }
+  return original;
+}
+
 
 function ColumnLink({ text, link, linkType }) {
   if (linkType === 'search') {
