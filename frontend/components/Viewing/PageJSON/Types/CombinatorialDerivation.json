@@ -20,8 +20,8 @@
                 {
                     "title": "Extra Work",
                     "predicates": [
-                        "sbol:displayId"
-                    ]
+                    ],
+                    "link": "$<This>"
                 }
             ]
         },
@@ -34,7 +34,12 @@
                     "title": "Extra Work",
                     "stripAfter": "#",
                     "predicates": [],
-                    "link": "$<This>"
+                    "link": "$<strategyLink>"
+                },
+                {
+                    "title": "strategyLink",
+                    "predicates": [],
+                    "hide": true
                 }
             ]
         }
@@ -57,38 +62,44 @@
                 {
                     "title": "VariableComponentsLink",
                     "predicates": [
-                        "sbol:persistentIdentity"
                     ],
                     "hide": true
                 },
 
                 {
                     "title": "Variable",
-                    "infoLink": "https://dissys.github.io/sbol-owl/sbol-owl.html#variable",
+                    "infoLink": "https://sbols.org/v2#variable",
                     "predicates": [
                         "sbol:variable"
                     ],
-                    "link": "$<VariableLink>"
+                    "link": "$<This>"
                 },
 
                 {
                     "title": "VariableLink",
                     "predicates": [
-                        "sbol:variable"
                     ],
                     "hide": true
                 },
                 {
                     "title": "Operator",
-                    "infoLink": "https://dissys.github.io/sbol-owl/sbol-owl.html#operator",
+                    "infoLink": "https://sbols.org/v2#operator",
                     "predicates": [
                         "sbol:operator"
                     ],
-                    "stripAfter": "#"
+                    "stripAfter": "#",
+                    "link": "$<operatorLink>"
+                },
+                {
+                    "title": "operatorLink",
+                    "predicates": [
+                        "sbol:operator"
+                    ],
+                    "hide": true
                 },
                 {
                     "title": "Variant",
-                    "infoLink": "https://dissys.github.io/sbol-owl/sbol-owl.html#variant",
+                    "infoLink": "https://sbols.org/v2#variant",
                     "predicates": [
                         "sbol:variant", "sbol:displayId"
                     ],

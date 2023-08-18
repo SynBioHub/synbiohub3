@@ -20,8 +20,7 @@
                 {
                     "title": "Extra Work",
                     "stripAfter": "#",
-                    "predicates": [
-                    ],
+                    "predicates": [],
                     "link": "$<typeLink>"
                 },
                 {
@@ -136,8 +135,7 @@
                 },
                 {
                     "title": "InstanceLink",
-                    "predicates": [
-                    ],
+                    "predicates": [],
                     "hide": true
                 }
             ]
@@ -162,33 +160,58 @@
                 },
                 {
                     "title": "Location",
+                    "predicates": [
+                    ],
                     "infoLink": "https://sbols.org/v2#Location",
-                    "text": "$<Start>, $<End>",
-                    "predicates": [],
-                    "link": "$<LocationLink>"
-                },
-                {
-                    "title": "Start",
-                    "predicates": [
-                        "sbol:location",
-                        "sbol:start"
-                    ],
-                    "hide": true
-                },
-                {
-                    "title": "End",
-                    "predicates": [
-                        "sbol:location",
-                        "sbol:end"
-                    ],
-                    "hide": true
-                },
-                {
-                    "title": "LocationLink",
-                    "predicates": [
-                        "sbol:location"
-                    ],
-                    "hide": true
+                    "icon": "faVials",
+                    "sections": [
+                        {
+                            "title": "Cut",
+                            "stripAfter": "#",
+                            "predicates": [
+                                "sbol:at"
+                            ],
+                            "link": "$<locationCutLink>"
+                        },
+                        {
+                            "title": "locationCutLink",
+                            "predicates": [],
+                            "hide": true
+                        },
+                        {
+                            "title": "Range",
+                            "infoLink": "https://sbols.org/v2#Location",
+                            "text": "$<Start>, $<End>",
+                            "predicates": [],
+                            "link": "$<LocationRangeLink>"
+                        },
+                        {
+                            "title": "Start",
+                            "predicates": [
+                                "sbol:start"
+                            ],
+                            "hide": true
+                        },
+                        {
+                            "title": "End",
+                            "predicates": [
+                                "sbol:end"
+                            ],
+                            "hide": true
+                        },
+                        {
+                            "title": "LocationRangeLink",
+                            "predicates": [
+                            ],
+                            "hide": true
+                        },
+                        {
+                            "title": "GenericLocation",
+                            "stripAfter": "#",
+                            "predicates": [],
+                            "text": "generic"
+                        }
+                    ]
                 },
                 {
                     "title": "Component",
@@ -239,15 +262,14 @@
                 {
                     "title": "SequenceLink",
                     "hide": true,
-                    "predicates": [
-
-                    ]
+                    "predicates": []
                 },
                 {
                     "title": "Subject",
                     "infoLink": "https://sbols.org/v2#subject",
                     "predicates": [
-                        "sbol:subject","sbol:displayId"
+                        "sbol:subject",
+                        "sbol:displayId"
                     ],
                     "link": "$<SubjectLink>"
                 },
@@ -278,7 +300,8 @@
                     "title": "Object",
                     "infoLink": "https://sbols.org/v2#object",
                     "predicates": [
-                        "sbol:object","sbol:displayId"
+                        "sbol:object",
+                        "sbol:displayId"
                     ],
                     "link": "$<ObjectLink>"
                 },

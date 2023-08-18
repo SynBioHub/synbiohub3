@@ -18,6 +18,14 @@ import Participation from './Types/Participation.json';
 import SequenceConstraint from './Types/SequenceConstraint.json';
 import Datasheet from './Types/Datasheet.json';
 import Plan from './Types/Plan.json';
+import VariableComponent from './Types/VariableComponent.json';
+import SequenceAnnotation from './Types/SequenceAnnotation.json';
+import Activity from './Types/Activity.json';
+import Usage from './Types/Usage.json';
+import Association from './Types/Association.json';
+import Agent from './Types/Agent.json';
+import GenericLocation from './Types/GenericLocation.json';
+import Cut from './Types/Cut.json';
 
 
 const TypeToJson = {
@@ -39,9 +47,16 @@ const TypeToJson = {
   'http://sbols.org/v2#Interaction': Interaction,
   'http://sbols.org/v2#Participation': Participation,
   'http://sbols.org/v2#SequenceConstraint': SequenceConstraint,
+  'http://sbols.org/v2#VariableComponent': VariableComponent,
+  'http://sbols.org/v2#SequenceAnnotation': SequenceAnnotation,
+  'http://sbols.org/v2#GenericLocation': GenericLocation,
+  'http://sbols.org/v2#Cut': Cut,
   'http://www.myapp.org/Datasheet': Datasheet,
-  'http://www.w3.org/ns/prov#Plan' : Plan
-
+  'http://www.w3.org/ns/prov#Plan' : Plan,
+  'http://www.w3.org/ns/prov#Activity': Activity,
+  'http://www.w3.org/ns/prov#Usage': Usage,
+  'http://www.w3.org/ns/prov#Association': Association,
+  'http://www.w3.org/ns/prov#Agent': Agent
 };
 
 export default TypeToJson;
