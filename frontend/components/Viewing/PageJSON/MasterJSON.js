@@ -32,6 +32,8 @@ import Feature3 from './Types/Feature3.json';
 import ComponentReference3 from './Types/ComponentReference3.json';
 import SubComponent3 from './Types/SubComponent3.json';
 import LocalSubComponent3 from './Types/LocalSubComponent3.json';
+import ExternallyDefined3 from './Types/ExternallyDefined3.json';
+import SequenceFeature3 from './Types/SequenceFeature3.json';
 
 
 const TypeToJson = {
@@ -68,7 +70,9 @@ const TypeToJson = {
   'http://sbols.org/v3#Feature': Feature3,
   'http://sbols.org/v3#ComponentReference': ComponentReference3,
   'http://sbols.org/v3#SubComponent': SubComponent3,
-  'http://sbols.org/v3#LocalSubComponent': LocalSubComponent3
+  'http://sbols.org/v3#LocalSubComponent': LocalSubComponent3,
+  'http://sbols.org/v3#ExternallyDefined': ExternallyDefined3,
+  'http://sbols.org/v3#SequenceFeature': SequenceFeature3
 
 };
 
