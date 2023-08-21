@@ -26,6 +26,12 @@ import Association from './Types/Association.json';
 import Agent from './Types/Agent.json';
 import GenericLocation from './Types/GenericLocation.json';
 import Cut from './Types/Cut.json';
+import Sequence3 from './Types/Sequence3.json';
+import Component3 from './Types/Component3.json';
+import Feature3 from './Types/Feature3.json';
+import ComponentReference3 from './Types/ComponentReference3.json';
+import SubComponent3 from './Types/SubComponent3.json';
+import LocalSubComponent3 from './Types/LocalSubComponent3.json';
 
 
 const TypeToJson = {
@@ -56,7 +62,14 @@ const TypeToJson = {
   'http://www.w3.org/ns/prov#Activity': Activity,
   'http://www.w3.org/ns/prov#Usage': Usage,
   'http://www.w3.org/ns/prov#Association': Association,
-  'http://www.w3.org/ns/prov#Agent': Agent
+  'http://www.w3.org/ns/prov#Agent': Agent,
+  'http://sbols.org/v3#Sequence': Sequence3,
+  'http://sbols.org/v3#Component': Component3,
+  'http://sbols.org/v3#Feature': Feature3,
+  'http://sbols.org/v3#ComponentReference': ComponentReference3,
+  'http://sbols.org/v3#SubComponent': SubComponent3,
+  'http://sbols.org/v3#LocalSubComponent': LocalSubComponent3
+
 };
 
 export default TypeToJson;

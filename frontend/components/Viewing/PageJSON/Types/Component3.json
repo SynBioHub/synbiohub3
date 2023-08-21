@@ -1,0 +1,188 @@
+{
+    "type": "http://sbols.org/v3#Component",
+    "prefixes": [
+        "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>",
+        "PREFIX dcterms: <http://purl.org/dc/terms/>",
+        "PREFIX dc: <http://purl.org/dc/elements/1.1/>",
+        "PREFIX sbh: <http://wiki.synbiohub.org/wiki/Terms/synbiohub#>",
+        "PREFIX prov: <http://www.w3.org/ns/prov#>",
+        "PREFIX sbol: <http://sbols.org/v3#>",
+        "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>",
+        "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>",
+        "PREFIX purl: <http://purl.obolibrary.org/obo/>"
+    ],
+    "metadata": [
+        {
+            "title": "Type",
+            "rootPredicate": "sbol:type",
+            "icon": "faVials",
+            "sections": [
+                {
+                    "title": "Extra Work",
+                    "stripAfter": "#",
+                    "predicates": [],
+                    "link": "$<typeLink>"
+                },
+                {
+                    "title": "typeLink",
+                    "predicates": [],
+                    "hide": true
+                }
+            ]
+        },
+        {
+            "title": "Roles",
+            "rootPredicate": "sbol:role",
+            "icon": "faVials",
+            "sections": [
+                {
+                    "title": "Extra Work",
+                    "stripAfter": "#",
+                    "predicates": [],
+                    "link": "$<roleLink>"
+                },
+                {
+                    "title": "roleLink",
+                    "predicates": [],
+                    "hide": true
+                }
+            ]
+        }
+    ],
+    "tables": [
+        {
+            "title": "Sequences",
+            "rootPredicate": "sbol:hasSequence",
+            "icon": "faVials",
+            "sections": [
+                {
+                    "title": "Sequence",
+                    "stripAfter": "#",
+                    "predicates": [
+                        "sbol:Sequence"
+                    ],
+                    "link": "$<SequenceLink>"
+                },
+                {
+                    "title": "SequenceLink",
+                    "predicates": [],
+                    "hide": true
+                }
+            ]
+        },
+        {
+            "icon": "faVials",
+            "title": "Features",
+            "rootPredicate": "sbol:hasFeature",
+            "sections": [
+                {
+                    "title": "SubComponents",
+                    "infoLink": "https://sbols.org/v3#SubComponent",
+                    "predicates": [
+                        "sbol:SubComponent"
+                    ],
+                    "stripAfter": "#",
+                    "link": "$<subcomponentLink>"
+                },
+                {
+                    "title": "subcomponentLink",
+                    "predicates": [
+                    ],
+                    "hide": true
+                }
+            ]
+        },
+        {
+            "icon": "faVials",
+            "title": "Interactions",
+            "rootPredicate": "sbol:hasInteraction",
+            "sections": [
+                {
+                    "title": "Sequence Annotation",
+                    "infoLink": "https://sbols.org/v3#Interaction",
+                    "predicates": [
+                        "sbol:Interaction"
+                    ],
+                    "link": "$<interactionLink>"
+                },
+                {
+                    "title": "interactionLink",
+                    "predicates": [],
+                    "hide": true
+                }
+            ]
+        },
+        {
+            "title": "Sequence Constraints",
+            "rootPredicate": "sbol:hasConstraint",
+            "icon": "faVials",
+            "sections": [
+                {
+                    "title": "Sequence Constraint",
+                    "infoLink": "https://sbols.org/v3#Constraint",
+                    "predicates": [
+                        "sbol:Constraint"
+                    ],
+                    "link": "$<constraintLink>"
+                },
+                {
+                    "title": "constraintLink",
+                    "hide": true,
+                    "predicates": []
+                }
+            ]
+        },
+        {
+            "title": "Interfaces",
+            "rootPredicate": "sbol:hasInterface",
+            "icon": "faVials",
+            "sections": [
+                {
+                    "title": "Interface",
+                    "infoLink": "https://sbols.org/v3#Interface",
+                    "predicates": [
+
+                    ],
+                    "link": "$<interfaceLink>"
+                },
+                {
+                    "title": "interfaceLink",
+                    "hide": true,
+                    "predicates": []
+                }
+            ]
+        },
+        {
+            "title": "Models",
+            "rootPredicate": "sbol:hasModel",
+            "icon": "faVials",
+            "sections": [
+                {
+                    "title": "Model",
+                    "infoLink": "https://sbols.org/v3#Model",
+                    "predicates": [
+
+                    ],
+                    "link": "$<modelLink>"
+                },
+                {
+                    "title": "modelLink",
+                    "hide": true,
+                    "predicates": []
+                }
+            ]
+        }
+    ],
+    "pages": [
+        "Details",
+        "$TABLES[Sequences]",
+        "$TABLES[Features]",
+        "$TABLES[Interactions]",
+        "$TABLES[Sequence Constraints]",
+        "$TABLES[Interfaces]",
+        "$TABLES[Models]",
+        "Other Properties",
+        "Member of these Collections",
+        "Attachments"
+    ]
+}
