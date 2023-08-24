@@ -1,0 +1,141 @@
+{
+    "type": "http://sbols.org/v3#Location",
+    "prefixes": [
+        "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>",
+        "PREFIX dcterms: <http://purl.org/dc/terms/>",
+        "PREFIX dc: <http://purl.org/dc/elements/1.1/>",
+        "PREFIX sbh: <http://wiki.synbiohub.org/wiki/Terms/synbiohub#>",
+        "PREFIX prov: <http://www.w3.org/ns/prov#>",
+        "PREFIX sbol: <http://sbols.org/v3#>",
+        "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>",
+        "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>",
+        "PREFIX purl: <http://purl.obolibrary.org/obo/>"
+    ],
+    "metadata": [
+        {
+            "title": "Orientation",
+            "rootPredicate": "sbol:orientation",
+            "icon": "faVials",
+            "sections": [
+                {
+                    "title": "Extra Work",
+                    "stripAfter": "#",
+                    "predicates": [],
+                    "link": "$<orientationLink"
+                },
+                {
+                    "title": "orientationLink",
+                    "predicates": [],
+                    "hide": true
+                }
+            ]
+        },
+        {
+            "title": "Order",
+            "rootPredicate": "sbol:order",
+            "icon": "faVials",
+            "sections": [
+                {
+                    "title": "Extra Work",
+                    "stripAfter": "#",
+                    "predicates": [],
+                    "link": "$<orderLink"
+                },
+                {
+                    "title": "orderLink",
+                    "predicates": [],
+                    "hide": true
+                }
+            ]
+        }
+    ],
+    "tables": [
+        {
+            "title": "Sequences",
+            "rootPredicate": "sbol:hasSequence",
+            "icon": "faVials",
+            "sections": [
+                {
+                    "title": "Extra Work",
+                    "stripAfter": "#",
+                    "predicates": []
+                }
+            ]
+        },
+        {
+            "title": "Range",
+            "rootPredicate": "sbol:range",
+            "icon": "faVials",
+            "text": "$<Start>, $<End>",
+            "link": "$<rangeLink>",
+            "sections": [
+                {
+                    "title": "Start",
+                    "stripAfter": "#",
+                    "predicates": [
+                        "sbol:start"
+                    ]
+                },
+                {
+                    "title": "End",
+                    "stripAfter": "#",
+                    "predicates": [
+                        "sbol:end"
+                    ]
+                },
+                {
+                    "title": "rangeLink",
+                    "predicates": [],
+                    "hide": true
+                }
+            ]
+        },
+        {
+            "title": "Cut",
+            "rootPredicate": "sbol:Cut",
+            "icon": "faVials",
+            "sections": [
+                {
+                    "title": "At",
+                    "stripAfter": "#",
+                    "predicates": [
+                        "sbol:at"
+                    ],
+                    "link": "$<cutLink>"
+                },
+                {
+                    "title": "cutLink",
+                    "predicates": [],
+                    "hide": true
+                }
+            ]
+        },
+        {
+            "title": "Entire Sequence",
+            "rootPredicate": "sbol:EntireSequence",
+            "icon": "faVials",
+            "sections": [
+                {
+                    "title": "Extra Work",
+                    "stripAfter": "#",
+                    "predicates": [],
+                    "link": "$<entireSequenceLink"
+                },
+                {
+                    "title": "entireSequenceLink",
+                    "predicates": [],
+                    "hide": true
+                }
+            ]
+        }
+    ],
+    "pages": [
+        "Details",
+        "$TABLES[Sequences]",
+        "$TABLES[Range]",
+        "$TABLES[Cut]",
+        "$TABLES[Generic Location]",
+        "Other Properties",
+        "Attachments"
+    ]
+}

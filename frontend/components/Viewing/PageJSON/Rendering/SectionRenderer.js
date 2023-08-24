@@ -13,9 +13,7 @@ function loadText(template, args) {
 export default function SectionRenderer({ section, metadata }) {
   console.log(section)
   const graphPrefix = "https://synbiohub.org/";
-  console.log(section.link);
   section.link = replaceBeginning("" + section.link, graphPrefix, "/");
-  console.log(section.link);
   if (section.grouped) {
     const items = section.text.split(', ');
     const content = items.map((item, index) => {

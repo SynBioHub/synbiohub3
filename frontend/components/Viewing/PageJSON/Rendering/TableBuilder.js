@@ -48,9 +48,9 @@ function TableRenderer({ uri, prefixes, table, metadata }) {
     return <MetadataRenderer title={table.title} content={content} />;
   }
 
-  if (content.length == 0) {
-    return <div>No columns to display</div>;
-  }
+  // if (content.length == 0) {
+  //   return <div>No columns to display</div>;
+  // }
 
   const rows = content.map((row, index) => {
     return <RowWrapper sections={row} key={index} metadata={false} />;
@@ -58,12 +58,14 @@ function TableRenderer({ uri, prefixes, table, metadata }) {
 
   return (
     <div>
-      <table className={styles.table}>
+      {content.length > 0 && (
+        <table className={styles.table}>
         <thead>
           <tr>{header}</tr>
         </thead>
         <tbody>{rows}</tbody>
       </table>
+      ) }
     </div>
   );
 }

@@ -33,6 +33,12 @@ export default function SidePanel({ metadata, type, json, uri }) {
   const date = metadata.created.replace('T', ' ').replace('Z', '');
 
   const pagesInfo = getPagesInfo(type, json);
+  // const graphPrefix = "https://synbiohub.org/";
+  // var displayUri = replaceBeginning("" + uri, graphPrefix, "/");
+  // var displayTitle = metadata.persistentIdentity.split('/');
+  // displayTitle = displayTitle[displayTitle.length-1];
+
+  
 
   return (
     <div
@@ -121,12 +127,12 @@ export default function SidePanel({ metadata, type, json, uri }) {
                 date.lastIndexOf('-') + 3
               )}&createdAfter=${date.substring(0, date.lastIndexOf('-') + 3)}&`}
             />
-            <MetadataInfo
+            {/* <MetadataInfo
               icon={faRunning}
               label="Persistent Identity"
-              title={metadata.persistentIdentity}
+              title={displayTitle}
               link={uri}
-            />
+            /> */}
             <GenericContent json={json} uri={uri} metadata={true} />
           </div>
           <SectionSelector pagesInfo={pagesInfo} json={json} />
@@ -145,4 +151,11 @@ function getPagesInfo(type, json) {
     return { type: type, order: json.pages };
 
   return { type: type, order: JSON.parse(pages).order };
+}
+
+function replaceBeginning(original, oldBeginning, newBeginning) {
+  if (original.startsWith(oldBeginning)) {
+    return newBeginning + original.slice(oldBeginning.length);
+  }
+  return original;
 }

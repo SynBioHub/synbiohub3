@@ -1,0 +1,180 @@
+{
+    "type": "http://sbols.org/v3#Feature",
+    "prefixes": [
+        "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>",
+        "PREFIX dcterms: <http://purl.org/dc/terms/>",
+        "PREFIX dc: <http://purl.org/dc/elements/1.1/>",
+        "PREFIX sbh: <http://wiki.synbiohub.org/wiki/Terms/synbiohub#>",
+        "PREFIX prov: <http://www.w3.org/ns/prov#>",
+        "PREFIX sbol: <http://sbols.org/v3#>",
+        "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>",
+        "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>",
+        "PREFIX purl: <http://purl.obolibrary.org/obo/>"
+    ],
+    "metadata": [
+        {
+            "title": "Roles",
+            "rootPredicate": "sbol:role",
+            "infoLink": "https://sbols.org/v3#role",
+            "icon": "faVials",
+            "sections": [
+                {
+                    "title": "Extra Work",
+                    "stripAfter": "#",
+                    "predicates": [
+                    ],
+                    "link": "$<roleLink>"
+                },
+                {
+                    "title": "roleLink",
+                    "predicates": [],
+                    "hide": true
+                }
+            ]
+        },
+        {
+            "title": "Orientation",
+            "rootPredicate": "sbol:orientation",
+            "infoLink": "https://sbols.org/v3#orientation",
+            "icon": "faVials",
+            "sections": [
+                {
+                    "title": "Extra Work",
+                    "stripAfter": "#",
+                    "predicates": [
+
+                    ],
+                    "link": "$<orientationLink>"
+                },
+                {
+                    "title": "orientationLink",
+                    "predicates": [],
+                    "hide": true
+                }
+            ]
+        }
+    ],
+    "tables": [
+        {
+            "title": "SubComponents",
+            "rootPredicate": "sbol:SubComponent",
+            "icon": "faVials",
+            "sections": [
+                {
+                    "title": "Role Integrations",
+                    "stripAfter": "#",
+                    "predicates": [
+                        "sbol:roleintegration"
+                    ],
+                    "link": "$<roleIntegrationLink>"
+                },
+                {
+                    "title": "roleIntegrationLink",
+                    "predicates": [],
+                    "hide": true
+                }
+            ]
+        },
+        {
+            "title": "Component References",
+            "rootPredicate": "sbol:ComponentReference",
+            "icon": "faVials",
+            "sections": [
+                {
+                    "title": "Sequence",
+                    "stripAfter": "#",
+                    "predicates": [
+                    ],
+                    "link": "$<referenceLink>"
+                },
+                {
+                    "title": "referenceLink",
+                    "predicates": [],
+                    "hide": true
+                }
+            ]
+        },
+        {
+            "title": "Local SubComponents",
+            "rootPredicate": "sbol:LocalSubComponents",
+            "icon": "faVials",
+            "sections": [
+                {
+                    "title": "Types",
+                    "stripAfter": "#",
+                    "predicates": [
+                        "sbol:type"
+                    ],
+                    "link": "$<localSubComponentLink>"
+                },
+                {
+                    "title": "localSubComponentLink",
+                    "predicates": [],
+                    "hide": true
+                }
+            ]
+        },
+        {
+            "title": "Externally Defined",
+            "rootPredicate": "sbol:ExternallyDefined",
+            "icon": "faVials",
+            "sections": [
+                {
+                    "title": "Types",
+                    "stripAfter": "#",
+                    "predicates": [
+                        "sbol:type"
+                    ],
+                    "link": "$<typeLink>"
+                },
+                {
+                    "title": "typeLink",
+                    "predicates": [],
+                    "hide": true
+                },
+                {
+                    "title": "Definition",
+                    "stripAfter": "#",
+                    "predicates": [
+                        "sbol:definition"
+                    ],
+                    "link": "$<definitionLink>"
+                },
+                {
+                    "title": "definitionLink",
+                    "predicates": [],
+                    "hide": true
+                }
+            ]
+        },
+        {
+            "title": "Sequence Features",
+            "rootPredicate": "sbol:SequenceFeature",
+            "icon": "faVials",
+            "sections": [
+                {
+                    "title": "Sequence Feature",
+                    "stripAfter": "#",
+                    "predicates": [
+                    ],
+                    "link": "$<sequenceFeatureLink>"
+                },
+                {
+                    "title": "sequenceFeatureLink",
+                    "predicates": [],
+                    "hide": true
+                }
+            ]
+        }
+    ],
+    "pages": [
+        "Details",
+        "$TABLES[SubComponents]",
+        "$TABLES[Component References]",
+        "$TABLES[Local SubComponents]",
+        "$TABLES[Externally Defined]",
+        "$TABLES[Sequence Features]",
+        "Other Properties",
+        "Attachments"
+    ]
+}
