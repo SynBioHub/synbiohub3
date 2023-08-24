@@ -79,7 +79,7 @@
                     "title": "SubComponents",
                     "infoLink": "https://sbols.org/v3#SubComponent",
                     "predicates": [
-                        "sbol:SubComponent"
+                        "rdf:type"
                     ],
                     "stripAfter": "#",
                     "link": "$<subcomponentLink>"

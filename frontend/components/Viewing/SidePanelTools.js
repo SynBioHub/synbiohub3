@@ -90,7 +90,14 @@ export default function SidePanelTools(properties) {
       `${properties.name} was a gift from ${properties.creator === "" ? "undefined" : properties.creator} ; ${publicRuntimeConfig.backend}${properties.url}`
     );
   }
-
+  var displayTitle = properties.type;
+  if (properties.type.includes('#')) {
+    displayTitle = properties.type.split('#')[1];
+  }
+  var displayLink = properties.type;
+  if (!properties.type.includes('http')) {
+    displayLink = `http://sbols.org/v2#${properties.type}`;
+  }
   return (
     <div className={styles.subheader}>
       {modal === "Delete" ?
@@ -132,14 +139,14 @@ export default function SidePanelTools(properties) {
                 */
       }
       <div className={styles.id}>
-        <Link href={`http://sbols.org/v2#${properties.type}`}>
+        <Link href={displayLink}>
           <a title="Learn more about this RDF type" target="_blank">
             <FontAwesomeIcon
               icon={faDatabase}
               size="1x"
               className={styles.contentinfoicon}
             />
-            {properties.type}
+            {displayTitle}
           </a>
         </Link>
       </div>

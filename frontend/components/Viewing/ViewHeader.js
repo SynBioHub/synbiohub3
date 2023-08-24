@@ -9,6 +9,14 @@ import getConfig from "next/config";
 const { publicRuntimeConfig } = getConfig();
 
 export default function ViewHeader(properties) {
+  var displayTitle = properties.type;
+  if (properties.type.includes('#')) {
+    displayTitle = properties.type.split('#')[1];
+  }
+  var displayLink = properties.type;
+  if (!properties.type.includes('http')) {
+    displayLink = `http://sbols.org/v2#${properties.type}`;
+  }
   return (
     <div>
       <div className={styles.contentheader}>
@@ -20,14 +28,14 @@ export default function ViewHeader(properties) {
         </Link>
       </div>
       <div className={styles.contentinfo}>
-        <Link href={`http://sbols.org/v2#${properties.type}`}>
+        <Link href={displayLink}>
           <a title="Learn more about this RDF type" target="_blank">
             <FontAwesomeIcon
               icon={faDatabase}
               size="1x"
               className={styles.contentinfoicon}
             />
-            {properties.type}
+            {displayTitle}
           </a>
         </Link>
       </div>
