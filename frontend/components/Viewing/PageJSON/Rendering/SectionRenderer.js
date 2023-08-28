@@ -2,6 +2,8 @@ import styles from '../../../../styles/view.module.css';
 import Link from 'next/link';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
+import { useDispatch } from 'react-redux';
+import useRegistries from '../Fetching/useRegistries';
 
 function loadText(template, args) {
   for (const key of Object.keys(args)) {
@@ -11,9 +13,20 @@ function loadText(template, args) {
 }
 
 export default function SectionRenderer({ section, metadata }) {
-  console.log(section)
-  const graphPrefix = "https://synbiohub.org/";
-  section.link = replaceBeginning("" + section.link, graphPrefix, "/");
+  const dispatch = useDispatch();
+  const {
+    registries,
+    registriesLoading,
+    error
+  } = useRegistries(dispatch);
+  // if (!registriesLoading) {
+  //   const queryUrl = registries.find(registry => {
+  //     return stackTrace.uri.startsWith(registry.uri);
+  //   })?.url;
+  // }
+  console.log(registries);
+  const queryUrl = "https://synbiohub.org";
+  section.link = replaceBeginning("" + section.link, queryUrl, "");
   if (section.grouped) {
     const items = section.text.split(', ');
     const content = items.map((item, index) => {
