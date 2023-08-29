@@ -7,6 +7,8 @@ import useRegistries from '../Fetching/useRegistries';
 import createRenderingObject from './createRenderingObject';
 import SectionRenderer from './SectionRenderer';
 import { useDispatch } from 'react-redux';
+import getConfig from 'next/config';
+const { publicRuntimeConfig } = getConfig();
 
 function handleExternalFetch(
   dispatch,
@@ -21,9 +23,10 @@ function handleExternalFetch(
 ) {
   if (!error && !loading) {
     setLoading(true);
-    const queryUrl = registries.find(registry => {
-      return stackTrace.uri.startsWith(registry.uri);
-    })?.url;
+    // const queryUrl = registries.find(registry => {
+    //   return stackTrace.uri.startsWith(registry.uri);
+    // })?.url;
+    const queryUrl = publicRuntimeConfig.backend;
     if (queryUrl) {
       executeQueryFromTableJSON(
         dispatch,

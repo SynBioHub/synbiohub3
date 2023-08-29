@@ -247,7 +247,12 @@ function MemberTable(properties) {
       }}
       dataRowDisplay={member => {
         var textArea = document.createElement('textarea');
-        textArea.innerHTML = member.name;
+        if (member.name.length > 0) {
+          textArea.innerHTML = member.name;
+        } else {
+          textArea.innerHTML = member.displayId;
+        }
+        
 
         return (
           <tr key={member.displayId + member.description}>
