@@ -40,7 +40,7 @@ export default function SectionRenderer({ section, metadata }) {
   if (data) {
     data.forEach(registry => {
       if (section.link.startsWith(registry.uri)) {
-        section.link = replaceBeginning("" + section.link, registry.uri, registry.url);
+        section.link = replaceBeginning("" + section.link, registry.uri, "");
       }
     })
     if (section.grouped) {
