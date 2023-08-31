@@ -60,7 +60,7 @@ export default function SidePanel({ metadata, type, json, uri }) {
             <div className={styles.titleHolder}>
               <h2 className={styles.title}>{metadata.name}</h2>
               <Link
-                href={`${publicRuntimeConfig.backend}/search/displayId='${metadata.displayId}'&`}
+                href={`/search/displayId='${metadata.displayId}'&`}
               >
                 <a
                   title="Find all records with the same identifier"
@@ -112,17 +112,13 @@ export default function SidePanel({ metadata, type, json, uri }) {
               icon={faUserEdit}
               label="Creator"
               title={metadata.creator}
-              link={`${
-                publicRuntimeConfig.backend
-              }/user/${metadata.creator.replace(' ', '')}`}
+              link={`/user/${metadata.creator.replace(' ', '')}`}
             />
             <MetadataInfo
               icon={faCalendarPlus}
               label="Created"
               title={date}
-              link={`${
-                publicRuntimeConfig.backend
-              }/search/createdBefore=${date.substring(
+              link={`/search/createdBefore=${date.substring(
                 0,
                 date.lastIndexOf('-') + 3
               )}&createdAfter=${date.substring(0, date.lastIndexOf('-') + 3)}&`}

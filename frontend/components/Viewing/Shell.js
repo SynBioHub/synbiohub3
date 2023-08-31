@@ -28,7 +28,7 @@ export default function Shell(properties) {
             name={metadata.name}
             displayId={metadata.displayId}
             description={metadata.description}
-            type={properties.type}
+            type={metadata.type}
           />
           <div className={styles.sections}>
             <div>
@@ -55,7 +55,7 @@ export default function Shell(properties) {
           name={metadata.name}
           displayId={metadata.displayId}
           description={metadata.description}
-          type={properties.type}
+          type={metadata.type}
         />
         <div className={styles.sections}>
           <GenericContent json={json} uri={properties.uri} />
