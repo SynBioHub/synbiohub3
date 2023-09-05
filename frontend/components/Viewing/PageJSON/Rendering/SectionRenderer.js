@@ -37,7 +37,7 @@ export default function SectionRenderer({ section, metadata }) {
     })
   }, []);
 
-  if (data) {
+  if (data && section.link) {
     data.forEach(registry => {
       if (section.link.startsWith(registry.uri)) {
         section.link = replaceBeginning("" + section.link, registry.uri, "");

@@ -68,7 +68,7 @@ export default function Members(properties) {
   const parameters = {
     graphs: '',
     graphPrefix: 'https://synbiohub.org/',
-    // graphPrefix: 'http://localhost:7777/',
+    // graphPrefix: 'http://localhost:3333/',
     collection: properties.uri,
     sort: sort,
     search: preparedSearch,
@@ -298,6 +298,13 @@ function getType(member) {
   return memberType;
 }
 
+function replaceBeginning(original, oldBeginning, newBeginning) {
+  if (original.startsWith(oldBeginning)) {
+    return newBeginning + original.slice(oldBeginning.length);
+  }
+  return original;
+}
+
 const createUrl = (query, options) => {
   query = loadTemplate(query, options);
   console.log(query);
@@ -318,7 +325,7 @@ const useCount = (query, options, token, dispatch) => {
 
 const useMembers = (query, options, token, dispatch) => {
   const url = createUrl(query, options);
-  console.log(url);
+  console.log(token);
   const { data, error, mutate } = useSWR([url, token, dispatch], fetcher);
 
   let processedData = data ? processResults(data) : undefined;
