@@ -152,9 +152,21 @@ function getPagesInfo(type, json, plugins) {
 
   const order = JSON.parse(localStorage.getItem(type)).order
 
-  const orderUpdated = order.filter(page => !page.startsWith('PLUGIN: '))
+  const orderUpdated = order.filter(page => {
+    if(page.startsWith('PLUGIN: ')) {
+      for(let plugin of plugins.rendering) {
+        if(plugin.name === page.substring(8,page.length)) {
+          return true;
+        }
+      }
+      return false
+    }
+    return true
+  })
   for(let plugin of plugins.rendering) {
-    orderUpdated.push('PLUGIN: ' + plugin.name)
+    if(!orderUpdated.includes('PLUGIN: ' + plugin.name)) {
+      orderUpdated.push('PLUGIN: ' + plugin.name)
+    }
   }
 
   return { type: type, order: orderUpdated };
