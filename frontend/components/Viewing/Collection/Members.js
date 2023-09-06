@@ -68,13 +68,16 @@ export default function Members(properties) {
   const parameters = {
     graphs: '',
     graphPrefix: 'https://synbiohub.org/',
-    // graphPrefix: 'http://localhost:3333/',
     collection: properties.uri,
     sort: sort,
     search: preparedSearch,
     offset: offset ? ` OFFSET ${offset}` : '',
     limit: ' LIMIT 10000 '
   };
+
+  if (token) {
+    parameters.graphs = 'https://synbiohub.org/user/dfang97'
+  }
 
   const searchQuery = preparedSearch || typeFilter !== 'Show Only Root Objects';
 

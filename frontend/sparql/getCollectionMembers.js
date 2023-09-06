@@ -7,7 +7,7 @@ SELECT ?uri
        ?type
        ?sbolType
        ?role
-$graphs 
+FROM <$graphs> 
 WHERE { {
 SELECT DISTINCT ?uri 
        ?displayId
@@ -16,7 +16,7 @@ SELECT DISTINCT ?uri
        ?type
        ?sbolType
        ?role
-$graphs
+
 WHERE { 
 <$collection> a sbol2:Collection .
 <$collection> sbol2:member ?uri .
