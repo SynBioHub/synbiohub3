@@ -142,7 +142,7 @@ function Profile() {
           <div className={styles.info}></div>
         </div>
       </div>
-      <div>
+      {/* <div>
         <PluginTable
           token={token}
           title="Authorization"
@@ -150,7 +150,7 @@ function Profile() {
           loading=""
           data={[]}
         />
-      </div>
+      </div> */}
     </div>
   );
 }
