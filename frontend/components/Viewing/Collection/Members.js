@@ -68,7 +68,6 @@ export default function Members(properties) {
   const parameters = {
     graphs: '',
     graphPrefix: 'https://synbiohub.org/',
-    // graphPrefix: 'http://localhost:3333/',
     collection: properties.uri,
     sort: sort,
     search: preparedSearch,
@@ -76,11 +75,13 @@ export default function Members(properties) {
     limit: ' LIMIT 10000 '
   };
 
+  if (token) {
+    parameters.graphs = 'https://synbiohub.org/user/dfang97'
+  }
+
   const searchQuery = preparedSearch || typeFilter !== 'Show Only Root Objects';
 
   let query = searchQuery ? getCollectionMembersSearch : getCollectionMembers;
-  console.log(query);
-  console.log(parameters);
 
   const { members, mutate } = useMembers(query, parameters, token, dispatch);
   const { count: totalMemberCount } = useCount(
@@ -89,7 +90,6 @@ export default function Members(properties) {
     token,
     dispatch
   );
-  console.log(members);
   const { count: currentMemberCount } = useCount(
     searchQuery ? CountMembersTotal : CountMembers,
     parameters,
@@ -282,7 +282,6 @@ function MemberTable(properties) {
 }
 
 function getType(member) {
-  console.log(member);
   var memberType = member.type
     ? member.type.slice(member.type.lastIndexOf('#') + 1)
     : 'Unknown';
@@ -307,7 +306,6 @@ function replaceBeginning(original, oldBeginning, newBeginning) {
 
 const createUrl = (query, options) => {
   query = loadTemplate(query, options);
-  console.log(query);
   return `${publicRuntimeConfig.backend}/sparql?query=${encodeURIComponent(
     query
   )}`;
@@ -325,7 +323,6 @@ const useCount = (query, options, token, dispatch) => {
 
 const useMembers = (query, options, token, dispatch) => {
   const url = createUrl(query, options);
-  console.log(token);
   const { data, error, mutate } = useSWR([url, token, dispatch], fetcher);
 
   let processedData = data ? processResults(data) : undefined;

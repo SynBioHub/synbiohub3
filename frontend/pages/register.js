@@ -85,6 +85,8 @@ function Register() {
           placeholder="Username"
           type="text"
           icon={faUser}
+          pattern="^[a-zA-Z0-9\-_\.~]+$"
+          title="Usernames can contain letters, numbers, and the symbols - _ . ~"
         />
         <InputField
           value={affiliation}
