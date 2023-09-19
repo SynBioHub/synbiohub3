@@ -2,60 +2,106 @@ import styles from '../../../../styles/view.module.css';
 import Link from 'next/link';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
+import { useDispatch } from 'react-redux';
+import useRegistries from '../Fetching/useRegistries';
+import getConfig from 'next/config';
+import axios from 'axios';
+import { useEffect } from 'react';
+import { useState } from 'react';
+const { publicRuntimeConfig } = getConfig();
 
 function loadText(template, args) {
   for (const key of Object.keys(args)) {
     template = template.replace(new RegExp(`\\$<${key}>`, 'g'), args[key]);
   }
-
   return template;
 }
 
-export default function SectionRenderer({ column, metadata }) {
-  if (column.grouped) {
-    const items = column.text.split(', ');
-    const content = items.map((item, index) => {
-      if (column.link && item) {
-        return (
-          <ColumnLink
-            link={loadText(column.link, { This: item })}
-            text={`${item}${
-              index === items.length - 1 ||
-              (column.linkType !== 'default' && column.linkType !== undefined)
+export default function SectionRenderer({ section, metadata }) {
+  const dispatch = useDispatch();
+  const url = `${publicRuntimeConfig.backend}/admin/registries`;
+
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    axios
+    .get(url, { headers: { accept: 'text/plain' } })
+    .then(res => res.data.registries)
+    .then((registries) => {
+      setData(registries);
+    })
+    .catch(error => {
+      error.customMessage = 'Request failed for GET /admin/registries';
+      error.fullUrl = url;
+      dispatch(addError(error))
+    })
+  }, []);
+
+  if (data && section.link) {
+    data.forEach(registry => {
+      if (section.link.startsWith(registry.uri)) {
+        section.link = replaceBeginning("" + section.link, registry.uri, "");
+      }
+    })
+    if (section.grouped) {
+      const items = section.text.split(', ');
+      const content = items.map((item, index) => {
+        if (section.link && item) {
+          return (
+            <ColumnLink
+              link={loadText(section.link, { This: item })}
+              text={`${item}${index === items.length - 1 ||
+                (section.linkType !== 'default' && section.linkType !== undefined)
                 ? ''
                 : ', '
-            }`}
-            linkType={column.linkType}
-            key={index}
-          />
+                }`}
+              linkType={section.linkType}
+              key={index}
+            />
+          );
+        }
+        return (
+          <span key={index}>
+            "{item}"
+            {index === items.length - 1 ? '' : ', '}
+          </span>
         );
+      });
+      if (metadata) {
+        return <div className={styles.preventoverflowmetadata}>{content}</div>;
       }
-      return (
-        <span key={index}>
-          {item}
-          {index === items.length - 1 ? '' : ', '}
-        </span>
-      );
-    });
-    if (metadata) {
-      return <span>{content}</span>;
+      return <td>{content}</td>;
     }
-    return <td>{content}</td>;
+    return (
+      <td>
+        {section.link ? (
+          <ColumnLink
+            link={loadText(section.link, { This: section.text })}
+            text={section.text}
+            linkType={section.linkType}
+          />
+        ) : (
+          <div className={metadata && styles.preventoverflowmetadata}>
+            {section.text}
+          </div>
+        )}
+      </td>
+    );
+  } else {
+    return <div>
+      Loading...
+    </div>
   }
-  return (
-    <td>
-      {column.link ? (
-        <ColumnLink
-          link={loadText(column.link, { This: column.text })}
-          text={column.text}
-          linkType={column.linkType}
-        />
-      ) : (
-        <span>{column.text}</span>
-      )}
-    </td>
-  );
+
 }
+
+function replaceBeginning(original, oldBeginning, newBeginning) {
+  if (original.startsWith(oldBeginning)) {
+    return newBeginning + original.slice(oldBeginning.length);
+  }
+  return original;
+}
+
 
 function ColumnLink({ text, link, linkType }) {
   if (linkType === 'search') {

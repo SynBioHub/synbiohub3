@@ -3,11 +3,12 @@ import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { markPageVisited, restoreLogin } from '../redux/actions';
+import { addError, markPageVisited, restoreLogin } from '../redux/actions';
 import styles from '../styles/layout.module.css';
 import Footer from './Footer';
 import Navbar from './Navbar/Navbar';
 import DownloadStatus from './Reusable/Download/DownloadStatus';
+import Errors from './Error/Errors';
 
 /* eslint sonarjs/cognitive-complexity: "off" */
 
@@ -40,24 +41,29 @@ export default function TopLevel(properties) {
     }
   }, [loggedIn, router, protectRoute]);
 
-  if (!protectRoute | loggedIn)
-    return (
-      <div>
-        <Head>
-          <title>SynBioHub</title>
+  try {
+    if (!protectRoute | loggedIn)
+      return (
+        <div>
+          <Head>
+            <title>SynBioHub</title>
 
-          <link href="/favicon.ico" rel="icon" />
-        </Head>
-
-        <div className={styles.container}>
-          <div className={!properties.hideFooter ? styles.content : ''}>
-            {properties.navbar ? properties.navbar : <Navbar />}
-            {properties.children}
+            <link href="/favicon.ico" rel="icon" />
+          </Head>
+          <Errors />
+          <div className={styles.container}>
+            <div className={!properties.hideFooter ? styles.content : ''}>
+              {properties.navbar ? properties.navbar : <Navbar />}
+              {properties.children}
+            </div>
+            {!properties.hideFooter && <Footer />}
           </div>
-          {!properties.hideFooter && <Footer />}
+          <DownloadStatus />
         </div>
-        <DownloadStatus />
-      </div>
-    );
-  return null;
+      );
+    return null;
+  } catch (error) {
+    error.customMessage = 'Error caught by general catch block';
+    dispatch(addError(error));
+  }
 }

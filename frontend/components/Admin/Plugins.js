@@ -9,7 +9,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import useSWR, { mutate } from 'swr';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -28,13 +28,15 @@ const searchable = ['index', 'name', 'url'];
 const headers = ['ID', 'Name', 'URL', ''];
 
 import getConfig from 'next/config';
+import { addError } from '../../redux/actions';
 const { publicRuntimeConfig } = getConfig();
 
 /* eslint sonarjs/no-duplicate-string: "off" */
 
 export default function Plugins() {
   const token = useSelector(state => state.user.token);
-  const { plugins, loading } = usePlugins(token);
+  const dispatch = useDispatch();
+  const { plugins, loading } = usePlugins(token, dispatch);
   return (
     <div>
       <PluginTable
@@ -116,6 +118,7 @@ function PluginTable(properties) {
 function NewPluginRow(properties) {
   const [name, setName] = useState('');
   const [url, setUrl] = useState('');
+  const dispatch = useDispatch();
   return (
     <tr key="New">
       <td>New</td>
@@ -141,7 +144,14 @@ function NewPluginRow(properties) {
               icon={faPlusCircle}
               color="#1C7C54"
               onClick={() => {
-                savePlugin('New', properties.type, name, url, properties.token);
+                savePlugin(
+                  'New',
+                  properties.type,
+                  name,
+                  url,
+                  properties.token,
+                  dispatch
+                );
                 setName('');
                 setUrl('');
               }}
@@ -158,6 +168,8 @@ function PluginDisplay(properties) {
   const [name, setName] = useState(properties.plugin.name);
   const [url, setUrl] = useState(properties.plugin.url);
   const [status, setStatus] = useState(true);
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     setName(properties.plugin.name);
@@ -177,9 +189,17 @@ function PluginDisplay(properties) {
       <td>{properties.plugin.name}</td>
       <td>
         <code>{properties.plugin.url}</code>
-        {!status ? <span><FontAwesomeIcon icon={faExclamationCircle} color={'#FB4C27'}></FontAwesomeIcon> Plugin is not Running</span>
-          : null}
+        {!status ? (
+          <span>
+            <FontAwesomeIcon
+              icon={faExclamationCircle}
+              color={'#FB4C27'}
+            ></FontAwesomeIcon>{' '}
+            Plugin is not Running
+          </span>
+        ) : null}
       </td>
+      {
       <td>
         <ActionButton 
         action="Refresh Plugin Status"
@@ -193,6 +213,7 @@ function PluginDisplay(properties) {
         }}
         />
       </td>
+        }
       <td>
         <div className={styles.actionbuttonscontainer}>
           <div className={styles.actionbuttonslayout}>
@@ -210,7 +231,8 @@ function PluginDisplay(properties) {
                 deletePlugin(
                   properties.plugin.index + 1,
                   properties.type,
-                  properties.token
+                  properties.token,
+                  dispatch
                 )
               }
             />
@@ -250,7 +272,8 @@ function PluginDisplay(properties) {
                   properties.type,
                   name,
                   url,
-                  properties.token
+                  properties.token,
+                  dispatch
                 );
                 setEditMode(false);
               }}
@@ -272,7 +295,7 @@ function PluginDisplay(properties) {
   );
 }
 
-const deletePlugin = async (id, type, token) => {
+const deletePlugin = async (id, type, token, dispatch) => {
   const url = `${publicRuntimeConfig.backend}/admin/deletePlugin`;
   const headers = {
     Accept: 'text/plain',
@@ -290,11 +313,11 @@ const deletePlugin = async (id, type, token) => {
   });
 
   if (response.status === 200) {
-    mutate([`${publicRuntimeConfig.backend}/admin/plugins`, token]);
+    mutate([`${publicRuntimeConfig.backend}/admin/plugins`, token, dispatch]);
   }
 };
 
-const savePlugin = async (id, type, name, pluginUrl, token) => {
+const savePlugin = async (id, type, name, pluginUrl, token, dispatch) => {
   const url = `${publicRuntimeConfig.backend}/admin/savePlugin`;
   const headers = {
     Accept: 'text/plain',
@@ -314,7 +337,7 @@ const savePlugin = async (id, type, name, pluginUrl, token) => {
   });
 
   if (response.status === 200) {
-    mutate([`${publicRuntimeConfig.backend}/admin/plugins`, token]);
+    mutate([`${publicRuntimeConfig.backend}/admin/plugins`, token, dispatch]);
   }
 };
 
@@ -336,9 +359,9 @@ const sortMethods = {
   url: (plugin1, plugin2) => compareStrings(plugin1.name, plugin2.name)
 };
 
-const usePlugins = token => {
+const usePlugins = (token, dispatch) => {
   const { data, error } = useSWR(
-    [`${publicRuntimeConfig.backend}/admin/plugins`, token],
+    [`${publicRuntimeConfig.backend}/admin/plugins`, token, dispatch],
     fetcher
   );
   return {
@@ -358,14 +381,17 @@ async function fetchStatus(plugin, type) {
       endpoint: 'status',
       category: type
     }
-  }).then(response => {
-    return response.status === 200;
-  }).catch(error => {
-    return false;
-  });
+  })
+    .then(response => {
+      return response.status === 200;
+    })
+    .catch(error => {
+      return false;
+    });
 }
 
-const fetcher = (url, token) => 
+
+const fetcher = (url, token, dispatch) =>
   axios
     .get(url, {
       headers: {
@@ -374,5 +400,9 @@ const fetcher = (url, token) =>
         'X-authorization': token
       }
     })
-    .then(response => response.data);
-
+    .then(response => response.data)
+    .catch(error => {
+      error.customMessage = 'Error fetching plugins';
+      error.fullUrl = url;
+      dispatch(addError(error));
+    });

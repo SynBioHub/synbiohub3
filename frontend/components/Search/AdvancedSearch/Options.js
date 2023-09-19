@@ -17,33 +17,32 @@ import getTypes from '../../../sparql/getTypes';
 import styles from '../../../styles/advancedsearch.module.css';
 import AdditionalFilter from './AdditionalFilter';
 import SelectLoader from './SelectLoader';
+import axios from 'axios';
+import { addError } from '../../../redux/actions';
+import { useDispatch } from 'react-redux';
 const { publicRuntimeConfig } = getConfig();
 
 /* eslint sonarjs/no-identical-functions: "off" */
 
 export default function Options(properties) {
-  const [filterDisplay, setFilterDisplay] = useState([]);
   const [predicates, setPredicates] = useState('loading');
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    loadPredicates(setPredicates);
+    loadPredicates(setPredicates, dispatch);
   }, []);
 
-  useEffect(() => {
-    setFilterDisplay(
-      properties.extraFilters.map((element, index) => {
-        return (
-          <AdditionalFilter
-            predicates={predicates}
-            key={index}
-            index={index}
-            extraFilters={properties.extraFilters}
-            setExtraFilters={properties.setExtraFilters}
-          />
-        );
-      })
+  const filterDisplay = properties.extraFilters.map((element, index) => {
+    return (
+      <AdditionalFilter
+        predicates={predicates}
+        key={index}
+        index={index}
+        extraFilters={properties.extraFilters}
+        setExtraFilters={properties.setExtraFilters}
+      />
     );
-  }, [properties.extraFilters, predicates]);
+  });
 
   return (
     <div>
@@ -170,24 +169,29 @@ const addFilter = filters => {
   ];
 };
 
-const loadPredicates = async setPredicates => {
-  const results = await fetchPredicates();
+const loadPredicates = async (setPredicates, dispatch) => {
+  const results = await fetchPredicates(dispatch);
   setPredicates(results);
 };
 
-const fetchPredicates = async () => {
+const fetchPredicates = async dispatch => {
   const url = `${publicRuntimeConfig.backend}/sparql?query=${encodeURIComponent(
     getPredicates
   )}`;
-  const headers = {
-    'Content-Type': 'application/json',
-    Accept: 'application/json'
-  };
+  try {
+    const headers = {
+      'Content-Type': 'application/json',
+      Accept: 'application/json'
+    };
 
-  const response = await fetch(url, {
-    method: 'GET',
-    headers
-  });
+    const response = await axios.get(url, {
+      headers
+    });
 
-  return response.status === 200 ? await response.json() : 'error';
+    return response.status === 200 ? response.data : 'error';
+  } catch (error) {
+    error.customMessage = 'Error fetching predicates';
+    error.fullUrl = `Query: ${getPredicates} \n\n\n URL: ${url}`;
+    dispatch(addError(error));
+  }
 };

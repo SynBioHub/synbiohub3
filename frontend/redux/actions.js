@@ -94,27 +94,33 @@ export const updateUser =
   (name, affiliation, email, password, confirmPassword) =>
   async (dispatch, getState) => {
     const url = `${publicRuntimeConfig.backend}/profile`;
-    const token = getState().user.token;
-    const headers = {
-      Accept: 'text/plain',
-      'X-authorization': token
-    };
+    try {
+      const token = getState().user.token;
+      const headers = {
+        Accept: 'text/plain',
+        'X-authorization': token
+      };
 
-    const parameters = new URLSearchParams();
-    parameters.append('name', name);
-    parameters.append('affiliation', affiliation);
-    parameters.append('email', email);
-    if (password) {
-      parameters.append('password1', password);
-      parameters.append('password2', confirmPassword);
+      const parameters = new URLSearchParams();
+      parameters.append('name', name);
+      parameters.append('affiliation', affiliation);
+      parameters.append('email', email);
+      if (password) {
+        parameters.append('password1', password);
+        parameters.append('password2', confirmPassword);
+      }
+
+      const response = await fetch(url, {
+        method: 'POST',
+        headers,
+        body: parameters
+      });
+      if (response.status === 200) dispatch(fetchUserInfo());
+    } catch (error) {
+      error.customMessage = 'There was an error updating your profile.';
+      error.url = `${publicRuntimeConfig.backend}/profile`;
+      dispatch(addError(error));
     }
-
-    const response = await fetch(url, {
-      method: 'POST',
-      headers,
-      body: parameters
-    });
-    if (response.status === 200) dispatch(fetchUserInfo());
   };
 
 export const fetchUserInfo = () => async (dispatch, getState) => {
@@ -764,54 +770,61 @@ export const addAttachments = (files, uri) => async (dispatch, getState) => {
 export const createCollection =
   (id, version, name, description, citations, overwrite_merge) =>
   async (dispatch, getState) => {
-    dispatch({ type: types.CREATINGCOLLECTIONERRORS, payload: [] });
-    dispatch({ type: types.CREATINGCOLLECTION, payload: true });
-    dispatch({
-      type: types.CREATINGCOLLECTIONBUTTONTEXT,
-      payload: 'Creating Collection'
-    });
-    const token = getState().user.token;
     const url = `${publicRuntimeConfig.backend}/submit`;
-    var headers = {
-      Accept: 'text/plain; charset=UTF-8',
-      'X-authorization': token
-    };
-
-    const form = new FormData();
-    form.append('id', id);
-    form.append('version', version);
-    form.append('name', name);
-    form.append('description', description);
-    form.append('citations', citations);
-    form.append('overwrite_merge', `${overwrite_merge}`);
-
-    const response = await fetch(url, {
-      method: 'POST',
-      headers,
-      body: form
-    });
-
-    if (response.status !== 200) {
-      var messages = await response.text();
-      messages = messages.charAt(0) !== '[' ? [messages] : JSON.parse(messages);
-      dispatch({ type: types.CREATINGCOLLECTIONERRORS, payload: messages });
-    } else {
+    try {
       dispatch({ type: types.CREATINGCOLLECTIONERRORS, payload: [] });
-      await dispatch(getCanSubmitTo());
-      const collections = getState().submit.canSubmitTo;
-      for (const collection of collections) {
-        if (
-          collection.displayId === id + '_collection' &&
-          collection.version === version &&
-          collection.name === name
-        ) {
-          dispatch(setSelectedCollection(collection));
-          break;
+      dispatch({ type: types.CREATINGCOLLECTION, payload: true });
+      dispatch({
+        type: types.CREATINGCOLLECTIONBUTTONTEXT,
+        payload: 'Creating Collection'
+      });
+      const token = getState().user.token;
+      var headers = {
+        Accept: 'text/plain; charset=UTF-8',
+        'X-authorization': token
+      };
+
+      const form = new FormData();
+      form.append('id', id);
+      form.append('version', version);
+      form.append('name', name);
+      form.append('description', description);
+      form.append('citations', citations);
+      form.append('overwrite_merge', `${overwrite_merge}`);
+
+      const response = await fetch(url, {
+        method: 'POST',
+        headers,
+        body: form
+      });
+
+      if (response.status !== 200) {
+        var messages = await response.text();
+        messages =
+          messages.charAt(0) !== '[' ? [messages] : JSON.parse(messages);
+        dispatch({ type: types.CREATINGCOLLECTIONERRORS, payload: messages });
+      } else {
+        dispatch({ type: types.CREATINGCOLLECTIONERRORS, payload: [] });
+        await dispatch(getCanSubmitTo());
+        const collections = getState().submit.canSubmitTo;
+        for (const collection of collections) {
+          if (
+            collection.displayId === id + '_collection' &&
+            collection.version === version &&
+            collection.name === name
+          ) {
+            dispatch(setSelectedCollection(collection));
+            break;
+          }
         }
+        dispatch(setPromptNewCollection(false));
       }
-      dispatch(setPromptNewCollection(false));
+      dispatch({ type: types.CREATINGCOLLECTION, payload: false });
+    } catch (error) {
+      error.customMessage = 'There was an error creating your collection.';
+      error.fullUrl = url;
+      dispatch(addError(error));
     }
-    dispatch({ type: types.CREATINGCOLLECTION, payload: false });
   };
 
 export const setSelectedCollection = collection => dispatch => {
@@ -839,39 +852,44 @@ export const resetSubmit = () => dispatch => {
 
 // MANAGE SUBMISSION ACTIONS
 export const getCanSubmitTo = () => async (dispatch, getState) => {
-  dispatch({ type: types.GETTINGCANSUBMITTO, payload: true });
-
-  const token = getState().user.token;
   var url = `${publicRuntimeConfig.backend}/manage`;
-  var headers = {
-    Accept: 'text/plain; charset=UTF-8',
-    'X-authorization': token
-  };
+  try {
+    dispatch({ type: types.GETTINGCANSUBMITTO, payload: true });
+    const token = getState().user.token;
+    var headers = {
+      Accept: 'text/plain; charset=UTF-8',
+      'X-authorization': token
+    };
 
-  var data = await fetch(url, {
-    method: 'GET',
-    headers
-  });
+    var data = await fetch(url, {
+      method: 'GET',
+      headers
+    });
 
-  const submissions = await data.json();
+    const submissions = await data.json();
 
-  url = `${publicRuntimeConfig.backend}/shared`;
+    url = `${publicRuntimeConfig.backend}/shared`;
 
-  data = await fetch(url, {
-    method: 'GET',
-    headers
-  });
+    data = await fetch(url, {
+      method: 'GET',
+      headers
+    });
 
-  const sharedSubmissions = await data.json();
+    const sharedSubmissions = await data.json();
 
-  dispatch({
-    type: types.CANSUBMITTO,
-    payload: [...submissions, ...sharedSubmissions].filter(
-      submission => submission.triplestore !== 'public'
-    )
-  });
+    dispatch({
+      type: types.CANSUBMITTO,
+      payload: [...submissions, ...sharedSubmissions].filter(
+        submission => submission.triplestore !== 'public'
+      )
+    });
 
-  dispatch({ type: types.GETTINGCANSUBMITTO, payload: false });
+    dispatch({ type: types.GETTINGCANSUBMITTO, payload: false });
+  } catch (error) {
+    error.customMessage = "Couldn't get and/or process submissions";
+    error.fullUrl = url;
+    dispatch(addError(error));
+  }
 };
 
 export const makePublicCollection =
@@ -887,38 +905,45 @@ export const makePublicCollection =
     setProcessUnderway
   ) =>
   async (dispatch, getState) => {
-    setProcessUnderway(true);
-    dispatch({ type: types.PUBLISHING, payload: true });
-
-    const token = getState().user.token;
     const url = `${publicRuntimeConfig.backend}${submissionUrl}/makePublic`;
-    const headers = {
-      Accept: 'text/plain; charset=UTF-8',
-      'X-authorization': token
-    };
+    try {
+      setProcessUnderway(true);
+      dispatch({ type: types.PUBLISHING, payload: true });
 
-    const parameters = new URLSearchParams();
-    parameters.append('id', displayId);
-    parameters.append('version', version);
-    parameters.append('name', name);
-    parameters.append('description', description);
-    parameters.append('citations', citations);
-    parameters.append('tabState', tabState);
-    if (tabState === 'existing') parameters.append('collections', collections);
+      const token = getState().user.token;
+      const headers = {
+        Accept: 'text/plain; charset=UTF-8',
+        'X-authorization': token
+      };
 
-    var response = await fetch(url, {
-      method: 'POST',
-      headers,
-      body: parameters
-    });
+      const parameters = new URLSearchParams();
+      parameters.append('id', displayId);
+      parameters.append('version', version);
+      parameters.append('name', name);
+      parameters.append('description', description);
+      parameters.append('citations', citations);
+      parameters.append('tabState', tabState);
+      if (tabState === 'existing')
+        parameters.append('collections', collections);
 
-    if (response.status === 200) {
-      mutate([`${publicRuntimeConfig.backend}/shared`, token]);
-      mutate([`${publicRuntimeConfig.backend}/manage`, token]);
+      var response = await fetch(url, {
+        method: 'POST',
+        headers,
+        body: parameters
+      });
+
+      if (response.status === 200) {
+        mutate([`${publicRuntimeConfig.backend}/shared`, token, dispatch]);
+        mutate([`${publicRuntimeConfig.backend}/manage`, token, dispatch]);
+      }
+
+      setProcessUnderway(false);
+      dispatch({ type: types.PUBLISHING, payload: false });
+    } catch (error) {
+      error.customMessage = "Couldn't make collection public";
+      error.fullUrl = url;
+      dispatch(addError(error));
     }
-
-    setProcessUnderway(false);
-    dispatch({ type: types.PUBLISHING, payload: false });
   };
 
 export const downloadFiles =
@@ -1212,5 +1237,39 @@ export const setUploadStatus = status => dispatch => {
   dispatch({
     type: types.UPLOADSTATUS,
     payload: status
+  });
+};
+
+// ERROR ACTIONS
+
+export const addError = error => (dispatch, getState) => {
+  dispatch({
+    type: types.SETERRORS,
+    payload: [...getState().errors.errors, error]
+  });
+};
+
+export const clearErrors = () => dispatch => {
+  dispatch({
+    type: types.SETERRORS,
+    payload: []
+  });
+};
+
+export const removeError = error => (dispatch, getState) => {
+  const newErrors = getState().errors.errors.filter(
+    e => e.message !== error.message
+  );
+  dispatch({
+    type: types.SETERRORS,
+    payload: newErrors
+  });
+};
+
+export const removeErrorByIndex = index => (dispatch, getState) => {
+  const newErrors = getState().errors.errors.filter((e, i) => i !== index);
+  dispatch({
+    type: types.SETERRORS,
+    payload: newErrors
   });
 };

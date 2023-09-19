@@ -10,6 +10,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
 import java.util.HashMap;
 
 @Service
@@ -21,12 +22,11 @@ public class EditService {
      * @param query SPARQL Query to send
      * @return Virtuoso response
      */
-    public String AuthSPARQLQuery(String query) {
-        JsonNode triplestore = ConfigUtil.get("triplestore");
-        String sparqlAuthEndpoint = triplestore.get("sparqlAuthEndpoint").asText();
-        String adminUsername = triplestore.get("username").asText();
-        String adminPassword = triplestore.get("password").asText();
-        String defaultGraph = triplestore.get("defaultGraph").asText();
+    public String AuthSPARQLQuery(String query) throws IOException {
+        String sparqlAuthEndpoint = ConfigUtil.get("sparqlAuthEndpoint").asText();
+        String adminUsername = ConfigUtil.get("username").asText();
+        String adminPassword = ConfigUtil.get("password").asText();
+        String defaultGraph = ConfigUtil.get("defaultGraph").asText();
 
         RestTemplate restTemplate = new RestTemplate();
         String url = sparqlAuthEndpoint + "?default-graph-uri={defaultGraph}&query={query}&format=json&";

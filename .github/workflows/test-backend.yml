@@ -1,0 +1,53 @@
+name: Test Backend
+
+# Controls when the action will run.
+on:
+  # Triggers the workflow on push or pull request events but only for the main branch
+  pull_request:
+    branches: [main]
+    
+jobs:
+  build:
+    name: Build Docker image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        name: Checkout source tree
+      - uses: nick-invision/retry@v2
+        name: Build docker image
+        with:
+          timeout_minutes: 10
+          max_attempts: 3
+          command: docker build ./backend --tag synbiohub/sbh3backend:snapshot
+      - name: Package image
+        run: |
+          docker save synbiohub/sbh3backend:snapshot | gzip > sbh3.tar.gz
+      - uses: actions/upload-artifact@v3
+        name: Upload Docker image
+        with:
+          name: sbh3-image
+          path: sbh3.tar.gz
+  sbhtests:
+    name: SynBioHub Test Suite
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        name: Checkout source tree
+      - uses: actions/download-artifact@v3
+        name: Download Docker image
+        with:
+          name: sbh3-image
+      - name: Import saved Docker image
+        run: |
+          cat sbh3.tar.gz | docker load
+      - uses: actions/setup-python@v4
+        name: Install Python
+        with:
+          python-version: '3.9'
+      - name: Install test dependencies
+        run: |
+          pip install -r tests/test_requirements.txt
+      - name: Run tests
+        run: |
+          tests/test.sh

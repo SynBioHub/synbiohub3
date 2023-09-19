@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import useSWR from 'swr';
 import axios from 'axios';
 import Select from 'react-select';
@@ -19,6 +19,7 @@ import loadTemplate from '../../../sparql/tools/loadTemplate';
 import { shortName } from '../../../namespace/namespace';
 import lookupRole from '../../../namespace/lookupRole';
 import Link from 'next/link';
+import { addError } from '../../../redux/actions';
 
 /* eslint sonarjs/cognitive-complexity: "off" */
 
@@ -42,6 +43,7 @@ export default function Members(properties) {
   const [defaultSortOption, setDefaultSortOption] = useState(sortOptions[0]);
   const [customBounds, setCustomBounds] = useState([0, 10000]);
   const [typeFilter, setTypeFilter] = useState('Show Only Root Objects');
+  const dispatch = useDispatch();
 
   let preparedSearch =
     search !== ''
@@ -66,6 +68,7 @@ export default function Members(properties) {
   const parameters = {
     graphs: '',
     graphPrefix: 'https://synbiohub.org/',
+    // graphPrefix: 'http://localhost:3333/',
     collection: properties.uri,
     sort: sort,
     search: preparedSearch,
@@ -76,17 +79,22 @@ export default function Members(properties) {
   const searchQuery = preparedSearch || typeFilter !== 'Show Only Root Objects';
 
   let query = searchQuery ? getCollectionMembersSearch : getCollectionMembers;
+  console.log(query);
+  console.log(parameters);
 
-  const { members, mutate } = useMembers(query, parameters, token);
+  const { members, mutate } = useMembers(query, parameters, token, dispatch);
   const { count: totalMemberCount } = useCount(
     CountMembersTotal,
     { ...parameters, search: '' },
-    token
+    token,
+    dispatch
   );
+  console.log(members);
   const { count: currentMemberCount } = useCount(
     searchQuery ? CountMembersTotal : CountMembers,
     parameters,
-    token
+    token,
+    dispatch
   );
 
   useEffect(() => {
@@ -96,7 +104,12 @@ export default function Members(properties) {
     }
   }, [properties.refreshMembers, mutate]);
 
-  const { filters } = useFilters(getTypesRoles, { uri: properties.uri }, token);
+  const { filters } = useFilters(
+    getTypesRoles,
+    { uri: properties.uri },
+    token,
+    dispatch
+  );
 
   const outOfBoundsHandle = offset => {
     const newBounds = getNewBounds(offset, currentMemberCount);
@@ -238,7 +251,12 @@ function MemberTable(properties) {
       }}
       dataRowDisplay={member => {
         var textArea = document.createElement('textarea');
-        textArea.innerHTML = member.name;
+        if (member.name.length > 0) {
+          textArea.innerHTML = member.name;
+        } else {
+          textArea.innerHTML = member.displayId;
+        }
+        
 
         return (
           <tr key={member.displayId + member.description}>
@@ -264,6 +282,7 @@ function MemberTable(properties) {
 }
 
 function getType(member) {
+  console.log(member);
   var memberType = member.type
     ? member.type.slice(member.type.lastIndexOf('#') + 1)
     : 'Unknown';
@@ -273,22 +292,30 @@ function getType(member) {
   if (member.role) {
     memberType = lookupRole(member.role).description.name;
   }
-  if (memberType === 'ComponentDefinition') memberType = 'Component';
-  else if (memberType === 'ModuleDefinition') memberType = 'Module';
+  // if (memberType === 'ComponentDefinition') memberType = 'Component';
+  // else if (memberType === 'ModuleDefinition') memberType = 'Module';
 
   return memberType;
 }
 
+function replaceBeginning(original, oldBeginning, newBeginning) {
+  if (original.startsWith(oldBeginning)) {
+    return newBeginning + original.slice(oldBeginning.length);
+  }
+  return original;
+}
+
 const createUrl = (query, options) => {
   query = loadTemplate(query, options);
+  console.log(query);
   return `${publicRuntimeConfig.backend}/sparql?query=${encodeURIComponent(
     query
   )}`;
 };
 
-const useCount = (query, options, token) => {
+const useCount = (query, options, token, dispatch) => {
   const url = createUrl(query, options, token);
-  const { data, error } = useSWR([url, token], fetcher);
+  const { data, error } = useSWR([url, token, dispatch], fetcher);
 
   let processedData = data ? processResults(data)[0].count : undefined;
   return {
@@ -296,9 +323,10 @@ const useCount = (query, options, token) => {
   };
 };
 
-const useMembers = (query, options, token) => {
+const useMembers = (query, options, token, dispatch) => {
   const url = createUrl(query, options);
-  const { data, error, mutate } = useSWR([url, token], fetcher);
+  console.log(token);
+  const { data, error, mutate } = useSWR([url, token, dispatch], fetcher);
 
   let processedData = data ? processResults(data) : undefined;
 
@@ -308,9 +336,9 @@ const useMembers = (query, options, token) => {
   };
 };
 
-const useFilters = (query, options, token) => {
+const useFilters = (query, options, token, dispatch) => {
   const url = createUrl(query, options);
-  const { data, error } = useSWR([url, token], fetcher);
+  const { data, error } = useSWR([url, token, dispatch], fetcher);
 
   let processedData = data ? processResults(data) : undefined;
 
@@ -319,7 +347,7 @@ const useFilters = (query, options, token) => {
   };
 };
 
-const fetcher = (url, token) =>
+const fetcher = (url, token, dispatch) =>
   axios
     .get(url, {
       headers: {
@@ -328,7 +356,13 @@ const fetcher = (url, token) =>
         'X-authorization': token
       }
     })
-    .then(response => response.data);
+    .then(response => response.data)
+    .catch(error => {
+      error.customMessage =
+        'Request failed while getting collection members info';
+      error.fullUrl = url;
+      dispatch(addError(error));
+    });
 
 const processResults = results => {
   const headers = results.head.vars;

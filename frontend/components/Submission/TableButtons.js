@@ -11,7 +11,7 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { mutate } from 'swr';
 
-import { addToBasket, downloadFiles } from '../../redux/actions';
+import { addError, addToBasket, downloadFiles } from '../../redux/actions';
 import styles from '../../styles/submissions.module.css';
 import TableButton from '../Reusable/TableButton';
 import PublishModal from './PublishModal';
@@ -69,7 +69,12 @@ export default function TableButtons(properties) {
         };
       }
     );
-    removeCollections(itemsChecked, properties.token, setProcessUnderway);
+    removeCollections(
+      itemsChecked,
+      properties.token,
+      setProcessUnderway,
+      dispatch
+    );
   };
 
   const preparePublishModal = () => {
@@ -134,7 +139,12 @@ export default function TableButtons(properties) {
   );
 }
 
-const removeCollections = (collections, token, setProcessUnderway) => {
+const removeCollections = (
+  collections,
+  token,
+  setProcessUnderway,
+  dispatch
+) => {
   const removeCollectionPromises = collections.map(collection => {
     if (collection.privacy === 'public') {
       alert(
@@ -149,6 +159,12 @@ const removeCollections = (collections, token, setProcessUnderway) => {
           Accept: 'text/plain',
           'X-authorization': token
         }
+      }).catch(error => {
+        error.customMessage =
+          'Request failed while preparing remove collection for GET ' +
+          collection.url;
+        error.fullUrl = collection.url;
+        dispatch(addError(error));
       });
     }
   });
@@ -156,8 +172,8 @@ const removeCollections = (collections, token, setProcessUnderway) => {
   Promise.all(removeCollectionPromises)
     .then(() => {
       setProcessUnderway(false);
-      mutate([`${publicRuntimeConfig.backend}/shared`, token]);
-      mutate([`${publicRuntimeConfig.backend}/manage`, token]);
+      mutate([`${publicRuntimeConfig.backend}/shared`, token, dispatch]);
+      mutate([`${publicRuntimeConfig.backend}/manage`, token, dispatch]);
     })
     .catch(error => {
       setProcessUnderway(false);

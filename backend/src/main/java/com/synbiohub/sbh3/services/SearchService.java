@@ -7,18 +7,15 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.synbiohub.sbh3.controllers.SearchController;
 import com.synbiohub.sbh3.sparql.SPARQLQuery;
 import com.synbiohub.sbh3.utils.ConfigUtil;
-import com.synbiohub.sbh3.utils.ObjectMapperUtils;
-import org.json.JSONObject;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
+import org.springframework.http.*;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -36,9 +33,8 @@ public class SearchService {
      * Returns the metadata for the object from the specified search query
      * @param allParams Key/Value pairs of the query
      * @return String containing SPARQL query
-     * @see SearchController#getResults(Map, HttpServletRequest)
      */
-    public String getMetadataQuerySPARQL(Map<String,String> allParams) throws UnsupportedEncodingException {
+    public String getMetadataQuerySPARQL(Map<String,String> allParams) throws IOException {
         SPARQLQuery searchQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/search.sparql");
         HashMap<String, String> sparqlArgs = new HashMap<>
                 (Map.of("from", "", "criteria", "", "limit", "", "offset", ""));
@@ -64,7 +60,7 @@ public class SearchService {
 
         String userGraph = getPrivateGraph();
         if (!userGraph.isEmpty()) {
-            String defaultGraph = ConfigUtil.get("triplestore").get("defaultGraph").toString();
+            String defaultGraph = ConfigUtil.get("defaultGraph").toString();
             sparqlArgs.replace("from", "FROM <" + defaultGraph.substring(1,defaultGraph.length()-1) + ">\nFROM NAMED <" + userGraph + ">");
         }
 
@@ -201,7 +197,7 @@ public class SearchService {
     }
 
     // TODO: Make sure this method (and others) are compatible with user authentication in the future
-    public String getURISPARQL(String collectionInfo, String endpoint) {
+    public String getURISPARQL(String collectionInfo, String endpoint) throws IOException {
         // Initialize arguments to be parsed into SPARQL template
         SPARQLQuery searchQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/search.sparql");
         HashMap<String, String> sparqlArgs = new HashMap<>
@@ -235,7 +231,7 @@ public class SearchService {
         return searchQuery.loadTemplate(sparqlArgs);
     }
 
-    public String getTwinsSPARQL(String collectionInfo) {
+    public String getTwinsSPARQL(String collectionInfo) throws IOException {
         SPARQLQuery searchQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/search.sparql");
         HashMap<String, String> sparqlArgs = new HashMap<>
                 (Map.of("from", getPrivateGraph(), "criteria", "", "limit", "", "offset", ""));
@@ -259,7 +255,7 @@ public class SearchService {
         return searchQuery.getQuery();
     }
 
-    public String getSubCollectionsSPARQL(String collectionInfo) {
+    public String getSubCollectionsSPARQL(String collectionInfo) throws IOException {
         SPARQLQuery searchQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/SubCollectionMetadata.sparql");
         String IRI = "<" + ConfigUtil.get("databasePrefix").asText() + collectionInfo + ">";
 
@@ -281,10 +277,17 @@ public class SearchService {
         ArrayList<ObjectNode> listOfParts = new ArrayList<>();
         for(JsonNode node : rawTree.get("results").get("bindings")) {
             ObjectNode part = mapper.createObjectNode();
-
+            Set<String> keySet = new HashSet<>();
             for (Iterator<Map.Entry<String, JsonNode>> it = node.fields(); it.hasNext(); ) {
                 Map.Entry<String, JsonNode> subNode = it.next();
-                part.put((subNode.getKey().equals("subject")? "uri" : subNode.getKey()), subNode.getValue().get("value"));
+                part.set((subNode.getKey().equals("subject")? "uri" : subNode.getKey()), subNode.getValue().get("value"));
+                keySet.add(subNode.getKey());
+            }
+            if (!keySet.contains("name")) {
+                part.set("name", part.get("displayId"));
+            }
+            if (!keySet.contains("description")) {
+                part.put("description", "");
             }
             listOfParts.add(part);
         }
@@ -325,46 +328,48 @@ public class SearchService {
         return value;
     }
 
-    public String SPARQLOrExplorerQuery(String query) {
+    public String SPARQLOrExplorerQuery(String query) throws IOException {
         RestTemplate restTemplate = new RestTemplate();
         String url;
         // Encoding the SPARQL query to be sent to Explorer/SPARQL
         HashMap<String, String> params = new HashMap<>();
-        params.put("default-graph-uri", ConfigUtil.get("triplestore").get("defaultGraph").asText());
+        params.put("default-graph-uri", ConfigUtil.get("defaultGraph").asText());
         params.put("query", query);
 
         if (ConfigUtil.get("useSBOLExplorer").asBoolean() && query.length() > 0)
             url = ConfigUtil.get("SBOLExplorerEndpoint").asText()  + "?default-graph-uri={default-graph-uri}&query={query}&";
         else
-            url = ConfigUtil.get("triplestore").get("sparqlEndpoint").asText() + "?default-graph-uri={default-graph-uri}&query={query}&format=json&";
+            url = ConfigUtil.get("sparqlEndpoint").asText() + "?default-graph-uri={default-graph-uri}&query={query}&format=json&";
 
         return restTemplate.getForObject(url, String.class, params);
     }
 
-    public String SPARQLQuery(String query) {
+    public String SPARQLQuery(String query) throws IOException {
         RestTemplate restTemplate = new RestTemplate();
         String url;
         HashMap<String, String> params = new HashMap<>();
-        params.put("default-graph-uri", ConfigUtil.get("triplestore").get("defaultGraph").asText());
+        params.put("default-graph-uri", ConfigUtil.get("defaultGraph").asText());
         params.put("query", query);
 
-        url = ConfigUtil.get("triplestore").get("sparqlEndpoint").asText() + "?default-graph-uri={default-graph-uri}&query={query}&format=json&";
+        url = ConfigUtil.get("sparqlEndpoint").asText() + "?default-graph-uri={default-graph-uri}&query={query}&format=json&";
+//        url = ConfigUtil.get("sparqlEndpoint").asText() + "?default-graph-uri={default-graph-uri}&query={query}";
+        // has to be the first one. without format json, getting root collections fails
 
         return restTemplate.getForObject(url, String.class, params);
     }
 
-    public byte[] SPARQLRDFXMLQuery(String query) {
+    public byte[] SPARQLRDFXMLQuery(String query) throws IOException {
         RestTemplate restTemplate = new RestTemplate();
         String url;
         HashMap<String, String> params = new HashMap<>();
-        params.put("default-graph-uri", ConfigUtil.get("triplestore").get("defaultGraph").asText());
+        params.put("default-graph-uri", ConfigUtil.get("defaultGraph").asText());
         params.put("query", query);
         params.put("format", "application/rdf+xml");
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add("Accept", "application/rdf+xml");
         HttpEntity entity = new HttpEntity(httpHeaders);
 
-        url = ConfigUtil.get("triplestore").get("sparqlEndpoint").asText() + "?default-graph-uri={default-graph-uri}&query={query}";
+        url = ConfigUtil.get("sparqlEndpoint").asText() + "?default-graph-uri={default-graph-uri}&query={query}";
 
         var rest = restTemplate.exchange(url, HttpMethod.GET, entity, byte[].class, params);
         return rest.getBody();
@@ -375,19 +380,33 @@ public class SearchService {
      * @param query SPARQL Query to send
      * @return JSON representation of results
      */
-    public byte[] queryOldSBHSparqlEndpoint(String WOREndpoint, String query) {
+    public byte[] queryOldSBHSparqlEndpoint(String WOREndpoint, String query) throws IOException {
         RestTemplate restTemplate = new RestTemplate();
         String url;
         HashMap<String, String> params = new HashMap<>();
+//        params.put("default-graph-uri", ConfigUtil.get("defaultGraph").asText());
         params.put("query", query);
+        params.put("format", "application/rdf+xml");
         HttpHeaders httpHeaders = new HttpHeaders();
+//        httpHeaders.add("Accept", "application/json");
         httpHeaders.add("Accept", "application/rdf+xml");
-        HttpEntity entity = new HttpEntity(httpHeaders);
+        HttpEntity entity = new HttpEntity<>("body", httpHeaders);
 
-        url = ConfigUtil.get("webOfRegistries").get(WOREndpoint).asText() + "/sparql?query={query}";
-
-        var rest = restTemplate.exchange(url, HttpMethod.GET, entity, String.class, params);
-
+//        url = WOREndpoint + "/sparql?query="+query;
+//        var result = restTemplate.getForObject(url, String.class);
+//        url = WOREndpoint + "/sparql?default-graph-uri={default-graph-uri}&query={query}";
+        url = WOREndpoint + "/sparql?query={query}";
+        ResponseEntity<String> rest;
+        try {
+            rest = restTemplate.getForEntity(url, String.class, entity);
+        } catch (HttpClientErrorException e) {
+            if (e.getStatusCode() == HttpStatus.NOT_ACCEPTABLE) {
+                byte[] emptyByteArray = new byte[0];
+                return emptyByteArray;
+            } else {
+                throw e;
+            }
+        }
         return rest.getBody().getBytes(StandardCharsets.UTF_8);
     }
 
@@ -395,11 +414,11 @@ public class SearchService {
      * Gets the user's private graph.
      * @return Empty string if user is not logged in, otherwise returns their private graph.
      */
-    public String getPrivateGraph() {
+    public String getPrivateGraph() throws IOException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication instanceof AnonymousAuthenticationToken) return "";
         //var user = authentication.getPrincipal();
-        return ConfigUtil.get("triplestore").get("graphPrefix").asText() + "/user/" + authentication.getName();
+        return ConfigUtil.get("graphPrefix").asText() + "/user/" + authentication.getName();
     }
 
     // Method to encode a string value using `UTF-8` encoding scheme

@@ -8,7 +8,7 @@ import {
 import axios from 'axios';
 import getConfig from 'next/config';
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import useSWR, { mutate } from 'swr';
 
 import styles from '../../styles/admin.module.css';
@@ -16,6 +16,7 @@ import Table from '../Reusable/Table/Table';
 import ActionButton from './Reusable/ActionButton';
 import Checkbox from './Reusable/CheckBox';
 import TableInput from './Reusable/TableInput';
+import { addError } from '../../redux/actions';
 const { publicRuntimeConfig } = getConfig();
 
 /* eslint sonarjs/cognitive-complexity: "off" */
@@ -37,7 +38,8 @@ const headers = [
 
 export default function Users() {
   const token = useSelector(state => state.user.token);
-  const { users, loading } = useUsers(token);
+  const dispatch = useDispatch();
+  const { users, loading } = useUsers(token, dispatch);
 
   return (
     <div className={styles.plugintable}>
@@ -67,6 +69,7 @@ function NewUserRow(properties) {
   const [member, setMember] = useState(false);
   const [curator, setCurator] = useState(false);
   const [admin, setAdmin] = useState(false);
+  const dispatch = useDispatch();
   return (
     <tr key="New">
       <td>New</td>
@@ -123,7 +126,8 @@ function NewUserRow(properties) {
                   member,
                   curator,
                   admin,
-                  properties.token
+                  properties.token,
+                  dispatch
                 );
                 setUsername('');
                 setName('');
@@ -155,6 +159,8 @@ function UserDisplay(properties) {
   const [isAdmin, setIsAdmin] = useState(
     properties.user.isAdmin ? true : false
   );
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     setName(properties.user.name);
@@ -201,7 +207,9 @@ function UserDisplay(properties) {
               action="Delete"
               icon={faTrashAlt}
               color="#FF3C38"
-              onClick={() => deleteUser(properties.user.id, properties.token)}
+              onClick={() =>
+                deleteUser(properties.user.id, properties.token, dispatch)
+              }
             />
           </div>
         </div>
@@ -260,7 +268,8 @@ function UserDisplay(properties) {
                   isMember,
                   isCurator,
                   isAdmin,
-                  properties.token
+                  properties.token,
+                  dispatch
                 );
                 setEditMode(false);
               }}
@@ -286,7 +295,7 @@ function UserDisplay(properties) {
   );
 }
 
-const deleteUser = async (id, token) => {
+const deleteUser = async (id, token, dispatch) => {
   const url = `${publicRuntimeConfig.backend}/admin/deleteUser`;
   const headers = {
     Accept: 'text/plain',
@@ -303,7 +312,7 @@ const deleteUser = async (id, token) => {
   });
 
   if (response.status === 200) {
-    mutate([`${publicRuntimeConfig.backend}/admin/users`, token]);
+    mutate([`${publicRuntimeConfig.backend}/admin/users`, token, dispatch]);
   }
 };
 
@@ -315,7 +324,8 @@ const saveUser = async (
   isMember,
   isCurator,
   isAdmin,
-  token
+  token,
+  dispatch
 ) => {
   const url = `${publicRuntimeConfig.backend}/admin/updateUser`;
   const headers = {
@@ -339,7 +349,7 @@ const saveUser = async (
   });
 
   if (response.status === 200) {
-    mutate([`${publicRuntimeConfig.backend}/admin/users`, token]);
+    mutate([`${publicRuntimeConfig.backend}/admin/users`, token, dispatch]);
   }
 };
 
@@ -351,7 +361,8 @@ const createUser = async (
   isMember,
   isCurator,
   isAdmin,
-  token
+  token,
+  dispatch
 ) => {
   const url = `${publicRuntimeConfig.backend}/admin/newUser`;
   const headers = {
@@ -374,8 +385,11 @@ const createUser = async (
     body: parameters
   });
 
+  const responseText = await response.text();
+  console.log(responseText);
+
   if (response.status === 200) {
-    mutate([`${publicRuntimeConfig.backend}/admin/users`, token]);
+    mutate([`${publicRuntimeConfig.backend}/admin/users`, token, dispatch]);
   }
 };
 
@@ -413,9 +427,9 @@ const sortMethods = {
   curator: (user1, user2) => compareBools(user1.isCurator, user2.isCurator)
 };
 
-const useUsers = token => {
+const useUsers = (token, dispatch) => {
   const { data, error } = useSWR(
-    [`${publicRuntimeConfig.backend}/admin/users`, token],
+    [`${publicRuntimeConfig.backend}/admin/users`, token, dispatch],
     fetcher
   );
   return {
@@ -425,7 +439,7 @@ const useUsers = token => {
   };
 };
 
-const fetcher = (url, token) =>
+const fetcher = (url, token, dispatch) =>
   axios
     .get(url, {
       headers: {
@@ -434,4 +448,9 @@ const fetcher = (url, token) =>
         'X-authorization': token
       }
     })
-    .then(response => response.data);
+    .then(response => response.data)
+    .catch(error => {
+      error.customMessage = 'Request failed for GET /admin/users';
+      error.fullUrl = url;
+      dispatch(addError(error));
+    });

@@ -19,6 +19,7 @@ export default function SubmissionStatusPanel() {
   const fileFailed = useSelector(state => state.submit.fileFailed);
   const submitting = useSelector(state => state.submit.submitting);
   const submissionUri = useSelector(state => state.submit.selectedCollection.uri);
+  console.log(submissionUri);
 
   const [header, setHeader] = useState(null);
   const dispatch = useDispatch();
@@ -64,6 +65,8 @@ export default function SubmissionStatusPanel() {
     }
   }, [submitting, fileFailed]);
 
+  var submissionLink = replaceBeginning(submissionUri, "https://synbiohub.org", "");
+
   return (
     <div className={styles.container}>
       <div className={styles.submitpanel}>
@@ -86,7 +89,7 @@ export default function SubmissionStatusPanel() {
               className={styles.aftersubmitbutton}
               role="button"
               onClick={() => {
-                router.push(submissionUri).then(() => {
+                router.push(submissionLink).then(() => {
                   dispatch(resetSubmit());
                 });
               }}
@@ -104,4 +107,11 @@ export default function SubmissionStatusPanel() {
       </div>
     </div>
   );
+}
+
+function replaceBeginning(original, oldBeginning, newBeginning) {
+  if (original.startsWith(oldBeginning)) {
+    return newBeginning + original.slice(oldBeginning.length);
+  }
+  return original;
 }

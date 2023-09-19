@@ -100,6 +100,7 @@ export default function Plugin(properties) {
   
 }
 
+
 async function evaluatePlugin(plugin, type) {
   return await axios({
     method: 'POST',
@@ -135,4 +136,5 @@ async function runPlugin(plugin, pluginData) {
   }).catch(error => {
     return `There was an error with ${plugin.name}`;
   })
+  
 }

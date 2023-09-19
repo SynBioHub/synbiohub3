@@ -1,6 +1,9 @@
 import { combineReducers } from 'redux';
 
 import * as types from './types';
+import { persistReducer } from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
+
 
 /*
 This file contains the reducers that redux uses to initialize and update
@@ -311,16 +314,16 @@ const initialTrackingState = {
 const trackingReducer = (state = initialTrackingState, { type, payload }) => {
   return type === types.TRACKPAGEVISIT
     ? {
-      ...state,
-      pageVisited: payload
-    }
+        ...state,
+        pageVisited: payload
+      }
     : state;
 };
 
 // PAGE SECTIONS REDUCER
 
 const initialPageSectionsOrder = {
-  type: "",
+  type: '',
   order: [],
   minimized: [],
   selected: [],
@@ -330,7 +333,10 @@ const initialPageSectionsOrder = {
 /**
  * This reducer tracks the order of the page sections and the minimized sections.
  */
-const pageSectionsReducer = (state = initialPageSectionsOrder, { type, payload }) => {
+const pageSectionsReducer = (
+  state = initialPageSectionsOrder,
+  { type, payload }
+) => {
   switch (type) {
     case types.UPDATESECTIONORDER:
       return {
@@ -341,12 +347,12 @@ const pageSectionsReducer = (state = initialPageSectionsOrder, { type, payload }
       return {
         ...state,
         minimized: payload
-      }
+      };
     case types.UPDATEPAGETYPE:
       return {
         ...state,
         type: payload
-      }
+      };
     case types.UPDATESELECTEDSECTIONS:
       return {
         ...state,
@@ -366,8 +372,8 @@ const pageSectionsReducer = (state = initialPageSectionsOrder, { type, payload }
 
 const initialAttachments = {
   attachments: [],
-  uploadStatus: ""
-}
+  uploadStatus: ''
+};
 
 /**
  * This reducer lets AttachmentRows know if the displayed rows should be updated.
@@ -378,21 +384,44 @@ const attachmentsReducer = (state = initialAttachments, { type, payload }) => {
       return {
         ...state,
         attachments: payload
-      }
+      };
     case types.UPLOADSTATUS:
       return {
         ...state,
         uploadStatus: payload
-      }
+      };
     default:
       return state;
   }
-}
+};
+
+// ERROR REDUCER
+
+const initialErrors = {
+  errors: []
+};
+
+const errorsReducer = (state = initialErrors, { type, payload }) => {
+  switch (type) {
+    case types.SETERRORS:
+      return {
+        ...state,
+        errors: payload
+      };
+    default:
+      return state;
+  }
+};
+
+const persistConfig = {
+    key: 'root',
+    storage
+};
 
 // COMBINED REDUCERS
 // combine all reducers for sbh to use
 const reducers = {
-  user: userReducer,
+  user: persistReducer(persistConfig, userReducer),
   search: searchReducer,
   submit: submitReducer,
   collectionCreate: collectionCreateReducer,
@@ -400,7 +429,8 @@ const reducers = {
   basket: basketReducer,
   tracking: trackingReducer,
   pageSections: pageSectionsReducer,
-  attachments: attachmentsReducer
+  attachments: attachmentsReducer,
+  errors: errorsReducer
 };
 
 export default combineReducers(reducers);

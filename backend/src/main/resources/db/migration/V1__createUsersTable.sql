@@ -1,12 +1,10 @@
+drop table if exists Users cascade;
 CREATE TABLE Users (
-    id INT NOT NULL AUTO_INCREMENT,
-    name VARCHAR,
-    username VARCHAR NOT NULL,
-    password VARCHAR NOT NULL,
-    email VARCHAR,
-    affiliation VARCHAR,
-    isAdmin BOOLEAN DEFAULT FALSE,
-    isCurator BOOLEAN DEFAULT FALSE,
-    PRIMARY KEY (id),
-    UNIQUE (username)
+    id SERIAL PRIMARY KEY,
+    full_name VARCHAR(64),
+    username VARCHAR(64) NOT NULL,
+    user_password VARCHAR(128) NOT NULL,
+    email VARCHAR(128),
+    affiliation VARCHAR(256),
+    user_role VARCHAR(64) NOT NULL
 );

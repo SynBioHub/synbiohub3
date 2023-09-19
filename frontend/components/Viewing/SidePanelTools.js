@@ -40,13 +40,16 @@ export default function SidePanelTools(properties) {
   const [curationAvailable, setCurationAvailable] = useState(false);
 
   useEffect(() => {
+    /*
     const checkCurateAvailability = async () => {
       const available = await checkCuration(pluginData);
       setCurationAvailable(available);
     }
     checkCurateAvailability();
+    
   })
   
+
 
   const pluginData = {
     complete_sbol: '',
@@ -58,8 +61,8 @@ export default function SidePanelTools(properties) {
     type: properties.type,
     submit_link: ''
   }
-
   */
+
   //The styles for the toast saying the citation has been copied.
   const copyToast = (message) => toast(
     <div>
@@ -90,7 +93,14 @@ export default function SidePanelTools(properties) {
       `${properties.name} was a gift from ${properties.creator === "" ? "undefined" : properties.creator} ; ${publicRuntimeConfig.backend}${properties.url}`
     );
   }
-
+  var displayTitle = properties.type;
+  if (properties.type.includes('#')) {
+    displayTitle = properties.type.split('#')[1];
+  }
+  var displayLink = properties.type;
+  if (!properties.type.includes('http')) {
+    displayLink = `http://sbols.org/v2#${properties.type}`;
+  }
   return (
     <div className={styles.subheader}>
       {modal === "Delete" ?
@@ -122,23 +132,25 @@ export default function SidePanelTools(properties) {
                 url={properties.url}
                 setModal={setModal}
               />
-              : 
+              : null
+              /*
               modal === "Curation" ?
                 <CurationModal
                   setModal={setModal}
                   type={properties.type}
                 />
                 : null
+                */
       }
       <div className={styles.id}>
-        <Link href={`http://sbols.org/v2#${properties.type}`}>
+        <Link href={displayLink}>
           <a title="Learn more about this RDF type" target="_blank">
             <FontAwesomeIcon
               icon={faDatabase}
               size="1x"
               className={styles.contentinfoicon}
             />
-            {properties.type}
+            {displayTitle}
           </a>
         </Link>
       </div>
@@ -197,3 +209,46 @@ export default function SidePanelTools(properties) {
     </div>
   );
 }
+
+/*
+async function checkCuration(pluginData) {
+  return await axios({
+    method: 'GET',
+    url: `${publicRuntimeConfig.backend}/admin/plugins`,
+    responseType: 'application/json',
+    params: {
+      category: 'curation'
+    }
+  }).then(async function (response) {
+    const curatePlugins = response.data;
+    let pluginPromises = [];
+
+    const buildPromises = async () => {
+        for(let plugin of curatePlugins) {
+        pluginPromises.push(axios({
+          method: 'POST',
+          url: `${publicRuntimeConfig.backend}/call`,
+          params: {
+            name: plugin.name,
+            endpoint: 'evaluate',
+            data: pluginData
+          }
+        }).then(response => {
+          return response.status === 200;
+        }).catch(error => {return false;}))
+      }
+    }
+
+    await buildPromises();
+
+    return Promise.all(pluginPromises).then(values => {
+      for(let value of values) {
+        if(value) return true;
+      }
+      return false;
+    })
+    
+  }).catch(error => {return false;});
+
+}
+*/

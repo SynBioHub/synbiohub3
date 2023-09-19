@@ -6,6 +6,7 @@ import Log from './Log';
 import Mail from './Mail';
 import Plugins from './Plugins';
 import Registries from './Registries';
+import Remotes from './Remotes';
 import Sparql from './Sparql';
 import Status from './Status';
 import Theme from './Theme';
@@ -31,6 +32,9 @@ export default function Content(properties) {
       case 'registries':
         setContent(<Registries />);
         break;
+      case 'remotes':
+          setContent(<Remotes />);
+          break;
       case 'sparql':
         setContent(<Sparql />);
         break;

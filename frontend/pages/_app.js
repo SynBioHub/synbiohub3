@@ -13,75 +13,91 @@ const { publicRuntimeConfig } = getConfig();
 
 import { ToastContainer } from 'react-toastify';
 import axios from 'axios';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Loading from '../components/Reusable/Loading';
 import Setup from '../specialAccess/setup';
+import { addError } from '../redux/actions';
+import Errors from '../components/Error/Errors';
+import { persistStore } from 'redux-persist';
+import { PersistGate } from 'redux-persist/integration/react';
 
 /**
- * This component is the starting component for the sbh app. Uses Provider
- * from react-redux so that entire app can access redux state
- */
+* This component is the starting component for the sbh app. Uses Provider
+* from react-redux so that entire app can access redux state
+*/
 function MyApp({ Component, pageProps }) {
-  const store = useStore(pageProps.initialReduxState);
-  const [isInitializing, setIsInitializing] = useState(true);
-  const [inSetupMode, setInSetupMode] = useState(false);
-  const router = useRouter();
+    const store = useStore(pageProps.initialReduxState);
+    const persistor = persistStore(store);
+    const [isInitializing, setIsInitializing] = useState(true);
+    const [inSetupMode, setInSetupMode] = useState(false);
+    const router = useRouter();
 
-  try {
-    axios
-      .get(`${publicRuntimeConfig.backend}/admin/theme`, {
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'text/plain'
+    useEffect(() => {
+        axios
+            .get(`${publicRuntimeConfig.backend}/admin/theme`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Accept: 'text/plain'
+                }
+            })
+            .then(response => {
+                if (response.data.firstLaunch) {
+                    setInSetupMode(true);
+                } else {
+                    setInSetupMode(false);
+                }
+                setIsInitializing(false);
+            })
+            .catch(error => {
+                error.customMessage =
+                    'Request and/or processing failed for GET /admin/theme';
+                error.fullUrl = `${publicRuntimeConfig.backend}/admin/theme`;
+                store.dispatch(addError(error));
+            });
+    }, []);
+
+    /* eslint no-console: "off" */
+
+        if (isInitializing) {
+            return (
+                <Provider store={store}>
+                <PersistGate loading={null} persistor={persistor}>
+                <div
+                style={{
+                    display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        height: '100vh'
+                }}
+                >
+                <Errors />
+                <Loading />
+                </div>
+                </PersistGate>
+                </Provider>
+            );
         }
-      })
-      .then(response => {
-        if (response.data.firstLaunch) {
-          setInSetupMode(true);
-        } else {
-          setInSetupMode(false);
-        }
-        setIsInitializing(false);
-      });
-  } catch (error) {
-    console.log(error);
-  }
 
-  /* eslint no-console: "off" */
-
-  if (isInitializing) {
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: '100vh'
-        }}
-      >
-        <Loading />
-      </div>
+        <Provider store={store}>
+        <PersistGate loading={null} persistor={persistor} >
+        {inSetupMode ? (
+            <Setup setInSetupMode={setInSetupMode} />
+        ) : (
+            <Component {...pageProps} key={router.asPath} />
+        )}
+        <ToastContainer />
+        </PersistGate>
+        </Provider>
     );
-  }
-
-  return (
-    <Provider store={store}>
-      {inSetupMode ? (
-        <Setup setInSetupMode={setInSetupMode} />
-      ) : (
-        <Component {...pageProps} key={router.asPath} />
-      )}
-      <ToastContainer />
-    </Provider>
-  );
 }
 
 MyApp.getInitialProps = async appContext => {
-  // calls page's `getInitialProps` and fills `appProps.pageProps`
-  const appProperties = await App.getInitialProps(appContext);
+    // calls page's `getInitialProps` and fills `appProps.pageProps`
+    const appProperties = await App.getInitialProps(appContext);
 
-  return { ...appProperties };
+    return { ...appProperties };
 };
 
 export default MyApp;

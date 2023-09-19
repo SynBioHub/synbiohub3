@@ -1,0 +1,137 @@
+{
+    "type": "http://www.w3.org/ns/prov#Activity",
+    "prefixes": [
+        "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>",
+        "PREFIX dcterms: <http://purl.org/dc/terms/>",
+        "PREFIX dc: <http://purl.org/dc/elements/1.1/>",
+        "PREFIX sbh: <http://wiki.synbiohub.org/wiki/Terms/synbiohub#>",
+        "PREFIX prov: <http://www.w3.org/ns/prov#>",
+        "PREFIX sbol: <http://sbols.org/v2#>",
+        "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>",
+        "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>",
+        "PREFIX purl: <http://purl.obolibrary.org/obo/>"
+    ],
+    "metadata": [],
+    "tables": [
+        {
+            "icon": "faVials",
+            "title": "Usages",
+            "rootPredicate": "prov:qualifiedUsage",
+            "sections": [
+                {
+                    "title": "Usage",
+                    "infoLink": "https://www.w3.org/ns/prov#Usage",
+                    "predicates": [
+                        "sbol:displayId"
+                    ],
+                    "stripAfter": "#",
+                    "link": "$<usageLink>"
+                },
+                {
+                    "title": "usageLink",
+                    "predicates": [],
+                    "hide": true
+                },
+                {
+                    "title": "Entity",
+                    "infoLink": "https://www.w3.org/ns/prov#entity",
+                    "predicates": [
+                        "prov:entity"
+                    ],
+                    "link": "$<entityLink>"
+                },
+                {
+                    "title": "entityLink",
+                    "predicates": [],
+                    "hide": true
+                },
+                {
+                    "title": "Roles",
+                    "infoLink": "https://www.w3.org/ns/prov#hasRole",
+                    "predicates": [
+                        "prov:hadRole"
+                    ],
+                    "stripAfter": "#",
+                    "link": "$<roleLink>"
+                },
+                {
+                    "title": "roleLink",
+                    "predicates": [],
+                    "hide": true
+                }
+            ]
+        },
+        {
+            "icon": "faVials",
+            "title": "Associations",
+            "rootPredicate": "prov:qualifiedAssociation",
+            "sections": [
+                {
+                    "title": "Association",
+                    "infoLink": "https://www.w3.org/ns/prov#Association",
+                    "predicates": [
+                        "sbol:displayId"
+                    ],
+                    "stripAfter": "#",
+                    "link": "$<associationLink>"
+                },
+                {
+                    "title": "associationLink",
+                    "predicates": [],
+                    "hide": true
+                },
+                {
+                    "title": "Agent",
+                    "infoLink": "https://www.w3.org/ns/prov#Agent",
+                    "predicates": [
+                        "prov:agent"
+                    ],
+                    "link": "$<agentLink>"
+                },
+                {
+                    "title": "agentLink",
+                    "predicates": [],
+                    "hide": true
+                },
+                {
+                    "title": "Plan",
+                    "infoLink": "https://www.w3.org/ns/prov#Plan",
+                    "predicates": [
+                        "prov:hadPlan"
+                    ],
+                    "link": "$<planLink>"
+                },
+                {
+                    "title": "planLink",
+                    "predicates": [],
+                    "hide": true
+                },
+                {
+                    "title": "Roles",
+                    "infoLink": "https://www.w3.org/ns/prov#hasRole",
+                    "predicates": [
+                        "prov:hadRole"
+                    ],
+                    "link": "$<rolesLink>",
+                    "stripAfter": "#"
+                    
+                },
+                {
+                    "title": "rolesLink",
+                    "predicates": [
+                        "prov:hadRole"
+                    ],
+                    "hide": true
+                }
+            ]
+        }
+    ],
+    "pages": [
+        "$TABLES[Usages]",
+        "$TABLES[Associations]",
+        "Details",
+        "Other Properties",
+        "Member of these Collections",
+        "Attachments"
+    ]
+}

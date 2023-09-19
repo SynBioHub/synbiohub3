@@ -2,7 +2,7 @@ import axios from 'axios';
 import getConfig from 'next/config';
 import { useEffect, useState } from 'react';
 import Loader from 'react-loader-spinner';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import useSWR from 'swr';
 const { publicRuntimeConfig } = getConfig();
 
@@ -25,11 +25,13 @@ export default function StandardSearch() {
   const limit = useSelector(state => state.search.limit);
   const token = useSelector(state => state.user.token);
   const [count, setCount] = useState();
+  const dispatch = useDispatch();
 
   // get search count
   const { newCount, isCountLoading, isCountError } = useSearchCount(
     encodeURIComponent(query),
-    token
+    token,
+    dispatch
   );
 
   // update search count display
@@ -59,7 +61,8 @@ export default function StandardSearch() {
     encodeURIComponent(query),
     offset,
     limit,
-    token
+    token,
+    dispatch
   );
 
   if (isError) {
@@ -91,11 +94,12 @@ export default function StandardSearch() {
   );
 }
 
-const useSearchResults = (query, offset, limit, token) => {
+const useSearchResults = (query, offset, limit, token, dispatch) => {
   const { data, error } = useSWR(
     [
       `${publicRuntimeConfig.backend}/search/${query}?offset=${offset}&limit=${limit}`,
-      token
+      token,
+      dispatch
     ],
     fetcher
   );
@@ -107,9 +111,9 @@ const useSearchResults = (query, offset, limit, token) => {
   };
 };
 
-const useSearchCount = (query, token) => {
+const useSearchCount = (query, token, dispatch) => {
   const { data, error } = useSWR(
-    [`${publicRuntimeConfig.backend}/searchCount/${query}`, token],
+    [`${publicRuntimeConfig.backend}/searchCount/${query}`, token, dispatch],
     fetcher
   );
 
@@ -145,7 +149,7 @@ const getTypeAndUrl = result => {
   result.url = newUrl;
 };
 
-const fetcher = (url, token) =>
+const fetcher = (url, token, dispatch) =>
   axios
     .get(url, {
       headers: {
@@ -154,4 +158,10 @@ const fetcher = (url, token) =>
         'X-authorization': token
       }
     })
-    .then(response => response.data);
+    .then(response => response.data)
+    .catch(error => {
+      error.customMessage =
+        'Request failed while fetching search result-related data';
+      error.fullUrl = url;
+      dispatch(addError(error));
+    });

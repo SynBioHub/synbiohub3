@@ -265,7 +265,7 @@ function headerCreate(pages, type, json, hiddenSections) {
  * @returns The correct icon that corresponds to the page.
  */
 function iconSelector(page, json) {
-  if (page.startsWith('$TABLES')) {
+  if (page.startsWith('$TABLES') && json && json.tables) {
     const tableName = page.substring(8, page.length - 1);
     const icon = json.tables.find(table => table.title === tableName)?.icon;
     return IconsMap[icon];

@@ -1,0 +1,125 @@
+{
+    "type": "http://sbols.org/v2#Component",
+    "prefixes": [
+        "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>",
+        "PREFIX dcterms: <http://purl.org/dc/terms/>",
+        "PREFIX dc: <http://purl.org/dc/elements/1.1/>",
+        "PREFIX sbh: <http://wiki.synbiohub.org/wiki/Terms/synbiohub#>",
+        "PREFIX prov: <http://www.w3.org/ns/prov#>",
+        "PREFIX sbol: <http://sbols.org/v2#>",
+        "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>",
+        "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>",
+        "PREFIX purl: <http://purl.obolibrary.org/obo/>"
+    ],
+    "metadata": [
+        {
+            "title": "Access",
+            "rootPredicate": "sbol:access",
+            "infoLink": "https://sbols.org/v2#access",
+            "icon": "faVials",
+            "sections": [
+                {
+                    "title": "Extra Work",
+                    "stripAfter": "#",
+                    "predicates": [
+                    ],
+                    "link": "$<accessLink>"
+                },
+                {
+                    "title": "accessLink",
+                    "predicates": [],
+                    "hide": true
+                }
+            ]
+        },
+        {
+            "title": "Definition",
+            "rootPredicate": "sbol:definition",
+            "infoLink": "https://sbols.org/v2#definition",
+            "icon": "faVials",
+            "sections": [
+                {
+                    "title": "Extra Work",
+                    "stripAfter": "#",
+                    "predicates": [
+                        "sbol:displayId"
+                    ],
+                    "link": "$<definitionLink>"
+                },
+                {
+                    "title": "definitionLink",
+                    "predicates": [],
+                    "hide": true
+                }
+            ]
+        },
+        {
+            "title": "Role(s)",
+            "rootPredicate": "sbol:role",
+            "icon": "faVials",
+            "sections": [
+                {
+                    "title": "Extra Work",
+                    "stripAfter": "#",
+                    "predicates": []
+                }
+            ]
+        },
+        {
+            "title": "roleIntegration",
+            "rootPredicate": "sbol:roleIntegration",
+            "icon": "faVials",
+            "sections": [
+                {
+                    "title": "Extra Work",
+                    "stripAfter": "#",
+                    "predicates": []
+                }
+            ]
+        },
+        {
+            "title": "sourceLocations",
+            "rootPredicate": "sbol:sourceLocation",
+            "infoLink": "https://sbols.org/v2#Location",
+            "icon": "faVials",
+            "sections": [
+                {
+                    "title": "Location",
+                    "stripAfter": "#",
+                    "predicates": [
+                        "sbol:Range",
+                        "sbol:displayId"
+                    ],
+                    "text": "$<Start>, $<End>",
+                    "link": "$<locationLink>"
+                },
+                {
+                    "title": "Start",
+                    "predicates": [
+                        "sbol:start"
+                    ],
+                    "hide": true
+                },
+                {
+                    "title": "End",
+                    "predicates": [
+                        "sbol:end"
+                    ],
+                    "hide": true
+                },
+                {
+                    "title": "locationLink",
+                    "predicates": [
+                    ],
+                    "hide": true
+                }
+            ]
+        }
+    ],
+    "tables": [],
+    "pages": [
+        "Details",
+        "Other Properties",
+        "Attachments"
+    ]
+}

@@ -9,8 +9,6 @@ spring:
     url: jdbc:h2:./data/sbhdb
     username: sa
     password:
-
-
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
@@ -26,3 +24,21 @@ spring:
 logging:
   file:
     path: ./data
+synbiohub:
+  firstLaunch: true
+plugin:
+  external:
+    testserver:
+      login: http://localhost:8104/loggedinAPI
+      logout: http://localhost:8104/logoutAPI
+      refresh: http://localhost:8104/refresh
+      status: http://localhost:8104/status
+
+jwt:
+  private.key: classpath:app.priv
+  public.key: classpath:app.pub
+
+roleToEndpointPermissions:
+  USER: ["/profile", "/do_logout", "/submit", "/rootCollections", "/setup", "/login", "/register", "/search", "/search/**", "/searchCount", "/searchCount/**", "/twins", "/uses", "/similar", "/sbol", "/sbolnr", "/metadata", "/gb", "/fasta", "/gff", "/download", "/public/**", "/sparql", "/ComponentDefinition/**", "/**/count", "/count"]
+  CURATOR: ["/makePublic"]
+  ADMIN: ['/admin/sparql', '/admin', '/admin/virtuoso', '/admin/graphs', '/admin/log', '/admin/mail', '/admin/plugins', '/admin/savePlugin', '/admin/deletePlugin', '/admin/registries', '/admin/saveRegistry', '/admin/deleteRegistry', '/admin/setAdministratorEmail', '/admin/retrieveFromWebOfRegistries', '/admin/federate', '/admin/remotes', '/admin/saveRemote', '/admin/deleteRemote', '/admin/explorerlog', '/admin/explorer', '/admin/explorerUpdateIndex', '/admin/theme', '/admin/users', '/admin/newUser', '/admin/updateUser', '/admin/deleteUser']

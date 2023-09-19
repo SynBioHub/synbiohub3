@@ -1,0 +1,77 @@
+version: '3.2'
+
+services:
+    autoheal: 
+        restart: always
+        image: willfarrell/autoheal
+        environment: 
+            - AUTOHEAL_CONTAINER_LABEL=all
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+    virtuoso:
+        image: tenforce/virtuoso:virtuoso7.2.5
+        volumes: 
+            - type: volume
+              source: virtuoso-db1
+              target: /data
+        ports:
+            - "8890:8890"
+        restart: always  
+        labels:
+            - "autoheal=true"
+    virtuoso3:
+        image: tenforce/virtuoso:virtuoso7.2.5
+        volumes:
+            - type: volume
+              source: virtuoso-db3
+              target: /data
+        ports:
+            - "8891:8890"
+        restart: always
+        labels:
+            - "autoheal=true"
+    synbiohubbackend:
+        image: synbiohub/sbh3backend:snapshot
+        depends_on: 
+            virtuoso3:
+                condition: service_started
+        ports:
+            - "6789:6789"
+        volumes:
+            - type: volume
+              source: sbh3
+              target: /mnt
+            - type: volume
+              source: virtuoso-db3
+              target: /virtuoso
+        dns: 8.8.8.8
+        restart: always
+    synbiohubFrontend:
+        image: synbiohub/sbh3frontend:snapshot
+        ports:
+            - "3333:3333"
+        dns: 8.8.8.8
+        restart: always
+        environment: 
+            - backend=http://localhost:6789
+    synbiohub:
+        image: synbiohub/synbiohub:snapshot-standalone
+        depends_on: 
+            - virtuoso
+        ports:
+            - "7777:7777"
+        volumes:
+            - type: volume
+              source: sbh1
+              target: /mnt
+            - type: volume
+              source: virtuoso-db1
+              target: /virtuoso
+        dns: 8.8.8.8
+        restart: always
+
+volumes:
+    virtuoso-db1:
+    virtuoso-db3:
+    sbh1:
+    sbh3:

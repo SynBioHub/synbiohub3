@@ -54,7 +54,7 @@ export default function SidePanel({ metadata, type, json, uri, plugins }) {
             <div className={styles.titleHolder}>
               <h2 className={styles.title}>{metadata.name}</h2>
               <Link
-                href={`${publicRuntimeConfig.backend}/search/displayId='${metadata.displayId}'&`}
+                href={`/search/displayId='${metadata.displayId}'&`}
               >
                 <a
                   title="Find all records with the same identifier"
@@ -107,27 +107,23 @@ export default function SidePanel({ metadata, type, json, uri, plugins }) {
               icon={faUserEdit}
               label="Creator"
               title={metadata.creator}
-              link={`${
-                publicRuntimeConfig.backend
-              }/user/${metadata.creator.replace(' ', '')}`}
+              link={`/user/${metadata.creator.replace(' ', '')}`}
             />
             <MetadataInfo
               icon={faCalendarPlus}
               label="Created"
               title={date}
-              link={`${
-                publicRuntimeConfig.backend
-              }/search/createdBefore=${date.substring(
+              link={`/search/createdBefore=${date.substring(
                 0,
                 date.lastIndexOf('-') + 3
               )}&createdAfter=${date.substring(0, date.lastIndexOf('-') + 3)}&`}
             />
-            <MetadataInfo
+            {/* <MetadataInfo
               icon={faRunning}
               label="Persistent Identity"
-              title={metadata.persistentIdentity}
+              title={displayTitle}
               link={uri}
-            />
+            /> */}
             <GenericContent json={json} uri={uri} metadata={true} />
           </div>
           <SectionSelector pagesInfo={pagesInfo} json={json} />
@@ -170,4 +166,11 @@ function getPagesInfo(type, json, plugins) {
   }
 
   return { type: type, order: orderUpdated };
+}
+
+function replaceBeginning(original, oldBeginning, newBeginning) {
+  if (original.startsWith(oldBeginning)) {
+    return newBeginning + original.slice(oldBeginning.length);
+  }
+  return original;
 }

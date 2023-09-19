@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RDFFormat;
 import org.sbolstandard.core2.SBOLDocument;
@@ -15,6 +16,8 @@ import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Collections;
@@ -30,8 +33,8 @@ public class DownloadService {
     private final SearchService searchService;
 
 
-    public String getMetadata(String uri) {
-        String graphPrefix = ConfigUtil.get("triplestore").get("graphPrefix").asText();
+    public String getMetadata(String uri) throws IOException {
+        String graphPrefix = ConfigUtil.get("graphPrefix").asText();
         URI uriClass = null;
         try {
             uriClass = new URI(uri);
@@ -52,8 +55,8 @@ public class DownloadService {
         return results;
     }
 
-    public SBOLDocument getSBOLNonRecursive(String uri) {
-        String graphPrefix = ConfigUtil.get("triplestore").get("graphPrefix").asText();
+    public SBOLDocument getSBOLNonRecursive(String uri) throws IOException {
+        String graphPrefix = ConfigUtil.get("graphPrefix").asText();
         URI uriClass = null;
         try {
             uriClass = new URI(uri);
@@ -79,8 +82,8 @@ public class DownloadService {
         return document;
     }
 
-    public Model getRecursiveModel(String uri) {
-        String graphPrefix = ConfigUtil.get("triplestore").get("graphPrefix").asText();
+    public Model getRecursiveModel(String uri) throws IOException {
+        String graphPrefix = ConfigUtil.get("graphPrefix").asText();
         URI uriClass = null;
         try {
             uriClass = new URI(uri);
@@ -156,7 +159,13 @@ public class DownloadService {
                     subjectResults = searchService.SPARQLRDFXMLQuery(subjectQuery);
                 }
                 Model tempModel = ModelFactory.createDefaultModel();
-                tempModel.read(new ByteArrayInputStream(subjectResults), null);
+                if (subjectResults.length == 0) {
+                    InputStream inputStream = new ByteArrayInputStream(subjectResults);
+                    RDFDataMgr.read(model, inputStream, Lang.TURTLE);
+                } else {
+                    tempModel.read(new ByteArrayInputStream(subjectResults), null);
+                }
+
                 if (model.size() > 10000) {
                     int counter = 1;
                     var offset = model.size();
@@ -196,7 +205,7 @@ public class DownloadService {
         return model;
     }
 
-    public SBOLDocument getSBOLRecursive(String uri) {
+    public SBOLDocument getSBOLRecursive(String uri) throws IOException {
         var results = getRecursiveModel(uri);
 
         // Write RDF Model to byte stream

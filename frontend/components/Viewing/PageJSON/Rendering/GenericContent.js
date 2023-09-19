@@ -6,10 +6,12 @@ import { Fragment } from 'react';
 import TableBuilder from './TableBuilder';
 
 import CustomComponents from '../CustomComponents.js';
+import { compileFile } from '../Parsing/compileFile';
 
 export default function GenericContent({ json, uri, metadata, plugins, type }) {
   if (metadata) {
-    if (!json.metadata) return null;
+    if (!json || !json.metadata) return null;
+    compileFile(json);
     const content = json.metadata.map((metadata, index) => {
       return (
         <TableBuilder
@@ -31,7 +33,10 @@ export default function GenericContent({ json, uri, metadata, plugins, type }) {
   const content = pages.map((page, index) => {
     if (page.startsWith('$TABLES[')) {
       const title = page.substring(8, page.length - 1);
-      const table = json.tables.find(table => table.title === title);
+      const table = json.tables.find(table => table.title.toLowerCase() === title.toLowerCase());
+      if(!table) {
+        return null;
+      }
       return (
         <Section id={page} title={table.title} key={index}>
           <TableBuilder uri={uri} prefixes={json.prefixes} table={table} />

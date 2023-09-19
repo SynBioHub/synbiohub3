@@ -1,97 +1,153 @@
 package com.synbiohub.sbh3.controllers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.synbiohub.sbh3.dto.UserRegistrationDTO;
-import com.synbiohub.sbh3.security.CustomUserService;
+import com.synbiohub.sbh3.security.customsecurity.AuthenticationResponse;
+import com.synbiohub.sbh3.security.model.User;
+import com.synbiohub.sbh3.security.repo.AuthRepository;
 import com.synbiohub.sbh3.services.UserService;
-import com.synbiohub.sbh3.utils.ObjectMapperUtils;
-import lombok.AllArgsConstructor;
+import com.synbiohub.sbh3.utils.ConfigUtil;
+import com.synbiohub.sbh3.utils.RestClient;
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.RequestContextHolder;
 
-import javax.naming.AuthenticationException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.util.Map;
 
 @RestController
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Slf4j
 public class UserController {
-
-    private final CustomUserService customUserService;
-    private final AuthenticationManager authenticationManager;
     private final UserService userService;
+    private final RestClient restClient;
     private final ObjectMapper mapper;
+    private final AuthRepository authRepository;
 
-    @PostMapping(value = "/login", produces = "text/plain", consumes = "application/x-www-form-urlencoded")
-    public ResponseEntity login(@RequestParam String email, @RequestParam String password, HttpServletRequest request, HttpServletResponse response) {
-        Authentication auth = userService.checkValidLogin(authenticationManager, email, password);
-        if (auth == null) {
-            log.error("Bad credentials");
-            return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+    @PostMapping(value = "/login", produces = "text/plain")
+    public ResponseEntity<String> login(@RequestParam String email, @RequestParam String password) {
+        if (email.isEmpty() || password.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Please enter your e-mail address and password.");
         }
-        var securityContext = SecurityContextHolder.getContext();
-        securityContext.setAuthentication(auth);
-        request.getSession().setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, securityContext);
-        return ResponseEntity.ok(RequestContextHolder.currentRequestAttributes().getSessionId());
+        try {
+            String username;
+            if (userService.isValidEmail(email)) {
+                try {
+                    username = userService.getUserByEmail(email).getUsername();
+                } catch (Exception e) {
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Your e-mail address was not recognized.");
+                }
+            } else {
+                try {
+                    username = userService.getUserByUsername(email).getUsername();
+                } catch (Exception e) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please enter a valid email address or username.");
+                }
+            }
+            return ResponseEntity.ok(userService.loginUser(username, password));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Your password was not recognized.");
+        }
     }
 
-    @PostMapping(value = "/logout")
-    @ResponseStatus(HttpStatus.OK)
-    public void logout(HttpSession session) {
-        session.invalidate();
+    /**
+     * Logs the current user out of SBH.
+     * Endpoint cannot be /logout as this gets intercepted by security configuration and doesn't go through here
+     * @param request
+     * @return
+     * @throws Exception
+     */
+    @PostMapping(value = "/do_logout")
+    public ResponseEntity<String> logout(HttpServletRequest request) throws Exception {
+        log.info("Received logout request");
+        return ResponseEntity.ok(userService.logoutUser(request));
     }
 
     @PostMapping(value = "/register")
-    public ResponseEntity registerNewUser(@RequestParam Map<String, String> params) {
+    public ResponseEntity<String> registerNewUser(@RequestParam String username, @RequestParam String name, @RequestParam String affiliation, @RequestParam String email, @RequestParam String password1, @RequestParam String password2) {
         try {
-            var userRegistrationDTO = ObjectMapperUtils.map(params, UserRegistrationDTO.class);
-            customUserService.registerNewUserAccount(userRegistrationDTO);
+            log.info("Registering a new user.");
+            UserRegistrationDTO userRegistrationDTO = UserRegistrationDTO
+                    .builder()
+                    .username(username)
+                    .name(name)
+                    .affiliation(affiliation)
+                    .email(email)
+                    .password1(password1)
+                    .password2(password2)
+                    .build();
+            AuthenticationResponse response = userService.register(userRegistrationDTO);
+            return ResponseEntity.ok(response.getToken());
         } catch (Exception e) {
-            log.error("Error creating a new account.");
-            e.printStackTrace();
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+            log.error("Error registering a new account.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error registering a new account.");
         }
-        return new ResponseEntity(HttpStatus.OK);
     }
 
-    @PostMapping(value = "/resetPassword")
-    public ResponseEntity<String> resetPassword(@RequestParam Map<String, String> allParams) {
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    @PostMapping(value = "/setNewPassword")
-    public ResponseEntity<String> setNewPassword(@RequestParam Map<String, String> allParams) {
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
+//
+//    @PostMapping(value = "/resetPassword")
+//    public ResponseEntity<String> resetPassword(@RequestParam Map<String, String> allParams) {
+//        return new ResponseEntity<>(HttpStatus.OK);
+//    }
+//
+//    @PostMapping(value = "/setNewPassword")
+//    public ResponseEntity<String> setNewPassword(@RequestParam Map<String, String> allParams) {
+//        return new ResponseEntity<>(HttpStatus.OK);
+//    }
 
     @GetMapping(value = "/profile", produces = "text/plain")
-    public ResponseEntity<String> getProfile() throws JsonProcessingException {
+    public ResponseEntity<String> getProfile(HttpServletRequest request) throws Exception {
+        String inputToken = request.getHeader("X-authorization");
         var user = userService.getUserProfile();
         if (user == null)
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Error retrieving user profile.");
         return ResponseEntity.ok(mapper.writeValueAsString(user));
     }
 
+    /**
+     * Changes user's profile fields.
+     * Only updates the fields name, email, and affiliation currently
+      */
     @PostMapping(value = "/profile", produces = "text/plain")
-    public ResponseEntity<String> updateProfile(@RequestParam Map<String, String> allParams) throws JsonProcessingException, AuthenticationException {
-        return userService.updateUser(mapper, allParams);
-
+    public ResponseEntity<String> updateProfile(@RequestParam Map<String, String> allParams, HttpServletRequest request) throws Exception {
+        User updatedUser;
+        try {
+            String inputToken = request.getHeader("X-authorization");
+            updatedUser = userService.updateUserProfile(allParams);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found.");
+        }
+        User copyUser = (User) updatedUser.clone();
+        copyUser.setPassword("");
+        log.info(copyUser.toString());
+        return ResponseEntity.ok("Profile updated successfully");
     }
 
+    /**
+     * First time setup of Synbiohub
+     * @param allParams
+     * @return
+     */
+    @PostMapping(value = "/setup")
+    public ResponseEntity<String> setup(@RequestBody Map<String, Object> allParams) {
+        log.info(String.valueOf(allParams));
+        return ResponseEntity.ok(userService.setupInstance(allParams));
+    }
 
+    /**
+     * Logs out all users from current instance of SBH
+     * @return
+     */
+    @DeleteMapping(value = "/cleanAuthRepo")
+    public String cleanAuthRepo() {
+        authRepository.deleteAll();
+        return "Cleaned.";
+    }
 
-
-
+    @GetMapping("/firstLaunched")
+    public Boolean checkFirstLaunch() {
+        return ConfigUtil.isLaunched();
+    }
 }
