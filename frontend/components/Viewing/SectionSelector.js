@@ -8,7 +8,8 @@ import {
   faInfoCircle,
   faStickyNote,
   faMinus,
-  faPlus
+  faPlus,
+  faEye
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -39,8 +40,9 @@ export default function SectionSelector({ pagesInfo, json }) {
   const pageSectionsOrder = useSelector(state => state.pageSections.order);
   const minimizedSections = useSelector(state => state.pageSections.minimized);
   const selectedOrder = useSelector(state => state.pageSections.selected);
+  const hiddenSections = useSelector(state => state.pageSections.hiddenSections)
 
-  const selectors = headerCreate(pageSectionsOrder, pagesInfo.type, json);
+  const selectors = headerCreate(pageSectionsOrder, pagesInfo.type, json, hiddenSections);
 
   //Initializes the store page sections and minimized order.
   useEffect(() => {
@@ -54,6 +56,7 @@ export default function SectionSelector({ pagesInfo, json }) {
       savedMinimizedValues = savedValues.minimized;
       savedSelectedSections = savedValues.selected;
     }
+    
 
     dispatch(updatePageSectionsOrder(pagesInfo.order, pagesInfo.type));
     dispatch(updateMinimizedSections(savedMinimizedValues, pagesInfo.type));
@@ -199,7 +202,7 @@ export default function SectionSelector({ pagesInfo, json }) {
  * @param {Array} pages An array containing the current page section order.
  * @returns The mapped pages.
  */
-function headerCreate(pages, type, json) {
+function headerCreate(pages, type, json, hiddenSections) {
   const useDraggableInPortal = () => {
     const self = useRef({}).current;
 
@@ -230,20 +233,24 @@ function headerCreate(pages, type, json) {
   const renderDraggable = useDraggableInPortal();
 
   const headers = pages.map((page, index) => {
-    return (
+    
+      return (
       <Draggable key={page} draggableId={page} index={index}>
         {renderDraggable(dragProvided => (
           <div
-            className={styles.sectionheaderparent}
+            className={`${styles.sectionheaderparent} ${hiddenSections.includes(page) ? styles.hiddensection : ''}`}
             {...dragProvided.dragHandleProps}
             {...dragProvided.draggableProps}
             ref={dragProvided.innerRef}
           >
-            <SectionHeader
+            {hiddenSections.includes(page) ? null : (
+              <SectionHeader
               type={type}
               title={page}
               icon={iconSelector(page, json)}
             />
+            )}
+            
           </div>
         ))}
       </Draggable>
@@ -262,6 +269,9 @@ function iconSelector(page, json) {
     const tableName = page.substring(8, page.length - 1);
     const icon = json.tables.find(table => table.title === tableName)?.icon;
     return IconsMap[icon];
+  }
+  if(page.startsWith('PLUGIN: ')) {
+    return faEye;
   }
   switch (page) {
     case 'Details':
@@ -285,7 +295,9 @@ function iconSelector(page, json) {
 
 const processHeaderTitle = title => {
   if (title.startsWith('$TABLES[')) return title.substring(8, title.length - 1);
+  if (title.startsWith('PLUGIN: ')) return title.substring(8, title.length);
   return title;
+  
 };
 
 /**

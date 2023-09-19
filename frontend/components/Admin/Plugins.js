@@ -55,7 +55,7 @@ export default function Plugins() {
       />
       <PluginTable
         token={token}
-        title="Download"
+        title="Downloading"
         type={downloadingType}
         loading={loading}
         data={plugins ? plugins.download : undefined}
@@ -175,13 +175,12 @@ function PluginDisplay(properties) {
     setName(properties.plugin.name);
     setUrl(properties.plugin.url);
 
-    /*
-    const checkStatus = async () => {
-      const hidden = await fetchStatus(properties.plugin);
-      setStatus(hidden);
-    };
-    checkStatus();
-    */
+      const checkStatus = async () => {
+        const hidden = await fetchStatus(properties.plugin, properties.type);
+        setStatus(hidden);
+      };
+      checkStatus();
+
   }, [properties.plugin.name, properties.plugin.url]);
 
   return !editMode ? (
@@ -200,21 +199,21 @@ function PluginDisplay(properties) {
           </span>
         ) : null}
       </td>
-      {/*
+      {
       <td>
-        <ActionButton
-          action="Refresh Plugin Status"
-          icon={faRedo}
-          onClick={() => {
-            const checkStatus = async () => {
-              const hidden = await fetchStatus(properties.plugin);
-              setStatus(hidden);
-            };
-            checkStatus();
-          }}
+        <ActionButton 
+        action="Refresh Plugin Status"
+        icon={faRedo}
+        onClick={() => {
+          const checkStatus = async () => {
+            const hidden = await fetchStatus(properties.plugin, properties.type);
+            setStatus(hidden);
+          };
+          checkStatus();
+        }}
         />
       </td>
-        */}
+        }
       <td>
         <div className={styles.actionbuttonscontainer}>
           <div className={styles.actionbuttonslayout}>
@@ -372,14 +371,15 @@ const usePlugins = (token, dispatch) => {
   };
 };
 
-/*
-async function fetchStatus(plugin) {
+
+async function fetchStatus(plugin, type) {
   return await axios({
     method: 'POST',
     url: `${publicRuntimeConfig.backend}/call`,
     params: {
       name: plugin.name,
-      endpoint: 'status'
+      endpoint: 'status',
+      category: type
     }
   })
     .then(response => {
@@ -390,7 +390,6 @@ async function fetchStatus(plugin) {
     });
 }
 
-*/
 
 const fetcher = (url, token, dispatch) =>
   axios

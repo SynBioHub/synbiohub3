@@ -7,14 +7,16 @@ import { addAttachments } from '../../../redux/actions';
 import styles from '../../../styles/attachmentupload.module.css';
 import MajorLabel from '../ReusableComponents/MajorLabel';
 import FileUploadDisplay from './FileUploadDisplay';
+import React from 'react';
 
-export default function FailedFilesDisplay() {
+export default function FailedFilesDisplay(properties) {
   const failedFiles = useSelector(state => state.submit.failedFiles);
   const submitting = useSelector(state => state.submit.submitting);
   const selectedCollection = useSelector(
     state => state.submit.selectedCollection
   );
-  const [selectedFiles, setSelectedFiles] = useState({});
+  const selectedFiles = properties.selectedFiles;
+  const setSelectedFiles = properties.setSelectedFiles;
   const [allFilesChecked, setAllFilesChecked] = useState(true);
   const [submitAttachmentsButtonClass, setSubmitAttachmentsButtonClass] =
     useState('');
@@ -78,6 +80,7 @@ export default function FailedFilesDisplay() {
       {failedFilesDisplay}
 
       {!submitting && (
+        <React.Fragment>
         <div
           className={`${styles.submitattachmentsbutton} ${submitAttachmentsButtonClass}`}
           role="button"
@@ -102,7 +105,23 @@ export default function FailedFilesDisplay() {
             multipleAttachmentsSelected ? 'Attachments' : 'Attachment'
           }`}
         </div>
+        <div
+          role="button"
+          className={`${styles.submitattachmentsbutton} ${submitAttachmentsButtonClass}`}
+          onClick={() => {
+            properties.setModal('configure')
+          }}
+
+        >
+        <FontAwesomeIcon
+          icon={faCloudUploadAlt}
+          size="1x"
+          className={styles.submitattachmentsicon}
+        />
+        {`Reupload Using Different Submission Handler`}</div>
+        </React.Fragment>
       )}
+      
     </div>
   );
 }

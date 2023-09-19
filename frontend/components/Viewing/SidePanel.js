@@ -28,17 +28,11 @@ const { publicRuntimeConfig } = getConfig();
  *
  * @param {Any} properties Information from the parent component.
  */
-export default function SidePanel({ metadata, type, json, uri }) {
+export default function SidePanel({ metadata, type, json, uri, plugins }) {
   const [translation, setTranslation] = useState(0);
   const date = metadata.created.replace('T', ' ').replace('Z', '');
 
-  const pagesInfo = getPagesInfo(type, json);
-  // const graphPrefix = "https://synbiohub.org/";
-  // var displayUri = replaceBeginning("" + uri, graphPrefix, "/");
-  // var displayTitle = metadata.persistentIdentity.split('/');
-  // displayTitle = displayTitle[displayTitle.length-1];
-
-  
+  const pagesInfo = getPagesInfo(type, json, plugins);
 
   return (
     <div
@@ -94,6 +88,7 @@ export default function SidePanel({ metadata, type, json, uri }) {
             displayId={metadata.displayId}
             name={metadata.name}
             url={uri.replace('https://synbiohub.org', '')}
+            uri={uri}
           />
           <div className={styles.infocontainer}>
             <MetadataInfo
@@ -138,15 +133,39 @@ export default function SidePanel({ metadata, type, json, uri }) {
   );
 }
 
-function getPagesInfo(type, json) {
-  if (!json) return { type: type, order: [] };
+function getPagesInfo(type, json, plugins) {
+  if (json === null) return { type: type, order: [] };
+  if (localStorage.getItem(type) === null) {
+    
+    const order = json.pages
 
-  const pages = localStorage.getItem(type);
+    for(let plugin of plugins.rendering) {
+      order.push('PLUGIN: ' + plugin.name)
+    }
+    
+    return { type: type, order: order };
+  }
 
-  if (pages === null || JSON.parse(pages).order.length !== json.pages.length)
-    return { type: type, order: json.pages };
+  const order = JSON.parse(localStorage.getItem(type)).order
 
-  return { type: type, order: JSON.parse(pages).order };
+  const orderUpdated = order.filter(page => {
+    if(page.startsWith('PLUGIN: ')) {
+      for(let plugin of plugins.rendering) {
+        if(plugin.name === page.substring(8,page.length)) {
+          return true;
+        }
+      }
+      return false
+    }
+    return true
+  })
+  for(let plugin of plugins.rendering) {
+    if(!orderUpdated.includes('PLUGIN: ' + plugin.name)) {
+      orderUpdated.push('PLUGIN: ' + plugin.name)
+    }
+  }
+
+  return { type: type, order: orderUpdated };
 }
 
 function replaceBeginning(original, oldBeginning, newBeginning) {

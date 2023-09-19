@@ -11,7 +11,7 @@ import getConfig from "next/config";
 const { publicRuntimeConfig } = getConfig();
 
 import { useDispatch } from "react-redux";
-import { downloadFiles, downloadFilesPlugin } from "../../../redux/actions";
+import { downloadFiles } from "../../../redux/actions";
 import axios from "axios";
 
 /**
@@ -55,23 +55,20 @@ export default function DownloadModal(properties) {
     const item = {
       name: properties.name,
       displayId: properties.displayId,
-      type: "xml", //needs to be changed to the type specified by the plugin
+      type: "xml",
       status: "downloading"
     };
 
     /*
     const pluginData = {
-      complete_sbol: '',
-      shallow_sbol: '',
-      genbank: '',
-      top_level: '',
-      instanceUrl: '',
-      size: 0,
+      uri: properties.uri,
+      instanceUrl: `${publicRuntimeConfig.backend}/`,
+      size: 1,
       type: properties.type
     };
     */
 
-    dispatch(downloadFiles([item], pluginName, pluginData));
+    dispatch(downloadFiles([item], true, pluginName, pluginData));
   }
   }
 
@@ -99,12 +96,14 @@ export default function DownloadModal(properties) {
     axios({
       method: 'GET',
       url: `${publicRuntimeConfig.backend}/admin/plugins`,
-      responseType: 'application/json',
       params: {
         category: 'download'
+      },
+      headers: {
+        Accept: 'application/json'
       }
     }).then(response => {
-      const downloadPlugins = response.data;
+      const downloadPlugins = response.data.download;
 
       for(let plugin of downloadPlugins) {
         axios({
@@ -113,6 +112,7 @@ export default function DownloadModal(properties) {
           params: {
             name: plugin.name,
             endpoint: 'evaluate',
+            category: 'download',
             data: {
               type: properties.type
             }

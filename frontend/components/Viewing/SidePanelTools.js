@@ -35,6 +35,8 @@ import axios from 'axios';
  */
 export default function SidePanelTools(properties) {
   const [modal, setModal] = useState();
+
+  /*
   const [curationAvailable, setCurationAvailable] = useState(false);
 
   useEffect(() => {
@@ -44,10 +46,11 @@ export default function SidePanelTools(properties) {
       setCurationAvailable(available);
     }
     checkCurateAvailability();
-    */
+    
   })
+  
 
-  /*
+
   const pluginData = {
     complete_sbol: '',
     shallow_sbol: '',
@@ -121,6 +124,7 @@ export default function SidePanelTools(properties) {
               displayId={properties.displayId}
               url={properties.url}
               setModal={setModal}
+              uri={properties.uri}
             />
             :
             modal === "AddToCollection" ?
@@ -167,7 +171,6 @@ export default function SidePanelTools(properties) {
             setModal("Download");
           }}
         />
-        
         {/*curationAvailable ?
         <FontAwesomeIcon
           icon={faFunnelDollar}
