@@ -140,7 +140,10 @@ export default function Setup({ setInSetupMode }) {
                 onChange={event => setUserName(event.target.value)}
                 inputName="username"
                 containerStyling={styles.inputcontainer}
+                pattern="^[a-zA-Z0-9\-_\.~]+$"
+                title="Usernames can contain letters, numbers, and the symbols - _ . ~"
               />
+
 
               <InputField
                 labelText="Full Name"
