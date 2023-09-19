@@ -66,12 +66,14 @@ export default function CurationModal(properties) {
         axios({
             method: 'GET',
             url: `${publicRuntimeConfig.backend}/admin/plugins`,
-            responseType: 'application/json',
             params: {
                 category: 'curation'
-            }
+            },
+            headers: {
+                Accept: 'application/json'
+              }
         }).then(response => {
-            const curatePlugins = response.data;
+            const curatePlugins = response.data.curation;
 
             for(let plugin of curatePlugins) {
                 axios({

@@ -117,6 +117,7 @@ const initialSubmitState = {
   failedFiles: [],
   fileFailed: false,
   attachmentsUploading: [],
+  convertedFiles: [],
   canSubmitTo: [],
   gettingCanSubmitTo: false,
   publishing: false
@@ -172,6 +173,11 @@ const submitReducer = (state = initialSubmitState, { type, payload }) => {
         ...state,
         attachmentsUploading: payload
       };
+    case types.CONVERTEDFILES:
+      return {
+        ...state,
+        convertedFiles: payload
+      }
     case types.CANSUBMITTO:
       return {
         ...state,
@@ -320,11 +326,12 @@ const initialPageSectionsOrder = {
   type: '',
   order: [],
   minimized: [],
-  selected: []
+  selected: [],
+  hiddenSections: []
 };
 
 /**
- * This reducer tracks the order of the page sections the minimized sections.
+ * This reducer tracks the order of the page sections and the minimized sections.
  */
 const pageSectionsReducer = (
   state = initialPageSectionsOrder,
@@ -350,7 +357,12 @@ const pageSectionsReducer = (
       return {
         ...state,
         selected: payload
-      };
+      }
+    case types.UPDATEHIDDENSECTIONS:
+      return {
+        ...state,
+        hiddenSections: payload
+      }
     default:
       return state;
   }

@@ -1,5 +1,4 @@
 import styles from '../../styles/view.module.css';
-import Plugin from './Plugin';
 import SidePanel from './SidePanel';
 import ViewHeader from './ViewHeader';
 
@@ -33,8 +32,7 @@ export default function Shell(properties) {
           <div className={styles.sections}>
             <div>
               No structure defined for type "{properties.metadata.type}"
-            </div>
-            <Plugins plugins={plugins} type={properties.type} />
+            </div>     
           </div>
         </div>
         <div></div>
@@ -49,6 +47,7 @@ export default function Shell(properties) {
         type={properties.type}
         uri={properties.uri}
         json={json}
+        plugins={plugins}
       />
       <div className={styles.content}>
         <ViewHeader
@@ -58,19 +57,10 @@ export default function Shell(properties) {
           type={metadata.type}
         />
         <div className={styles.sections}>
-          <GenericContent json={json} uri={properties.uri} />
-          <Plugins plugins={plugins} type={properties.type} />
+          <GenericContent json={json} uri={properties.uri} metadata={false} plugins={plugins} type={properties.type} />
         </div>
       </div>
       <div></div>
     </div>
   );
-}
-
-function Plugins(properties) {
-  const plugins = properties.plugins.rendering.map(plugin => {
-    return <Plugin plugin={plugin} type={properties.type} key={plugin.index} />;
-  });
-
-  return <div>{plugins}</div>;
-}
+  }

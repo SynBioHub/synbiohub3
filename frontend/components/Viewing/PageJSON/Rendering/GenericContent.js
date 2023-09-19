@@ -1,4 +1,5 @@
 import Section from '../../Sections/Section';
+import Plugin from '../../Plugin';
 
 import { useSelector } from 'react-redux';
 import { Fragment } from 'react';
@@ -7,7 +8,7 @@ import TableBuilder from './TableBuilder';
 import CustomComponents from '../CustomComponents.js';
 import { compileFile } from '../Parsing/compileFile';
 
-export default function GenericContent({ json, uri, metadata }) {
+export default function GenericContent({ json, uri, metadata, plugins, type }) {
   if (metadata) {
     if (!json || !json.metadata) return null;
     compileFile(json);
@@ -27,6 +28,7 @@ export default function GenericContent({ json, uri, metadata }) {
   }
 
   const pages = useSelector(state => state.pageSections.order);
+  const hiddenSections = useSelector(state => state.pageSections.hiddenSections);
 
   const content = pages.map((page, index) => {
     if (page.startsWith('$TABLES[')) {
@@ -41,6 +43,21 @@ export default function GenericContent({ json, uri, metadata }) {
         </Section>
       );
     }
+    if (page.startsWith('PLUGIN: ')) {
+      if(!hiddenSections.includes(page)) {
+        const title = page.substring(8, page.length)
+        const plugin = plugins.rendering.filter(plugin => plugin.name === title)[0]
+        return(
+          <Section title={title} key={index} pluginID={page} >
+            <Plugin plugin={plugin} type={type} uri={uri} />
+          </Section>
+        );
+      }
+      else {
+        return null;
+      } 
+    }
+    
     const ComponentToRender = CustomComponents[page];
     return (
       <Section title={page} key={index}>
@@ -55,7 +72,7 @@ export default function GenericContent({ json, uri, metadata }) {
 // This is Alex's code for the previous table renderer. I'm keeping it
 // for now to keep track of custom components, but this is dead code/not valid
 // and if you delete it it's totally fine (zombie code sucks)
-
+//
 // /**
 //  * Returns the corresponding section component.
 //  *
