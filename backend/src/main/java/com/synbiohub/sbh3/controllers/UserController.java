@@ -150,4 +150,9 @@ public class UserController {
     public Boolean checkFirstLaunch() {
         return ConfigUtil.isLaunched();
     }
+
+    @GetMapping("/privateUser")
+    public String getPrivateUserGraph() throws Exception {
+        return ConfigUtil.get("uriPrefix") + "user/" + userService.getUserProfile().getUsername();
+    }
 }
