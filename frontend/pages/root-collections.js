@@ -7,7 +7,7 @@ import ResultTable from '../components/Search/StandardSearch/ResultTable/ResultT
 import TopLevel from '../components/TopLevel';
 import styles from '../styles/standardsearch.module.css';
 import { addError } from '../redux/actions';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 const { publicRuntimeConfig } = getConfig();
 
 /**
@@ -62,6 +62,8 @@ export default function RootCollections({ data, error }) {
 
 // eslint-disable-next-line unicorn/prevent-abbreviations
 export async function getServerSideProps() {
+  // const token = useSelector(state => state.user.token);
+  // const token = context.store.getState().user.token; 
   // Fetch rootCollections from sbh
   try {
     const url = `${publicRuntimeConfig.backendSS}/rootCollections`;

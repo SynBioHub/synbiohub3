@@ -37,6 +37,7 @@ const sortOptions = [
 
 export default function Members(properties) {
   const token = useSelector(state => state.user.token);
+  const privateGraph = useSelector(state => state.user.graphUri);
   const [search, setSearch] = useState('');
   const [offset, setOffset] = useState(0);
   const [sort, setSort] = useState(sortMethods.displayId);
@@ -74,9 +75,9 @@ export default function Members(properties) {
     offset: offset ? ` OFFSET ${offset}` : '',
     limit: ' LIMIT 10000 '
   };
-
+  
   if (token) {
-    parameters.graphs = 'https://synbiohub.org/user/dfang97'
+    parameters.graphs = privateGraph
   }
 
   const searchQuery = preparedSearch || typeFilter !== 'Show Only Root Objects';
