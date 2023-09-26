@@ -94,7 +94,7 @@
       "title": "Component",
       "rootPredicate": "sbol:component",
       "infoLink": "https://sbols.org/v2#Component",
-      "icon": "faVials",
+      "icon": "faPlug",
       "sections": [
         {
           "title": "Extra Work",

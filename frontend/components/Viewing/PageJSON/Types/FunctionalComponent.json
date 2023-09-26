@@ -73,7 +73,7 @@
         {
             "title": "MapsTo",
             "rootPredicate": "sbol:mapsTo",
-            "icon": "faVials",
+            "icon": "faMapMarkedAlt",
             "sections": [
                 {
                     "title": "Extra Work",

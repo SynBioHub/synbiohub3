@@ -14,7 +14,7 @@
     "metadata": [],
     "tables": [
         {
-            "icon": "faVials",
+            "icon": "faPeopleCarry",
             "title": "Usages",
             "rootPredicate": "prov:qualifiedUsage",
             "sections": [
@@ -62,7 +62,7 @@
             ]
         },
         {
-            "icon": "faVials",
+            "icon": "faUsers",
             "title": "Associations",
             "rootPredicate": "prov:qualifiedAssociation",
             "sections": [

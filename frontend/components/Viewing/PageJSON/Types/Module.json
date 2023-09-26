@@ -35,7 +35,7 @@
       {
         "title": "Mappings",
         "rootPredicate": "sbol:mapsTo",
-        "icon": "faVials",
+        "icon": "faMapMarkedAlt",
         "sections": [
           {
             "title": "Mapping",
@@ -104,7 +104,7 @@
       {
         "title": "Measures",
         "rootPredicate": "sbol:measure",
-        "icon": "faVials",
+        "icon": "faRuler",
         "sections": [
           {
             "title": "Extra Work",

@@ -89,7 +89,7 @@
     ],
     "tables": [
         {
-            "icon": "faVials",
+            "icon": "faPlug",
             "title": "Components",
             "rootPredicate": "sbol:component",
             "sections": [
