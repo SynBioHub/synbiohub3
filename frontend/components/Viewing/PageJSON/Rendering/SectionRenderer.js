@@ -8,6 +8,7 @@ import getConfig from 'next/config';
 import axios from 'axios';
 import { useEffect } from 'react';
 import { useState } from 'react';
+import { addError } from '../../../../redux/actions';
 const { publicRuntimeConfig } = getConfig();
 
 function loadText(template, args) {
