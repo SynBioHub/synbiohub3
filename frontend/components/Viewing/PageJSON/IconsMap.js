@@ -10,7 +10,25 @@ import {
   faRuler,
   faPeopleCarry,
   faUsers,
-  faPlug
+  faPlug,
+  faUserTag,
+  faUserSecret,
+  faStar,
+  faParagraph,
+  faDotCircle,
+  faHashtag,
+  faStickyNote,
+  faLightbulb,
+  faQuestionCircle,
+  faUniversalAccess,
+  faBook,
+  faMapMarkerAlt,
+  faUserPlus,
+  faPalette,
+  faEdit,
+  faVirusSlash,
+  faTable,
+  faDirections
 } from '@fortawesome/free-solid-svg-icons';
 
 const IconsMap = {
@@ -25,7 +43,25 @@ const IconsMap = {
   faRuler,
   faPeopleCarry,
   faUsers,
-  faPlug
+  faPlug,
+  faUserTag,
+  faUserSecret,
+  faStar,
+  faParagraph,
+  faDotCircle,
+  faHashtag,
+  faStickyNote,
+  faLightbulb,
+  faQuestionCircle,
+  faUniversalAccess,
+  faBook,
+  faMapMarkerAlt,
+  faUserPlus,
+  faPalette,
+  faEdit,
+  faVirusSlash,
+  faTable,
+  faDirections
 };
 
 export default IconsMap;

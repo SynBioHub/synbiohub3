@@ -14,7 +14,7 @@
     "metadata": [
       {
         "title": "Definition",
-        "icon": "faVials",
+        "icon": "faBook",
         "rootPredicate": "sbol:definition",
         "sections": [
           {

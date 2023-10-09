@@ -16,7 +16,7 @@
             "title": "Roles",
             "rootPredicate": "sbol:role",
             "infoLink": "https://sbols.org/v3#role",
-            "icon": "faVials",
+            "icon": "faUserTag",
             "sections": [
                 {
                     "title": "Extra Work",
@@ -58,7 +58,7 @@
         {
             "title": "SubComponents",
             "rootPredicate": "sbol:SubComponent",
-            "icon": "faVials",
+            "icon": "faUserPlus",
             "sections": [
                 {
                     "title": "Role Integrations",

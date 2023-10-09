@@ -29,7 +29,7 @@
         {
             "title": "Sequences",
             "rootPredicate": "sbol:sequence",
-            "icon": "faVials",
+            "icon": "faDna",
             "sections": [
                 {
                     "title": "Extra Work",
@@ -100,7 +100,7 @@
                 {
             "title": "Sequences",
             "rootPredicate": "sbol:sequence",
-            "icon": "faVials",
+            "icon": "faDna",
             "sections": [
                 {
                     "title": "Orientation",

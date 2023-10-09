@@ -15,7 +15,7 @@
         {
             "title": "Type",
             "rootPredicate": "sbol:type",
-            "icon": "faVials",
+            "icon": "faPalette",
             "sections": [
                 {
                     "title": "Extra Work",
@@ -33,7 +33,7 @@
         {
             "title": "Roles",
             "rootPredicate": "sbol:role",
-            "icon": "faVials",
+            "icon": "faUserTag",
             "sections": [
                 {
                     "title": "Extra Work",
@@ -53,7 +53,7 @@
         {
             "title": "Sequences",
             "rootPredicate": "sbol:hasSequence",
-            "icon": "faVials",
+            "icon": "faDna",
             "sections": [
                 {
                     "title": "Sequence",
@@ -115,7 +115,7 @@
         {
             "title": "Sequence Constraints",
             "rootPredicate": "sbol:hasConstraint",
-            "icon": "faVials",
+            "icon": "faVirusSlash",
             "sections": [
                 {
                     "title": "Sequence Constraint",

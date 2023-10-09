@@ -16,7 +16,7 @@
             "title": "Access",
             "rootPredicate": "sbol:access",
             "infoLink": "https://sbols.org/v2#access",
-            "icon": "faVials",
+            "icon": "faUniversalAccess",
             "sections": [
                 {
                     "title": "Extra Work",
@@ -36,7 +36,7 @@
             "title": "Definition",
             "rootPredicate": "sbol:definition",
             "infoLink": "https://sbols.org/v2#definition",
-            "icon": "faVials",
+            "icon": "faBook",
             "sections": [
                 {
                     "title": "Extra Work",
@@ -56,7 +56,7 @@
         {
             "title": "Role(s)",
             "rootPredicate": "sbol:role",
-            "icon": "faVials",
+            "icon": "faUserTag",
             "sections": [
                 {
                     "title": "Extra Work",
@@ -68,7 +68,7 @@
         {
             "title": "roleIntegration",
             "rootPredicate": "sbol:roleIntegration",
-            "icon": "faVials",
+            "icon": "faUserPlus",
             "sections": [
                 {
                     "title": "Extra Work",
@@ -81,7 +81,7 @@
             "title": "sourceLocations",
             "rootPredicate": "sbol:sourceLocation",
             "infoLink": "https://sbols.org/v2#Location",
-            "icon": "faVials",
+            "icon": "faMapMarkerAlt",
             "sections": [
                 {
                     "title": "Location",

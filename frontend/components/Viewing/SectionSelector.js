@@ -43,7 +43,7 @@ export default function SectionSelector({ pagesInfo, json }) {
   const hiddenSections = useSelector(state => state.pageSections.hiddenSections)
 
   const selectors = headerCreate(pageSectionsOrder, pagesInfo.type, json, hiddenSections);
-
+  console.log(json)
   //Initializes the store page sections and minimized order.
   useEffect(() => {
     let savedMinimizedValues, savedSelectedSections;
@@ -231,7 +231,7 @@ function headerCreate(pages, type, json, hiddenSections) {
   };
 
   const renderDraggable = useDraggableInPortal();
-
+  console.log(pages)
   const headers = pages.map((page, index) => {
     
       return (

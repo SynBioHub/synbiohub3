@@ -14,7 +14,7 @@
     "metadata": [
        {
          "title": "Location",
-         "icon": "faVials",
+         "icon": "faMapMarkerAlt",
          "rootPredicate": "sbol:start",
          "sections": [
           {

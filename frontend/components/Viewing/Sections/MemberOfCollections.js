@@ -18,15 +18,18 @@ export default function MemberOfCollections(properties) {
   const [otherProps, setOtherProps] = useState();
   const dispatch = useDispatch();
 
+  console.log(otherProps)
+
   useEffect(() => {
     if (otherProps == undefined)
       getQueryResponse(dispatch, getOtherProperties, {
         uri: properties.uri
-      }).then(props => {
+      }).then(console.log(properties.uri))
+      .then(props => {
         if (props.length > 0) setOtherProps(props);
       });
   }, [otherProps]);
-
+  console.log(otherProps)
   if (!otherProps) return <Loading />;
 
   return (
@@ -54,6 +57,7 @@ export default function MemberOfCollections(properties) {
    * @returns A row with the populated collection information.
    */
   function getRow(collection, key) {
+    console.log(collection)
     return (
       <tr key={key}>
         <td>

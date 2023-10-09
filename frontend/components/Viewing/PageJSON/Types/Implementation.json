@@ -41,7 +41,7 @@
       },
       {
         "title": "Source",
-        "icon": "faVials",
+        "icon": "faStar",
         "rootPredicate": "prov:wasDerivedFrom",
         "sections": [
           {

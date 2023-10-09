@@ -14,7 +14,7 @@
     "metadata": [
         {
             "title": "Roles",
-            "icon": "faVials",
+            "icon": "faUserTag",
             "infoLink": "https://sbols.org/v2#role",
             "rootPredicate": "prov:hadRole",
             "sections": [

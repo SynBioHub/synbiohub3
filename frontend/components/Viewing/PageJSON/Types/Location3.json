@@ -53,7 +53,7 @@
         {
             "title": "Sequences",
             "rootPredicate": "sbol:hasSequence",
-            "icon": "faVials",
+            "icon": "faDna",
             "sections": [
                 {
                     "title": "Extra Work",

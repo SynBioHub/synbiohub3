@@ -14,7 +14,7 @@
    "metadata": [],
    "tables": [
       {
-         "icon": "faDna",
+         "icon": "faTable",
          "title": "ExperimentalData",
          "rootPredicate": "sbol:experimentalData",
          "sections": [

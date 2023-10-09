@@ -14,7 +14,7 @@
     "metadata": [
         {
             "title": "Definition",
-            "icon": "faVials",
+            "icon": "faBook",
             "rootPredicate": "sbol:definition",
             "sections": [
                 {
@@ -34,7 +34,7 @@
         },
         {
             "title": "Access",
-            "icon": "faVials",
+            "icon": "faUniversalAccess",
             "rootPredicate": "sbol:access",
             "sections": [
                 {
@@ -52,7 +52,7 @@
         },
         {
             "title": "Direction",
-            "icon": "faVials",
+            "icon": "faDirections",
             "rootPredicate": "sbol:direction",
             "sections": [
                 {

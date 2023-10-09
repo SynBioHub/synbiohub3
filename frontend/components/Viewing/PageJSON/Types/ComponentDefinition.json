@@ -15,7 +15,7 @@
         {
             "title": "Type",
             "rootPredicate": "sbol:type",
-            "icon": "faVials",
+            "icon": "faPalette",
             "sections": [
                 {
                     "title": "Extra Work",
@@ -33,7 +33,7 @@
         {
             "title": "Role(s)",
             "rootPredicate": "sbol:role",
-            "icon": "faVials",
+            "icon": "faUserTag",
             "sections": [
                 {
                     "title": "Extra Work",
@@ -51,7 +51,7 @@
         {
             "title": "Source",
             "rootPredicate": "prov:wasDerivedFrom",
-            "icon": "faInfoCircle",
+            "icon": "faStar",
             "sections": [
                 {
                     "title": "Extra Work",
@@ -69,7 +69,7 @@
         {
             "title": "Sequence(s)",
             "rootPredicate": "sbol:sequence",
-            "icon": "faVials",
+            "icon": "faDna",
             "sections": [
                 {
                     "title": "Sequence",
@@ -141,7 +141,7 @@
             ]
         },
         {
-            "icon": "faVials",
+            "icon": "faEdit",
             "title": "Sequence Annotations",
             "rootPredicate": "sbol:sequenceAnnotation",
             "sections": [
@@ -163,7 +163,7 @@
                     "predicates": [
                     ],
                     "infoLink": "https://sbols.org/v2#Location",
-                    "icon": "faVials",
+                    "icon": "faMapMarkerAlt",
                     "sections": [
                         {
                             "title": "Cut",
@@ -237,7 +237,6 @@
                     "predicates": [
                         "sbol:role"
                     ],
-                    "icon": "faInfoCircle",
                     "link": "search/role=<$<This>>&",
                     "linkType": "search",
                     "infoLink": "http://sbols.org/v2#role",
@@ -249,7 +248,7 @@
         {
             "title": "Sequence Constraints",
             "rootPredicate": "sbol:sequenceConstraint",
-            "icon": "faVials",
+            "icon": "faVirusSlash",
             "sections": [
                 {
                     "title": "Sequence Constraint",
