@@ -105,22 +105,61 @@ export default function DownloadModal(properties) {
     }).then(response => {
       const downloadPlugins = response.data.download;
 
+      let type;
+
+      switch(properties.type) {
+        case 'Component':
+          type = 'ComponentInstance'
+          break
+        case 'Module':
+          type = 'ModuleInstance'
+          break
+        case 'ComponentDefinition':
+          type = 'Component'
+          break
+        case 'ModuleDefinition':
+          type = 'Module'
+          break
+        default:
+          type = properties.type
+      }
+
       for(let plugin of downloadPlugins) {
+
         axios({
           method: 'POST',
           url: `${publicRuntimeConfig.backend}/call`,
           params: {
             name: plugin.name,
-            endpoint: 'evaluate',
-            category: 'download',
-            data: {
-              type: properties.type
-            }
+            endpoint: 'status',
+            category: 'download'
           }
-          
         }).then(response => {
-          if (response.status === 200) selectOptions.push({ value: "plugin", label: plugin.name});
-        }).catch(error => {return;});
+
+          if(response.status === 200) {
+
+            axios({
+              method: 'POST',
+              url: `${publicRuntimeConfig.backend}/call`,
+              params: {
+                name: plugin.name,
+                endpoint: 'evaluate',
+                category: 'download',
+                data: {
+                  type: properties.type
+                }
+              }
+              
+            }).then(response => {
+              if (response.status === 200) selectOptions.push({ value: "plugin", label: plugin.name});
+            }).catch(error => {return;});
+
+          }
+
+          return;
+
+        }).catch(error => {return;})
+        
       }
     }).catch(error => {return;});
     
