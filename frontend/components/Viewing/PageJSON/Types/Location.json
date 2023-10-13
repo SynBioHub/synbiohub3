@@ -15,7 +15,7 @@
         {
             "title": "Orientation",
             "rootPredicate": "sbol:orientation",
-            "icon": "faVials",
+            "icon": "faCompass",
             "sections": [
                 {
                     "title": "Extra Work",
@@ -41,7 +41,7 @@
         {
             "title": "Range",
             "rootPredicate": "sbol:range",
-            "icon": "faVials",
+            "icon": "faGlobe",
             "sections": [
                 {
                     "title": "Start",
@@ -68,7 +68,7 @@
         {
             "title": "Cut",
             "rootPredicate": "sbol:Cut",
-            "icon": "faVials",
+            "icon": "faCut",
             "sections": [
                 {
                     "title": "At",
@@ -90,14 +90,16 @@
         {
             "title": "Generic Location",
             "rootPredicate": "sbol:GenericLocation",
-            "icon": "faVials",
+            "icon": "faMapMarkerAlt",
             "sections": [
                 {
                     "title": "Extra Work",
                     "stripAfter": "#",
                     "predicates": []
-                },
-                {
+                }
+            ]
+        },
+        {
             "title": "Sequences",
             "rootPredicate": "sbol:sequence",
             "icon": "faDna",
@@ -112,8 +114,6 @@
                     "stripAfter": "#",
                     "predicates": ["sbol:sequence"]
                 }
-            ]
-        }
             ]
         }
     ],

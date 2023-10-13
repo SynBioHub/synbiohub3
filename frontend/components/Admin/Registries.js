@@ -271,3 +271,5 @@ const fetcher = (url, token, dispatch) =>
       error.fullUrl = url;
       dispatch(addError(error));
     });
+
+// const replaceURL = (regi)

@@ -28,7 +28,25 @@ import {
   faEdit,
   faVirusSlash,
   faTable,
-  faDirections
+  faDirections,
+  faShapes,
+  faPeopleArrows,
+  faCompass,
+  faUser,
+  faPlusSquare,
+  faExchangeAlt,
+  faArchive,
+  faUserSlash,
+  faLanguage,
+  faBuilding,
+  faFile,
+  faStreetView,
+  faMapSigns,
+  faGlobe,
+  faCut,
+  faMapPin,
+  faSort,
+  faChild
 } from '@fortawesome/free-solid-svg-icons';
 
 const IconsMap = {
@@ -61,7 +79,25 @@ const IconsMap = {
   faEdit,
   faVirusSlash,
   faTable,
-  faDirections
+  faDirections,
+  faShapes,
+  faPeopleArrows,
+  faCompass,
+  faUser,
+  faPlusSquare,
+  faExchangeAlt,
+  faArchive,
+  faUserSlash,
+  faLanguage,
+  faBuilding,
+  faFile,
+  faStreetView,
+  faMapSigns,
+  faGlobe,
+  faCut,
+  faMapPin,
+  faSort,
+  faChild
 };
 
 export default IconsMap;

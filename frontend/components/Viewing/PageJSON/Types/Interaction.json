@@ -15,7 +15,7 @@
         {
             "title": "Types",
             "rootPredicate": "sbol:type",
-            "icon": "faVials",
+            "icon": "faPalette",
             "sections": [
                 {
                     "title": "Extra Work",
@@ -37,7 +37,7 @@
         {
         "title": "Participations",
        "rootPredicate": "sbol:participation",
-       "icon": "faVials",
+       "icon": "faPeopleArrows",
        "sections": [
         {
             "title": "Participation",
@@ -80,8 +80,8 @@
 },
     {
         "title": "Measures",
-        "rootPredicate": "sbol:participation",
-        "icon": "faVials",
+        "rootPredicate": "sbol:measure",
+        "icon": "faRuler",
         "sections": [ 
 
     ]

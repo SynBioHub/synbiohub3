@@ -35,7 +35,7 @@
             "title": "InstanceOf",
             "rootPredicate": "sbol:instanceOf",
             "infoLink": "https://sbols.org/v3#instanceOf",
-            "icon": "faVials",
+            "icon": "faMapPin",
             "sections": [
                 {
                     "title": "Component",

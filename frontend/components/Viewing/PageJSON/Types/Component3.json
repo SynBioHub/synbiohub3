@@ -71,7 +71,7 @@
             ]
         },
         {
-            "icon": "faVials",
+            "icon": "faThLarge",
             "title": "Features",
             "rootPredicate": "sbol:hasFeature",
             "sections": [
@@ -93,7 +93,7 @@
             ]
         },
         {
-            "icon": "faVials",
+            "icon": "faHandshake",
             "title": "Interactions",
             "rootPredicate": "sbol:hasInteraction",
             "sections": [
@@ -135,7 +135,7 @@
         {
             "title": "Interfaces",
             "rootPredicate": "sbol:hasInterface",
-            "icon": "faVials",
+            "icon": "faStickyNote",
             "sections": [
                 {
                     "title": "Interface",
@@ -155,7 +155,7 @@
         {
             "title": "Models",
             "rootPredicate": "sbol:hasModel",
-            "icon": "faVials",
+            "icon": "faBuilding",
             "sections": [
                 {
                     "title": "Model",
