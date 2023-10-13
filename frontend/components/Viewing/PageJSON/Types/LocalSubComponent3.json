@@ -16,7 +16,7 @@
             "title": "Type",
             "rootPredicate": "sbol:type",
             "infoLink": "https://sbols.org/v3#type",
-            "icon": "faVials",
+            "icon": "faPalette",
             "sections": [
                 {
                     "title": "Extra Work",
@@ -36,7 +36,7 @@
         {
             "title": "Locations",
             "rootPredicate": "sbol:hasLocation",
-            "icon": "faVials",
+            "icon": "faMapMarkerAlt",
             "sections": [
                 {
                     "title": "Source Location",

@@ -15,7 +15,7 @@
         {
             "title": "Roles",
             "rootPredicate": "sbol:role",
-            "icon": "faVials",
+            "icon": "faUserTag",
             "sections": [
                 {
                     "title": "Extra Work",
@@ -34,7 +34,7 @@
         {
             "title": "Participant",
             "rootPredicate": "sbol:participant",
-            "icon": "faVials",
+            "icon": "faUser",
             "sections": [
                 {
                     "title": "Extra Work",
@@ -57,8 +57,8 @@
     "tables": [
     {
         "title": "Measures",
-        "rootPredicate": "sbol:participation",
-        "icon": "faVials",
+        "rootPredicate": "sbol:measure",
+        "icon": "faRuler",
         "sections": [ 
 
     ]

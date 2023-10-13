@@ -15,7 +15,7 @@
         {
             "title": "Template",
             "rootPredicate": "sbol:template",
-            "icon": "faVials",
+            "icon": "faStickyNote",
             "sections": [
                 {
                     "title": "Extra Work",
@@ -28,7 +28,7 @@
         {
             "title": "Strategy",
             "rootPredicate": "sbol:strategy",
-            "icon": "faVials",
+            "icon": "faLightbulb",
             "sections": [
                 {
                     "title": "Extra Work",
@@ -48,7 +48,7 @@
         {
             "title": "Variable Components",
             "rootPredicate": "sbol:variableComponent",
-            "icon": "faVials",
+            "icon": "faQuestionCircle",
             "sections": [
                 {
                     "title": "Variable Components",

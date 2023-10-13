@@ -14,7 +14,7 @@
    "metadata": [
       {
         "title": "Language",
-        "icon": "faVials",
+        "icon": "faLanguage",
         "rootPredicate": "sbol:language",
         "sections": [
           {
@@ -28,7 +28,7 @@
       {
         "title": "Framework",
         "rootPredicate": "sbol:framework",
-        "icon": "faVials",
+        "icon": "faBuilding",
         "sections": [
           {
             "title": "framework",
@@ -41,7 +41,7 @@
       {
          "title": "Model File",
          "rootPredicate": "sbol:source",
-         "icon": "faVials",
+         "icon": "faFile",
          "sections": [
            {
              "title": "mfile",

@@ -16,7 +16,7 @@
             "title": "Type",
             "rootPredicate": "sbol:type",
             "infoLink": "https://sbols.org/v3#type",
-            "icon": "faVials",
+            "icon": "faPalette",
             "sections": [
                 {
                     "title": "Extra Work",
@@ -35,7 +35,7 @@
             "title": "Definition",
             "rootPredicate": "sbol:definition",
             "infoLink": "https://sbols.org/v3#definition",
-            "icon": "faVials",
+            "icon": "faBook",
             "sections": [
                 {
                     "title": "Extra Work",

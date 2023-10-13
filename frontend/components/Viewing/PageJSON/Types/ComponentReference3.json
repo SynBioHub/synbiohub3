@@ -16,7 +16,7 @@
             "title": "In Child Of",
             "rootPredicate": "sbol:inChildOf",
             "infoLink": "https://sbols.org/v3#inChildOf",
-            "icon": "faVials",
+            "icon": "faChild",
             "sections": [
                 {
                     "title": "Extra Work",
@@ -35,7 +35,7 @@
             "title": "Refers To",
             "rootPredicate": "sbol:refersTo",
             "infoLink": "https://sbols.org/v3#refersTo",
-            "icon": "faVials",
+            "icon": "faUserTag",
             "sections": [
                 {
                     "title": "Reference",

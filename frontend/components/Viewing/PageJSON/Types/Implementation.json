@@ -14,7 +14,7 @@
    "metadata": [
       {
         "title": "Built",
-        "icon": "faVials",
+        "icon": "faShapes",
         "rootPredicate": "sbol:built",
         "sections": [
           {
@@ -41,7 +41,7 @@
       },
       {
         "title": "Source",
-        "icon": "faVials",
+        "icon": "faStar",
         "rootPredicate": "prov:wasDerivedFrom",
         "sections": [
           {

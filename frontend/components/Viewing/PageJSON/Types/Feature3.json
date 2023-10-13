@@ -16,7 +16,7 @@
             "title": "Roles",
             "rootPredicate": "sbol:role",
             "infoLink": "https://sbols.org/v3#role",
-            "icon": "faVials",
+            "icon": "faUserTag",
             "sections": [
                 {
                     "title": "Extra Work",
@@ -36,7 +36,7 @@
             "title": "Orientation",
             "rootPredicate": "sbol:orientation",
             "infoLink": "https://sbols.org/v3#orientation",
-            "icon": "faVials",
+            "icon": "faCompass",
             "sections": [
                 {
                     "title": "Extra Work",
@@ -58,7 +58,7 @@
         {
             "title": "SubComponents",
             "rootPredicate": "sbol:SubComponent",
-            "icon": "faVials",
+            "icon": "faPuzzlePiece",
             "sections": [
                 {
                     "title": "Role Integrations",
@@ -78,7 +78,7 @@
         {
             "title": "Component References",
             "rootPredicate": "sbol:ComponentReference",
-            "icon": "faVials",
+            "icon": "faUserTag",
             "sections": [
                 {
                     "title": "Sequence",
@@ -97,7 +97,7 @@
         {
             "title": "Local SubComponents",
             "rootPredicate": "sbol:LocalSubComponents",
-            "icon": "faVials",
+            "icon": "faStreetView",
             "sections": [
                 {
                     "title": "Types",
@@ -117,7 +117,7 @@
         {
             "title": "Externally Defined",
             "rootPredicate": "sbol:ExternallyDefined",
-            "icon": "faVials",
+            "icon": "faPeopleArrows",
             "sections": [
                 {
                     "title": "Types",
@@ -150,7 +150,7 @@
         {
             "title": "Sequence Features",
             "rootPredicate": "sbol:SequenceFeature",
-            "icon": "faVials",
+            "icon": "faDna",
             "sections": [
                 {
                     "title": "Sequence Feature",

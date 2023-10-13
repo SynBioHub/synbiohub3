@@ -16,7 +16,7 @@
             "title": "Role Integrations",
             "rootPredicate": "sbol:RoleIntegration",
             "infoLink": "https://sbols.org/v3#roleintegration",
-            "icon": "faVials",
+            "icon": "faUserPlus",
             "sections": [
                 {
                     "title": "Extra Work",
@@ -35,7 +35,7 @@
             "title": "InstanceOf",
             "rootPredicate": "sbol:instanceOf",
             "infoLink": "https://sbols.org/v3#instanceOf",
-            "icon": "faVials",
+            "icon": "faMapPin",
             "sections": [
                 {
                     "title": "Component",
@@ -57,7 +57,7 @@
         {
             "title": "Locations",
             "rootPredicate": "sbol:hasLocation",
-            "icon": "faVials",
+            "icon": "faMapMarkerAlt",
             "sections": [
                 {
                     "title": "Source Location",

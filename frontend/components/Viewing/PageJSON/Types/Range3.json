@@ -14,7 +14,7 @@
     "metadata": [
        {
          "title": "Location",
-         "icon": "faVials",
+         "icon": "faMapMarkerAlt",
          "rootPredicate": "sbol:start",
          "sections": [
           {
@@ -36,7 +36,7 @@
        },
        {
           "title": "Orientation",
-          "icon": "faVials",
+          "icon": "faCompass",
           "rootPredicate": "sbol:orientation",
           "sections": [
             {

@@ -15,7 +15,7 @@
         {
             "title": "Refinement",
             "rootPredicate": "sbol:refinement",
-            "icon": "faVials",
+            "icon": "faPlusSquare",
             "sections": [
                 {
                     "title": "Extra Work",
@@ -35,7 +35,7 @@
             "rootPredicate": [
                 "sbol:remote"
             ],
-            "icon": "faVials",
+            "icon": "faMapSigns",
             "sections": [
                 {
                     "title": "Extra Work",
@@ -55,7 +55,7 @@
         {
             "title": "Local",
             "rootPredicate": "sbol:local",
-            "icon": "faVials",
+            "icon": "faStreetView",
             "sections": [
                 {
                     "title": "Extra Work",

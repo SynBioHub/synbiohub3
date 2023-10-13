@@ -17,7 +17,7 @@
         {
             "title": "Locations",
             "rootPredicate": "sbol:hasLocation",
-            "icon": "faVials",
+            "icon": "faMapMarkerAlt",
             "sections": [
                 {
                     "title": "Source Location",

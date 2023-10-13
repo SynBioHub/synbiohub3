@@ -16,7 +16,7 @@
             "title": "Location",
             "rootPredicate": "sbol:persistentIdentity",
             "infoLink": "https://sbols.org/v2#Location",
-            "icon": "faVials",
+            "icon": "faMapMarkerAlt",
             "sections": [
                 {
                     "title": "Extra Work",

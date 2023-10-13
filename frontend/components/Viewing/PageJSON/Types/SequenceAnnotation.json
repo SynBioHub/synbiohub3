@@ -14,7 +14,7 @@
   "metadata": [
     {
       "title": "Roles",
-      "icon": "faVials",
+      "icon": "faUserTag",
       "infoLink": "https://sbols.org/v2#role",
       "rootPredicate": "sbol:role",
       "sections": [
@@ -35,7 +35,7 @@
       "title": "Locations",
       "rootPredicate": "sbol:location",
       "infoLink": "https://sbols.org/v2#Location",
-      "icon": "faVials",
+      "icon": "faMapMarkerAlt",
       "sections": [
         {
           "title": "Cut",
@@ -94,7 +94,7 @@
       "title": "Component",
       "rootPredicate": "sbol:component",
       "infoLink": "https://sbols.org/v2#Component",
-      "icon": "faVials",
+      "icon": "faPlug",
       "sections": [
         {
           "title": "Extra Work",

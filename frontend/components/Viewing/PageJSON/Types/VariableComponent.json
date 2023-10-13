@@ -14,7 +14,7 @@
     "metadata": [
         {
             "title": "Variable",
-            "icon": "faVials",
+            "icon": "faQuestionCircle",
             "rootPredicate": "sbol:variable",
             "sections": [
                 {
@@ -32,7 +32,7 @@
         },
         {
             "title": "Operator",
-            "icon": "faVials",
+            "icon": "faPlusSquare",
             "rootPredicate": "sbol:operator",
             "sections": [
                 {
@@ -53,7 +53,7 @@
         {
             "title": "Variants",
             "rootPredicate": "sbol:variant",
-            "icon": "faVials",
+            "icon": "faExchangeAlt",
             "sections": [
                 {
                     "title": "Variant",

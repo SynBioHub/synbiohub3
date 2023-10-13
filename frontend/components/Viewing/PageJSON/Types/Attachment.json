@@ -15,7 +15,7 @@
         {
             "title": "Source",
             "rootPredicate": "sbol:source",
-            "icon": "faVials",
+            "icon": "faStar",
             "sections": [
                 {
                     "title": "Extra Work",
@@ -28,7 +28,7 @@
         {
             "title": "Format",
             "rootPredicate": "sbol:format",
-            "icon": "faVials",
+            "icon": "faParagraph",
             "sections": [
                 {
                     "title": "Extra Work",
@@ -40,7 +40,7 @@
         {
             "title": "Size",
             "rootPredicate": "sbol:size",
-            "icon": "faVials",
+            "icon": "faDotCircle",
             "sections": [
                 {
                     "title": "Extra Work",
@@ -52,7 +52,7 @@
         {
             "title": "Hash",
             "rootPredicate": "sbh:hash",
-            "icon": "faVials",
+            "icon": "faHashtag",
             "sections": [
                 {
                     "title": "Extra Work",
