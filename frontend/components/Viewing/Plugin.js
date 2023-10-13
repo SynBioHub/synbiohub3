@@ -17,17 +17,38 @@ export default function Plugin(properties) {
   const dispatch = useDispatch();
   
   const uri = properties.uri;
-  
+
+  let type;
+
+  switch(properties.type) {
+    case 'Component':
+      type = 'ComponentInstance'
+      break
+    case 'Module':
+      type = 'ModuleInstance'
+      break
+    case 'ComponentDefinition':
+      type = 'Component'
+      break
+    case 'ModuleDefinition':
+      type = 'Module'
+      break
+    default:
+      type = properties.type
+  }
+
   const pluginData = {
     uri: uri,
     instanceUrl: `${publicRuntimeConfig.backend}/`,
     size: 1,
-    type: properties.type
+    type: type
   };
 
   useEffect(() => {
     if (status === null) {
+      setContent('<div>Loading Data From Plugin...</div>')
       evaluatePlugin(properties.plugin, properties.type).then(status => setStatus(status));
+      
     }
     else if (status) {
       const downloadContent = async () => {
@@ -102,6 +123,21 @@ export default function Plugin(properties) {
 
 
 async function evaluatePlugin(plugin, type) {
+
+  switch(type) {
+    case 'Component':
+      type = 'ComponentInstance'
+      break
+    case 'Module':
+      type = 'ModuleInstance'
+      break
+    case 'ComponentDefinition':
+      type = 'Component'
+      break
+    case 'ModuleDefinition':
+      type = 'Module'
+      break
+  }
   return await axios({
     method: 'POST',
     url: `${publicRuntimeConfig.backend}/call`,
