@@ -189,11 +189,15 @@ const deleteRegistry = async (uri, token, dispatch) => {
   const parameters = new URLSearchParams();
   parameters.append('uri', uri);
 
-  const response = await fetch(url, {
-    method: 'POST',
-    headers,
-    body: parameters
-  });
+  let response;
+
+  try {
+    response = await axios.post(url, parameters, { headers });
+  } catch (error) {
+    if (error.response) {
+      console.error('Error:', error.message);
+    }
+  }
 
   if (response.status === 200) {
     mutate([
@@ -215,11 +219,15 @@ const saveRegistry = async (uri, sbhUrl, token, dispatch) => {
   parameters.append('uri', uri);
   parameters.append('url', sbhUrl);
 
-  const response = await fetch(url, {
-    method: 'POST',
-    headers,
-    body: parameters
-  });
+  let response;
+
+  try {
+    response = await axios.post(url, parameters, { headers });
+  } catch (error) {
+    if (error.response) {
+      console.error('Error:', error.message);
+    }
+  }
 
   if (response.status === 200) {
     mutate([

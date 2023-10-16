@@ -305,11 +305,15 @@ const deleteUser = async (id, token, dispatch) => {
   const parameters = new URLSearchParams();
   parameters.append('id', id);
 
-  const response = await fetch(url, {
-    method: 'POST',
-    headers,
-    body: parameters
-  });
+  let response;
+
+  try {
+    response = await axios.post(url, parameters, { headers });
+  } catch (error) {
+    if (error.response) {
+      console.error('Error:', error.message);
+    }
+  }
 
   if (response.status === 200) {
     mutate([`${publicRuntimeConfig.backend}/admin/users`, token, dispatch]);
@@ -342,11 +346,15 @@ const saveUser = async (
   parameters.append('isCurator', isCurator);
   parameters.append('isAdmin', isAdmin);
 
-  const response = await fetch(url, {
-    method: 'POST',
-    headers,
-    body: parameters
-  });
+  let response;
+
+  try {
+    response = await axios.post(url, parameters, { headers });
+  } catch (error) {
+    if (error.response) {
+      console.error('Error:', error.message);
+    }
+  }
 
   if (response.status === 200) {
     mutate([`${publicRuntimeConfig.backend}/admin/users`, token, dispatch]);
@@ -378,12 +386,16 @@ const createUser = async (
   isMember && parameters.append('isMember', '1');
   isCurator && parameters.append('isCurator', '1');
   isAdmin && parameters.append('isAdmin', '1');
+  
+  let response;
 
-  const response = await fetch(url, {
-    method: 'POST',
-    headers,
-    body: parameters
-  });
+  try {
+    response = await axios.post(url, parameters, { headers });
+  } catch (error) {
+    if (error.response) {
+      console.error('Error:', error.message);
+    }
+  }
 
   const responseText = await response.text();
   console.log(responseText);

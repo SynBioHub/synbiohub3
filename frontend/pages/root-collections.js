@@ -71,10 +71,15 @@ export async function getServerSideProps() {
       Accept: 'text/plain; charset=UTF-8'
     };
 
-    const response = await fetch(url, {
-      method: 'GET',
-      headers
-    });
+    let response;
+
+    try {
+      response = await axios.get(url, { headers });
+    } catch (error) {
+      if (error.response) {
+        console.error('Error:', error.message);
+      }
+    }
 
     const data = await response.json();
 
