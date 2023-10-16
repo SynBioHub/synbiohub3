@@ -37,13 +37,6 @@ export default function SearchHeader(properties) {
         />
 
         <SearchTypeButton
-          name="Advanced Search"
-          route="advanced-search"
-          selected={properties.selected}
-          icon={faHatWizard}
-        />
-
-        <SearchTypeButton
           name="SPARQL"
           route="sparql"
           selected={properties.selected}
