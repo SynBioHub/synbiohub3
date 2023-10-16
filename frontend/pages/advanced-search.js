@@ -78,10 +78,8 @@ export default function AdvancedSearch() {
   };
 
   return (
-    <TopLevel doNotTrack={true} hideFooter={true} publicPage={true}>
       <div className={styles.container}>
-        <SearchHeader selected="Advanced Search" />
-        <div className={styles.standardcontainer}>
+          <div className={styles.standardcontainer}>
           <div className={styles.body}>
             <Options
               setCreator={setCreator}
@@ -117,6 +115,5 @@ export default function AdvancedSearch() {
           </div>
         </div>
       </div>
-    </TopLevel>
   );
 }

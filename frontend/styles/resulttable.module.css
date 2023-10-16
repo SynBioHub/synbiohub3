@@ -5,7 +5,7 @@
 }
 
 .tablecontainer {
-   width: 100vw;
+   width: 50vw;
    overflow: scroll;
    max-height: calc(100vh - 11rem);
    padding: 0 1rem 0 1rem;
