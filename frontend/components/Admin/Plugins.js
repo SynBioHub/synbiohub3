@@ -306,11 +306,15 @@ const deletePlugin = async (id, type, token, dispatch) => {
   parameters.append('id', id);
   parameters.append('category', type);
 
-  const response = await fetch(url, {
-    method: 'POST',
-    headers,
-    body: parameters
-  });
+  let response;
+
+  try {
+    response = await axios.post(url, parameters, { headers });
+  } catch (error) {
+    if (error.response) {
+      console.error('Error:', error.message);
+    }
+  }
 
   if (response.status === 200) {
     mutate([`${publicRuntimeConfig.backend}/admin/plugins`, token, dispatch]);
@@ -330,11 +334,15 @@ const savePlugin = async (id, type, name, pluginUrl, token, dispatch) => {
   parameters.append('name', name);
   parameters.append('url', pluginUrl);
 
-  const response = await fetch(url, {
-    method: 'POST',
-    headers,
-    body: parameters
-  });
+  let response;
+
+  try {
+    response = await axios.post(url, parameters, { headers });
+  } catch (error) {
+    if (error.response) {
+      console.error('Error:', error.message);
+    }
+  }
 
   if (response.status === 200) {
     mutate([`${publicRuntimeConfig.backend}/admin/plugins`, token, dispatch]);

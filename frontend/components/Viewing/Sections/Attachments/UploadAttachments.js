@@ -70,12 +70,16 @@ export default function UploadAttachments(properties) {
     parameters.append('url', attachment.url);
     parameters.append('name', attachment.name);
     parameters.append('type', attachment.type);
+    
+    let response;
 
-    const response = await fetch(url, {
-      method: 'POST',
-      headers,
-      body: parameters
-    });
+    try {
+      response = await axios.post(url, parameters, { headers });
+    } catch (error) {
+      if (error.response) {
+        console.error('Error:', error.message);
+      }
+    }
 
     if (response.status !== 200) console.error(response.status);
     else properties.setRefreshMembers(true);
@@ -99,11 +103,15 @@ export default function UploadAttachments(properties) {
       const form = new FormData();
       form.append('file', files[fileIndex].file);
 
-      const response = await fetch(url, {
-        method: 'POST',
-        headers,
-        body: form
-      });
+      let response;
+
+      try {
+        response = await axios.post(url, form, { headers });
+      } catch (error) {
+        if (error.response) {
+          console.error('Error:', error.message);
+        }
+      }
 
       if (response.status !== 200) console.error(response.status);
       else properties.setRefreshMembers(true);

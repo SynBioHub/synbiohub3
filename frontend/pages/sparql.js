@@ -123,10 +123,15 @@ const submitQuery = async (
     Accept: 'application/json'
   };
 
-  const response = await fetch(url, {
-    method: 'GET',
-    headers
-  });
+  let response;
+
+  try {
+    response = await axios.get(url, { headers });
+  } catch (error) {
+    if (error.response) {
+      console.error('Error:', error.message);
+    }
+  }
 
   if (response.status === 200) {
     setError();

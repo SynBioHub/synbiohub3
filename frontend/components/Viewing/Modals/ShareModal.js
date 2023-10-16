@@ -62,11 +62,15 @@ export default function ShareModal(properties) {
     parameters.append("user", owner);
     parameters.append("uri", publicRuntimeConfig.backend + properties.url);
 
-    const response = await fetch(url, {
-      method: "POST",
-      headers,
-      body: parameters
-    });
+    let response;
+
+    try {
+      response = await axios.post(url, parameters, { headers });
+    } catch (error) {
+      if (error.response) {
+        console.error('Error:', error.message);
+      }
+    }
 
     if (response.status !== 200) errorToast("Something went wrong with adding an owner.");
   }
