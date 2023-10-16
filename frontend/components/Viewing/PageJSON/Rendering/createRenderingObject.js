@@ -1,8 +1,22 @@
 export default function createRenderingObject(column, value, titleToValueMap) {
   let text = column.text ? loadText(column.text, titleToValueMap) : value;
   if (column.stripAfter) {
-    text = text.slice(text.lastIndexOf(column.stripAfter) + 1);
+    const parts = text.split('/');
+    if (parts.length >= 2) {
+      const lastPart = parts[parts.length - 1];
+
+      if (/^1(\.0+)*$/.test(lastPart)) {
+        text = parts[parts.length - 2];
+      } else {
+        const delimiters = ['#', '%', '/'];
+        const lastPartSegments = lastPart.split(new RegExp(`[${delimiters.join('')}]`));
+
+        text = lastPartSegments.pop();
+      }
+    }
   }
+
+
   const link = column.link ? loadText(column.link, titleToValueMap) : undefined;
   const linkType = column.linkType || 'default';
   const infoLink = column.infoLink
