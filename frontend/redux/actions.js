@@ -36,15 +36,7 @@ export const login = (username, password) => async dispatch => {
   parameters.append('email', username);
   parameters.append('password', password);
 
-  let response;
-
-  try {
-    response = await axios.post(url, parameters, { headers });
-  } catch (error) {
-    if (error.response) {
-      console.error('Error:', error.message);
-    }
-  }
+  const response = await axios.post(url, parameters, { headers });
 
   const message = await response.text();
   if (response.status === 200) {
