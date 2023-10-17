@@ -140,16 +140,16 @@ const submitQuery = async (
     }
   }
 
-  if (response.status === 200) {
+  if (response && response.status === 200) {
     setError();
-    const results = await response.json();
+    const results = response.data; 
     setResults(processResults(results));
     setHeaders(results.head.vars);
-  } else {
-    const message = await response.text();
+} else {
+    const message = response ? response.data : 'Unknown error';
     setError(message);
     setResults();
-  }
+}
 
   setLoading(false);
 };

@@ -304,7 +304,7 @@ const getCitationInfo = async (ids) => {
   try {
     const response = await axios.post(url, parameters);
 
-    const citationXML = await response.text();
+    const citationXML = await response.data;
     if (response.status === 200) return parseCitationInfo(citationXML);
     else return undefined;
   } catch(e) {
