@@ -230,6 +230,7 @@ function MemberTable(properties) {
       Number(properties.totalMembers).toLocaleString() +
       ')';
   }
+  console.log(properties)
   return (
     <Table
       data={properties.members}

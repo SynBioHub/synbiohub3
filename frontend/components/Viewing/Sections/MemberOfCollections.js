@@ -9,6 +9,8 @@ import Link from 'next/link';
 
 import styles from '../../../styles/view.module.css';
 import { useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
+import { processUrl } from '../../Admin/Registries';
 
 /**
  * @param {Any} properties Information passed down from parent component.
@@ -17,7 +19,8 @@ import { useDispatch } from 'react-redux';
 export default function MemberOfCollections(properties) {
   const [otherProps, setOtherProps] = useState();
   const dispatch = useDispatch();
-
+  const token = useSelector(state => state.user.token);
+  console.log(properties)
   console.log(otherProps)
 
   useEffect(() => {
@@ -25,9 +28,9 @@ export default function MemberOfCollections(properties) {
       getQueryResponse(dispatch, getOtherProperties, {
         uri: properties.uri
       }).then(console.log(properties.uri))
-      .then(props => {
-        if (props.length > 0) setOtherProps(props);
-      });
+        .then(props => {
+          if (props.length > 0) setOtherProps(props);
+        });
   }, [otherProps]);
   console.log(otherProps)
   if (!otherProps) return <Loading />;
@@ -46,9 +49,9 @@ export default function MemberOfCollections(properties) {
    * @returns All the returned collection info mapped into rows.
    */
   function generateRows() {
-    return otherProps.map((collection, key) => {
-      return getRow(collection, key);
-    });
+    return otherProps.map((collection, key) => (
+      <Row key={key} collection={collection} token={token} dispatch={dispatch} />
+    ));
   }
 
   /**
@@ -56,13 +59,33 @@ export default function MemberOfCollections(properties) {
    * @param {Object} collection The collection information.
    * @returns A row with the populated collection information.
    */
-  function getRow(collection, key) {
-    console.log(collection)
+  function Row({ collection, token, dispatch }) {
+    const [urlRemovedForLink, setUrlRemovedForLink] = useState(null);
+
+    useEffect(() => {
+      async function fetchProcessedUrl() {
+        const result = await processUrl(collection.subject, token, dispatch);
+        setUrlRemovedForLink(result.urlRemovedForLink);
+      }
+
+      fetchProcessedUrl();
+    }, [collection.subject, token, dispatch]);
+
+    const displayText = collection.title || (function () {
+      const parts = collection.subject.split('/');
+      return parts[parts.length - 2] || '';
+    })();
+
+
     return (
-      <tr key={key}>
+      <tr>
         <td>
           <span className={styles.link}>
-            <Link href={collection.subject}>{collection.title}</Link>
+            {urlRemovedForLink ? (
+              <Link href={urlRemovedForLink}>{displayText}</Link>
+            ) : (
+              <span>{displayText}</span>
+            )}
           </span>
           <Link
             href={`/search/collection=<${encodeURIComponent(
@@ -82,4 +105,5 @@ export default function MemberOfCollections(properties) {
       </tr>
     );
   }
+
 }
