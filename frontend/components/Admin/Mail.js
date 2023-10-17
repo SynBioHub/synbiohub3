@@ -155,7 +155,7 @@ const updateEmail = async (
   }
 
   if (response.status !== 200) {
-    const message = await response.text();
+    const message = await response.data;
     setError(message);
     setApiKey(actualApiKey);
     setSendGridEmail(actualSendGridEmail);

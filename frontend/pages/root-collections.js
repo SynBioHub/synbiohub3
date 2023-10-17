@@ -81,7 +81,7 @@ export async function getServerSideProps() {
       }
     }
 
-    const data = await response.json();
+    const data = await response.data;
 
     return { props: { data } };
   } catch (error) {

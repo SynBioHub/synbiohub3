@@ -21,7 +21,13 @@
                     "title": "Extra Work",
                     "predicates": [
                     ],
-                    "link": "$<This>"
+                    "link": "$<templateLink>",
+                    "stripAfter": "/"
+                },
+                {
+                    "title": "templateLink",
+                    "predicates": [],
+                    "hide": true
                 }
             ]
         },
@@ -72,7 +78,8 @@
                     "predicates": [
                         "sbol:variable"
                     ],
-                    "link": "$<This>"
+                    "link": "$<VariableLink>",
+                    "stripAfter": "/"
                 },
 
                 {

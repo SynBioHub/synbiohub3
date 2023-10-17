@@ -46,7 +46,7 @@ export const login = (username, password) => async dispatch => {
     }
   }
 
-  const message = await response.text();
+  const message = await response.data;
   if (response.status === 200) {
     dispatch({
       type: types.LOGIN,
@@ -150,7 +150,7 @@ export const fetchUserInfo = () => async (dispatch, getState) => {
     }
   }
   if (response.status === 200) {
-    const message = await response.json();
+    const message = await response.data;
     dispatch({
       type: types.USERINFO,
       payload: {
@@ -193,7 +193,7 @@ export const registerUser =
         }
       }
 
-      const message = await response.text();
+      const message = await response.data;
       if (response.status === 200) {
         localStorage.setItem('userToken', message); // save the token of the user locally, change to cookie later
         localStorage.setItem('username', username); // save the username of the user locally, change to cookie later
@@ -762,7 +762,7 @@ export const addAttachments = (files, uri) => async (dispatch, getState) => {
     for (var index = 0; index < files.length; index++)
       files[index].status = 'successful';
   } else {
-    var fileErrorMessages = await response.text();
+    var fileErrorMessages = await response.data;
     fileErrorMessages =
       fileErrorMessages.charAt(0) !== '['
         ? [fileErrorMessages]
@@ -831,7 +831,7 @@ export const createCollection =
         }
 
         if (response.status !== 200) {
-          var messages = await response.text();
+          var messages = await response.data;
           messages =
             messages.charAt(0) !== '[' ? [messages] : JSON.parse(messages);
           dispatch({ type: types.CREATINGCOLLECTIONERRORS, payload: messages });
@@ -904,7 +904,7 @@ export const getCanSubmitTo = () => async (dispatch, getState) => {
       }
     }
 
-    const submissions = await data.json();
+    const submissions = await data.data;
 
     url = `${publicRuntimeConfig.backend}/shared`;
 
@@ -917,7 +917,7 @@ export const getCanSubmitTo = () => async (dispatch, getState) => {
       }
     }
 
-    const sharedSubmissions = await data.json();
+    const sharedSubmissions = await data.data;
 
     dispatch({
       type: types.CANSUBMITTO,
