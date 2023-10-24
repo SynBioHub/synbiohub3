@@ -281,17 +281,14 @@ const fetcher = (url, token, dispatch) =>
     });
 
 export async function processUrl(inputUrl, token, dispatch) {
-  console.log(inputUrl)
 
   const data = await fetcher(`${publicRuntimeConfig.backend}/admin/registries`, token, dispatch);
   const registries = data.registries;
-  console.log(registries)
 
   for (const registry of registries) {
     if (inputUrl.startsWith(registry.uri)) {
       const urlRemovedForLink = inputUrl.replace(registry.uri, "");
       const urlReplacedForBackend = inputUrl.replace(registry.uri, registry.url);
-      console.log(urlRemovedForLink)
       return { urlRemovedForLink, urlReplacedForBackend };
     }
   }

@@ -20,19 +20,15 @@ export default function MemberOfCollections(properties) {
   const [otherProps, setOtherProps] = useState();
   const dispatch = useDispatch();
   const token = useSelector(state => state.user.token);
-  console.log(properties)
-  console.log(otherProps)
 
   useEffect(() => {
     if (otherProps == undefined)
       getQueryResponse(dispatch, getOtherProperties, {
         uri: properties.uri
-      }).then(console.log(properties.uri))
-        .then(props => {
+      }).then(props => {
           if (props.length > 0) setOtherProps(props);
         });
   }, [otherProps]);
-  console.log(otherProps)
   if (!otherProps) return <Loading />;
 
   return (
