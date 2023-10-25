@@ -20,6 +20,7 @@ import { shortName } from '../../../namespace/namespace';
 import lookupRole from '../../../namespace/lookupRole';
 import Link from 'next/link';
 import { addError } from '../../../redux/actions';
+import { processUrl } from '../../Admin/Registries';
 
 /* eslint sonarjs/cognitive-complexity: "off" */
 
@@ -68,7 +69,7 @@ export default function Members(properties) {
 
   const parameters = {
     graphs: '',
-    graphPrefix: 'https://synbiohub.org/',
+    graphPrefix: 'https://synbiohub.org/', // TODO: Maybe get this from somewhere? 
     collection: properties.uri,
     sort: sort,
     search: preparedSearch,
@@ -217,6 +218,27 @@ function FilterHeader(properties) {
 }
 
 function MemberTable(properties) {
+  const [processedMembers, setProcessedMembers] = useState([]);
+
+  const token = useSelector(state => state.user.token);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    async function processMembers() {
+      if (properties.members) {
+        const updatedMembers = await Promise.all(properties.members.map(async member => {
+          const processed = await processUrl(member.uri, token, dispatch);
+          return {
+            ...member,
+            uri: processed.urlRemovedForLink
+          };
+        }));
+        setProcessedMembers(updatedMembers);
+      }
+    }
+
+    processMembers();
+  }, [properties.members]);
+
   let count = (
     <div className={styles.loadinginline}>
       <MiniLoading height={10} />
@@ -232,7 +254,7 @@ function MemberTable(properties) {
   }
   return (
     <Table
-      data={properties.members}
+      data={processedMembers}
       loading={!properties.members}
       title="Members"
       count={count}
@@ -257,19 +279,18 @@ function MemberTable(properties) {
         } else {
           textArea.innerHTML = member.displayId;
         }
-        
 
         return (
           <tr key={member.displayId + member.description}>
             <td>
-              <Link href={member.uri.replace('https://synbiohub.org', '')}>
+              <Link href={member.uri}>
                 <a className={styles.membername}>
                   <code>{textArea.value}</code>
                 </a>
               </Link>
             </td>
             <td>
-              <Link href={member.uri.replace('https://synbiohub.org', '')}>
+              <Link href={member.uri}>
                 <a className={styles.memberid}>{member.displayId}</a>
               </Link>
             </td>
@@ -296,13 +317,6 @@ function getType(member) {
   // else if (memberType === 'ModuleDefinition') memberType = 'Module';
 
   return memberType;
-}
-
-function replaceBeginning(original, oldBeginning, newBeginning) {
-  if (original.startsWith(oldBeginning)) {
-    return newBeginning + original.slice(oldBeginning.length);
-  }
-  return original;
 }
 
 const createUrl = (query, options) => {

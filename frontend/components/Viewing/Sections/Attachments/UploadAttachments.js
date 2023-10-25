@@ -15,6 +15,8 @@ import options from './SelectOptions';
 const { publicRuntimeConfig } = getConfig();
 import getConfig from 'next/config';
 
+import { processUrl } from '../../../Admin/Registries';
+
 /**
  * @param {Any} properties Information passed in from parent component.
  * @returns A section where the owner can upload attachments or lookup attachments.
@@ -70,7 +72,7 @@ export default function UploadAttachments(properties) {
     parameters.append('url', attachment.url);
     parameters.append('name', attachment.name);
     parameters.append('type', attachment.type);
-    
+
     let response;
 
     try {
@@ -181,14 +183,11 @@ export default function UploadAttachments(properties) {
                 document.getElementById('attached-file-input').value = '';
                 setSelectedFiles([]);
 
-                attachFromFile(
-                  selectedFiles,
-                  properties.uri.replace(
-                    'https://synbiohub.org',
-                    publicRuntimeConfig.backend
-                  )
-                ).then(() => {
-                  dispatch(setUploadStatus(''));
+                processUrl(properties.uri, token, dispatch).then(processedUriData => {
+                  const uriToUse = processedUriData.urlReplacedForBackend || processedUriData.original;
+                  attachFromFile(selectedFiles, uriToUse).then(() => {
+                    dispatch(setUploadStatus(''));
+                  });
 
                   //Query all the attachments so the store can be updated.
                   getQueryResponse(dispatch, getAttachments, {
@@ -278,17 +277,18 @@ export default function UploadAttachments(properties) {
                 } else if (!urlInput.includes('http')) {
                   alert('The URL has to be a link');
                 } else {
-                  const attachment = {
-                    name: nameInput,
-                    url: urlInput,
-                    type: typeInput,
-                    uri: uri.replace(
-                      'https://synbiohub.org',
-                      publicRuntimeConfig.backend
-                    )
-                  };
-
-                  attachFromURL(attachment);
+                  processUrl(uri, token, dispatch).then(processedUriData => {
+                      const uriToUse = processedUriData.urlReplacedForBackend || processedUriData.original;
+                      
+                      const attachment = {
+                          name: nameInput,
+                          url: urlInput,
+                          type: typeInput,
+                          uri: uriToUse
+                      };
+              
+                      attachFromURL(attachment);
+                  });
 
                   const convertedUrl = uri.slice(
                     0,

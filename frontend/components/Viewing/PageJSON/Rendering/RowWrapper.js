@@ -243,7 +243,13 @@ export default function RowWrapper({ sections, metadata, setSectionIcon }) {
   }, [titleToValueMap, sectionsToRender]);
 
   if (loading) {
-    return <MiniLoading height={10} width={50} />;
-  }
+    return (
+      <tr>
+        <td colSpan="100%">  {/* colSpan="100%" makes sure it spans the entire width of the table */}
+          <MiniLoading height={10} width={50} />
+        </td>
+      </tr>
+    );
+  }  
   return <tr>{content}</tr>;
 }

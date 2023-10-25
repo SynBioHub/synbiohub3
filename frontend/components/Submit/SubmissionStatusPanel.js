@@ -9,6 +9,7 @@ import { useEffect, useState } from 'react';
 import Loader from 'react-loader-spinner';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
+import { processUrl } from '../Admin/Registries';
 
 import { resetSubmit } from '../../redux/actions';
 import styles from '../../styles/submit.module.css';
@@ -19,9 +20,10 @@ export default function SubmissionStatusPanel() {
   const fileFailed = useSelector(state => state.submit.fileFailed);
   const submitting = useSelector(state => state.submit.submitting);
   const submissionUri = useSelector(state => state.submit.selectedCollection.uri);
-  console.log(submissionUri);
 
   const [header, setHeader] = useState(null);
+  const [processedUri, setProcessedUri] = useState(submissionUri);
+  const token = useSelector(state => state.user.token);
   const dispatch = useDispatch();
   const router = useRouter();
 
@@ -65,7 +67,14 @@ export default function SubmissionStatusPanel() {
     }
   }, [submitting, fileFailed]);
 
-  var submissionLink = replaceBeginning(submissionUri, "https://synbiohub.org", "");
+  useEffect(() => {
+    async function processAndSetUri() {
+      const result = await processUrl(submissionUri, token, dispatch);
+      setProcessedUri(result.urlRemovedForLink || result.original);
+    }
+    
+    processAndSetUri();
+  }, [submissionUri]);
 
   return (
     <div className={styles.container}>
@@ -89,7 +98,7 @@ export default function SubmissionStatusPanel() {
               className={styles.aftersubmitbutton}
               role="button"
               onClick={() => {
-                router.push(submissionLink).then(() => {
+                router.push(processedUri).then(() => {
                   dispatch(resetSubmit());
                 });
               }}
@@ -107,11 +116,4 @@ export default function SubmissionStatusPanel() {
       </div>
     </div>
   );
-}
-
-function replaceBeginning(original, oldBeginning, newBeginning) {
-  if (original.startsWith(oldBeginning)) {
-    return newBeginning + original.slice(oldBeginning.length);
-  }
-  return original;
 }
