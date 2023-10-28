@@ -6,7 +6,6 @@ import StandardSearch from '../components/Search/StandardSearch/StandardSearch';
 import TopLevel from '../components/TopLevel';
 import { setOffset, setSearchQuery } from '../redux/actions';
 import styles from '../styles/standardsearch.module.css';
-import AdvancedSearch from './advanced-search';
 
 /**
  * This page renders the default search for the /search url
@@ -32,10 +31,7 @@ export default function SearchDefault() {
     >
       <div className={styles.container}>
         <SearchHeader selected="Standard Search" />
-        <div className={styles.subcontainer}>
-          <AdvancedSearch />
           <StandardSearch />
-        </div>
       </div>
     </TopLevel>
   );

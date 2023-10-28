@@ -29,7 +29,7 @@ export default function Options(properties) {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    loadPredicates(setPredicates, dispatch);
+  loadPredicates(setPredicates, dispatch);
   }, []);
 
   const filterDisplay = properties.extraFilters.map((element, index) => {
@@ -47,7 +47,6 @@ export default function Options(properties) {
   return (
     <div>
       <div className={styles.inputsection}>
-        <label>Keyword</label>
         <input
           type="text"
           placeholder="ID/Name/Description"
@@ -57,9 +56,9 @@ export default function Options(properties) {
         />
       </div>
       <div className={styles.inputsection}>
-        <label>Object Type</label>
         <SelectLoader
           sparql={getTypes}
+          placeholder="Select Object Type..."
           parseResult={result => {
             return {
               value: result.object.value,
@@ -72,9 +71,9 @@ export default function Options(properties) {
         />
       </div>
       <div className={styles.inputsection}>
-        <label>Creator</label>
         <SelectLoader
           sparql={getCreators}
+          placeholder="Select Creator..."
           parseResult={result => {
             return { value: result.object.value, label: result.object.value };
           }}
@@ -82,9 +81,9 @@ export default function Options(properties) {
         />
       </div>
       <div className={styles.inputsection}>
-        <label>Role</label>
         <SelectLoader
           sparql={getRoles}
+          placeholder="Select Role..."
           parseResult={result => {
             return {
               value: result.object.value,
@@ -95,9 +94,9 @@ export default function Options(properties) {
         />
       </div>
       <div className={styles.inputsection}>
-        <label>SBOL Type</label>
         <SelectLoader
           sparql={getSBOLTypes}
+          placeholder="Select SBOL Type..."
           parseResult={result => {
             return {
               value: result.object.value,
@@ -110,9 +109,9 @@ export default function Options(properties) {
         />
       </div>
       <div className={styles.inputsection}>
-        <label>Collections</label>
         <SelectLoader
           sparql={getCollections}
+          placeholder="Select Collections..."
           isMulti={true}
           parseResult={result => {
             return !result.name
@@ -122,7 +121,11 @@ export default function Options(properties) {
           onChange={collections => properties.setCollections(collections)}
         />
       </div>
-      <div className={styles.calendarinputsection}>
+      <div className={styles.inputsection}>
+
+      </div>
+
+      {/* <div className={styles.calendarinputsection}>
         <label>Created Between</label>
         <DateRangePicker
           editableDateInputs={true}
@@ -131,8 +134,8 @@ export default function Options(properties) {
           ranges={properties.created}
           moveRangeOnFirstSelection={false}
         />
-      </div>
-      <div className={styles.calendarinputsection}>
+      </div> */}
+      {/* <div className={styles.calendarinputsection}>
         <label>Modfied Between</label>
         <DateRangePicker
           editableDateInputs={true}
@@ -141,7 +144,7 @@ export default function Options(properties) {
           ranges={properties.modified}
           moveRangeOnFirstSelection={false}
         />
-      </div>
+      </div> */}
       {filterDisplay}
       <div
         className={styles.newfilterbutton}
@@ -171,6 +174,7 @@ const addFilter = filters => {
 
 const loadPredicates = async (setPredicates, dispatch) => {
   const results = await fetchPredicates(dispatch);
+  console.log("results: "+results);
   setPredicates(results);
 };
 
