@@ -29,7 +29,6 @@ export default function Remotes() {
   const token = useSelector(state => state.user.token);
   const dispatch = useDispatch();
   const { registries, loading } = useRegistries(token, dispatch);
-  console.log(registries);
 
   return (
     <div className={styles.plugintable}>
@@ -94,7 +93,6 @@ function RemoteDisplay(properties) {
   // const [editMode, setEditMode] = useState(false);
   // const [url, setUrl] = useState(properties.registry.url);
   const dispatch = useDispatch();
-  console.log(properties);
 
   // useEffect(() => {
   //   setUrl(properties.registry.url);
