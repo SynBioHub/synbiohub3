@@ -39,13 +39,13 @@ class TestAdmin(TestCase):
         # compare_get_request("/admin/mail", headers = {"Accept":"text/plain"}, test_type = test_type, comparison_type="json", fields=["sendGridApiKey", "sendGridFromEmail"])
         # test_print("test_admin_mail completed")
 
-        # test_print("test_post_admin_mail starting")
-        # data={
-        #     'key': 'SG.Dummy_Token',
-        #     'fromEmail' : 'synbiohub@synbiohub.utah.edu',
-        # }
-        # compare_post_request("/admin/mail", data, headers = {"Accept": "text/plain"}, test_name = "admin_mail", test_type = test_type)
-        # test_print("test_post_admin_mail completed")
+        test_print("test_post_admin_mail starting")
+        data={
+            'key': 'SG.Dummy_Token',
+            'fromEmail' : 'synbiohub@synbiohub.utah.edu',
+        }
+        compare_post_request("/admin/mail", data, headers = {"Accept": "text/plain"}, test_name = "admin_mail", test_type = test_type)
+        test_print("test_post_admin_mail completed")
 
         test_print("test_admin_plugins starting")
         compare_get_request("/admin/plugins", headers = {"Accept":"text/plain"}, test_type = test_type, comparison_type="json", fields=["rendering", "download", "submit"])
@@ -225,49 +225,49 @@ class TestAdmin(TestCase):
         # compare_post_request("/admin/theme", data, headers = {"Accept": "text/plain"}, files = files, test_name = "admin_setAdministratorEmail", test_type = test_type)
         # test_print("test_admin_updateTheme completed")
 
-        # test_print("test_get_admin_users starting")
-        # compare_get_request("/admin/users", headers = {"Accept":"text/plain"}, test_type = test_type, comparison_type="json", fields=["users", "graphUri", "isAdmin"])
-        # test_print("test_get_admin_users completed")
+        test_print("test_get_admin_users starting")
+        compare_get_request("/admin/users", headers = {"Accept":"text/plain"}, test_type = test_type, comparison_type="json", fields=["users", "graphUri", "isAdmin"])
+        test_print("test_get_admin_users completed")
 
-        # test_print("test_post_admin_users starting")
-        # data={
-        #     'allowPublicSignup': 'False',
-        # }
-        # compare_post_request("/admin/users", data, headers = {"Accept": "text/plain"}, test_name = "admin_updateUsersConfig")
-        # test_print("test_post_admin_users completed")
+        test_print("test_post_admin_users starting")
+        data={
+            'allowPublicSignup': 'False',
+        }
+        compare_post_request("/admin/users", data, headers = {"Accept": "text/plain"}, test_name = "admin_updateUsersConfig")
+        test_print("test_post_admin_users completed")
 
-        # test_print("test_newUser POST starting")
-        # data = {
-        #     'username': 'adminNewUser',
-        #     'name' : 'adminNewUser',
-        #     'email' : 'adminNewUser@user.synbiohub',
-        #     'affiliation' : 'adminNewUser',
-        #     'isMember' : '1',
-        #     'isCurator' : '1',
-        #     'isAdmin' : '1',
-        # }
-        # compare_post_request("/admin/newUser", data, headers = {"Accept": "text/plain"}, test_name = "admin_newUser1", test_type = test_type)
-        # test_print("test_newUser POST completed")
+        test_print("test_newUser POST starting")
+        data = {
+            'username': 'adminNewUser',
+            'name' : 'adminNewUser',
+            'email' : 'adminNewUser@user.synbiohub',
+            'affiliation' : 'adminNewUser',
+            'isMember' : '1',
+            'isCurator' : '1',
+            'isAdmin' : '1',
+        }
+        compare_post_request("/admin/newUser", data, headers = {"Accept": "text/plain"}, test_name = "admin_newUser1", test_type = test_type)
+        test_print("test_newUser POST completed")
 
-        # test_print("test_updateUser starting")
-        # data={
-        #     'id': '2',
-        #     'name' : 'ronnieUpdated',
-        #     'email' : 'ronnieUpdated@user.synbiohub',
-        #     'affiliation' : 'updatedAffiliation',
-        #     'isMember' : '1',
-        #     'isCurator' : '1',
-        #     'isAdmin' : '1'
-        # }
-        # compare_post_request("/admin/updateUser", data, headers = {"Accept": "text/plain"}, test_name = "admin_updateUser", test_type = test_type)
-        # test_print("test_updateUser completed")
+        test_print("test_updateUser starting")
+        data={
+            'id': '2',
+            'name' : 'ronnieUpdated',
+            'email' : 'ronnieUpdated@user.synbiohub',
+            'affiliation' : 'updatedAffiliation',
+            'isMember' : '1',
+            'isCurator' : '1',
+            'isAdmin' : '1'
+        }
+        compare_post_request("/admin/updateUser", data, headers = {"Accept": "text/plain"}, test_name = "admin_updateUser", test_type = test_type)
+        test_print("test_updateUser completed")
 
-        # test_print("test_admin_DeleteUser starting")
-        # data={
-        #     'id': '2',
-        # }
-        # compare_post_request("/admin/deleteUser", data, headers = {"Accept": "text/plain"}, test_name = "admin_deleteUser", test_type = test_type)
-        # test_print("test_admin_DeleteUser completed")
+        test_print("test_admin_DeleteUser starting")
+        data={
+            'id': '2',
+        }
+        compare_post_request("/admin/deleteUser", data, headers = {"Accept": "text/plain"}, test_name = "admin_deleteUser", test_type = test_type)
+        test_print("test_admin_DeleteUser completed")
 
 
 
