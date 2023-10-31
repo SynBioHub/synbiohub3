@@ -30,28 +30,28 @@ export default function SectionRenderer({ section, metadata }) {
 
   useEffect(() => {
     let isMounted = true;
-  
+
     async function fetchDataAndProcessLink() {
       //... your existing code fetching the data
-  
+
       // After you set the data, process the link
-      if(isMounted && section.link) {
+      if (isMounted && section.link) {
         const processed = await processUrl(section.link, token, dispatch); // Assuming you have token available
         setProcessedLink(processed);
       }
     }
-  
+
     fetchDataAndProcessLink();
-  
+
     return () => {
       isMounted = false;
     };
   }, []);
-  
+
 
   useEffect(() => {
     let isMounted = true; // <-- add this line
-  
+
     axios
       .get(url, { headers: { accept: 'text/plain' } })
       .then(res => res.data.registries)
@@ -65,7 +65,7 @@ export default function SectionRenderer({ section, metadata }) {
         error.fullUrl = url;
         dispatch(addError(error))
       });
-  
+
     return () => {  // <-- cleanup function
       isMounted = false;  // <-- set the flag to false when the component unmounts
     };
@@ -73,7 +73,7 @@ export default function SectionRenderer({ section, metadata }) {
 
   if (data && section.link) {
     data.forEach(registry => {
-      if (section.link.startsWith(registry.uri)) {
+      if (section.link.startsWith(registry.uri) && processedLink && processedLink.urlRemovedForLink) {
         section.link = processedLink.urlRemovedForLink;
       }
     })
@@ -103,30 +103,30 @@ export default function SectionRenderer({ section, metadata }) {
       });
       if (metadata) {
         return <td className={styles.preventoverflowmetadata}>{content}</td>;
-    }    
+      }
       return <td>{content}</td>;
     }
     return (
       <td>
-    {section.link ? (
-        <ColumnLink
+        {section.link ? (
+          <ColumnLink
             link={section.link === 'sequenceLink' ? window.location.href : loadText(section.link, { This: section.text })}
             text={section.text}
             linkType={section.linkType}
-        />
-    ) : (
-        <div className={metadata && styles.preventoverflowmetadata}>
+          />
+        ) : (
+          <div className={metadata && styles.preventoverflowmetadata}>
             {section.text}
-        </div>
-    )}
-</td>
+          </div>
+        )}
+      </td>
 
     );
   } else {
     return <td>
       Loading...
     </td>
-}
+  }
 
 }
 
