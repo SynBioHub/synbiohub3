@@ -54,7 +54,7 @@ export default function EditSection(properties) {
       }
     }
 
-    if (response.status !== 200) console.error(response.status);
+    // if (response.status !== 200) console.error(response.status);
   }
 
   /**

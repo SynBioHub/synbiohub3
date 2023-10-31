@@ -8,6 +8,7 @@ import TopLevel from '../components/TopLevel';
 import styles from '../styles/standardsearch.module.css';
 import { addError } from '../redux/actions';
 import { useDispatch, useSelector } from 'react-redux';
+import axios from 'axios';
 const { publicRuntimeConfig } = getConfig();
 
 /**
@@ -30,7 +31,6 @@ export default function RootCollections({ data, error }) {
     });
     setFilteredData(newFilteredData);
   }, [data, query]);
-
   return (
     <TopLevel
       doNotTrack={true}
@@ -62,34 +62,28 @@ export default function RootCollections({ data, error }) {
 
 // eslint-disable-next-line unicorn/prevent-abbreviations
 export async function getServerSideProps() {
-  // const token = useSelector(state => state.user.token);
-  // const token = context.store.getState().user.token; 
-  // Fetch rootCollections from sbh
   try {
     const url = `${publicRuntimeConfig.backendSS}/rootCollections`;
     const headers = {
       Accept: 'text/plain; charset=UTF-8'
     };
 
-    let response;
+    const response = await axios.get(url, { headers });
 
-    try {
-      response = await axios.get(url, { headers });
-    } catch (error) {
-      if (error.response) {
-        console.error('Error:', error.message);
-      }
+    if (!response || !response.data) {
+      throw new Error("Failed to retrieve data from server");
     }
 
     const data = await response.data;
 
     return { props: { data } };
+
   } catch (error) {
+    console.error('Error:', error.message);
     return {
       props: {
         error: {
-          customMessage:
-            'Request and/or processing failed for GET /rootCollections',
+          customMessage: 'Request and/or processing failed for GET /rootCollections',
           fullUrl: `${publicRuntimeConfig.backendSS}/rootCollections`,
           message: error.message,
           name: 'Server side error',
@@ -100,3 +94,4 @@ export async function getServerSideProps() {
     };
   }
 }
+
