@@ -106,6 +106,7 @@ export default function StandardSearch() {
   // get search count
   const { newCount, isCountLoading, isCountError } = useSearchCount(
     encodeURIComponent(query),
+    url,
     token,
     dispatch
   );
