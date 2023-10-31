@@ -11,6 +11,10 @@
    z-index: 9999;
 }
 
+.instanceNameSize {
+   font-size: 32px;
+ } 
+
 .logo {
    width: auto;
    height: 100%;
@@ -22,6 +26,13 @@
 
 .logo:hover {
    transform: scale(1.1);
+}
+
+.logoAndInstanceContainer {
+   margin-right: 1rem;
+   height: 100%;
+   display: flex;
+   align-items: left;
 }
 
 .navcontainer {
@@ -41,7 +52,7 @@
 .navoption {
    color: white;
    margin: 0 0.6rem;
-   font-size: 1rem;
+   font-size: 1.5rem;
    display: flex;
    height: 100%;
    align-items: center;
@@ -54,6 +65,7 @@
    color: #fff;
    opacity: 0.7;
    transition: opacity .2s;
+   font-size: 1rem;
 }
 
 .navoption:hover .navoptionname {
