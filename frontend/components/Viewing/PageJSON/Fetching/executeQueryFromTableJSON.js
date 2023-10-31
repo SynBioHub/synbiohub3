@@ -8,6 +8,11 @@ export default function executeQueryFromTableJSON(
   table,
   urlOverride
 ) {
+  if (typeof uri === "undefined") {
+    uri = "URI is undefined";
+}
+
+  
   return getQueryResponse(
     dispatch,
     prefixes + '\n' + buildQuery(uri, table),

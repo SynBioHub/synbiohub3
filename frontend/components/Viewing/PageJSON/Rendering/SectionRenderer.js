@@ -108,18 +108,19 @@ export default function SectionRenderer({ section, metadata }) {
     }
     return (
       <td>
-        {section.link ? (
-          <ColumnLink
-            link={loadText(section.link, { This: section.text })}
+    {section.link ? (
+        <ColumnLink
+            link={section.link === 'sequenceLink' ? window.location.href : loadText(section.link, { This: section.text })}
             text={section.text}
             linkType={section.linkType}
-          />
-        ) : (
-          <div className={metadata && styles.preventoverflowmetadata}>
+        />
+    ) : (
+        <div className={metadata && styles.preventoverflowmetadata}>
             {section.text}
-          </div>
-        )}
-      </td>
+        </div>
+    )}
+</td>
+
     );
   } else {
     return <td>

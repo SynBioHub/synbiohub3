@@ -29,7 +29,7 @@ export default function OtherProperties(properties) {
   return (
     <div>
       <table className={styles.table}>
-        <tbody>{/* {generateRows()} */}</tbody>
+        <tbody>{generateRows()}</tbody>
       </table>
     </div>
   );
