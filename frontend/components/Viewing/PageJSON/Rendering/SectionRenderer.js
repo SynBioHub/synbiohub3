@@ -110,7 +110,7 @@ export default function SectionRenderer({ section, metadata }) {
       <td>
         {section.link ? (
           <ColumnLink
-            link={section.link === 'sequenceLink' ? window.location.href : loadText(section.link, { This: section.text })}
+            link={section.link === 'sequenceLink' ? null : loadText(section.link, { This: section.text })}
             text={section.text}
             linkType={section.linkType}
           />
@@ -132,6 +132,9 @@ export default function SectionRenderer({ section, metadata }) {
 
 
 function ColumnLink({ text, link, linkType }) {
+  if (!link) {
+    return <span>{text}</span>;
+  }
   if (linkType === 'search') {
     const searchStart = link.indexOf('=');
     link =
