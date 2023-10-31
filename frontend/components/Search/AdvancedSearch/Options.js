@@ -47,18 +47,13 @@ export default function Options(properties) {
   return (
     <div>
       <div className={styles.inputsection}>
-        <input
-          type="text"
-          placeholder="ID/Name/Description"
-          className={styles.filterinput}
-          value={properties.keyword}
-          onChange={event => properties.setKeyword(event.target.value)}
-        />
-      </div>
-      <div className={styles.inputsection}>
+        <div className={styles.labelsection}>
+          <span>Select Object Type</span>
+        </div>
         <SelectLoader
           sparql={getTypes}
-          placeholder="Select Object Type..."
+          // placeholder="Select Object Type..."
+          placeholder={shortName(properties.objectType)}
           parseResult={result => {
             return {
               value: result.object.value,
@@ -71,9 +66,12 @@ export default function Options(properties) {
         />
       </div>
       <div className={styles.inputsection}>
+        <div className={styles.labelsection}>
+          <span>Select Creator</span>
+        </div>
         <SelectLoader
           sparql={getCreators}
-          placeholder="Select Creator..."
+          placeholder={shortName(properties.creator)}
           parseResult={result => {
             return { value: result.object.value, label: result.object.value };
           }}
@@ -81,9 +79,13 @@ export default function Options(properties) {
         />
       </div>
       <div className={styles.inputsection}>
+        <div className={styles.labelsection}>
+          <span>Select Role Type</span>
+        </div>
         <SelectLoader
           sparql={getRoles}
-          placeholder="Select Role..."
+          placeholder={shortName(properties.role)}
+          value={properties.role}
           parseResult={result => {
             return {
               value: result.object.value,
@@ -94,9 +96,12 @@ export default function Options(properties) {
         />
       </div>
       <div className={styles.inputsection}>
+        <div className={styles.labelsection}>
+          <span>Select SBOL Type</span>
+        </div>
         <SelectLoader
           sparql={getSBOLTypes}
-          placeholder="Select SBOL Type..."
+          placeholder={shortName(properties.sbolType)}
           parseResult={result => {
             return {
               value: result.object.value,
@@ -109,6 +114,9 @@ export default function Options(properties) {
         />
       </div>
       <div className={styles.inputsection}>
+        <div className={styles.labelsection}>
+          <span>Select Collections</span>
+        </div>
         <SelectLoader
           sparql={getCollections}
           placeholder="Select Collections..."
@@ -174,7 +182,6 @@ const addFilter = filters => {
 
 const loadPredicates = async (setPredicates, dispatch) => {
   const results = await fetchPredicates(dispatch);
-  console.log("results: "+results);
   setPredicates(results);
 };
 

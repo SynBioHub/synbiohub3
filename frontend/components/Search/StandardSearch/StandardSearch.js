@@ -49,7 +49,6 @@ export default function StandardSearch() {
       key: 'selection'
     }
   ]);
-  const [keyword, setKeyword] = useState('');
   const [objectType, setObjectType] = useState('');
   const [role, setRole] = useState('');
   const [sbolType, setSbolType] = useState('');
@@ -84,7 +83,6 @@ export default function StandardSearch() {
       'modifedBefore',
       true
     )}${constructExtraFilters()}`;
-    //router.push(url+keyword);
     setUrl(url);
   };
 
@@ -144,7 +142,7 @@ export default function StandardSearch() {
     dispatch
   );
 
-  if (isError) {
+if (isError) {
     return (
       <div className={standarderror}>
         Errors were encountered while fetching the data
@@ -172,17 +170,24 @@ export default function StandardSearch() {
       <div className={standardcontainer}>
           <div className={body}>
             <Options
+              creator={creator}
               setCreator={setCreator}
+
+              objectType={objectType}
               setObjectType={setObjectType}
+
+              sbolType={sbolType}
               setSbolType={setSbolType}
+
+              role={role}
               setRole={setRole}
+
+              collections={collections}
               setCollections={setCollections}
-              keyword={keyword}
-              setKeyword={setKeyword}
-              created={created}
-              setCreated={setCreated}
+
               modified={modifed}
               setModified={setModified}
+
               extraFilters={extraFilters}
               setExtraFilters={setExtraFilters}
             />
