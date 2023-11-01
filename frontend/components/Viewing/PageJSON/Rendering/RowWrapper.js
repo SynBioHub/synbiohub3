@@ -232,6 +232,7 @@ export default function RowWrapper({ sections, metadata, setSectionIcon }) {
       if (section.tableIcon) {
         sectionIcon = section.tableIcon;
       }
+      console.log(section)
       return (
         <SectionRenderer
           section={section}

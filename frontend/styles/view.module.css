@@ -1041,3 +1041,9 @@
 .customrow {
   /* font-weight: 500; */
 }
+
+.sequenceFont {
+  font-family: 'Courier New', Courier, monospace;
+}
+
+
