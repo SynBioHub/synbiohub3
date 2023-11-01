@@ -43,8 +43,8 @@ export default function Navbar() {
       <div className={styles.logoAndInstanceContainer}> {/* This is your new div container */}
         <Link href="/">
           <a className={styles.logo}>
-            {/* <Image alt="logo" width={80} height={80} src="/images/logo.svg" /> */}
-            <Image alt="logo" width={80} height={80} src="/images/widevibe.gif" />
+            <Image alt="logo" width={80} height={80} src="/images/logo.svg" />
+            {/* <Image alt="logo" width={80} height={80} src="/images/widevibe.gif" /> */}
           </a>
         </Link>
 
