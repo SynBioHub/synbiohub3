@@ -32,10 +32,13 @@ export default function MetadataInfo({ title, link, label, icon, specific }) {
       <div className={specific ? styles.infotitlegeneric : styles.infotitle}>
         <table>
           <tbody>
-            {title}
+            <tr>
+              <td>{title}</td>
+            </tr>
           </tbody>
         </table>
       </div>
+
     </div>
   );
 

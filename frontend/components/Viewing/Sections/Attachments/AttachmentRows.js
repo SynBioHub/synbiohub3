@@ -16,6 +16,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 const { publicRuntimeConfig } = getConfig();
 import getConfig from 'next/config';
 import { processUrl } from '../../../Admin/Registries';
+import { useEffect } from 'react';
 
 import styles from '../../../../styles/view.module.css';
 

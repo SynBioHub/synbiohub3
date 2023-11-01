@@ -10,6 +10,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import Loader from 'react-loader-spinner';
 import { useSelector } from 'react-redux';
+import { useTheme } from '../Admin/Theme';
 
 import styles from '../../styles/navbar.module.css';
 import Profile from './Profile';
@@ -22,6 +23,8 @@ import Selector from './Selector';
 export default function Navbar() {
   const loggedIn = useSelector(state => state.user.loggedIn);
   const submitting = useSelector(state => state.submit.submitting);
+  const { theme, loading } = useTheme();
+
   const [profileControl, setProfileControl] = useState(
     <Selector icon={faSignInAlt} name="Log in or Register" href="/login" />
   );
@@ -36,11 +39,19 @@ export default function Navbar() {
 
   return (
     <header className={styles.container}>
-      <Link href="/">
-        <a className={styles.logo}>
-          <Image alt="logo" width={80} height={80} src="/images/logo.svg" />
-        </a>
-      </Link>
+
+      <div className={styles.logoAndInstanceContainer}> {/* This is your new div container */}
+        <Link href="/">
+          <a className={styles.logo}>
+            <Image alt="logo" width={80} height={80} src="/images/logo.svg" />
+            {/* <Image alt="logo" width={80} height={80} src="/images/widevibe.gif" /> */}
+          </a>
+        </Link>
+
+        {!loading && theme && (
+          <Selector name={theme.instanceName} href="/" isInstanceName={true} />
+        )}
+      </div>
 
       <div className={styles.navcontainer}>
         {loggedIn && (

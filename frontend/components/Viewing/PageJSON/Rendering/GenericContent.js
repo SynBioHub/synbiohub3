@@ -31,10 +31,10 @@ export default function GenericContent({ json, uri, metadata, plugins, type }) {
   const hiddenSections = useSelector(state => state.pageSections.hiddenSections);
 
   const content = pages.map((page, index) => {
-    if (page.startsWith('$TABLES[')) {
+    if (page.startsWith('$TABLES[') && json && json.tables) {
       const title = page.substring(8, page.length - 1);
       const table = json.tables.find(table => table.title.toLowerCase() === title.toLowerCase());
-      if(!table) {
+      if (!table) {
         return null;
       }
       return (
@@ -44,10 +44,10 @@ export default function GenericContent({ json, uri, metadata, plugins, type }) {
       );
     }
     if (page.startsWith('PLUGIN: ')) {
-      if(!hiddenSections.includes(page)) {
+      if (!hiddenSections.includes(page)) {
         const title = page.substring(8, page.length)
         const plugin = plugins.rendering.filter(plugin => plugin.name === title)[0]
-        return(
+        return (
           <Section title={title} key={index} pluginID={page} >
             <Plugin plugin={plugin} type={type} uri={uri} />
           </Section>
@@ -55,15 +55,18 @@ export default function GenericContent({ json, uri, metadata, plugins, type }) {
       }
       else {
         return null;
-      } 
+      }
     }
-    
+
     const ComponentToRender = CustomComponents[page];
-    return (
-      <Section title={page} key={index}>
-        <ComponentToRender uri={uri} />
-      </Section>
-    );
+    if (ComponentToRender) {
+      return (
+        <Section title={page} key={index}>
+          <ComponentToRender uri={uri} />
+        </Section>
+      );
+    }
+
   });
 
   return <Fragment>{content}</Fragment>;
