@@ -71,11 +71,7 @@ export default function SectionRenderer({ section, metadata }) {
     };
   }, []);
 
-  let tdClassName = section.id === "Sequence" ? "sequenceFont" : "";
-  if (metadata) {
-    tdClassName += ` ${styles.preventoverflowmetadata}`;
-  }
-  console.log(tdClassName);
+  const tdId = section.id === 'sequence' ? 'sequenceFont' : null;
   if (data && section.link) {
     data.forEach(registry => {
       if (section.link.startsWith(registry.uri) && processedLink && processedLink.urlRemovedForLink) {
@@ -107,12 +103,12 @@ export default function SectionRenderer({ section, metadata }) {
         );
       });
       if (metadata) {
-        return <td className={`${styles.preventoverflowmetadata} ${tdClassName}`}>{content}</td>;
+        return <td className={`${styles.preventoverflowmetadata} ${tdId}`}>{content}</td>;
       }
-      return <td className={tdClassName}>{content}</td>;
+      return <td >{content}</td>;
     }
     return (
-      <td className={tdClassName}>
+      <td id={tdId}>
         {section.link ? (
           <ColumnLink
             link={section.link === 'sequenceLink' ? null : loadText(section.link, { This: section.text })}
@@ -128,13 +124,11 @@ export default function SectionRenderer({ section, metadata }) {
 
     );
   } else {
-    return <td className={tdClassName}>
+    return <td id={tdId}>
       Loading...
     </td>
   }
-
 }
-
 
 function ColumnLink({ text, link, linkType }) {
   if (!link) {
