@@ -160,9 +160,6 @@ if (isError) {
       </div>
     );
   }
-  if (results.length === 0) {
-    return <div className={standarderror}>No results found</div>;
-  }
   for (const result of results) {
     getTypeAndUrl(result);
   }
