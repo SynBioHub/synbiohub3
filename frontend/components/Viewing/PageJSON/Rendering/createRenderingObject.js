@@ -1,5 +1,4 @@
 export default function createRenderingObject(column, value, titleToValueMap) {
-  console.log(column);
   let text = column.text ? loadText(column.text, titleToValueMap) : value;
   if (column.stripAfter) {
     const parts = text.split('/');

@@ -38,7 +38,9 @@ export default function Navbar() {
   }, [loggedIn]);
 
   return (
-    <header className={styles.container}>
+    <header className={styles.container}
+    style={{ backgroundColor: theme?.themeParameters?.[0]?.value || '#465775' }} // Replace 'defaultColor' with a fallback color
+    >
 
       <div className={styles.logoAndInstanceContainer}> {/* This is your new div container */}
         <Link href="/">

@@ -15,10 +15,12 @@ const { publicRuntimeConfig } = getConfig();
 export default function Theme() {
   const dispatch = useDispatch();
   const { theme, loading } = useTheme(dispatch);
-  console.log(theme);
   const [instanceName, setInstanceName] = useState('');   // default to empty
   const [frontPageText, setFrontPageText] = useState(''); // default to empty
+  const [baseColor, setBaseColor] = useState('');
   const [logoFile, setLogoFile] = useState(null);
+  const [showModuleInteractions, setShowModuleInteractions] = useState(true);
+  const [removePublicEnabled, setRemovePublicEnabled] = useState(true);
   const token = useSelector(state => state.user.token);
 
   useEffect(() => {
@@ -28,36 +30,53 @@ export default function Theme() {
     }
   }, [theme]);
 
+  useEffect(() => {
+    if (theme && theme.themeParameters && theme.themeParameters[0]) {
+      setBaseColor(theme.themeParameters[0].value);
+    }
+  }, [theme]);
+
+  const handleShowModuleInteractionsChange = (event) => {
+    setShowModuleInteractions(event.target.checked);
+  };
+
+  const handleRemovePublicEnabledChange = (event) => {
+    setRemovePublicEnabled(event.target.checked);
+  };
+
+  const handleBaseColorChange = (event) => {
+    setBaseColor(event.target.value);
+    // Optionally, update themeParameters directly if needed
+    // theme.themeParameters[0].value = event.target.value;
+  };
+
   const handleSave = async () => {
     const url = `${publicRuntimeConfig.backend}/admin/theme`;
-  const headers = {
-    Accept: 'text/plain',
-    'X-authorization': token
-  };
+    const headers = {
+      Accept: 'text/plain',
+      'X-authorization': token
+    };
 
     const formData = new FormData();
     formData.append('instanceName', instanceName);
     formData.append('frontPageText', frontPageText);
-    formData.append('baseColor', theme.themeParameters[0].value);
+    formData.append('baseColor', baseColor);
     if (logoFile) {
       formData.append('logo', logoFile);
     }
-    
+
     try {
       const response = await fetch(url, { method: 'POST', headers: headers, body: formData });
       const data = await response.text();
-      console.log(url);
-      console.log(headers);
-      console.log(data);
 
       if (response.ok) {
-        // Handle successful response if needed (e.g., show success notification)
+        window.location.reload();
       } else {
-        // Handle non-2xx HTTP responses if needed (e.g., show error notification)
+        alert("Error saving theme");
       }
     } catch (error) {
       console.log(error);
-      // Handle unexpected errors (e.g., network issues)
+      alert("Error saving theme");
     }
   };
 
@@ -87,11 +106,14 @@ export default function Theme() {
         type="text"
         value={instanceName}
         onChange={(e) => setInstanceName(e.target.value)}
+        style={{ width: '400px' }}
       />
-      <div>Front page description</div>
+      <div>Front Page Description</div>
       <textarea
         value={frontPageText}
         onChange={(e) => setFrontPageText(e.target.value)}
+        rows={10}  // Number of rows
+        cols={100}  // Number of columns
       />
 
       <div>Color Settings</div>
@@ -99,17 +121,31 @@ export default function Theme() {
         <tbody>
           <tr>
             <td>Base Color</td>
-            <td>{theme.themeParameters[0].value}</td>
+            <td>
+              <input
+                type="text"
+                value={baseColor}
+                onChange={handleBaseColorChange}
+              />
+            </td>
           </tr>
         </tbody>
       </table>
       <div>
-        <input type="checkbox" checked={true} />
-        Show module interactions
+        <input
+          type="checkbox"
+          checked={showModuleInteractions}
+          onChange={handleShowModuleInteractionsChange}
+        />
+        Show Module Interactions
       </div>
       <div>
-        <input type="checkbox" checked={true} />
-        Remove public enabled
+        <input
+          type="checkbox"
+          checked={removePublicEnabled}
+          onChange={handleRemovePublicEnabledChange}
+        />
+        Remove Public Enabled
       </div>
       <button onClick={handleSave}>Save</button>
     </div>

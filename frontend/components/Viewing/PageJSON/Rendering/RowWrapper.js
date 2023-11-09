@@ -77,7 +77,6 @@ function createKeyToValueMap(
     let currentSection = sections[key];
     const foundData = currentSection.some((possibility, index) => {
       const titleKey = possibility.section.title.split('__')[0];
-      console.log(possibility);
       if (
         possibility.section &&
         !possibility.section.predicates &&
@@ -227,7 +226,6 @@ export default function RowWrapper({ sections, metadata, setSectionIcon }) {
         );
       })
       .filter(section => !section.hidden);
-    console.log(toRender)
     const newContent = toRender.map(section => {
       if (section.tableIcon) {
         sectionIcon = section.tableIcon;
