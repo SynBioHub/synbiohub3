@@ -274,6 +274,13 @@
   overflow: scroll;
 }
 
+.searchContent {
+  margin: 0rem 0 0 -5rem;
+  padding: 0 1rem;
+  width: 100%;
+  overflow: scroll;
+}
+
 .contentheader {
   display: flex;
   align-items: center;

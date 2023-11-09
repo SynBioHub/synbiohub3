@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import Loader from 'react-loader-spinner';
 import { useDispatch, useSelector } from 'react-redux';
 import useSWR from 'swr';
-import { faHatWizard } from '@fortawesome/free-solid-svg-icons';
+import { faHatWizard, faBars} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRouter } from 'next/router';
 import Options from '../AdvancedSearch/Options';
@@ -16,10 +16,10 @@ import {
   standardcontainer,
   standarderror,
   standardresultsloading,
-  subcontainer,
   body
 } from '../../../styles/standardsearch.module.css';
 
+import viewStyles from '../../../styles/view.module.css';
 import advStyles from '../../../styles/advancedsearch.module.css';
 import ResultTable from './ResultTable/ResultTable';
 
@@ -56,6 +56,7 @@ export default function StandardSearch() {
   const [extraFilters, setExtraFilters] = useState([]);
 
   const [url, setUrl] = useState('');
+  const [translation, setTranslation] = useState(0);
 
   const router = useRouter();
 
@@ -166,51 +167,80 @@ if (isError) {
     getTypeAndUrl(result);
   }
   return (
+  <div className={viewStyles.container}> 
+    <div
+      className={
+        translation === 0
+          ? viewStyles.sidepanelcontaineropen
+          : viewStyles.sidepanelcontainercollapse
+      }
+    >
+      <div className={viewStyles.sidepanel}
+        style={{
+          transform: `translateX(-${translation}rem)`,
+          transition: 'transform 0.3s'
+        }}
+      >
+        <div
+            className={viewStyles.panelbutton}
+            role="button"
+            onClick={() => {
+              translation == 14 ? setTranslation(0) : setTranslation(14);
+            }}
+          >
+          <FontAwesomeIcon icon={faBars} size="1x" />
+        </div>
+        <div className={body}>
+          <Options
+            creator={creator}
+            setCreator={setCreator}
 
-    <div className={subcontainer}>
-      <div className={standardcontainer}>
-          <div className={body}>
-            <Options
-              creator={creator}
-              setCreator={setCreator}
+            objectType={objectType}
+            setObjectType={setObjectType}
 
-              objectType={objectType}
-              setObjectType={setObjectType}
+            sbolType={sbolType}
+            setSbolType={setSbolType}
 
-              sbolType={sbolType}
-              setSbolType={setSbolType}
+            role={role}
+            setRole={setRole}
 
-              role={role}
-              setRole={setRole}
+            collections={collections}
+            setCollections={setCollections}
 
-              collections={collections}
-              setCollections={setCollections}
+            modified={modifed}
+            setModified={setModified}
 
-              modified={modifed}
-              setModified={setModified}
-
-              extraFilters={extraFilters}
-              setExtraFilters={setExtraFilters}
+            extraFilters={extraFilters}
+            setExtraFilters={setExtraFilters}
+          />
+          <div
+            className={advStyles.searchbutton}
+            role="button"
+            onClick={constructSearch}
+          >
+            <FontAwesomeIcon
+              icon={faHatWizard}
+              size="1x"
+              className={advStyles.dnaicon}
+              color="#F2E86D"
             />
-            <div
-              className={advStyles.searchbutton}
-              role="button"
-              onClick={constructSearch}
-            >
-              <FontAwesomeIcon
-                icon={faHatWizard}
-                size="1x"
-                className={advStyles.dnaicon}
-                color="#F2E86D"
-              />
-              <div>Search</div>
-            </div>
+            <div>Search</div>
           </div>
         </div>
+        <div className={viewStyles.boundedheightforsidepanel}
+        style={{
+          transform: `translateX(-${translation === 14 ? 2.5 : 0}rem)`,
+          transition: 'transform 0.3s'
+        }}
+        ></div>
+      </div>
+    </div>
+    <div className={viewStyles.searchContent}>
       <div className={standardcontainer}>
         <ResultTable count={count} data={results} />
       </div>
     </div>
+  </div>
   );
 }
 
