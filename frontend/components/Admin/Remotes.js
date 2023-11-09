@@ -25,22 +25,20 @@ const headers = ['ID', 'Type', 'URL', ''];
 
 /* eslint sonarjs/no-duplicate-string: "off" */
 
-export default function Remotes() { 
+export default function Remotes() {
   const token = useSelector(state => state.user.token);
   const dispatch = useDispatch();
   const { registries, loading } = useRegistries(token, dispatch);
 
   return (
     <div className={styles.plugintable}>
+      <Dropdown />
       <Table
         data={registries ? registries.remotes : undefined}
         loading={loading}
         title="Remotes"
         searchable={searchable}
         headers={headers}
-        sortOptions={options}
-        defaultSortOption={options[0]}
-        sortMethods={sortMethods}
         hideFooter={true}
         finalRow={<NewRegistryRow token={token} />}
         dataRowDisplay={remote => <RemoteDisplay remote={remote} />}
@@ -99,18 +97,18 @@ function RemoteDisplay(properties) {
   // }, [properties.registry.url]);
   if (!properties.remote) return null;
 
-  return (  
+  return (
     <tr>
       <td>{properties.remote.id}</td>
 
       <td>
-  {/* <DropdownButton title="Select an option" id="dropdown-menu">
+        {/* <DropdownButton title="Select an option" id="dropdown-menu">
     <Dropdown.Item eventKey="1">Option 1</Dropdown.Item>
     <Dropdown.Item eventKey="2">Option 2</Dropdown.Item>
     <Dropdown.Item eventKey="3">Option 3</Dropdown.Item>
   </DropdownButton> */}
-</td>
-     
+      </td>
+
       <td>{properties.remote.url}</td>
     </tr>
   );
@@ -190,72 +188,29 @@ function RemoteDisplay(properties) {
 }
 
 const TypeOptions = [
-    "-----", 'ICE', 'BENCHLING'
-  ];
-
-const deleteRegistry = async (uri, token, dispatch) => {
-  const url = `${publicRuntimeConfig.backend}/admin/deleteRegistry`;
-  const headers = {
-    Accept: 'text/plain',
-    'X-authorization': token
-  };
-
-  const parameters = new URLSearchParams();
-  parameters.append('uri', uri);
-
-  let response;
-
-  try {
-    response = await axios.post(url, parameters, { headers });
-  } catch (error) {
-    if (error.response) {
-      console.error('Error:', error.message);
-    }
-  }
-
-  if (response.status === 200) {
-    mutate([
-      `${publicRuntimeConfig.backend}/admin/registries`,
-      token,
-      dispatch
-    ]);
-  }
-};
-
-const saveRegistry = async (uri, sbhUrl, token, dispatch) => {
-  const url = `${publicRuntimeConfig.backend}/admin/saveRegistry`;
-  const headers = {
-    Accept: 'text/plain',
-    'X-authorization': token
-  };
-
-  const parameters = new URLSearchParams();
-  parameters.append('uri', uri);
-  parameters.append('url', sbhUrl);
-
-  let response;
-
-  try {
-    response = await axios.post(url, parameters, { headers });
-  } catch (error) {
-    if (error.response) {
-      console.error('Error:', error.message);
-    }
-  }
-
-  if (response.status === 200) {
-    mutate([
-      `${publicRuntimeConfig.backend}/admin/registries`,
-      token,
-      dispatch
-    ]);
-  }
-};
-
-const options = [
-  { value: 'uri', label: 'URI Prefix' },
-  { value: 'url', label: 'SynBioHub Url' }
+  "-----", 'ICE', 'BENCHLING'
 ];
+
+function Dropdown() {
+  const [selectedType, setSelectedType] = useState(TypeOptions[0]);
+
+  const handleChange = (event) => {
+    setSelectedType(event.target.value);
+  };
+
+  return (
+    <div>
+      <select value={selectedType} onChange={handleChange}>
+        {TypeOptions.map((type, index) => (
+          <option key={index} value={type}>
+            {type}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+}
+
 
 const compareStrings = (string1, string2) => {
   return (string1?.toLowerCase() > string2?.toLowerCase() && 1) || -1;
@@ -289,7 +244,7 @@ const fetcher = (url, token, dispatch) =>
     })
     .then(response => response.data)
     .catch(error => {
-      error.customMessage = 'Error fetching registries';
+      error.customMessage = 'Error fetching remotes';
       error.fullUrl = url;
       dispatch(addError(error));
     });

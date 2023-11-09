@@ -36,32 +36,38 @@ export const login = (username, password) => async dispatch => {
   parameters.append('email', username);
   parameters.append('password', password);
 
-  let response;
-
   try {
-    response = await axios.post(url, parameters, { headers });
-  } catch (error) {
-    if (error.response) {
-      console.error('Error:', error.message);
-    }
-  }
+    const response = await axios.post(url, parameters, { headers });
 
-  const message = await response.data;
-  if (response.status === 200) {
-    dispatch({
-      type: types.LOGIN,
-      payload: {
-        username,
-        token: message
-      }
-    });
-    dispatch(fetchUserInfo());
-    localStorage.setItem('userToken', message); // save the token of the user locally, change to cookie later
-    localStorage.setItem('username', username); // save the username of the user locally, change to cookie later
-  } else {
+    console.log(response);
+    const message = response.data;
+
+    if (response.status === 200) {
+      dispatch({
+        type: types.LOGIN,
+        payload: {
+          username,
+          token: message
+        }
+      });
+      dispatch(fetchUserInfo());
+      localStorage.setItem('userToken', message); // Save the token of the user locally, change to cookie later
+      localStorage.setItem('username', username); // Save the username of the user locally, change to cookie later
+    } else {
+      dispatch({
+        type: types.LOGINERROR,
+        payload: message
+      });
+    }
+  } catch (error) {
+    // Handle error case
+    if (error.response.data == 'Your e-mail address was not recognized.') {
+      error.response.data = 'Your e-mail address or password was not recognized.'
+    }
+    console.error('Error:', error.message);
     dispatch({
       type: types.LOGINERROR,
-      payload: message
+      payload: error.response ? error.response.data : 'Login failed'
     });
   }
 };
@@ -186,22 +192,24 @@ export const registerUser =
       let response;
 
       try {
-        response = await axios.post(url, parameters, { headers });
-      } catch (error) {
-        if (error.response) {
-          console.error('Error:', error.message);
-        }
-      }
+        const response = await axios.post(url, parameters, { headers });
 
-      const message = await response.data;
-      if (response.status === 200) {
-        localStorage.setItem('userToken', message); // save the token of the user locally, change to cookie later
-        localStorage.setItem('username', username); // save the username of the user locally, change to cookie later
-        dispatch(login(username, password));
-      } else {
+        const message = response.data;
+        if (response.status === 200) {
+          localStorage.setItem('userToken', message); // save the token of the user locally
+          localStorage.setItem('username', username); // save the username of the user locally
+          dispatch(login(username, password));
+        } else {
+          dispatch({
+            type: types.REGISTERERROR,
+            payload: message
+          });
+        }
+      } catch (error) {
+        console.error('Error:', error.message);
         dispatch({
           type: types.REGISTERERROR,
-          payload: message
+          payload: error.response ? error.response.data : 'Registration failed'
         });
       }
     };
