@@ -14,10 +14,9 @@ import SearchHeader from '../SearchHeader/SearchHeader';
 import {
   countloader,
   countloadercontainer,
-  standardcontainer,
   standarderror,
   standardresultsloading,
-  body
+  standardcontainer
 } from '../../../styles/standardsearch.module.css';
 
 import viewStyles from '../../../styles/view.module.css';
@@ -169,8 +168,8 @@ if (isError) {
     <div
       className={
         translation === 0
-          ? viewStyles.sidepanelcontaineropen
-          : viewStyles.sidepanelcontainercollapse
+          ? viewStyles.searchSidepanelcontaineropen
+          : viewStyles.searchSidepanelcontainercollapse
       }
     >
       <div className={viewStyles.sidepanel}
@@ -241,10 +240,8 @@ if (isError) {
       </div>
     </div>
     <div className={viewStyles.searchContent}>
-      <div className={standardcontainer}>
         <SearchHeader selected="Standard Search" />
         <ResultTable count={count} data={results} />
-      </div>
     </div>
   </div>
   );

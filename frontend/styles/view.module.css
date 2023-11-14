@@ -13,14 +13,28 @@
 .sidepanelcontainercollapse {
   display: flex;
   flex-shrink: 0;
-  width: 3.2rem;
+  width: 4.2rem;
   transition: width 0.3s;
 }
 
 .sidepanelcontaineropen {
   display: flex;
   flex-shrink: 0;
-  width: 21.2rem;
+  width: 22.2rem;
+  transition: width 0.3s;
+}
+
+.searchSidepanelcontainercollapse {
+  display: flex;
+  flex-shrink: 0;
+  width: 3.5rem;
+  transition: width 0.3s;
+}
+
+.searchSidepanelcontaineropen {
+  display: flex;
+  flex-shrink: 0;
+  width: 17.5rem;
   transition: width 0.3s;
 }
 
@@ -39,6 +53,13 @@
   bottom: 0;
   padding-bottom: 3rem;
   z-index: 5;
+}
+
+.standardcontainer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 
@@ -285,7 +306,7 @@
 }
 
 .searchContent {
-  margin: 0rem 0 0 -5rem;
+  margin: 0rem 0 0 0;
   padding: 0 1rem;
   width: 100%;
   overflow: scroll;
