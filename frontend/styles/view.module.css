@@ -5,6 +5,11 @@
   min-height: 100vh;
 }
 
+.emptySpace {
+  display: flex;
+  margin-top: 20px;
+}
+
 .sidepanelcontainercollapse {
   display: flex;
   flex-shrink: 0;
@@ -39,6 +44,11 @@
 
 .boundedheightforsidepanel {
   max-height: calc(100vh - 11rem);
+  overflow: scroll;
+}
+
+.searchBoundedheightforsidepanel {
+  max-height: calc(100vh - 5rem);
   overflow: scroll;
 }
 

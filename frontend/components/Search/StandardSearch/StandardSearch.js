@@ -178,43 +178,54 @@ if (isError) {
           transition: 'transform 0.3s'
         }}
       >
-        <div
-            className={viewStyles.panelbutton}
-            role="button"
-            onClick={() => {
-              translation == 14 ? setTranslation(0) : setTranslation(14);
-            }}
-          >
-          <FontAwesomeIcon icon={faBars} size="1x" />
-        </div>
-        <div className={body}>
-          <Options
-            creator={creator}
-            setCreator={setCreator}
-
-            objectType={objectType}
-            setObjectType={setObjectType}
-
-            sbolType={sbolType}
-            setSbolType={setSbolType}
-
-            role={role}
-            setRole={setRole}
-
-            collections={collections}
-            setCollections={setCollections}
-
-            modified={modifed}
-            setModified={setModified}
-
-            extraFilters={extraFilters}
-            setExtraFilters={setExtraFilters}
-          />
+        <div className={viewStyles.headercontainer}>
+          <div className={viewStyles.emptySpace}>
+          </div>
           <div
-            className={advStyles.searchbutton}
-            role="button"
-            onClick={constructSearch}
-          >
+              className={viewStyles.panelbutton}
+              role="button"
+              onClick={() => {
+                translation == 14 ? setTranslation(0) : setTranslation(14);
+              }}
+            >
+            <FontAwesomeIcon icon={faBars} size="1x" />
+          </div>
+        </div>
+
+        <div className={viewStyles.searchBoundedheightforsidepanel}
+          style={{
+            transform: `translateX(-${translation === 14 ? 2.5 : 0}rem)`,
+            transition: 'transform 0.3s'
+          }}
+        >
+          <div>
+            <Options
+              creator={creator}
+              setCreator={setCreator}
+
+              objectType={objectType}
+              setObjectType={setObjectType}
+
+              sbolType={sbolType}
+              setSbolType={setSbolType}
+
+              role={role}
+              setRole={setRole}
+
+              collections={collections}
+              setCollections={setCollections}
+
+              modified={modifed}
+              setModified={setModified}
+
+              extraFilters={extraFilters}
+              setExtraFilters={setExtraFilters}
+            />
+            <div
+              className={advStyles.searchbutton}
+              role="button"
+              onClick={constructSearch}
+            >
             <FontAwesomeIcon
               icon={faHatWizard}
               size="1x"
@@ -224,12 +235,8 @@ if (isError) {
             <div>Search</div>
           </div>
         </div>
-        <div className={viewStyles.boundedheightforsidepanel}
-        style={{
-          transform: `translateX(-${translation === 14 ? 2.5 : 0}rem)`,
-          transition: 'transform 0.3s'
-        }}
-        ></div>
+
+        </div>
       </div>
     </div>
     <div className={viewStyles.searchContent}>
