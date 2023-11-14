@@ -9,6 +9,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRouter } from 'next/router';
 import Options from '../AdvancedSearch/Options';
 const { publicRuntimeConfig } = getConfig();
+import SearchHeader from '../SearchHeader/SearchHeader';
 
 import {
   countloader,
@@ -164,7 +165,7 @@ if (isError) {
     getTypeAndUrl(result);
   }
   return (
-  <div className={viewStyles.container}> 
+  <div className={viewStyles.container}>
     <div
       className={
         translation === 0
@@ -241,6 +242,7 @@ if (isError) {
     </div>
     <div className={viewStyles.searchContent}>
       <div className={standardcontainer}>
+        <SearchHeader selected="Standard Search" />
         <ResultTable count={count} data={results} />
       </div>
     </div>
