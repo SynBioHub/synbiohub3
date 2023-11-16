@@ -110,7 +110,6 @@ export default function SectionRenderer({ section, metadata }) {
       }
       return <td >{content}</td>;
     }
-    console.log(section);
     return (
       <td>
         {section.id === "Sequence" && section.link == null ? (

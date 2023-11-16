@@ -41,7 +41,6 @@ export default function MetadataInfo({ title, link, label, icon, specific }) {
 
     </div>
   );
-
   if (link) {
     return (
       <Link href={link}>

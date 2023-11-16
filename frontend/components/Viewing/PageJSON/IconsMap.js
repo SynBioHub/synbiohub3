@@ -47,7 +47,8 @@ import {
   faMapPin,
   faSort,
   faChild,
-  faCode
+  faCode,
+  faFileSignature
 } from '@fortawesome/free-solid-svg-icons';
 
 const IconsMap = {
@@ -99,7 +100,8 @@ const IconsMap = {
   faMapPin,
   faSort,
   faChild,
-  faCode
+  faCode,
+  faFileSignature
 };
 
 export default IconsMap;
