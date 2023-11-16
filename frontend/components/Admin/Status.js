@@ -61,6 +61,12 @@ export default function Status() {
               </td>
             </tr>
             <tr>
+              <td>Thread Pool Size</td>
+              <td>
+                {status.threadPoolSize}
+              </td>
+            </tr>
+            <tr>
               <td>Upload Limit</td>
               <td>{status.uploadLimit}</td>
             </tr>
