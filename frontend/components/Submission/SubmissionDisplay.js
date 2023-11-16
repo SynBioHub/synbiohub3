@@ -6,6 +6,8 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
+import { processUrl } from '../Admin/Registries';
+import { useDispatch, useSelector } from 'react-redux';
 
 import styles from '../../styles/submissions.module.css';
 
@@ -13,6 +15,9 @@ export default function SubmissionDisplay(properties) {
   const router = useRouter();
 
   const [privacyDisplay, setPrivacyDisplay] = useState();
+  const [processedUri, setProcessedUri] = useState(properties.submission.uri);
+  const token = useSelector(state => state.user.token);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (properties.submission.privacy === 'public')
@@ -27,13 +32,22 @@ export default function SubmissionDisplay(properties) {
       );
   }, [properties.submission.privacy]);
 
+  useEffect(() => {
+    async function processAndSetUri() {
+      const result = await processUrl(properties.submission.uri, token, dispatch);
+      setProcessedUri(result.urlRemovedForLink || result.original);
+    }
+
+    processAndSetUri();
+  }, [properties.submission.uri]);
+
   return (
     <tr
       key={properties.submission.displayId}
       className={styles.submission}
       onClick={() => {
         router.push(
-          properties.submission.uri.replace('https://synbiohub.org', '')
+          processedUri
         );
       }}
     >

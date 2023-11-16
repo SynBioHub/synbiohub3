@@ -15,6 +15,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const { publicRuntimeConfig } = getConfig();
 import getConfig from 'next/config';
+import { processUrl } from '../../../Admin/Registries';
+import { useEffect } from 'react';
 
 import styles from '../../../../styles/view.module.css';
 
@@ -27,6 +29,7 @@ import styles from '../../../../styles/view.module.css';
 export default function AttachmentRows(properties) {
   const token = useSelector(state => state.user.token);
   const [attachmentInfo, setStateAttachments] = useState();
+  const [processedAttachments, setProcessedAttachments] = useState([]);
   const dispatch = useDispatch();
 
   //There are attachments from the parent but they haven't been added to the state yet.
@@ -35,6 +38,20 @@ export default function AttachmentRows(properties) {
 
   //There are no attachments to get.
   if (properties.attachments.length === 0) return null;
+
+  useEffect(() => {
+    async function processAndSetAttachments() {
+      const processed = await Promise.all(properties.attachments.map(async (attachment) => {
+        const result = await processUrl(attachment.topLevel, token, dispatch);
+        return {
+          ...attachment,
+          processedTopLevel: result.urlRemovedForLink || result.original
+        };
+      }));
+      setProcessedAttachments(processed);
+    }
+    processAndSetAttachments();
+  }, [properties.attachments]);
 
   /**
    * @param {Number} bytes The number of bytes.
@@ -62,7 +79,7 @@ export default function AttachmentRows(properties) {
             : attachment.format.split('/').pop()}
         </td>
         <td>
-          <Link href={attachment.topLevel.replace('https://synbiohub.org', '')}>
+          <Link href={attachment.processedTopLevel}>
             <a className={styles.link}>{attachment.title}</a>
           </Link>
         </td>
@@ -80,12 +97,8 @@ export default function AttachmentRows(properties) {
                 });
               } else {
                 const item = {
-                  url: `${
-                    publicRuntimeConfig.backend
-                  }${attachment.topLevel.replace(
-                    'https://synbiohub.org',
-                    ''
-                  )}/download`,
+                  url: `${publicRuntimeConfig.backend
+                    }${attachment.processedTopLevel}/download`,
                   name: attachment.title.substring(
                     0,
                     attachment.title.lastIndexOf('.')

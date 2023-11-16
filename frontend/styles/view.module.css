@@ -1079,3 +1079,11 @@
 .customrow {
   /* font-weight: 500; */
 }
+
+.table td#sequenceFont {
+  font-family: 'Courier', monospace;
+  font-size: 1.5rem;
+}
+
+
+

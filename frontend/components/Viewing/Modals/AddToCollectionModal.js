@@ -94,11 +94,15 @@ export default function AddToCollectionModal(properties) {
     const parameters = new URLSearchParams();
     parameters.append("collections", collection);
 
-    const response = await fetch(url, {
-      method: "POST",
-      headers,
-      body: parameters
-    });
+    let response;
+
+    try {
+      response = await axios.post(url, parameters, { headers });
+    } catch (error) {
+      if (error.response) {
+        console.error('Error:', error.message);
+      }
+    }
 
     if (response.status !== 200) errorToast("Something went wrong with adding to the collection.");
     else successToast("Successfully added to the collection!")

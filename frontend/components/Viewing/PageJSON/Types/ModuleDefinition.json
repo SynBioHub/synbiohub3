@@ -47,22 +47,6 @@
             "sbol:definition"
           ],
           "hide": true
-        },
-        {
-          "title": "MapsTos",
-          "infoLink": "https://sbols.org/v2#MapsTo",
-          "predicates": [
-            "sbol:mapsTo",
-            "sbol:displayId"
-          ],
-          "link": "$<mapsToLink>"
-        },
-        {
-          "title": "mapsToLink",
-          "predicates": [
-            "sbol:mapsTo"
-          ],
-          "hide": true
         }
       ]
     },
@@ -131,22 +115,6 @@
             "sbol:definition"
           ],
           "hide": true
-        },
-        {
-          "title": "MapsTos",
-          "infoLink": "https://sbols.org/v2#MapsTo",
-          "predicates": [
-            "sbol:mapsTo",
-            "sbol:displayId"
-          ],
-          "link": "$<mapsToLink>"
-        },
-        {
-          "title": "mapsToLink",
-          "predicates": [
-            "sbol:mapsTo"
-          ],
-          "hide": true
         }
       ]
     },
@@ -176,15 +144,14 @@
           "infoLink": "https://sbols.org/v2#type",
           "stripAfter": "#",
           "predicates": [
-            "sbol:Interaction",
-            "sbol:type",
-            "sbol:displayId"
+            "sbol:type"
           ],
           "link": "$<typeLink>"
         },
         {
           "title": "typeLink",
           "predicates": [
+            "sbol:type"
           ],
           "hide": true
         }

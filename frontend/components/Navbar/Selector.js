@@ -22,6 +22,8 @@ export default function Selector(properties) {
     if (properties.href === router.pathname) setStyle(navoptionactive);
   }, [router.pathname, properties.href]);
 
+  const textClassName = properties.isInstanceName ? 'instanceName' : navoptionname;
+
   return (
     <Link href={properties.href}>
       <a className={`${navoption}  ${style}`}>
@@ -37,7 +39,7 @@ export default function Selector(properties) {
           properties.customIcon
         )}
 
-        <span className={navoptionname}>{properties.name}</span>
+        <span className={textClassName}>{properties.name}</span>
       </a>
     </Link>
   );

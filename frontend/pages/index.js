@@ -8,11 +8,33 @@ import {
 import Card from '../components/Home/Card';
 import TopLevel from '../components/TopLevel';
 import styles from '../styles/home.module.css';
+import getConfig from 'next/config';
+import { useDispatch, useSelector } from 'react-redux';
+import { useTheme } from '../components/Admin/Theme.js'
+
+import useSWR from 'swr';
+const { publicRuntimeConfig } = getConfig();
+
 
 /**
  * This page renders the home/landing page for sbh.
  */
 function Home() {
+  const dispatch = useDispatch(); // if you are using Redux, otherwise, you might not need this
+  const { theme, loading } = useTheme(dispatch);
+
+  if (loading) {
+    return (
+      <div className={styles.container}>
+        <main className={styles.main}>
+          Loading...
+        </main>
+      </div>
+    );
+  }
+
+
+
   return (
     <div className={styles.container}>
       <main className={styles.main}>
@@ -28,11 +50,7 @@ function Home() {
         </h1>
 
         <p className={styles.description}>
-          SynBioHub is a design repository for people designing biological
-          constructs. It enables DNA and protein designs to be uploaded, then
-          facilitates sharing and viewing of such designs. SynBioHub also
-          facilitates searching for information about existing useful parts and
-          designs by combining data from a variety of sources.
+          {theme && theme.frontPageText ? theme.frontPageText : "Default description if theme is not loaded"}
         </p>
 
         <div className={styles.grid}>

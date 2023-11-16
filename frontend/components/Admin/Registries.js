@@ -189,11 +189,15 @@ const deleteRegistry = async (uri, token, dispatch) => {
   const parameters = new URLSearchParams();
   parameters.append('uri', uri);
 
-  const response = await fetch(url, {
-    method: 'POST',
-    headers,
-    body: parameters
-  });
+  let response;
+
+  try {
+    response = await axios.post(url, parameters, { headers });
+  } catch (error) {
+    if (error.response) {
+      console.error('Error:', error.message);
+    }
+  }
 
   if (response.status === 200) {
     mutate([
@@ -215,11 +219,15 @@ const saveRegistry = async (uri, sbhUrl, token, dispatch) => {
   parameters.append('uri', uri);
   parameters.append('url', sbhUrl);
 
-  const response = await fetch(url, {
-    method: 'POST',
-    headers,
-    body: parameters
-  });
+  let response;
+
+  try {
+    response = await axios.post(url, parameters, { headers });
+  } catch (error) {
+    if (error.response) {
+      console.error('Error:', error.message);
+    }
+  }
 
   if (response.status === 200) {
     mutate([
@@ -261,7 +269,7 @@ const fetcher = (url, token, dispatch) =>
     .get(url, {
       headers: {
         'Content-Type': 'application/json',
-        Accept: 'text/plain',
+        Accept: 'application/json',
         'X-authorization': token
       }
     })
@@ -272,4 +280,17 @@ const fetcher = (url, token, dispatch) =>
       dispatch(addError(error));
     });
 
-// const replaceURL = (regi)
+export async function processUrl(inputUrl, token, dispatch) {
+
+  const data = await fetcher(`${publicRuntimeConfig.backend}/admin/registries`, token, dispatch);
+  const registries = data.registries;
+
+  for (const registry of registries) {
+    if (inputUrl.startsWith(registry.uri)) {
+      const urlRemovedForLink = inputUrl.replace(registry.uri, "");
+      const urlReplacedForBackend = inputUrl.replace(registry.uri, registry.url);
+      return { urlRemovedForLink, urlReplacedForBackend };
+    }
+  }
+  return { original: inputUrl };  // if you don't match any uri
+}

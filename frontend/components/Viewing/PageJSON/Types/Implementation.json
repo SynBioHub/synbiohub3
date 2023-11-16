@@ -20,17 +20,20 @@
           {
             "title": "name",
             "predicates": ["dcterms:title"],
-            "link": "$<link>"
+            "link": "$<link>",
+            "stripAfter": "/"
           },
           {
             "title": "name",
             "predicates": ["sbol:displayId"],
-            "link": "$<link>"
+            "link": "$<link>",
+            "stripAfter": "/"
           },
           {
             "title": "name",
             "predicates": [],
-            "link": "$<link>"
+            "link": "$<link>",
+            "stripAfter": "/"
           },
           {
             "title": "link",
@@ -47,17 +50,20 @@
           {
             "title": "name",
             "predicates": ["dcterms:title"],
-            "link": "$<link>"
+            "link": "$<link>",
+            "stripAfter": "/"
           },
           {
             "title": "name",
             "predicates": ["sbol:displayId"],
-            "link": "$<link>"
+            "link": "$<link>",
+            "stripAfter": "/"
           },
           {
             "title": "name",
             "predicates": [],
-            "link": "$<link>"
+            "link": "$<link>",
+            "stripAfter": "/"
           },
           {
             "title": "link",

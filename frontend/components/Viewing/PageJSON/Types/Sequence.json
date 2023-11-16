@@ -21,13 +21,18 @@
          {
             "title": "Sequence",
             "infoLink": "$<Encoding>",
-            "predicates": []
+            "predicates": [],
+            "link": "sequenceLink"
+         },
+         {
+            "title": "sequenceLink",
+            "predicates": [],
+            "hide": true
          },
          {
             "title": "Encoding",
-            "rootPredicateOverride": "sbol:encoding",
             "predicates": [
-               "rdf:resource"
+               
             ],
             "hide": true
          }

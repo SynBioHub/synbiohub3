@@ -1,8 +1,25 @@
 export default function createRenderingObject(column, value, titleToValueMap) {
   let text = column.text ? loadText(column.text, titleToValueMap) : value;
   if (column.stripAfter) {
-    text = text.slice(text.lastIndexOf(column.stripAfter) + 1);
+    const parts = text.split('/');
+    if (parts.length >= 2) {
+      const lastPart = parts[parts.length - 1];
+
+      if (/^1(\.0+)*$/.test(lastPart)) {
+        text = parts[parts.length - 2];
+      } else {
+        const delimiters = ['#', '%', '/'];
+        const lastPartSegments = lastPart.split(new RegExp(`[${delimiters.join('')}]`));
+
+        text = lastPartSegments.pop();
+      }
+    }
   }
+  if (column.title === 'Sequence') {
+    text = formatSequence(text);
+  }
+
+
   const link = column.link ? loadText(column.link, titleToValueMap) : undefined;
   const linkType = column.linkType || 'default';
   const infoLink = column.infoLink
@@ -31,4 +48,36 @@ function loadText(template, args) {
   }
 
   return template;
+}
+
+function formatSequence(sequence) {
+  if (!isValidSequence(sequence)) {
+    return sequence; // Return the original sequence if it's not valid
+  }
+  const chunkSize = 10;
+  const chunksPerLine = 5;
+  let result = '';
+
+  for (let i = 0; i < sequence.length; i += chunkSize * chunksPerLine) {
+    const lineStart = i;
+    const lineEnd = i + chunkSize * chunksPerLine;
+    const line = sequence.slice(lineStart, lineEnd);
+
+    for (let j = 0; j < line.length; j += chunkSize) {
+      const chunkStart = j;
+      const chunkEnd = j + chunkSize;
+      const chunk = line.slice(chunkStart, chunkEnd);
+      result += chunk + ' ';
+    }
+
+    const lineNumber = String(lineStart + 1).padStart(4, '0');
+    result = lineNumber + ' ' + result.trim() + '\n';
+  }
+
+  return result.trim();
+}
+
+function isValidSequence(sequence) {
+  // This regex checks if the sequence consists only of a, c, t, g, and u characters (case-insensitive)
+  return /^[actgu]+$/i.test(sequence);
 }

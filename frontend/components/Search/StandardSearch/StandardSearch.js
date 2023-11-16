@@ -10,6 +10,7 @@ import { useRouter } from 'next/router';
 import Options from '../AdvancedSearch/Options';
 const { publicRuntimeConfig } = getConfig();
 import SearchHeader from '../SearchHeader/SearchHeader';
+import { processUrl } from '../../Admin/Registries';
 
 import {
   countloader,
@@ -277,7 +278,7 @@ const useSearchCount = (query, url, token, dispatch) => {
   };
 };
 
-const getTypeAndUrl = result => {
+const getTypeAndUrl = async (result, token, dispatch) => {
   let type = '';
   const potentialType = result.type.toLowerCase();
 
@@ -297,10 +298,14 @@ const getTypeAndUrl = result => {
 
   result.type = type;
 
-  let newUrl = result.uri.replace('https://synbiohub.org', '');
-  newUrl = newUrl.replace('https://dev.synbiohub.org', '');
-  result.url = newUrl;
+  const processed = await processUrl(result.uri, token, dispatch);
+  result.url = processed.urlRemovedForLink || processed.original;
+
+  // let newUrl = result.uri.replace('https://synbiohub.org', '');
+  // newUrl = newUrl.replace('https://dev.synbiohub.org', '');
+  // result.url = newUrl;
 };
+
 
 const fetcher = (url, token, dispatch) =>
   axios

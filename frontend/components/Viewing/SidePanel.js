@@ -9,6 +9,7 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 
 import Link from 'next/link';
 
@@ -16,6 +17,9 @@ import styles from '../../styles/view.module.css';
 
 import SectionSelector from './SectionSelector';
 import SidePanelTools from './SidePanelTools';
+
+import { processUrl } from '../Admin/Registries';
+import { useEffect } from 'react';
 
 import getConfig from 'next/config';
 import GenericContent from './PageJSON/Rendering/GenericContent';
@@ -30,7 +34,19 @@ const { publicRuntimeConfig } = getConfig();
  */
 export default function SidePanel({ metadata, type, json, uri, plugins }) {
   const [translation, setTranslation] = useState(0);
+  const [processedUrl, setProcessedUrl] = useState({ original: uri });
   const date = metadata.created.replace('T', ' ').replace('Z', '');
+  const token = useSelector(state => state.user.token);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    async function fetchAndProcessUrl() {
+      const result = await processUrl(uri, token, dispatch);
+      setProcessedUrl(result);
+    }
+
+    fetchAndProcessUrl();
+  }, [uri]);
 
   const pagesInfo = getPagesInfo(type, json, plugins);
 
@@ -87,7 +103,7 @@ export default function SidePanel({ metadata, type, json, uri, plugins }) {
             type={type}
             displayId={metadata.displayId}
             name={metadata.name}
-            url={uri.replace('https://synbiohub.org', '')}
+            url={processedUrl.urlRemovedForLink || processedUrl.original}
             uri={uri}
           />
           <div className={styles.infocontainer}>
@@ -166,11 +182,4 @@ function getPagesInfo(type, json, plugins) {
   }
 
   return { type: type, order: orderUpdated };
-}
-
-function replaceBeginning(original, oldBeginning, newBeginning) {
-  if (original.startsWith(oldBeginning)) {
-    return newBeginning + original.slice(oldBeginning.length);
-  }
-  return original;
 }

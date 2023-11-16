@@ -38,7 +38,8 @@
                     "predicates": [
                         "prov:entity"
                     ],
-                    "link": "$<entityLink>"
+                    "link": "$<entityLink>",
+                    "stripAfter": "/"
                 },
                 {
                     "title": "entityLink",
@@ -86,7 +87,8 @@
                     "predicates": [
                         "prov:agent"
                     ],
-                    "link": "$<agentLink>"
+                    "link": "$<agentLink>",
+                    "stripAfter": "/"
                 },
                 {
                     "title": "agentLink",

@@ -2,7 +2,7 @@ import styles from '../../../../styles/view.module.css';
 import Link from 'next/link';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import useRegistries from '../Fetching/useRegistries';
 import getConfig from 'next/config';
 import axios from 'axios';
@@ -10,6 +10,8 @@ import { useEffect } from 'react';
 import { useState } from 'react';
 import { addError } from '../../../../redux/actions';
 const { publicRuntimeConfig } = getConfig();
+
+import { processUrl } from '../../../Admin/Registries';
 
 function loadText(template, args) {
   for (const key of Object.keys(args)) {
@@ -23,25 +25,57 @@ export default function SectionRenderer({ section, metadata }) {
   const url = `${publicRuntimeConfig.backend}/admin/registries`;
 
   const [data, setData] = useState(null);
+  const [processedLink, setProcessedLink] = useState(null);
+  const token = useSelector(state => state.user.token);
 
   useEffect(() => {
-    axios
-    .get(url, { headers: { accept: 'text/plain' } })
-    .then(res => res.data.registries)
-    .then((registries) => {
-      setData(registries);
-    })
-    .catch(error => {
-      error.customMessage = 'Request failed for GET /admin/registries';
-      error.fullUrl = url;
-      dispatch(addError(error))
-    })
+    let isMounted = true;
+
+    async function fetchDataAndProcessLink() {
+      //... your existing code fetching the data
+
+      // After you set the data, process the link
+      if (isMounted && section.link) {
+        const processed = await processUrl(section.link, token, dispatch); // Assuming you have token available
+        setProcessedLink(processed);
+      }
+    }
+
+    fetchDataAndProcessLink();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
+
+  useEffect(() => {
+    let isMounted = true; // <-- add this line
+
+    axios
+      .get(url, { headers: { accept: 'text/plain' } })
+      .then(res => res.data.registries)
+      .then((registries) => {
+        if (isMounted) {  // <-- check this condition before setting state
+          setData(registries);
+        }
+      })
+      .catch(error => {
+        error.customMessage = 'Request failed for GET /admin/registries';
+        error.fullUrl = url;
+        dispatch(addError(error))
+      });
+
+    return () => {  // <-- cleanup function
+      isMounted = false;  // <-- set the flag to false when the component unmounts
+    };
+  }, []);
+
+  const tdId = section.id === 'sequence' ? 'sequenceFont' : null;
   if (data && section.link) {
     data.forEach(registry => {
-      if (section.link.startsWith(registry.uri)) {
-        section.link = replaceBeginning("" + section.link, registry.uri, "");
+      if (section.link.startsWith(registry.uri) && processedLink && processedLink.urlRemovedForLink) {
+        section.link = processedLink.urlRemovedForLink;
       }
     })
     if (section.grouped) {
@@ -69,15 +103,15 @@ export default function SectionRenderer({ section, metadata }) {
         );
       });
       if (metadata) {
-        return <div className={styles.preventoverflowmetadata}>{content}</div>;
+        return <td className={`${styles.preventoverflowmetadata} ${tdId}`}>{content}</td>;
       }
-      return <td>{content}</td>;
+      return <td >{content}</td>;
     }
     return (
-      <td>
+      <td id={tdId}>
         {section.link ? (
           <ColumnLink
-            link={loadText(section.link, { This: section.text })}
+            link={section.link === 'sequenceLink' ? null : loadText(section.link, { This: section.text })}
             text={section.text}
             linkType={section.linkType}
           />
@@ -87,24 +121,19 @@ export default function SectionRenderer({ section, metadata }) {
           </div>
         )}
       </td>
+
     );
   } else {
-    return <div>
+    return <td id={tdId}>
       Loading...
-    </div>
+    </td>
   }
-
 }
-
-function replaceBeginning(original, oldBeginning, newBeginning) {
-  if (original.startsWith(oldBeginning)) {
-    return newBeginning + original.slice(oldBeginning.length);
-  }
-  return original;
-}
-
 
 function ColumnLink({ text, link, linkType }) {
+  if (!link) {
+    return <span>{text}</span>;
+  }
   if (linkType === 'search') {
     const searchStart = link.indexOf('=');
     link =

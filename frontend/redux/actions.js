@@ -36,27 +36,38 @@ export const login = (username, password) => async dispatch => {
   parameters.append('email', username);
   parameters.append('password', password);
 
-  const response = await fetch(url, {
-    method: 'POST',
-    headers,
-    body: parameters
-  });
-  const message = await response.text();
-  if (response.status === 200) {
-    dispatch({
-      type: types.LOGIN,
-      payload: {
-        username,
-        token: message
-      }
-    });
-    dispatch(fetchUserInfo());
-    localStorage.setItem('userToken', message); // save the token of the user locally, change to cookie later
-    localStorage.setItem('username', username); // save the username of the user locally, change to cookie later
-  } else {
+  try {
+    const response = await axios.post(url, parameters, { headers });
+
+    console.log(response);
+    const message = response.data;
+
+    if (response.status === 200) {
+      dispatch({
+        type: types.LOGIN,
+        payload: {
+          username,
+          token: message
+        }
+      });
+      dispatch(fetchUserInfo());
+      localStorage.setItem('userToken', message); // Save the token of the user locally, change to cookie later
+      localStorage.setItem('username', username); // Save the username of the user locally, change to cookie later
+    } else {
+      dispatch({
+        type: types.LOGINERROR,
+        payload: message
+      });
+    }
+  } catch (error) {
+    // Handle error case
+    if (error.response.data == 'Your e-mail address was not recognized.') {
+      error.response.data = 'Your e-mail address or password was not recognized.'
+    }
+    console.error('Error:', error.message);
     dispatch({
       type: types.LOGINERROR,
-      payload: message
+      payload: error.response ? error.response.data : 'Login failed'
     });
   }
 };
@@ -92,36 +103,41 @@ export const logoutUser = () => dispatch => {
 
 export const updateUser =
   (name, affiliation, email, password, confirmPassword) =>
-  async (dispatch, getState) => {
-    const url = `${publicRuntimeConfig.backend}/profile`;
-    try {
-      const token = getState().user.token;
-      const headers = {
-        Accept: 'text/plain',
-        'X-authorization': token
-      };
+    async (dispatch, getState) => {
+      const url = `${publicRuntimeConfig.backend}/profile`;
+      try {
+        const token = getState().user.token;
+        const headers = {
+          Accept: 'text/plain',
+          'X-authorization': token
+        };
 
-      const parameters = new URLSearchParams();
-      parameters.append('name', name);
-      parameters.append('affiliation', affiliation);
-      parameters.append('email', email);
-      if (password) {
-        parameters.append('password1', password);
-        parameters.append('password2', confirmPassword);
+        const parameters = new URLSearchParams();
+        parameters.append('name', name);
+        parameters.append('affiliation', affiliation);
+        parameters.append('email', email);
+        if (password) {
+          parameters.append('password1', password);
+          parameters.append('password2', confirmPassword);
+        }
+
+        let response;
+
+        try {
+          response = await axios.post(url, parameters, { headers });
+        } catch (error) {
+          if (error.response) {
+            console.error('Error:', error.message);
+          }
+        }
+
+        if (response.status === 200) dispatch(fetchUserInfo());
+      } catch (error) {
+        error.customMessage = 'There was an error updating your profile.';
+        error.url = `${publicRuntimeConfig.backend}/profile`;
+        dispatch(addError(error));
       }
-
-      const response = await fetch(url, {
-        method: 'POST',
-        headers,
-        body: parameters
-      });
-      if (response.status === 200) dispatch(fetchUserInfo());
-    } catch (error) {
-      error.customMessage = 'There was an error updating your profile.';
-      error.url = `${publicRuntimeConfig.backend}/profile`;
-      dispatch(addError(error));
-    }
-  };
+    };
 
 export const fetchUserInfo = () => async (dispatch, getState) => {
   const url = `${publicRuntimeConfig.backend}/profile`;
@@ -130,13 +146,17 @@ export const fetchUserInfo = () => async (dispatch, getState) => {
     Accept: 'text/plain',
     'X-authorization': token
   };
+  let response;
 
-  const response = await fetch(url, {
-    method: 'GET',
-    headers
-  });
+  try {
+    response = await axios.get(url, { headers });
+  } catch (error) {
+    if (error.response) {
+      console.error('Error:', error.message);
+    }
+  }
   if (response.status === 200) {
-    const message = await response.json();
+    const message = await response.data;
     dispatch({
       type: types.USERINFO,
       payload: {
@@ -155,37 +175,44 @@ export const fetchUserInfo = () => async (dispatch, getState) => {
 
 export const registerUser =
   (fullName, username, affiliation, email, password, confirmPassword) =>
-  async dispatch => {
-    const url = `${publicRuntimeConfig.backend}/register`;
-    const headers = {
-      Accept: 'text/plain'
+    async dispatch => {
+      const url = `${publicRuntimeConfig.backend}/register`;
+      const headers = {
+        Accept: 'text/plain'
+      };
+
+      const parameters = new URLSearchParams();
+      parameters.append('name', fullName);
+      parameters.append('username', username);
+      parameters.append('affiliation', affiliation);
+      parameters.append('email', email);
+      parameters.append('password1', password);
+      parameters.append('password2', confirmPassword);
+
+      let response;
+
+      try {
+        const response = await axios.post(url, parameters, { headers });
+
+        const message = response.data;
+        if (response.status === 200) {
+          localStorage.setItem('userToken', message); // save the token of the user locally
+          localStorage.setItem('username', username); // save the username of the user locally
+          dispatch(login(username, password));
+        } else {
+          dispatch({
+            type: types.REGISTERERROR,
+            payload: message
+          });
+        }
+      } catch (error) {
+        console.error('Error:', error.message);
+        dispatch({
+          type: types.REGISTERERROR,
+          payload: error.response ? error.response.data : 'Registration failed'
+        });
+      }
     };
-
-    const parameters = new URLSearchParams();
-    parameters.append('name', fullName);
-    parameters.append('username', username);
-    parameters.append('affiliation', affiliation);
-    parameters.append('email', email);
-    parameters.append('password1', password);
-    parameters.append('password2', confirmPassword);
-
-    const response = await fetch(url, {
-      method: 'POST',
-      headers,
-      body: parameters
-    });
-    const message = await response.text();
-    if (response.status === 200) {
-      localStorage.setItem('userToken', message); // save the token of the user locally, change to cookie later
-      localStorage.setItem('username', username); // save the username of the user locally, change to cookie later
-      dispatch(login(username, password));
-    } else {
-      dispatch({
-        type: types.REGISTERERROR,
-        payload: message
-      });
-    }
-  };
 
 // SEARCHING ACTIONS
 
@@ -235,303 +262,303 @@ export const submit =
     plugin = null,
     resubmit = false
   ) =>
-  async (dispatch, getState) => {
-    if(!resubmit){
-      dispatch({
-        type: types.SUBMITRESET,
-        payload: true // sets submitting state to true
-      });
-    }
-    else {
-      dispatch({
-        type: types.SUBMITTING,
-        payload: true
-      })
-
-      var failedFiles = getState().submit.failedFiles
-
-      for(let file of files) {
-        failedFiles = failedFiles.filter(failedFile => file.name !== failedFile.name)
-      }
-      dispatch({
-        type: types.FAILEDFILES,
-        payload: failedFiles
-      })
-      if(failedFiles.length === 0) {
+    async (dispatch, getState) => {
+      if (!resubmit) {
         dispatch({
-          type: types.FILEFAILED,
-          payload: false
-        })
-      }
-    }
-
-    dispatch({
-      type: types.SHOWSUBMITPROGRESS,
-      payload: true
-    });
-
-    const token = getState().user.token;
-
-
-    const convertedFiles = await submitPluginHandler(files, plugin, dispatch, getState);
-
-
-
-
-    await uploadFiles(
-      dispatch,
-      getState,
-      token,
-      uri,
-      convertedFiles,
-      overwriteIncrement,
-      addingToCollection
-    );
-
-    dispatch({
-      type: types.SUBMITTING,
-      payload: false
-    });
-  };
-
-
-  async function submitPluginHandler(files, plugin, dispatch, getState) {
-
-    if (plugin.value === 'configure') {
-      const returnFiles = [];
-
-      for (let [key, value] of plugin.pluginBundles) {
-          const convertedFiles = await singlePluginHandler(value, key.value, dispatch, getState)
-          returnFiles.push(...convertedFiles)
-
-      }
-      return returnFiles
-    }
-
-    else {
-      return await singlePluginHandler(files, plugin.value, dispatch, getState)
-    }
-
-  }
-
-  async function singlePluginHandler(files, plugin, dispatch, getState) {
-
-    if(plugin === 'default') {
-      return files
-    }
-
-    let unzippedFiles = [];
-
-    for (let file of files) {
-      if (mime.lookup(file.name) === 'application/zip') {
-        var zip = new JSZip();
-        const result = await zip.loadAsync(file);
-
-        for(let [filename, zipFile] of Object.entries(result.files)) {
-          if (!filename.includes('__MACOSX/._')) {
-            const currFileBlob = await zipFile.async('blob');
-            const currFile = new File([currFileBlob], filename);
-
-            unzippedFiles.push(currFile)
-          }
-
-        }
+          type: types.SUBMITRESET,
+          payload: true // sets submitting state to true
+        });
       }
       else {
-        unzippedFiles.push(file)
+        dispatch({
+          type: types.SUBMITTING,
+          payload: true
+        })
+
+        var failedFiles = getState().submit.failedFiles
+
+        for (let file of files) {
+          failedFiles = failedFiles.filter(failedFile => file.name !== failedFile.name)
+        }
+        dispatch({
+          type: types.FAILEDFILES,
+          payload: failedFiles
+        })
+        if (failedFiles.length === 0) {
+          dispatch({
+            type: types.FILEFAILED,
+            payload: false
+          })
+        }
+      }
+
+      dispatch({
+        type: types.SHOWSUBMITPROGRESS,
+        payload: true
+      });
+
+      const token = getState().user.token;
+
+
+      const convertedFiles = await submitPluginHandler(files, plugin, dispatch, getState);
+
+
+
+
+      await uploadFiles(
+        dispatch,
+        getState,
+        token,
+        uri,
+        convertedFiles,
+        overwriteIncrement,
+        addingToCollection
+      );
+
+      dispatch({
+        type: types.SUBMITTING,
+        payload: false
+      });
+    };
+
+
+async function submitPluginHandler(files, plugin, dispatch, getState) {
+
+  if (plugin.value === 'configure') {
+    const returnFiles = [];
+
+    for (let [key, value] of plugin.pluginBundles) {
+      const convertedFiles = await singlePluginHandler(value, key.value, dispatch, getState)
+      returnFiles.push(...convertedFiles)
+
+    }
+    return returnFiles
+  }
+
+  else {
+    return await singlePluginHandler(files, plugin.value, dispatch, getState)
+  }
+
+}
+
+async function singlePluginHandler(files, plugin, dispatch, getState) {
+
+  if (plugin === 'default') {
+    return files
+  }
+
+  let unzippedFiles = [];
+
+  for (let file of files) {
+    if (mime.lookup(file.name) === 'application/zip') {
+      var zip = new JSZip();
+      const result = await zip.loadAsync(file);
+
+      for (let [filename, zipFile] of Object.entries(result.files)) {
+        if (!filename.includes('__MACOSX/._')) {
+          const currFileBlob = await zipFile.async('blob');
+          const currFile = new File([currFileBlob], filename);
+
+          unzippedFiles.push(currFile)
+        }
+
+      }
+    }
+    else {
+      unzippedFiles.push(file)
+    }
+  }
+
+  const evaluateFilesManifest = [];
+  const returnFiles = [];
+
+
+  for (let file of unzippedFiles) {
+
+    file.url = URL.createObjectURL(file)
+
+
+
+
+    evaluateFilesManifest.push({
+      url: file.url,
+      filename: file.name,
+      type: mime.lookup(file.name)
+    })
+  }
+
+  const evaluateManifest = {
+    manifest: {
+      files: evaluateFilesManifest
+    }
+  };
+
+  return axios({
+    headers: {
+      'Content-Type': 'application/json',
+      'Accepts': 'application/json'
+    },
+    method: 'POST',
+    url: `${publicRuntimeConfig.backend}/call`,
+    params: {
+      name: plugin,
+      endpoint: 'evaluate',
+      category: 'submit',
+      data: encodeURIComponent(JSON.stringify(evaluateManifest))
+    }
+  }).then(async (response) => {
+    const requirementManifest = response.data.manifest;
+    const pluginFiles = [];
+
+    for (let file of requirementManifest) {
+      if (file.requirement === 0) {
+        returnFiles.push(findFile(unzippedFiles, file.filename))
+      }
+      else {
+        pluginFiles.push(findFile(unzippedFiles, file.filename))
       }
     }
 
-    const evaluateFilesManifest = [];
-    const returnFiles = [];
-
-
-    for (let file of unzippedFiles) {
-
-      file.url = URL.createObjectURL(file)
-
-      
-      
-
-      evaluateFilesManifest.push({
+    const runFilesManifest = [];
+    for (let file of pluginFiles) {
+      runFilesManifest.push({
         url: file.url,
         filename: file.name,
-        type: mime.lookup(file.name)
+        type: mime.lookup(file.name),
+        instanceUrl: publicRuntimeConfig.backend
       })
     }
 
-    const evaluateManifest = {
+    const runManifest = {
       manifest: {
-        files: evaluateFilesManifest
+        files: runFilesManifest
       }
-    };
+    }
 
     return axios({
       headers: {
         'Content-Type': 'application/json',
-        'Accepts': 'application/json'
+        'Accept': 'application/zip'
       },
       method: 'POST',
       url: `${publicRuntimeConfig.backend}/call`,
+      responseType: 'arraybuffer',
+      responseEncoding: 'binary',
       params: {
         name: plugin,
-        endpoint: 'evaluate',
+        endpoint: 'run',
         category: 'submit',
-        data: encodeURIComponent(JSON.stringify(evaluateManifest))
+        data: encodeURIComponent(JSON.stringify(runManifest))
       }
+
     }).then(async (response) => {
-      const requirementManifest = response.data.manifest;
-      const pluginFiles = [];
 
-      for(let file of requirementManifest) {
-        if(file.requirement === 0) {
-          returnFiles.push(findFile(unzippedFiles, file.filename))
-        }
-        else {
-          pluginFiles.push(findFile(unzippedFiles, file.filename))
-        }
+
+      for (let file of unzippedFiles) {
+        URL.revokeObjectURL(file.url)
       }
 
-      const runFilesManifest = [];
-      for(let file of pluginFiles) {
-        runFilesManifest.push({
+      const pluginZip = response.data;
+
+      var zip = new JSZip();
+      const result = await zip.loadAsync(pluginZip);
+
+      const jsonFile = await result.file('manifest.json').async('string')
+
+      const jsonFileFixed = jsonFile.replaceAll("'", '"')
+
+
+      const jsonManifest = JSON.parse(jsonFileFixed);
+      result.remove('manifest.json');
+
+      for (let [filename, zipFile] of Object.entries(result.files)) {
+
+        const currFileBlob = await zipFile.async('blob');
+        const currFile = new File([currFileBlob], filename);
+
+        returnFiles.push(currFile)
+
+      }
+
+      const convertedFiles = getState().submit.convertedFiles
+
+      for (let fileResult of jsonManifest.results) {
+        const fileSources = [];
+        for (let filename of fileResult.sources) {
+          fileSources.push(findFile(unzippedFiles, filename))
+        }
+
+        convertedFiles.push(
+          {
+            convertedFileName: fileResult.filename,
+            fileSources: fileSources
+          }
+        )
+      }
+
+      dispatch({
+        type: types.CONVERTEDFILES,
+        payload: convertedFiles
+      })
+
+      return returnFiles;
+
+    }).catch(error => {
+
+      const failedFiles = [];
+
+      for (let file of unzippedFiles) {
+        failedFiles.push({
+          file: file,
+          name: file.name,
           url: file.url,
-          filename: file.name,
-          type: mime.lookup(file.name),
-          instanceUrl: publicRuntimeConfig.backend
+          status: 'failed',
+          errors: ['Error using ' + plugin + ': ' + error.message]
         })
       }
 
-      const runManifest = {
-        manifest: {
-          files: runFilesManifest
-        }
-      }
+      dispatch({ type: types.FILEFAILED, payload: true });
+      dispatch({
+        type: types.FAILEDFILES,
+        payload: [...failedFiles]
+      });
 
-      return axios({
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/zip'
-        },
-        method: 'POST',
-        url: `${publicRuntimeConfig.backend}/call`,
-        responseType: 'arraybuffer',
-        responseEncoding: 'binary',
-        params: {
-          name: plugin,
-          endpoint: 'run',
-          category: 'submit',
-          data: encodeURIComponent(JSON.stringify(runManifest))
-        }
-
-      }).then(async (response) => {
-
-
-        for (let file of unzippedFiles) {
-          URL.revokeObjectURL(file.url)
-        }
-
-        const pluginZip = response.data;
-
-        var zip = new JSZip();
-        const result = await zip.loadAsync(pluginZip);
-
-        const jsonFile = await result.file('manifest.json').async('string')
-
-        const jsonFileFixed = jsonFile.replaceAll("'", '"')
-        
-        
-        const jsonManifest = JSON.parse(jsonFileFixed);
-        result.remove('manifest.json');
-
-        for(let [filename, zipFile] of Object.entries(result.files)) {
-
-          const currFileBlob = await zipFile.async('blob');
-          const currFile = new File([currFileBlob], filename);
-
-          returnFiles.push(currFile)    
-          
-        }
-
-        const convertedFiles = getState().submit.convertedFiles
-
-          for(let fileResult of jsonManifest.results) {
-            const fileSources = [];
-            for(let filename of fileResult.sources) {
-              fileSources.push(findFile(unzippedFiles, filename))
-            }
-
-            convertedFiles.push(
-              {
-                convertedFileName: fileResult.filename,
-                fileSources: fileSources
-              }
-            )
-          }
-
-          dispatch({
-            type: types.CONVERTEDFILES,
-            payload: convertedFiles
-          })
-
-        return returnFiles;
-        
-      }).catch(error => {
-
-        const failedFiles = [];
-
-        for(let file of unzippedFiles) {
-          failedFiles.push({
-            file: file,
-            name: file.name,
-            url: file.url,
-            status: 'failed',
-            errors: ['Error using ' + plugin + ': ' + error.message]
-          })
-        }
-
-        dispatch({ type: types.FILEFAILED, payload: true });
-        dispatch({
-          type: types.FAILEDFILES,
-          payload: [...failedFiles]
-        });
-
-        return returnFiles;
-      })
-
-
-    }).catch(error => {
-      const failedFiles = [];
-
-        for(let file of unzippedFiles) {
-          failedFiles.push({
-            file: file,
-            name: file.name,
-            url: file.url,
-            status: 'failed',
-            errors: ['Error using ' + plugin + ': ' + error.message]
-          })
-        }
-
-        dispatch({ type: types.FILEFAILED, payload: true });
-        dispatch({
-          type: types.FAILEDFILES,
-          payload: [...failedFiles]
-        });
-
-        return [];
+      return returnFiles;
     })
 
 
-  }
+  }).catch(error => {
+    const failedFiles = [];
 
-  function findFile (files, filename) {
-    for(let file of files) {
-      if(file.name === filename) {
-        return file;
-      }
+    for (let file of unzippedFiles) {
+      failedFiles.push({
+        file: file,
+        name: file.name,
+        url: file.url,
+        status: 'failed',
+        errors: ['Error using ' + plugin + ': ' + error.message]
+      })
+    }
+
+    dispatch({ type: types.FILEFAILED, payload: true });
+    dispatch({
+      type: types.FAILEDFILES,
+      payload: [...failedFiles]
+    });
+
+    return [];
+  })
+
+
+}
+
+function findFile(files, filename) {
+  for (let file of files) {
+    if (file.name === filename) {
+      return file;
     }
   }
+}
 
 /**
  * Helper function called by the submit action
@@ -562,7 +589,7 @@ async function uploadFiles(
       errors: []
     });
 
-    
+
   }
 
   dispatch({
@@ -598,15 +625,19 @@ async function uploadFiles(
       form.append('collections', uri);
     }
 
-    const response = await fetch(url, {
-      method: 'POST',
-      headers,
-      body: form
-    });
+    let response;
+
+    try {
+      response = await axios.post(url, form, { headers });
+    } catch (error) {
+      if (error.response) {
+        console.error('Error:', error.message);
+      }
+    }
 
     if (response.status === 200) {
       filesUploading[fileIndex].status = 'successful';
-      
+
       var convertedFiles = getState().submit.convertedFiles
       convertedFiles = convertedFiles.filter(item => item["convertedFileName"] !== filesUploading[fileIndex].name)
 
@@ -614,7 +645,7 @@ async function uploadFiles(
         type: types.CONVERTEDFILES,
         payload: convertedFiles
       })
-      
+
     } else {
       var fileErrorMessages = await response.text();
       fileErrorMessages =
@@ -626,15 +657,15 @@ async function uploadFiles(
       var convertedFiles = getState().submit.convertedFiles
       let origFiles = null;
       for (let item of convertedFiles) {
-        if(item.convertedFileName === filesUploading[fileIndex].name) {
-              origFiles = item.fileSources
-            }
-          }
+        if (item.convertedFileName === filesUploading[fileIndex].name) {
+          origFiles = item.fileSources
+        }
+      }
 
 
-      if(origFiles !== null) {
-        
-        for(let file of origFiles) {
+      if (origFiles !== null) {
+
+        for (let file of origFiles) {
           failedFiles.push({
             file: file,
             name: file.name,
@@ -649,7 +680,7 @@ async function uploadFiles(
           type: types.CONVERTEDFILES,
           payload: convertedFiles
         })
-        
+
       }
       else {
         filesUploading[fileIndex].status = 'failed';
@@ -675,15 +706,15 @@ function retrieveConvertedFile(dispatch, getState, filename) {
   var convertedFiles = getState().submit.convertedFiles
   let targetFiles = null;
   for (let item of convertedFiles) {
-    if(item.convertedFileName === filename) {
+    if (item.convertedFileName === filename) {
       targetFiles = item.fileSources
     }
   }
   convertedFiles = convertedFiles.filter(item => item["convertedFileName"] !== filename)
-      dispatch({
-        type: types.CONVERTEDFILES,
-        payload: convertedFiles
-      })
+  dispatch({
+    type: types.CONVERTEDFILES,
+    payload: convertedFiles
+  })
 
 
   return targetFiles
@@ -724,17 +755,22 @@ export const addAttachments = (files, uri) => async (dispatch, getState) => {
   form.append('file', zipped);
   form.append('overwrite_merge', 2);
 
-  const response = await fetch(url, {
-    method: 'POST',
-    headers,
-    body: form
-  });
+
+  let response;
+
+  try {
+    response = await axios.post(url, form, { headers });
+  } catch (error) {
+    if (error.response) {
+      console.error('Error:', error.message);
+    }
+  }
 
   if (response.status === 200) {
     for (var index = 0; index < files.length; index++)
       files[index].status = 'successful';
   } else {
-    var fileErrorMessages = await response.text();
+    var fileErrorMessages = await response.data;
     fileErrorMessages =
       fileErrorMessages.charAt(0) !== '['
         ? [fileErrorMessages]
@@ -769,63 +805,67 @@ export const addAttachments = (files, uri) => async (dispatch, getState) => {
 
 export const createCollection =
   (id, version, name, description, citations, overwrite_merge) =>
-  async (dispatch, getState) => {
-    const url = `${publicRuntimeConfig.backend}/submit`;
-    try {
-      dispatch({ type: types.CREATINGCOLLECTIONERRORS, payload: [] });
-      dispatch({ type: types.CREATINGCOLLECTION, payload: true });
-      dispatch({
-        type: types.CREATINGCOLLECTIONBUTTONTEXT,
-        payload: 'Creating Collection'
-      });
-      const token = getState().user.token;
-      var headers = {
-        Accept: 'text/plain; charset=UTF-8',
-        'X-authorization': token
-      };
-
-      const form = new FormData();
-      form.append('id', id);
-      form.append('version', version);
-      form.append('name', name);
-      form.append('description', description);
-      form.append('citations', citations);
-      form.append('overwrite_merge', `${overwrite_merge}`);
-
-      const response = await fetch(url, {
-        method: 'POST',
-        headers,
-        body: form
-      });
-
-      if (response.status !== 200) {
-        var messages = await response.text();
-        messages =
-          messages.charAt(0) !== '[' ? [messages] : JSON.parse(messages);
-        dispatch({ type: types.CREATINGCOLLECTIONERRORS, payload: messages });
-      } else {
+    async (dispatch, getState) => {
+      const url = `${publicRuntimeConfig.backend}/submit`;
+      try {
         dispatch({ type: types.CREATINGCOLLECTIONERRORS, payload: [] });
-        await dispatch(getCanSubmitTo());
-        const collections = getState().submit.canSubmitTo;
-        for (const collection of collections) {
-          if (
-            collection.displayId === id + '_collection' &&
-            collection.version === version &&
-            collection.name === name
-          ) {
-            dispatch(setSelectedCollection(collection));
-            break;
+        dispatch({ type: types.CREATINGCOLLECTION, payload: true });
+        dispatch({
+          type: types.CREATINGCOLLECTIONBUTTONTEXT,
+          payload: 'Creating Collection'
+        });
+        const token = getState().user.token;
+        var headers = {
+          Accept: 'text/plain; charset=UTF-8',
+          'X-authorization': token
+        };
+
+        const form = new FormData();
+        form.append('id', id);
+        form.append('version', version);
+        form.append('name', name);
+        form.append('description', description);
+        form.append('citations', citations);
+        form.append('overwrite_merge', `${overwrite_merge}`);
+
+        let response;
+
+        try {
+          response = await axios.post(url, form, { headers });
+        } catch (error) {
+          if (error.response) {
+            console.error('Error:', error.message);
           }
         }
-        dispatch(setPromptNewCollection(false));
+
+        if (response.status !== 200) {
+          var messages = await response.data;
+          messages =
+            messages.charAt(0) !== '[' ? [messages] : JSON.parse(messages);
+          dispatch({ type: types.CREATINGCOLLECTIONERRORS, payload: messages });
+        } else {
+          dispatch({ type: types.CREATINGCOLLECTIONERRORS, payload: [] });
+          await dispatch(getCanSubmitTo());
+          const collections = getState().submit.canSubmitTo;
+          for (const collection of collections) {
+            if (
+              collection.displayId === id + '_collection' &&
+              collection.version === version &&
+              collection.name === name
+            ) {
+              dispatch(setSelectedCollection(collection));
+              break;
+            }
+          }
+          dispatch(setPromptNewCollection(false));
+        }
+        dispatch({ type: types.CREATINGCOLLECTION, payload: false });
+      } catch (error) {
+        error.customMessage = 'There was an error creating your collection.';
+        error.fullUrl = url;
+        dispatch(addError(error));
       }
-      dispatch({ type: types.CREATINGCOLLECTION, payload: false });
-    } catch (error) {
-      error.customMessage = 'There was an error creating your collection.';
-      error.fullUrl = url;
-      dispatch(addError(error));
-    }
-  };
+    };
 
 export const setSelectedCollection = collection => dispatch => {
   dispatch({ type: types.SELECTEDCOLLECTION, payload: collection });
@@ -861,21 +901,31 @@ export const getCanSubmitTo = () => async (dispatch, getState) => {
       'X-authorization': token
     };
 
-    var data = await fetch(url, {
-      method: 'GET',
-      headers
-    });
 
-    const submissions = await data.json();
+    let data;
+
+    try {
+      data = await axios.get(url, { headers });
+    } catch (error) {
+      if (error.response) {
+        console.error('Error:', error.message);
+      }
+    }
+
+    const submissions = await data.data;
 
     url = `${publicRuntimeConfig.backend}/shared`;
 
-    data = await fetch(url, {
-      method: 'GET',
-      headers
-    });
 
-    const sharedSubmissions = await data.json();
+    try {
+      data = await axios.get(url, { headers });
+    } catch (error) {
+      if (error.response) {
+        console.error('Error:', error.message);
+      }
+    }
+
+    const sharedSubmissions = await data.data;
 
     dispatch({
       type: types.CANSUBMITTO,
@@ -904,93 +954,97 @@ export const makePublicCollection =
     collections,
     setProcessUnderway
   ) =>
-  async (dispatch, getState) => {
-    const url = `${publicRuntimeConfig.backend}${submissionUrl}/makePublic`;
-    try {
-      setProcessUnderway(true);
-      dispatch({ type: types.PUBLISHING, payload: true });
+    async (dispatch, getState) => {
+      const url = `${publicRuntimeConfig.backend}${submissionUrl}/makePublic`;
+      try {
+        setProcessUnderway(true);
+        dispatch({ type: types.PUBLISHING, payload: true });
 
-      const token = getState().user.token;
-      const headers = {
-        Accept: 'text/plain; charset=UTF-8',
-        'X-authorization': token
-      };
+        const token = getState().user.token;
+        const headers = {
+          Accept: 'text/plain; charset=UTF-8',
+          'X-authorization': token
+        };
 
-      const parameters = new URLSearchParams();
-      parameters.append('id', displayId);
-      parameters.append('version', version);
-      parameters.append('name', name);
-      parameters.append('description', description);
-      parameters.append('citations', citations);
-      parameters.append('tabState', tabState);
-      if (tabState === 'existing')
-        parameters.append('collections', collections);
+        const parameters = new URLSearchParams();
+        parameters.append('id', displayId);
+        parameters.append('version', version);
+        parameters.append('name', name);
+        parameters.append('description', description);
+        parameters.append('citations', citations);
+        parameters.append('tabState', tabState);
+        if (tabState === 'existing')
+          parameters.append('collections', collections);
 
-      var response = await fetch(url, {
-        method: 'POST',
-        headers,
-        body: parameters
-      });
+        let response;
 
-      if (response.status === 200) {
-        mutate([`${publicRuntimeConfig.backend}/shared`, token, dispatch]);
-        mutate([`${publicRuntimeConfig.backend}/manage`, token, dispatch]);
+        try {
+          response = await axios.post(url, parameters, { headers });
+        } catch (error) {
+          if (error.response) {
+            console.error('Error:', error.message);
+          }
+        }
+
+        if (response.status === 200) {
+          mutate([`${publicRuntimeConfig.backend}/shared`, token, dispatch]);
+          mutate([`${publicRuntimeConfig.backend}/manage`, token, dispatch]);
+        }
+
+        setProcessUnderway(false);
+        dispatch({ type: types.PUBLISHING, payload: false });
+      } catch (error) {
+        error.customMessage = "Couldn't make collection public";
+        error.fullUrl = url;
+        dispatch(addError(error));
       }
-
-      setProcessUnderway(false);
-      dispatch({ type: types.PUBLISHING, payload: false });
-    } catch (error) {
-      error.customMessage = "Couldn't make collection public";
-      error.fullUrl = url;
-      dispatch(addError(error));
-    }
-  };
+    };
 
 export const downloadFiles =
   (files, plugin = false, pluginName = null, pluginData = null) =>
-  (dispatch, getState) => {
-    dispatch({ type: types.DOWNLOADSTATUS, payload: 'Downloading' });
-    dispatch({ type: types.DOWNLOADLIST, payload: files });
-    dispatch({ type: types.SHOWDOWNLOAD, payload: true });
+    (dispatch, getState) => {
+      dispatch({ type: types.DOWNLOADSTATUS, payload: 'Downloading' });
+      dispatch({ type: types.DOWNLOADLIST, payload: files });
+      dispatch({ type: types.SHOWDOWNLOAD, payload: true });
 
-    const token = getState().user.token;
-    var zip = new JSZip();
-    var zipFilename = 'sbhdownload.zip';
+      const token = getState().user.token;
+      var zip = new JSZip();
+      var zipFilename = 'sbhdownload.zip';
 
-    const zippedFilePromises = files.map((file, index) => {
-      return zippedFilePromise(
-        file,
-        index,
-        token,
-        files,
-        dispatch,
-        plugin,
-        pluginName,
-        pluginData
-      );
-    });
-
-    Promise.allSettled(zippedFilePromises).then(results => {
-      dispatch({ type: types.DOWNLOADSTATUS, payload: 'Zipping' });
-      for (const result of results) {
-        if (result.status === 'fulfilled') {
-          let filename;
-          if(plugin) {
-            filename = `${result.value.file.pluginName}`;
-          }
-          else {
-            filename = `${result.value.file.displayId}.${result.value.file.type}`;
-          }
-          
-          zip.file(filename, result.value.response.data);
-        }
-      }
-      zip.generateAsync({ type: 'blob' }).then(function (content) {
-        dispatch({ type: types.SHOWDOWNLOAD, payload: false });
-        saveAs(content, zipFilename);
+      const zippedFilePromises = files.map((file, index) => {
+        return zippedFilePromise(
+          file,
+          index,
+          token,
+          files,
+          dispatch,
+          plugin,
+          pluginName,
+          pluginData
+        );
       });
-    });
-  };
+
+      Promise.allSettled(zippedFilePromises).then(results => {
+        dispatch({ type: types.DOWNLOADSTATUS, payload: 'Zipping' });
+        for (const result of results) {
+          if (result.status === 'fulfilled') {
+            let filename;
+            if (plugin) {
+              filename = `${result.value.file.pluginName}`;
+            }
+            else {
+              filename = `${result.value.file.displayId}.${result.value.file.type}`;
+            }
+
+            zip.file(filename, result.value.response.data);
+          }
+        }
+        zip.generateAsync({ type: 'blob' }).then(function (content) {
+          dispatch({ type: types.SHOWDOWNLOAD, payload: false });
+          saveAs(content, zipFilename);
+        });
+      });
+    };
 
 const zippedFilePromise = (
   file,
@@ -1021,26 +1075,26 @@ const zippedFilePromise = (
         }
         :
         {
-            url: file.url,
-            method: 'GET',
-            responseType: 'blob',
-            headers: {
-              'X-authorization': token
-            }
+          url: file.url,
+          method: 'GET',
+          responseType: 'blob',
+          headers: {
+            'X-authorization': token
           }
-        
+        }
+
     )
       .then(response => {
         if (response.status === 200) {
           files[index].status = 'downloaded';
-          if(plugin) {
+          if (plugin) {
             const filename = response.headers['content-disposition'].split('=')[1];
             const extension = filename.split('.').pop().replace('"', '');
             file.type = extension
-            file.pluginName = filename.replaceAll('"','');
+            file.pluginName = filename.replaceAll('"', '');
           }
           resolve({ file, response });
-          
+
         } else {
           files[index].status = 'failed';
           files[index].errors = 'Sorry, this file could not be downloaded';

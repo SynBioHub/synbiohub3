@@ -1,6 +1,9 @@
 import { faGlobeAmericas, faUserLock } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import router from 'next/router';
+import React, { useState, useEffect } from 'react';
+import { processUrl } from '../../../Admin/Registries';
+import { useSelector, useDispatch } from 'react-redux';
 
 import styles from '../../../../styles/resulttable.module.css';
 
@@ -10,6 +13,18 @@ import styles from '../../../../styles/resulttable.module.css';
 export default function ResultRow(properties) {
   let type = '';
   const potentialType = properties.type.toLowerCase();
+  const token = useSelector(state => state.user.token);
+  const dispatch = useDispatch();
+  const [processedUri, setProcessedUri] = useState(properties.uri);
+
+  useEffect(() => {
+    async function processAndSetUri() {
+      const result = await processUrl(properties.uri, token, dispatch);
+      setProcessedUri(result.urlRemovedForLink || result.original);
+    }
+    
+    processAndSetUri();
+  }, [properties.uri]);
 
   // Identify what type of object the search result is from type url
   if (potentialType.includes('component')) {
@@ -32,7 +47,7 @@ export default function ResultRow(properties) {
   return (
     <tr
       onClick={() => {
-        router.push(properties.uri.replace('https://synbiohub.org', ''));
+        router.push(processedUri);
       }}
     >
       <td>

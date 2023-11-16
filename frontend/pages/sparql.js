@@ -123,21 +123,26 @@ const submitQuery = async (
     Accept: 'application/json'
   };
 
-  const response = await fetch(url, {
-    method: 'GET',
-    headers
-  });
+  let response;
 
-  if (response.status === 200) {
+  try {
+    response = await axios.get(url, { headers });
+  } catch (error) {
+    if (error.response) {
+      console.error('Error:', error.message);
+    }
+  }
+
+  if (response && response.status === 200) {
     setError();
-    const results = await response.json();
+    const results = response.data;
     setResults(processResults(results));
     setHeaders(results.head.vars);
-  } else {
-    const message = await response.text();
+} else {
+    const message = response ? response.data : 'Unknown error';
     setError(message);
     setResults();
-  }
+}
 
   setLoading(false);
 };

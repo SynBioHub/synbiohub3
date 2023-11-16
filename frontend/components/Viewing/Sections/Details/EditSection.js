@@ -44,13 +44,17 @@ export default function EditSection(properties) {
     parameters.append("uri", properties.uri);
     parameters.append("value", content);
 
-    const response = await fetch(url, {
-      method: "POST",
-      headers,
-      body: parameters
-    });
+    let response;
 
-    if (response.status !== 200) console.error(response.status);
+    try {
+      response = await axios.post(url, parameters, { headers });
+    } catch (error) {
+      if (error.response) {
+        console.error('Error:', error.message);
+      }
+    }
+
+    // if (response.status !== 200) console.error(response.status);
   }
 
   /**
@@ -298,12 +302,9 @@ const getCitationInfo = async (ids) => {
   parameters.append("retmode", "xml");
 
   try {
-    const response = await fetch(url, {
-      method: "POST",
-      body: parameters
-    });
+    const response = await axios.post(url, parameters);
 
-    const citationXML = await response.text();
+    const citationXML = await response.data;
     if (response.status === 200) return parseCitationInfo(citationXML);
     else return undefined;
   } catch(e) {
