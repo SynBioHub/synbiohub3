@@ -76,7 +76,7 @@ export default function Members(properties) {
     offset: offset ? ` OFFSET ${offset}` : '',
     limit: ' LIMIT 10000 '
   };
-  
+
   if (token) {
     parameters.graphs = privateGraph
   }
@@ -252,6 +252,7 @@ function MemberTable(properties) {
       Number(properties.totalMembers).toLocaleString() +
       ')';
   }
+  console.log(properties.members);
   return (
     <Table
       data={processedMembers}
@@ -373,6 +374,16 @@ const fetcher = (url, token, dispatch) =>
       error.customMessage =
         'Request failed while getting collection members info';
       error.fullUrl = url;
+      // Check if the error is 401 Unauthorized or 400 Bad Request
+      if (error.response && (error.response.status === 401 || error.response.status === 400)) {
+        // Check if the user is logged in by looking for 'userToken' in local storage
+        if (!localStorage.getItem('userToken')) {
+          // User is not logged in, redirect to the login page
+          window.location.href = '/login';
+        }
+      }
+      
+      // Dispatch the error regardless of whether the user is logged in
       dispatch(addError(error));
     });
 

@@ -22,6 +22,8 @@ const { publicRuntimeConfig } = getConfig();
 function Home() {
   const dispatch = useDispatch(); // if you are using Redux, otherwise, you might not need this
   const { theme, loading } = useTheme(dispatch);
+  const token = useSelector(state => state.user.token);
+  console.log(token);
 
   if (loading) {
     return (
