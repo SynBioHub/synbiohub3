@@ -38,8 +38,6 @@ export const login = (username, password) => async dispatch => {
 
   try {
     const response = await axios.post(url, parameters, { headers });
-
-    console.log(response);
     const message = response.data;
 
     if (response.status === 200) {

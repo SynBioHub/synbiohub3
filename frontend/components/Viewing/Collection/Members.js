@@ -252,7 +252,6 @@ function MemberTable(properties) {
       Number(properties.totalMembers).toLocaleString() +
       ')';
   }
-  console.log(properties.members);
   return (
     <Table
       data={processedMembers}
