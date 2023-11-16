@@ -50,32 +50,47 @@ function loadText(template, args) {
   return template;
 }
 
+
 function formatSequence(sequence) {
   if (!isValidSequence(sequence)) {
-    return sequence; // Return the original sequence if it's not valid
+    return [sequence]; // Return the original sequence wrapped in an array if it's not valid
   }
+  
   const chunkSize = 10;
-  const chunksPerLine = 5;
-  let result = '';
+  const lineLength = 50;
+  let lines = [];
+  let currentLine = '';
 
-  for (let i = 0; i < sequence.length; i += chunkSize * chunksPerLine) {
-    const lineStart = i;
-    const lineEnd = i + chunkSize * chunksPerLine;
-    const line = sequence.slice(lineStart, lineEnd);
-
-    for (let j = 0; j < line.length; j += chunkSize) {
-      const chunkStart = j;
-      const chunkEnd = j + chunkSize;
-      const chunk = line.slice(chunkStart, chunkEnd);
-      result += chunk + ' ';
+  for (let i = 0; i < sequence.length; i += chunkSize) {
+    // Add line index at the start of each line
+    if (i % lineLength === 0) {
+      if (i !== 0) {
+        lines.push(currentLine);
+        currentLine = '';
+      }
+      currentLine += String(i + 1).padStart(4, '0') + ' ';
     }
 
-    const lineNumber = String(lineStart + 1).padStart(4, '0');
-    result = lineNumber + ' ' + result.trim() + '\n';
+    // Add a chunk of the sequence
+    currentLine += sequence.slice(i, i + chunkSize);
+
+    // Add a space to separate chunks, but not at the end of a line
+    if ((i + chunkSize) % lineLength !== 0) {
+      currentLine += ' ';
+    }
   }
 
-  return result.trim();
+  // Add the final line if it's not empty
+  if (currentLine) {
+    lines.push(currentLine);
+  }
+
+  return lines;
 }
+
+
+
+
 
 function isValidSequence(sequence) {
   // This regex checks if the sequence consists only of a, c, t, g, and u characters (case-insensitive)

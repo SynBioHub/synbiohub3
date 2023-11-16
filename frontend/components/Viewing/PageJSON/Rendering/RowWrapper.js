@@ -242,6 +242,7 @@ export default function RowWrapper({ sections, metadata, setSectionIcon }) {
     if (metadata) setSectionIcon(sectionIcon);
   }, [titleToValueMap, sectionsToRender]);
 
+
   if (loading) {
     return (
       <tr>

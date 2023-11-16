@@ -7,6 +7,7 @@ const { publicRuntimeConfig } = getConfig();
 
 import styles from '../../styles/defaulttable.module.css';
 import { addError } from '../../redux/actions';
+import { logoutUser } from '../../redux/actions';
 
 export default function Status() {
   const dispatch = useDispatch();
@@ -107,7 +108,14 @@ const fetcher = (url, token, dispatch) =>
     })
     .then(response => response.data)
     .catch(error => {
-      error.customMessage = 'Error fetching status';
-      error.fullUrl = url;
-      dispatch(addError(error));
+      if (error.response && error.response.status === 401) {
+        // Handle 401 Unauthorized error by signing out and redirecting to the login page
+        dispatch(logoutUser()); // Dispatch the logout action to sign out the user
+        window.location.href = '/login'; // Redirect to the login page
+      } else {
+        // Handle other errors
+        error.customMessage = 'Error fetching status';
+        error.fullUrl = url;
+        dispatch(addError(error));
+      }
     });

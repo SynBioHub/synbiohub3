@@ -71,7 +71,6 @@ export default function SectionRenderer({ section, metadata }) {
     };
   }, []);
 
-  const tdId = section.id === 'sequence' ? 'sequenceFont' : null;
   if (data && section.link) {
     data.forEach(registry => {
       if (section.link.startsWith(registry.uri) && processedLink && processedLink.urlRemovedForLink) {
@@ -103,13 +102,23 @@ export default function SectionRenderer({ section, metadata }) {
         );
       });
       if (metadata) {
-        return <td className={`${styles.preventoverflowmetadata} ${tdId}`}>{content}</td>;
+        return <td className={`${styles.preventoverflowmetadata}`}>{content}</td>;
       }
       return <td >{content}</td>;
     }
     return (
-      <td id={tdId}>
-        {section.link ? (
+      <td>
+        {section.id === "Sequence" ? (
+          section.text.map((line, index) => (
+            <div
+              key={index}
+              className={metadata && styles.preventoverflowmetadata}
+              style={{ fontFamily: 'Courier', fontSize: '1.0rem'}}
+            >
+              {line}
+            </div>
+          ))
+        ) : section.link ? (
           <ColumnLink
             link={section.link === 'sequenceLink' ? null : loadText(section.link, { This: section.text })}
             text={section.text}
@@ -121,10 +130,10 @@ export default function SectionRenderer({ section, metadata }) {
           </div>
         )}
       </td>
-
     );
+
   } else {
-    return <td id={tdId}>
+    return <td>
       Loading...
     </td>
   }
