@@ -29,7 +29,7 @@ export default function Options(properties) {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    loadPredicates(setPredicates, dispatch);
+  loadPredicates(setPredicates, dispatch);
   }, []);
 
   const filterDisplay = properties.extraFilters.map((element, index) => {
@@ -47,19 +47,13 @@ export default function Options(properties) {
   return (
     <div>
       <div className={styles.inputsection}>
-        <label>Keyword</label>
-        <input
-          type="text"
-          placeholder="ID/Name/Description"
-          className={styles.filterinput}
-          value={properties.keyword}
-          onChange={event => properties.setKeyword(event.target.value)}
-        />
-      </div>
-      <div className={styles.inputsection}>
-        <label>Object Type</label>
+        <div className={styles.labelsection}>
+          <span>Select Object Type</span>
+        </div>
         <SelectLoader
           sparql={getTypes}
+          // placeholder="Select Object Type..."
+          placeholder={shortName(properties.objectType)}
           parseResult={result => {
             return {
               value: result.object.value,
@@ -72,9 +66,12 @@ export default function Options(properties) {
         />
       </div>
       <div className={styles.inputsection}>
-        <label>Creator</label>
+        <div className={styles.labelsection}>
+          <span>Select Creator</span>
+        </div>
         <SelectLoader
           sparql={getCreators}
+          placeholder={shortName(properties.creator)}
           parseResult={result => {
             return { value: result.object.value, label: result.object.value };
           }}
@@ -82,9 +79,13 @@ export default function Options(properties) {
         />
       </div>
       <div className={styles.inputsection}>
-        <label>Role</label>
+        <div className={styles.labelsection}>
+          <span>Select Role Type</span>
+        </div>
         <SelectLoader
           sparql={getRoles}
+          placeholder={shortName(properties.role)}
+          value={properties.role}
           parseResult={result => {
             return {
               value: result.object.value,
@@ -95,9 +96,12 @@ export default function Options(properties) {
         />
       </div>
       <div className={styles.inputsection}>
-        <label>SBOL Type</label>
+        <div className={styles.labelsection}>
+          <span>Select SBOL Type</span>
+        </div>
         <SelectLoader
           sparql={getSBOLTypes}
+          placeholder={shortName(properties.sbolType)}
           parseResult={result => {
             return {
               value: result.object.value,
@@ -110,9 +114,12 @@ export default function Options(properties) {
         />
       </div>
       <div className={styles.inputsection}>
-        <label>Collections</label>
+        <div className={styles.labelsection}>
+          <span>Select Collections</span>
+        </div>
         <SelectLoader
           sparql={getCollections}
+          placeholder="Select Collections..."
           isMulti={true}
           parseResult={result => {
             return !result.name
@@ -122,7 +129,11 @@ export default function Options(properties) {
           onChange={collections => properties.setCollections(collections)}
         />
       </div>
-      <div className={styles.calendarinputsection}>
+      <div className={styles.inputsection}>
+
+      </div>
+
+      {/* <div className={styles.calendarinputsection}>
         <label>Created Between</label>
         <DateRangePicker
           editableDateInputs={true}
@@ -131,8 +142,8 @@ export default function Options(properties) {
           ranges={properties.created}
           moveRangeOnFirstSelection={false}
         />
-      </div>
-      <div className={styles.calendarinputsection}>
+      </div> */}
+      {/* <div className={styles.calendarinputsection}>
         <label>Modfied Between</label>
         <DateRangePicker
           editableDateInputs={true}
@@ -141,7 +152,7 @@ export default function Options(properties) {
           ranges={properties.modified}
           moveRangeOnFirstSelection={false}
         />
-      </div>
+      </div> */}
       {filterDisplay}
       <div
         className={styles.newfilterbutton}

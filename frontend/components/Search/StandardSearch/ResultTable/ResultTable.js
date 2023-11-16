@@ -49,7 +49,9 @@ export default function ResultTable(properties) {
       key={row.uri}
     />
   ));
-
+  if (properties.data.length === 0) {
+    return <div className={styles.resultcontainer}>No results found</div>;
+  }
   return (
     <div className={styles.resultcontainer}>
       <TableButtons
