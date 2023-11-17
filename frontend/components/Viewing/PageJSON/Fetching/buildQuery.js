@@ -7,6 +7,9 @@ import getId from './getId';
  * @returns
  */
 export default function buildQuery(uri, tableJSON) {
+  if (!tableJSON) {
+    return null;
+  }
   compileTableSections(tableJSON);
   const rootPredicateDictionary = {};
   rootPredicateDictionary[tableJSON.rootPredicate] = [];

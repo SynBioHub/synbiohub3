@@ -398,7 +398,6 @@ const createUser = async (
   }
 
   const responseText = await response.data;
-  console.log(responseText);
 
   if (response.status === 200) {
     mutate([`${publicRuntimeConfig.backend}/admin/users`, token, dispatch]);

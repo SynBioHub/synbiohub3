@@ -28,6 +28,7 @@ export default function SectionRenderer({ section, metadata }) {
   const [processedLink, setProcessedLink] = useState(null);
   const token = useSelector(state => state.user.token);
 
+
   useEffect(() => {
     let isMounted = true;
 
@@ -71,12 +72,15 @@ export default function SectionRenderer({ section, metadata }) {
     };
   }, []);
 
-  if (data && section.link) {
-    data.forEach(registry => {
-      if (section.link.startsWith(registry.uri) && processedLink && processedLink.urlRemovedForLink) {
-        section.link = processedLink.urlRemovedForLink;
-      }
-    })
+  if (data) {
+    if (section.link) {
+      data.forEach(registry => {
+        if (section.link.startsWith(registry.uri) && processedLink && processedLink.urlRemovedForLink) {
+          section.link = processedLink.urlRemovedForLink;
+        }
+      })
+    }
+
     if (section.grouped) {
       const items = section.text.split(', ');
       const content = items.map((item, index) => {
@@ -108,24 +112,24 @@ export default function SectionRenderer({ section, metadata }) {
     }
     return (
       <td>
-        {section.id === "Sequence" ? (
+        {section.id === "Sequence" && section.link == null ? (
           section.text.map((line, index) => (
             <div
               key={index}
-              className={metadata && styles.preventoverflowmetadata}
-              style={{ fontFamily: 'Courier', fontSize: '1.0rem'}}
+              className={metadata ? styles.preventoverflowmetadata : undefined}
+              style={{ fontFamily: 'Courier', fontSize: '1.0rem' }}
             >
               {line}
             </div>
           ))
         ) : section.link ? (
           <ColumnLink
-            link={section.link === 'sequenceLink' ? null : loadText(section.link, { This: section.text })}
+            link={section.link}
             text={section.text}
             linkType={section.linkType}
           />
         ) : (
-          <div className={metadata && styles.preventoverflowmetadata}>
+          <div className={metadata ? styles.preventoverflowmetadata : undefined}>
             {section.text}
           </div>
         )}
@@ -156,7 +160,7 @@ function ColumnLink({ text, link, linkType }) {
             <a target="_blank">
               <FontAwesomeIcon
                 icon={faSearch}
-                size="small"
+                size="sm"
                 className={styles.searchicon}
               />
             </a>

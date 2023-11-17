@@ -45,15 +45,15 @@ export default function OtherProperties(properties) {
     const valueSearch = isUri
       ? `/search/<${encodeURIComponent(name)}>=<${encodeURIComponent(value)}>&`
       : `/search/<${encodeURIComponent(name)}>='${encodeURIComponent(
-          value.replace("'", "\\'")
-        )}'&`;
-    const parsedValue = value
-      .replace(name + '/', '')
-      .slice(
-        value.slice(0, value.lastIndexOf('/')).lastIndexOf('/') + 1,
-        value.length
-      );
-
+        value.replace("'", "\\'")
+      )}'&`;
+    // const parsedValue = value
+    //   .replace(name + '/', '')
+    //   .slice(
+    //     value.slice(0, value.lastIndexOf('/')).lastIndexOf('/') + 1,
+    //     value.length
+    //   );
+    const parsedValue = parseValue(value);
     return (
       <tr key={key}>
         <td>
@@ -96,5 +96,22 @@ export default function OtherProperties(properties) {
         </td>
       </tr>
     );
+  }
+
+  function parseValue(text) {
+    const parts = text.split('/');
+    if (parts.length >= 2) {
+      const lastPart = parts[parts.length - 1];
+
+      if (/^1(\.0+)*$/.test(lastPart)) {
+        text = parts[parts.length - 2];
+      } else {
+        const delimiters = ['#', '%', '/'];
+        const lastPartSegments = lastPart.split(new RegExp(`[${delimiters.join('')}]`));
+
+        text = lastPartSegments.pop();
+      }
+    }
+    return text;
   }
 }

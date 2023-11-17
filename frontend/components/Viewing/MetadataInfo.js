@@ -11,7 +11,10 @@ import RenderIcon from './PageJSON/Rendering/RenderIcon';
  */
 export default function MetadataInfo({ title, link, label, icon, specific }) {
   //If the metadata doesn't contain the title nothing should be rendered.
-  if (!title) return null;
+  if (!title || (Array.isArray(title) && title.length === 0)) {
+    return null;
+  }
+
 
   const renderedSection = (
     <div className={styles.info}>
@@ -32,16 +35,15 @@ export default function MetadataInfo({ title, link, label, icon, specific }) {
       <div className={specific ? styles.infotitlegeneric : styles.infotitle}>
         <table>
           <tbody>
-            <tr>
-              <td>{title}</td>
-            </tr>
+            {/* Check if 'title' contains table rows and render them directly here */}
+            {Array.isArray(title) ? title : <tr><td>{title}</td></tr>}
           </tbody>
         </table>
       </div>
 
+
     </div>
   );
-
   if (link) {
     return (
       <Link href={link}>

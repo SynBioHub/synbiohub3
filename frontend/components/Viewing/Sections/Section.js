@@ -7,6 +7,8 @@ import { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateMinimizedSections } from '../../../redux/actions.js';
 
+// import { checkContentExist } from '../PageJSON/Rendering/TableBuilder';
+
 /*
 TODO
 Make sure that the sections don't flicker when checkbox is clicked to unrender/render

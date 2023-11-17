@@ -49,24 +49,6 @@
             ]
         },
         {
-            "title": "Source",
-            "rootPredicate": "prov:wasDerivedFrom",
-            "icon": "faStar",
-            "sections": [
-                {
-                    "title": "Extra Work",
-                    "stripAfter": "#",
-                    "predicates": [],
-                    "link": "$<sourceLink>"
-                },
-                {
-                    "title": "sourceLink",
-                    "predicates": [],
-                    "hide": true
-                }
-            ]
-        },
-        {
             "title": "Sequence(s)",
             "rootPredicate": "sbol:sequence",
             "icon": "faDna",

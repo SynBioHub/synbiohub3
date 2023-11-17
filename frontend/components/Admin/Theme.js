@@ -75,7 +75,6 @@ export default function Theme() {
         alert("Error saving theme");
       }
     } catch (error) {
-      console.log(error);
       alert("Error saving theme");
     }
   };

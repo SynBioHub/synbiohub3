@@ -11,38 +11,46 @@
       "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>",
       "PREFIX purl: <http://purl.obolibrary.org/obo/>"
    ],
-   "metadata": [],
+   "metadata": [
+      {
+         "title": "Encoding",
+         "rootPredicate": "sbol:encoding",
+         "icon": "faCode",
+         "sections": [
+            {
+               "title": "Encoding",
+               "stripAfter": "/",
+               "text": "Encoding",
+               "predicates": [
+               ],
+               "link": "$<encodingLink>"
+            },
+            {
+               "title": "encodingLink",
+               "predicates": [],
+               "hide": true
+            }
+         ]
+      }
+   ],
    "tables": [
-     {
-       "icon": "faDna",
-       "title": "Sequence",
-       "rootPredicate": "sbol:elements",
-       "sections": [ 
-         {
-            "title": "Sequence",
-            "infoLink": "$<Encoding>",
-            "predicates": [],
-            "link": "sequenceLink"
-         },
-         {
-            "title": "sequenceLink",
-            "predicates": [],
-            "hide": true
-         },
-         {
-            "title": "Encoding",
-            "predicates": [
-               
-            ],
-            "hide": true
-         }
-      ]
-     }
+      {
+         "icon": "faDna",
+         "title": "Sequence",
+         "rootPredicate": "sbol:elements",
+         "sections": [
+            {
+               "title": "Sequence",
+               "infoLink": "https://sbols.org/v2#sequence",
+               "predicates": []
+            }
+         ]
+      }
    ],
    "pages": [
-     "$TABLES[Sequence]",
-     "Other Properties",
-     "Member of these Collections",
-     "Attachments"
+      "$TABLES[Sequence]",
+      "Other Properties",
+      "Member of these Collections",
+      "Attachments"
    ]
- }
+}

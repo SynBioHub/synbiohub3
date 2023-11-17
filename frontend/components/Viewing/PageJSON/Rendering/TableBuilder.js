@@ -8,12 +8,13 @@ import executeQueryFromTableJSON from '../Fetching/executeQueryFromTableJSON';
 import RowWrapper from './RowWrapper';
 import { useDispatch } from 'react-redux';
 import { parseTableHeaders } from '../Parsing/parseTableHeaders';
+import React, { createContext } from 'react';
 
 /**
  * This Component renders an individual table based on given JSON
  * for the table. It constructs the corresponding SPARQL query as
  * dictated by the JSON
- * @param {*} param0
+ * @param {*} param
  * @returns
  */
 export default function TableBuilder({ uri, prefixes, table, metadata }) {
@@ -42,7 +43,9 @@ function TableRenderer({ uri, prefixes, table, metadata }) {
 
   const header = metadata ? null : createHeader(table.sections, content);
 
-  if (!content) return null;
+  if (!checkContentExist(content)) {
+    return "No content to display for " + table.title;
+  }
 
   if (metadata) {
     return <MetadataRenderer title={table.title} content={content} />;
@@ -111,3 +114,13 @@ const tableFork = tableJSON => {
     }
   });
 };
+
+export const BooleanContext = React.createContext(false);
+
+export const checkContentExist = (content) => {
+  if (!content || (Array.isArray(content) && content.length === 0)) {
+    return false;
+  } else {
+    return true;
+  }
+}

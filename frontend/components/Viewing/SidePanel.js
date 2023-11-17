@@ -4,7 +4,11 @@ import {
   faHammer,
   faQuoteLeft,
   faRunning,
-  faUserEdit
+  faUserEdit,
+  faFileSignature,
+  faIdBadge,
+  faIdCard,
+  faCodeBranch
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -49,7 +53,6 @@ export default function SidePanel({ metadata, type, json, uri, plugins }) {
   }, [uri]);
 
   const pagesInfo = getPagesInfo(type, json, plugins);
-
   return (
     <div
       className={
@@ -108,6 +111,27 @@ export default function SidePanel({ metadata, type, json, uri, plugins }) {
           />
           <div className={styles.infocontainer}>
             <MetadataInfo
+              icon={faIdBadge}
+              label="Identity"
+              title={metadata.name}
+            />
+            <MetadataInfo
+              icon={faFileSignature}
+              label="Persistent Identity"
+              title={metadata.persistentIdentity}
+              link={metadata.persistentIdentity}
+            />
+            <MetadataInfo
+              icon={faIdCard}
+              label="Display ID"
+              title={metadata.displayId}
+            />
+            <MetadataInfo
+              icon={faCodeBranch}
+              label="Version"
+              title={metadata.version}
+            />
+            <MetadataInfo
               icon={faQuoteLeft}
               label="Source"
               title={metadata.wasDerivedFrom}
@@ -152,22 +176,22 @@ export default function SidePanel({ metadata, type, json, uri, plugins }) {
 function getPagesInfo(type, json, plugins) {
   if (json === null) return { type: type, order: [] };
   if (localStorage.getItem(type) === null) {
-    
+
     const order = json.pages
 
-    for(let plugin of plugins.rendering) {
+    for (let plugin of plugins.rendering) {
       order.push('PLUGIN: ' + plugin.name)
     }
-    
+
     return { type: type, order: order };
   }
 
   const order = JSON.parse(localStorage.getItem(type)).order
 
   const orderUpdated = order.filter(page => {
-    if(page.startsWith('PLUGIN: ')) {
-      for(let plugin of plugins.rendering) {
-        if(plugin.name === page.substring(8,page.length)) {
+    if (page.startsWith('PLUGIN: ')) {
+      for (let plugin of plugins.rendering) {
+        if (plugin.name === page.substring(8, page.length)) {
           return true;
         }
       }
@@ -175,8 +199,8 @@ function getPagesInfo(type, json, plugins) {
     }
     return true
   })
-  for(let plugin of plugins.rendering) {
-    if(!orderUpdated.includes('PLUGIN: ' + plugin.name)) {
+  for (let plugin of plugins.rendering) {
+    if (!orderUpdated.includes('PLUGIN: ' + plugin.name)) {
       orderUpdated.push('PLUGIN: ' + plugin.name)
     }
   }
