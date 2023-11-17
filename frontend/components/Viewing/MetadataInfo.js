@@ -4,6 +4,9 @@ import styles from '../../styles/view.module.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import RenderIcon from './PageJSON/Rendering/RenderIcon';
 
+import { useTheme } from '../Admin/Theme';
+import React, { useState } from 'react';
+
 /**
  * Component container for displaying metadata information about the object.
  *
@@ -14,11 +17,24 @@ export default function MetadataInfo({ title, link, label, icon, specific }) {
   if (!title || (Array.isArray(title) && title.length === 0)) {
     return null;
   }
+  const { theme, loading } = useTheme();
+
+  const [isHovered, setIsHovered] = useState(false);
+
+  const hoverStyle = {
+    backgroundColor: isHovered ? (theme?.hoverColor || '#00A1E4') : (theme?.themeParameters?.[0]?.value || styles.infoheader.backgroundColor)
+  };
+
 
 
   const renderedSection = (
     <div className={styles.info}>
-      <div className={specific ? styles.infogeneric : styles.infoheader}>
+      <div
+        className={specific ? styles.infogeneric : styles.infoheader}
+        style={hoverStyle}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
         <div className={styles.infoiconcontainer}>
           {!specific ? (
             <FontAwesomeIcon
