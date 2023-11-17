@@ -116,7 +116,7 @@ export default function SectionRenderer({ section, metadata }) {
           section.text.map((line, index) => (
             <div
               key={index}
-              className={metadata && styles.preventoverflowmetadata}
+              className={metadata ? styles.preventoverflowmetadata : undefined}
               style={{ fontFamily: 'Courier', fontSize: '1.0rem' }}
             >
               {line}
@@ -129,7 +129,7 @@ export default function SectionRenderer({ section, metadata }) {
             linkType={section.linkType}
           />
         ) : (
-          <div className={metadata && styles.preventoverflowmetadata}>
+          <div className={metadata ? styles.preventoverflowmetadata : undefined}>
             {section.text}
           </div>
         )}
@@ -160,7 +160,7 @@ function ColumnLink({ text, link, linkType }) {
             <a target="_blank">
               <FontAwesomeIcon
                 icon={faSearch}
-                size="small"
+                size="sm"
                 className={styles.searchicon}
               />
             </a>

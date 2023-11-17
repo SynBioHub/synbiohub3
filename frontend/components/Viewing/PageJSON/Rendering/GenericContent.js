@@ -23,7 +23,6 @@ export default function GenericContent({ json, uri, metadata, plugins, type }) {
         />
       );
     });
-
     return <Fragment>{content}</Fragment>;
   }
 

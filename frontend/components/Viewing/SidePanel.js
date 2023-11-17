@@ -53,7 +53,6 @@ export default function SidePanel({ metadata, type, json, uri, plugins }) {
   }, [uri]);
 
   const pagesInfo = getPagesInfo(type, json, plugins);
-  console.log(metadata);
   return (
     <div
       className={
