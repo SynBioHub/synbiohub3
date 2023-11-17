@@ -819,7 +819,7 @@
 
 .nosectionheadershadow {
   box-shadow: none;
-  background-color: transparent;
+  background-color: #D25627;
   cursor: default;
 }
 

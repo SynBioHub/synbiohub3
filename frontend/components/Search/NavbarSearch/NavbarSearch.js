@@ -7,13 +7,17 @@ import { useSelector } from 'react-redux';
 
 import styles from '../../../styles/navbar.module.css';
 import SearchBar from './SearchBar';
+import { useTheme } from '../../Admin/Theme';
 
 export default function NavbarSearch(properties) {
   const router = useRouter();
   const pageVisited = useSelector(state => state.tracking.pageVisited);
+  const { theme, loading } = useTheme();
 
   return (
-    <header className={styles.container}>
+    <header className={styles.container}
+    style={{ backgroundColor: theme?.themeParameters?.[0]?.value || '#465775' }} 
+    >
       <Link href="/">
         <a className={styles.logo}>
           <Image alt="logo" width={86} height={86} src="/images/logo.svg" />

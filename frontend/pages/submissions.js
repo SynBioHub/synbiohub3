@@ -216,8 +216,13 @@ const fetcher = (url, token, dispatch) =>
     })
     .then(response => response.data)
     .catch(error => {
-      error.customMessage =
-        'Request(s) failed for submissions data. Check the URL to see which one failed';
-      error.fullUrl = url;
-      dispatch(addError(error));
+      if (error.response && error.response.status === 401) {
+        dispatch(logoutUser()); // Dispatch the logout action to sign out the user
+        window.location.href = '/login'; // Redirect to the login page
+      } else {
+        // Handle other errors
+        error.customMessage = 'Request(s) failed for submissions data. Check the URL to see which one failed';
+        error.fullUrl = url;
+        dispatch(addError(error));
+      }
     });
