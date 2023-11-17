@@ -34,11 +34,7 @@ function Home() {
     );
   }
 
-  console.log(theme.frontPageText);
-
   const frontPageText = theme && theme.frontPageText ? theme.frontPageText : "SynBioHub is a design repository for people designing biological constructs. It enables DNA and protein designs to be uploaded, then facilitates sharing and viewing of such designs. SynBioHub also facilitates searching for information about existing useful parts and designs by combining data from a variety of sources.";
-
-
 
   return (
     <div className={styles.container}>
