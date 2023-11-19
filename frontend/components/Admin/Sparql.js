@@ -139,7 +139,6 @@ const submitQuery = async (
       console.error('Error:', error.message);
     }
   }
-
   if (response && response.status === 200) {
     setError();
     const results = response.data; 
@@ -155,6 +154,9 @@ const submitQuery = async (
 };
 
 const processResults = results => {
+  if (!results.results || !results.results.bindings) {
+    return [];
+  }
   const headers = results.head.vars;
   return results.results.bindings.map(result => {
     const resultObject = {};

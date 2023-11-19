@@ -1134,6 +1134,12 @@ export const addToBasket = items => async (dispatch, getState) => {
 export const restoreBasket = () => dispatch => {
   const basket = JSON.parse(localStorage.getItem('basket'));
   if (basket) {
+    for (let i = 0; i < basket.length; i++) {
+      if (!checkUriExists(basket[i].uri)) {
+        console.log("item not exist");
+        dispatch(clearBasket(item));
+      }
+    }
     dispatch({
       type: types.ADDTOBASKET,
       payload: basket
@@ -1160,6 +1166,43 @@ export const clearBasket = itemsToClear => (dispatch, getState) => {
   });
   localStorage.setItem('basket', JSON.stringify(newBasket));
 };
+
+export async function checkUriExists(uri) {
+  const query = `SELECT ?subject ?predicate ?object
+  WHERE {
+      <${uri}> ?predicate ?object .
+      BIND(<${uri}> AS ?subject)
+  }`;
+  const url = `${publicRuntimeConfig.backend}/sparql?query=${encodeURIComponent(query)}`;
+
+  try {
+    const response = await fetch(url, {
+      headers: { 'Accept': 'application/sparql-results+json' }
+    });
+
+    if (!response.ok) {
+      console.error(`HTTP error! status: ${response.status}`);
+      return false;
+    }
+
+    const data = await response.json();
+
+    // Check if there are any bindings in the results
+    const bindings = data.results.bindings;
+    if (bindings && bindings.length > 0) {
+      console.log("URI exists:", bindings);
+      return true; // URI exists
+    } else {
+      console.log("URI does not exist.");
+      return false; // URI does not exist
+    }
+  } catch (error) {
+    console.error('Error in SPARQL query:', error);
+    return false;
+  }
+}
+
+
 
 // TRACKING ACTIONS
 

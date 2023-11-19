@@ -16,6 +16,10 @@ export default function DeleteModal(properties) {
   const [submittable, setSubmittable] = useState(false);
   const token = useSelector(state => state.user.token);
 
+  const handleDelete = () => {
+    properties.onDeletionComplete?.(); // Call the callback function
+  };
+
   return (
     <CustomModal
       buttonText={["Cancel", "Delete"]}
@@ -44,6 +48,7 @@ export default function DeleteModal(properties) {
           </div>
         </React.Fragment>
       }
+      onConfirm={handleDelete}
     />
   );
 }
