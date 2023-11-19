@@ -1168,8 +1168,9 @@ export const clearBasket = itemsToClear => (dispatch, getState) => {
 };
 
 export async function checkUriExists(uri) {
-  const query = `SELECT ?subject
+  const query = `SELECT ?subject ?predicate ?object
   WHERE {
+      <${uri}> ?predicate ?object .
       BIND(<${uri}> AS ?subject)
   }`;
   const url = `${publicRuntimeConfig.backend}/sparql?query=${encodeURIComponent(query)}`;
