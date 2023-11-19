@@ -43,7 +43,7 @@ function TableRenderer({ uri, prefixes, table, metadata }) {
 
   const header = metadata ? null : createHeader(table.sections, content);
 
-  if (!checkContentExist(content)) {
+  if (!checkContentExist(content) && !metadata) {
     return "No content to display for " + table.title;
   }
 

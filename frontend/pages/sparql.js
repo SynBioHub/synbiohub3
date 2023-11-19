@@ -11,6 +11,8 @@ import SearchHeader from '../components/Search/SearchHeader/SearchHeader';
 import TopLevel from '../components/TopLevel';
 import styles from '../styles/sparql.module.css';
 
+import axios from 'axios';
+
 const CodeMirror = dynamic(
   () => {
     import('codemirror/mode/sparql/sparql');
@@ -119,7 +121,7 @@ const submitQuery = async (
   )}`;
 
   const headers = {
-    'Content-Type': 'application/json',
+    // 'Content-Type': 'application/json',
     Accept: 'application/json'
   };
 
@@ -148,6 +150,9 @@ const submitQuery = async (
 };
 
 const processResults = results => {
+  // if (!results.results || !results.results.bindings) {
+  //   return [];
+  // }
   const headers = results.head.vars;
   return results.results.bindings.map(result => {
     const resultObject = {};

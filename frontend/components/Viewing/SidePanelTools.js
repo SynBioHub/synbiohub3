@@ -11,6 +11,7 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { useEffect, useState } from "react";
+import { useDispatch } from 'react-redux';
 import Link from 'next/link';
 
 import DeleteModal from "./Modals/DeleteModal";
@@ -35,6 +36,10 @@ import axios from 'axios';
  */
 export default function SidePanelTools(properties) {
   const [modal, setModal] = useState();
+
+  const handleDeletionComplete = () => {
+    dispatch(restoreBasket()); // Replace with your actual dispatch action
+  };
 
   /*
   const [curationAvailable, setCurationAvailable] = useState(false);
@@ -108,6 +113,7 @@ export default function SidePanelTools(properties) {
           <DeleteModal
             url={properties.url}
             setModal={setModal}
+            onDeletionComplete={handleDeletionComplete}
           />
         ) :
         modal === "Share" ?
