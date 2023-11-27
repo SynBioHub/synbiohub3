@@ -12,6 +12,7 @@ export default function AdditionalFilter(properties) {
   const [selectedPredicate, setSelectedPredicate] = useState();
   const [selectedValue, setSelectedValue] = useState();
   const [hidden, setHidden] = useState(false);
+  const [showResults, setShowResults] = useState(true);
 
   useEffect(() => {
     const newFilters = [...properties.extraFilters];
@@ -23,22 +24,26 @@ export default function AdditionalFilter(properties) {
   }, [selectedPredicate, selectedValue, properties.index]);
 
   if (hidden) return null;
-
+  console.log("properties", properties); 
+  console.log("selectedPredicate", selectedPredicate);//rdf
   return (
     <div className={styles.inputsection}>
-      <SelectLoader
-        result={properties.predicates}
-        placeholder="Select filter type..."
-        parseResult={result => {
-          return {
-            value: result.predicate.value,
-            label: shortName(result.predicate.value)
-          };
-        }}
-        onChange={option => {
-          setSelectedPredicate(option ? option.label : undefined);
-        }}
-      />
+      { showResults ? 
+            <SelectLoader
+            result={properties.predicates}
+            placeholder="Select filter type..."
+            parseResult={result => {
+              return {
+                value: result.predicate.value,
+                label: shortName(result.predicate.value)
+              };
+            }}
+            onChange={option => {
+              setSelectedPredicate(option ? option.label : undefined);
+            }}
+          />
+      : null }
+
       {selectedPredicate && (
         <SelectLoader
           sparql={configureQuery(searchObject, {
@@ -52,6 +57,7 @@ export default function AdditionalFilter(properties) {
           }}
           onChange={option => {
             setSelectedValue(option ? option.value : undefined);
+            setShowResults(false);
           }}
         />
       )}
