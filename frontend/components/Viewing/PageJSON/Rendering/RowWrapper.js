@@ -224,7 +224,7 @@ export default function RowWrapper({ sections, metadata, setSectionIcon }) {
       titleToValueMap.Location.value = sections.locationcut[0].value;
     } else if (section.key === 'LocationGeneric' && sections.locationrangestart[0].value === "") {
       titleToValueMap.Location.value = "GenericLocation";
-    } 
+    }
   }
 
   useEffect(() => {

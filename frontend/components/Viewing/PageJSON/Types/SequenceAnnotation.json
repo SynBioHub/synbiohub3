@@ -32,61 +32,49 @@
       ]
     },
     {
-      "title": "Locations",
+      "title": "Location",
       "rootPredicate": "sbol:location",
       "infoLink": "https://sbols.org/v2#Location",
       "icon": "faMapMarkerAlt",
       "sections": [
         {
-          "title": "Cut",
-          "stripAfter": "#",
+          "title": "Location",
           "predicates": [
-            "sbol:at"
           ],
-          "link": "$<locationCutLink>"
+          "link": "$<LocationLink>"
         },
         {
-          "title": "locationCutLink",
-          "predicates": [],
-          "hide": true
-        },
-        {
-          "title": "Range",
-          "infoLink": "https://sbols.org/v2#Location",
-          "text": "$<Start>, $<End>",
-          "predicates": [],
-          "link": "$<LocationRangeLink>"
-        },
-        {
-          "title": "Start",
+          "title": "LocationRangeStart",
           "predicates": [
-            "sbol:location",
             "sbol:start"
           ],
           "hide": true
         },
         {
-          "title": "End",
+          "title": "LocationRangeEnd",
           "predicates": [
-            "sbol:location",
             "sbol:end"
           ],
           "hide": true
         },
         {
-          "title": "LocationRangeLink",
+          "title": "LocationGeneric",
           "predicates": [
-            "sbol:location"
+            "sbol:GenericLocation"
           ],
           "hide": true
         },
         {
-          "title": "GenericLocation",
-          "stripAfter": "#",
+          "title": "LocationCut",
           "predicates": [
-            "sbol:GenericLocation"
+            "sbol:at"
           ],
-          "text": "generic"
+          "hide": true
+        },
+        {
+          "title": "LocationLink",
+          "predicates": [],
+          "hide": true
         }
       ]
     },
@@ -112,8 +100,7 @@
       ]
     }
   ],
-  "tables": [
-  ],
+  "tables": [],
   "pages": [
     "Details",
     "Other Properties",
