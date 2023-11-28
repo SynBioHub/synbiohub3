@@ -183,8 +183,6 @@ function getPagesInfo(type, json, plugins) {
 
   const order = JSON.parse(localStorage.getItem(type)).order
 
-  console.log(localStorage);
-
   const orderUpdated = order.filter(page => {
     if (page.startsWith('PLUGIN: ')) {
       for (let plugin of plugins.rendering) {

@@ -166,6 +166,22 @@
                     "hide": true
                 },
                 {
+                    "title": "LocationGeneric",
+                    "predicates": [
+                        "sbol:location",
+                        "sbol:GenericLocation"
+                    ],
+                    "hide": true
+                },
+                {
+                    "title": "LocationCut",
+                    "predicates": [
+                        "sbol:location",
+                        "sbol:at"
+                    ],
+                    "hide": true
+                },
+                {
                     "title": "LocationLink",
                     "predicates": [
                         "sbol:location"
