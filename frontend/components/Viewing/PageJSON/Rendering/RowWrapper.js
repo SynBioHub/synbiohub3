@@ -215,6 +215,14 @@ export default function RowWrapper({ sections, metadata, setSectionIcon }) {
     }
   }, [sectionsToParse, registries, registriesLoading, error]);
 
+  for (let section of sectionsToRender) {
+    if (section.key === 'LocationRangeStart') {
+      const startValue = sections.locationrangestart[0].value;
+      const endValue = sections.locationrangeend[0].value;
+      titleToValueMap.Location.value = "" + startValue + ", " + endValue;
+    }
+  }
+
   useEffect(() => {
     let sectionIcon = null;
     const toRender = sectionsToRender
@@ -226,6 +234,7 @@ export default function RowWrapper({ sections, metadata, setSectionIcon }) {
         );
       })
       .filter(section => !section.hidden);
+    console.log(toRender);
     const newContent = toRender.map(section => {
       if (section.tableIcon) {
         sectionIcon = section.tableIcon;
@@ -251,6 +260,6 @@ export default function RowWrapper({ sections, metadata, setSectionIcon }) {
         </td>
       </tr>
     );
-  }  
+  }
   return <tr>{content}</tr>;
 }

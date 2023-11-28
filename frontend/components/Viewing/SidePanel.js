@@ -8,7 +8,8 @@ import {
   faFileSignature,
   faIdBadge,
   faIdCard,
-  faCodeBranch
+  faCodeBranch,
+  faCalendarMinus
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -39,7 +40,9 @@ const { publicRuntimeConfig } = getConfig();
 export default function SidePanel({ metadata, type, json, uri, plugins }) {
   const [translation, setTranslation] = useState(0);
   const [processedUrl, setProcessedUrl] = useState({ original: uri });
-  const date = metadata.created.replace('T', ' ').replace('Z', '');
+  const dateCreated = metadata.created.replace('T', ' ').replace('Z', '');
+  const dateModified = metadata.modified.replace('T', ' ').replace('Z', '');
+  
   const token = useSelector(state => state.user.token);
   const dispatch = useDispatch();
 
@@ -111,22 +114,6 @@ export default function SidePanel({ metadata, type, json, uri, plugins }) {
           />
           <div className={styles.infocontainer}>
             <MetadataInfo
-              icon={faIdBadge}
-              label="Identity"
-              title={metadata.name}
-            />
-            <MetadataInfo
-              icon={faFileSignature}
-              label="Persistent Identity"
-              title={metadata.persistentIdentity}
-              link={metadata.persistentIdentity}
-            />
-            <MetadataInfo
-              icon={faIdCard}
-              label="Display ID"
-              title={metadata.displayId}
-            />
-            <MetadataInfo
               icon={faCodeBranch}
               label="Version"
               title={metadata.version}
@@ -151,12 +138,21 @@ export default function SidePanel({ metadata, type, json, uri, plugins }) {
             />
             <MetadataInfo
               icon={faCalendarPlus}
-              label="Created"
-              title={date}
-              link={`/search/createdBefore=${date.substring(
+              label="Date Created"
+              title={dateCreated}
+              link={`/search/createdBefore=${dateCreated.substring(
                 0,
-                date.lastIndexOf('-') + 3
-              )}&createdAfter=${date.substring(0, date.lastIndexOf('-') + 3)}&`}
+                dateCreated.lastIndexOf('-') + 3
+              )}&createdAfter=${dateCreated.substring(0, dateCreated.lastIndexOf('-') + 3)}&`}
+            />
+            <MetadataInfo
+              icon={faCalendarMinus}
+              label="Date Modified"
+              title={dateModified}
+              link={`/search/modifiedBefore=${dateModified.substring(
+                0,
+                dateModified.lastIndexOf('-') + 3
+              )}&modifiedAfter=${dateModified.substring(0, dateModified.lastIndexOf('-') + 3)}&`}
             />
             {/* <MetadataInfo
               icon={faRunning}
@@ -186,6 +182,8 @@ function getPagesInfo(type, json, plugins) {
   }
 
   const order = JSON.parse(localStorage.getItem(type)).order
+
+  console.log(localStorage);
 
   const orderUpdated = order.filter(page => {
     if (page.startsWith('PLUGIN: ')) {
