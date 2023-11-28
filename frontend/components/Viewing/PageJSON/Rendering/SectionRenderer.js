@@ -9,6 +9,7 @@ import axios from 'axios';
 import { useEffect } from 'react';
 import { useState } from 'react';
 import { addError } from '../../../../redux/actions';
+import sequenceOntology from '../../../../namespace/sequence-ontology';
 const { publicRuntimeConfig } = getConfig();
 
 import { processUrl } from '../../../Admin/Registries';
@@ -79,7 +80,18 @@ export default function SectionRenderer({ section, metadata }) {
         }
       })
     }
-
+    if(/SO:\s*(\d{7})/.test(section.text))
+    {
+      for (let key in sequenceOntology) {
+        if (section.text === key) {
+            section.text = sequenceOntology[key].name;
+            break;
+        }
+    }
+    
+    
+  }
+    
     if (section.grouped) {
       const items = section.text.split(', ');
       const content = items.map((item, index) => {
