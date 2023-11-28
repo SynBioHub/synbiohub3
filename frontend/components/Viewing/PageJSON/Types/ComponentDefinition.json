@@ -143,57 +143,50 @@
                 {
                     "title": "Location",
                     "predicates": [
+                        "sbol:location"
                     ],
                     "infoLink": "https://sbols.org/v2#Location",
                     "icon": "faMapMarkerAlt",
-                    "sections": [
-                        {
-                            "title": "Cut",
-                            "stripAfter": "#",
-                            "predicates": [
-                                "sbol:at"
-                            ],
-                            "link": "$<locationCutLink>"
-                        },
-                        {
-                            "title": "locationCutLink",
-                            "predicates": [],
-                            "hide": true
-                        },
-                        {
-                            "title": "Range",
-                            "infoLink": "https://sbols.org/v2#Location",
-                            "text": "$<Start>, $<End>",
-                            "predicates": [],
-                            "link": "$<LocationRangeLink>"
-                        },
-                        {
-                            "title": "Start",
-                            "predicates": [
-                                "sbol:start"
-                            ],
-                            "hide": true
-                        },
-                        {
-                            "title": "End",
-                            "predicates": [
-                                "sbol:end"
-                            ],
-                            "hide": true
-                        },
-                        {
-                            "title": "LocationRangeLink",
-                            "predicates": [
-                            ],
-                            "hide": true
-                        },
-                        {
-                            "title": "GenericLocation",
-                            "stripAfter": "#",
-                            "predicates": [],
-                            "text": "generic"
-                        }
-                    ]
+                    "link": "$<LocationLink>"
+                },
+                {
+                    "title": "LocationRangeStart",
+                    "predicates": [
+                        "sbol:location",
+                        "sbol:start"
+                    ],
+                    "hide": true
+                },
+                {
+                    "title": "LocationRangeEnd",
+                    "predicates": [
+                        "sbol:location",
+                        "sbol:end"
+                    ],
+                    "hide": true
+                },
+                {
+                    "title": "LocationGeneric",
+                    "predicates": [
+                        "sbol:location",
+                        "sbol:GenericLocation"
+                    ],
+                    "hide": true
+                },
+                {
+                    "title": "LocationCut",
+                    "predicates": [
+                        "sbol:location",
+                        "sbol:at"
+                    ],
+                    "hide": true
+                },
+                {
+                    "title": "LocationLink",
+                    "predicates": [
+                        "sbol:location"
+                    ],
+                    "hide": true
                 },
                 {
                     "title": "Component",

@@ -15,6 +15,7 @@ SELECT DISTINCT
        ?uploadedBy
        ?creator
        ?created
+       ?modified
        ?wasDerivedFrom
        ?wasGeneratedBy
 WHERE { 
@@ -26,6 +27,7 @@ WHERE {
       OPTIONAL { <$uri> dcterms:description ?description . }
       OPTIONAL { <$uri> dc:creator ?creator . }
       OPTIONAL { <$uri> dcterms:created ?created . }
+      OPTIONAL { <$uri> dcterms:modified ?modified . }
       OPTIONAL { <$uri> synbiohub:uploadedBy ?uploadedBy . }
       OPTIONAL { <$uri> prov:wasDerivedFrom ?wasDerivedFrom . }
       OPTIONAL { <$uri> prov:wasGeneratedBy ?wasGeneratedBy . }

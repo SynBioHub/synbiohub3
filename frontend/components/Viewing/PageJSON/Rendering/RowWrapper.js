@@ -215,6 +215,18 @@ export default function RowWrapper({ sections, metadata, setSectionIcon }) {
     }
   }, [sectionsToParse, registries, registriesLoading, error]);
 
+  for (let section of sectionsToRender) {
+    if (section.key === 'LocationRangeStart' && sections.locationrangestart[0].value != "") {
+      const startValue = sections.locationrangestart[0].value;
+      const endValue = sections.locationrangeend[0].value;
+      titleToValueMap.Location.value = "" + startValue + ", " + endValue;
+    } else if (section.key === 'LocationCut' && sections.locationcut[0].value != "") {
+      titleToValueMap.Location.value = sections.locationcut[0].value;
+    } else if (section.key === 'LocationGeneric' && sections.locationrangestart[0].value === "") {
+      titleToValueMap.Location.value = "GenericLocation";
+    }
+  }
+
   useEffect(() => {
     let sectionIcon = null;
     const toRender = sectionsToRender
@@ -251,6 +263,6 @@ export default function RowWrapper({ sections, metadata, setSectionIcon }) {
         </td>
       </tr>
     );
-  }  
+  }
   return <tr>{content}</tr>;
 }

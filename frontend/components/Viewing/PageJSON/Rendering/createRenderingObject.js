@@ -19,7 +19,6 @@ export default function createRenderingObject(column, value, titleToValueMap) {
     text = formatSequence(text);
   }
 
-
   const link = column.link ? loadText(column.link, titleToValueMap) : undefined;
   const linkType = column.linkType || 'default';
   const infoLink = column.infoLink
