@@ -10,9 +10,12 @@ import { useEffect } from 'react';
 import { useState } from 'react';
 import { addError } from '../../../../redux/actions';
 import sequenceOntology from '../../../../namespace/sequence-ontology';
+import systemsBiologyOntology from '../../../../namespace/systems-biology-ontology';
+import edamOntology from '../../../../namespace/edam-ontology';
 const { publicRuntimeConfig } = getConfig();
 
 import { processUrl } from '../../../Admin/Registries';
+import edam from '../../../../namespace/edam-ontology';
 
 function loadText(template, args) {
   for (const key of Object.keys(args)) {
@@ -80,18 +83,32 @@ export default function SectionRenderer({ section, metadata }) {
         }
       })
     }
-    if(/SO:\s*(\d{7})/.test(section.text))
-    {
+    if (/SO:\s*(\d{7})/.test(section.text)) {
       for (let key in sequenceOntology) {
         if (section.text === key) {
-            section.text = sequenceOntology[key].name;
-            break;
+          section.text = sequenceOntology[key].name;
+          break;
         }
+      }
     }
-    
-    
-  }
-    
+    if (/SBO:\s*(\d{7})/.test(section.text)) {
+      for (let key in systemsBiologyOntology) {
+        if (section.text === key) {
+          section.text = systemsBiologyOntology[key].name;
+          break;
+        }
+      }
+    }
+    const edamRegex = /http:\/\/edamontology\.org\/format_\d{4}/;
+    const match = section.text.match(edamRegex);
+
+    if (match) {
+      const url = match[0]; // The matched URL
+      if (edamOntology.hasOwnProperty(url)) {
+        section.text = edamOntology[url];
+      }
+    }
+
     if (section.grouped) {
       const items = section.text.split(', ');
       const content = items.map((item, index) => {
