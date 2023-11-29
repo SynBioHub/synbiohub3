@@ -9,8 +9,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimesCircle } from '@fortawesome/free-solid-svg-icons';
 
 export default function AdditionalFilter(properties) {
-  const [selectedPredicate, setSelectedPredicate] = useState();
-  const [selectedValue, setSelectedValue] = useState();
+  const [selectedPredicate, setSelectedPredicate] = useState("");
+  const [selectedValue, setSelectedValue] = useState("");
   const [hidden, setHidden] = useState(false);
   const [showResults, setShowResults] = useState(true);
 
@@ -18,20 +18,21 @@ export default function AdditionalFilter(properties) {
     const newFilters = [...properties.extraFilters];
     newFilters[properties.index] = {
       filter: selectedPredicate,
-      value: selectedPredicate ? selectedValue : undefined
+      value: selectedPredicate ? selectedValue : ""
     };
     properties.setExtraFilters(newFilters);
   }, [selectedPredicate, selectedValue, properties.index]);
 
   if (hidden) return null;
-  console.log("properties", properties); 
-  console.log("selectedPredicate", selectedPredicate);//rdf
+  // console.log("AdditionalFilter_predicates", properties.predicates);
+  // console.log("AdditionalFilter_selectedValue", selectedValue);
+  console.log("filter: ", properties.extraFilters[0].filter);
+  console.log("index", properties.index);
   return (
     <div className={styles.inputsection}>
-      { showResults ? 
-            <SelectLoader
+      {showResults && (<SelectLoader
             result={properties.predicates}
-            placeholder="Select filter type..."
+            placeholder={selectedValue}//"Select filter type..."
             parseResult={result => {
               return {
                 value: result.predicate.value,
@@ -39,13 +40,18 @@ export default function AdditionalFilter(properties) {
               };
             }}
             onChange={option => {
-              setSelectedPredicate(option ? option.label : undefined);
+              setSelectedPredicate(option ? option.label : "");//undefined
             }}
-          />
-      : null }
-
+          />)}
+      
+      {!showResults && 
+        <div className={styles.labelsection}>
+          <span>{properties.extraFilters[properties.index].filter}</span>
+        </div>}
+      
       {selectedPredicate && (
         <SelectLoader
+          placeholder={selectedValue}
           sparql={configureQuery(searchObject, {
             predicate: selectedPredicate
           })}
