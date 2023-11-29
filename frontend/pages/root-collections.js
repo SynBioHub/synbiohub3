@@ -14,23 +14,69 @@ const { publicRuntimeConfig } = getConfig();
 /**
  * This page renders the default search for the /search url
  */
-export default function RootCollections({ data, error }) {
+export default function RootCollections() {
   const dispatch = useDispatch();
-  if (error) {
-    dispatch(addError(error));
-  }
+  const [data, setData] = useState(null);
+  const [error, setError] = useState(null);
   const [query, setQuery] = useState('');
-  const [filteredData, setFilteredData] = useState(data);
+  const [filteredData, setFilteredData] = useState([]);
+  const token = useSelector(state => state.user.token);
 
   useEffect(() => {
-    const newFilteredData = data.filter(result => {
-      for (const key of Object.keys(result))
-        if (result[key].toString().toLowerCase().includes(query.toLowerCase()))
-          return true;
-      return false;
-    });
-    setFilteredData(newFilteredData);
+    const fetchData = async () => {
+      try {
+        const url = `${publicRuntimeConfig.backend}/rootCollections`;
+        const headers = {
+          Accept: 'text/plain; charset=UTF-8',
+          'X-authorization': token
+        };
+
+        const response = await axios.get(url, { headers });
+
+        if (!response || !response.data) {
+          throw new Error("Failed to retrieve data from server");
+        }
+
+        setData(response.data);
+        setFilteredData(response.data); // Set initial filtered data
+      } catch (err) {
+        console.error('Error:', err.message);
+        setError({
+          customMessage: 'Request and/or processing failed for GET /rootCollections',
+          fullUrl: `${publicRuntimeConfig.backendSS}/rootCollections`,
+          message: err.message,
+          name: 'Client side error',
+          stack: err.stack
+        });
+        dispatch(addError(err)); // Dispatch the error
+      }
+    };
+
+    fetchData();
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (data) {
+      const newFilteredData = data.filter(result => {
+        for (const key of Object.keys(result))
+          if (result[key].toString().toLowerCase().includes(query.toLowerCase()))
+            return true;
+        return false;
+      });
+      setFilteredData(newFilteredData);
+    }
   }, [data, query]);
+
+  if (error) {
+    // Render error message or handle error as needed
+    return <div>Error: {error.message}</div>;
+  }
+
+  if (!data) {
+    // Render loading state
+    return <div>Loading...</div>;
+  }
+
   return (
     <TopLevel
       doNotTrack={true}
@@ -58,40 +104,5 @@ export default function RootCollections({ data, error }) {
       </div>
     </TopLevel>
   );
-}
-
-// eslint-disable-next-line unicorn/prevent-abbreviations
-export async function getServerSideProps() {
-  try {
-    const url = `${publicRuntimeConfig.backendSS}/rootCollections`;
-    const headers = {
-      Accept: 'text/plain; charset=UTF-8'
-    };
-
-    const response = await axios.get(url, { headers });
-
-    if (!response || !response.data) {
-      throw new Error("Failed to retrieve data from server");
-    }
-
-    const data = await response.data;
-
-    return { props: { data } };
-
-  } catch (error) {
-    console.error('Error:', error.message);
-    return {
-      props: {
-        error: {
-          customMessage: 'Request and/or processing failed for GET /rootCollections',
-          fullUrl: `${publicRuntimeConfig.backendSS}/rootCollections`,
-          message: error.message,
-          name: 'Server side error',
-          stack: error.stack
-        },
-        data: []
-      }
-    };
-  }
 }
 

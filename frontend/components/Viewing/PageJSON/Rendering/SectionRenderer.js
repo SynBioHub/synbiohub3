@@ -31,6 +31,7 @@ export default function SectionRenderer({ section, metadata }) {
   const [data, setData] = useState(null);
   const [processedLink, setProcessedLink] = useState(null);
   const token = useSelector(state => state.user.token);
+  console.log(token);
 
   useEffect(() => {
     let isMounted = true;
