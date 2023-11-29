@@ -99,13 +99,11 @@ export default function SectionRenderer({ section, metadata }) {
         }
       }
     }
-    const edamRegex = /http:\/\/edamontology\.org\/format_\d{4}/;
-    const match = section.text.match(edamRegex);
-
-    if (match) {
-      const url = match[0]; // The matched URL
-      if (edamOntology.hasOwnProperty(url)) {
-        section.text = edamOntology[url];
+    if (/http:\/\/edamontology\.org\/format_\d{4}/.test(section.text)) {
+      for (let key in edamOntology) {
+        if (section.text === key) {
+          section.text = edamOntology[key];
+        }
       }
     }
 
