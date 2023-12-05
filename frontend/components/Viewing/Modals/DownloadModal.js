@@ -20,6 +20,8 @@ import axios from "axios";
  * @param {Any} properties Information passed in from the parent component.
  */
 export default function DownloadModal(properties) {
+
+  console.log(properties);
   const [selectedOption, setSelectedOption] = useState();
   const [submitted, setSubmitted] = useState(false);
   const [submittable, setSubmittable] = useState(false);
@@ -83,13 +85,13 @@ export default function DownloadModal(properties) {
       { value: "omex", label: "Download COMBINE Archive" }
     ];
 
-    if (properties.type === "Component") {
+    if (properties.type === "ComponentDefinition") {
       selectOptions.push({ value: "gb", label: "Download GenBank" });
       selectOptions.push({ value: "gff", label: "Download GFF3" });
     }
 
-    if (properties.type === "Sequence") selectOptions.push({ value: "fasta", label: "Download FASTA" });
-    if (properties.type === "Module") selectOptions.push({ value: "image", label: "Download Image" });
+    if (properties.type === "Sequence" || properties.type === "ComponentDefinition") selectOptions.push({ value: "fasta", label: "Download FASTA" });
+    if (properties.type === "Module" || properties.type === "ComponentDefinition") selectOptions.push({ value: "image", label: "Download Image" });
     if (properties.type === "Attachment") selectOptions.push({ value: "download", label: "Download Attachment" });
 
     

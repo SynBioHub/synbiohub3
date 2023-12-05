@@ -2,6 +2,8 @@ import styles from "../../../../styles/view.module.css";
 import { faBold, faGlobeAmericas, faImage, faItalic, faUnderline } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
+import axios from "axios";
+
 const { publicRuntimeConfig } = getConfig();
 import getConfig from "next/config";
 
@@ -48,7 +50,9 @@ export default function EditSection(properties) {
 
     try {
       response = await axios.post(url, parameters, { headers });
+      console.log(response);
     } catch (error) {
+      console.log(error);
       if (error.response) {
         console.error('Error:', error.message);
       }

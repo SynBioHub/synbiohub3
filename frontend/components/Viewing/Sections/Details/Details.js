@@ -70,6 +70,8 @@ export default function Details(properties) {
     }
   }, [details]);
 
+  console.log(details);
+
   if (!details) return <Loading />;
 
   /**
