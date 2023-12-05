@@ -41,36 +41,6 @@
             "hide": true
           }
         ]
-      },
-      {
-        "title": "Source",
-        "icon": "faStar",
-        "rootPredicate": "prov:wasDerivedFrom",
-        "sections": [
-          {
-            "title": "name",
-            "predicates": ["dcterms:title"],
-            "link": "$<link>",
-            "stripAfter": "/"
-          },
-          {
-            "title": "name",
-            "predicates": ["sbol:displayId"],
-            "link": "$<link>",
-            "stripAfter": "/"
-          },
-          {
-            "title": "name",
-            "predicates": [],
-            "link": "$<link>",
-            "stripAfter": "/"
-          },
-          {
-            "title": "link",
-            "predicates": [],
-            "hide": true
-          }
-        ]
       }
    ],
    "tables": [],

@@ -16,6 +16,8 @@ const { publicRuntimeConfig } = getConfig();
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+import axios from "axios";
+
 /**
  * A modal that allows the current collection to be added a private collection.
  * 
