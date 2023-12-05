@@ -17,9 +17,13 @@ export default function ResultTable(properties) {
   const [selectAll, setSelectAll] = useState(false);
   const [buttonClass, setButtonClass] = useState(styles.disabled);
 
+  console.log(selectAll);
+
   useEffect(() => {
     let allSelected = true;
     let oneSelected = false;
+
+    console.log(selected);
 
     for (const checked of selected.values()) {
       if (!checked) {
@@ -28,7 +32,10 @@ export default function ResultTable(properties) {
         oneSelected = true;
       }
     }
-    setSelectAll(allSelected);
+    if (selected.size > 0) {
+      setSelectAll(allSelected);
+    }
+
     if (oneSelected) {
       setButtonClass(styles.enabled);
     } else {

@@ -17,6 +17,8 @@ import getConfig from 'next/config';
 
 import { processUrl } from '../../../Admin/Registries';
 
+import axios from 'axios';
+
 /**
  * @param {Any} properties Information passed in from parent component.
  * @returns A section where the owner can upload attachments or lookup attachments.
