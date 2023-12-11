@@ -40,6 +40,7 @@ export default function Options(properties) {
         index={index}
         extraFilters={properties.extraFilters}
         setExtraFilters={properties.setExtraFilters}
+        handleDelete={properties.handleDelete}
       />
     );
   });
@@ -158,7 +159,7 @@ export default function Options(properties) {
         className={styles.newfilterbutton}
         role="button"
         onClick={() =>
-          properties.setExtraFilters(addFilter(properties.extraFilters))
+          properties.setExtraFilters(properties.addFilter(properties.extraFilters))
         }
       >
         <div className={styles.addfiltericon}>
@@ -170,15 +171,7 @@ export default function Options(properties) {
   );
 }
 
-const addFilter = filters => {
-  return [
-    ...filters,
-    {
-      filter: undefined,
-      value: undefined
-    }
-  ];
-};
+
 
 const loadPredicates = async (setPredicates, dispatch) => {
   const results = await fetchPredicates(dispatch);

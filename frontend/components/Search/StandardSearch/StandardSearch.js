@@ -88,6 +88,24 @@ export default function StandardSearch() {
     setUrl(url);
   };
 
+  const handleDelete = id => {
+    const newFilters = extraFilters.splice(id, 1);
+    setExtraFilters(newFilters);
+    console.log("deleted: ", id);
+    console.log("After delete: ", extraFilters);
+  };
+
+  const addFilter = filters => {
+    return [
+      ...filters,
+      {
+        filter: undefined,
+        value: undefined,
+        id: 0
+      }
+    ];
+  };
+
   const constructExtraFilters = () => {
     let url = '';
     for (const filter of extraFilters) {
@@ -133,7 +151,7 @@ export default function StandardSearch() {
     } else {
       setCount(newCount);
     }
-  }, [isCountLoading, isCountError, query]);
+  }, [isCountLoading, isCountError, query, extraFilters]);
 
   // get search results
   const { results, isLoading, isError } = useSearchResults(
@@ -221,6 +239,9 @@ if (isError) {
 
               extraFilters={extraFilters}
               setExtraFilters={setExtraFilters}
+
+              addFilter={addFilter}
+              handleDelete={handleDelete}
             />
             <div
               className={advStyles.searchbutton}
@@ -247,7 +268,6 @@ if (isError) {
   </div>
   );
 }
-
 const useSearchResults = (query, url, offset, limit, token, dispatch) => {
   query = url + query;
   const { data, error } = useSWR(
