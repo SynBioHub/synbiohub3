@@ -18,7 +18,8 @@ export default function AdditionalFilter(properties) {
     const newFilters = [...properties.extraFilters];
     newFilters[properties.index] = {
       filter: selectedPredicate,
-      value: selectedPredicate ? selectedValue : ""
+      value: selectedPredicate ? selectedValue : "",
+      id: properties.index
     };
     properties.setExtraFilters(newFilters);
   }, [selectedPredicate, selectedValue, properties.index]);
@@ -26,8 +27,6 @@ export default function AdditionalFilter(properties) {
   if (hidden) return null;
   // console.log("AdditionalFilter_predicates", properties.predicates);
   // console.log("AdditionalFilter_selectedValue", selectedValue);
-  console.log("filter: ", properties.extraFilters[0].filter);
-  console.log("index", properties.index);
   return (
     <div className={styles.inputsection}>
       {showResults && (<SelectLoader
@@ -74,12 +73,18 @@ export default function AdditionalFilter(properties) {
           cursor: 'pointer'
         }}
         onClick={() => {
-          const newFilters = [...properties.extraFilters];
-          newFilters[properties.index] = {
-            filter: selectedPredicate,
-            value: undefined
-          };
-          properties.setExtraFilters(newFilters);
+          // const newFilters = [...properties.extraFilters];
+          // newFilters[properties.index] = {
+          //   filter: selectedPredicate,
+          //   value: undefined
+          // };
+          //console.log("properties.extraFilters: ", properties.extraFilters);
+          //console.log("selectedPredicate: ", selectedPredicate)
+          //properties.extraFilters.map(extraFilter => console.log("map_index: ", extraFilter.id));
+          console.log("newFilters 0: ", properties.extraFilters);
+          properties.handleDelete(0);//properties.index
+          //const newFilters = properties.handelDet
+          console.log("newFilters 1: ", properties.extraFilters);
           setHidden(true);
         }}
       >
