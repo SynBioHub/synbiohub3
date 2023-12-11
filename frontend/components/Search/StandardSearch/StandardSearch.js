@@ -64,7 +64,8 @@ export default function StandardSearch() {
   const [translation, setTranslation] = useState(0);
 
   const router = useRouter();
-
+  console.log("collections: ", collections);
+  collections.map(collection => console.log(collection.label));
   const constructSearch = () => {
     let collectionUrls = '';
     for (const collection of collections) {
