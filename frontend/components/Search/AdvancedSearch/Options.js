@@ -120,14 +120,15 @@ export default function Options(properties) {
         </div>
         <SelectLoader
           sparql={getCollections}
-          placeholder="Select Collections..."
+          placeholder={properties.collections.map(collection => collection.label)}//"Select Collections..."
           isMulti={true}
           parseResult={result => {
             return !result.name
               ? { value: result.subject.value, label: result.displayId.value }
               : { value: result.subject.value, label: result.name.value };
           }}
-          onChange={collections => properties.setCollections(collections)}
+          onChange={collections => properties.setCollections(collections)
+          }
         />
       </div>
       <div className={styles.inputsection}>
