@@ -52,11 +52,12 @@ export default function Shell(properties) {
             displayId={metadata.displayId}
             description={metadata.description}
             type={metadata.type}
+            uri={metadata.persistentIdentity}
           />
           <div className={styles.sections}>
             <div>
               No structure defined for type "{properties.metadata.type}"
-            </div>     
+            </div>
           </div>
         </div>
         <div></div>
@@ -79,6 +80,7 @@ export default function Shell(properties) {
           displayId={metadata.displayId}
           description={metadata.description}
           type={metadata.type}
+          uri={`${metadata.persistentIdentity}/${metadata.version}`}
         />
         <div className={styles.sections}>
           <GenericContent json={json} uri={properties.uri} metadata={false} plugins={plugins} type={properties.type} />
@@ -87,4 +89,19 @@ export default function Shell(properties) {
       <div></div>
     </div>
   );
+}
+
+export function isUriOwner(uri, currentUserUsername) {
+  // Split the URI and check if the segment after the domain is '/user'
+  const parts = uri.split('/');
+  if (parts.length > 3 && parts[3] === 'user') {
+      // Call helper function to check if the next segment matches the current user's username
+      return isUserOwner(parts[4], currentUserUsername);
   }
+  return false;
+}
+
+function isUserOwner(uriUsername, currentUserUsername) {
+  // Compare the username part of the URI with the current user's username
+  return uriUsername === currentUserUsername;
+}
