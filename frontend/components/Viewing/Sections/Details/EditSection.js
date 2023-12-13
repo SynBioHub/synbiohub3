@@ -50,9 +50,7 @@ export default function EditSection(properties) {
 
     try {
       response = await axios.post(url, parameters, { headers });
-      console.log(response);
     } catch (error) {
-      console.log(error);
       if (error.response) {
         console.error('Error:', error.message);
       }
