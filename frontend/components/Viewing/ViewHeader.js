@@ -1,4 +1,4 @@
-import { faDatabase, faPencilAlt } from '@fortawesome/free-solid-svg-icons';
+import { faDatabase, faPencilAlt, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import styles from '../../styles/view.module.css';
@@ -49,14 +49,14 @@ export default function ViewHeader(properties) {
 
   const token = useSelector(state => state.user.token);
   const username = useSelector(state => state.user.username);
-  const objectUriEdit = `${publicRuntimeConfig.backend}/${objectUriParts}/edit`;
-  var isOwner = isUriOwner(objectUriEdit, username);
+  const objectUri = `${publicRuntimeConfig.backend}/${objectUriParts}`;
+  var isOwner = isUriOwner(objectUri, username);
 
   const saveDescription = () => {
     const editedText = descriptionRef.current.querySelector('.editable-description').value;
     const previousDescription = properties.description;
 
-    axios.post(`${objectUriEdit}/description`, {
+    axios.post(`${objectUri}/edit/description`, {
       previous: previousDescription,
       object: editedText
     }, {
@@ -73,6 +73,38 @@ export default function ViewHeader(properties) {
       .catch(error => {
         // Handle error here
         console.error('Error updating description:', error);
+      });
+  };
+
+  const confirmDeletion = () => {
+    // Show a confirmation dialog
+    const userConfirmed = window.confirm("Do you want to delete this description?");
+
+    if (userConfirmed) {
+      // User clicked "OK"
+      deleteDescription();
+    } else {
+      // User clicked "Cancel", do nothing
+    }
+  };
+
+  const deleteDescription = () => {
+    axios.post(`${objectUri}/remove/description`, {
+      object: properties.description
+    }, {
+      headers: {
+        "Accept": "text/plain; charset=UTF-8",
+        "X-authorization": token
+      }
+    })
+      .then(response => {
+        // Handle response here
+        // Refresh the page after successful update
+        window.location.reload();
+      })
+      .catch(error => {
+        // Handle error here
+        console.error('Error removing description:', error);
       });
   };
 
@@ -98,26 +130,45 @@ export default function ViewHeader(properties) {
           </a>
         </Link>
       </div>
-      <div ref={descriptionRef} className={styles.description} title="Find all records with terms in common with this description">
+      <div ref={descriptionRef} className={styles.description}
+      title={properties.description.length > 0 ? "Find all records with terms in common with this description" : ""}>
         <div
           style={{ display: 'flex', alignItems: 'center' }}
-          onClick={() => window.open(`/search/?q=${properties.description}`, '_blank')}
+          onClick={() => {
+            if (properties.description.length > 0) {
+              window.open(`/search/?q=${properties.description}`, '_blank');
+            }
+          }}
         >
           <span style={{ marginRight: '10px' }}>{properties.description}</span>
           {isOwner && (
-            <FontAwesomeIcon
-              icon={faPencilAlt}
-              size="1x"
-              className={styles.pencilicon}
-              onClick={(e) => {
-                e.stopPropagation();
-                makeEditable(properties.description);
-              }}
-            />
+            <>
+              <FontAwesomeIcon
+                icon={faPencilAlt}
+                size="1x"
+                className={styles.pencilicon}
+                title="Add/Edit description"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  makeEditable(properties.description);
+                }}
+              />
+              {properties.description.length > 0 && (
+                <FontAwesomeIcon
+                  icon={faTrash}
+                  size="1x"
+                  className={styles.deleteIcon}
+                  title="Remove description" // Tooltip text for the trashcan icon
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    confirmDeletion();
+                  }}
+                />
+              )}
+            </>
           )}
         </div>
       </div>
-
     </div>
   );
 }
