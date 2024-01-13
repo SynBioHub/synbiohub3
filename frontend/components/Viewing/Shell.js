@@ -16,10 +16,11 @@ import MasterJSON from './PageJSON/MasterJSON';
 // import { useDispatch } from 'react-redux';
 
 export default function Shell(properties) {
+  console.log(properties);
   const plugins = properties.plugins;
   const metadata = properties.metadata;
 
-  const json = MasterJSON[properties.metadata.type];
+  const json = MasterJSON[properties.metadata.types];
 
   // const [content, setContent] = useState();
 
@@ -51,12 +52,12 @@ export default function Shell(properties) {
             name={metadata.name}
             displayId={metadata.displayId}
             description={metadata.description}
-            type={metadata.type}
+            type={metadata.types}
             uri={metadata.persistentIdentity}
           />
           <div className={styles.sections}>
             <div>
-              No structure defined for type "{properties.metadata.type}"
+              No structure defined for type "{properties.metadata.types}"
             </div>
           </div>
         </div>
@@ -79,7 +80,7 @@ export default function Shell(properties) {
           name={metadata.name}
           displayId={metadata.displayId}
           description={metadata.description}
-          type={metadata.type}
+          type={metadata.types}
           uri={`${metadata.persistentIdentity}/${metadata.version}`}
         />
         <div className={styles.sections}>

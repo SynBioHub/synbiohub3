@@ -11,13 +11,13 @@ SELECT DISTINCT
        ?version
        ?name
        ?description
-       ?type
-       ?uploadedBy
-       ?creator
-       ?created
-       ?modified
-       ?wasDerivedFrom
-       ?wasGeneratedBy
+       (GROUP_CONCAT(DISTINCT ?type; separator=", ") AS ?types)
+       (GROUP_CONCAT(DISTINCT ?uploadedBy; separator=", ") AS ?uploadedBys)
+       (GROUP_CONCAT(DISTINCT ?creator; separator=", ") AS ?creators)
+       (GROUP_CONCAT(DISTINCT ?created; separator=", ") AS ?createdDates)
+       (GROUP_CONCAT(DISTINCT ?modified; separator=", ") AS ?modifiedDates)
+       (GROUP_CONCAT(DISTINCT ?wasDerivedFrom; separator=", ") AS ?wasDerivedFroms)
+       (GROUP_CONCAT(DISTINCT ?wasGeneratedBy; separator=", ") AS ?wasGeneratedBys)
 WHERE { 
       <$uri> a ?type .
       OPTIONAL { <$uri> sbol2:persistentIdentity ?persistentIdentity . }
@@ -31,6 +31,7 @@ WHERE {
       OPTIONAL { <$uri> synbiohub:uploadedBy ?uploadedBy . }
       OPTIONAL { <$uri> prov:wasDerivedFrom ?wasDerivedFrom . }
       OPTIONAL { <$uri> prov:wasGeneratedBy ?wasGeneratedBy . }
-}`;
+}
+GROUP BY ?persistentIdentity ?displayId ?version ?name ?description`;
 
 export default query;

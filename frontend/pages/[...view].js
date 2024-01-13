@@ -32,6 +32,8 @@ export default function View({ data, error }) {
       );
   }, [metadata, token]);
 
+  console.log(metadata);
+
   // validate part
   if (!url || !metadata)
     return (
@@ -51,7 +53,7 @@ export default function View({ data, error }) {
       <Shell
         plugins={data}
         metadata={metadata[0]}
-        type={getType(metadata[0].type)}
+        type={getType(metadata[0].types)}
         uri={uri}
       />
     </TopLevel>
@@ -93,5 +95,8 @@ export async function getServerSideProps() {
 }
 
 const getType = type => {
-  return type.replace('http://sbols.org/v2#', '');
+  if (type) {
+    return type.replace('http://sbols.org/v2#', '');
+  }
+  return type;
 };

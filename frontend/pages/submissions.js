@@ -130,7 +130,11 @@ const options = [
 ];
 
 const compareStrings = (string1, string2) => {
-  return (string1.toLowerCase() > string2.toLowerCase() && 1) || -1;
+  if (string1 && string2) {
+    return (string1.toLowerCase() > string2.toLowerCase() && 1) || -1;
+  }
+  return -1;
+
 };
 
 const sortMethods = {
