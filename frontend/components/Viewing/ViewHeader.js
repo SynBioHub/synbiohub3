@@ -16,6 +16,7 @@ import getConfig from "next/config";
 const { publicRuntimeConfig } = getConfig();
 
 export default function ViewHeader(properties) {
+  console.log(properties);
   var displayTitle = properties.type;
   if (properties.type.includes('#')) {
     displayTitle = properties.type.split('#')[1];
@@ -38,12 +39,6 @@ export default function ViewHeader(properties) {
       saveButton.addEventListener('click', () => saveDescription());
     }
   };
-
-  function getAfterThirdSlash(uri) {
-    const parts = uri.split('/');
-    const afterThirdSlashParts = parts.slice(3);
-    return afterThirdSlashParts.join('/');
-  }
 
   const objectUriParts = getAfterThirdSlash(properties.uri);
 
@@ -173,4 +168,9 @@ export default function ViewHeader(properties) {
   );
 }
 
+export function getAfterThirdSlash(uri) {
+  const parts = uri.split('/');
+  const afterThirdSlashParts = parts.slice(3);
+  return afterThirdSlashParts.join('/');
+}
 

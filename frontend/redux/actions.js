@@ -633,7 +633,7 @@ async function uploadFiles(
       }
     }
 
-    if (response.status === 200) {
+    if (response && response.status === 200) {
       filesUploading[fileIndex].status = 'successful';
 
       var convertedFiles = getState().submit.convertedFiles
