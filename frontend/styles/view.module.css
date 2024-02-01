@@ -1085,5 +1085,13 @@
   margin-right: 0.3rem;
 }
 
+.titleContainer {
+  display: flex;
+  align-items: center; /* Aligns items vertically in the center */
+}
+
+.editIcon {
+  margin-left: 5px; /* Adds a bit of space between the title and the icon */
+}
 
 

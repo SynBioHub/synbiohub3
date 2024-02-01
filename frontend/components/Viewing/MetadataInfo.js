@@ -178,7 +178,8 @@ export default function MetadataInfo({ title, link, label, icon, specific, uri }
         <tbody>
           {sources.map((source, index) => {
             let processedSource = source;
-            if (source.match(urlRegex)) {
+            console.log(typeof (source));
+            if (typeof (source) === 'string' && source.match(urlRegex)) {
               processedSource = getAfterThirdSlash(source);
             }
             return (
@@ -198,7 +199,7 @@ export default function MetadataInfo({ title, link, label, icon, specific, uri }
                   ) : (
                     // Display mode
                     <a
-                      href={source.match(urlRegex) ? source : `http://localhost:3333/${processedSource}`}
+                      href={typeof source === 'string' && source.match(urlRegex) ? source : `http://localhost:3333/${processedSource}`}
                       target="_blank"
                       rel="noopener noreferrer"
                     >
@@ -207,18 +208,18 @@ export default function MetadataInfo({ title, link, label, icon, specific, uri }
                   )}
                 </td>
                 {label === "Source" && source && (
-                <td>
-                  {editSourceIndex === index ? null : (
-                    <div>
-                      <button onClick={() => handleEditSource(index, source)}>
-                        <FontAwesomeIcon icon={faPencilAlt} />
-                      </button>
-                      <button onClick={(e) => handleDeleteSource(e, source)}>
-                        <FontAwesomeIcon icon={faTrash} />
-                      </button>
-                    </div>
-                  )}
-                </td>
+                  <td>
+                    {editSourceIndex === index ? null : (
+                      <div>
+                        <button onClick={() => handleEditSource(index, source)}>
+                          <FontAwesomeIcon icon={faPencilAlt} />
+                        </button>
+                        <button onClick={(e) => handleDeleteSource(e, source)}>
+                          <FontAwesomeIcon icon={faTrash} />
+                        </button>
+                      </div>
+                    )}
+                  </td>
                 )}
               </tr>
             );
