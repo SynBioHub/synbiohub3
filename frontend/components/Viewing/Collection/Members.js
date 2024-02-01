@@ -21,6 +21,10 @@ import lookupRole from '../../../namespace/lookupRole';
 import Link from 'next/link';
 import { addError } from '../../../redux/actions';
 import { processUrl } from '../../Admin/Registries';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrash, faUnlink } from '@fortawesome/free-solid-svg-icons';
+import { getAfterThirdSlash } from '../ViewHeader';
+import Status, { useStatus } from '../../Admin/Status';
 
 /* eslint sonarjs/cognitive-complexity: "off" */
 
@@ -77,25 +81,32 @@ export default function Members(properties) {
     limit: ' LIMIT 10000 '
   };
 
+  const { adminStatus, loading, error } = useStatus(token, dispatch);
+
   if (token) {
     parameters.graphs = privateGraph
+  } else {
   }
 
   const searchQuery = preparedSearch || typeFilter !== 'Show Only Root Objects';
 
   let query = searchQuery ? getCollectionMembersSearch : getCollectionMembers;
 
-  const { members, mutate } = useMembers(query, parameters, token, dispatch);
+  const { members, mutate } = privateGraph
+    ? useMembers(query, parameters, token, dispatch)
+    : useMembers(query, parameters, dispatch);
+
   const { count: totalMemberCount } = useCount(
     CountMembersTotal,
     { ...parameters, search: '' },
-    token,
+    privateGraph ? token : undefined, // Pass token only if privateGraph is true
     dispatch
   );
+
   const { count: currentMemberCount } = useCount(
     searchQuery ? CountMembersTotal : CountMembers,
     parameters,
-    token,
+    privateGraph ? token : undefined, // Pass token only if privateGraph is true
     dispatch
   );
 
@@ -137,6 +148,7 @@ export default function Members(properties) {
         setSort={setSort}
         defaultSortOption={defaultSortOption}
         setDefaultSortOption={setDefaultSortOption}
+        uri={properties.uri}
       />
     </React.Fragment>
   );
@@ -264,7 +276,7 @@ function MemberTable(properties) {
       customSearch={properties.customSearch}
       hideFilter={true}
       searchable={[]}
-      headers={['Name', 'Identifier', 'Type', 'Description']}
+      headers={['Name', 'Identifier', 'Type', 'Description', 'Remove']}
       sortOptions={sortOptions}
       sortMethods={sortMethods}
       defaultSortOption={properties.defaultSortOption}
@@ -279,6 +291,55 @@ function MemberTable(properties) {
         } else {
           textArea.innerHTML = member.displayId;
         }
+
+        const objectUriParts = getAfterThirdSlash(properties.uri);
+        const objectUri = `${publicRuntimeConfig.backend}/${objectUriParts}`;
+
+        const icon = compareUri(member.uri, `/${objectUriParts}`);
+
+        const handleIconClick = (member) => {
+          if (icon && icon === faTrash) {
+            handleDelete(member);
+          } else if (icon && icon === faUnlink) {
+            handleUnlink(member);
+          }
+        };
+
+        const handleDelete = (member) => {
+          if (member.uri && window.confirm("Would you like to remove this item from the collection?")) {
+            axios.get(`${publicRuntimeConfig.backend}${member.uri}/remove`, {
+              headers: {
+                "Accept": "text/plain; charset=UTF-8",
+                "X-authorization": token
+              }
+            })
+              .then(response => {
+                window.location.reload();
+              })
+              .catch(error => {
+                console.error('Error removing item:', error);
+              });
+          }
+        };
+
+        const handleUnlink = (member) => {
+          if (member.uri && window.confirm("Would you like to unlink this item from the collection?")) {
+            axios.post(`${objectUri}/removeMembership`, {
+              "member": `${publicRuntimeConfig.backend}${member.uri}`
+            }, {
+              headers: {
+                "Accept": "text/plain; charset=UTF-8",
+                "X-authorization": token
+              }
+            })
+              .then(response => {
+                window.location.reload();
+              })
+              .catch(error => {
+                console.error('Error removing item:', error);
+              });
+          }
+        };
 
         return (
           <tr key={member.displayId + member.description}>
@@ -296,9 +357,13 @@ function MemberTable(properties) {
             </td>
             <td>{getType(member)}</td>
             <td>{member.description}</td>
+            <td onClick={() => handleIconClick(member)}>
+              <FontAwesomeIcon icon={icon} />
+            </td>
           </tr>
         );
       }}
+
     />
   );
 }
@@ -317,6 +382,26 @@ function getType(member) {
   // else if (memberType === 'ModuleDefinition') memberType = 'Module';
 
   return memberType;
+}
+
+function compareUri(memberUri, baseUri) {
+  const userUriPrefix = '/user/';
+  const publicUriPrefix = '/public/';
+
+  if (memberUri.startsWith(userUriPrefix)) {
+    // Check if member.uri matches properties.uri for the first 3 slashes
+    const matchUri = baseUri.split('/').slice(0, 4).join('/');
+    if (memberUri.startsWith(matchUri)) {
+      return faTrash;
+    }
+  } else if (memberUri.startsWith(publicUriPrefix)) {
+    // Check if member.uri matches properties.uri for the first 2 slashes
+    const matchUri = baseUri.split('/').slice(0, 3).join('/');
+    if (memberUri.startsWith(matchUri)) {
+      return faTrash;
+    }
+  }
+  return faUnlink;
 }
 
 const createUrl = (query, options) => {
@@ -378,10 +463,10 @@ const fetcher = (url, token, dispatch) =>
         // Check if the user is logged in by looking for 'userToken' in local storage
         if (!localStorage.getItem('userToken')) {
           // User is not logged in, redirect to the login page
-          window.location.href = '/login';
+          // window.location.href = '/login';
         }
       }
-      
+
       // Dispatch the error regardless of whether the user is logged in
       dispatch(addError(error));
     });

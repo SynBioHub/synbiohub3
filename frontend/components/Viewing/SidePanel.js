@@ -38,9 +38,6 @@ const { publicRuntimeConfig } = getConfig();
  * @param {Any} properties Information from the parent component.
  */
 export default function SidePanel({ metadata, type, json, uri, plugins }) {
-
-  console.log(metadata);
-  console.log(plugins);
   const [translation, setTranslation] = useState(0);
   const [processedUrl, setProcessedUrl] = useState({ original: uri });
   const dateCreated = metadata.createdDates.split(", ")[0].replace('T', ' ').replace('Z', '');

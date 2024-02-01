@@ -16,7 +16,6 @@ import getConfig from "next/config";
 const { publicRuntimeConfig } = getConfig();
 
 export default function ViewHeader(properties) {
-  console.log(properties);
   var displayTitle = properties.type;
   if (properties.type.includes('#')) {
     displayTitle = properties.type.split('#')[1];
