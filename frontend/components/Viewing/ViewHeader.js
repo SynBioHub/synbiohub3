@@ -90,15 +90,16 @@ export default function ViewHeader(properties) {
       }
     })
       .then(response => {
-        // Handle response here
-        // Refresh the page after successful update
-        window.location.reload();
+        // Successfully deleted the description, now reset the relevant states
+        setDisplayedDescription('');  // Reset the displayed description
+        setEditedDescription('');
+        setIsEditingDescription(false); // Exit edit mode if it's active
       })
       .catch(error => {
-        // Handle error here
         console.error('Error removing description:', error);
       });
   };
+
 
   const handleSaveTitle = () => {
     // Axios POST request to save edited title
