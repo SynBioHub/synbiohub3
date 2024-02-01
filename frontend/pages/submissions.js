@@ -130,11 +130,7 @@ const options = [
 ];
 
 const compareStrings = (string1, string2) => {
-  if (string1 && string2) {
-    return (string1.toLowerCase() > string2.toLowerCase() && 1) || -1;
-  }
-  return -1;
-
+  return (string1.toLowerCase() > string2.toLowerCase() && 1) || -1;
 };
 
 const sortMethods = {
@@ -222,7 +218,7 @@ const fetcher = (url, token, dispatch) =>
     .catch(error => {
       if (error.response && error.response.status === 401) {
         dispatch(logoutUser()); // Dispatch the logout action to sign out the user
-        window.location.href = '/login'; // Redirect to the login page
+        // window.location.href = '/login'; // Redirect to the login page
       } else {
         // Handle other errors
         error.customMessage = 'Request(s) failed for submissions data. Check the URL to see which one failed';

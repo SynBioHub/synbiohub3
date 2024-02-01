@@ -16,7 +16,6 @@ import MasterJSON from './PageJSON/MasterJSON';
 // import { useDispatch } from 'react-redux';
 
 export default function Shell(properties) {
-  console.log(properties);
   const plugins = properties.plugins;
   const metadata = properties.metadata;
 

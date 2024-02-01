@@ -13,6 +13,7 @@ export default function Status() {
   const dispatch = useDispatch();
   const token = useSelector(state => state.user.token);
   const { status, loading } = useStatus(token, dispatch);
+
   if (status) {
     return (
       <div className={styles.statuscontainer}>
@@ -91,7 +92,7 @@ export default function Status() {
   }
 }
 
-const useStatus = (token, dispatch) => {
+export const useStatus = (token, dispatch) => {
   const { data, error } = useSWR(
     [`${publicRuntimeConfig.backend}/admin`, token, dispatch],
     fetcher
@@ -117,7 +118,7 @@ const fetcher = (url, token, dispatch) =>
       if (error.response && error.response.status === 401) {
         // Handle 401 Unauthorized error by signing out and redirecting to the login page
         dispatch(logoutUser()); // Dispatch the logout action to sign out the user
-        window.location.href = '/login'; // Redirect to the login page
+        // window.location.href = '/login'; // Redirect to the login page
       } else {
         // Handle other errors
         error.customMessage = 'Error fetching status';
