@@ -12,7 +12,6 @@ export default function AdditionalFilter(properties) {
   const [selectedPredicate, setSelectedPredicate] = useState("");
   const [selectedValue, setSelectedValue] = useState("");
   const [hidden, setHidden] = useState(false);
-  const [showResults, setShowResults] = useState(true);
 
   useEffect(() => {
     const newFilters = [...properties.extraFilters];
@@ -21,7 +20,11 @@ export default function AdditionalFilter(properties) {
       value: selectedPredicate ? selectedValue : "",
       id: properties.index
     };
-    properties.setExtraFilters(newFilters);
+    if(newFilters[properties.index].filter != '')
+      properties.setExtraFilters(newFilters);
+    console.log('filter: ', properties.extraFilters[properties.index].filter);
+    console.log('value: ', shortName(properties.extraFilters[properties.index].value));
+    console.log("predicate: ", selectedPredicate);
   }, [selectedPredicate, selectedValue, properties.index]);
 
   if (hidden) return null;
@@ -29,9 +32,13 @@ export default function AdditionalFilter(properties) {
   // console.log("AdditionalFilter_selectedValue", selectedValue);
   return (
     <div className={styles.inputsection}>
-      {showResults && (<SelectLoader
+      {<div className={styles.labelsection}>
+        <span>{properties.extraFilters[properties.index].filter}</span>
+      </div>}
+      
+      { !properties.extraFilters[properties.index].filter && (<SelectLoader // disappear when filter is not null
             result={properties.predicates}
-            placeholder={selectedValue}//"Select filter type..."
+            placeholder="Select filter type..."//{properties.extraFilters[properties.index].filter}//"Select filter type..."
             parseResult={result => {
               return {
                 value: result.predicate.value,
@@ -42,17 +49,13 @@ export default function AdditionalFilter(properties) {
               setSelectedPredicate(option ? option.label : "");//undefined
             }}
           />)}
+
       
-      {!showResults && 
-        <div className={styles.labelsection}>
-          <span>{properties.extraFilters[properties.index].filter}</span>
-        </div>}
-      
-      {selectedPredicate && (
+      {properties.extraFilters[properties.index].filter && (
         <SelectLoader
-          placeholder={selectedValue}
+          placeholder={shortName(properties.extraFilters[properties.index].value)}//{selectedValue}
           sparql={configureQuery(searchObject, {
-            predicate: selectedPredicate
+            predicate: properties.extraFilters[properties.index].filter //selectedPredicate
           })}
           parseResult={result => {
             return {
@@ -62,10 +65,10 @@ export default function AdditionalFilter(properties) {
           }}
           onChange={option => {
             setSelectedValue(option ? option.value : undefined);
-            setShowResults(false);
           }}
         />
       )}
+
       <div
         style={{
           padding: '0.6rem 0.5rem 0.6rem 0.7rem',
@@ -82,7 +85,7 @@ export default function AdditionalFilter(properties) {
           //console.log("selectedPredicate: ", selectedPredicate)
           //properties.extraFilters.map(extraFilter => console.log("map_index: ", extraFilter.id));
           console.log("newFilters 0: ", properties.extraFilters);
-          properties.handleDelete(0);//properties.index
+          properties.handleDelete(properties.index);//properties.index
           //const newFilters = properties.handelDet
           console.log("newFilters 1: ", properties.extraFilters);
           setHidden(true);

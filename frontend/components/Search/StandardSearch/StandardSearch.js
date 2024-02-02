@@ -24,6 +24,7 @@ import {
 import viewStyles from '../../../styles/view.module.css';
 import advStyles from '../../../styles/advancedsearch.module.css';
 import ResultTable from './ResultTable/ResultTable';
+import { filter } from 'jszip';
 
 /**
  * This component handles a basic 'string search' from users on sbh,
@@ -64,7 +65,6 @@ export default function StandardSearch() {
   const [translation, setTranslation] = useState(0);
 
   const router = useRouter();
-  console.log("collections: ", collections);
   collections.map(collection => console.log(collection.label));
   const constructSearch = () => {
     let collectionUrls = '';
@@ -104,9 +104,9 @@ export default function StandardSearch() {
     return [
       ...filters,
       {
-        filter: undefined,
-        value: undefined,
-        id: 0
+        filter: '',
+        value: '',
+        id: filters ? filters.length : 0
       }
     ];
   };
