@@ -178,7 +178,6 @@ export default function MetadataInfo({ title, link, label, icon, specific, uri }
         <tbody>
           {sources.map((source, index) => {
             let processedSource = source;
-            console.log(typeof (source));
             if (typeof (source) === 'string' && source.match(urlRegex)) {
               processedSource = getAfterThirdSlash(source);
             }
