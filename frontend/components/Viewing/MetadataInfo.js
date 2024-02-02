@@ -10,6 +10,7 @@ import axios from 'axios';
 import getConfig from "next/config";
 
 import { getAfterThirdSlash } from './ViewHeader';
+import { isUriOwner } from './Shell';
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -19,10 +20,18 @@ export default function MetadataInfo({ title, link, label, icon, specific, uri }
   const [isEditingSource, setIsEditingSource] = useState(false);
   const [newSource, setNewSource] = useState('');
   const token = useSelector(state => state.user.token);
+  const username = useSelector(state => state.user.username);
+
+  let objectUriParts = "";
+  if (uri) {
+    objectUriParts = getAfterThirdSlash(uri);
+  }
+  const objectUri = `${publicRuntimeConfig.backend}/${objectUriParts}`;
 
   const [editSourceIndex, setEditSourceIndex] = useState(null);
   const [editedSource, setEditedSource] = useState('');
   const [sources, setSources] = useState(processTitle(title)); // Assuming processTitle is your existing function
+  var isOwner = isUriOwner(objectUri, username);
 
 
   const handleEditSource = (index, source) => {
@@ -43,9 +52,6 @@ export default function MetadataInfo({ title, link, label, icon, specific, uri }
       alert('Source content cannot be empty.');
       return; // Do not proceed with saving an empty source
     }
-
-    const objectUriParts = getAfterThirdSlash(uri);
-    const objectUri = `${publicRuntimeConfig.backend}/${objectUriParts}`;
 
     axios
       .post(
@@ -80,8 +86,6 @@ export default function MetadataInfo({ title, link, label, icon, specific, uri }
   };
 
   const handleAddSource = () => {
-    const objectUriParts = getAfterThirdSlash(uri);
-    const objectUri = `${publicRuntimeConfig.backend}/${objectUriParts}`;
     const editedText = newSource;
 
     axios.post(`${objectUri}/add/wasDerivedFrom`, {
@@ -109,8 +113,6 @@ export default function MetadataInfo({ title, link, label, icon, specific, uri }
     event.stopPropagation(); // Prevent event from propagating to parent elements
 
     if (window.confirm("Do you want to delete this source?")) {
-      const objectUriParts = getAfterThirdSlash(uri);
-      const objectUri = `${publicRuntimeConfig.backend}/${objectUriParts}`;
 
       // Find the index of the source to delete
       const indexToDelete = sources.findIndex(source => source === sourceToDelete);
@@ -141,11 +143,18 @@ export default function MetadataInfo({ title, link, label, icon, specific, uri }
       {(label === "Source") && (
         <>
           <span style={{ marginRight: '0.5rem' }}></span> {/* Add space */}
-          <FontAwesomeIcon
-            icon={faPlus}
-            onClick={() => setIsEditingSource(true)}
-            className={styles.plusIcon}
-          />
+          {
+            isOwner && (
+              <>
+                <FontAwesomeIcon
+                  icon={faPlus}
+                  onClick={() => setIsEditingSource(true)}
+                  className={styles.plusIcon}
+                />
+              </>
+            )
+          }
+
         </>
       )}
     </div>
@@ -210,12 +219,18 @@ export default function MetadataInfo({ title, link, label, icon, specific, uri }
                   <td>
                     {editSourceIndex === index ? null : (
                       <div>
-                        <button onClick={() => handleEditSource(index, source)}>
-                          <FontAwesomeIcon icon={faPencilAlt} />
-                        </button>
-                        <button onClick={(e) => handleDeleteSource(e, source)}>
-                          <FontAwesomeIcon icon={faTrash} />
-                        </button>
+                        {
+                          isOwner && (
+                            <>
+                              <button onClick={() => handleEditSource(index, source)}>
+                                <FontAwesomeIcon icon={faPencilAlt} />
+                              </button>
+                              <button onClick={(e) => handleDeleteSource(e, source)}>
+                                <FontAwesomeIcon icon={faTrash} />
+                              </button>
+                            </>
+                          )
+                        }
                       </div>
                     )}
                   </td>

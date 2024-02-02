@@ -143,11 +143,18 @@ export default function ViewHeader(properties) {
           ) : (
             <div className={styles.titleContainer}>
               <h1 className={styles.maintitle}>{displayedTitle}</h1>
-              <FontAwesomeIcon
-                icon={faPencilAlt}
-                onClick={handleEditClick}
-                className={styles.editIcon}
-              />
+              {
+                isOwner && (
+                  <>
+                    <FontAwesomeIcon
+                      icon={faPencilAlt}
+                      onClick={handleEditClick}
+                      className={styles.editIcon}
+                    />
+                  </>
+                )
+              }
+
             </div>
           )}
           <Link href={`/search/displayId='${properties.displayId}'&`}>

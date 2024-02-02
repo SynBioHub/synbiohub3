@@ -72,7 +72,7 @@ export default function Members(properties) {
   }
 
   const parameters = {
-    graphs: '',
+    from: '',
     graphPrefix: 'https://synbiohub.org/', // TODO: Maybe get this from somewhere? 
     collection: properties.uri,
     sort: sort,
@@ -81,10 +81,8 @@ export default function Members(properties) {
     limit: ' LIMIT 10000 '
   };
 
-  const { adminStatus, loading, error } = useStatus(token, dispatch);
-
   if (token) {
-    parameters.graphs = privateGraph
+    parameters.from = "FROM <" + privateGraph + ">";
   } else {
   }
 
