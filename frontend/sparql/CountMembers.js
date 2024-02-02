@@ -1,7 +1,7 @@
 const query = `PREFIX sbol2: <http://sbols.org/v2#>
 PREFIX dcterms: <http://purl.org/dc/terms/>
 SELECT (COUNT(DISTINCT ?uri) AS ?count)
-FROM <$graphs>
+$from
 WHERE {
 <$collection> sbol2:member ?uri .
 OPTIONAL { ?uri a ?type . }

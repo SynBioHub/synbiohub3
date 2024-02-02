@@ -7,7 +7,7 @@ SELECT ?uri
        ?type
        ?sbolType
        ?role
-FROM <$graphs> 
+$from
 WHERE { {
 SELECT DISTINCT ?uri 
        ?displayId
