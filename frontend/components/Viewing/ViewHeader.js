@@ -68,13 +68,25 @@ export default function ViewHeader(properties) {
       });
   };
 
-  const confirmDeletion = () => {
+  const confirmDescriptionDeletion = () => {
     // Show a confirmation dialog
     const userConfirmed = window.confirm("Do you want to delete this description?");
 
     if (userConfirmed) {
       // User clicked "OK"
       deleteDescription();
+    } else {
+      // User clicked "Cancel", do nothing
+    }
+  };
+
+  const confirmTitleDeletion = () => {
+    // Show a confirmation dialog
+    const userConfirmed = window.confirm("Do you want to delete this description?");
+
+    if (userConfirmed) {
+      // User clicked "OK"
+      deleteTitle();
     } else {
       // User clicked "Cancel", do nothing
     }
@@ -94,6 +106,26 @@ export default function ViewHeader(properties) {
         setDisplayedDescription('');  // Reset the displayed description
         setEditedDescription('');
         setIsEditingDescription(false); // Exit edit mode if it's active
+      })
+      .catch(error => {
+        console.error('Error removing description:', error);
+      });
+  };
+
+  const deleteTitle = () => {
+    axios.post(`${objectUri}/remove/title`, {
+      object: properties.name
+    }, {
+      headers: {
+        "Accept": "text/plain; charset=UTF-8",
+        "X-authorization": token
+      }
+    })
+      .then(response => {
+        // Successfully deleted the description, now reset the relevant states
+        setDisplayedTitle('');  // Reset the displayed description
+        setEditedTitle('');
+        setIsEditingTitle(false); // Exit edit mode if it's active
       })
       .catch(error => {
         console.error('Error removing description:', error);
@@ -151,6 +183,18 @@ export default function ViewHeader(properties) {
                       onClick={handleEditClick}
                       className={styles.editIcon}
                     />
+                    {properties.name.length > 0 && (
+                      <FontAwesomeIcon
+                        icon={faTrash}
+                        size="1x"
+                        className={styles.deleteIcon}
+                        title="Remove title"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          confirmTitleDeletion();
+                        }}
+                      />
+                    )}
                   </>
                 )
               }
@@ -211,7 +255,7 @@ export default function ViewHeader(properties) {
                     title="Remove description"
                     onClick={(e) => {
                       e.stopPropagation();
-                      confirmDeletion();
+                      confirmDescriptionDeletion();
                     }}
                   />
                 )}
