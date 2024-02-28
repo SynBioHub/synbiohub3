@@ -13,7 +13,7 @@
   ],
   "metadata": [
     {
-      "title": "Roles",
+      "title": "Role",
       "icon": "faUserTag",
       "infoLink": "https://sbols.org/v2#role",
       "rootPredicate": "sbol:role",

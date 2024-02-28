@@ -32,6 +32,8 @@ export default function View({ data, error }) {
       );
   }, [metadata, token]);
 
+  console.log(metadata);
+
   // validate part
   if (!url || !metadata)
     return (

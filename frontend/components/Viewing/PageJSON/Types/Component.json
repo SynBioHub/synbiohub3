@@ -54,7 +54,7 @@
             ]
         },
         {
-            "title": "Role(s)",
+            "title": "Role",
             "rootPredicate": "sbol:role",
             "icon": "faUserTag",
             "sections": [

@@ -11,11 +11,19 @@
         "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>",
         "PREFIX purl: <http://purl.obolibrary.org/obo/>"
     ],
+    "search": [
+        {
+            "twins": true,
+            "similar": true,
+            "uses": true
+        }
+    ],
     "metadata": [
         {
             "title": "Type",
             "rootPredicate": "sbol:type",
             "icon": "faPalette",
+            "editable": true,
             "sections": [
                 {
                     "title": "Extra Work",
@@ -31,9 +39,10 @@
             ]
         },
         {
-            "title": "Role(s)",
+            "title": "Role",
             "rootPredicate": "sbol:role",
             "icon": "faUserTag",
+            "editable": true,
             "sections": [
                 {
                     "title": "Extra Work",
@@ -207,7 +216,7 @@
                     "hide": true
                 },
                 {
-                    "title": "Role(s)",
+                    "title": "Role",
                     "group": true,
                     "predicates": [
                         "sbol:role"

@@ -17,6 +17,7 @@ import getConfig from "next/config";
 const { publicRuntimeConfig } = getConfig();
 
 export default function ViewHeader(properties) {
+  console.log(properties);
   const [displayedTitle, setDisplayedTitle] = useState(properties.name);  // New state for the displayed title
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [editedTitle, setEditedTitle] = useState(properties.name);
