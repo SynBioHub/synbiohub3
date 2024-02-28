@@ -899,7 +899,6 @@ export const getCanSubmitTo = () => async (dispatch, getState) => {
       'X-authorization': token
     };
 
-
     let data;
 
     try {
@@ -909,12 +908,15 @@ export const getCanSubmitTo = () => async (dispatch, getState) => {
         console.error('Error:', error.message);
       }
     }
-
-    const submissions = await data.data;
-
+    let submissions;
+    if (data) {
+      submissions = data.data;
+      // Your logic for handling submissions goes here
+    } else {
+      // Logic in case data is undefined or null
+      console.error('No data received');
+    }
     url = `${publicRuntimeConfig.backend}/shared`;
-
-
     try {
       data = await axios.get(url, { headers });
     } catch (error) {
@@ -922,8 +924,14 @@ export const getCanSubmitTo = () => async (dispatch, getState) => {
         console.error('Error:', error.message);
       }
     }
-
-    const sharedSubmissions = await data.data;
+    let sharedSubmissions;
+    if (data) {
+      sharedSubmissions = data.data;
+      // Your logic for handling submissions goes here
+    } else {
+      // Logic in case data is undefined or null
+      console.error('No shared data received');
+    }
 
     dispatch({
       type: types.CANSUBMITTO,

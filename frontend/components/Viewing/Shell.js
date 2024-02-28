@@ -5,6 +5,10 @@ import ViewHeader from './ViewHeader';
 import GenericContent from './PageJSON/Rendering/GenericContent';
 import MasterJSON from './PageJSON/MasterJSON';
 
+import sequenceOntology from '../../namespace/sequence-ontology';
+import systemsBiologyOntology from '../../namespace/systems-biology-ontology';
+import edamOntology from '../../namespace/edam-ontology';
+
 // import { BooleanContext, checkContentExist } from './PageJSON/Rendering/TableBuilder';
 // import Section from './Sections/Section'
 // import TableBuilder from './PageJSON/Rendering/TableBuilder';
@@ -95,8 +99,8 @@ export function isUriOwner(uri, currentUserUsername) {
   // Split the URI and check if the segment after the domain is '/user'
   const parts = uri.split('/');
   if (parts.length > 3 && parts[3] === 'user') {
-      // Call helper function to check if the next segment matches the current user's username
-      return isUserOwner(parts[4], currentUserUsername);
+    // Call helper function to check if the next segment matches the current user's username
+    return isUserOwner(parts[4], currentUserUsername);
   }
   return false;
 }
@@ -105,3 +109,65 @@ function isUserOwner(uriUsername, currentUserUsername) {
   // Compare the username part of the URI with the current user's username
   return uriUsername === currentUserUsername;
 }
+
+function formatTitle(title) {
+  let link;
+  const parts = title.split('/');
+  if (parts.length >= 2 && title.startsWith('http')) {
+    const lastPart = parts[parts.length - 1];
+    link = title;
+    if (/^1(\.0+)*$/.test(lastPart)) {
+      title = parts[parts.length - 2];
+    } else {
+      const delimiters = ['#', '%', '/'];
+      const lastPartSegments = lastPart.split(new RegExp(`[${delimiters.join('')}]`));
+
+      title = lastPartSegments.pop();
+    }
+  }
+  if (/SO:\s*(\d{7})/.test(title)) {
+    for (let key in sequenceOntology) {
+      if (title === key) {
+        title = sequenceOntology[key].name;
+        break;
+      }
+    }
+  }
+  if (/SBO:\s*(\d{7})/.test(title)) {
+    for (let key in systemsBiologyOntology) {
+      if (title === key) {
+        title = systemsBiologyOntology[key].name;
+        break;
+      }
+    }
+  }
+  if (/http:\/\/edamontology\.org\/format_\d{4}/.test(title)) {
+    for (let key in edamOntology) {
+      if (title === key) {
+        title = edamOntology[key];
+      }
+    }
+  }
+
+  return [title, link];
+}
+
+export function formatMultipleTitles(titles) {
+  // Split the titles string into an array of individual titles
+  const titleArray = titles.split(',');
+
+  // Process each title independently and also collect their links
+  const processedTitles = titleArray.map((singleTitle) => {
+    const [formattedTitle, link] = formatTitle(singleTitle.trim());
+    return { title: formattedTitle, link };
+  });
+
+  // Join the processed titles back into a single string, separated by commas
+  const formattedTitlesString = processedTitles.map(item => item.title).join(", ");
+  const linksArray = processedTitles.map(item => item.link);
+
+  // If you need to do something with linksArray, you can use it here
+
+  return [formattedTitlesString, linksArray];
+}
+

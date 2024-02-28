@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import styles from '../../../../styles/view.module.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import Link from 'next/link';
 import RenderIcon from './RenderIcon';
 import MetadataRenderer from './MetadataRenderer';
@@ -7,8 +9,14 @@ import parseQueryResult from '../Fetching/parseQueryResult';
 import executeQueryFromTableJSON from '../Fetching/executeQueryFromTableJSON';
 import RowWrapper from './RowWrapper';
 import { useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { parseTableHeaders } from '../Parsing/parseTableHeaders';
 import React, { createContext } from 'react';
+import { isUriOwner } from '../../Shell';
+import { getAfterThirdSlash } from '../../ViewHeader';
+import getConfig from 'next/config';
+const { publicRuntimeConfig } = getConfig();
+import axios from 'axios';
 
 /**
  * This Component renders an individual table based on given JSON
@@ -19,7 +27,10 @@ import React, { createContext } from 'react';
  */
 export default function TableBuilder({ uri, prefixes, table, metadata }) {
   prefixes = prefixes.join('\n');
-
+  const objectUriParts = getAfterThirdSlash(uri);
+  const username = useSelector(state => state.user.username);
+  const objectUri = `${publicRuntimeConfig.backend}/${objectUriParts}`;
+  var isOwner = isUriOwner(objectUri, username);
   return (
     <div>
       <TableRenderer
@@ -27,12 +38,14 @@ export default function TableBuilder({ uri, prefixes, table, metadata }) {
         prefixes={prefixes}
         table={table}
         metadata={metadata}
+        owner={isOwner}
       />
     </div>
   );
 }
 
-function TableRenderer({ uri, prefixes, table, metadata }) {
+function TableRenderer({ uri, prefixes, table, metadata, owner }) {
+  const token = useSelector(state => state.user.token);
   const [content, setContent] = useState(null);
   const dispatch = useDispatch();
   useEffect(() => {
@@ -43,12 +56,14 @@ function TableRenderer({ uri, prefixes, table, metadata }) {
 
   const header = metadata ? null : createHeader(table.sections, content);
 
+  const isEditable = metadata && metadata.editable && owner;
+
   if (!checkContentExist(content) && !metadata) {
     return "No content to display for " + table.title;
   }
 
   if (metadata) {
-    return <MetadataRenderer title={table.title} content={content} />;
+    return <MetadataRenderer title={table.title} content={content} editable={isEditable} uri={uri}/>;
   }
 
   // if (content.length == 0) {
@@ -59,16 +74,35 @@ function TableRenderer({ uri, prefixes, table, metadata }) {
     return <RowWrapper sections={row} key={index} metadata={false} />;
   });
 
+  // const titleType = splitPredicate(metadata.rootPredicate);
+
+  // const handleAdd = () => {
+  //   axios.post(`${objectUri}/add/${titleType}`, {
+  //     object: editedDescription
+  //   }, {
+  //     headers: {
+  //       "Accept": "text/plain; charset=UTF-8",
+  //       "X-authorization": token
+  //     }
+  //   })
+  //     .then(response => {
+
+  //     })
+  //     .catch(error => {
+  //       console.error(`Error adding: ${titleType}`, error);
+  //     });
+  // };
+
   return (
     <div>
       {content.length > 0 && (
         <table className={styles.table}>
-        <thead>
-          <tr>{header}</tr>
-        </thead>
-        <tbody>{rows}</tbody>
-      </table>
-      ) }
+          <thead>
+            <tr>{header}</tr>
+          </thead>
+          <tbody>{rows}</tbody>
+        </table>
+      )}
     </div>
   );
 }
@@ -100,6 +134,20 @@ function createHeader(columns, content) {
       }
     })
     .filter(column => column !== undefined);
+}
+
+function EditableIcon({ onAddClick }) {
+  return (
+    <div style={{ textAlign: 'right', margin: '10px' }}>
+      <button onClick={onAddClick}>
+        <FontAwesomeIcon icon={faPlus} />
+      </button> {/* Style this as needed */}
+    </div>
+  );
+}
+
+function splitPredicate(predicate) {
+  return predicate.split(':')[1];
 }
 
 const tableFork = tableJSON => {

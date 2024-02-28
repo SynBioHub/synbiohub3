@@ -74,7 +74,6 @@ export default function SectionRenderer({ section, metadata }) {
       isMounted = false;  // <-- set the flag to false when the component unmounts
     };
   }, []);
-
   if (data) {
     if (section.link) {
       data.forEach(registry => {

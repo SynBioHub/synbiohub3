@@ -10,17 +10,42 @@ import axios from 'axios';
 import getConfig from "next/config";
 
 import { getAfterThirdSlash } from './ViewHeader';
-import { isUriOwner } from './Shell';
+import { isUriOwner, formatMultipleTitles } from './Shell';
 
 const { publicRuntimeConfig } = getConfig();
 
-export default function MetadataInfo({ title, link, label, icon, specific, uri }) {
+export default function MetadataInfo({ title, link, label, icon, specific, uri, editable }) {
   const { theme } = useTheme();
   const [isHovered, setIsHovered] = useState(false);
-  const [isEditingSource, setIsEditingSource] = useState(false);
-  const [newSource, setNewSource] = useState('');
+
+  const [isEditing, setIsEditing] = useState(false);
+  const [newMetadata, setNewMetadata] = useState('');
+
   const token = useSelector(state => state.user.token);
   const username = useSelector(state => state.user.username);
+  if (Array.isArray(title) && label === 'Type' || label === 'Role') {
+    const concatenatedTitle = title.map(item => {
+      // Accessing the extra_work property for each object in the title array
+      if (item.props && item.props.sections && item.props.sections.extra_work &&
+        item.props.sections.extra_work.length > 0) {
+        return item.props.sections.extra_work[0].result.extra_work;
+      }
+      return ''; // Return an empty string if the path doesn't exist
+    }).filter(item => item !== '').join(", "); // Filter out empty strings and join
+    [title, link] = formatMultipleTitles(concatenatedTitle);
+  }
+  if (Array.isArray(title) && label === 'Sequence') {
+    const concatenatedTitle = title.map(item => {
+      // Accessing the extra_work property for each object in the title array
+      if (item.props && item.props.sections && item.props.sections.sequence &&
+        item.props.sections.sequence.length > 0) {
+        link = item.props.sections.sequence[0].result.sequencelink;
+        return item.props.sections.sequence[0].result.sequence;
+      }
+      return ''; // Return an empty string if the path doesn't exist
+    }).filter(item => item !== '').join(", "); // Filter out empty strings and join
+    title = concatenatedTitle;
+  }
 
   let objectUriParts = "";
   if (uri) {
@@ -30,35 +55,113 @@ export default function MetadataInfo({ title, link, label, icon, specific, uri }
 
   const [editSourceIndex, setEditSourceIndex] = useState(null);
   const [editedSource, setEditedSource] = useState('');
-  const [sources, setSources] = useState(processTitle(title)); // Assuming processTitle is your existing function
+  const [editTypeIndex, setEditTypeIndex] = useState(null);
+  const [editedType, setEditedType] = useState('');
+  const [editRoleIndex, setEditRoleIndex] = useState(null);
+  const [editedRole, setEditedRole] = useState('');
+
+  const [sources, setSources] = useState(processTitle(title));
+  const [types, setTypes] = useState(processTitle(title));
+  const [roles, setRoles] = useState(processTitle(title));
+
+  let metadata, setMetadata;
+  switch (label) {
+    case 'Source':
+      metadata = sources;
+      setMetadata = setSources;
+      break;
+    case 'Type':
+      metadata = types;
+      setMetadata = setTypes;
+      break;
+    case 'Role':
+      metadata = roles;
+      setMetadata = setRoles;
+      break;
+    default:
+      // If the label is not one of the recognized types, set metadata to be an array containing title
+      metadata = [title];
+      setMetadata = () => { }; // setMetadata does nothing in this case
+      break;
+  }
+
+
+
   var isOwner = isUriOwner(objectUri, username);
 
 
-  const handleEditSource = (index, source) => {
-    setEditSourceIndex(index);
-    setEditedSource(source);
+  const handleEditMetadata = (index, value, metadataLabel) => {
+    switch (metadataLabel) {
+      case 'Source':
+        setEditSourceIndex(index);
+        setEditedSource(value);
+        break;
+      case 'Type':
+        setEditTypeIndex(index);
+        setEditedType(value);
+        break;
+      case 'Role':
+        setEditRoleIndex(index);
+        setEditedRole(value);
+        break;
+      default:
+        break;
+    }
   };
 
-  const handleCancelEdit = () => {
-    setEditSourceIndex(null); // Reset edit mode
-    setEditedSource(''); // Clear the edited content
+  const handleCancelEdit = (label) => {
+    switch (label) {
+      case 'Source':
+        setEditSourceIndex(null);
+        setEditedSource('');
+        break;
+      case 'Type':
+        setEditTypeIndex(null);
+        setEditedType('');
+        break;
+      case 'Role':
+        setEditRoleIndex(null);
+        setEditedRole('');
+        break;
+      default:
+        return; // Exit if metadata type is not recognized
+    }
   };
 
 
-  const handleSaveEdit = (index, source) => {
-    // Make an Axios POST request to save the edited source content
-    if (editedSource.trim() === '') {
-      // Handle the case where the edited source content is empty (optional)
-      alert('Source content cannot be empty.');
-      return; // Do not proceed with saving an empty source
+  const handleSaveEditMetadata = (index, originalValue, label) => {
+    let editedValue;
+    switch (label) {
+      case 'Source':
+        editedValue = editedSource;
+        break;
+      case 'Type':
+        editedValue = editedType;
+        break;
+      case 'Role':
+        editedValue = editedRole;
+        break;
+      default:
+        return; // Exit if metadata type is not recognized
+    }
+    let urlEnd;
+    if (label === 'Source') {
+      urlEnd = 'wasDerivedFrom';
+    } else {
+      urlEnd = label.toLowerCase();
     }
 
+    if (editedValue.trim() === '') {
+      alert('Content cannot be empty.');
+      return;
+    }
+    // Make an Axios POST request to save the edited source content
     axios
       .post(
-        `${objectUri}/edit/wasDerivedFrom`,
+        `${objectUri}/edit/${urlEnd}`,
         {
-          previous: source, // You may need to pass the source index for identification
-          object: editedSource, // The edited source content
+          previous: originalValue, // You may need to pass the source index for identification
+          object: editedValue, // The edited source content
         },
         {
           headers: {
@@ -70,9 +173,9 @@ export default function MetadataInfo({ title, link, label, icon, specific, uri }
       .then((response) => {
         // Handle the successful response here, if needed
         // You may want to update the source in your data or state
-        const updatedSources = [...sources];
-        updatedSources[index] = editedSource;
-        setSources(updatedSources);
+        const updatedMetadata = [...metadata];
+        updatedMetadata[index] = editedValue;
+        setMetadata(updatedMetadata);
         setEditSourceIndex(null);
       })
       .catch((error) => {
@@ -85,10 +188,17 @@ export default function MetadataInfo({ title, link, label, icon, specific, uri }
     backgroundColor: isHovered ? (theme?.hoverColor || '#00A1E4') : (theme?.themeParameters?.[0]?.value || styles.infoheader.backgroundColor)
   };
 
-  const handleAddSource = () => {
-    const editedText = newSource;
+  const handleAddMetadata = (label) => {
+    const editedText = newMetadata;
 
-    axios.post(`${objectUri}/add/wasDerivedFrom`, {
+    let urlEnd;
+    if (label === 'Source') {
+      urlEnd = 'wasDerivedFrom';
+    } else {
+      urlEnd = label.toLowerCase();
+    }
+
+    axios.post(`${objectUri}/add/${urlEnd}`, {
       object: editedText
     }, {
       headers: {
@@ -97,41 +207,61 @@ export default function MetadataInfo({ title, link, label, icon, specific, uri }
       }
     })
       .then(response => {
-        // Assuming response.data contains the updated list of sources
-        // Update your sources state with the new list
-        setSources([...sources, processTitle(response.data)]);
-        setIsEditingSource(false);
-        setNewSource('');
+        setMetadata([...metadata, response.data]);
+        setIsEditing(false);
+        setNewMetadata('');
       })
       .catch(error => {
-        console.error('Error adding source:', error);
+        console.error('Error adding metadata', error);
+        // Additional error handling logic can be added here
       });
   };
 
 
-  const handleDeleteSource = (event, sourceToDelete) => {
+
+  const handleDeleteMetadata = (event, itemToDelete, label) => {
     event.stopPropagation(); // Prevent event from propagating to parent elements
 
-    if (window.confirm("Do you want to delete this source?")) {
+    if (window.confirm("Do you want to delete this metadata?")) {
+      let currentMetadata, setCurrentMetadata;
+      switch (label) {
+        case 'Source':
+          currentMetadata = sources;
+          setCurrentMetadata = setSources;
+          break;
+        case 'Type':
+          currentMetadata = types;
+          setCurrentMetadata = setTypes;
+          break;
+        case 'Role':
+          currentMetadata = roles;
+          setCurrentMetadata = setRoles;
+          break;
+        default:
+          return; // Exit if label is not recognized
+      }
 
-      // Find the index of the source to delete
-      const indexToDelete = sources.findIndex(source => source === sourceToDelete);
+      // Find the index of the item to delete
+      const indexToDelete = currentMetadata.findIndex(item => item === itemToDelete);
 
-      axios.post(`${objectUri}/remove/wasDerivedFrom`, { object: sourceToDelete }, {
+      let urlEnd = label === 'Source' ? 'wasDerivedFrom' : label.toLowerCase();
+      axios.post(`${objectUri}/remove/${urlEnd}`, { object: itemToDelete }, {
         headers: {
           "Accept": "text/plain; charset=UTF-8",
           "X-authorization": token
         }
       })
         .then(response => {
-          const updatedSources = sources.filter((_, index) => index !== indexToDelete);
-          setSources(updatedSources);
+          // Update the state after successful deletion
+          const updatedMetadata = currentMetadata.filter((_, index) => index !== indexToDelete);
+          setCurrentMetadata(updatedMetadata);
         })
         .catch(error => {
-          console.error('Error deleting source:', error);
+          console.error('Error deleting metadata:', error);
         });
     }
   };
+
 
 
 
@@ -140,7 +270,7 @@ export default function MetadataInfo({ title, link, label, icon, specific, uri }
   const renderedLabel = (
     <div className={styles.infolabel}>
       {label}
-      {(label === "Source") && (
+      {(label === "Source" || label === "Type" || label === "Role") && (
         <>
           <span style={{ marginRight: '0.5rem' }}></span> {/* Add space */}
           {
@@ -148,7 +278,7 @@ export default function MetadataInfo({ title, link, label, icon, specific, uri }
               <>
                 <FontAwesomeIcon
                   icon={faPlus}
-                  onClick={() => setIsEditingSource(true)}
+                  onClick={() => setIsEditing(true)}
                   className={styles.plusIcon}
                 />
               </>
@@ -180,34 +310,55 @@ export default function MetadataInfo({ title, link, label, icon, specific, uri }
     // Restore commas in URLs
     return parts.map(part => part.replace(new RegExp(commaPlaceholder, 'g'), ','));
   }
-
   const renderedTitle = (
     <div className={styles.infotitle}>
       <table>
         <tbody>
-          {sources.map((source, index) => {
-            let processedSource = source;
-            if (typeof (source) === 'string' && source.match(urlRegex)) {
-              processedSource = getAfterThirdSlash(source);
+          {metadata.map((data, index) => {
+            let isEditingThisItem = false;
+            let currentValue = "";
+            let correspondingLink = (label === 'Source' || label === 'Type' || label === 'Role')
+              ? (link && link.length > 0 && typeof link === 'object' ? link[index] : null)
+              : link;
+            let processedSource = data;
+            if (typeof (data) === 'string' && data.match(urlRegex)) {
+              processedSource = getAfterThirdSlash(data);
             }
+            switch (label) {
+              case 'Source':
+                isEditingThisItem = editSourceIndex === index;
+                currentValue = editedSource;
+                break;
+              case 'Type':
+                isEditingThisItem = editTypeIndex === index;
+                currentValue = editedType;
+                break;
+              case 'Role':
+                isEditingThisItem = editRoleIndex === index;
+                currentValue = editedRole;
+                break;
+              default:
+                break;
+            }
+
             return (
               <tr key={index}>
                 <td>
-                  {label === "Source" && source && editSourceIndex === index ? (
+                  {isEditingThisItem ? (
                     // Edit mode
                     <div>
                       <input
                         type="text"
-                        value={editedSource}
-                        onChange={(e) => setEditedSource(e.target.value)}
+                        value={currentValue}
+                        onChange={(e) => handleEditMetadata(index, e.target.value, label)}
                       />
-                      <button type="button" onClick={() => handleSaveEdit(index, source)}>Save</button>
-                      <button type="button" onClick={handleCancelEdit}>Cancel</button>
+                      <button onClick={() => handleSaveEditMetadata(index, data, label)}>Save</button>
+                      <button onClick={() => handleCancelEdit(label)}>Cancel</button>
                     </div>
                   ) : (
                     // Display mode
                     <a
-                      href={typeof source === 'string' && source.match(urlRegex) ? source : `http://localhost:3333/${processedSource}`}
+                      href={correspondingLink ? correspondingLink : `http://localhost:3333/${processedSource}`}
                       target="_blank"
                       rel="noopener noreferrer"
                     >
@@ -215,22 +366,20 @@ export default function MetadataInfo({ title, link, label, icon, specific, uri }
                     </a>
                   )}
                 </td>
-                {label === "Source" && source && (
+                {(label === "Source" || label === "Type" || label === "Role") && data && (
                   <td>
-                    {editSourceIndex === index ? null : (
+                    {isEditingThisItem ? null : (
                       <div>
-                        {
-                          isOwner && (
-                            <>
-                              <button onClick={() => handleEditSource(index, source)}>
-                                <FontAwesomeIcon icon={faPencilAlt} />
-                              </button>
-                              <button onClick={(e) => handleDeleteSource(e, source)}>
-                                <FontAwesomeIcon icon={faTrash} />
-                              </button>
-                            </>
-                          )
-                        }
+                        {isOwner && (
+                          <>
+                            <button onClick={() => handleEditMetadata(index, data, label)}>
+                              <FontAwesomeIcon icon={faPencilAlt} />
+                            </button>
+                            <button onClick={(e) => handleDeleteMetadata(e, data, label)}>
+                              <FontAwesomeIcon icon={faTrash} />
+                            </button>
+                          </>
+                        )}
                       </div>
                     )}
                   </td>
@@ -269,22 +418,21 @@ export default function MetadataInfo({ title, link, label, icon, specific, uri }
         {renderedLabel}
       </div>
       {renderedTitle}
-      {isEditingSource ? (
-        <div className={styles.addSource}>
+      {isEditing ? (
+        <div className={styles.addMetadata}>
           <input
             type="text"
-            value={newSource}
-            onChange={(e) => setNewSource(e.target.value)}
+            value={newMetadata}
+            onChange={(e) => setNewMetadata(e.target.value)}
           />
-          <button type="button" onClick={handleAddSource}>Save</button>
+          <button type="button" onClick={() => handleAddMetadata(label)}>Save</button>
           <button type="button" onClick={() => {
-            setIsEditingSource(false);
-            setNewSource(''); // Optional: Clear the input if needed
+            setIsEditing(false);
+            setNewMetadata(''); // Optional: Clear the input if needed
           }}>Cancel</button>
         </div>
       ) : null}
     </div>
   );
-
   return renderedSection;
 }
