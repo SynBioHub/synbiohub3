@@ -908,7 +908,6 @@ export const getCanSubmitTo = () => async (dispatch, getState) => {
         console.error('Error:', error.message);
       }
     }
-    console.log('test1');
     let submissions;
     if (data) {
       submissions = data.data;

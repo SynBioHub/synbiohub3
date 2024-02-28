@@ -46,9 +46,6 @@ export default function MetadataInfo({ title, link, label, icon, specific, uri, 
     }).filter(item => item !== '').join(", "); // Filter out empty strings and join
     title = concatenatedTitle;
   }
-  console.log(label);
-  console.log(title);
-  console.log(link);
 
   let objectUriParts = "";
   if (uri) {
@@ -193,7 +190,6 @@ export default function MetadataInfo({ title, link, label, icon, specific, uri, 
 
   const handleAddMetadata = (label) => {
     const editedText = newMetadata;
-    console.log("Data being sent:", editedText);
 
     let urlEnd;
     if (label === 'Source') {
@@ -324,9 +320,6 @@ export default function MetadataInfo({ title, link, label, icon, specific, uri, 
             let correspondingLink = (label === 'Source' || label === 'Type' || label === 'Role')
               ? (link && link.length > 0 && typeof link === 'object' ? link[index] : null)
               : link;
-            console.log(typeof link);
-            console.log(link);
-            console.log(correspondingLink);
             let processedSource = data;
             if (typeof (data) === 'string' && data.match(urlRegex)) {
               processedSource = getAfterThirdSlash(data);
