@@ -42,6 +42,9 @@ export default function Shell(properties) {
   if (metadata && !metadata.name && metadata.displayId)
     metadata.name = metadata.displayId;
 
+  let getSearchData = getSearch(formatMultipleTitles(metadata.types)[0]);
+  metadata.search = getSearchData;
+
   if (!json) {
     return (
       <div className={styles.container}>
@@ -85,6 +88,7 @@ export default function Shell(properties) {
           description={metadata.description}
           type={metadata.types}
           uri={`${metadata.persistentIdentity}/${metadata.version}`}
+          search={metadata.search}
         />
         <div className={styles.sections}>
           <GenericContent json={json} uri={properties.uri} metadata={false} plugins={plugins} type={properties.type} />
@@ -170,4 +174,35 @@ export function formatMultipleTitles(titles) {
 
   return [formattedTitlesString, linksArray];
 }
+
+
+function getSearch(type) {
+  // list the top levels
+  console.log(type);
+  const toplevel = ["Activity", "Agent", "Association", "Attachment", "Collection", "CombinatorialDerivation", "Component", "Datasheet", "Experiment", "FunctionalComponent", "Implementation", "Model", "ModuleDefinition", "Plan", "Sequence", "Usage"]
+  //return tru"e,false based on type
+  if (type === "ComponentDefinition") {
+    return {
+      twins: true,
+      similar: true,
+      uses: true
+    };
+  }
+  //if top level
+  if (toplevel.includes(type)) {
+    return {
+      twins: false,
+      similar: false,
+      uses: true
+    };
+  }
+  else {
+    return {
+      twins: false,
+      similar: false,
+      uses: false
+    };
+  }
+}
+
 

@@ -33,7 +33,6 @@ export default function ViewHeader(properties) {
 
   const descriptionRef = useRef(null);
 
-
   const handleEditClick = () => {
     setIsEditingTitle(true);
   };
@@ -48,6 +47,51 @@ export default function ViewHeader(properties) {
   const username = useSelector(state => state.user.username);
   const objectUri = `${publicRuntimeConfig.backend}/${objectUriParts}`;
   var isOwner = isUriOwner(objectUri, username);
+
+  console.log(objectUri);
+
+  const similar = () => {
+    axios.get(`${objectUri}/similar`, {
+      headers: {
+        "Content-Type": "text/plain; charset=UTF-8",
+        "Accept": "application/json"
+      }
+    })
+      .then(response => {
+        console.log(response.data);
+      })
+      .catch(error => {
+        console.error('Error fetching similar: ', error);
+      });
+  };
+  const twins = () => {
+    axios.get(`${objectUri}/twins`, {
+      headers: {
+        "Content-Type": "text/plain; charset=UTF-8",
+        "Accept": "application/json"
+      }
+    })
+      .then(response => {
+        console.log(response.data);
+      })
+      .catch(error => {
+        console.error('Error fetching twins: ', error);
+      });
+  };
+  const uses = () => {
+    axios.get(`${objectUri}/uses`, {
+      headers: {
+        "Content-Type": "text/plain; charset=UTF-8",
+        "Accept": "application/json"
+      }
+    })
+      .then(response => {
+        console.log(response.data);
+      })
+      .catch(error => {
+        console.error('Error fetching uses: ', error);
+      });
+  };
 
   const saveDescription = () => {
     axios.post(`${objectUri}/edit/description`, {
@@ -160,53 +204,48 @@ export default function ViewHeader(properties) {
 
   return (
     <div>
-      <div>
-        <div className={styles.contentheader}>
-          {isEditingTitle ? (
-            <div>
-              <input
-                type="text"
-                value={editedTitle}
-                onChange={(e) => setEditedTitle(e.target.value)}
-              />
-              <button onClick={handleSaveTitle}>Save</button>
-              <button onClick={handleCancelTitle}>Cancel</button>
-            </div>
-          ) : (
-            <div className={styles.titleContainer}>
-              <h1 className={styles.maintitle}>{displayedTitle}</h1>
-              {
-                isOwner && (
-                  <>
-                    <FontAwesomeIcon
-                      icon={faPencilAlt}
-                      onClick={handleEditClick}
-                      className={styles.editIcon}
-                    />
-                    {properties.name.length > 0 && (
-                      <FontAwesomeIcon
-                        icon={faTrash}
-                        size="1x"
-                        className={styles.deleteIcon}
-                        title="Remove title"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          confirmTitleDeletion();
-                        }}
-                      />
-                    )}
-                  </>
-                )
-              }
-
-            </div>
-          )}
-          <Link href={`/search/displayId='${properties.displayId}'&`}>
-            <a title="Find all records with the same identifier" target="_blank">
-              <h1 className={styles.maintitleid}>({properties.displayId})</h1>
-            </a>
-          </Link>
-        </div>
+      <div className={styles.contentheader}>
+        {isEditingTitle ? (
+          <div>
+            <input
+              type="text"
+              value={editedTitle}
+              onChange={(e) => setEditedTitle(e.target.value)}
+            />
+            <button onClick={handleSaveTitle}>Save</button>
+            <button onClick={handleCancelTitle}>Cancel</button>
+          </div>
+        ) : (
+          <div className={styles.titleContainer}>
+            <h1 className={styles.maintitle}>{displayedTitle}</h1>
+            {isOwner && (
+              <>
+                <FontAwesomeIcon
+                  icon={faPencilAlt}
+                  onClick={handleEditClick}
+                  className={styles.editIcon}
+                />
+                {properties.name.length > 0 && (
+                  <FontAwesomeIcon
+                    icon={faTrash}
+                    size="1x"
+                    className={styles.deleteIcon}
+                    title="Remove title"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      confirmTitleDeletion();
+                    }}
+                  />
+                )}
+              </>
+            )}
+          </div>
+        )}
+        <Link href={`/search/displayId='${properties.displayId}'&`}>
+          <a title="Find all records with the same identifier" target="_blank">
+            <h1 className={styles.maintitleid}>({properties.displayId})</h1>
+          </a>
+        </Link>
       </div>
       <div className={styles.contentinfo}>
         <Link href={displayLink}>
@@ -262,6 +301,17 @@ export default function ViewHeader(properties) {
               </>
             )}
           </div>
+        )}
+      </div>
+      <div>
+        {properties.search.similar && (
+          <button className={styles.searchButton} onClick={similar}> Similar </button>
+        )}
+        {properties.search.twins && (
+          <button className={styles.searchButton} onClick={twins}> Twins </button>
+        )}
+        {properties.search.uses && (
+          <button className={styles.searchButton} onClick={uses}> Uses </button>
         )}
       </div>
     </div>
