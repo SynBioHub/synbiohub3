@@ -224,12 +224,13 @@ export default function ViewHeader(properties) {
                   icon={faPencilAlt}
                   onClick={handleEditClick}
                   className={styles.editIcon}
+                  title="Edit title"
                 />
                 {properties.name.length > 0 && (
                   <FontAwesomeIcon
                     icon={faTrash}
                     size="1x"
-                    className={styles.deleteIcon}
+                    className={styles.editIcon}
                     title="Remove title"
                     onClick={(e) => {
                       e.stopPropagation();
