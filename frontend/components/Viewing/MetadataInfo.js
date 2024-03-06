@@ -280,6 +280,7 @@ export default function MetadataInfo({ title, link, label, icon, specific, uri, 
                   icon={faPlus}
                   onClick={() => setIsEditing(true)}
                   className={styles.plusIcon}
+                  title="Add a new source"
                 />
               </>
             )
@@ -373,10 +374,10 @@ export default function MetadataInfo({ title, link, label, icon, specific, uri, 
                         {isOwner && (
                           <>
                             <button onClick={() => handleEditMetadata(index, data, label)}>
-                              <FontAwesomeIcon icon={faPencilAlt} />
+                              <FontAwesomeIcon icon={faPencilAlt} title="Edit metadata" style={{ cursor: 'pointer' }} />
                             </button>
                             <button onClick={(e) => handleDeleteMetadata(e, data, label)}>
-                              <FontAwesomeIcon icon={faTrash} />
+                              <FontAwesomeIcon icon={faTrash} title="Delete metadata"  style={{ cursor: 'pointer' }} />
                             </button>
                           </>
                         )}
