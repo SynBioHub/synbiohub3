@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import getOtherProperties from '../../../sparql/getOtherProperties';
 import getQueryResponse from '../../../sparql/tools/getQueryResponse';
 import { getAfterThirdSlash } from '../ViewHeader';
-import { isUriOwner } from '../Shell';
+import { isUriOwner, isValidURI } from '../Shell';
 import Loading from '../../Reusable/Loading';
 import Link from 'next/link';
 import getConfig from "next/config";
@@ -54,6 +54,17 @@ export default function OtherProperties(properties) {
   var isOwner = isUriOwner(objectUri, username);
 
   const handleAddAnnotation = () => {
+    if (!isValidURI(newPredicate)) {
+      alert("The predicate entered is not a valid URI.");
+      // Refocus and select the text in the predicate input box
+      const predicateInput = document.getElementById("newPredicateInput");
+      if (predicateInput) {
+        predicateInput.focus();
+        predicateInput.select();
+      }
+      return; // Stop the function if the predicate is not valid
+    }
+
     axios.post(`${objectUri}/add/annotation`, {
       pred: newPredicate,
       object: newValue
@@ -136,6 +147,7 @@ export default function OtherProperties(properties) {
           <tr>
             <td>
               <input
+                id="newPredicateInput"
                 type="text"
                 value={newPredicate}
                 onChange={(e) => setNewPredicate(e.target.value)}
@@ -177,8 +189,6 @@ export default function OtherProperties(properties) {
     //     value.length
     //   );
     const parsedValue = parseValue(value);
-    console.log(parsedValue);
-    console.log(name);
     return (
       <tr key={key}>
         <td>
