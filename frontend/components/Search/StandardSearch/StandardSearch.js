@@ -93,11 +93,8 @@ export default function StandardSearch() {
     setUrl(url);
   };
 
-  const handleDelete = id => {
-    const newFilters = extraFilters.splice(id, 1);
-    setExtraFilters(newFilters);
-    console.log("deleted: ", id);
-    console.log("After delete: ", extraFilters);
+  const handleDelete = (delFilter) => {
+    return extraFilters.filter(extraFilter => extraFilter !== delFilter);
   };
 
   const addFilter = filters => {
@@ -105,8 +102,7 @@ export default function StandardSearch() {
       ...filters,
       {
         filter: '',
-        value: '',
-        id: filters ? filters.length : 0
+        value: ''
       }
     ];
   };
