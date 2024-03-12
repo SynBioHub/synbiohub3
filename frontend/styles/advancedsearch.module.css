@@ -81,6 +81,12 @@
    font-size: 0.8rem;
 }
 
+.optionselectW {
+   width: 100%;
+   flex-direction: row;
+   font-size: 0.8rem;
+}
+
 /**STANDARD SEARCH CSS**/
 .standardcontainer {
    width: 100%;

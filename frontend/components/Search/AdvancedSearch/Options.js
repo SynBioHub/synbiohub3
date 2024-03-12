@@ -119,6 +119,7 @@ export default function Options(properties) {
           <span>Select Collections</span>
         </div>
         <SelectLoader
+          className={styles.optionselectW}
           sparql={getCollections}
           placeholder={properties.collections.map(collection => collection.label)}//"Select Collections..."
           isMulti={true}
