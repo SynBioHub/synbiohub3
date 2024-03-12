@@ -2,13 +2,24 @@ import Image from 'next/image';
 
 import styles from '../styles/footer.module.css';
 
+import { useState, useEffect } from 'react';
+
 /**
  * This component renders the footer in sbh
  */
 export default function Footer() {
+  const [commitHash, setCommitHash] = useState('');
+
+  useEffect(() => {
+    fetch('/commitHash.txt')
+      .then(response => response.text())
+      .then(hash => setCommitHash(hash));
+  }, []);
+
   return (
     <footer className={styles.footer}>
       <div className={styles.copyrightcontainer}>
+        <div>Commit Hash: {commitHash}</div>
         <Image
           alt="logo"
           width={80}

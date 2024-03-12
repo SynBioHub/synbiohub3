@@ -283,14 +283,37 @@ const fetcher = (url, token, dispatch) =>
 export async function processUrl(inputUrl, token, dispatch) {
 
   const data = await fetcher(`${publicRuntimeConfig.backend}/admin/registries`, token, dispatch);
-  const registries = data.registries;
 
-  for (const registry of registries) {
-    if (inputUrl.startsWith(registry.uri)) {
-      const urlRemovedForLink = inputUrl.replace(registry.uri, "");
-      const urlReplacedForBackend = inputUrl.replace(registry.uri, registry.url);
-      return { urlRemovedForLink, urlReplacedForBackend };
+  if (data) {
+    const registries = data.registries;
+
+    for (const registry of registries) {
+      if (inputUrl.startsWith(registry.uri)) {
+        const urlRemovedForLink = inputUrl.replace(registry.uri, "");
+        const urlReplacedForBackend = inputUrl.replace(registry.uri, registry.url);
+        return { urlRemovedForLink, urlReplacedForBackend };
+      }
     }
+    return { original: inputUrl };  // if you don't match any uri
+  }
+  return { original: inputUrl };  // if you don't match any uri
+}
+
+export async function processUrlReverse(inputUrl, token, dispatch) {
+
+  const data = await fetcher(`${publicRuntimeConfig.backend}/admin/registries`, token, dispatch);
+
+  if (data) {
+    const registries = data.registries;
+
+    for (const registry of registries) {
+      if (inputUrl.startsWith(registry.url)) {
+        const uriRemovedForLink = inputUrl.replace(registry.url, "");
+        const uriReplacedForBackend = inputUrl.replace(registry.url, registry.uri);
+        return { uriRemovedForLink, uriReplacedForBackend };
+      }
+    }
+    return { original: inputUrl };  // if you don't match any uri
   }
   return { original: inputUrl };  // if you don't match any uri
 }

@@ -49,46 +49,57 @@ function MyApp({ Component, pageProps }) {
                 setIsInitializing(false);
             })
             .catch(error => {
-                error.customMessage =
-                    'Request and/or processing failed for GET /admin/theme';
+                let customMessage = 'An unexpected error occurred while fetching theme data.';
+
+                // Check if it's a network error
+                if (error.message === 'Network Error') {
+                    customMessage = 'Unable to connect to the backend server. Please check your network connection.';
+                }
+                // You can add more conditions here for different types of errors
+
+                // Update the error object
+                error.customMessage = customMessage;
+                console.log(error);
                 error.fullUrl = `${publicRuntimeConfig.backend}/admin/theme`;
+
+                // Dispatch the error to your Redux store
                 store.dispatch(addError(error));
             });
     }, []);
 
     /* eslint no-console: "off" */
 
-        if (isInitializing) {
-            return (
-                <Provider store={store}>
+    if (isInitializing) {
+        return (
+            <Provider store={store}>
                 <PersistGate loading={null} persistor={persistor}>
-                <div
-                style={{
-                    display: 'flex',
-                        flexDirection: 'column',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        height: '100vh'
-                }}
-                >
-                <Errors />
-                <Loading />
-                </div>
+                    <div
+                        style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            height: '100vh'
+                        }}
+                    >
+                        <Errors />
+                        <Loading />
+                    </div>
                 </PersistGate>
-                </Provider>
-            );
-        }
+            </Provider>
+        );
+    }
 
     return (
         <Provider store={store}>
-        <PersistGate loading={null} persistor={persistor} >
-        {inSetupMode ? (
-            <Setup setInSetupMode={setInSetupMode} />
-        ) : (
-            <Component {...pageProps} key={router.asPath} />
-        )}
-        <ToastContainer />
-        </PersistGate>
+            <PersistGate loading={null} persistor={persistor} >
+                {inSetupMode ? (
+                    <Setup setInSetupMode={setInSetupMode} />
+                ) : (
+                    <Component {...pageProps} key={router.asPath} />
+                )}
+                <ToastContainer />
+            </PersistGate>
         </Provider>
     );
 }
