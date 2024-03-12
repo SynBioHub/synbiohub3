@@ -11,34 +11,25 @@ import { faTimesCircle } from '@fortawesome/free-solid-svg-icons';
 export default function AdditionalFilter(properties) {
   const [selectedPredicate, setSelectedPredicate] = useState("");
   const [selectedValue, setSelectedValue] = useState("");
-  const [hidden, setHidden] = useState(false);
 
   useEffect(() => {
     const newFilters = [...properties.extraFilters];
     newFilters[properties.index] = {
       filter: selectedPredicate,
       value: selectedPredicate ? selectedValue : "",
-      id: properties.index
     };
+
     if(newFilters[properties.index].filter != '')
       properties.setExtraFilters(newFilters);
-    console.log('filter: ', properties.extraFilters[properties.index].filter);
-    console.log('value: ', shortName(properties.extraFilters[properties.index].value));
-    console.log("predicate: ", selectedPredicate);
-  }, [selectedPredicate, selectedValue, properties.index]);
-
-  if (hidden) return null;
-  // console.log("AdditionalFilter_predicates", properties.predicates);
-  // console.log("AdditionalFilter_selectedValue", selectedValue);
+  }, [selectedPredicate, selectedValue]);
   return (
     <div className={styles.inputsection}>
       {<div className={styles.labelsection}>
         <span>{properties.extraFilters[properties.index].filter}</span>
       </div>}
-      
-      { !properties.extraFilters[properties.index].filter && (<SelectLoader // disappear when filter is not null
-            result={properties.predicates}
-            placeholder="Select filter type..."//{properties.extraFilters[properties.index].filter}//"Select filter type..."
+      { !properties.extraFilters[properties.index].filter && (<SelectLoader 
+            result={properties.predicates} 
+            placeholder="Select filter type..."
             parseResult={result => {
               return {
                 value: result.predicate.value,
@@ -46,12 +37,13 @@ export default function AdditionalFilter(properties) {
               };
             }}
             onChange={option => {
-              setSelectedPredicate(option ? option.label : "");//undefined
+              setSelectedPredicate(option ? option.label : "");
             }}
           />)}
 
       
-      {properties.extraFilters[properties.index].filter && (
+      {properties.extraFilters[properties.index].filter && 
+      (
         <SelectLoader
           placeholder={shortName(properties.extraFilters[properties.index].value)}//{selectedValue}
           sparql={configureQuery(searchObject, {
@@ -76,19 +68,9 @@ export default function AdditionalFilter(properties) {
           cursor: 'pointer'
         }}
         onClick={() => {
-          // const newFilters = [...properties.extraFilters];
-          // newFilters[properties.index] = {
-          //   filter: selectedPredicate,
-          //   value: undefined
-          // };
-          //console.log("properties.extraFilters: ", properties.extraFilters);
-          //console.log("selectedPredicate: ", selectedPredicate)
-          //properties.extraFilters.map(extraFilter => console.log("map_index: ", extraFilter.id));
-          console.log("newFilters 0: ", properties.extraFilters);
-          properties.handleDelete(properties.index);//properties.index
-          //const newFilters = properties.handelDet
-          console.log("newFilters 1: ", properties.extraFilters);
-          setHidden(true);
+          //properties.handleDelete(properties.extraFilters[properties.index]);
+          const newFilters = properties.handleDelete(properties.extraFilters[properties.index]);
+          properties.setExtraFilters(newFilters);
         }}
       >
         <FontAwesomeIcon icon={faTimesCircle} size="1x" color="red" />
