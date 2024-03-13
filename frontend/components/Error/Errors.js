@@ -22,6 +22,24 @@ export default function Errors() {
   const error = errors[viewIndex];
   const toggleExpand = () => setIsExpanded(!isExpanded);
 
+  console.log(error.response.data);
+
+  if (error.response.data === "Error: Cannot access other users' graphs.") {
+    return (
+      <div className={styles.smallErrorContainer}>
+        <div className={styles.errorHeaderContainer}>
+          <div className={styles.errorTitle}>
+            <FontAwesomeIcon icon={faExclamationCircle} color="#f00" size="1x" />
+            <h1 className={styles.header}>{error.message = "User token is expired. Please relog."}</h1>
+          </div>
+          <div>
+            <ErrorClearer index={viewIndex} setIndex={setViewIndex} size={'relog'} />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={isExpanded ? styles.errorContainer : styles.smallErrorContainer}>
       <div className={styles.errorHeaderContainer}>
@@ -32,7 +50,7 @@ export default function Errors() {
         <div>
           {!isExpanded && (
             <>
-              <ErrorClearer index={viewIndex} setIndex={setViewIndex} />
+              <ErrorClearer index={viewIndex} setIndex={setViewIndex} size={'small'} />
             </>
           )}
         </div>

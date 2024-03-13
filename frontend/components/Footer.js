@@ -13,13 +13,12 @@ export default function Footer() {
   useEffect(() => {
     fetch('/commitHash.txt')
       .then(response => response.text())
-      .then(hash => setCommitHash(hash));
+      .then(hash => setCommitHash(hash.slice(0, 8)));
   }, []);
 
   return (
     <footer className={styles.footer}>
       <div className={styles.copyrightcontainer}>
-        <div>Commit Hash: {commitHash}</div>
         <Image
           alt="logo"
           width={80}
@@ -61,11 +60,11 @@ export default function Footer() {
           API
         </a>
         <a
-          href="https://github.com/SynBioHub/synbiohub3"
+          href={`https://github.com/SynBioHub/synbiohub3/commit/${commitHash}`} // Incorporate the commit hash into the link
           target="_blank"
           rel="noreferrer"
         >
-          Github Repo
+          Github Repo ({commitHash}) {/* Display the trimmed commit hash */}
         </a>
         <a
           href="https://github.com/SynBioHub/synbiohub3/issues"

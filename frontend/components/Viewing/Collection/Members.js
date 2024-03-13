@@ -479,7 +479,10 @@ const fetcher = (url, token, dispatch) =>
       // Check if the error is 401 Unauthorized or 400 Bad Request
       if (error.response && (error.response.status === 401 || error.response.status === 400)) {
         // Check if the user is logged in by looking for 'userToken' in local storage
+        console.log(localStorage);
+        console.log(error.response);
         if (!localStorage.getItem('userToken')) {
+          console.log('Missing user token');
           // User is not logged in, redirect to the login page
           // window.location.href = '/login';
         }
