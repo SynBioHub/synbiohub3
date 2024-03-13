@@ -48,8 +48,6 @@ export default function ViewHeader(properties) {
   const objectUri = `${publicRuntimeConfig.backend}/${objectUriParts}`;
   var isOwner = isUriOwner(objectUri, username);
 
-  console.log(objectUri);
-
   const similar = () => {
     axios.get(`${objectUri}/similar`, {
       headers: {

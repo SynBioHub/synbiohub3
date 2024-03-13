@@ -20,7 +20,7 @@ import { shortName } from '../../../namespace/namespace';
 import lookupRole from '../../../namespace/lookupRole';
 import Link from 'next/link';
 import { addError } from '../../../redux/actions';
-import { processUrl } from '../../Admin/Registries';
+import { processUrl, processUrlReverse } from '../../Admin/Registries';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faUnlink } from '@fortawesome/free-solid-svg-icons';
 import { getAfterThirdSlash } from '../ViewHeader';
@@ -50,6 +50,7 @@ export default function Members(properties) {
   const [customBounds, setCustomBounds] = useState([0, 10000]);
   const [typeFilter, setTypeFilter] = useState('Show Only Root Objects');
   const dispatch = useDispatch();
+  const [processedUri, setProcessedUri] = useState(publicRuntimeConfig.backend);
 
   let preparedSearch =
     search !== ''
@@ -128,6 +129,19 @@ export default function Members(properties) {
     setOffset(newBounds[0]);
   };
 
+  useEffect(() => {
+    let isMounted = true;
+    async function processUri() {
+      const result = await processUrlReverse(publicRuntimeConfig.backend, token, dispatch);
+      if (isMounted) {
+        setProcessedUri(result.uriReplacedForBackend);
+      }
+    }
+
+    processUri();
+    return () => { isMounted = false };
+  }, [token, dispatch]);
+
   return (
     <React.Fragment>
       <FilterHeader filters={filters} setTypeFilter={setTypeFilter} />
@@ -147,6 +161,8 @@ export default function Members(properties) {
         defaultSortOption={defaultSortOption}
         setDefaultSortOption={setDefaultSortOption}
         uri={properties.uri}
+        processedUri={processedUri}
+        mutate={mutate}
       />
     </React.Fragment>
   );
@@ -299,43 +315,47 @@ function MemberTable(properties) {
           if (icon && icon === faTrash) {
             handleDelete(member);
           } else if (icon && icon === faUnlink) {
-            handleUnlink(member);
+            handleUnlink(member, properties.processedUri);  // Use processedUri from props
           }
         };
 
-        const handleDelete = (member) => {
+        
+
+        const handleDelete = async (member) => {
           if (member.uri && window.confirm("Would you like to remove this item from the collection?")) {
-            axios.get(`${publicRuntimeConfig.backend}${member.uri}/remove`, {
-              headers: {
-                "Accept": "text/plain; charset=UTF-8",
-                "X-authorization": token
-              }
-            })
-              .then(response => {
-                window.location.reload();
-              })
-              .catch(error => {
-                console.error('Error removing item:', error);
+            try {
+              await axios.get(`${publicRuntimeConfig.backend}${member.uri}/remove`, {
+                headers: {
+                  "Accept": "text/plain; charset=UTF-8",
+                  "X-authorization": token
+                }
               });
+              // After successful deletion, update the state
+              properties.mutate(); // This will re-fetch the members
+            } catch (error) {
+              console.error('Error removing item:', error);
+              // Handle error appropriately
+            }
           }
         };
 
-        const handleUnlink = (member) => {
+        const handleUnlink = async (member, processedUri) => {
           if (member.uri && window.confirm("Would you like to unlink this item from the collection?")) {
-            axios.post(`${objectUri}/removeMembership`, {
-              "member": `${publicRuntimeConfig.backend}${member.uri}`
-            }, {
-              headers: {
-                "Accept": "text/plain; charset=UTF-8",
-                "X-authorization": token
-              }
-            })
-              .then(response => {
-                window.location.reload();
-              })
-              .catch(error => {
-                console.error('Error removing item:', error);
+            try {
+              await axios.post(`${objectUri}/removeMembership`, {
+                "member": `${processedUri}${member.uri}`
+              }, {
+                headers: {
+                  "Accept": "text/plain; charset=UTF-8",
+                  "X-authorization": token
+                }
               });
+              // After successful unlinking, update the state
+              properties.mutate(); // This will re-fetch the members
+            } catch (error) {
+              console.error('Error unlinking item:', error);
+              // Handle error appropriately
+            }
           }
         };
 
@@ -459,7 +479,10 @@ const fetcher = (url, token, dispatch) =>
       // Check if the error is 401 Unauthorized or 400 Bad Request
       if (error.response && (error.response.status === 401 || error.response.status === 400)) {
         // Check if the user is logged in by looking for 'userToken' in local storage
+        console.log(localStorage);
+        console.log(error.response);
         if (!localStorage.getItem('userToken')) {
+          console.log('Missing user token');
           // User is not logged in, redirect to the login page
           // window.location.href = '/login';
         }
