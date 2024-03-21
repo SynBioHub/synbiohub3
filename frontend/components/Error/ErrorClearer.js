@@ -8,15 +8,23 @@ export default function ErrorClearer({ index, setIndex, size }) {
   const router = useRouter();
   if (size === 'relog') {
     return (
-      <div
-        className={styles.clearButton}
-        onClick={() => {
-          dispatch(clearErrors());
-          dispatch(logoutUser());
-          router.push('/');
-        }}
-      >
-        Return to Login
+      <div>
+        <div
+          className={styles.clearAllButton}
+          onClick={() => dispatch(clearErrors())}
+        >
+          Clear All
+        </div>
+        <div
+          className={styles.clearButton}
+          onClick={() => {
+            dispatch(clearErrors());
+            dispatch(logoutUser());
+            router.push('/');
+          }}
+        >
+          Return to Login
+        </div>
       </div>
     );
   }
