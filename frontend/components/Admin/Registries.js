@@ -32,6 +32,7 @@ export default function Registries() {
 
   return (
     <div className={styles.plugintable}>
+      <RegistryActions />
       <Table
         data={registries ? registries.registries : undefined}
         loading={loading}
@@ -176,6 +177,75 @@ function RegistryDisplay(properties) {
         </div>
       </td>
     </tr>
+  );
+}
+
+function RegistryActions() {
+  const [inputOne, setInputOne] = useState('');
+  const [inputTwo, setInputTwo] = useState('');
+  const token = useSelector(state => state.user.token);
+  const dispatch = useDispatch();
+
+  const url = `${publicRuntimeConfig.backend}/admin/deleteRegistry`;
+
+  const handleFederate = async () => {
+    try {
+      await axios.post(`${publicRuntimeConfig.backend}/admin/federate`, {
+        administratorEmail: inputTwo,
+        webOfRegistries: inputOne
+      }, {
+        headers: {
+          'Accept': 'application/json',
+          'X-authorization': token
+        }
+      });
+      // Add additional logic here if needed after successful POST
+    } catch (error) {
+      console.error('Error with federate: ', error);
+      // Handle errors here
+    }
+  };
+
+  const handleRetrieve = async () => {
+    try {
+      const response = await axios.post(`${publicRuntimeConfig.backend}/admin/retrieveFromWebOfRegistries`, {}, {
+        headers: {
+          'Accept': 'application/json',
+          'X-authorization': token
+        }
+      });
+
+      if (response.data && Array.isArray(response.data.registries)) {
+        // Assuming 'registries' is the correct key in response and it's an array of registry objects
+        mutate([
+          `${publicRuntimeConfig.backend}/admin/registries`,
+          token,
+          dispatch
+        ]);
+      }
+    } catch (error) {
+      console.error('Error with retrieving from Web Of Registries: ', error);
+      // Handle errors here
+    }
+  };
+
+  return (
+    <div className={styles.registryActionsContainer}>
+      <input
+        type="text"
+        value={inputOne}
+        onChange={(e) => setInputOne(e.target.value)}
+        placeholder="Web of Registries URL"
+      />
+      <input
+        type="text"
+        value={inputTwo}
+        onChange={(e) => setInputTwo(e.target.value)}
+        placeholder="Administrator Email"
+      />
+      <button onClick={handleFederate}>Federate</button>
+      <button onClick={handleRetrieve}>Retrieve</button>
+    </div>
   );
 }
 

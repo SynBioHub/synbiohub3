@@ -19,7 +19,7 @@ import loadTemplate from '../../../sparql/tools/loadTemplate';
 import { shortName } from '../../../namespace/namespace';
 import lookupRole from '../../../namespace/lookupRole';
 import Link from 'next/link';
-import { addError } from '../../../redux/actions';
+import { addError, logoutUser } from '../../../redux/actions';
 import { processUrl, processUrlReverse } from '../../Admin/Registries';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faUnlink } from '@fortawesome/free-solid-svg-icons';
@@ -95,17 +95,28 @@ export default function Members(properties) {
     ? useMembers(query, parameters, token, dispatch)
     : useMembers(query, parameters, dispatch);
 
-  const { count: totalMemberCount } = useCount(
+  const { count: totalMemberCount } = privateGraph
+  ? useCount(
     CountMembersTotal,
     { ...parameters, search: '' },
     privateGraph ? token : undefined, // Pass token only if privateGraph is true
     dispatch
-  );
+  )
+  : useCount(
+    CountMembersTotal,
+    { ...parameters, search: '' },
+    dispatch);
 
-  const { count: currentMemberCount } = useCount(
+  const { count: currentMemberCount } = privateGraph
+  ? useCount(
     searchQuery ? CountMembersTotal : CountMembers,
     parameters,
     privateGraph ? token : undefined, // Pass token only if privateGraph is true
+    dispatch
+  )
+  : useCount(
+    searchQuery ? CountMembersTotal : CountMembers,
+    parameters,
     dispatch
   );
 
@@ -116,10 +127,16 @@ export default function Members(properties) {
     }
   }, [properties.refreshMembers, mutate]);
 
-  const { filters } = useFilters(
+  const { filters } = privateGraph 
+  ? useFilters(
     getTypesRoles,
     { uri: properties.uri },
     token,
+    dispatch
+  )
+  : useFilters(
+    getTypesRoles,
+    { uri: properties.uri },
     dispatch
   );
 
@@ -245,9 +262,10 @@ function FilterHeader(properties) {
 
 function MemberTable(properties) {
   const [processedMembers, setProcessedMembers] = useState([]);
-
+  const isPublicCollection = properties.uri.includes("/public/");
   const token = useSelector(state => state.user.token);
   const dispatch = useDispatch();
+  
   useEffect(() => {
     async function processMembers() {
       if (properties.members) {
@@ -278,6 +296,12 @@ function MemberTable(properties) {
       Number(properties.totalMembers).toLocaleString() +
       ')';
   }
+
+  const headers = ['Name', 'Identifier', 'Type', 'Description'];
+  if (!isPublicCollection) {
+    headers.push('Remove');
+  }
+
   return (
     <Table
       data={processedMembers}
@@ -290,7 +314,7 @@ function MemberTable(properties) {
       customSearch={properties.customSearch}
       hideFilter={true}
       searchable={[]}
-      headers={['Name', 'Identifier', 'Type', 'Description', 'Remove']}
+      headers={headers}
       sortOptions={sortOptions}
       sortMethods={sortMethods}
       defaultSortOption={properties.defaultSortOption}
@@ -319,7 +343,7 @@ function MemberTable(properties) {
           }
         };
 
-        
+
 
         const handleDelete = async (member) => {
           if (member.uri && window.confirm("Would you like to remove this item from the collection?")) {
@@ -375,9 +399,11 @@ function MemberTable(properties) {
             </td>
             <td>{getType(member)}</td>
             <td>{member.description}</td>
-            <td onClick={() => handleIconClick(member)}>
-              <FontAwesomeIcon icon={icon} />
-            </td>
+            {!isPublicCollection && (
+              <td onClick={() => handleIconClick(member)}>
+                <FontAwesomeIcon icon={icon} />
+              </td>
+            )}
           </tr>
         );
       }}
@@ -431,7 +457,13 @@ const createUrl = (query, options) => {
 
 const useCount = (query, options, token, dispatch) => {
   const url = createUrl(query, options, token);
-  const { data, error } = useSWR([url, token, dispatch], fetcher);
+  let data, error;
+
+  if (typeof token === 'string') {
+    ({ data, error } = useSWR([url, token, dispatch], fetcher));
+  } else {
+    ({ data, error } = useSWR([url, dispatch], fetcher));
+  }
 
   let processedData = data ? processResults(data)[0].count : undefined;
   return {
@@ -441,10 +473,15 @@ const useCount = (query, options, token, dispatch) => {
 
 const useMembers = (query, options, token, dispatch) => {
   const url = createUrl(query, options);
-  const { data, error, mutate } = useSWR([url, token, dispatch], fetcher);
+  let data, error, mutate;
+
+  if (typeof token === 'string') {
+    ({ data, error, mutate } = useSWR([url, token, dispatch], fetcher));
+  } else {
+    ({ data, error, mutate } = useSWR([url, dispatch], fetcher));
+  }
 
   let processedData = data ? processResults(data) : undefined;
-
   return {
     members: processedData,
     mutate
@@ -453,12 +490,20 @@ const useMembers = (query, options, token, dispatch) => {
 
 const useFilters = (query, options, token, dispatch) => {
   const url = createUrl(query, options);
-  const { data, error } = useSWR([url, token, dispatch], fetcher);
+
+  let data, error, mutate;
+
+  if (typeof token === 'string') {
+    ({ data, error, mutate } = useSWR([url, token, dispatch], fetcher));
+  } else {
+    ({ data, error, mutate } = useSWR([url, dispatch], fetcher));
+  }
 
   let processedData = data ? processResults(data) : undefined;
 
   return {
-    filters: processedData
+    filters: processedData,
+    mutate
   };
 };
 
@@ -479,12 +524,13 @@ const fetcher = (url, token, dispatch) =>
       // Check if the error is 401 Unauthorized or 400 Bad Request
       if (error.response && (error.response.status === 401 || error.response.status === 400)) {
         // Check if the user is logged in by looking for 'userToken' in local storage
-        console.log(localStorage);
-        console.log(error.response);
         if (!localStorage.getItem('userToken')) {
           console.log('Missing user token');
           // User is not logged in, redirect to the login page
-          // window.location.href = '/login';
+          dispatch(logoutUser());
+          window.location.href = '/login';
+        } else {
+          console.error(error);
         }
       }
 

@@ -11,6 +11,7 @@ import Shell from '../components/Viewing/Shell';
 import getMetadata from '../sparql/getMetadata';
 import getQueryResponse from '../sparql/tools/getQueryResponse';
 import { addError } from '../redux/actions';
+import styles from '../styles/view.module.css';
 
 export default function View({ data, error }) {
   const dispatch = useDispatch();
@@ -22,29 +23,65 @@ export default function View({ data, error }) {
   const token = useSelector(state => state.user.token);
   const url = view ? view.join('/') : '';
   const [metadata, setMetadata] = useState();
-
   const uri = `https://synbiohub.org/${url}`;
+  const [urlExists, setUrlExists] = useState(true); // New state for URL existence
+  const backenduri = `${publicRuntimeConfig.backend}/${url}`;
+
+  const centerStyle = {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: '100vh', // This makes sure it takes the full viewport height
+    marginTop: '-10vh',
+  };
 
   useEffect(() => {
-    if (!metadata)
-      getQueryResponse(dispatch, getMetadata, { uri: uri }, token).then(
-        metadata => setMetadata(metadata)
-      );
-  }, [metadata, token]);
+    // Check if URL exists
+    axios.get(backenduri)
+      .then(response => {
+        // URL exists
+        setUrlExists(true);
+        if (!metadata)
+          getQueryResponse(dispatch, getMetadata, { uri: uri }, token).then(
+            metadata => setMetadata(metadata)
+          );
+      })
+      .catch(error => {
+        // URL does not exist
+        setUrlExists(false);
+      });
+  }, [uri, metadata, token]);
 
-  // validate part
-  if (!url || !metadata)
+  // Render based on URL existence
+  if (!url || !urlExists) {
+    return (
+      <TopLevel publicPage={true}>
+        <div style={centerStyle}>
+          { /* Logo Here */}
+          <img src="images/widevibe.gif" alt="Logo" style={{ marginBottom: '20px' }} />
+
+          { /* Page Not Found Message */}
+          <div>
+            <h1>Page Not Found</h1>
+            <p>The requested URL {url && <code>{`/${url}`}</code>} was not found on this server.</p>
+          </div>
+        </div>
+      </TopLevel>
+    );
+  } else if (!metadata) {
     return (
       <TopLevel publicPage={true}>
         <Loading />
       </TopLevel>
     );
-  else if (metadata.length === 0)
+  } else if (metadata.length === 0) {
     return (
       <TopLevel publicPage={true}>
         <div>Page not found</div>
       </TopLevel>
     );
+  }
 
   return (
     <TopLevel publicPage={true}>
