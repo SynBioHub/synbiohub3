@@ -7,6 +7,9 @@ import React, { useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { useState } from 'react';
 
+import SearchHeader from '../Search/SearchHeader/SearchHeader';
+import ResultTable from '../Search/StandardSearch/ResultTable/ResultTable';
+
 import axios from 'axios';
 
 import Link from 'next/link';
@@ -71,6 +74,12 @@ export default function ViewHeader(properties) {
     })
       .then(response => {
         console.log(response.data);
+        return (
+          <div className={styles.searchContent}>
+            <SearchHeader selected="Standard Search" />
+            <ResultTable count={response.data.count} data={response.data} />
+          </div>
+        )
       })
       .catch(error => {
         console.error('Error fetching twins: ', error);
