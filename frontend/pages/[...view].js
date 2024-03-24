@@ -12,6 +12,7 @@ import getMetadata from '../sparql/getMetadata';
 import getQueryResponse from '../sparql/tools/getQueryResponse';
 import { addError } from '../redux/actions';
 import styles from '../styles/view.module.css';
+import LinkedSearch from '../components/Search/StandardSearch/LinkedSearch';
 
 export default function View({ data, error }) {
   const dispatch = useDispatch();
@@ -26,6 +27,34 @@ export default function View({ data, error }) {
   const uri = `https://synbiohub.org/${url}`;
   const [urlExists, setUrlExists] = useState(true); // New state for URL existence
   const backenduri = `${publicRuntimeConfig.backend}/${url}`;
+
+  if (url.endsWith('/twins')) {
+    const searchUrl = `${publicRuntimeConfig.backend}/${url}`;
+    return (
+      <LinkedSearch
+        url={searchUrl}
+        uri={url}
+      />
+    )
+  }
+  if (url.endsWith('/uses')) {
+    const searchUrl = `${publicRuntimeConfig.backend}/${url}`;
+    return (
+      <LinkedSearch
+        url={searchUrl}
+        uri={url}
+      />
+    )
+  }
+  if (url.endsWith('/similar')) {
+    const searchUrl = `${publicRuntimeConfig.backend}/${url}`;
+    return (
+      <LinkedSearch
+        url={searchUrl}
+        uri={url}
+      />
+    )
+  }
 
   const centerStyle = {
     display: 'flex',
@@ -135,3 +164,41 @@ const getType = type => {
   }
   return type;
 };
+
+function twins() {
+  const [twinsData, setTwinsData] = useState(null);
+  const [error, setError] = useState(null);
+
+  console.log('reached twinssearch');
+
+  useEffect(() => {
+    axios.get(`${objectUri}/twins`, {
+      headers: {
+        "Content-Type": "text/plain; charset=UTF-8",
+        "Accept": "application/json"
+      }
+    })
+      .then(response => {
+        setTwinsData(response.data);
+      })
+      .catch(error => {
+        console.error('Error fetching twins: ', error);
+        setError(error);
+      });
+  }, []);
+
+  if (error) {
+    return <div>Error loading twins data.</div>;
+  }
+
+  if (!twinsData) {
+    return <div>Loading...</div>;
+  }
+
+  return (
+    <div className={styles.searchContent}>
+      <SearchHeader selected="Standard Search" />
+      <ResultTable count={twinsData.count} data={twinsData} />
+    </div>
+  );
+}

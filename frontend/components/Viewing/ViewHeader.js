@@ -6,9 +6,9 @@ import styles from '../../styles/view.module.css';
 import React, { useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { useState } from 'react';
+import { useRouter } from 'next/router';
 
-import SearchHeader from '../Search/SearchHeader/SearchHeader';
-import ResultTable from '../Search/StandardSearch/ResultTable/ResultTable';
+import TwinsSearch from '../Search/StandardSearch/LinkedSearch';
 
 import axios from 'axios';
 
@@ -51,53 +51,16 @@ export default function ViewHeader(properties) {
   const objectUri = `${publicRuntimeConfig.backend}/${objectUriParts}`;
   var isOwner = isUriOwner(objectUri, username);
 
-  const similar = () => {
-    axios.get(`${objectUri}/similar`, {
-      headers: {
-        "Content-Type": "text/plain; charset=UTF-8",
-        "Accept": "application/json"
-      }
-    })
-      .then(response => {
-        console.log(response.data);
-      })
-      .catch(error => {
-        console.error('Error fetching similar: ', error);
-      });
-  };
+  const router = useRouter();
+
   const twins = () => {
-    axios.get(`${objectUri}/twins`, {
-      headers: {
-        "Content-Type": "text/plain; charset=UTF-8",
-        "Accept": "application/json"
-      }
-    })
-      .then(response => {
-        console.log(response.data);
-        return (
-          <div className={styles.searchContent}>
-            <SearchHeader selected="Standard Search" />
-            <ResultTable count={response.data.count} data={response.data} />
-          </div>
-        )
-      })
-      .catch(error => {
-        console.error('Error fetching twins: ', error);
-      });
+    router.push(`${window.location.href}/twins`);
   };
   const uses = () => {
-    axios.get(`${objectUri}/uses`, {
-      headers: {
-        "Content-Type": "text/plain; charset=UTF-8",
-        "Accept": "application/json"
-      }
-    })
-      .then(response => {
-        console.log(response.data);
-      })
-      .catch(error => {
-        console.error('Error fetching uses: ', error);
-      });
+    router.push(`${window.location.href}/uses`);
+  };
+  const similar = () => {
+    router.push(`${window.location.href}/similar`);
   };
 
   const saveDescription = () => {
@@ -312,7 +275,7 @@ export default function ViewHeader(properties) {
         )}
       </div>
       <div>
-        {properties.search.similar && (
+        {properties.search.similar && ( //TODO: Add check for SBOLExplorer
           <button className={styles.searchButton} onClick={similar}> Similar </button>
         )}
         {properties.search.twins && (
