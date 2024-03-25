@@ -1105,7 +1105,9 @@
 
 .editIcon {
   margin-left: 5px; /* Adds a bit of space between the title and the icon */
+  cursor: pointer;
 }
+
 
 .simANDTwinbutton {
   background-color: #D25627; /* This is a vibrant orange color */
@@ -1118,5 +1120,14 @@
   padding: 0.5rem;
   border-radius: 0.3rem 0.3rem 0.3rem 0.3rem;
 }
+
+.notFound {
+  display: 'flex';
+  flex-direction: 'column';
+  align-items: 'center';
+  justify-content: 'center';
+  height: '100vh';
+};
+
 
 

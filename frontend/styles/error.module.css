@@ -65,6 +65,20 @@
    box-shadow: 0 0.2rem 0.5rem 0 rgba(0, 0, 0, 0.2), 0 0.2rem 0.2rem 0 rgba(0, 0, 0, 0.14), 0 0.3rem 1px -0.2rem rgba(0, 0, 0, 0.12);
 }
 
+.smallErrorContainer {
+   display: flex;
+   z-index: 99999;
+   flex-direction: column;
+   position: fixed;
+   left: 50%;
+   transform: translateX(-50%);
+   width: 25rem;
+   border-radius: 0.5rem;
+   overflow: hidden;
+   /* shadow over div */
+   box-shadow: 0 0.2rem 0.5rem 0 rgba(0, 0, 0, 0.2), 0 0.2rem 0.2rem 0 rgba(0, 0, 0, 0.14), 0 0.3rem 1px -0.2rem rgba(0, 0, 0, 0.12);
+}
+
 .errorInfoContainer {
    flex-grow: 1;
    overflow: scroll;
@@ -154,4 +168,8 @@
    font-weight: 600;
    margin-top: 1rem;
    margin-bottom: 1rem;
+}
+
+.expandButton {
+   margin-left: 1.0rem;
 }

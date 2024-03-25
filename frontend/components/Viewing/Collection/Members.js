@@ -19,8 +19,8 @@ import loadTemplate from '../../../sparql/tools/loadTemplate';
 import { shortName } from '../../../namespace/namespace';
 import lookupRole from '../../../namespace/lookupRole';
 import Link from 'next/link';
-import { addError } from '../../../redux/actions';
-import { processUrl } from '../../Admin/Registries';
+import { addError, logoutUser } from '../../../redux/actions';
+import { processUrl, processUrlReverse } from '../../Admin/Registries';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faUnlink } from '@fortawesome/free-solid-svg-icons';
 import { getAfterThirdSlash } from '../ViewHeader';
@@ -50,6 +50,7 @@ export default function Members(properties) {
   const [customBounds, setCustomBounds] = useState([0, 10000]);
   const [typeFilter, setTypeFilter] = useState('Show Only Root Objects');
   const dispatch = useDispatch();
+  const [processedUri, setProcessedUri] = useState(publicRuntimeConfig.backend);
 
   let preparedSearch =
     search !== ''
@@ -94,17 +95,28 @@ export default function Members(properties) {
     ? useMembers(query, parameters, token, dispatch)
     : useMembers(query, parameters, dispatch);
 
-  const { count: totalMemberCount } = useCount(
+  const { count: totalMemberCount } = privateGraph
+  ? useCount(
     CountMembersTotal,
     { ...parameters, search: '' },
     privateGraph ? token : undefined, // Pass token only if privateGraph is true
     dispatch
-  );
+  )
+  : useCount(
+    CountMembersTotal,
+    { ...parameters, search: '' },
+    dispatch);
 
-  const { count: currentMemberCount } = useCount(
+  const { count: currentMemberCount } = privateGraph
+  ? useCount(
     searchQuery ? CountMembersTotal : CountMembers,
     parameters,
     privateGraph ? token : undefined, // Pass token only if privateGraph is true
+    dispatch
+  )
+  : useCount(
+    searchQuery ? CountMembersTotal : CountMembers,
+    parameters,
     dispatch
   );
 
@@ -115,10 +127,16 @@ export default function Members(properties) {
     }
   }, [properties.refreshMembers, mutate]);
 
-  const { filters } = useFilters(
+  const { filters } = privateGraph 
+  ? useFilters(
     getTypesRoles,
     { uri: properties.uri },
     token,
+    dispatch
+  )
+  : useFilters(
+    getTypesRoles,
+    { uri: properties.uri },
     dispatch
   );
 
@@ -127,6 +145,19 @@ export default function Members(properties) {
     setCustomBounds(newBounds);
     setOffset(newBounds[0]);
   };
+
+  useEffect(() => {
+    let isMounted = true;
+    async function processUri() {
+      const result = await processUrlReverse(publicRuntimeConfig.backend, token, dispatch);
+      if (isMounted) {
+        setProcessedUri(result.uriReplacedForBackend);
+      }
+    }
+
+    processUri();
+    return () => { isMounted = false };
+  }, [token, dispatch]);
 
   return (
     <React.Fragment>
@@ -147,6 +178,8 @@ export default function Members(properties) {
         defaultSortOption={defaultSortOption}
         setDefaultSortOption={setDefaultSortOption}
         uri={properties.uri}
+        processedUri={processedUri}
+        mutate={mutate}
       />
     </React.Fragment>
   );
@@ -229,9 +262,10 @@ function FilterHeader(properties) {
 
 function MemberTable(properties) {
   const [processedMembers, setProcessedMembers] = useState([]);
-
+  const isPublicCollection = properties.uri.includes("/public/");
   const token = useSelector(state => state.user.token);
   const dispatch = useDispatch();
+  
   useEffect(() => {
     async function processMembers() {
       if (properties.members) {
@@ -262,6 +296,12 @@ function MemberTable(properties) {
       Number(properties.totalMembers).toLocaleString() +
       ')';
   }
+
+  const headers = ['Name', 'Identifier', 'Type', 'Description'];
+  if (!isPublicCollection) {
+    headers.push('Remove');
+  }
+
   return (
     <Table
       data={processedMembers}
@@ -274,7 +314,7 @@ function MemberTable(properties) {
       customSearch={properties.customSearch}
       hideFilter={true}
       searchable={[]}
-      headers={['Name', 'Identifier', 'Type', 'Description', 'Remove']}
+      headers={headers}
       sortOptions={sortOptions}
       sortMethods={sortMethods}
       defaultSortOption={properties.defaultSortOption}
@@ -299,43 +339,47 @@ function MemberTable(properties) {
           if (icon && icon === faTrash) {
             handleDelete(member);
           } else if (icon && icon === faUnlink) {
-            handleUnlink(member);
+            handleUnlink(member, properties.processedUri);  // Use processedUri from props
           }
         };
 
-        const handleDelete = (member) => {
+
+
+        const handleDelete = async (member) => {
           if (member.uri && window.confirm("Would you like to remove this item from the collection?")) {
-            axios.get(`${publicRuntimeConfig.backend}${member.uri}/remove`, {
-              headers: {
-                "Accept": "text/plain; charset=UTF-8",
-                "X-authorization": token
-              }
-            })
-              .then(response => {
-                window.location.reload();
-              })
-              .catch(error => {
-                console.error('Error removing item:', error);
+            try {
+              await axios.get(`${publicRuntimeConfig.backend}${member.uri}/remove`, {
+                headers: {
+                  "Accept": "text/plain; charset=UTF-8",
+                  "X-authorization": token
+                }
               });
+              // After successful deletion, update the state
+              properties.mutate(); // This will re-fetch the members
+            } catch (error) {
+              console.error('Error removing item:', error);
+              // Handle error appropriately
+            }
           }
         };
 
-        const handleUnlink = (member) => {
+        const handleUnlink = async (member, processedUri) => {
           if (member.uri && window.confirm("Would you like to unlink this item from the collection?")) {
-            axios.post(`${objectUri}/removeMembership`, {
-              "member": `${publicRuntimeConfig.backend}${member.uri}`
-            }, {
-              headers: {
-                "Accept": "text/plain; charset=UTF-8",
-                "X-authorization": token
-              }
-            })
-              .then(response => {
-                window.location.reload();
-              })
-              .catch(error => {
-                console.error('Error removing item:', error);
+            try {
+              await axios.post(`${objectUri}/removeMembership`, {
+                "member": `${processedUri}${member.uri}`
+              }, {
+                headers: {
+                  "Accept": "text/plain; charset=UTF-8",
+                  "X-authorization": token
+                }
               });
+              // After successful unlinking, update the state
+              properties.mutate(); // This will re-fetch the members
+            } catch (error) {
+              console.error('Error unlinking item:', error);
+              // Handle error appropriately
+            }
           }
         };
 
@@ -355,9 +399,11 @@ function MemberTable(properties) {
             </td>
             <td>{getType(member)}</td>
             <td>{member.description}</td>
-            <td onClick={() => handleIconClick(member)}>
-              <FontAwesomeIcon icon={icon} />
-            </td>
+            {!isPublicCollection && (
+              <td onClick={() => handleIconClick(member)}>
+                <FontAwesomeIcon icon={icon} />
+              </td>
+            )}
           </tr>
         );
       }}
@@ -411,7 +457,13 @@ const createUrl = (query, options) => {
 
 const useCount = (query, options, token, dispatch) => {
   const url = createUrl(query, options, token);
-  const { data, error } = useSWR([url, token, dispatch], fetcher);
+  let data, error;
+
+  if (typeof token === 'string') {
+    ({ data, error } = useSWR([url, token, dispatch], fetcher));
+  } else {
+    ({ data, error } = useSWR([url, dispatch], fetcher));
+  }
 
   let processedData = data ? processResults(data)[0].count : undefined;
   return {
@@ -421,10 +473,15 @@ const useCount = (query, options, token, dispatch) => {
 
 const useMembers = (query, options, token, dispatch) => {
   const url = createUrl(query, options);
-  const { data, error, mutate } = useSWR([url, token, dispatch], fetcher);
+  let data, error, mutate;
+
+  if (typeof token === 'string') {
+    ({ data, error, mutate } = useSWR([url, token, dispatch], fetcher));
+  } else {
+    ({ data, error, mutate } = useSWR([url, dispatch], fetcher));
+  }
 
   let processedData = data ? processResults(data) : undefined;
-
   return {
     members: processedData,
     mutate
@@ -433,12 +490,20 @@ const useMembers = (query, options, token, dispatch) => {
 
 const useFilters = (query, options, token, dispatch) => {
   const url = createUrl(query, options);
-  const { data, error } = useSWR([url, token, dispatch], fetcher);
+
+  let data, error, mutate;
+
+  if (typeof token === 'string') {
+    ({ data, error, mutate } = useSWR([url, token, dispatch], fetcher));
+  } else {
+    ({ data, error, mutate } = useSWR([url, dispatch], fetcher));
+  }
 
   let processedData = data ? processResults(data) : undefined;
 
   return {
-    filters: processedData
+    filters: processedData,
+    mutate
   };
 };
 
@@ -460,8 +525,12 @@ const fetcher = (url, token, dispatch) =>
       if (error.response && (error.response.status === 401 || error.response.status === 400)) {
         // Check if the user is logged in by looking for 'userToken' in local storage
         if (!localStorage.getItem('userToken')) {
+          console.log('Missing user token');
           // User is not logged in, redirect to the login page
-          // window.location.href = '/login';
+          dispatch(logoutUser());
+          window.location.href = '/login';
+        } else {
+          console.error(error);
         }
       }
 

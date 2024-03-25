@@ -6,6 +6,9 @@ import styles from '../../styles/view.module.css';
 import React, { useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { useState } from 'react';
+import { useRouter } from 'next/router';
+
+import TwinsSearch from '../Search/StandardSearch/LinkedSearch';
 
 import axios from 'axios';
 
@@ -52,77 +55,17 @@ export default function ViewHeader(properties) {
   const objectUri = `${publicRuntimeConfig.backend}/${objectUriParts}`;
   var isOwner = isUriOwner(objectUri, username);
 
-  console.log(objectUri);
-  /*
-    const url = `${getUrl(objectType, 'objectType')}${getUrl(
-      creator,
-      'dc:creator'
-    )}${getUrl(role, 'sbol2:role')}${getUrl(
-      sbolType,
-      'sbol2:type'
-    )}${collectionUrls}${getUrl(
-      created[0].startDate,
-      'createdAfter',
-      true
-    )}${getUrl(created[0].endDate, 'createdBefore', true)}${getUrl(
-      modifed[0].startDate,
-      'modifedAfter',
-      true
-    )}${getUrl(
-      modifed[0].endDate,
-      'modifedBefore',
-      true
-    )}${constructExtraFilters()}`;
-    setUrl(url);
 
-    /// this is for the table?
-    <div className={viewStyles.searchContent}>
-        <SearchHeader selected="Standard Search" />
-        <ResultTable count={count} data={results} />
-    </div>
-  */
+  const router = useRouter();
 
-  const similar = () => {
-    axios.get(`${objectUri}/similar`, {
-      headers: {
-        "Content-Type": "text/plain; charset=UTF-8",
-        "Accept": "application/json"
-      }
-    })
-      .then(response => {
-        setSimilarData(response.data)
-      })
-      .catch(error => {
-        console.error('Error fetching similar: ', error);
-      });
-  };
   const twins = () => {
-    axios.get(`${objectUri}/twins`, {
-      headers: {
-        "Content-Type": "text/plain; charset=UTF-8",
-        "Accept": "application/json"
-      }
-    })
-      .then(response => {
-        setTwinsData(response.data);
-      })
-      .catch(error => {
-        console.error('Error fetching twins: ', error);
-      });
+    router.push(`${window.location.href}/twins`);
   };
   const uses = () => {
-    axios.get(`${objectUri}/uses`, {
-      headers: {
-        "Content-Type": "text/plain; charset=UTF-8",
-        "Accept": "application/json"
-      }
-    })
-      .then(response => {
-        setUsesData(response.data);
-      })
-      .catch(error => {
-        console.error('Error fetching uses: ', error);
-      });
+    router.push(`${window.location.href}/uses`);
+  };
+  const similar = () => {
+    router.push(`${window.location.href}/similar`);
   };
 
   const saveDescription = () => {
@@ -256,12 +199,13 @@ export default function ViewHeader(properties) {
                   icon={faPencilAlt}
                   onClick={handleEditClick}
                   className={styles.editIcon}
+                  title="Edit title"
                 />
                 {properties.name.length > 0 && (
                   <FontAwesomeIcon
                     icon={faTrash}
                     size="1x"
-                    className={styles.deleteIcon}
+                    className={styles.editIcon}
                     title="Remove title"
                     onClick={(e) => {
                       e.stopPropagation();
@@ -336,8 +280,8 @@ export default function ViewHeader(properties) {
         )}
       </div>
       <div>
-        {properties.search.similar && (
-          <button className={styles.simANDTwinbutton} onClick={similar}> Similar </button>
+        {properties.search.similar && ( //TODO: Add check for SBOLExplorer
+          <button className={styles.searchButton} onClick={similar}> Similar </button>
         )}
         {properties.search.twins && (
           <button className={styles.simANDTwinbutton} onClick={twins}> Twins </button>

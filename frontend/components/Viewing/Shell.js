@@ -178,7 +178,6 @@ export function formatMultipleTitles(titles) {
 
 function getSearch(type) {
   // list the top levels
-  console.log(type);
   const toplevel = ["Activity", "Agent", "Association", "Attachment", "Collection", "CombinatorialDerivation", "Component", "Datasheet", "Experiment", "FunctionalComponent", "Implementation", "Model", "ModuleDefinition", "Plan", "Sequence", "Usage"]
   //return tru"e,false based on type
   if (type === "ComponentDefinition") {
@@ -203,6 +202,11 @@ function getSearch(type) {
       uses: false
     };
   }
+}
+
+export function isValidURI(uri) {
+  const pattern = /^(https?|ftp|file):\/\/([A-Z0-9.-]+)(:[0-9]+)?(\/[A-Z0-9.-_]*)*$/i;
+  return pattern.test(uri);
 }
 
 

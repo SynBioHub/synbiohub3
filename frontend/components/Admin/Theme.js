@@ -171,7 +171,15 @@ const fetcher = (url, dispatch) =>
     })
     .then(response => response.data)
     .catch(error => {
-      error.customMessage = 'Request failed for GET /admin/theme';
-      error.fullUrl = url;
-      dispatch(addError(error));
+      if (error.message === 'Network Error') {
+        // Change the error message or handle it differently
+        console.error('Unable to connect to the server. Please check your network connection.');
+        dispatch(addError(error));
+      } else {
+        // Handle other errors      
+        error.customMessage = 'Request failed for GET /admin/theme31278931739137131';
+        error.fullUrl = url;
+        dispatch(addError(error));
+      }
+
     });
