@@ -17,6 +17,7 @@ import Table from '../Reusable/Table/Table';
 import TableButton from '../Reusable/TableButton';
 import BasketItem from './BasketItem';
 import CreateCollection from './CreateCollection';
+import { useTheme } from '../Admin/Theme';
 
 const searchable = ['name', 'displayId', 'type', 'description'];
 
@@ -37,6 +38,7 @@ export default function Basket() {
   const [buttonEnabled, setButtonEnabled] = useState(false);
   const [itemsToAddToCollection, setItemsToAddToCollection] = useState([]);
   const [createCollectionMode, setCreateCollectionMode] = useState(false);
+  const { theme } = useTheme();
 
   useEffect(() => {
     dispatch(restoreBasket());
@@ -71,7 +73,7 @@ export default function Basket() {
       <FontAwesomeIcon
         icon={faShoppingBasket}
         size="2x"
-        color="#D25627"
+        color={theme?.themeParameters?.[0]?.value || '#D25627'} // Use theme color or default to #D25627
         className={styles.basketicon}
         onClick={() => setShowBasket(true)}
       />
@@ -160,6 +162,7 @@ export default function Basket() {
                 item={item}
                 selected={selected}
                 setSelected={setSelected}
+                theme={theme}
               />
             )}
           />

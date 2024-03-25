@@ -36,7 +36,8 @@ export default function TableButtons(properties) {
             dispatch(addToBasket(itemsChecked));
           }}
         >
-          <span className={styles.buttonicon}>
+          <span className={styles.buttonicon} 
+          >
             <FontAwesomeIcon icon={faPlus} color="#00000" size="1x" />
           </span>
           Add to Basket

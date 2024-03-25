@@ -27,6 +27,10 @@ export default function ViewHeader(properties) {
   const [displayedDescription, setDisplayedDescription] = useState(properties.description);
   const [isEditingDescription, setIsEditingDescription] = useState(false);
   const [editedDescription, setEditedDescription] = useState(properties.description);
+  // State variables for handling similar, twins, and uses results
+  const [similarData, setSimilarData] = useState(null);
+  const [twinsData, setTwinsData] = useState(null);
+  const [usesData, setUsesData] = useState(null);
 
   var displayTitle = properties.type;
   if (properties.type.includes('#')) {
@@ -50,6 +54,7 @@ export default function ViewHeader(properties) {
   const username = useSelector(state => state.user.username);
   const objectUri = `${publicRuntimeConfig.backend}/${objectUriParts}`;
   var isOwner = isUriOwner(objectUri, username);
+
 
   const router = useRouter();
 
@@ -182,8 +187,8 @@ export default function ViewHeader(properties) {
               value={editedTitle}
               onChange={(e) => setEditedTitle(e.target.value)}
             />
-            <button onClick={handleSaveTitle}>Save</button>
-            <button onClick={handleCancelTitle}>Cancel</button>
+            <button className={styles.saveANDcancel} onClick={handleSaveTitle}>Save</button>
+            <button className={styles.saveANDcancel} onClick={handleCancelTitle}>Cancel</button>
           </div>
         ) : (
           <div className={styles.titleContainer}>
@@ -230,17 +235,17 @@ export default function ViewHeader(properties) {
           </a>
         </Link>
       </div>
-      <div className={styles.description}
+      <div 
         title={displayedDescription.length > 0 ? "Find all records with terms in common with this description" : ""}>
         {isEditingDescription ? (
           <div>
-            <input
+            <input className={styles.description}
               type="text"
               value={editedDescription}
               onChange={(e) => setEditedDescription(e.target.value)}
             />
-            <button onClick={saveDescription}>Save</button>
-            <button onClick={() => setIsEditingDescription(false)}>Cancel</button>
+            <button className={styles.saveANDcancel} onClick={saveDescription} >Save</button>
+            <button className={styles.saveANDcancel} onClick={() => setIsEditingDescription(false)} >Cancel</button>
           </div>
         ) : (
           <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -279,10 +284,10 @@ export default function ViewHeader(properties) {
           <button className={styles.searchButton} onClick={similar}> Similar </button>
         )}
         {properties.search.twins && (
-          <button className={styles.searchButton} onClick={twins}> Twins </button>
+          <button className={styles.simANDTwinbutton} onClick={twins}> Twins </button>
         )}
         {properties.search.uses && (
-          <button className={styles.searchButton} onClick={uses}> Uses </button>
+          <button className={styles.simANDTwinbutton} onClick={uses}> Uses </button>
         )}
       </div>
     </div>
