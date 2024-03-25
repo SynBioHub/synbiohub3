@@ -177,6 +177,21 @@ export default function ViewHeader(properties) {
     setIsEditingTitle(false);
   };
 
+  const checkSBOLExplorer = () => {
+    axios.get(`${publicRuntimeConfig.backend}/admin/explorer`, {
+      headers: {
+        "Accept": "text/plain; charset=UTF-8",
+        "X-authorization": token
+      }
+    })
+      .then(response => {
+        console.log(response.data);
+      })
+      .catch(error => {
+        console.error('Error checking SBOLExplorer:', error);
+      });
+  };
+
   return (
     <div>
       <div className={styles.contentheader}>
@@ -235,7 +250,7 @@ export default function ViewHeader(properties) {
           </a>
         </Link>
       </div>
-      <div 
+      <div
         title={displayedDescription.length > 0 ? "Find all records with terms in common with this description" : ""}>
         {isEditingDescription ? (
           <div>
@@ -280,8 +295,8 @@ export default function ViewHeader(properties) {
         )}
       </div>
       <div>
-        {properties.search.similar && ( //TODO: Add check for SBOLExplorer
-          <button className={styles.searchButton} onClick={similar}> Similar </button>
+        {properties.search.similar && checkSBOLExplorer?.data?.includes('SBOLExplorer') && ( //TODO: Add check for SBOLExplorer
+          <button className={styles.simANDTwinbutton} onClick={similar}> Similar </button>
         )}
         {properties.search.twins && (
           <button className={styles.simANDTwinbutton} onClick={twins}> Twins </button>
