@@ -11,6 +11,7 @@ import Options from '../AdvancedSearch/Options';
 const { publicRuntimeConfig } = getConfig();
 import SearchHeader from '../SearchHeader/SearchHeader';
 import { processUrl } from '../../Admin/Registries';
+import { useTheme } from '../../Admin/Theme';
 
 import {
   countloader,
@@ -28,7 +29,10 @@ import ResultTable from './ResultTable/ResultTable';
  * This component handles a basic 'string search' from users on sbh,
  * otherwise known as a standard search
  */
+
+
 export default function StandardSearch() {
+  const { theme} = useTheme();
   const query = useSelector(state => state.search.query);
   const offset = useSelector(state => state.search.offset);
   const limit = useSelector(state => state.search.limit);
@@ -226,6 +230,10 @@ if (isError) {
               className={advStyles.searchbutton}
               role="button"
               onClick={constructSearch}
+              style={{
+                backgroundColor: theme?.themeParameters?.[0]?.value || '#333', // Use theme color or default to #333
+                color: theme?.themeParameters?.[1]?.value || '#fff', // Use text color from theme or default to #fff
+              }}
             >
             <FontAwesomeIcon
               icon={faHatWizard}

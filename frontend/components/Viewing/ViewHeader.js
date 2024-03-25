@@ -24,6 +24,10 @@ export default function ViewHeader(properties) {
   const [displayedDescription, setDisplayedDescription] = useState(properties.description);
   const [isEditingDescription, setIsEditingDescription] = useState(false);
   const [editedDescription, setEditedDescription] = useState(properties.description);
+  // State variables for handling similar, twins, and uses results
+  const [similarData, setSimilarData] = useState(null);
+  const [twinsData, setTwinsData] = useState(null);
+  const [usesData, setUsesData] = useState(null);
 
   var displayTitle = properties.type;
   if (properties.type.includes('#')) {
@@ -49,6 +53,34 @@ export default function ViewHeader(properties) {
   var isOwner = isUriOwner(objectUri, username);
 
   console.log(objectUri);
+  /*
+    const url = `${getUrl(objectType, 'objectType')}${getUrl(
+      creator,
+      'dc:creator'
+    )}${getUrl(role, 'sbol2:role')}${getUrl(
+      sbolType,
+      'sbol2:type'
+    )}${collectionUrls}${getUrl(
+      created[0].startDate,
+      'createdAfter',
+      true
+    )}${getUrl(created[0].endDate, 'createdBefore', true)}${getUrl(
+      modifed[0].startDate,
+      'modifedAfter',
+      true
+    )}${getUrl(
+      modifed[0].endDate,
+      'modifedBefore',
+      true
+    )}${constructExtraFilters()}`;
+    setUrl(url);
+
+    /// this is for the table?
+    <div className={viewStyles.searchContent}>
+        <SearchHeader selected="Standard Search" />
+        <ResultTable count={count} data={results} />
+    </div>
+  */
 
   const similar = () => {
     axios.get(`${objectUri}/similar`, {
@@ -58,7 +90,7 @@ export default function ViewHeader(properties) {
       }
     })
       .then(response => {
-        console.log(response.data);
+        setSimilarData(response.data)
       })
       .catch(error => {
         console.error('Error fetching similar: ', error);
@@ -72,7 +104,7 @@ export default function ViewHeader(properties) {
       }
     })
       .then(response => {
-        console.log(response.data);
+        setTwinsData(response.data);
       })
       .catch(error => {
         console.error('Error fetching twins: ', error);
@@ -86,7 +118,7 @@ export default function ViewHeader(properties) {
       }
     })
       .then(response => {
-        console.log(response.data);
+        setUsesData(response.data);
       })
       .catch(error => {
         console.error('Error fetching uses: ', error);
@@ -212,8 +244,8 @@ export default function ViewHeader(properties) {
               value={editedTitle}
               onChange={(e) => setEditedTitle(e.target.value)}
             />
-            <button onClick={handleSaveTitle}>Save</button>
-            <button onClick={handleCancelTitle}>Cancel</button>
+            <button className={styles.saveANDcancel} onClick={handleSaveTitle}>Save</button>
+            <button className={styles.saveANDcancel} onClick={handleCancelTitle}>Cancel</button>
           </div>
         ) : (
           <div className={styles.titleContainer}>
@@ -259,17 +291,17 @@ export default function ViewHeader(properties) {
           </a>
         </Link>
       </div>
-      <div className={styles.description}
+      <div 
         title={displayedDescription.length > 0 ? "Find all records with terms in common with this description" : ""}>
         {isEditingDescription ? (
           <div>
-            <input
+            <input className={styles.description}
               type="text"
               value={editedDescription}
               onChange={(e) => setEditedDescription(e.target.value)}
             />
-            <button onClick={saveDescription}>Save</button>
-            <button onClick={() => setIsEditingDescription(false)}>Cancel</button>
+            <button className={styles.saveANDcancel} onClick={saveDescription} >Save</button>
+            <button className={styles.saveANDcancel} onClick={() => setIsEditingDescription(false)} >Cancel</button>
           </div>
         ) : (
           <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -305,13 +337,13 @@ export default function ViewHeader(properties) {
       </div>
       <div>
         {properties.search.similar && (
-          <button className={styles.searchButton} onClick={similar}> Similar </button>
+          <button className={styles.simANDTwinbutton} onClick={similar}> Similar </button>
         )}
         {properties.search.twins && (
-          <button className={styles.searchButton} onClick={twins}> Twins </button>
+          <button className={styles.simANDTwinbutton} onClick={twins}> Twins </button>
         )}
         {properties.search.uses && (
-          <button className={styles.searchButton} onClick={uses}> Uses </button>
+          <button className={styles.simANDTwinbutton} onClick={uses}> Uses </button>
         )}
       </div>
     </div>
