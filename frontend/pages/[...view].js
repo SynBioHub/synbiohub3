@@ -12,6 +12,7 @@ import getMetadata from '../sparql/getMetadata';
 import getQueryResponse from '../sparql/tools/getQueryResponse';
 import { addError } from '../redux/actions';
 import styles from '../styles/view.module.css';
+import LinkedSearch from '../components/Search/StandardSearch/LinkedSearch';
 
 export default function View({ data, error }) {
   const dispatch = useDispatch();
@@ -26,6 +27,34 @@ export default function View({ data, error }) {
   const uri = `https://synbiohub.org/${url}`;
   const [urlExists, setUrlExists] = useState(true); // New state for URL existence
   const backenduri = `${publicRuntimeConfig.backend}/${url}`;
+
+  if (url.endsWith('/twins')) {
+    const searchUrl = `${publicRuntimeConfig.backend}/${url}`;
+    return (
+      <LinkedSearch
+        url={searchUrl}
+        uri={url}
+      />
+    )
+  }
+  if (url.endsWith('/uses')) {
+    const searchUrl = `${publicRuntimeConfig.backend}/${url}`;
+    return (
+      <LinkedSearch
+        url={searchUrl}
+        uri={url}
+      />
+    )
+  }
+  if (url.endsWith('/similar')) {
+    const searchUrl = `${publicRuntimeConfig.backend}/${url}`;
+    return (
+      <LinkedSearch
+        url={searchUrl}
+        uri={url}
+      />
+    )
+  }
 
   const centerStyle = {
     display: 'flex',
