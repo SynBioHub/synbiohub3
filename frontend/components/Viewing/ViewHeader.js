@@ -295,7 +295,7 @@ export default function ViewHeader(properties) {
         )}
       </div>
       <div>
-        {properties.search.similar && checkSBOLExplorer?.data?.includes('SBOLExplorer') && ( //TODO: Add check for SBOLExplorer
+        {properties.search.similar && typeof checkSBOLExplorer?.data === 'string' && ( //TODO: Add check for SBOLExplorer
           <button className={styles.simANDTwinbutton} onClick={similar}> Similar </button>
         )}
         {properties.search.twins && (
