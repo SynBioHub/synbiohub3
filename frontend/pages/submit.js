@@ -77,7 +77,7 @@ function Submit() {
           checked={overwriteCollection}
           setChecked={setOverwriteCollection}
         />
-        <SubmitButton files={files} overwriteCollection={overwriteCollection} submitHandler={selectedHandler} change={handleClick} />
+        <SubmitButton files={files} overwriteCollection={overwriteCollection} submitHandler={selectedHandler} configure={handleClick} />
         
       </div>
     </div>
