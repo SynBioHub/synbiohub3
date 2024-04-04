@@ -32,6 +32,8 @@ export default function Options(properties) {
   loadPredicates(setPredicates, dispatch);
   }, []);
 
+  console.log('Option predicates: ', predicates);
+  console.log(properties);
   const filterDisplay = properties.extraFilters.map((element, index) => {
     return (
       <AdditionalFilter
@@ -132,9 +134,9 @@ export default function Options(properties) {
           }
         />
       </div>
-      <div className={styles.inputsection}>
+      {/*<div className={styles.inputsection}>
 
-      </div>
+        </div>*/}
 
       {/* <div className={styles.calendarinputsection}>
         <label>Created Between</label>

@@ -22,29 +22,38 @@ export default function AdditionalFilter(properties) {
     if(newFilters[properties.index].filter != '')
       properties.setExtraFilters(newFilters);
   }, [selectedPredicate, selectedValue]);
+
+  console.log("selectedPredicate: ", selectedPredicate);
+  console.log("selectedValue: ", selectedValue);
+  console.log("predicates: ", properties.predicates);
+
+  console.log(properties);
+
   return (
     <div className={styles.inputsection}>
       {<div className={styles.labelsection}>
-        <span>{properties.extraFilters[properties.index].filter}</span>
+        <span>{shortName(properties.extraFilters[properties.index].filter)}</span>
       </div>}
-      { !properties.extraFilters[properties.index].filter && (<SelectLoader 
-            result={properties.predicates} 
-            placeholder="Select filter type..."
-            parseResult={result => {
-              return {
-                value: result.predicate.value,
-                label: shortName(result.predicate.value)
-              };
-            }}
-            onChange={option => {
-              setSelectedPredicate(option ? option.label : "");
-            }}
-          />)}
-
-      
+      {!properties.extraFilters[properties.index].filter && 
+        (<SelectLoader 
+          result={properties.predicates}
+          placeholder="Select filter type..."
+          parseResult={result => {
+            return {
+              value: result.predicate.value,
+              label: shortName(result.predicate.value)
+            };
+          }}
+          onChange={option => {
+            setSelectedPredicate(option ? option.label : "");
+          }}
+          />
+        )}
+      {<div className={styles.labelsection}>
+        <span>{shortName(properties.extraFilters[properties.index].value)}</span>
+      </div>}
       {properties.extraFilters[properties.index].filter && 
-      (
-        <SelectLoader
+        (<SelectLoader
           placeholder={shortName(properties.extraFilters[properties.index].value)}//{selectedValue}
           sparql={configureQuery(searchObject, {
             predicate: properties.extraFilters[properties.index].filter //selectedPredicate
@@ -56,7 +65,7 @@ export default function AdditionalFilter(properties) {
             };
           }}
           onChange={option => {
-            setSelectedValue(option ? option.value : undefined);
+            setSelectedValue(option ? option.value : "");
           }}
         />
       )}
@@ -68,7 +77,7 @@ export default function AdditionalFilter(properties) {
           cursor: 'pointer'
         }}
         onClick={() => {
-          //properties.handleDelete(properties.extraFilters[properties.index]);
+          console.log('delete: ', properties.index);
           const newFilters = properties.handleDelete(properties.extraFilters[properties.index]);
           properties.setExtraFilters(newFilters);
         }}
