@@ -23,11 +23,17 @@ export default function AdditionalFilter(properties) {
       properties.setExtraFilters(newFilters);
   }, [selectedPredicate, selectedValue]);
 
-  console.log("selectedPredicate: ", selectedPredicate);
-  console.log("selectedValue: ", selectedValue);
-  console.log("predicates: ", properties.predicates);
-
-  console.log(properties);
+  useEffect(() => {
+    if (properties.index < properties.extraFilters.length) {
+      const currentFilter = properties.extraFilters[properties.index];
+      setSelectedPredicate(currentFilter.filter || "");
+      setSelectedValue(currentFilter.value || "");
+    } else {
+      // Reset local state if this filter no longer exists
+      setSelectedPredicate("");
+      setSelectedValue("");
+    }
+  }, [properties.extraFilters.length, properties.index]);
 
   return (
     <div className={styles.inputsection}>
@@ -49,9 +55,6 @@ export default function AdditionalFilter(properties) {
           }}
           />
         )}
-      {<div className={styles.labelsection}>
-        <span>{shortName(properties.extraFilters[properties.index].value)}</span>
-      </div>}
       {properties.extraFilters[properties.index].filter && 
         (<SelectLoader
           placeholder={shortName(properties.extraFilters[properties.index].value)}//{selectedValue}
@@ -76,10 +79,8 @@ export default function AdditionalFilter(properties) {
           marginLeft: '0.3rem',
           cursor: 'pointer'
         }}
-        onClick={() => {
-          console.log('delete: ', properties.index);
-          const newFilters = properties.handleDelete(properties.extraFilters[properties.index]);
-          properties.setExtraFilters(newFilters);
+        onClick={() => { 
+          properties.handleDelete(properties.index); 
         }}
       >
         <FontAwesomeIcon icon={faTimesCircle} size="1x" color="red" />

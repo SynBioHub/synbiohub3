@@ -65,7 +65,7 @@ export default function StandardSearch() {
   const [translation, setTranslation] = useState(0);
 
   const router = useRouter();
-  collections.map(collection => console.log(collection.label));
+
   const constructSearch = () => {
     let collectionUrls = '';
     for (const collection of collections) {
@@ -92,26 +92,12 @@ export default function StandardSearch() {
     )}${constructExtraFilters()}`;
     setUrl(url);
   };
-
-  console.log("S: ", extraFilters);
   
-  // const handleDelete = (delFilter) => {
-  //   console.log("delFilters: ", delFilter);
-  //   const leftFilters = extraFilters.filter(extraFilter => extraFilter !== delFilter);
-  //   console.log(leftFilters); // Log the updated filters first
-  //   setExtraFilters(leftFilters); // Update the state
-  //   console.log(extraFilters); // Log the state after the update (will still be the old value)
-  //   return leftFilters;
-  // };
-
-  const handleDelete = (delFilter) => {
-    console.log("delFilters: ", delFilter);
-    setExtraFilters((prevFilters) => {
-      const leftFilters = prevFilters.filter(extraFilter => extraFilter !== delFilter);
-      console.log("Updated Filters (inside setExtraFilters): ", leftFilters);
-      return leftFilters;
-    });
-  };
+  const handleDelete = (delFilterIndex) => { 
+    setExtraFilters(prevFilters => { 
+      return prevFilters.filter((_, index) => index !== delFilterIndex); 
+    }); 
+  }; 
   
 
   const addFilter = filters => {
