@@ -40,7 +40,9 @@ export default function AdditionalFilter(properties) {
       {<div className={styles.labelsection}>
         <span>{shortName(properties.extraFilters[properties.index].filter)}</span>
       </div>}
-      {!properties.extraFilters[properties.index].filter && 
+      {<div className={styles.inputsection2}>
+        <div className={styles.containerLeft}>
+        {!properties.extraFilters[properties.index].filter && 
         (<SelectLoader 
           result={properties.predicates}
           placeholder="Select filter type..."
@@ -72,19 +74,21 @@ export default function AdditionalFilter(properties) {
           }}
         />
       )}
-
-      <div
-        style={{
-          padding: '0.6rem 0.5rem 0.6rem 0.7rem',
-          marginLeft: '0.3rem',
-          cursor: 'pointer'
-        }}
-        onClick={() => { 
-          properties.handleDelete(properties.index); 
-        }}
-      >
-        <FontAwesomeIcon icon={faTimesCircle} size="1x" color="red" />
-      </div>
+        </div>
+        <div className={styles.containerRight}>
+          <div
+          style={{
+            padding: '0.6rem 0.5rem 0.1rem 0.5rem',
+            cursor: 'pointer'
+          }}
+          onClick={() => { 
+            properties.handleDelete(properties.index); 
+          }}
+        >
+          <FontAwesomeIcon icon={faTimesCircle} size="1x" color="red" />
+          </div>
+        </div>
+      </div>}
     </div>
   );
 }
