@@ -176,11 +176,9 @@ if (isError) {
   }
   if (isLoading) {
     return (
-      <div className={standardcontainer}>
         <div className={standardresultsloading}>
           <Loader color="#D25627" type="ThreeDots" />
         </div>
-      </div>
     );
   }
   for (const result of results) {
