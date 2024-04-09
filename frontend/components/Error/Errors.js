@@ -22,9 +22,7 @@ export default function Errors() {
   const error = errors[viewIndex];
   const toggleExpand = () => setIsExpanded(!isExpanded);
 
-  console.log(error.response.data);
-
-  if (error.response.data === "Error: Cannot access other users' graphs.") {
+  if (error.response && error.response.data === "Error: Cannot access other users' graphs.") {
     return (
       <div className={styles.smallErrorContainer}>
         <div className={styles.errorHeaderContainer}>
