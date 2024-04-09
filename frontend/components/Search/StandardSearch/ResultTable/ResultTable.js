@@ -53,7 +53,7 @@ export default function ResultTable(properties) {
     />
   ));
   if (properties.data.length === 0) {
-    return <div className={styles.resultcontainer}>No results found</div>;
+    return <div className={styles.tablecontainer2}>No results found</div>;
   }
   return (
     <div className={styles.resultcontainer}>
@@ -65,8 +65,6 @@ export default function ResultTable(properties) {
         count={properties.count}
         submissionsPage={properties.submissionsPage}
       />
-
-      <div className={styles.tablecontainer}>
         <table className={styles.table} id={styles.results}>
           <thead>
             <tr>
@@ -99,6 +97,5 @@ export default function ResultTable(properties) {
           <tbody>{rows}</tbody>
         </table>
       </div>
-    </div>
   );
 }

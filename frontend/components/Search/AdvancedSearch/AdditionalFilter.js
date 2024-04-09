@@ -9,40 +9,59 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimesCircle } from '@fortawesome/free-solid-svg-icons';
 
 export default function AdditionalFilter(properties) {
-  const [selectedPredicate, setSelectedPredicate] = useState();
-  const [selectedValue, setSelectedValue] = useState();
-  const [hidden, setHidden] = useState(false);
+  const [selectedPredicate, setSelectedPredicate] = useState("");
+  const [selectedValue, setSelectedValue] = useState("");
 
   useEffect(() => {
     const newFilters = [...properties.extraFilters];
     newFilters[properties.index] = {
       filter: selectedPredicate,
-      value: selectedPredicate ? selectedValue : undefined
+      value: selectedPredicate ? selectedValue : "",
     };
-    properties.setExtraFilters(newFilters);
-  }, [selectedPredicate, selectedValue, properties.index]);
 
-  if (hidden) return null;
+    if(newFilters[properties.index].filter != '')
+      properties.setExtraFilters(newFilters);
+  }, [selectedPredicate, selectedValue]);
+
+  useEffect(() => {
+    if (properties.index < properties.extraFilters.length) {
+      const currentFilter = properties.extraFilters[properties.index];
+      setSelectedPredicate(currentFilter.filter || "");
+      setSelectedValue(currentFilter.value || "");
+    } else {
+      // Reset local state if this filter no longer exists
+      setSelectedPredicate("");
+      setSelectedValue("");
+    }
+  }, [properties.extraFilters.length, properties.index]);
 
   return (
     <div className={styles.inputsection}>
-      <SelectLoader
-        result={properties.predicates}
-        placeholder="Select filter type..."
-        parseResult={result => {
-          return {
-            value: result.predicate.value,
-            label: shortName(result.predicate.value)
-          };
-        }}
-        onChange={option => {
-          setSelectedPredicate(option ? option.label : undefined);
-        }}
-      />
-      {selectedPredicate && (
-        <SelectLoader
+      {<div className={styles.labelsection}>
+        <span>{shortName(properties.extraFilters[properties.index].filter)}</span>
+      </div>}
+      {<div className={styles.inputsection2}>
+        <div className={styles.containerLeft}>
+        {!properties.extraFilters[properties.index].filter && 
+        (<SelectLoader 
+          result={properties.predicates}
+          placeholder="Select filter type..."
+          parseResult={result => {
+            return {
+              value: result.predicate.value,
+              label: shortName(result.predicate.value)
+            };
+          }}
+          onChange={option => {
+            setSelectedPredicate(option ? option.label : "");
+          }}
+          />
+        )}
+      {properties.extraFilters[properties.index].filter && 
+        (<SelectLoader
+          placeholder={shortName(properties.extraFilters[properties.index].value)}//{selectedValue}
           sparql={configureQuery(searchObject, {
-            predicate: selectedPredicate
+            predicate: properties.extraFilters[properties.index].filter //selectedPredicate
           })}
           parseResult={result => {
             return {
@@ -51,28 +70,25 @@ export default function AdditionalFilter(properties) {
             };
           }}
           onChange={option => {
-            setSelectedValue(option ? option.value : undefined);
+            setSelectedValue(option ? option.value : "");
           }}
         />
       )}
-      <div
-        style={{
-          padding: '0.6rem 0.5rem 0.6rem 0.7rem',
-          marginLeft: '0.3rem',
-          cursor: 'pointer'
-        }}
-        onClick={() => {
-          const newFilters = [...properties.extraFilters];
-          newFilters[properties.index] = {
-            filter: selectedPredicate,
-            value: undefined
-          };
-          properties.setExtraFilters(newFilters);
-          setHidden(true);
-        }}
-      >
-        <FontAwesomeIcon icon={faTimesCircle} size="1x" color="red" />
-      </div>
+        </div>
+        <div className={styles.containerRight}>
+          <div
+          style={{
+            padding: '0.6rem 0.5rem 0.1rem 0.5rem',
+            cursor: 'pointer'
+          }}
+          onClick={() => { 
+            properties.handleDelete(properties.index); 
+          }}
+        >
+          <FontAwesomeIcon icon={faTimesCircle} size="1x" color="red" />
+          </div>
+        </div>
+      </div>}
     </div>
   );
 }
