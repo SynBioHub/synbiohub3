@@ -410,17 +410,19 @@
   cursor: pointer;
 }
 
-.saveANDcancel {
-  background-color: #D25627; /* This is a vibrant orange color */
-  color: #fff; /* White text for good contrast */
-  border: none; /* Remove default border */
-  cursor: pointer; /* Add cursor pointer for better UX */
+/* ButtonStyles.css */
+.button {
+  background-color: #D25627; 
+  color: #fff; 
+  border: none;
+  cursor: pointer; 
   font-family: 'Kardia Fit', sans-serif;
   font-weight: 600;
   margin: 0.5rem 0.2rem 0.5rem 0.5rem;
   padding: 0.5rem;
   border-radius: 0.3rem 0.3rem 0.3rem 0.3rem;
 }
+
 
 .description div {
   margin-top: 0.5rem;
@@ -1109,17 +1111,6 @@
 }
 
 
-.simANDTwinbutton {
-  background-color: #D25627; /* This is a vibrant orange color */
-  color: #fff; /* White text for good contrast */
-  border: none; /* Remove default border */
-  cursor: pointer; /* Add cursor pointer for better UX */
-  font-family: 'Kardia Fit', sans-serif;
-  font-weight: 600;
-  margin: 0.5rem 0.2rem 0.5rem 0.5rem;
-  padding: 0.5rem;
-  border-radius: 0.3rem 0.3rem 0.3rem 0.3rem;
-}
 
 .notFound {
   display: 'flex';
@@ -1128,6 +1119,5 @@
   justify-content: 'center';
   height: '100vh';
 };
-
 
 

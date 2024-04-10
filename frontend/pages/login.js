@@ -11,6 +11,9 @@ import TopLevel from '../components/TopLevel';
 import { login } from '../redux/actions';
 import styles from '../styles/login.module.css';
 
+import { useTheme } from '../../frontend/components/Admin/Theme';
+
+
 /**
  * This page renders the login page for sbh
  */
@@ -22,6 +25,8 @@ function Login() {
   const [password, setPassword] = useState('');
   const dispatch = useDispatch();
   const router = useRouter();
+
+  const { theme} = useTheme();
 
   const next = router.query.next;
 
@@ -78,6 +83,10 @@ function Login() {
         <div
           role="button"
           className={styles.submitbutton}
+          style={{
+            backgroundColor: theme?.themeParameters?.[0]?.value || '#333', // Use theme color or default to #333
+            color: theme?.themeParameters?.[1]?.value || '#fff', // Use text color from theme or default to #fff
+          }} 
           onClick={() => {
             dispatch(login(username, password));
             setUsername('');
