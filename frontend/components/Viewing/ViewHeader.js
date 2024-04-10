@@ -321,10 +321,6 @@ export default function ViewHeader(properties) {
       <div>
         {properties.search.similar && typeof checkSBOLExplorer?.data === 'string' && ( //TODO: Add check for SBOLExplorer
           <button className={styles.button} onClick={similar}> Similar 
-          {/* style={{
-            backgroundColor: theme?.themeParameters?.[0]?.value || '#333', // Use theme color or default to #333
-            color: theme?.themeParameters?.[1]?.value || '#fff', // Use text color from theme or default to #fff
-          }}  */}
           </button>
         )}
         {properties.search.twins && (

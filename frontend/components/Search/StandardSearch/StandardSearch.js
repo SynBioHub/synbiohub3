@@ -24,6 +24,7 @@ import {
 import viewStyles from '../../../styles/view.module.css';
 import advStyles from '../../../styles/advancedsearch.module.css';
 import ResultTable from './ResultTable/ResultTable';
+import { filter } from 'jszip';
 
 /**
  * This component handles a basic 'string search' from users on sbh,
@@ -91,6 +92,23 @@ export default function StandardSearch() {
     )}${constructExtraFilters()}`;
     setUrl(url);
   };
+  
+  const handleDelete = (delFilterIndex) => { 
+    setExtraFilters(prevFilters => { 
+      return prevFilters.filter((_, index) => index !== delFilterIndex); 
+    }); 
+  }; 
+  
+
+  const addFilter = filters => {
+    return [
+      ...filters,
+      {
+        filter: '',
+        value: ''
+      }
+    ];
+  };
 
   const constructExtraFilters = () => {
     let url = '';
@@ -137,7 +155,7 @@ export default function StandardSearch() {
     } else {
       setCount(newCount);
     }
-  }, [isCountLoading, isCountError, query]);
+  }, [isCountLoading, isCountError, query, extraFilters]);
 
   // get search results
   const { results, isLoading, isError } = useSearchResults(
@@ -158,11 +176,9 @@ if (isError) {
   }
   if (isLoading) {
     return (
-      <div className={standardcontainer}>
         <div className={standardresultsloading}>
           <Loader color="#D25627" type="ThreeDots" />
         </div>
-      </div>
     );
   }
   for (const result of results) {
@@ -225,6 +241,9 @@ if (isError) {
 
               extraFilters={extraFilters}
               setExtraFilters={setExtraFilters}
+
+              addFilter={addFilter}
+              handleDelete={handleDelete}
             />
             <div
               className={advStyles.searchbutton}
@@ -255,7 +274,6 @@ if (isError) {
   </div>
   );
 }
-
 const useSearchResults = (query, url, offset, limit, token, dispatch) => {
   query = url + query;
   const { data, error } = useSWR(
