@@ -8,9 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
 import org.springframework.web.bind.annotation.*;
 
-import javax.json.Json;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
 @RestController
@@ -199,8 +197,9 @@ public class SearchController {
      */
     @RequestMapping(value = "/sparql", headers = "Accept=application/json")
     @ResponseBody
-    public String getSPARQL(@RequestParam String query) throws IOException {
-        return searchService.SPARQLQuery(query);
+    public String getSPARQL(@RequestParam Map<String, String> params) throws IOException {
+        System.out.println(params);
+        return searchService.SPARQLQuery(params.get("query"));
     }
 
 //    @GetMapping(value = "/search/**")

@@ -53,7 +53,7 @@ public class SecurityConfig {
                 .cors()
                 .and()
                 .authorizeHttpRequests()
-                .requestMatchers("/setup", "/login", "/register", "/search", "/search/**", "/searchCount", "/searchCount/**", "/twins", "/uses", "/similar", "/sbol", "/sbolnr", "/metadata", "/gb", "/fasta", "/gff", "/download", "/public/**", "/sparql", "/ComponentDefinition/**", "/**/count", "/count", "/admin/theme").permitAll()
+                .requestMatchers("/setup", "/login", "/register", "/search", "/search/**", "/searchCount", "/searchCount/**", "/twins", "/uses", "/similar", "/sbol", "/sbolnr", "/metadata", "/gb", "/fasta", "/gff", "/download", "/public/**", "/sparql", "/ComponentDefinition/**", "/**/count", "/count", "/admin/theme", "/admin/registries", "admin/plugins").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .csrf().disable()

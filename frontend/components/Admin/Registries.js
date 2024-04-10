@@ -324,7 +324,7 @@ const sortMethods = {
 
 const useRegistries = (token, dispatch) => {
   const { data, error } = useSWR(
-    [`${publicRuntimeConfig.backend}/admin/registries`, token, dispatch],
+    [`${publicRuntimeConfig.backend}/admin/registries`, dispatch],
     fetcher
   );
   return {
@@ -334,13 +334,12 @@ const useRegistries = (token, dispatch) => {
   };
 };
 
-const fetcher = (url, token, dispatch) =>
+const fetcher = (url, dispatch) =>
   axios
     .get(url, {
       headers: {
         'Content-Type': 'application/json',
-        Accept: 'application/json',
-        'X-authorization': token
+        Accept: 'application/json'
       }
     })
     .then(response => response.data)
@@ -352,10 +351,20 @@ const fetcher = (url, token, dispatch) =>
 
 export async function processUrl(inputUrl, token, dispatch) {
 
-  const data = await fetcher(`${publicRuntimeConfig.backend}/admin/registries`, token, dispatch);
+  const data = await fetcher(`${publicRuntimeConfig.backend}/admin/registries`, dispatch);
+
+
 
   if (data) {
-    const registries = data.registries;
+    let registries;
+    // Check if data.registries is an array
+    if (data.registries && Array.isArray(data.registries)) {
+      registries = data.registries;
+    } else if (data && typeof data === 'object') {
+      registries = [data]; // This is an example, adjust based on your needs
+    } else {
+      registries = [];
+    }
 
     for (const registry of registries) {
       if (inputUrl.startsWith(registry.uri)) {
@@ -371,7 +380,7 @@ export async function processUrl(inputUrl, token, dispatch) {
 
 export async function processUrlReverse(inputUrl, token, dispatch) {
 
-  const data = await fetcher(`${publicRuntimeConfig.backend}/admin/registries`, token, dispatch);
+  const data = await fetcher(`${publicRuntimeConfig.backend}/admin/registries`, dispatch);
 
   if (data) {
     const registries = data.registries;

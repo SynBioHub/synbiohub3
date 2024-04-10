@@ -1,6 +1,5 @@
 package com.synbiohub.sbh3.controllers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.synbiohub.sbh3.services.DownloadService;
 import com.synbiohub.sbh3.utils.ConfigUtil;
@@ -13,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.ByteArrayInputStream;
@@ -30,9 +28,16 @@ public class DownloadController extends AntPathMatcher {
     private final ObjectMapper mapper;
 
     @GetMapping(value = "/public/{db}/{id}/{ver}/sbol") // Separate mapping for private components /user/{username}/{db}/{id}/{ver}
+    public ResponseEntity<?> getSBOLRecursiveRDFDownload(@PathVariable String db, @PathVariable String id, @PathVariable String ver) throws IOException {
+        return getInputStreamResourceResponseEntity(db, id, ver);
+    }
+
+    @GetMapping(value = "/public/{db}/{id}/{ver}") // Separate mapping for private components /user/{username}/{db}/{id}/{ver}
     public ResponseEntity<?> getSBOLRecursiveRDF(@PathVariable String db, @PathVariable String id, @PathVariable String ver) throws IOException {
-//        var uri = request.getRequestURL().toString();
-//        String splitUri = uri.split("/sbol")[0]; //TODO replace http://localhost:6789 with https://synbiohub.org
+        return getInputStreamResourceResponseEntity(db, id, ver);
+    }
+
+    private ResponseEntity<InputStreamResource> getInputStreamResourceResponseEntity(String db, String id, String ver) throws IOException {
         String splitUri = ConfigUtil.get("defaultGraph").toString().replace("\"","") + "/" + db + "/" + id + "/" + ver;
         String uri = splitUri + "/sbol";
 
@@ -50,7 +55,7 @@ public class DownloadController extends AntPathMatcher {
                 //.contentLength(results.length)
                 .contentType(
                         MediaType.parseMediaType("application/xml"))
-                .header("Content-Disposition", "attachment; filename=\"" + uriArr[uriArr.length-3] + ".xml\"")
+                .header("Content-Disposition", "attachment; filename=\"" + uriArr[uriArr.length - 3] + ".xml\"")
                 .body(new InputStreamResource(new ByteArrayInputStream(byteOutput.toByteArray())));
     }
 
