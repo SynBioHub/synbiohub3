@@ -12,6 +12,11 @@ export default function Explorer() {
     const [autoUpdate, setAutoUpdate] = useState(false);
     const [days, setDays] = useState();
     const [distrib, setDistrib] = useState(false);
+    const [tolerance, setTolerance] = useState(0.0002);
+    const [clusterIdentity, setClusterIdentity] = useState(0.9);
+    const [elasticSearchEnd, setElasticSearchEnd] = useState("http://elasticsearch:9200/");
+    const [elasticSearchIndex, setElasticSearchIndex] = useState("part");
+    const [sparqlEndpoint, setSparqlEndpoint] = useState("http://virtuoso:8890/sparql?");
 
     const handleChange = () => {
       setChecked(!checked);
@@ -24,25 +29,38 @@ export default function Explorer() {
         setVSChecked(!VSchecked);
         setUSChecked(false);
     };
-
     const handleUpdateIndex = () => {
         console.log("update1");
     }
-
     const handleDownloadLog = () => {
         console.log("update2");
     }
-
     const handleAutoUpdate = () => {
         setAutoUpdate(!autoUpdate);
     }
-
     const handleDays = () => {
         setAutoUpdate(days);
     }
-
     const handleDistrib = () => {
         setDistrib(!distrib);
+    }
+    const handleTolerance = () => {
+        setTolerance(tolerance);
+    }
+    const handleClusteringIdentity = () => {
+        setClusterIdentity(clusterIdentity);
+    }
+    const handleElasticSearchEnd = () => {
+        setElasticSearchEnd(elasticSearchEnd);
+    }
+    const handleElasticSearchIndex = () => {
+        setElasticSearchIndex(elasticSearchIndex);
+    }
+    const handleSparqlEndpoint = () => {
+        setSparqlEndpoint(sparqlEndpoint);
+    }
+    const handleSubmit = () => {
+        console.log("Submit");
     }
 
     useEffect(() => {
@@ -128,56 +146,66 @@ export default function Explorer() {
             <div className="row">
                 <div className="col-md-12">
                     <div className="checkbox">
-                        <label>
-                            <input checked="" name="useDistributedSearch" type="checkbox" />
-                            Use Distributed Search
-                        </label>
+                        <input
+                        type="checkbox"
+                        checked={distrib}
+                        onChange={handleDistrib}
+                        />
+                        Use Distributed Search
                     </div>
                 </div>
             </div>
-            <div className="row">
-                <div className="col-md-12">
-                    <div className="form-group">
-                        <label htmlFor="pagerankTolerance">Pagerank Tolerance</label>
-                        <input className="form-control" name="pagerankTolerance" type="text" value=".0002" />
-                    </div>
-                </div>
+            <div className="form-group">
+                Pagerank Tolerance &nbsp;
+                <input 
+                    id="typeinp" 
+                    type="text" 
+                    value={tolerance} 
+                    onChange={handleTolerance}/>
             </div>
-            <div className="row">
-                <div className="col-md-12">
-                    <div className="form-group">
-                        <label htmlFor="uclustIdentity">UClust Clustering Identity</label>
-                        <input className="form-control" name="uclustIdentity" type="text" value="0.9" />
-                    </div>
-                </div>
+            <div className="form-group">
+            UClust Clustering Identity &nbsp;
+                <input 
+                    id="typeinp" 
+                    type="text" 
+                    value={clusterIdentity} 
+                    onChange={handleClusteringIdentity}/>
             </div>
-            <div className="row">
-                <div className="col-md-6">
-                    <div className="form-group">
-                        <label htmlFor="elasticsearchEndpoint">Elasticsearch Endpoint</label>
-                        <input className="form-control" name="elasticsearchEndpoint" type="text" value="http://elasticsearch:9200/" />
-                    </div>
-                </div>
-                <div className="col-md-6">
-                    <div className="form-group">
-                        <label htmlFor="elasticsearchIndexName">Elasticsearch Index Name</label>
-                        <input className="form-control" name="elasticsearchIndexName" type="text" value="part" />
-                    </div>
-                </div>
+
+            <div className="form-group">
+            Elasticsearch Endpoint &nbsp;
+                <input 
+                    id="typeinp" 
+                    type="text" 
+                    value={elasticSearchEnd} 
+                    onChange={handleElasticSearchEnd}/>
             </div>
-            <div className="row">
-                <div className="col-md-12">
-                    <div className="form-group">
-                        <label htmlFor="sparqlEndpoint">SPARQL/Virtuoso Endpoint</label>
-                        <input className="form-control" name="sparqlEndpoint" type="text" value="http://virtuoso:8890/sparql?" />
-                    </div>
-                </div>
+
+            <div className="form-group">
+            Elasticsearch Index Name &nbsp;
+                <input 
+                    id="typeinp" 
+                    type="text" 
+                    value={elasticSearchIndex} 
+                    onChange={handleElasticSearchIndex}/>
             </div>
-            <div className="row">
-                <div className="col-md-1 col-md-offset-11">
-                    <button className="btn btn-primary" type="submit">Save</button>
-                </div>
+
+            <div className="form-group">
+            SPARQL/Virtuoso Endpoint &nbsp;
+                <input 
+                    id="typeinp" 
+                    type="text" 
+                    value={sparqlEndpoint} 
+                    onChange={handleSparqlEndpoint}/>
             </div>
+            <div className={styles.actionbuttonslayout}>
+                            <ActionButton
+                            action="Save"
+                            color="#00A1E4"
+                            onClick={handleSubmit}
+                            />
+            </div>
+
                 </div>
                 )}
             </div>}
