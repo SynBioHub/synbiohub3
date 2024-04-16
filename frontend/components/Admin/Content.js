@@ -11,10 +11,11 @@ import Sparql from './Sparql';
 import Status from './Status';
 import Theme from './Theme';
 import Users from './Users';
+import Explorer from './Explorer';
 
 export default function Content(properties) {
   const [content, setContent] = useState(properties.selected);
-
+  console.log("test: ", properties.selected)
   useEffect(() => {
     switch (properties.selected) {
       case 'graphs':
@@ -43,6 +44,9 @@ export default function Content(properties) {
         break;
       case 'theme':
         setContent(<Theme />);
+        break;
+      case 'explorer':
+        setContent(<Explorer />);
         break;
       default:
         setContent(<Status />);
