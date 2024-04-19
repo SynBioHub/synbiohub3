@@ -353,8 +353,18 @@ export default function MetadataInfo({ title, link, label, icon, specific, uri, 
                   value={currentValue}
                   onChange={(e) => handleEditMetadata(index, e.target.value, label)}
                 />
-                <button className={styles.saveANDcancel} onClick={() => handleSaveEditMetadata(index, data, label)}>Save</button>
-                <button className={styles.saveANDcancel} onClick={() => handleCancelEdit(label)}>Cancel</button>
+                <button className={styles.button} onClick={() => handleSaveEditMetadata(index, data, label)}
+                style={{
+                  backgroundColor: theme?.themeParameters?.[0]?.value || '#333', // Use theme color or default to #333
+                  color: theme?.themeParameters?.[1]?.value || '#fff', // Use text color from theme or default to #fff
+                }} 
+                >Save</button>
+                <button className={styles.button} onClick={() => handleCancelEdit(label)}
+                style={{
+                  backgroundColor: theme?.themeParameters?.[0]?.value || '#333', // Use theme color or default to #333
+                  color: theme?.themeParameters?.[1]?.value || '#fff', // Use text color from theme or default to #fff
+                }} 
+                >Cancel</button>
               </div>
             ) : (
               // Display mode
@@ -427,11 +437,21 @@ export default function MetadataInfo({ title, link, label, icon, specific, uri, 
             value={newMetadata}
             onChange={(e) => setNewMetadata(e.target.value)}
           />
-          <button className={styles.saveANDcancel} type="button" onClick={() => handleAddMetadata(label)}>Save</button>
-          <button className={styles.saveANDcancel} type="button" onClick={() => {
+          <button className={styles.button} type="button" onClick={() => handleAddMetadata(label)}
+            style={{
+              backgroundColor: theme?.themeParameters?.[0]?.value || '#333', // Use theme color or default to #333
+              color: theme?.themeParameters?.[1]?.value || '#fff', // Use text color from theme or default to #fff
+            }} 
+          >Save</button>
+          <button className={styles.button} type="button" onClick={() => {
             setIsEditing(false);
             setNewMetadata(''); // Optional: Clear the input if needed
-          }}>Cancel</button>
+          }}
+            style={{
+              backgroundColor: theme?.themeParameters?.[0]?.value || '#333', // Use theme color or default to #333
+              color: theme?.themeParameters?.[1]?.value || '#fff', // Use text color from theme or default to #fff
+            }} 
+          >Cancel</button>
         </div>
       ) : null}
     </div>
