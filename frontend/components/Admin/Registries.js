@@ -355,7 +355,7 @@ export async function processUrl(inputUrl, token, dispatch) {
 
 
 
-  if (data) {
+  if (data && data.registries) {
     let registries;
     // Check if data.registries is an array
     if (data.registries && Array.isArray(data.registries)) {
@@ -368,7 +368,7 @@ export async function processUrl(inputUrl, token, dispatch) {
 
     for (const registry of registries) {
       if (inputUrl.startsWith(registry.uri)) {
-        const urlRemovedForLink = inputUrl.replace(registry.uri, "");
+        const urlRemovedForLink = inputUrl.replace(registry.uri, ""); // TODO: Should only strip for only "you"
         const urlReplacedForBackend = inputUrl.replace(registry.uri, registry.url);
         return { urlRemovedForLink, urlReplacedForBackend };
       }
@@ -382,7 +382,7 @@ export async function processUrlReverse(inputUrl, token, dispatch) {
 
   const data = await fetcher(`${publicRuntimeConfig.backend}/admin/registries`, dispatch);
 
-  if (data) {
+  if (data && data.registries) {
     const registries = data.registries;
 
     for (const registry of registries) {

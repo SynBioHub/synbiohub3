@@ -22,7 +22,8 @@ export default function Setup({ setInSetupMode }) {
   const [logo, setLogo] = useState(undefined);
   const [allowPublicSignup, setAllowPublicSignup] = useState(true);
 
-  const [instanceURL, setInstanceURL] = useState('http://localhost:7777/');
+  const [frontendURL, setFrontendURL] = useState('http://localhost:3333/');
+  const [backendURL, setBackendURL] = useState('http://localhost:7777/');
   const [uriPrefix, setUriPrefix] = useState('http://localhost:7777/');
 
   const [userName, setUserName] = useState('');
@@ -110,11 +111,20 @@ export default function Setup({ setInSetupMode }) {
           content={
             <div>
               <InputField
-                labelText="Instance URL: We need to know where this SynBioHub instance is hosted so we can assign URLs to your submissions. If the URL below is incorrect, please change it"
-                placeholder="Instance URL"
-                value={instanceURL}
-                onChange={event => setInstanceURL(event.target.value)}
-                inputName="Instance URL"
+                labelText="Frontend URL: We need to know where this SynBioHub instance is is displayed. If the URL below is incorrect, please change it"
+                placeholder="Frontend URL"
+                value={frontendURL}
+                onChange={event => setFrontendURL(event.target.value)}
+                inputName="Frontend URL"
+                containerStyling={styles.inputcontainer}
+              />
+
+              <InputField
+                labelText="Backend URL: We need to know where this SynBioHub instance is hosted so we can assign URLs to your submissions. In most cases, this will be the same as the frontend. If the URL below is incorrect, please change it"
+                placeholder="Backend URL"
+                value={backendURL}
+                onChange={event => setBackendURL(event.target.value)}
+                inputName="Backend URL"
                 containerStyling={styles.inputcontainer}
               />
 
@@ -141,7 +151,7 @@ export default function Setup({ setInSetupMode }) {
                 inputName="username"
                 containerStyling={styles.inputcontainer}
                 pattern="^[a-zA-Z0-9\-_\.~]+$"
-                title="Usernames can contain letters, numbers, and the symbols - _ . ~"
+                title="Usernames can only contain letters, numbers, and the symbols - _ . ~"
               />
 
 
@@ -206,7 +216,8 @@ export default function Setup({ setInSetupMode }) {
                 `${publicRuntimeConfig.backend}/setup`,
                 {
                   instanceName,
-                  instanceURL,
+                  frontendURL,
+                  backendURL,
                   uriPrefix,
                   userName,
                   affiliation,
