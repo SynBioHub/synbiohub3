@@ -10,17 +10,15 @@ export default function executeQueryFromTableJSON(
 ) {
   if (typeof uri === "undefined") {
     uri = "URI is undefined";
-  }
+}
 
-  console.log(uri);
-
+  
   return getQueryResponse(
     dispatch,
     prefixes + '\n' + buildQuery(uri, table),
-    { uri },
+    {},
     '',
     false,
-    urlOverride, 
-    uri
+    urlOverride
   );
 }

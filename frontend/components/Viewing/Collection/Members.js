@@ -25,7 +25,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faUnlink } from '@fortawesome/free-solid-svg-icons';
 import { getAfterThirdSlash } from '../ViewHeader';
 import Status, { useStatus } from '../../Admin/Status';
-import { useTheme } from '../../Admin/Theme';
 
 /* eslint sonarjs/cognitive-complexity: "off" */
 
@@ -52,7 +51,6 @@ export default function Members(properties) {
   const [typeFilter, setTypeFilter] = useState('Show Only Root Objects');
   const dispatch = useDispatch();
   const [processedUri, setProcessedUri] = useState(publicRuntimeConfig.backend);
-  const { theme } = useTheme();
 
   let preparedSearch =
     search !== ''
@@ -76,7 +74,7 @@ export default function Members(properties) {
 
   const parameters = {
     from: '',
-    graphPrefix: `${theme.uriPrefix}`, // TODO: Maybe get this from somewhere? 
+    graphPrefix: 'https://synbiohub.org/', // TODO: Maybe get this from somewhere? 
     collection: properties.uri,
     sort: sort,
     search: preparedSearch,

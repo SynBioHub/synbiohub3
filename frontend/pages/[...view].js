@@ -13,7 +13,6 @@ import getQueryResponse from '../sparql/tools/getQueryResponse';
 import { addError } from '../redux/actions';
 import styles from '../styles/view.module.css';
 import LinkedSearch from '../components/Search/StandardSearch/LinkedSearch';
-import { useTheme } from '../components/Admin/Theme'; 
 
 export default function View({ data, error }) {
   const dispatch = useDispatch();
@@ -25,7 +24,7 @@ export default function View({ data, error }) {
   const token = useSelector(state => state.user.token);
   const url = view ? view.join('/') : '';
   const [metadata, setMetadata] = useState();
-  const { theme } = useTheme();
+  const uri = `https://synbiohub.org/${url}`;
   const [urlExists, setUrlExists] = useState(true); // New state for URL existence
   const backenduri = `${publicRuntimeConfig.backend}/${url}`;
 
@@ -66,20 +65,13 @@ export default function View({ data, error }) {
     marginTop: '-10vh',
   };
 
-  let uri;
-  // let uri = `https://dan.org/${url}`;
-  if (theme) {
-    uri = `${theme.uriPrefix}${url}`;
-  }
-  
-
   useEffect(() => {
     // Check if URL exists
     axios.get(backenduri)
       .then(response => {
         // URL exists
         setUrlExists(true);
-        if (!metadata && uri)
+        if (!metadata)
           getQueryResponse(dispatch, getMetadata, { uri: uri }, token).then(
             metadata => setMetadata(metadata)
           );

@@ -13,8 +13,6 @@ export default async function getQueryResponse(
   admin,
   urlOverride
 ) {
-console.log(options);
-
   query = loadTemplate(query, options);
 
   const currentURL = window.location.href;
@@ -25,9 +23,7 @@ console.log(options);
     const result = regex.exec(currentURL)[0];
     const lastSlash = result.lastIndexOf('/');
     const graphURL = result.substring(0, lastSlash);
-    const uriPrefix = getUrlBeforeThirdSlash(options.uri);
-    console.log(`${uriPrefix}${graphURL}`);
-    graphEx = `&default-graph-uri=${uriPrefix}${graphURL}`;
+    graphEx = `&default-graph-uri=https://synbiohub.org${graphURL}`;
   }
 
   const params = admin ? '/admin/sparql?query=' : '/sparql?query=';
@@ -35,9 +31,6 @@ console.log(options);
   const url = `${
     urlOverride || publicRuntimeConfig.backend
   }${params}${encodeURIComponent(query)}${graph}`;
-
-  console.log(options);
-  console.log(url);
 
   const headers = {
     'Content-Type': 'application/json',
@@ -73,14 +66,3 @@ const processResults = results => {
     return resultObject;
   });
 };
-
-function getUrlBeforeThirdSlash(url) {
-  if (typeof url !== 'string') return '';
-  let slashCount = 0, result = '';
-  for (let i = 0; i < url.length; i++) {
-    if (url[i] === '/') slashCount++;
-    if (slashCount === 3) break;
-    result += url[i];
-  }
-  return result;
-}

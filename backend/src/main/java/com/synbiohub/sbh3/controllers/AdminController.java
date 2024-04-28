@@ -130,14 +130,8 @@ public class AdminController {
     @GetMapping(value = "/admin/registries")
     @ResponseBody
     public JsonNode getRegistries() throws IOException {
-        try {
-            JsonNode result = ConfigUtil.get("webOfRegistries");
-            return result;
-        } catch (IOException e) {
-            e.printStackTrace();
-            // Optionally, handle the exception or log more details here.
-            throw e; // rethrow the exception if you want to maintain the current method signature
-        }
+        return ConfigUtil.get("webOfRegistries");
+
     }
 
     @PostMapping(value = "/admin/saveRegistry")

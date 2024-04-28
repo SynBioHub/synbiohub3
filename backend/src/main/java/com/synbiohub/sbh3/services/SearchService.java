@@ -350,7 +350,7 @@ public class SearchService {
         HashMap<String, String> params = new HashMap<>();
         params.put("default-graph-uri", ConfigUtil.get("defaultGraph").asText());
         params.put("query", query);
-        System.out.println(query.getClass().getName());
+
         url = ConfigUtil.get("sparqlEndpoint").asText() + "?default-graph-uri={default-graph-uri}&query={query}&format=json&";
 //        url = ConfigUtil.get("sparqlEndpoint").asText() + "?default-graph-uri={default-graph-uri}&query={query}";
         // has to be the first one. without format json, getting root collections fails
@@ -369,7 +369,7 @@ public class SearchService {
         httpHeaders.add("Accept", "application/rdf+xml");
         HttpEntity entity = new HttpEntity(httpHeaders);
 
-        url = ConfigUtil.get("sparqlEndpoint").asText();
+        url = ConfigUtil.get("sparqlEndpoint").asText() + "?default-graph-uri={default-graph-uri}&query={query}";
 
         var rest = restTemplate.exchange(url, HttpMethod.GET, entity, byte[].class, params);
         return rest.getBody();
@@ -385,12 +385,12 @@ public class SearchService {
         String url;
         HashMap<String, String> params = new HashMap<>();
 //        params.put("default-graph-uri", ConfigUtil.get("defaultGraph").asText());
-//        params.put("query", query);
-//        params.put("format", "application/rdf+xml");
+        params.put("query", query);
+        params.put("format", "application/rdf+xml");
         HttpHeaders httpHeaders = new HttpHeaders();
 //        httpHeaders.add("Accept", "application/json");
-        httpHeaders.add("Accept", "text/plain");
-        HttpEntity entity = new HttpEntity<>(httpHeaders);
+        httpHeaders.add("Accept", "application/rdf+xml");
+        HttpEntity entity = new HttpEntity<>("body", httpHeaders);
 
 //        url = WOREndpoint + "/sparql?query="+query;
 //        var result = restTemplate.getForObject(url, String.class);

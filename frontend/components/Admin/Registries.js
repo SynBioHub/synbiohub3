@@ -324,7 +324,7 @@ const sortMethods = {
 
 const useRegistries = (token, dispatch) => {
   const { data, error } = useSWR(
-    [`${publicRuntimeConfig.backend}/admin/registries`, dispatch],
+    [`${publicRuntimeConfig.backend}/admin/registries`, token, dispatch],
     fetcher
   );
   return {
@@ -334,12 +334,13 @@ const useRegistries = (token, dispatch) => {
   };
 };
 
-const fetcher = (url, dispatch) =>
+const fetcher = (url, token, dispatch) =>
   axios
     .get(url, {
       headers: {
         'Content-Type': 'application/json',
-        Accept: 'application/json'
+        Accept: 'application/json',
+        'X-authorization': token
       }
     })
     .then(response => response.data)
@@ -351,24 +352,14 @@ const fetcher = (url, dispatch) =>
 
 export async function processUrl(inputUrl, token, dispatch) {
 
-  const data = await fetcher(`${publicRuntimeConfig.backend}/admin/registries`, dispatch);
+  const data = await fetcher(`${publicRuntimeConfig.backend}/admin/registries`, token, dispatch);
 
-
-
-  if (data && data.registries) {
-    let registries;
-    // Check if data.registries is an array
-    if (data.registries && Array.isArray(data.registries)) {
-      registries = data.registries;
-    } else if (data && typeof data === 'object') {
-      registries = [data]; // This is an example, adjust based on your needs
-    } else {
-      registries = [];
-    }
+  if (data) {
+    const registries = data.registries;
 
     for (const registry of registries) {
       if (inputUrl.startsWith(registry.uri)) {
-        const urlRemovedForLink = inputUrl.replace(registry.uri, ""); // TODO: Should only strip for only "you"
+        const urlRemovedForLink = inputUrl.replace(registry.uri, "");
         const urlReplacedForBackend = inputUrl.replace(registry.uri, registry.url);
         return { urlRemovedForLink, urlReplacedForBackend };
       }
@@ -380,9 +371,9 @@ export async function processUrl(inputUrl, token, dispatch) {
 
 export async function processUrlReverse(inputUrl, token, dispatch) {
 
-  const data = await fetcher(`${publicRuntimeConfig.backend}/admin/registries`, dispatch);
+  const data = await fetcher(`${publicRuntimeConfig.backend}/admin/registries`, token, dispatch);
 
-  if (data && data.registries) {
+  if (data) {
     const registries = data.registries;
 
     for (const registry of registries) {
