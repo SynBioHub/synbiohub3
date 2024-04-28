@@ -29,7 +29,7 @@ export default function Details(properties) {
     if (details == undefined) {
       getQueryResponse(dispatch, getDetails, { uri: properties.uri }).then(
         details => {
-          if (details.length > 0) setDetails(details[0]);
+          if (details && details.length > 0) setDetails(details[0]);
         }
       );
 
