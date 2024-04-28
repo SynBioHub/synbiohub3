@@ -23,7 +23,7 @@ export default function Setup({ setInSetupMode }) {
   const [allowPublicSignup, setAllowPublicSignup] = useState(true);
 
   const [frontendURL, setFrontendURL] = useState('http://localhost:3333/');
-  const [backendURL, setBackendURL] = useState('http://localhost:7777/');
+  const [instanceUrl, setInstanceUrl] = useState('http://localhost:7777/');
   const [uriPrefix, setUriPrefix] = useState('http://localhost:7777/');
 
   const [userName, setUserName] = useState('');
@@ -122,8 +122,8 @@ export default function Setup({ setInSetupMode }) {
               <InputField
                 labelText="Backend URL: We need to know where this SynBioHub instance is hosted so we can assign URLs to your submissions. In most cases, this will be the same as the frontend. If the URL below is incorrect, please change it"
                 placeholder="Backend URL"
-                value={backendURL}
-                onChange={event => setBackendURL(event.target.value)}
+                value={instanceUrl}
+                onChange={event => setInstanceUrl(event.target.value)}
                 inputName="Backend URL"
                 containerStyling={styles.inputcontainer}
               />
@@ -217,7 +217,7 @@ export default function Setup({ setInSetupMode }) {
                 {
                   instanceName,
                   frontendURL,
-                  backendURL,
+                  instanceUrl,
                   uriPrefix,
                   userName,
                   affiliation,
