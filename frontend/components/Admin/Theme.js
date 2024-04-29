@@ -65,6 +65,8 @@ export default function Theme() {
       formData.append('logo', logoFile);
     }
 
+    console.log('this is a test');
+
     try {
       const response = await fetch(url, { method: 'POST', headers: headers, body: formData });
       const data = await response.text();
