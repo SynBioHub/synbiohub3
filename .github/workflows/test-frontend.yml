@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: Tests
+name: Test Frontend
 
 # Controls when the action will run.
 on:
@@ -15,7 +15,7 @@ on:
 jobs:
   # This workflow contains a single job called "build"
   build:
-    name: Build frontend image and push to Docker Hub
+    name: Build docker image
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
