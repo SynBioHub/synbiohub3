@@ -11,8 +11,7 @@ import TopLevel from '../components/TopLevel';
 import { login } from '../redux/actions';
 import styles from '../styles/login.module.css';
 
-import { useTheme } from '../../frontend/components/Admin/Theme';
-
+import { useTheme } from '../components/Admin/Theme';
 
 /**
  * This page renders the login page for sbh
