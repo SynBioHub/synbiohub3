@@ -15,7 +15,7 @@ on:
 jobs:
   # This workflow contains a single job called "build"
   build:
-    name: Build frontent image and push to Docker Hub
+    name: Build frontend image and push to Docker Hub
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
