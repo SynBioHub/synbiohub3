@@ -29,6 +29,7 @@ class TestSetup(TestCase):
             'frontendURL': 'http://localhost:3333',
             'instanceUrl': 'http://localhost:7777/',
             'uriPrefix': 'https://synbiohub.org/',
+            'altHome': 'http://testHomepage.org/',
             'color': '#D25627',
             'frontPageText': 'text',
             'virtuosoINI': '/etc/virtuoso-opensource-7/virtuoso.ini',
