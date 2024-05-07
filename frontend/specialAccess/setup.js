@@ -23,8 +23,9 @@ export default function Setup({ setInSetupMode }) {
   const [allowPublicSignup, setAllowPublicSignup] = useState(true);
 
   const [frontendURL, setFrontendURL] = useState('http://localhost:3333/');
-  const [backendURL, setBackendURL] = useState('http://localhost:7777/');
+  const [instanceUrl, setInstanceUrl] = useState('http://localhost:7777/');
   const [uriPrefix, setUriPrefix] = useState('http://localhost:7777/');
+  const [altHome, setAltHome] = useState('');
 
   const [userName, setUserName] = useState('');
   const [userFullName, setUserFullName] = useState('');
@@ -122,8 +123,8 @@ export default function Setup({ setInSetupMode }) {
               <InputField
                 labelText="Backend URL: We need to know where this SynBioHub instance is hosted so we can assign URLs to your submissions. In most cases, this will be the same as the frontend. If the URL below is incorrect, please change it"
                 placeholder="Backend URL"
-                value={backendURL}
-                onChange={event => setBackendURL(event.target.value)}
+                value={instanceUrl}
+                onChange={event => setInstanceUrl(event.target.value)}
                 inputName="Backend URL"
                 containerStyling={styles.inputcontainer}
               />
@@ -134,6 +135,15 @@ export default function Setup({ setInSetupMode }) {
                 value={uriPrefix}
                 onChange={event => setUriPrefix(event.target.value)}
                 inputName="URI Prefix"
+                containerStyling={styles.inputcontainer}
+              />
+
+              <InputField
+                labelText="Alternate Home Page: If you would like to set your own version of the home page, set the uri here. For example, typing https://mysynbiohub.org, would make this the default page, while mysynbiohub, would make https://synbiohub.org/mysynbiohub the default page."
+                placeholder="Alternate Home Page"
+                value={altHome}
+                onChange={event => setAltHome(event.target.value)}
+                inputName="Alternate Home Page"
                 containerStyling={styles.inputcontainer}
               />
             </div>
@@ -217,7 +227,7 @@ export default function Setup({ setInSetupMode }) {
                 {
                   instanceName,
                   frontendURL,
-                  backendURL,
+                  instanceUrl,
                   uriPrefix,
                   userName,
                   affiliation,
@@ -229,7 +239,8 @@ export default function Setup({ setInSetupMode }) {
                   frontPageText,
                   virtuosoINI: '/etc/virtuoso-opensource-7/virtuoso.ini',
                   virtuosoDB: '/var/lib/virtuoso-opensource-7/db',
-                  allowPublicSignup
+                  allowPublicSignup,
+                  altHome
                 },
                 {
                   headers
