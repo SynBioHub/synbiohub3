@@ -1,25 +1,34 @@
+import axios from 'axios';
+import getConfig from 'next/config';
 import styles from '../../styles/admin.module.css';
 import { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import useSWR from 'swr';
 import ActionButton from './Reusable/ActionButton';
+import { forEach } from 'jszip';
+const { publicRuntimeConfig } = getConfig();
 
 
 export default function Explorer() {
+    const token = useSelector(state => state.user.token);
+    const dispatch = useDispatch();
+    const { config, loading } = useConfig(token, dispatch);
     const [checked, setChecked] = useState(false);
-    const [USchecked, setUSChecked] = useState(false);
-    const [VSchecked, setVSChecked] = useState(false);
-    const [startIndex, setStartIndex] = useState(0);
-    const [endIndex, setEndIndex] = useState(0);
-    const [autoUpdate, setAutoUpdate] = useState(false);
+    const [USchecked, setUSChecked] = useState();
+    const [VSchecked, setVSChecked] = useState();
+    const [startIndex, setStartIndex] = useState();
+    const [endIndex, setEndIndex] = useState();
+    const [autoUpdate, setAutoUpdate] = useState();
     const [days, setDays] = useState();
-    const [distrib, setDistrib] = useState(false);
-    const [tolerance, setTolerance] = useState(0.0002);
-    const [clusterIdentity, setClusterIdentity] = useState(0.9);
-    const [elasticSearchEnd, setElasticSearchEnd] = useState("http://elasticsearch:9200/");
-    const [elasticSearchIndex, setElasticSearchIndex] = useState("part");
-    const [sparqlEndpoint, setSparqlEndpoint] = useState("http://virtuoso:8890/sparql?");
+    const [distrib, setDistrib] = useState();
+    const [tolerance, setTolerance] = useState();
+    const [clusterIdentity, setClusterIdentity] = useState();
+    const [elasticSearchEnd, setElasticSearchEnd] = useState();
+    const [elasticSearchIndex, setElasticSearchIndex] = useState();
+    const [sparqlEndpoint, setSparqlEndpoint] = useState();
 
     const handleChange = () => {
-      setChecked(!checked);
+      setChecked(!checked); // TODO
     };
     const handleUSChange = () => {
         setUSChecked(!USchecked);
@@ -29,12 +38,15 @@ export default function Explorer() {
         setVSChecked(!VSchecked);
         setUSChecked(false);
     };
-    const handleUpdateIndex = () => {
+    const handleUpdateIndex = () => { // TODO
         console.log("update1");
     }
-    const handleDownloadLog = () => {
-        console.log("update2");
+    const handleDownloadGeneralLog = () => { // TODO
+        console.log("download1");
     }
+    const handleDownloadIndexLog = () => { // TODO
+        console.log("update2");
+    } 
     const handleAutoUpdate = () => {
         setAutoUpdate(!autoUpdate);
     }
@@ -59,13 +71,47 @@ export default function Explorer() {
     const handleSparqlEndpoint = () => {
         setSparqlEndpoint(sparqlEndpoint);
     }
-    const handleSubmit = () => {
-        console.log("Submit");
+    const handleSubmit = () => { // TODO
+        console.log("Submit: ");
     }
 
     useEffect(() => {
+        if(config) {
+            const configArr = Object.entries(config)?.map(([key, value]) => {
+                return {key, value};
+            })
+            console.log("Array: ", configArr);
+            for (let obj of configArr) {
+                let key = obj.key;
+                let value = obj.value;
+                if (key === 'autoUpdateIndex') { // 1
+                    setAutoUpdate(value);
+                 } else if (key === 'distributed_search') { // 2
+                   setDistrib(value);
+                 } else if (key === 'elasticsearch_endpoint') { // 3
+                    setElasticSearchEnd(value);
+                 } else if (key === 'elasticsearch_index_name') { // 4
+                    setElasticSearchIndex(value);
+                 } else if (key === 'last_update_end') { // 5
+                    setEndIndex(value);
+                 } else if (key === 'last_update_start') { // 6
+                    setStartIndex(value);
+                 } else if (key === 'pagerank_tolerance') { // 7
+                    setTolerance(value);
+                 } else if (key === 'sparql_endpoint') { // 8
+                    setSparqlEndpoint(value);
+                 } else if (key === 'uclust_identity') { // 9
+                    setClusterIdentity(value);
+                 } else if (key === 'updateTimeInDays') { // 10
+                    setDays(value);
+                 } else if (key === 'which_search') { // 11
+                    setVSChecked(value === 'vsearch');
+                    setUSChecked(value === 'usearch');
+                 }
+            }
+        }  
+    }, [config]);
 
-    }, []);
     return ( 
         <div>
             <div className="row">
@@ -73,13 +119,16 @@ export default function Explorer() {
             {checked && <span>Note: Looks like SBOLExplorer is up and running :) Endpoint fields should end with '/', SynBioHub Public Graph should end with '/public', and SPARQL/Virtuoso Endpoint should end with '/sparql?'.</span>} 
             </div>
             <div className="row">
-                <label >SBOLExplorer Endpoint</label>
-                <input value="http://explorer:13162/" />
+                <label >SBOLExplorer Endpoint
+                    <input value="http://explorer:13162/" id="7"/>
+                </label>
+                
                 <div>
                     <input
                     type="checkbox"
                     checked={checked}
                     onChange={handleChange}
+                    id="8"
                     />
                     Searching Using SBOLExplorer
                 </div>
@@ -91,13 +140,15 @@ export default function Explorer() {
                         <input
                         type="radio"
                         checked={USchecked}
-                        onChange={handleUSChange}/>
+                        onChange={handleUSChange}
+                        id="9"/>
                         USearch &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 
                         <input
                         type="radio"
                         checked={VSchecked}
-                        onChange={handleVSChange}/>
+                        onChange={handleVSChange}
+                        id="10"/>
                         VSearch
                     </label>
                     <div className={styles.actionbuttonscontainer}>
@@ -110,9 +161,16 @@ export default function Explorer() {
                         </div>
                         <div className={styles.actionbuttonslayout}>
                             <ActionButton
-                            action="Download Log"
+                            action="Download General Log"
                             color="#00A1E4"
-                            onClick={handleDownloadLog}
+                            onClick={handleDownloadGeneralLog}
+                            />
+                        </div>
+                        <div className={styles.actionbuttonslayout}>
+                            <ActionButton
+                            action="Download Index Log"
+                            color="#00A1E4"
+                            onClick={handleDownloadIndexLog}
                             />
                         </div>
                     </div>
@@ -127,6 +185,7 @@ export default function Explorer() {
                         type="checkbox"
                         checked={autoUpdate}
                         onChange={handleAutoUpdate}
+                        id="12"
                         />
                         Update index automatically
                     </div>
@@ -134,7 +193,7 @@ export default function Explorer() {
                     <div className="form-group">
                     Update index every &nbsp;
                     <input 
-                        id="typeinp" 
+                        id="1" 
                         type="number" 
                         min="0" max="5" 
                         value={days} 
@@ -150,6 +209,7 @@ export default function Explorer() {
                         type="checkbox"
                         checked={distrib}
                         onChange={handleDistrib}
+                        id="11"
                         />
                         Use Distributed Search
                     </div>
@@ -158,7 +218,7 @@ export default function Explorer() {
             <div className="form-group">
                 Pagerank Tolerance &nbsp;
                 <input 
-                    id="typeinp" 
+                    id="2" 
                     type="text" 
                     value={tolerance} 
                     onChange={handleTolerance}/>
@@ -166,7 +226,7 @@ export default function Explorer() {
             <div className="form-group">
             UClust Clustering Identity &nbsp;
                 <input 
-                    id="typeinp" 
+                    id="3" 
                     type="text" 
                     value={clusterIdentity} 
                     onChange={handleClusteringIdentity}/>
@@ -175,7 +235,7 @@ export default function Explorer() {
             <div className="form-group">
             Elasticsearch Endpoint &nbsp;
                 <input 
-                    id="typeinp" 
+                    id="4" 
                     type="text" 
                     value={elasticSearchEnd} 
                     onChange={handleElasticSearchEnd}/>
@@ -184,7 +244,7 @@ export default function Explorer() {
             <div className="form-group">
             Elasticsearch Index Name &nbsp;
                 <input 
-                    id="typeinp" 
+                    id="5" 
                     type="text" 
                     value={elasticSearchIndex} 
                     onChange={handleElasticSearchIndex}/>
@@ -193,17 +253,19 @@ export default function Explorer() {
             <div className="form-group">
             SPARQL/Virtuoso Endpoint &nbsp;
                 <input 
-                    id="typeinp" 
+                    id="6" 
                     type="text" 
                     value={sparqlEndpoint} 
                     onChange={handleSparqlEndpoint}/>
             </div>
-            <div className={styles.actionbuttonslayout}>
-                            <ActionButton
-                            action="Save"
-                            color="#00A1E4"
-                            onClick={handleSubmit}
-                            />
+            <div className={styles.actionbuttonscontainer}>
+                <div className={styles.actionbuttonslayout}>
+                                <ActionButton
+                                action="Save"
+                                color="#00A1E4"
+                                onClick={handleSubmit}
+                                />
+                </div>
             </div>
 
                 </div>
@@ -211,6 +273,33 @@ export default function Explorer() {
             </div>}
         </div>
 );
-  }
+}
+
+const fetcher = (url, token, dispatch) =>
+        axios
+            .get(url, {
+            headers: {
+                'Content-Type': 'application/json',
+                Accept: 'text/plain',
+                'X-authorization': token
+            }
+            })
+            .then(response => response.data)
+            .catch(error => {
+            error.customMessage = 'Error loading explorer config';
+            error.fullUrl = url;
+            dispatch(addError(error));
+        });
+
+const useConfig = (token, dispatch) => {
+    const { data, error } = useSWR(
+        [`${publicRuntimeConfig.backend}/admin/explorer`, token, dispatch],
+        fetcher
+    );
+    return {
+        config: data,
+        loading: !error && !data
+    };
+};
 
 
