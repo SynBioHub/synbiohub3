@@ -37,13 +37,19 @@ export default function Navbar() {
       );
   }, [loggedIn]);
 
+  console.log(theme);
+  let linkHref = "/";
+  if (theme && theme.altHome && theme.altHome.length > 0) {
+    linkHref = theme.altHome;
+  }
+
   return (
     <header className={styles.container}
     style={{ backgroundColor: theme?.themeParameters?.[0]?.value || '#465775' }} 
     >
 
       <div className={styles.logoAndInstanceContainer}> {/* This is your new div container */}
-        <Link href="/">
+        <Link href={linkHref}>
           <a className={styles.logo}>
             <Image alt="logo" width={80} height={80} src="/images/logo.svg" />
             {/* <Image alt="logo" width={80} height={80} src="/images/widevibe.gif" /> */}

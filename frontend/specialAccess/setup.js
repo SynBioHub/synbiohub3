@@ -9,6 +9,7 @@ import SubmitLabel from '../components/Submit/ReusableComponents/SubmitLabel';
 import getConfig from 'next/config';
 import { useDispatch } from 'react-redux';
 import { addError } from '../redux/actions';
+import { isValidURI } from '../components/Viewing/Shell';
 import axios from 'axios';
 const { publicRuntimeConfig } = getConfig();
 
@@ -139,13 +140,14 @@ export default function Setup({ setInSetupMode }) {
               />
 
               <InputField
-                labelText="Alternate Home Page: If you would like to set your own version of the home page, set the uri here. For example, typing https://mysynbiohub.org, would make this the default page, while mysynbiohub, would make https://synbiohub.org/mysynbiohub the default page."
+                labelText="Alternate Home Page: If you would like to set your own version of the home page, set the uri here. For example, typing https://mysynbiohub.org would make this the default page, while mysynbiohub would make https://synbiohub.org/mysynbiohub the default page."
                 placeholder="Alternate Home Page"
                 value={altHome}
                 onChange={event => setAltHome(event.target.value)}
                 inputName="Alternate Home Page"
                 containerStyling={styles.inputcontainer}
               />
+
             </div>
           }
         />
@@ -221,6 +223,10 @@ export default function Setup({ setInSetupMode }) {
               'Content-Type': 'application/json',
               Accept: 'text/plain'
             };
+            if (altHome !== '' && !isValidURI(altHome)) {
+              setErrors(['Alternate Home Page must either be empty or contain a valid URL.']);
+              return; // Prevent the submission
+            }
             try {
               await axios.post(
                 `${publicRuntimeConfig.backend}/setup`,
@@ -240,18 +246,18 @@ export default function Setup({ setInSetupMode }) {
                   virtuosoINI: '/etc/virtuoso-opensource-7/virtuoso.ini',
                   virtuosoDB: '/var/lib/virtuoso-opensource-7/db',
                   allowPublicSignup,
-                  altHome
+                  altHome, // This can now be either a valid URL or an empty string
                 },
                 {
-                  headers
+                  headers,
                 }
               );
               setErrors([]);
               setInSetupMode(false);
             } catch (error) {
-              if (error.response.status === 400) {
+              if (error.response?.status === 400) {
                 const errorMessages = error.response.data.details.map(
-                  error => error.message
+                  (err) => err.message
                 );
                 setErrors(errorMessages);
                 return;
