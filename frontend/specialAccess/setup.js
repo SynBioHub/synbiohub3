@@ -246,18 +246,18 @@ export default function Setup({ setInSetupMode }) {
                   virtuosoINI: '/etc/virtuoso-opensource-7/virtuoso.ini',
                   virtuosoDB: '/var/lib/virtuoso-opensource-7/db',
                   allowPublicSignup,
-                  altHome, // This can now be either a valid URL or an empty string
+                  altHome
                 },
                 {
-                  headers,
+                  headers
                 }
               );
               setErrors([]);
               setInSetupMode(false);
             } catch (error) {
-              if (error.response?.status === 400) {
+              if (error.response.status === 400) {
                 const errorMessages = error.response.data.details.map(
-                  (err) => err.message
+                  error => error.message
                 );
                 setErrors(errorMessages);
                 return;
