@@ -18,6 +18,8 @@ import DeleteModal from "./Modals/DeleteModal";
 import ShareModal from "./Modals/ShareModal";
 import DownloadModal from "./Modals/DownloadModal";
 import AddToCollectionModal from "./Modals/AddToCollectionModal";
+import { isUriOwner } from './Shell';
+import { useSelector } from 'react-redux';
 
 import styles from '../../styles/view.module.css';
 
@@ -35,7 +37,10 @@ import axios from 'axios';
  * @param {Any} properties Information passed down from the parent component.
  */
 export default function SidePanelTools(properties) {
+  console.log(properties);
   const [modal, setModal] = useState();
+
+  const username = useSelector(state => state.user.username);
 
   const handleDeletionComplete = () => {
     dispatch(restoreBasket()); // Replace with your actual dispatch action
@@ -90,6 +95,8 @@ export default function SidePanelTools(properties) {
     }
   );
 
+  var isOwner = isUriOwner(properties.uri, username);
+
   /**
    * Copies the link to the users clipboard.
    */
@@ -139,14 +146,14 @@ export default function SidePanelTools(properties) {
                 setModal={setModal}
               />
               : null
-              /*
-              modal === "Curation" ?
-                <CurationModal
-                  setModal={setModal}
-                  type={properties.type}
-                />
-                : null
-                */
+        /*
+        modal === "Curation" ?
+          <CurationModal
+            setModal={setModal}
+            type={properties.type}
+          />
+          : null
+          */
       }
       <div className={styles.id}>
         <Link href={displayLink}>
@@ -203,14 +210,14 @@ export default function SidePanelTools(properties) {
             setModal("AddToCollection");
           }}
         />
-        <FontAwesomeIcon
-          icon={faTrashAlt}
-          size="1x"
-          className={styles.actionicon}
-          onClick={() => {
-            setModal("Delete");
-          }}
-        />
+        {isOwner && (
+          <FontAwesomeIcon
+            icon={faTrashAlt}
+            size="1x"
+            className={styles.actionicon}
+            onClick={() => setModal("Delete")}
+          />
+        )}
       </div>
     </div>
   );
