@@ -203,6 +203,7 @@ export default function EditSection(properties) {
 
               //Parses the citation info and sets it to a variable.
               getCitationInfo(trimmedInput).then(parsedCitations => {
+                console.log(parsedCitations);
                 if (parsedCitations === undefined || (Array.isArray(parsedCitations) && parsedCitations.length === 0) && trimmedInput !== "") {
                   alert("Invalid PMID.");
                 } else {
@@ -296,7 +297,7 @@ const parseCitationInfo = (info) => {
  * @returns The parsed xml for the id's.
  */
 const getCitationInfo = async (ids) => {
-  const url = "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi";
+  const url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi";
 
   const parameters = new URLSearchParams();
   parameters.append("db", "pubmed");
