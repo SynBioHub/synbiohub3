@@ -178,7 +178,6 @@ export function formatMultipleTitles(titles) {
 
 function getSearch(type) {
   // list the top levels
-  console.log(type);
   const toplevel = ["Activity", "Agent", "Association", "Attachment", "Collection", "CombinatorialDerivation", "Component", "Datasheet", "Experiment", "FunctionalComponent", "Implementation", "Model", "ModuleDefinition", "Plan", "Sequence", "Usage"]
   //return tru"e,false based on type
   if (type === "ComponentDefinition") {

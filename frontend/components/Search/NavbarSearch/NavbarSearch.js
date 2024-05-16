@@ -14,11 +14,16 @@ export default function NavbarSearch(properties) {
   const pageVisited = useSelector(state => state.tracking.pageVisited);
   const { theme, loading } = useTheme();
 
+  let linkHref = "/";
+  if (theme && theme.altHome && theme.altHome.length > 0) {
+    linkHref = theme.altHome;
+  }
+
   return (
     <header className={styles.container}
     style={{ backgroundColor: theme?.themeParameters?.[0]?.value || '#465775' }} 
     >
-      <Link href="/">
+      <Link href={linkHref}>
         <a className={styles.logo}>
           <Image alt="logo" width={86} height={86} src="/images/logo.svg" />
         </a>

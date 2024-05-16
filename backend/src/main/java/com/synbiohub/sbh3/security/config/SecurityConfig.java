@@ -1,8 +1,5 @@
 package com.synbiohub.sbh3.security.config;
 
-import java.security.interfaces.RSAPrivateKey;
-import java.security.interfaces.RSAPublicKey;
-
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
@@ -24,9 +21,10 @@ import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.channel.ChannelProcessingFilter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+
+import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
 
 @Configuration
 @EnableWebSecurity
@@ -52,8 +50,10 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .cors()
+                .and()
                 .authorizeHttpRequests()
-                .requestMatchers("/setup", "/login", "/register", "/search", "/search/**", "/searchCount", "/searchCount/**", "/twins", "/uses", "/similar", "/sbol", "/sbolnr", "/metadata", "/gb", "/fasta", "/gff", "/download", "/public/**", "/sparql", "/ComponentDefinition/**", "/**/count", "/count").permitAll()
+                .requestMatchers("/setup", "/login", "/register", "/search", "/search/**", "/searchCount", "/searchCount/**", "/twins", "/uses", "/similar", "/sbol", "/sbolnr", "/metadata", "/gb", "/fasta", "/gff", "/download", "/public/**", "/sparql", "/ComponentDefinition/**", "/**/count", "/count", "/admin/theme", "/admin/registries", "admin/plugins").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .csrf().disable()

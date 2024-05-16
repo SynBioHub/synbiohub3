@@ -10,6 +10,7 @@ import { useState } from 'react';
 import Loader from 'react-loader-spinner';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import { isValidURI } from '../Viewing/Shell';
 const { publicRuntimeConfig } = getConfig();
 
 export default function Theme() {
@@ -17,6 +18,7 @@ export default function Theme() {
   const { theme, loading } = useTheme(dispatch);
   const [instanceName, setInstanceName] = useState('');   // default to empty
   const [frontPageText, setFrontPageText] = useState(''); // default to empty
+  const [altHome, setAltHome] = useState('');
   const [baseColor, setBaseColor] = useState('');
   const [logoFile, setLogoFile] = useState(null);
   const [showModuleInteractions, setShowModuleInteractions] = useState(true);
@@ -27,6 +29,7 @@ export default function Theme() {
     if (theme) {
       setInstanceName(theme.instanceName);
       setFrontPageText(theme.frontPageText);
+      setAltHome(theme.altHome);
     }
   }, [theme]);
 
@@ -57,9 +60,15 @@ export default function Theme() {
       'X-authorization': token
     };
 
+    if (altHome !== '' && !isValidURI(altHome)) {
+      alert('Alternate Home Page must be empty or contain a valid URL.');
+      return; // Prevent form submission
+    }
+
     const formData = new FormData();
     formData.append('instanceName', instanceName);
     formData.append('frontPageText', frontPageText);
+    formData.append('altHome', altHome);
     formData.append('baseColor', baseColor);
     if (logoFile) {
       formData.append('logo', logoFile);
@@ -113,6 +122,13 @@ export default function Theme() {
         onChange={(e) => setFrontPageText(e.target.value)}
         rows={10}  // Number of rows
         cols={100}  // Number of columns
+      />
+      <div>Alternate Home Page</div>
+      <input
+        type="text"
+        value={altHome}
+        onChange={(e) => setAltHome(e.target.value)}
+        style={{ width: '600px' }}
       />
 
       <div>Color Settings</div>
@@ -171,7 +187,15 @@ const fetcher = (url, dispatch) =>
     })
     .then(response => response.data)
     .catch(error => {
-      error.customMessage = 'Request failed for GET /admin/theme';
-      error.fullUrl = url;
-      dispatch(addError(error));
+      if (error.message === 'Network Error') {
+        // Change the error message or handle it differently
+        console.error('Unable to connect to the server. Please check your network connection.');
+        dispatch(addError(error));
+      } else {
+        // Handle other errors      
+        error.customMessage = 'Request failed for GET /admin/theme31278931739137131';
+        error.fullUrl = url;
+        dispatch(addError(error));
+      }
+
     });

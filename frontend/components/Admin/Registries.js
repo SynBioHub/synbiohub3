@@ -32,6 +32,7 @@ export default function Registries() {
 
   return (
     <div className={styles.plugintable}>
+      <RegistryActions />
       <Table
         data={registries ? registries.registries : undefined}
         loading={loading}
@@ -179,6 +180,75 @@ function RegistryDisplay(properties) {
   );
 }
 
+function RegistryActions() {
+  const [inputOne, setInputOne] = useState('');
+  const [inputTwo, setInputTwo] = useState('');
+  const token = useSelector(state => state.user.token);
+  const dispatch = useDispatch();
+
+  const url = `${publicRuntimeConfig.backend}/admin/deleteRegistry`;
+
+  const handleFederate = async () => {
+    try {
+      await axios.post(`${publicRuntimeConfig.backend}/admin/federate`, {
+        administratorEmail: inputTwo,
+        webOfRegistries: inputOne
+      }, {
+        headers: {
+          'Accept': 'application/json',
+          'X-authorization': token
+        }
+      });
+      // Add additional logic here if needed after successful POST
+    } catch (error) {
+      console.error('Error with federate: ', error);
+      // Handle errors here
+    }
+  };
+
+  const handleRetrieve = async () => {
+    try {
+      const response = await axios.post(`${publicRuntimeConfig.backend}/admin/retrieveFromWebOfRegistries`, {}, {
+        headers: {
+          'Accept': 'application/json',
+          'X-authorization': token
+        }
+      });
+
+      if (response.data && Array.isArray(response.data.registries)) {
+        // Assuming 'registries' is the correct key in response and it's an array of registry objects
+        mutate([
+          `${publicRuntimeConfig.backend}/admin/registries`,
+          token,
+          dispatch
+        ]);
+      }
+    } catch (error) {
+      console.error('Error with retrieving from Web Of Registries: ', error);
+      // Handle errors here
+    }
+  };
+
+  return (
+    <div className={styles.registryActionsContainer}>
+      <input
+        type="text"
+        value={inputOne}
+        onChange={(e) => setInputOne(e.target.value)}
+        placeholder="Web of Registries URL"
+      />
+      <input
+        type="text"
+        value={inputTwo}
+        onChange={(e) => setInputTwo(e.target.value)}
+        placeholder="Administrator Email"
+      />
+      <button onClick={handleFederate}>Federate</button>
+      <button onClick={handleRetrieve}>Retrieve</button>
+    </div>
+  );
+}
+
 const deleteRegistry = async (uri, token, dispatch) => {
   const url = `${publicRuntimeConfig.backend}/admin/deleteRegistry`;
   const headers = {
@@ -254,7 +324,7 @@ const sortMethods = {
 
 const useRegistries = (token, dispatch) => {
   const { data, error } = useSWR(
-    [`${publicRuntimeConfig.backend}/admin/registries`, token, dispatch],
+    [`${publicRuntimeConfig.backend}/admin/registries`, dispatch],
     fetcher
   );
   return {
@@ -264,13 +334,12 @@ const useRegistries = (token, dispatch) => {
   };
 };
 
-const fetcher = (url, token, dispatch) =>
+const fetcher = (url, dispatch) =>
   axios
     .get(url, {
       headers: {
         'Content-Type': 'application/json',
-        Accept: 'application/json',
-        'X-authorization': token
+        Accept: 'application/json'
       }
     })
     .then(response => response.data)
@@ -282,15 +351,48 @@ const fetcher = (url, token, dispatch) =>
 
 export async function processUrl(inputUrl, token, dispatch) {
 
-  const data = await fetcher(`${publicRuntimeConfig.backend}/admin/registries`, token, dispatch);
-  const registries = data.registries;
+  const data = await fetcher(`${publicRuntimeConfig.backend}/admin/registries`, dispatch);
 
-  for (const registry of registries) {
-    if (inputUrl.startsWith(registry.uri)) {
-      const urlRemovedForLink = inputUrl.replace(registry.uri, "");
-      const urlReplacedForBackend = inputUrl.replace(registry.uri, registry.url);
-      return { urlRemovedForLink, urlReplacedForBackend };
+
+
+  if (data && data.registries) {
+    let registries;
+    // Check if data.registries is an array
+    if (data.registries && Array.isArray(data.registries)) {
+      registries = data.registries;
+    } else if (data && typeof data === 'object') {
+      registries = [data]; // This is an example, adjust based on your needs
+    } else {
+      registries = [];
     }
+
+    for (const registry of registries) {
+      if (inputUrl.startsWith(registry.uri)) {
+        const urlRemovedForLink = inputUrl.replace(registry.uri, ""); // TODO: Should only strip for only "you"
+        const urlReplacedForBackend = inputUrl.replace(registry.uri, registry.url);
+        return { urlRemovedForLink, urlReplacedForBackend };
+      }
+    }
+    return { original: inputUrl };  // if you don't match any uri
+  }
+  return { original: inputUrl };  // if you don't match any uri
+}
+
+export async function processUrlReverse(inputUrl, token, dispatch) {
+
+  const data = await fetcher(`${publicRuntimeConfig.backend}/admin/registries`, dispatch);
+
+  if (data && data.registries) {
+    const registries = data.registries;
+
+    for (const registry of registries) {
+      if (inputUrl.startsWith(registry.url)) {
+        const uriRemovedForLink = inputUrl.replace(registry.url, "");
+        const uriReplacedForBackend = inputUrl.replace(registry.url, registry.uri);
+        return { uriRemovedForLink, uriReplacedForBackend };
+      }
+    }
+    return { original: inputUrl };  // if you don't match any uri
   }
   return { original: inputUrl };  // if you don't match any uri
 }

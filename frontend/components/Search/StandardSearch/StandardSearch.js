@@ -11,6 +11,7 @@ import Options from '../AdvancedSearch/Options';
 const { publicRuntimeConfig } = getConfig();
 import SearchHeader from '../SearchHeader/SearchHeader';
 import { processUrl } from '../../Admin/Registries';
+import { useTheme } from '../../Admin/Theme';
 
 import {
   countloader,
@@ -23,12 +24,16 @@ import {
 import viewStyles from '../../../styles/view.module.css';
 import advStyles from '../../../styles/advancedsearch.module.css';
 import ResultTable from './ResultTable/ResultTable';
+import { filter } from 'jszip';
 
 /**
  * This component handles a basic 'string search' from users on sbh,
  * otherwise known as a standard search
  */
+
+
 export default function StandardSearch() {
+  const { theme} = useTheme();
   const query = useSelector(state => state.search.query);
   const offset = useSelector(state => state.search.offset);
   const limit = useSelector(state => state.search.limit);
@@ -87,6 +92,23 @@ export default function StandardSearch() {
     )}${constructExtraFilters()}`;
     setUrl(url);
   };
+  
+  const handleDelete = (delFilterIndex) => { 
+    setExtraFilters(prevFilters => { 
+      return prevFilters.filter((_, index) => index !== delFilterIndex); 
+    }); 
+  }; 
+  
+
+  const addFilter = filters => {
+    return [
+      ...filters,
+      {
+        filter: '',
+        value: ''
+      }
+    ];
+  };
 
   const constructExtraFilters = () => {
     let url = '';
@@ -133,7 +155,7 @@ export default function StandardSearch() {
     } else {
       setCount(newCount);
     }
-  }, [isCountLoading, isCountError, query]);
+  }, [isCountLoading, isCountError, query, extraFilters]);
 
   // get search results
   const { results, isLoading, isError } = useSearchResults(
@@ -154,11 +176,9 @@ if (isError) {
   }
   if (isLoading) {
     return (
-      <div className={standardcontainer}>
         <div className={standardresultsloading}>
           <Loader color="#D25627" type="ThreeDots" />
         </div>
-      </div>
     );
   }
   for (const result of results) {
@@ -221,11 +241,18 @@ if (isError) {
 
               extraFilters={extraFilters}
               setExtraFilters={setExtraFilters}
+
+              addFilter={addFilter}
+              handleDelete={handleDelete}
             />
             <div
               className={advStyles.searchbutton}
               role="button"
               onClick={constructSearch}
+              style={{
+                backgroundColor: theme?.themeParameters?.[0]?.value || '#333', // Use theme color or default to #333
+                color: theme?.themeParameters?.[1]?.value || '#fff', // Use text color from theme or default to #fff
+              }}
             >
             <FontAwesomeIcon
               icon={faHatWizard}
@@ -247,7 +274,6 @@ if (isError) {
   </div>
   );
 }
-
 const useSearchResults = (query, url, offset, limit, token, dispatch) => {
   query = url + query;
   const { data, error } = useSWR(

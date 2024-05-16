@@ -6,6 +6,9 @@ import styles from '../../styles/view.module.css';
 import React, { useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { useState } from 'react';
+import { useRouter } from 'next/router';
+
+import TwinsSearch from '../Search/StandardSearch/LinkedSearch';
 
 import axios from 'axios';
 
@@ -16,6 +19,8 @@ import { isUriOwner } from './Shell';
 import getConfig from "next/config";
 const { publicRuntimeConfig } = getConfig();
 
+import { useTheme } from '../Admin/Theme';
+
 export default function ViewHeader(properties) {
   const [displayedTitle, setDisplayedTitle] = useState(properties.name);  // New state for the displayed title
   const [isEditingTitle, setIsEditingTitle] = useState(false);
@@ -24,6 +29,12 @@ export default function ViewHeader(properties) {
   const [displayedDescription, setDisplayedDescription] = useState(properties.description);
   const [isEditingDescription, setIsEditingDescription] = useState(false);
   const [editedDescription, setEditedDescription] = useState(properties.description);
+  // State variables for handling similar, twins, and uses results
+  const [similarData, setSimilarData] = useState(null);
+  const [twinsData, setTwinsData] = useState(null);
+  const [usesData, setUsesData] = useState(null);
+
+  const { theme} = useTheme();
 
   var displayTitle = properties.type;
   if (properties.type.includes('#')) {
@@ -48,49 +59,17 @@ export default function ViewHeader(properties) {
   const objectUri = `${publicRuntimeConfig.backend}/${objectUriParts}`;
   var isOwner = isUriOwner(objectUri, username);
 
-  console.log(objectUri);
 
-  const similar = () => {
-    axios.get(`${objectUri}/similar`, {
-      headers: {
-        "Content-Type": "text/plain; charset=UTF-8",
-        "Accept": "application/json"
-      }
-    })
-      .then(response => {
-        console.log(response.data);
-      })
-      .catch(error => {
-        console.error('Error fetching similar: ', error);
-      });
-  };
+  const router = useRouter();
+
   const twins = () => {
-    axios.get(`${objectUri}/twins`, {
-      headers: {
-        "Content-Type": "text/plain; charset=UTF-8",
-        "Accept": "application/json"
-      }
-    })
-      .then(response => {
-        console.log(response.data);
-      })
-      .catch(error => {
-        console.error('Error fetching twins: ', error);
-      });
+    router.push(`${window.location.href}/twins`);
   };
   const uses = () => {
-    axios.get(`${objectUri}/uses`, {
-      headers: {
-        "Content-Type": "text/plain; charset=UTF-8",
-        "Accept": "application/json"
-      }
-    })
-      .then(response => {
-        console.log(response.data);
-      })
-      .catch(error => {
-        console.error('Error fetching uses: ', error);
-      });
+    router.push(`${window.location.href}/uses`);
+  };
+  const similar = () => {
+    router.push(`${window.location.href}/similar`);
   };
 
   const saveDescription = () => {
@@ -202,6 +181,21 @@ export default function ViewHeader(properties) {
     setIsEditingTitle(false);
   };
 
+  const checkSBOLExplorer = () => {
+    axios.get(`${publicRuntimeConfig.backend}/admin/explorer`, {
+      headers: {
+        "Accept": "text/plain; charset=UTF-8",
+        "X-authorization": token
+      }
+    })
+      .then(response => {
+        console.log(response.data);
+      })
+      .catch(error => {
+        console.error('Error checking SBOLExplorer:', error);
+      });
+  };
+
   return (
     <div>
       <div className={styles.contentheader}>
@@ -212,8 +206,18 @@ export default function ViewHeader(properties) {
               value={editedTitle}
               onChange={(e) => setEditedTitle(e.target.value)}
             />
-            <button onClick={handleSaveTitle}>Save</button>
-            <button onClick={handleCancelTitle}>Cancel</button>
+            <button className={styles.button} onClick={handleSaveTitle}
+            style={{
+              backgroundColor: theme?.themeParameters?.[0]?.value || '#333', // Use theme color or default to #333
+              color: theme?.themeParameters?.[1]?.value || '#fff', // Use text color from theme or default to #fff
+            }} 
+            >Save</button>
+            <button className={styles.button} onClick={handleCancelTitle}
+            style={{
+              backgroundColor: theme?.themeParameters?.[0]?.value || '#333', // Use theme color or default to #333
+              color: theme?.themeParameters?.[1]?.value || '#fff', // Use text color from theme or default to #fff
+            }} 
+            >Cancel</button>
           </div>
         ) : (
           <div className={styles.titleContainer}>
@@ -260,17 +264,27 @@ export default function ViewHeader(properties) {
           </a>
         </Link>
       </div>
-      <div className={styles.description}
+      <div
         title={displayedDescription.length > 0 ? "Find all records with terms in common with this description" : ""}>
         {isEditingDescription ? (
           <div>
-            <input
+            <input className={styles.description}
               type="text"
               value={editedDescription}
               onChange={(e) => setEditedDescription(e.target.value)}
             />
-            <button onClick={saveDescription}>Save</button>
-            <button onClick={() => setIsEditingDescription(false)}>Cancel</button>
+            <button className={styles.button} onClick={saveDescription} 
+            style={{
+            backgroundColor: theme?.themeParameters?.[0]?.value || '#333', // Use theme color or default to #333
+            color: theme?.themeParameters?.[1]?.value || '#fff', // Use text color from theme or default to #fff
+            }}  
+          >Save</button>
+            <button className={styles.button} onClick={() => setIsEditingDescription(false)} 
+            style={{
+              backgroundColor: theme?.themeParameters?.[0]?.value || '#333', // Use theme color or default to #333
+              color: theme?.themeParameters?.[1]?.value || '#fff', // Use text color from theme or default to #fff
+            }} 
+            >Cancel</button>
           </div>
         ) : (
           <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -305,14 +319,25 @@ export default function ViewHeader(properties) {
         )}
       </div>
       <div>
-        {properties.search.similar && (
-          <button className={styles.searchButton} onClick={similar}> Similar </button>
+        {properties.search.similar && typeof checkSBOLExplorer?.data === 'string' && ( //TODO: Add check for SBOLExplorer
+          <button className={styles.button} onClick={similar}> Similar 
+          </button>
         )}
         {properties.search.twins && (
-          <button className={styles.searchButton} onClick={twins}> Twins </button>
+          <button className={styles.button} onClick={twins}>
+            style={{
+            backgroundColor: theme?.themeParameters?.[0]?.value || '#333', // Use theme color or default to #333
+            color: theme?.themeParameters?.[1]?.value || '#fff', // Use text color from theme or default to #fff
+            }} 
+             Twins </button>
         )}
         {properties.search.uses && (
-          <button className={styles.searchButton} onClick={uses}> Uses </button>
+          <button className={styles.button} onClick={uses}
+          style={{
+            backgroundColor: theme?.themeParameters?.[0]?.value || '#333', // Use theme color or default to #333
+            color: theme?.themeParameters?.[1]?.value || '#fff', // Use text color from theme or default to #fff
+          }} 
+          > Uses </button>
         )}
       </div>
     </div>
@@ -324,4 +349,3 @@ export function getAfterThirdSlash(uri) {
   const afterThirdSlashParts = parts.slice(3);
   return afterThirdSlashParts.join('/');
 }
-

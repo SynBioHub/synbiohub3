@@ -9,6 +9,7 @@ import SubmitLabel from '../components/Submit/ReusableComponents/SubmitLabel';
 import getConfig from 'next/config';
 import { useDispatch } from 'react-redux';
 import { addError } from '../redux/actions';
+import { isValidURI } from '../components/Viewing/Shell';
 import axios from 'axios';
 const { publicRuntimeConfig } = getConfig();
 
@@ -22,8 +23,10 @@ export default function Setup({ setInSetupMode }) {
   const [logo, setLogo] = useState(undefined);
   const [allowPublicSignup, setAllowPublicSignup] = useState(true);
 
-  const [instanceURL, setInstanceURL] = useState('http://localhost:7777/');
+  const [frontendURL, setFrontendURL] = useState('http://localhost:3333/');
+  const [instanceUrl, setInstanceUrl] = useState('http://localhost:7777/');
   const [uriPrefix, setUriPrefix] = useState('http://localhost:7777/');
+  const [altHome, setAltHome] = useState('');
 
   const [userName, setUserName] = useState('');
   const [userFullName, setUserFullName] = useState('');
@@ -110,11 +113,20 @@ export default function Setup({ setInSetupMode }) {
           content={
             <div>
               <InputField
-                labelText="Instance URL: We need to know where this SynBioHub instance is hosted so we can assign URLs to your submissions. If the URL below is incorrect, please change it"
-                placeholder="Instance URL"
-                value={instanceURL}
-                onChange={event => setInstanceURL(event.target.value)}
-                inputName="Instance URL"
+                labelText="Frontend URL: We need to know where this SynBioHub instance is is displayed. If the URL below is incorrect, please change it"
+                placeholder="Frontend URL"
+                value={frontendURL}
+                onChange={event => setFrontendURL(event.target.value)}
+                inputName="Frontend URL"
+                containerStyling={styles.inputcontainer}
+              />
+
+              <InputField
+                labelText="Backend URL: We need to know where this SynBioHub instance is hosted so we can assign URLs to your submissions. In most cases, this will be the same as the frontend. If the URL below is incorrect, please change it"
+                placeholder="Backend URL"
+                value={instanceUrl}
+                onChange={event => setInstanceUrl(event.target.value)}
+                inputName="Backend URL"
                 containerStyling={styles.inputcontainer}
               />
 
@@ -126,6 +138,16 @@ export default function Setup({ setInSetupMode }) {
                 inputName="URI Prefix"
                 containerStyling={styles.inputcontainer}
               />
+
+              <InputField
+                labelText="Alternate Home Page: If you would like to set your own version of the home page, set the uri here. For example, typing https://mysynbiohub.org would make this the default page, while mysynbiohub would make https://synbiohub.org/mysynbiohub the default page."
+                placeholder="Alternate Home Page"
+                value={altHome}
+                onChange={event => setAltHome(event.target.value)}
+                inputName="Alternate Home Page"
+                containerStyling={styles.inputcontainer}
+              />
+
             </div>
           }
         />
@@ -141,7 +163,7 @@ export default function Setup({ setInSetupMode }) {
                 inputName="username"
                 containerStyling={styles.inputcontainer}
                 pattern="^[a-zA-Z0-9\-_\.~]+$"
-                title="Usernames can contain letters, numbers, and the symbols - _ . ~"
+                title="Usernames can only contain letters, numbers, and the symbols - _ . ~"
               />
 
 
@@ -201,12 +223,17 @@ export default function Setup({ setInSetupMode }) {
               'Content-Type': 'application/json',
               Accept: 'text/plain'
             };
+            if (altHome !== '' && !isValidURI(altHome)) {
+              setErrors(['Alternate Home Page must either be empty or contain a valid URL.']);
+              return; // Prevent the submission
+            }
             try {
               await axios.post(
                 `${publicRuntimeConfig.backend}/setup`,
                 {
                   instanceName,
-                  instanceURL,
+                  frontendURL,
+                  instanceUrl,
                   uriPrefix,
                   userName,
                   affiliation,
@@ -218,7 +245,8 @@ export default function Setup({ setInSetupMode }) {
                   frontPageText,
                   virtuosoINI: '/etc/virtuoso-opensource-7/virtuoso.ini',
                   virtuosoDB: '/var/lib/virtuoso-opensource-7/db',
-                  allowPublicSignup
+                  allowPublicSignup,
+                  altHome
                 },
                 {
                   headers

@@ -36,10 +36,11 @@ export default function Options(properties) {
     return (
       <AdditionalFilter
         predicates={predicates}
-        key={index}
+        key={element.filter + element.value}
         index={index}
         extraFilters={properties.extraFilters}
         setExtraFilters={properties.setExtraFilters}
+        handleDelete={properties.handleDelete}
       />
     );
   });
@@ -118,20 +119,22 @@ export default function Options(properties) {
           <span>Select Collections</span>
         </div>
         <SelectLoader
+          className={styles.optionselectW}
           sparql={getCollections}
-          placeholder="Select Collections..."
+          placeholder={properties.collections.map(collection => collection.label)}//"Select Collections..."
           isMulti={true}
           parseResult={result => {
             return !result.name
               ? { value: result.subject.value, label: result.displayId.value }
               : { value: result.subject.value, label: result.name.value };
           }}
-          onChange={collections => properties.setCollections(collections)}
+          onChange={collections => properties.setCollections(collections)
+          }
         />
       </div>
-      <div className={styles.inputsection}>
+      {/*<div className={styles.inputsection}>
 
-      </div>
+        </div>*/}
 
       {/* <div className={styles.calendarinputsection}>
         <label>Created Between</label>
@@ -158,7 +161,7 @@ export default function Options(properties) {
         className={styles.newfilterbutton}
         role="button"
         onClick={() =>
-          properties.setExtraFilters(addFilter(properties.extraFilters))
+          properties.setExtraFilters(properties.addFilter(properties.extraFilters))
         }
       >
         <div className={styles.addfiltericon}>
@@ -170,15 +173,7 @@ export default function Options(properties) {
   );
 }
 
-const addFilter = filters => {
-  return [
-    ...filters,
-    {
-      filter: undefined,
-      value: undefined
-    }
-  ];
-};
+
 
 const loadPredicates = async (setPredicates, dispatch) => {
   const results = await fetchPredicates(dispatch);

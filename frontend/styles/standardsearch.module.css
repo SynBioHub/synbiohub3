@@ -15,7 +15,6 @@
    width: 100%;
    align-items: center;
    max-height: calc(100vh - 10rem);
-   overflow-y: scroll;
    display: flex;
    flex-direction: column;
    margin-bottom: 2rem;
