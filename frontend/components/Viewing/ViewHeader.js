@@ -34,7 +34,7 @@ export default function ViewHeader(properties) {
   const [twinsData, setTwinsData] = useState(null);
   const [usesData, setUsesData] = useState(null);
 
-  const { theme} = useTheme();
+  const { theme } = useTheme();
 
   var displayTitle = properties.type;
   if (properties.type.includes('#')) {
@@ -207,16 +207,16 @@ export default function ViewHeader(properties) {
               onChange={(e) => setEditedTitle(e.target.value)}
             />
             <button className={styles.button} onClick={handleSaveTitle}
-            style={{
-              backgroundColor: theme?.themeParameters?.[0]?.value || '#333', // Use theme color or default to #333
-              color: theme?.themeParameters?.[1]?.value || '#fff', // Use text color from theme or default to #fff
-            }} 
+              style={{
+                backgroundColor: theme?.themeParameters?.[0]?.value || '#333', // Use theme color or default to #333
+                color: theme?.themeParameters?.[1]?.value || '#fff', // Use text color from theme or default to #fff
+              }}
             >Save</button>
             <button className={styles.button} onClick={handleCancelTitle}
-            style={{
-              backgroundColor: theme?.themeParameters?.[0]?.value || '#333', // Use theme color or default to #333
-              color: theme?.themeParameters?.[1]?.value || '#fff', // Use text color from theme or default to #fff
-            }} 
+              style={{
+                backgroundColor: theme?.themeParameters?.[0]?.value || '#333', // Use theme color or default to #333
+                color: theme?.themeParameters?.[1]?.value || '#fff', // Use text color from theme or default to #fff
+              }}
             >Cancel</button>
           </div>
         ) : (
@@ -273,17 +273,17 @@ export default function ViewHeader(properties) {
               value={editedDescription}
               onChange={(e) => setEditedDescription(e.target.value)}
             />
-            <button className={styles.button} onClick={saveDescription} 
-            style={{
-            backgroundColor: theme?.themeParameters?.[0]?.value || '#333', // Use theme color or default to #333
-            color: theme?.themeParameters?.[1]?.value || '#fff', // Use text color from theme or default to #fff
-            }}  
-          >Save</button>
-            <button className={styles.button} onClick={() => setIsEditingDescription(false)} 
-            style={{
-              backgroundColor: theme?.themeParameters?.[0]?.value || '#333', // Use theme color or default to #333
-              color: theme?.themeParameters?.[1]?.value || '#fff', // Use text color from theme or default to #fff
-            }} 
+            <button className={styles.button} onClick={saveDescription}
+              style={{
+                backgroundColor: theme?.themeParameters?.[0]?.value || '#333', // Use theme color or default to #333
+                color: theme?.themeParameters?.[1]?.value || '#fff', // Use text color from theme or default to #fff
+              }}
+            >Save</button>
+            <button className={styles.button} onClick={() => setIsEditingDescription(false)}
+              style={{
+                backgroundColor: theme?.themeParameters?.[0]?.value || '#333', // Use theme color or default to #333
+                color: theme?.themeParameters?.[1]?.value || '#fff', // Use text color from theme or default to #fff
+              }}
             >Cancel</button>
           </div>
         ) : (
@@ -320,23 +320,27 @@ export default function ViewHeader(properties) {
       </div>
       <div>
         {properties.search.similar && typeof checkSBOLExplorer?.data === 'string' && ( //TODO: Add check for SBOLExplorer
-          <button className={styles.button} onClick={similar}> Similar 
+          <button className={styles.button} onClick={similar}> Similar
           </button>
         )}
         {properties.search.twins && (
-          <button className={styles.button} onClick={twins}>
+          <button
+            className={styles.button}
+            onClick={twins}
             style={{
-            backgroundColor: theme?.themeParameters?.[0]?.value || '#333', // Use theme color or default to #333
-            color: theme?.themeParameters?.[1]?.value || '#fff', // Use text color from theme or default to #fff
-            }} 
-             Twins </button>
+              backgroundColor: theme?.themeParameters?.[0]?.value || '#333', // Use theme color or default to #333
+              color: theme?.themeParameters?.[1]?.value || '#fff' // Use text color from theme or default to #fff
+            }}
+          >
+            Twins
+          </button>
         )}
         {properties.search.uses && (
           <button className={styles.button} onClick={uses}
-          style={{
-            backgroundColor: theme?.themeParameters?.[0]?.value || '#333', // Use theme color or default to #333
-            color: theme?.themeParameters?.[1]?.value || '#fff', // Use text color from theme or default to #fff
-          }} 
+            style={{
+              backgroundColor: theme?.themeParameters?.[0]?.value || '#333', // Use theme color or default to #333
+              color: theme?.themeParameters?.[1]?.value || '#fff', // Use text color from theme or default to #fff
+            }}
           > Uses </button>
         )}
       </div>
