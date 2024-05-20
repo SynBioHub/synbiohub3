@@ -12,8 +12,10 @@ const { publicRuntimeConfig } = getConfig();
 export default function Explorer() {
     const token = useSelector(state => state.user.token);
     const dispatch = useDispatch();
-    const { config, loading } = useConfig(token, dispatch);
+    const { config, loading, isValidating } = useConfig(token, dispatch);
+    const [configDis, setConfigDis] = useState();
     const [checked, setChecked] = useState(false);
+    const [SBOLEnd, setSBOLEnd] = useState();
     const [USchecked, setUSChecked] = useState();
     const [VSchecked, setVSChecked] = useState();
     const [startIndex, setStartIndex] = useState();
@@ -28,7 +30,11 @@ export default function Explorer() {
     const [sparqlEndpoint, setSparqlEndpoint] = useState();
 
     const handleChange = () => {
-      setChecked(!checked); // TODO
+        if(!config) {
+            setChecked(false);
+        } else {
+            setChecked(true);
+        }
     };
     const handleUSChange = () => {
         setUSChecked(!USchecked);
@@ -38,45 +44,108 @@ export default function Explorer() {
         setVSChecked(!VSchecked);
         setUSChecked(false);
     };
-    const handleUpdateIndex = () => { // TODO
-        console.log("update1");
+
+    //Update SBOLExplorer Index
+    const handleUpdateIndex = async () => { // TODO: test
+        const params = new URLSearchParams();
+        console.log("URLSearchParams: ", params);
+        const url = `${publicRuntimeConfig.backend}/admin/explorerUpdateIndex`;
+        const response = await axios
+        .post(url, params, {
+        headers: {
+            'Accept': 'text/plain', 
+            'X-authorization': token
+        }
+        })
+        .then(response => response.data)
+        .catch (error => {
+        // Handle errors here
+        error.customMessage = 'Error with updating indexes';
+        error.fullUrl = url;
+        dispatch(addError(error));
+        });
+        console.log("Update: ", response);
+    };
+
+    //View SBOLExplorer Log
+    const handleDownloadGeneralLog = async () => { // TODO
+        const url = '`${publicRuntimeConfig.backend}/admin/explorerlog';
+        const response = axios
+            .get(url, {
+            headers: {
+                'Content-Type': 'application/json',
+                Accept: 'text/plain',
+                'X-authorization': token
+            }
+            })
+            .then(response => response.data)
+            .catch(error => {
+            error.customMessage = 'Error downloading explorer config';
+            error.fullUrl = url;
+            dispatch(addError(error));
+            console.log("Download: ", response);
+        });
+        console.log("Download: ", response);
+        // TODO Download
     }
-    const handleDownloadGeneralLog = () => { // TODO
-        console.log("download1");
-    }
+
+    //admin/explorerIndexingLog’
     const handleDownloadIndexLog = () => { // TODO
         console.log("update2");
     } 
     const handleAutoUpdate = () => {
         setAutoUpdate(!autoUpdate);
     }
-    const handleDays = () => {
-        setAutoUpdate(days);
-    }
     const handleDistrib = () => {
         setDistrib(!distrib);
     }
-    const handleTolerance = () => {
-        setTolerance(tolerance);
-    }
-    const handleClusteringIdentity = () => {
-        setClusterIdentity(clusterIdentity);
-    }
-    const handleElasticSearchEnd = () => {
-        setElasticSearchEnd(elasticSearchEnd);
-    }
-    const handleElasticSearchIndex = () => {
-        setElasticSearchIndex(elasticSearchIndex);
-    }
-    const handleSparqlEndpoint = () => {
-        setSparqlEndpoint(sparqlEndpoint);
-    }
-    const handleSubmit = () => { // TODO
-        console.log("Submit: ");
+    // question key is different from get 
+    // Update SBOLExplorer Config
+    const handleSubmit = async (checked, SBOLEnd, distrib, tolerance, clusterIdentity, 
+        elasticSearchEnd, elasticSearchIndex, sparqlEndpoint, autoUpdate, days) => {
+
+        const params = new URLSearchParams();
+        params.append('useSBOLExplorer', checked); // 1
+        params.append('SBOLExplorerEndpoint', SBOLEnd); // 2 None, added
+        params.append('useDistributedSearch', distrib); // 3
+        params.append('pagerankTolerance', tolerance); //4
+        params.append('uclustIdentity', clusterIdentity); //5
+        //params.append('synbiohubPublicGraph', '<synbiohubPublicGraph>'); // None
+        params.append('elasticsearchEndpont', elasticSearchEnd); //6
+        params.append('elasticsearchIndexName', elasticSearchIndex); //7
+        params.append('spraqlEndpoint', sparqlEndpoint); //8
+        params.append('useCron', autoUpdate); //9
+        params.append('cronDay', days); //10, logic is to update days only if autoupdate==true 
+
+        const url = `${publicRuntimeConfig.backend}/admin/explorer`;
+        let res = await axios
+        .post(url, params, {
+        headers: {
+            'Accept': 'text/plain', // textplain
+            'X-authorization': token
+        }
+        })
+        .then(response => response.data)
+        .catch (error => {
+        console.error('Error with submitting parameters: ', error);
+        // Handle errors here
+        error.customMessage = 'Error with submitting parameters';
+        error.fullUrl = url;
+        });
+        console.log("Submit Message: ", res);
+        console.log("Iterate each params key and value", Object.fromEntries(params));
     }
 
     useEffect(() => {
+        if(!config) {
+            console.log("SBOLExplorer Stoped");
+            setChecked(false);
+        }
         if(config) {
+            console.log("SBOLExplorer Started");
+            // set checked
+            setChecked(true);
+            // get all key and value from config.json in SBOLExplorer
             const configArr = Object.entries(config)?.map(([key, value]) => {
                 return {key, value};
             })
@@ -86,31 +155,31 @@ export default function Explorer() {
                 let value = obj.value;
                 if (key === 'autoUpdateIndex') { // 1
                     setAutoUpdate(value);
-                 } else if (key === 'distributed_search') { // 2
-                   setDistrib(value);
-                 } else if (key === 'elasticsearch_endpoint') { // 3
+                    } else if (key === 'distributed_search') { // 2
+                    setDistrib(value);
+                    } else if (key === 'elasticsearch_endpoint') { // 3
                     setElasticSearchEnd(value);
-                 } else if (key === 'elasticsearch_index_name') { // 4
+                    } else if (key === 'elasticsearch_index_name') { // 4
                     setElasticSearchIndex(value);
-                 } else if (key === 'last_update_end') { // 5
+                    } else if (key === 'last_update_end') { // 
                     setEndIndex(value);
-                 } else if (key === 'last_update_start') { // 6
+                    } else if (key === 'last_update_start') { // 
                     setStartIndex(value);
-                 } else if (key === 'pagerank_tolerance') { // 7
+                    } else if (key === 'pagerank_tolerance') { // 5
                     setTolerance(value);
-                 } else if (key === 'sparql_endpoint') { // 8
+                    } else if (key === 'sparql_endpoint') { // 6
                     setSparqlEndpoint(value);
-                 } else if (key === 'uclust_identity') { // 9
+                    } else if (key === 'uclust_identity') { // 7
                     setClusterIdentity(value);
-                 } else if (key === 'updateTimeInDays') { // 10
+                    } else if (key === 'updateTimeInDays') { // 8
                     setDays(value);
-                 } else if (key === 'which_search') { // 11
+                    } else if (key === 'which_search') { // 9
                     setVSChecked(value === 'vsearch');
                     setUSChecked(value === 'usearch');
-                 }
+                    }
             }
-        }  
-    }, [config]);
+        } 
+    }, [checked, config]); // not render 
 
     return ( 
         <div>
@@ -120,7 +189,11 @@ export default function Explorer() {
             </div>
             <div className="row">
                 <label >SBOLExplorer Endpoint
-                    <input value="http://explorer:13162/" id="7"/>
+                    <input 
+                        type="text" 
+                        value={SBOLEnd} 
+                        onChange={e => setSBOLEnd(e.target.value)} 
+                        id="7"/>
                 </label>
                 
                 <div>
@@ -179,7 +252,6 @@ export default function Explorer() {
             </div>
             <div className="row">
                 <div className="col-md-6">
-
                     <div>
                         <input
                         type="checkbox"
@@ -195,9 +267,9 @@ export default function Explorer() {
                     <input 
                         id="1" 
                         type="number" 
-                        min="0" max="5" 
-                        value={days} 
-                        onChange={handleDays}
+                        min="0" max="100" 
+                        value={days}
+                        onChange={e => setDays(e.target.value)}
                         step="1"/> days
                     </div>
                 </div>
@@ -221,7 +293,8 @@ export default function Explorer() {
                     id="2" 
                     type="text" 
                     value={tolerance} 
-                    onChange={handleTolerance}/>
+                    onChange={e => {setTolerance(e.target.value);
+                    console.log("tolerance: ", e.target.value)}}/>
             </div>
             <div className="form-group">
             UClust Clustering Identity &nbsp;
@@ -229,7 +302,10 @@ export default function Explorer() {
                     id="3" 
                     type="text" 
                     value={clusterIdentity} 
-                    onChange={handleClusteringIdentity}/>
+                    onChange={e => {
+                        setClusterIdentity(e.target.value);
+                        console.log("clusterIdentity: ", e.target.value);
+                        }}/>
             </div>
 
             <div className="form-group">
@@ -238,7 +314,7 @@ export default function Explorer() {
                     id="4" 
                     type="text" 
                     value={elasticSearchEnd} 
-                    onChange={handleElasticSearchEnd}/>
+                    onChange={e => setElasticSearchEnd(e.target.value)}/>
             </div>
 
             <div className="form-group">
@@ -247,7 +323,8 @@ export default function Explorer() {
                     id="5" 
                     type="text" 
                     value={elasticSearchIndex} 
-                    onChange={handleElasticSearchIndex}/>
+                    onChange={e => {setElasticSearchIndex(e.target.value);
+                    console.log("elasticSearchIndex: ", e.target.value)}}/>
             </div>
 
             <div className="form-group">
@@ -256,50 +333,50 @@ export default function Explorer() {
                     id="6" 
                     type="text" 
                     value={sparqlEndpoint} 
-                    onChange={handleSparqlEndpoint}/>
+                    onChange={e => setSparqlEndpoint(e.target.value)}/>
             </div>
             <div className={styles.actionbuttonscontainer}>
                 <div className={styles.actionbuttonslayout}>
                                 <ActionButton
                                 action="Save"
                                 color="#00A1E4"
-                                onClick={handleSubmit}
+                                onClick={()=>handleSubmit(checked, SBOLEnd, distrib, tolerance, clusterIdentity, 
+                                    elasticSearchEnd, elasticSearchIndex, sparqlEndpoint, autoUpdate, days)} // Error
                                 />
                 </div>
             </div>
-
-                </div>
+        </div>
                 )}
             </div>}
         </div>
 );
 }
-
-const fetcher = (url, token, dispatch) =>
-        axios
-            .get(url, {
-            headers: {
-                'Content-Type': 'application/json',
-                Accept: 'text/plain',
-                'X-authorization': token
-            }
-            })
-            .then(response => response.data)
-            .catch(error => {
-            error.customMessage = 'Error loading explorer config';
-            error.fullUrl = url;
-            dispatch(addError(error));
-        });
-
 const useConfig = (token, dispatch) => {
     const { data, error } = useSWR(
-        [`${publicRuntimeConfig.backend}/admin/explorer`, token, dispatch],
-        fetcher
+      [`${publicRuntimeConfig.backend}/admin/explorer`, token, dispatch],
+      fetcher
     );
+    console.log("Config: ", data);
     return {
-        config: data,
-        loading: !error && !data
+      config: data,
+      loading: !error && !data,
+      error: error
     };
-};
-
+  };
+  
+  const fetcher = (url, token, dispatch) =>
+    axios
+      .get(url, {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'text/plain',
+          'X-authorization': token
+        }
+      })
+      .then(response => response.data)
+      .catch(error => {
+        error.customMessage = 'Error loading graphs';
+        error.fullUrl = url;
+        dispatch(addError(error));
+      });
 
