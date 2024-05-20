@@ -58,14 +58,16 @@ export default function RootCollections() {
   useEffect(() => {
     if (data) {
       const newFilteredData = data.filter(result => {
-        for (const key of Object.keys(result))
-          if (result[key].toString().toLowerCase().includes(query.toLowerCase()))
+        for (const key of Object.keys(result)) {
+          if (result[key] !== null && result[key] !== undefined && query !== undefined && result[key].toString().toLowerCase().includes(query.toLowerCase()))
             return true;
+        }
         return false;
       });
       setFilteredData(newFilteredData);
     }
   }, [data, query]);
+
 
   if (error) {
     // Render error message or handle error as needed
