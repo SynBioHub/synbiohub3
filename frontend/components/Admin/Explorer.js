@@ -29,13 +29,6 @@ export default function Explorer() {
     const [elasticSearchIndex, setElasticSearchIndex] = useState();
     const [sparqlEndpoint, setSparqlEndpoint] = useState();
 
-    const handleChange = () => {
-        if(!config) {
-            setChecked(false);
-        } else {
-            setChecked(true);
-        }
-    };
     const handleUSChange = () => {
         setUSChecked(!USchecked);
         setVSChecked(false);
@@ -93,6 +86,9 @@ export default function Explorer() {
     const handleDownloadIndexLog = () => { // TODO
         console.log("update2");
     } 
+    const handleUseSBOLExplorer = () => {
+        setChecked(!checked);
+    }
     const handleAutoUpdate = () => {
         setAutoUpdate(!autoUpdate);
     }
@@ -137,14 +133,10 @@ export default function Explorer() {
     }
 
     useEffect(() => {
-        if(!config) {
-            console.log("SBOLExplorer Stoped");
-            setChecked(false);
-        }
+        console.log("checked: ", checked);
+        console.log("SBOLEnd: ", SBOLEnd);
         if(config) {
             console.log("SBOLExplorer Started");
-            // set checked
-            setChecked(true);
             // get all key and value from config.json in SBOLExplorer
             const configArr = Object.entries(config)?.map(([key, value]) => {
                 return {key, value};
@@ -182,10 +174,11 @@ export default function Explorer() {
     }, [checked, config]); // not render 
 
     return ( 
+        // logic: checked == true && SBOLEnd != empty, save, show parameter options
         <div>
             <div className="row">
             {!checked && <span>SBOLExplorer is disabled. Check the "Searching Using SBOLExplorer" to enable it.</span>} 
-            {checked && <span>Note: Looks like SBOLExplorer is up and running :) Endpoint fields should end with '/', SynBioHub Public Graph should end with '/public', and SPARQL/Virtuoso Endpoint should end with '/sparql?'.</span>} 
+            {checked && SBOLEnd && <span>Note: Looks like SBOLExplorer is up and running :) Endpoint fields should end with '/', SynBioHub Public Graph should end with '/public', and SPARQL/Virtuoso Endpoint should end with '/sparql?'.</span>} 
             </div>
             <div className="row">
                 <label >SBOLExplorer Endpoint
@@ -200,14 +193,14 @@ export default function Explorer() {
                     <input
                     type="checkbox"
                     checked={checked}
-                    onChange={handleChange}
+                    onChange={handleUseSBOLExplorer}
                     id="8"
                     />
                     Searching Using SBOLExplorer
                 </div>
             </div>
             {<div>
-                {checked && 
+                {checked && SBOLEnd &&
                 (<div>
                     <label>
                         <input
@@ -335,7 +328,10 @@ export default function Explorer() {
                     value={sparqlEndpoint} 
                     onChange={e => setSparqlEndpoint(e.target.value)}/>
             </div>
-            <div className={styles.actionbuttonscontainer}>
+            
+        </div>
+                )}
+                <div className={styles.actionbuttonscontainer}>
                 <div className={styles.actionbuttonslayout}>
                                 <ActionButton
                                 action="Save"
@@ -345,8 +341,6 @@ export default function Explorer() {
                                 />
                 </div>
             </div>
-        </div>
-                )}
             </div>}
         </div>
 );
