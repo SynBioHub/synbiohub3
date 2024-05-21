@@ -39,9 +39,8 @@ export default function Explorer() {
     };
 
     //Update SBOLExplorer Index
-    const handleUpdateIndex = async () => { // TODO: test
+    const handleUpdateIndex = async () => {
         const params = new URLSearchParams();
-        console.log("URLSearchParams: ", params);
         const url = `${publicRuntimeConfig.backend}/admin/explorerUpdateIndex`;
         const response = await axios
         .post(url, params, {
@@ -52,40 +51,70 @@ export default function Explorer() {
         })
         .then(response => response.data)
         .catch (error => {
-        // Handle errors here
-        error.customMessage = 'Error with updating indexes';
+        console.error('Error with updating index: ', error);
+        error.customMessage = 'Error with updating index';
         error.fullUrl = url;
-        dispatch(addError(error));
         });
-        console.log("Update: ", response);
     };
 
     //View SBOLExplorer Log
     const handleDownloadGeneralLog = async () => { // TODO
-        const url = '`${publicRuntimeConfig.backend}/admin/explorerlog';
-        const response = axios
+        const url = `${publicRuntimeConfig.backend}/admin/explorerlog`;
+        console.log('GeneralLogURL: ', url);
+        const res = await axios
             .get(url, {
-            headers: {
-                'Content-Type': 'application/json',
-                Accept: 'text/plain',
-                'X-authorization': token
-            }
+                headers: {
+                    Accept: 'text/plain',
+                    'X-authorization': token
+                },
+                responseType: 'blob'  // This ensures the response is treated as a binary large object (blob)
             })
-            .then(response => response.data)
+            .then(response => {
+                const link = document.createElement('a');
+                const blobUrl = window.URL.createObjectURL(new Blob([response.data]));
+                link.href = blobUrl;
+                link.setAttribute('download', 'explorer_log.txt');  // Specify the file name
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            })
             .catch(error => {
-            error.customMessage = 'Error downloading explorer config';
-            error.fullUrl = url;
-            dispatch(addError(error));
-            console.log("Download: ", response);
-        });
-        console.log("Download: ", response);
-        // TODO Download
+                // Handle errors here
+                error.customMessage = 'Error with view general log';
+                error.fullUrl = url;
+                console.error(error);
+            });
     }
 
-    //admin/explorerIndexingLog’
-    const handleDownloadIndexLog = () => { // TODO
-        console.log("update2");
+    //admin/explorerIndexingLog
+    const handleDownloadIndexLog = async () => { 
+        const url = `${publicRuntimeConfig.backend}/admin/explorerIndexingLog`;
+        console.log('url: ', url);
+        const res = await axios
+            .get(url, {
+                headers: {
+                    Accept: 'text/plain',
+                    'X-authorization': token
+                },
+                responseType: 'blob' 
+            })
+            .then(response => {
+                const link = document.createElement('a');
+                const blobUrl = window.URL.createObjectURL(new Blob([response.data]));
+                link.href = blobUrl;
+                link.setAttribute('download', 'explorer_indexing_log.txt');  // Specify the file name
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                console.log("download: ", response.data);
+            })
+            .catch(error => {
+                error.customMessage = 'Error with view indexing log';
+                error.fullUrl = url;
+                console.error(error);
+            });
     } 
+
     const handleUseSBOLExplorer = () => {
         setChecked(!checked);
     }
@@ -106,7 +135,7 @@ export default function Explorer() {
         params.append('useDistributedSearch', distrib); // 3
         params.append('pagerankTolerance', tolerance); //4
         params.append('uclustIdentity', clusterIdentity); //5
-        //params.append('synbiohubPublicGraph', '<synbiohubPublicGraph>'); // None
+        //params.append('synbiohubPublicGraph', '<synbiohubPublicGraph>'); // None, not necessary
         params.append('elasticsearchEndpont', elasticSearchEnd); //6
         params.append('elasticsearchIndexName', elasticSearchIndex); //7
         params.append('spraqlEndpoint', sparqlEndpoint); //8
@@ -117,14 +146,13 @@ export default function Explorer() {
         let res = await axios
         .post(url, params, {
         headers: {
-            'Accept': 'text/plain', // textplain
+            'Accept': 'text/plain',
             'X-authorization': token
         }
         })
         .then(response => response.data)
         .catch (error => {
         console.error('Error with submitting parameters: ', error);
-        // Handle errors here
         error.customMessage = 'Error with submitting parameters';
         error.fullUrl = url;
         });
@@ -171,7 +199,7 @@ export default function Explorer() {
                     }
             }
         } 
-    }, [checked, config]); // not render 
+    }, [checked, config]); 
 
     return ( 
         // logic: checked == true && SBOLEnd != empty, save, show parameter options
@@ -373,4 +401,3 @@ const useConfig = (token, dispatch) => {
         error.fullUrl = url;
         dispatch(addError(error));
       });
-
