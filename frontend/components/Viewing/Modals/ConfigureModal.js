@@ -12,17 +12,12 @@ import SubmissionHandler from "../../Submit/ReusableComponents/SubmissionHandler
 import { submit } from '../../../redux/actions';
 
 
-
-
-
-
-
 export default function ConfigureModal(properties) {
 
     const initializeMap = new Map();
 
     for (let file of properties.files) {
-        initializeMap.set(file, {value: 'default', label: 'Default Handler'})
+        initializeMap.set(file.name, {value: 'default', label: 'Default Handler'})
     }
 
     const [submitted, setSubmitted] = useState(false);
@@ -36,25 +31,10 @@ export default function ConfigureModal(properties) {
 
     useEffect(() => {
         if(submitted) {
-            const pluginBundles = new Map();
-            fileMap.forEach((value, key) => {
-                if(value.value !== 'null') {
-                    if(pluginBundles.has(value)) {
-                        pluginBundles.get(value).push(key)
-                    }
-                    else {
-                        const fileList = [];
-                        fileList.push(key)
-                        pluginBundles.set(value, fileList)
-                    }
-                }
+            const pluginMapping = new Map();
+            fileMap.forEach((plugin, file) => {
+                pluginMapping.set(file.name, plugin.value)
             })
-
-            if(pluginBundles.size !== 0) {
-                const pluginObject = {
-                    value: 'configure',
-                    pluginBundles: pluginBundles
-                }
     
                 dispatch(
                     submit(
@@ -62,11 +42,10 @@ export default function ConfigureModal(properties) {
                       properties.files,
                       properties.overwriteCollection ? 1 : 0,
                       properties.addingToCollection ? true : false,
-                      pluginObject,
+                      pluginMapping,
                       properties.failed
                     )
                   );
-            }
 
             
         }
@@ -78,9 +57,9 @@ export default function ConfigureModal(properties) {
         <div key={file.name} className={styles.configurefile}>
             <p className={styles.configurefilename}>{file.name}</p>
             <SubmissionHandler 
-                selectedHandler={fileMap.get(file)}
+                selectedHandler={fileMap.get(file.name)}
                 setSelectedHandler={(e) => {
-                    setFileMap(new Map(fileMap.set(file, e)));
+                    setFileMap(new Map(fileMap.set(file.name, e)));
                 }}
                 configureOption={false}
                 failed={properties.failed}
