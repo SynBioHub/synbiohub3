@@ -326,8 +326,7 @@ const initialPageSectionsOrder = {
   type: '',
   order: [],
   minimized: [],
-  selected: [],
-  hiddenSections: []
+  selected: []
 };
 
 /**
@@ -357,11 +356,6 @@ const pageSectionsReducer = (
       return {
         ...state,
         selected: payload
-      }
-    case types.UPDATEHIDDENSECTIONS:
-      return {
-        ...state,
-        hiddenSections: payload
       }
     default:
       return state;
