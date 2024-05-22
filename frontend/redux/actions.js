@@ -1321,6 +1321,12 @@ export const updateSelectedSections = (selectedSections, type) => dispatch => {
   });
 };
 
+export const updateHiddenSections = hiddenSections => dispatch => {
+  dispatch({
+    type: types.UPDATEHIDDENSECTIONS,
+    payload: hiddenSections
+  })
+}
 
 // ATTACHMENTS SECTION
 

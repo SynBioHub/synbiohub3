@@ -5,14 +5,19 @@ import React from 'react';
 
 import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 
 import Section from './Sections/Section';
+import { updateHiddenSections } from '../../redux/actions';
 
 export default function Plugin(properties) {
   const [status, setStatus] = useState(null);
   const [content, setContent] = useState('<div>Loading Data From Plugin...</div>');
   const pageSectionsOrder = useSelector(state => state.pageSections.order);
+  const hiddenSections = useSelector(state => state.pageSections.hiddenSections);
+  const dispatch = useDispatch();
+
+  
   
   const uri = properties.uri;
 
@@ -45,19 +50,25 @@ export default function Plugin(properties) {
   useEffect(() => {
     if (status === null) {
       evaluatePlugin(properties.plugin, properties.type).then(status => setStatus(status));
+      
     }
     
     if (status) {
+      dispatch(updateHiddenSections(hiddenSections.filter(page => page != `PLUGIN: ${properties.plugin.name}`)))
       const downloadContent = async () => {
       const toRender = await runPlugin(properties.plugin, pluginData);
       setContent(toRender);
       };
       downloadContent();
     }
+    else {
+      dispatch(updateHiddenSections(hiddenSections.filter(page => page != `PLUGIN: ${properties.plugin.name}`).concat(`PLUGIN: ${properties.plugin.name}`)))
+    }
   }, [status, pageSectionsOrder]);
 
   if (status) {
 
+    
 
     const options = {
       replace: domNode => {
@@ -100,6 +111,7 @@ export default function Plugin(properties) {
   }
   
   else {
+    
     return null
   }
   

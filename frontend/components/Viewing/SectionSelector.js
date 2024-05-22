@@ -242,13 +242,12 @@ function headerCreate(pages, type, json, hiddenSections) {
             ref={dragProvided.innerRef}
           >
             
+            { hiddenSections.includes(page) ? null : 
             <SectionHeader
               type={type}
               title={page}
               icon={iconSelector(page, json)}
-            />
-            
-            
+            />}
           </div>
         ))}
       </Draggable>
