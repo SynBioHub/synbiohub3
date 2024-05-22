@@ -13,7 +13,6 @@ export default async function getQueryResponse(
   admin,
   urlOverride
 ) {
-console.log(options);
 
   query = loadTemplate(query, options);
 
@@ -26,7 +25,6 @@ console.log(options);
     const lastSlash = result.lastIndexOf('/');
     const graphURL = result.substring(0, lastSlash);
     const uriPrefix = getUrlBeforeThirdSlash(options.uri);
-    console.log(`${uriPrefix}${graphURL}`);
     graphEx = `&default-graph-uri=${uriPrefix}${graphURL}`;
   }
 
@@ -35,9 +33,6 @@ console.log(options);
   const url = `${
     urlOverride || publicRuntimeConfig.backend
   }${params}${encodeURIComponent(query)}${graph}`;
-
-  console.log(options);
-  console.log(url);
 
   const headers = {
     'Content-Type': 'application/json',
