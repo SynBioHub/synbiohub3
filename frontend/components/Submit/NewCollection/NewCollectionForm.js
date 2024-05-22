@@ -91,7 +91,7 @@ export default function NewCollectionForm(properties) {
         inputName="collection citations"
         placeholder="Pubmed IDs separated by commas, we'll do the rest!"
         value={citations}
-        onChange={event => setCollectionCitations(event.value)}
+        onChange={event => setCollectionCitations(event.target.value)}
       />
       <NewCollectionButtons
         needsVerification={needsVerification}

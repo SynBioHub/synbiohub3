@@ -16,6 +16,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 const { publicRuntimeConfig } = getConfig();
 import getConfig from 'next/config';
 import { processUrl } from '../../../Admin/Registries';
+import { getAfterThirdSlash } from '../../ViewHeader.js';
 import { useEffect } from 'react';
 
 import styles from '../../../../styles/view.module.css';
@@ -27,10 +28,13 @@ import styles from '../../../../styles/view.module.css';
  * @returns The rows the contains the information about the attachments.
  */
 export default function AttachmentRows(properties) {
+  const dispatch = useDispatch();
   const token = useSelector(state => state.user.token);
   const [attachmentInfo, setStateAttachments] = useState();
-  const [processedAttachments, setProcessedAttachments] = useState([]);
-  const dispatch = useDispatch();
+  const [attachments, setAttachments] = useState(properties.attachments.map(attachment => ({
+    ...attachment,
+    processedTopLevel: attachment.topLevel // Initialize with topLevel
+})));
 
   //There are attachments from the parent but they haven't been added to the state yet.
   if (attachmentInfo === undefined && properties.attachments.length > 0)
@@ -39,19 +43,19 @@ export default function AttachmentRows(properties) {
   //There are no attachments to get.
   if (properties.attachments.length === 0) return null;
 
-  useEffect(() => {
-    async function processAndSetAttachments() {
-      const processed = await Promise.all(properties.attachments.map(async (attachment) => {
-        const result = await processUrl(attachment.topLevel, token, dispatch);
-        return {
-          ...attachment,
-          processedTopLevel: result.urlRemovedForLink || result.original
-        };
-      }));
-      setProcessedAttachments(processed);
-    }
-    processAndSetAttachments();
-  }, [properties.attachments]);
+  // useEffect(() => {
+  //   async function processAttachments() {
+  //     const processedAttachments = await Promise.all(attachments.map(async attachment => {
+  //       if (!attachment.processedTopLevel) {
+  //         const result = await processUrl(attachment.topLevel, token, dispatch);
+  //         return { ...attachment, processedTopLevel: result.urlRemovedForLink };
+  //       }
+  //       return attachment;
+  //     }));
+  //     setAttachments(processedAttachments);
+  //   }
+  //   processAttachments();
+  // }, [attachments, token, dispatch]);
 
   /**
    * @param {Number} bytes The number of bytes.
@@ -64,13 +68,20 @@ export default function AttachmentRows(properties) {
     return (bytes / Math.pow(1024, i)).toFixed(2) + ' ' + sizes[i];
   };
 
+  const removeUrl = urlLink => {
+    return getAfterThirdSlash(urlLink);
+  }
+
   /**
    * @param {String} type The URL from edamontology.org that has what format the file is.
    * @returns The corresponding name of extension from the edam.json file.
    */
   const edamTypeConverter = type => edam[`${type}`];
 
-  return properties.attachments.map((attachment, key) => {
+  return attachments.map((attachment, key) => {
+    if (attachment.processedTopLevel.startsWith("http")) {
+      attachment.processedTopLevel = removeUrl(attachment.processedTopLevel);
+    }
     return (
       <tr key={key}>
         <td>
@@ -98,7 +109,7 @@ export default function AttachmentRows(properties) {
               } else {
                 const item = {
                   url: `${publicRuntimeConfig.backend
-                    }${attachment.processedTopLevel}/download`,
+                    }/${attachment.processedTopLevel}/download`,
                   name: attachment.title.substring(
                     0,
                     attachment.title.lastIndexOf('.')
@@ -110,7 +121,7 @@ export default function AttachmentRows(properties) {
                   type: attachment.format.split('/').pop(),
                   status: 'downloading'
                 };
-
+                console.log(item);
                 dispatch(downloadFiles([item]));
               }
             }}
@@ -129,10 +140,11 @@ export default function AttachmentRows(properties) {
             <div
               type="button"
               onClick={async () => {
-                const copy = [...properties.attachments];
+                console.log("reached onclick");
+                const copy = [...attachments];
                 const deletedAttachment = copy.splice(key, 1);
-
-                dispatch(setAttachments(copy));
+                console.log(copy);
+                setAttachments(copy);
                 await getQueryResponse(
                   dispatch,
                   deleteAttachment,
@@ -140,7 +152,6 @@ export default function AttachmentRows(properties) {
                   token,
                   true
                 );
-                properties.setRefreshMembers(true);
               }}
             >
               <FontAwesomeIcon

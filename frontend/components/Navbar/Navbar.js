@@ -37,7 +37,6 @@ export default function Navbar() {
       );
   }, [loggedIn]);
 
-  console.log(theme);
   let linkHref = "/";
   if (theme && theme.altHome && theme.altHome.length > 0) {
     linkHref = theme.altHome;

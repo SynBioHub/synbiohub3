@@ -315,7 +315,7 @@ const deleteUser = async (id, token, dispatch) => {
     }
   }
 
-  if (response.status === 200) {
+  if (response && response.status === 200) {
     mutate([`${publicRuntimeConfig.backend}/admin/users`, token, dispatch]);
   }
 };
@@ -397,9 +397,9 @@ const createUser = async (
     }
   }
 
-  const responseText = await response.data;
+  // const responseText = await response.data;
 
-  if (response.status === 200) {
+  if (response && response.status === 200) {
     mutate([`${publicRuntimeConfig.backend}/admin/users`, token, dispatch]);
   }
 };
