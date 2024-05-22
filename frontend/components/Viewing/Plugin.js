@@ -6,15 +6,18 @@ import React from 'react';
 import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
 import { useSelector, useDispatch } from 'react-redux';
+
+import Section from './Sections/Section';
 import { updateHiddenSections } from '../../redux/actions';
 
 export default function Plugin(properties) {
   const [status, setStatus] = useState(null);
-  const [content, setContent] = useState("");
+  const [content, setContent] = useState('<div>Loading Data From Plugin...</div>');
   const pageSectionsOrder = useSelector(state => state.pageSections.order);
-  const hiddenSections = useSelector(state => state.pageSections.hiddenSections)
-
+  const hiddenSections = useSelector(state => state.pageSections.hiddenSections);
   const dispatch = useDispatch();
+
+  
   
   const uri = properties.uri;
 
@@ -46,36 +49,26 @@ export default function Plugin(properties) {
 
   useEffect(() => {
     if (status === null) {
-      setContent('<div>Loading Data From Plugin...</div>')
       evaluatePlugin(properties.plugin, properties.type).then(status => setStatus(status));
       
     }
-    else if (status) {
+    
+    if (status) {
+      dispatch(updateHiddenSections(hiddenSections.filter(page => page != `PLUGIN: ${properties.plugin.name}`)))
       const downloadContent = async () => {
       const toRender = await runPlugin(properties.plugin, pluginData);
       setContent(toRender);
       };
       downloadContent();
     }
+    else {
+      dispatch(updateHiddenSections(hiddenSections.filter(page => page != `PLUGIN: ${properties.plugin.name}`).concat(`PLUGIN: ${properties.plugin.name}`)))
+    }
   }, [status, pageSectionsOrder]);
-
-  useEffect(() => {
-    if(status === false) {
-      hiddenSections.push('PLUGIN: ' + properties.plugin.name)
-      dispatch(
-        updateHiddenSections(hiddenSections)
-      )
-    }
-    else if (status === true) {
-      const updatedHiddenSections = hiddenSections.filter(str => str !== 'PLUGIN: ' + properties.plugin.name)
-      dispatch(
-        updateHiddenSections(updatedHiddenSections)
-      )
-    }
-  }, [status])
 
   if (status) {
 
+    
 
     const options = {
       replace: domNode => {
@@ -108,14 +101,17 @@ export default function Plugin(properties) {
     }
 
     return (
-      <div id={properties.plugin.name}>
-        {parse(`${content}`, options)}
-      </div>
+      <Section title={properties.title} key={properties.index} pluginID={properties.page} >
+        <div id={properties.plugin.name}>
+          {parse(`${content}`, options)}
+        </div>
+      </Section>
+      
     );
   }
   
   else {
-    //return <Section title={properties.plugin.name}>{`${properties.plugin.name} is not working`}</Section>; //return null for it not to be loaded
+    
     return null
   }
   

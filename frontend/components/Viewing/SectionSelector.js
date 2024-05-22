@@ -236,19 +236,18 @@ function headerCreate(pages, type, json, hiddenSections) {
       <Draggable key={page} draggableId={page} index={index}>
         {renderDraggable(dragProvided => (
           <div
-            className={`${styles.sectionheaderparent} ${hiddenSections.includes(page) ? styles.hiddensection : ''}`}
+            className={`${styles.sectionheaderparent}`}
             {...dragProvided.dragHandleProps}
             {...dragProvided.draggableProps}
             ref={dragProvided.innerRef}
           >
-            {hiddenSections.includes(page) ? null : (
-              <SectionHeader
+            
+            { hiddenSections.includes(page) ? null : 
+            <SectionHeader
               type={type}
               title={page}
               icon={iconSelector(page, json)}
-            />
-            )}
-            
+            />}
           </div>
         ))}
       </Draggable>

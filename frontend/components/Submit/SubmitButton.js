@@ -29,19 +29,23 @@ export default function SubmitButton(properties) {
             'You must select one or more files and a destination collection before you can submit.'
           );
         else if (properties.submitHandler.value === 'configure') {
-          properties.change()
+          properties.configure()
         }
-        else
+        else {
+          let pluginMapping = new Map();
+          for (const file of properties.files) {
+            pluginMapping.set(file.name, properties.submitHandler.value)
+          }
           dispatch(
             submit(
               selectedCollection.uri,
               properties.files,
               properties.overwriteCollection ? 1 : 0,
               properties.addingToCollection ? true : false,
-              properties.submitHandler
+              pluginMapping
             )
           );
-          
+            }
       }}
     >
       <FontAwesomeIcon

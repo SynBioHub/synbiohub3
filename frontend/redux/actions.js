@@ -257,7 +257,7 @@ export const submit =
     files,
     overwriteIncrement = 0,
     addingToCollection = false,
-    plugin = null,
+    pluginMapping = null,
     resubmit = false
   ) =>
     async (dispatch, getState) => {
@@ -298,7 +298,7 @@ export const submit =
       const token = getState().user.token;
 
 
-      const convertedFiles = await submitPluginHandler(files, plugin, dispatch, getState);
+      //const convertedFiles = await submitPluginHandler(files, plugin, dispatch, getState);
 
 
 
@@ -308,9 +308,10 @@ export const submit =
         getState,
         token,
         uri,
-        convertedFiles,
+        files,
         overwriteIncrement,
-        addingToCollection
+        addingToCollection,
+        pluginMapping
       );
 
       dispatch({
@@ -319,7 +320,7 @@ export const submit =
       });
     };
 
-
+/*
 async function submitPluginHandler(files, plugin, dispatch, getState) {
 
   if (plugin.value === 'configure') {
@@ -572,7 +573,8 @@ async function uploadFiles(
   uri,
   files,
   overwriteIncrement = 0,
-  addingToCollection = false
+  addingToCollection = false,
+  pluginMapping = null
 ) {
   const filesUploading = getState().submit.filesUploading;
   const failedFiles = getState().submit.failedFiles;
@@ -582,9 +584,10 @@ async function uploadFiles(
     filesUploading.push({
       file: file,
       name: file.name,
-      url: file.url,
+      url: file.url, //unnecessary and most likely not even working anyway
       status: 'pending',
-      errors: []
+      errors: [],
+      plugin: pluginMapping ? pluginMapping.get(file.name): 'default'
     });
 
 
@@ -622,6 +625,8 @@ async function uploadFiles(
       form = new URLSearchParams();
       form.append('collections', uri);
     }
+
+    form.append('plugin', filesUploading[fileIndex].plugin)
 
     let response;
 
