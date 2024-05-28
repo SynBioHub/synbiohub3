@@ -5,16 +5,13 @@ import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import useSWR from 'swr';
 import ActionButton from './Reusable/ActionButton';
-import { forEach } from 'jszip';
 const { publicRuntimeConfig } = getConfig();
-
 
 export default function Explorer() {
     const token = useSelector(state => state.user.token);
     const dispatch = useDispatch();
     const { config, loading, isValidating } = useConfig(token, dispatch);
-    const [configDis, setConfigDis] = useState();
-    const [checked, setChecked] = useState(false);
+    const [checked, setChecked] = useState();
     const [SBOLEnd, setSBOLEnd] = useState();
     const [USchecked, setUSChecked] = useState();
     const [VSchecked, setVSChecked] = useState();
@@ -30,12 +27,16 @@ export default function Explorer() {
     const [sparqlEndpoint, setSparqlEndpoint] = useState();
 
     const handleUSChange = () => {
-        setUSChecked(!USchecked);
+        setUSChecked(true);
         setVSChecked(false);
+        console.log("USchecked: ", USchecked);
+        console.log("VSchecked: ", VSchecked);
       };
     const handleVSChange = () => {
-        setVSChecked(!VSchecked);
+        setVSChecked(true);
         setUSChecked(false);
+        console.log("USchecked: ", USchecked);
+        console.log("VSchecked: ", VSchecked);
     };
 
     //Update SBOLExplorer Index
@@ -127,20 +128,24 @@ export default function Explorer() {
     // question key is different from get 
     // Update SBOLExplorer Config
     const handleSubmit = async (checked, SBOLEnd, distrib, tolerance, clusterIdentity, 
-        elasticSearchEnd, elasticSearchIndex, sparqlEndpoint, autoUpdate, days) => {
-
-        const params = new URLSearchParams();
-        params.append('useSBOLExplorer', checked); // 1
-        params.append('SBOLExplorerEndpoint', SBOLEnd); // 2 None, added
-        params.append('useDistributedSearch', distrib); // 3
-        params.append('pagerankTolerance', tolerance); //4
-        params.append('uclustIdentity', clusterIdentity); //5
-        //params.append('synbiohubPublicGraph', '<synbiohubPublicGraph>'); // None, not necessary
-        params.append('elasticsearchEndpont', elasticSearchEnd); //6
-        params.append('elasticsearchIndexName', elasticSearchIndex); //7
-        params.append('spraqlEndpoint', sparqlEndpoint); //8
-        params.append('useCron', autoUpdate); //9
-        params.append('cronDay', days); //10, logic is to update days only if autoupdate==true 
+        elasticSearchEnd, elasticSearchIndex, sparqlEndpoint, autoUpdate, days, USchecked) => {
+        //const params = new URLSearchParams();
+        const params = {
+            'useSBOLExplorer': checked, // boolean value
+            'SBOLExplorerEndpoint': SBOLEnd, 
+            "SBOLExplorerConfig": {
+                'useDistributedSearch': distrib,
+                'pagerankTolerance': tolerance,
+                'uclustIdentity': clusterIdentity,
+                'elasticsearchEndpont': elasticSearchEnd,
+                'elasticsearchIndexName': elasticSearchIndex,
+                'spraqlEndpoint': sparqlEndpoint,
+                'useCron': autoUpdate,
+                'cronDay': days,
+                'whichSearch': USchecked ? 'usearch' : 'vsearch'
+            }
+            
+        };
 
         const url = `${publicRuntimeConfig.backend}/admin/explorer`;
         let res = await axios
@@ -157,12 +162,11 @@ export default function Explorer() {
         error.fullUrl = url;
         });
         console.log("Submit Message: ", res);
-        console.log("Iterate each params key and value", Object.fromEntries(params));
+        //console.log("Iterate each params key and value", Object.fromEntries(params));
     }
 
     useEffect(() => {
-        console.log("checked: ", checked);
-        console.log("SBOLEnd: ", SBOLEnd);
+        // TODO: get "useSBOLExplorer" and "SBOLEnd"
         if(config) {
             console.log("SBOLExplorer Started");
             // get all key and value from config.json in SBOLExplorer
@@ -173,33 +177,48 @@ export default function Explorer() {
             for (let obj of configArr) {
                 let key = obj.key;
                 let value = obj.value;
-                if (key === 'autoUpdateIndex') { // 1
-                    setAutoUpdate(value);
-                    } else if (key === 'distributed_search') { // 2
-                    setDistrib(value);
-                    } else if (key === 'elasticsearch_endpoint') { // 3
-                    setElasticSearchEnd(value);
-                    } else if (key === 'elasticsearch_index_name') { // 4
-                    setElasticSearchIndex(value);
-                    } else if (key === 'last_update_end') { // 
-                    setEndIndex(value);
-                    } else if (key === 'last_update_start') { // 
-                    setStartIndex(value);
-                    } else if (key === 'pagerank_tolerance') { // 5
-                    setTolerance(value);
-                    } else if (key === 'sparql_endpoint') { // 6
-                    setSparqlEndpoint(value);
-                    } else if (key === 'uclust_identity') { // 7
-                    setClusterIdentity(value);
-                    } else if (key === 'updateTimeInDays') { // 8
-                    setDays(value);
-                    } else if (key === 'which_search') { // 9
-                    setVSChecked(value === 'vsearch');
-                    setUSChecked(value === 'usearch');
+                if (key === 'SBOLExplorerEndpoint') {
+                    setSBOLEnd(value);
+                } else if (key === 'useSBOLExplorer') {
+                    setChecked(value);
+                } else if (key === 'SBOLExplorerConfig'){
+                    console.log("here: ", value);
+                    const configArr2 = Object.entries(value)?.map(([key, value]) => {
+                        return {key, value};
+                    })
+                    for (let obj of configArr2) {
+                        let key = obj.key;
+                        let value = obj.value;
+                        if (key === 'autoUpdateIndex') { // 1
+                            setAutoUpdate(value);
+                            } else if (key === 'distributed_search') { // 2
+                            setDistrib(value);
+                            } else if (key === 'elasticsearch_endpoint') { // 3
+                            setElasticSearchEnd(value);
+                            } else if (key === 'elasticsearch_index_name') { // 4
+                            setElasticSearchIndex(value);
+                            } else if (key === 'last_update_end') { // 
+                            setEndIndex(value);
+                            } else if (key === 'last_update_start') { // 
+                            setStartIndex(value);
+                            } else if (key === 'pagerank_tolerance') { // 5
+                            setTolerance(value);
+                            } else if (key === 'sparql_endpoint') { // 6
+                            setSparqlEndpoint(value);
+                            } else if (key === 'uclust_identity') { // 7
+                            setClusterIdentity(value);
+                            } else if (key === 'updateTimeInDays') { // 8
+                            setDays(value);
+                            } else if (key === 'which_search') { // 9
+                            setVSChecked(value === 'vsearch');
+                            setUSChecked(value === 'usearch');
+                            } 
                     }
-            }
-        } 
-    }, [checked, config]); 
+                }
+                
+                }
+            } 
+        }, [config]); 
 
     return ( 
         // logic: checked == true && SBOLEnd != empty, save, show parameter options
@@ -365,7 +384,7 @@ export default function Explorer() {
                                 action="Save"
                                 color="#00A1E4"
                                 onClick={()=>handleSubmit(checked, SBOLEnd, distrib, tolerance, clusterIdentity, 
-                                    elasticSearchEnd, elasticSearchIndex, sparqlEndpoint, autoUpdate, days)} // Error
+                                    elasticSearchEnd, elasticSearchIndex, sparqlEndpoint, autoUpdate, days, USchecked)} // Error
                                 />
                 </div>
             </div>
@@ -373,12 +392,13 @@ export default function Explorer() {
         </div>
 );
 }
+// if SBOLExplorer is on
 const useConfig = (token, dispatch) => {
     const { data, error } = useSWR(
       [`${publicRuntimeConfig.backend}/admin/explorer`, token, dispatch],
       fetcher
     );
-    console.log("Config: ", data);
+    console.log("Config only on: ", data);
     return {
       config: data,
       loading: !error && !data,
