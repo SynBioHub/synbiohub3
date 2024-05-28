@@ -60,7 +60,7 @@ export default function MemberOfCollections(properties) {
 
     useEffect(() => {
       async function fetchProcessedUrl() {
-        const result = await processUrl(collection.subject, token, dispatch);
+        const result = await processUrl(collection.subject, localStorage.getItem('registries'));
         setUrlRemovedForLink(result.urlRemovedForLink);
       }
 

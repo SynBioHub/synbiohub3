@@ -37,7 +37,6 @@ import axios from 'axios';
  * @param {Any} properties Information passed down from the parent component.
  */
 export default function SidePanelTools(properties) {
-  console.log(properties);
   const [modal, setModal] = useState();
 
   const username = useSelector(state => state.user.username);

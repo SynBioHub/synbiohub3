@@ -34,7 +34,7 @@ export default function SubmissionDisplay(properties) {
 
   useEffect(() => {
     async function processAndSetUri() {
-      const result = await processUrl(properties.submission.uri, token, dispatch);
+      const result = await processUrl(properties.submission.uri, localStorage.getItem('registries'));
       setProcessedUri(result.urlRemovedForLink || result.original);
     }
 

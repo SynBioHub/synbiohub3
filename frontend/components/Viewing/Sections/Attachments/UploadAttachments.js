@@ -185,7 +185,7 @@ export default function UploadAttachments(properties) {
                 document.getElementById('attached-file-input').value = '';
                 setSelectedFiles([]);
 
-                processUrl(properties.uri, token, dispatch).then(processedUriData => {
+                processUrl(properties.uri, localStorage.getItem('registries')).then(processedUriData => {
                   const uriToUse = processedUriData.urlReplacedForBackend || processedUriData.original;
                   attachFromFile(selectedFiles, uriToUse).then(() => {
                     dispatch(setUploadStatus(''));
@@ -279,7 +279,7 @@ export default function UploadAttachments(properties) {
                 } else if (!urlInput.includes('http')) {
                   alert('The URL has to be a link');
                 } else {
-                  processUrl(uri, token, dispatch).then(processedUriData => {
+                  processUrl(uri, localStorage.getItem('registries')).then(processedUriData => {
                       const uriToUse = processedUriData.urlReplacedForBackend || processedUriData.original;
                       
                       const attachment = {

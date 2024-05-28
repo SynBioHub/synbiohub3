@@ -2,6 +2,7 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useState } from 'react';
 
 import { addError, markPageVisited, restoreLogin } from '../redux/actions';
 import styles from '../styles/layout.module.css';
@@ -9,6 +10,9 @@ import Footer from './Footer';
 import Navbar from './Navbar/Navbar';
 import DownloadStatus from './Reusable/Download/DownloadStatus';
 import Errors from './Error/Errors';
+import getConfig from 'next/config';
+const { publicRuntimeConfig } = getConfig();
+import axios from 'axios';
 
 /* eslint sonarjs/cognitive-complexity: "off" */
 
@@ -23,6 +27,48 @@ export default function TopLevel(properties) {
   const router = useRouter();
   const loggedIn = useSelector(state => state.user.loggedIn);
   const pageVisited = useSelector(state => state.tracking.pageVisited);
+  const [registries, setRegistries] = useState([]);
+  const [theme, setTheme] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  // Fetch registries once on component mount
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const [registriesResponse, themeResponse] = await Promise.all([
+          axios.get(`${publicRuntimeConfig.backend}/admin/registries`, {
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+            },
+          }),
+          axios.get(`${publicRuntimeConfig.backend}/admin/theme`, {
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+            },
+          })
+        ]);
+
+        const registriesData = registriesResponse.data.registries || [];
+        const themeData = themeResponse.data.theme || [];
+
+        setRegistries(registriesData);
+        setTheme(themeData);
+
+        localStorage.setItem('registries', JSON.stringify(registriesData));
+        localStorage.setItem('theme', JSON.stringify(themeData));
+      } catch (error) {
+        console.error('Error fetching data', error);
+        dispatch(addError(error));
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [dispatch]);
 
   useEffect(() => {
     if (!pageVisited && !properties.doNotTrack) dispatch(markPageVisited(true));

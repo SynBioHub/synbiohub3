@@ -40,7 +40,7 @@ export default function SectionRenderer({ section, metadata }) {
 
       // After you set the data, process the link
       if (isMounted && section.link) {
-        const processed = await processUrl(section.link, token, dispatch); // Assuming you have token available
+        const processed = await processUrl(section.link, localStorage.getItem('registries')); // Assuming you have token available
         setProcessedLink(processed);
       }
     }

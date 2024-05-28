@@ -28,20 +28,34 @@ const headers = ['URI Prefix', 'SynBioHub URL', ''];
 export default function Registries() {
   const token = useSelector(state => state.user.token);
   const dispatch = useDispatch();
-  const { registries, loading } = useRegistries(token, dispatch);
+  const [registries, setRegistries] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    setLoading(true);
+    try {
+      const registriesData = JSON.parse(localStorage.getItem('registries')) || [];
+      setRegistries(registriesData);
+    } catch (error) {
+      console.error('Error fetching registries from localStorage', error);
+      dispatch(addError(error));
+    } finally {
+      setLoading(false);
+    }
+  }, [dispatch]);
 
   return (
     <div className={styles.plugintable}>
       <RegistryActions />
       <Table
-        data={registries ? registries.registries : undefined}
+        data={registries}
         loading={loading}
         title="Local Registries"
-        searchable={searchable}
-        headers={headers}
-        sortOptions={options}
-        defaultSortOption={options[0]}
-        sortMethods={sortMethods}
+        searchable={true} // Assuming you want to enable search
+        headers={['Header1', 'Header2']} // Replace with your actual headers
+        sortOptions={['Option1', 'Option2']} // Replace with your actual sort options
+        defaultSortOption={'Option1'} // Replace with your actual default sort option
+        sortMethods={{}} // Replace with your actual sort methods
         hideFooter={true}
         finalRow={<NewRegistryRow token={token} />}
         dataRowDisplay={registry => (
@@ -349,50 +363,24 @@ const fetcher = (url, dispatch) =>
       dispatch(addError(error));
     });
 
-export async function processUrl(inputUrl, token, dispatch) {
-
-  const data = await fetcher(`${publicRuntimeConfig.backend}/admin/registries`, dispatch);
-
-
-
-  if (data && data.registries) {
-    let registries;
-    // Check if data.registries is an array
-    if (data.registries && Array.isArray(data.registries)) {
-      registries = data.registries;
-    } else if (data && typeof data === 'object') {
-      registries = [data]; // This is an example, adjust based on your needs
-    } else {
-      registries = [];
+export async function processUrl(inputUrl, registries) {
+  for (const registry of registries) {
+    if (inputUrl.startsWith(registry.uri)) {
+      const urlRemovedForLink = inputUrl.replace(registry.uri, "");
+      const urlReplacedForBackend = inputUrl.replace(registry.uri, registry.url);
+      return { urlRemovedForLink, urlReplacedForBackend };
     }
-
-    for (const registry of registries) {
-      if (inputUrl.startsWith(registry.uri)) {
-        const urlRemovedForLink = inputUrl.replace(registry.uri, ""); // TODO: Should only strip for only "you"
-        const urlReplacedForBackend = inputUrl.replace(registry.uri, registry.url);
-        return { urlRemovedForLink, urlReplacedForBackend };
-      }
-    }
-    return { original: inputUrl };  // if you don't match any uri
   }
-  return { original: inputUrl };  // if you don't match any uri
+  return { original: inputUrl };
 }
 
-export async function processUrlReverse(inputUrl, token, dispatch) {
-
-  const data = await fetcher(`${publicRuntimeConfig.backend}/admin/registries`, dispatch);
-
-  if (data && data.registries) {
-    const registries = data.registries;
-
-    for (const registry of registries) {
-      if (inputUrl.startsWith(registry.url)) {
-        const uriRemovedForLink = inputUrl.replace(registry.url, "");
-        const uriReplacedForBackend = inputUrl.replace(registry.url, registry.uri);
-        return { uriRemovedForLink, uriReplacedForBackend };
-      }
+export async function processUrlReverse(inputUrl, registries) {
+  for (const registry of registries) {
+    if (inputUrl.startsWith(registry.url)) {
+      const uriRemovedForLink = inputUrl.replace(registry.url, "");
+      const uriReplacedForBackend = inputUrl.replace(registry.url, registry.uri);
+      return { uriRemovedForLink, uriReplacedForBackend };
     }
-    return { original: inputUrl };  // if you don't match any uri
   }
-  return { original: inputUrl };  // if you don't match any uri
+  return { original: inputUrl };
 }

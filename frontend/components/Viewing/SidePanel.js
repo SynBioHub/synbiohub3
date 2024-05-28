@@ -48,7 +48,7 @@ export default function SidePanel({ metadata, type, json, uri, plugins }) {
 
   useEffect(() => {
     async function fetchAndProcessUrl() {
-      const result = await processUrl(uri, token, dispatch);
+      const result = await processUrl(uri, localStorage.getItem('registries'));
       setProcessedUrl(result);
     }
 

@@ -15,7 +15,7 @@ export default function BasketItem(properties) {
 
   // Process the URI using processUrl function
   const handleClick = async () => {
-    const processedUrlData = await processUrl(properties.item.uri, token, dispatch);
+    const processedUrlData = await processUrl(properties.item.uri, localStorage.getItem('registries'));
     if (processedUrlData.urlReplacedForBackend) {
       router.push(processedUrlData.urlReplacedForBackend);
     } else if (processedUrlData.original) {

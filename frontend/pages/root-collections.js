@@ -68,6 +68,8 @@ export default function RootCollections() {
     }
   }, [data, query]);
 
+  console.log(filteredData);
+
 
   if (error) {
     // Render error message or handle error as needed

@@ -167,15 +167,19 @@ export default function Theme() {
   );
 }
 
-export const useTheme = dispatch => {
-  const { data, error } = useSWR(
-    [`${publicRuntimeConfig.backend}/admin/theme`, dispatch],
-    fetcher
-  );
-  return {
-    theme: data,
-    loading: !error && !data
-  };
+export const useTheme = () => {
+  const [theme, setTheme] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const storedTheme = localStorage.getItem('theme');
+    if (storedTheme) {
+      setTheme(JSON.parse(storedTheme));
+    }
+    setLoading(false);
+  }, []);
+
+  return { theme, loading };
 };
 
 const fetcher = (url, dispatch) =>
