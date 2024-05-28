@@ -51,8 +51,11 @@ export default function TopLevel(properties) {
           })
         ]);
 
+        console.log(registriesResponse.data);
+        console.log(themeResponse.data);
+
         const registriesData = registriesResponse.data.registries || [];
-        const themeData = themeResponse.data.theme || [];
+        const themeData = themeResponse.data || [];
 
         setRegistries(registriesData);
         setTheme(themeData);
@@ -73,6 +76,8 @@ export default function TopLevel(properties) {
   useEffect(() => {
     if (!pageVisited && !properties.doNotTrack) dispatch(markPageVisited(true));
   }, [pageVisited, properties.doNotTrack]);
+
+  console.log(localStorage);
 
   useEffect(() => {
     if (!loggedIn) {
