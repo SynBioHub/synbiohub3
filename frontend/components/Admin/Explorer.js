@@ -25,18 +25,15 @@ export default function Explorer() {
     const [elasticSearchEnd, setElasticSearchEnd] = useState();
     const [elasticSearchIndex, setElasticSearchIndex] = useState();
     const [sparqlEndpoint, setSparqlEndpoint] = useState();
+    const [conf, setConf] = useState();
 
     const handleUSChange = () => {
         setUSChecked(true);
         setVSChecked(false);
-        console.log("USchecked: ", USchecked);
-        console.log("VSchecked: ", VSchecked);
       };
     const handleVSChange = () => {
         setVSChecked(true);
         setUSChecked(false);
-        console.log("USchecked: ", USchecked);
-        console.log("VSchecked: ", VSchecked);
     };
 
     //Update SBOLExplorer Index
@@ -52,16 +49,14 @@ export default function Explorer() {
         })
         .then(response => response.data)
         .catch (error => {
-        console.error('Error with updating index: ', error);
         error.customMessage = 'Error with updating index';
         error.fullUrl = url;
         });
     };
 
     //View SBOLExplorer Log
-    const handleDownloadGeneralLog = async () => { // TODO
+    const handleDownloadGeneralLog = async () => { 
         const url = `${publicRuntimeConfig.backend}/admin/explorerlog`;
-        console.log('GeneralLogURL: ', url);
         const res = await axios
             .get(url, {
                 headers: {
@@ -90,7 +85,6 @@ export default function Explorer() {
     //admin/explorerIndexingLog
     const handleDownloadIndexLog = async () => { 
         const url = `${publicRuntimeConfig.backend}/admin/explorerIndexingLog`;
-        console.log('url: ', url);
         const res = await axios
             .get(url, {
                 headers: {
@@ -107,7 +101,6 @@ export default function Explorer() {
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
-                console.log("download: ", response.data);
             })
             .catch(error => {
                 error.customMessage = 'Error with view indexing log';
@@ -133,18 +126,15 @@ export default function Explorer() {
         const params = {
             'useSBOLExplorer': checked, // boolean value
             'SBOLExplorerEndpoint': SBOLEnd, 
-            "SBOLExplorerConfig": {
-                'useDistributedSearch': distrib,
-                'pagerankTolerance': tolerance,
-                'uclustIdentity': clusterIdentity,
-                'elasticsearchEndpont': elasticSearchEnd,
-                'elasticsearchIndexName': elasticSearchIndex,
-                'spraqlEndpoint': sparqlEndpoint,
-                'useCron': autoUpdate,
-                'cronDay': days,
-                'whichSearch': USchecked ? 'usearch' : 'vsearch'
-            }
-            
+            'useDistributedSearch': distrib,
+            'pagerankTolerance': tolerance,
+            'uclustIdentity': clusterIdentity,
+            'elasticsearchEndpont': elasticSearchEnd,
+            'elasticsearchIndexName': elasticSearchIndex,
+            'spraqlEndpoint': sparqlEndpoint,
+            'useCron': autoUpdate,
+            'cronDay': days,
+            'whichSearch': USchecked ? 'usearch' : 'vsearch'
         };
 
         const url = `${publicRuntimeConfig.backend}/admin/explorer`;
@@ -161,19 +151,15 @@ export default function Explorer() {
         error.customMessage = 'Error with submitting parameters';
         error.fullUrl = url;
         });
-        console.log("Submit Message: ", res);
-        //console.log("Iterate each params key and value", Object.fromEntries(params));
     }
 
     useEffect(() => {
-        // TODO: get "useSBOLExplorer" and "SBOLEnd"
         if(config) {
-            console.log("SBOLExplorer Started");
             // get all key and value from config.json in SBOLExplorer
             const configArr = Object.entries(config)?.map(([key, value]) => {
                 return {key, value};
             })
-            console.log("Array: ", configArr);
+            setConf(configArr.length);
             for (let obj of configArr) {
                 let key = obj.key;
                 let value = obj.value;
@@ -182,7 +168,6 @@ export default function Explorer() {
                 } else if (key === 'useSBOLExplorer') {
                     setChecked(value);
                 } else if (key === 'SBOLExplorerConfig'){
-                    console.log("here: ", value);
                     const configArr2 = Object.entries(value)?.map(([key, value]) => {
                         return {key, value};
                     })
@@ -218,14 +203,16 @@ export default function Explorer() {
                 
                 }
             } 
-        }, [config]); 
+        }, [config, conf]); 
 
     return ( 
-        // logic: checked == true && SBOLEnd != empty, save, show parameter options
+        // logic: 
+        // if SBOLExplorer is on: automatically show all parameter options
+        // else: only show 2 parameters
         <div>
             <div className="row">
-            {!checked && <span>SBOLExplorer is disabled. Check the "Searching Using SBOLExplorer" to enable it.</span>} 
-            {checked && SBOLEnd && <span>Note: Looks like SBOLExplorer is up and running :) Endpoint fields should end with '/', SynBioHub Public Graph should end with '/public', and SPARQL/Virtuoso Endpoint should end with '/sparql?'.</span>} 
+            {conf === 2 && <span>SBOLExplorer is disabled. Check the "Searching Using SBOLExplorer" to enable it.</span>} 
+            {conf > 2 && <span>Note: Looks like SBOLExplorer is up and running :) Endpoint fields should end with '/', SynBioHub Public Graph should end with '/public', and SPARQL/Virtuoso Endpoint should end with '/sparql?'.</span>} 
             </div>
             <div className="row">
                 <label >SBOLExplorer Endpoint
@@ -247,7 +234,7 @@ export default function Explorer() {
                 </div>
             </div>
             {<div>
-                {checked && SBOLEnd &&
+                {conf > 2 &&
                 (<div>
                     <label>
                         <input
@@ -334,7 +321,7 @@ export default function Explorer() {
                     type="text" 
                     value={tolerance} 
                     onChange={e => {setTolerance(e.target.value);
-                    console.log("tolerance: ", e.target.value)}}/>
+                    }}/>
             </div>
             <div className="form-group">
             UClust Clustering Identity &nbsp;
@@ -344,7 +331,6 @@ export default function Explorer() {
                     value={clusterIdentity} 
                     onChange={e => {
                         setClusterIdentity(e.target.value);
-                        console.log("clusterIdentity: ", e.target.value);
                         }}/>
             </div>
 
@@ -363,8 +349,7 @@ export default function Explorer() {
                     id="5" 
                     type="text" 
                     value={elasticSearchIndex} 
-                    onChange={e => {setElasticSearchIndex(e.target.value);
-                    console.log("elasticSearchIndex: ", e.target.value)}}/>
+                    onChange={e => {setElasticSearchIndex(e.target.value);}}/>
             </div>
 
             <div className="form-group">
@@ -398,7 +383,6 @@ const useConfig = (token, dispatch) => {
       [`${publicRuntimeConfig.backend}/admin/explorer`, token, dispatch],
       fetcher
     );
-    console.log("Config only on: ", data);
     return {
       config: data,
       loading: !error && !data,
