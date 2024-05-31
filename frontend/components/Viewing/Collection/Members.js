@@ -366,6 +366,8 @@ function MemberTable(properties) {
         };
 
         const handleUnlink = async (member, processedUri) => {
+          console.log(processedUri, member.uri);
+          console.log(objectUri);
           if (member.uri && window.confirm("Would you like to unlink this item from the collection?")) {
             try {
               await axios.post(`${objectUri}/removeMembership`, {
