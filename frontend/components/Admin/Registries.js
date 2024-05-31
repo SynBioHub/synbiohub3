@@ -23,6 +23,12 @@ const { publicRuntimeConfig } = getConfig();
 const searchable = ['uri', 'url'];
 const headers = ['URI Prefix', 'SynBioHub URL', ''];
 
+const sortOptions = [
+  { value: 'default', label: 'Default' },
+  { value: 'name', label: 'Name' },
+  { value: 'displayId', label: 'Identifier' }
+];
+
 /* eslint sonarjs/no-duplicate-string: "off" */
 
 export default function Registries() {
@@ -30,6 +36,8 @@ export default function Registries() {
   const dispatch = useDispatch();
   const [registries, setRegistries] = useState([]);
   const [loading, setLoading] = useState(false);
+
+
 
   useEffect(() => {
     setLoading(true);
@@ -51,11 +59,11 @@ export default function Registries() {
         data={registries}
         loading={loading}
         title="Local Registries"
-        searchable={true} // Assuming you want to enable search
-        headers={['Header1', 'Header2']} // Replace with your actual headers
-        sortOptions={['Option1', 'Option2']} // Replace with your actual sort options
-        defaultSortOption={'Option1'} // Replace with your actual default sort option
-        sortMethods={{}} // Replace with your actual sort methods
+        searchable={searchable} // Assuming you want to enable search
+        headers={headers} // Replace with your actual headers
+        sortOptions={options} // Replace with your actual sort options
+        defaultSortOption={'uri'} // Replace with your actual default sort option
+        sortMethods={sortMethods} // Replace with your actual sort methods
         hideFooter={true}
         finalRow={<NewRegistryRow token={token} />}
         dataRowDisplay={registry => (
@@ -69,6 +77,26 @@ export default function Registries() {
     </div>
   );
 }
+
+{/* <Table
+      data={processedMembers}
+      loading={!properties.members}
+      title="Members"
+      count={count}
+      customCount={properties.currMembers}
+      customBounds={properties.customBounds}
+      outOfBoundsHandle={properties.outOfBoundsHandle}
+      customSearch={properties.customSearch}
+      hideFilter={true}
+      searchable={[]}
+      headers={headers}
+      sortOptions={sortOptions}
+      sortMethods={sortMethods}
+      defaultSortOption={properties.defaultSortOption}
+      customSortBehavior={(sortMethod, sortOption) => {
+        properties.setSort(sortMethod);
+        properties.setDefaultSortOption(sortOption);
+      }} */}
 
 function NewRegistryRow(properties) {
   const [uri, setUri] = useState('');
@@ -335,33 +363,6 @@ const sortMethods = {
   uri: (registry1, registry2) => compareStrings(registry1.uri, registry2.uri),
   url: (registry1, registry2) => compareStrings(registry1.url, registry2.url)
 };
-
-const useRegistries = (token, dispatch) => {
-  const { data, error } = useSWR(
-    [`${publicRuntimeConfig.backend}/admin/registries`, dispatch],
-    fetcher
-  );
-  return {
-    registries: data,
-    loading: !error && !data,
-    error: error
-  };
-};
-
-const fetcher = (url, dispatch) =>
-  axios
-    .get(url, {
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json'
-      }
-    })
-    .then(response => response.data)
-    .catch(error => {
-      error.customMessage = 'Error fetching registries';
-      error.fullUrl = url;
-      dispatch(addError(error));
-    });
 
 export async function processUrl(inputUrl, registries) {
   for (const registry of registries) {

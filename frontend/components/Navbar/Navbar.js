@@ -10,7 +10,6 @@ import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 import Loader from 'react-loader-spinner';
 import { useSelector } from 'react-redux';
-import { useTheme } from '../Admin/Theme';
 import styles from '../../styles/navbar.module.css';
 import Profile from './Profile';
 import Selector from './Selector';
@@ -22,7 +21,7 @@ import Selector from './Selector';
 export default function Navbar() {
   const loggedIn = useSelector(state => state.user.loggedIn);
   const submitting = useSelector(state => state.submit.submitting);
-  const { theme, loading } = useTheme();
+  const theme = JSON.parse(localStorage.getItem('theme')) || {};
 
   const [profileControl, setProfileControl] = useState(
     <Selector icon={faSignInAlt} name="Log in or Register" href="/login" />
@@ -37,10 +36,6 @@ export default function Navbar() {
       );
     }
   }, [loggedIn]);
-
-  if (loading) {
-    return <div>Loading...</div>; // Adjust this to your loading indicator
-  }
 
   let linkHref = "/";
   if (theme && theme.altHome && theme.altHome.length > 0) {

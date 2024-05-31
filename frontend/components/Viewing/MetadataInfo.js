@@ -5,7 +5,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faTrash, faPencilAlt } from '@fortawesome/free-solid-svg-icons';
 import RenderIcon from './PageJSON/Rendering/RenderIcon';
 import styles from '../../styles/view.module.css';
-import { useTheme } from '../Admin/Theme';
 import axios from 'axios';
 import getConfig from "next/config";
 
@@ -15,7 +14,7 @@ import { isUriOwner, formatMultipleTitles } from './Shell';
 const { publicRuntimeConfig } = getConfig();
 
 export default function MetadataInfo({ title, link, label, icon, specific, uri, editable }) {
-  const { theme } = useTheme();
+  const theme = JSON.parse(localStorage.getItem('theme')) || {};
   const [isHovered, setIsHovered] = useState(false);
 
   const [isEditing, setIsEditing] = useState(false);

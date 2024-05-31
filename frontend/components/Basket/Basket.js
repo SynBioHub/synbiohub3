@@ -17,7 +17,6 @@ import Table from '../Reusable/Table/Table';
 import TableButton from '../Reusable/TableButton';
 import BasketItem from './BasketItem';
 import CreateCollection from './CreateCollection';
-import { useTheme } from '../Admin/Theme';
 
 const searchable = ['name', 'displayId', 'type', 'description'];
 
@@ -38,7 +37,7 @@ export default function Basket() {
   const [buttonEnabled, setButtonEnabled] = useState(false);
   const [itemsToAddToCollection, setItemsToAddToCollection] = useState([]);
   const [createCollectionMode, setCreateCollectionMode] = useState(false);
-  const { theme } = useTheme();
+  const theme = JSON.parse(localStorage.getItem('theme')) || {};
 
   useEffect(() => {
     dispatch(restoreBasket());

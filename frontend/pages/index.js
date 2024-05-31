@@ -8,21 +8,28 @@ import {
 import Card from '../components/Home/Card';
 import TopLevel from '../components/TopLevel';
 import styles from '../styles/home.module.css';
-import getConfig from 'next/config';
-import { useDispatch, useSelector } from 'react-redux';
-import { useTheme } from '../components/Admin/Theme.js'
-
-import useSWR from 'swr';
-const { publicRuntimeConfig } = getConfig();
+import { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 
 
 /**
  * This page renders the home/landing page for sbh.
  */
 function Home() {
-  const dispatch = useDispatch(); // if you are using Redux, otherwise, you might not need this
-  const { theme, loading } = useTheme(dispatch);
+  const [loading, setLoading] = useState(true);
+  const [theme, setTheme] = useState({});
   const token = useSelector(state => state.user.token);
+
+  useEffect(() => {
+    // Simulate data fetching
+    const fetchData = () => {
+      setLoading(true);
+      const themeData = JSON.parse(localStorage.getItem('theme')) || {};
+      setTheme(themeData);
+      setLoading(false);
+    };
+    fetchData();
+  }, []);
 
   if (loading) {
     return (

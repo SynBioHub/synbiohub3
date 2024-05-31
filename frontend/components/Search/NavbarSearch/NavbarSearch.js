@@ -7,12 +7,11 @@ import { useSelector } from 'react-redux';
 
 import styles from '../../../styles/navbar.module.css';
 import SearchBar from './SearchBar';
-import { useTheme } from '../../Admin/Theme';
 
 export default function NavbarSearch(properties) {
   const router = useRouter();
   const pageVisited = useSelector(state => state.tracking.pageVisited);
-  const { theme, loading } = useTheme();
+  const theme = JSON.parse(localStorage.getItem('theme')) || {};
 
   let linkHref = "/";
   if (theme && theme.altHome && theme.altHome.length > 0) {
