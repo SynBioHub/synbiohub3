@@ -20,7 +20,7 @@ export default function SubmissionStatusPanel() {
   const fileFailed = useSelector(state => state.submit.fileFailed);
   const submitting = useSelector(state => state.submit.submitting);
   const submissionUri = useSelector(state => state.submit.selectedCollection.uri);
-
+  const registries = JSON.parse(localStorage.getItem("registries")) || {};
   const [header, setHeader] = useState(null);
   const [processedUri, setProcessedUri] = useState(submissionUri);
   const token = useSelector(state => state.user.token);
@@ -69,7 +69,7 @@ export default function SubmissionStatusPanel() {
 
   useEffect(() => {
     async function processAndSetUri() {
-      const result = await processUrl(submissionUri, localStorage.getItem('registries'));
+      const result = await processUrl(submissionUri, registries);
       setProcessedUri(result.urlRemovedForLink || result.original);
     }
     

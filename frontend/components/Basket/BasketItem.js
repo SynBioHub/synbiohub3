@@ -12,10 +12,11 @@ export default function BasketItem(properties) {
   const router = useRouter();
   const token = useSelector(state => state.user.token); // assuming you use Redux for state management
   const dispatch = useDispatch();
+  const registries = JSON.parse(localStorage.getItem("registries")) || {};
 
   // Process the URI using processUrl function
   const handleClick = async () => {
-    const processedUrlData = await processUrl(properties.item.uri, localStorage.getItem('registries'));
+    const processedUrlData = await processUrl(properties.item.uri, registries);
     if (processedUrlData.urlReplacedForBackend) {
       router.push(processedUrlData.urlReplacedForBackend);
     } else if (processedUrlData.original) {

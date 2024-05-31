@@ -15,9 +15,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const { publicRuntimeConfig } = getConfig();
 import getConfig from 'next/config';
-import { processUrl } from '../../../Admin/Registries';
-import { getAfterThirdSlash } from '../../ViewHeader.js';
-import { useEffect } from 'react';
 
 import styles from '../../../../styles/view.module.css';
 

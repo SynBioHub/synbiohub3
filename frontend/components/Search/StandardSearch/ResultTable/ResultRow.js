@@ -16,10 +16,11 @@ export default function ResultRow(properties) {
   const token = useSelector(state => state.user.token);
   const dispatch = useDispatch();
   const [processedUri, setProcessedUri] = useState(properties.uri);
+  const registries = JSON.parse(localStorage.getItem("registries")) || {};
 
   useEffect(() => {
     async function processAndSetUri() {
-      const result = await processUrl(properties.uri, localStorage.getItem('registries'));
+      const result = await processUrl(properties.uri, registries);
       setProcessedUri(result.urlRemovedForLink || result.original);
     }
     
