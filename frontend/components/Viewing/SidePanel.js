@@ -3,11 +3,7 @@ import {
   faCalendarPlus,
   faHammer,
   faQuoteLeft,
-  faRunning,
   faUserEdit,
-  faFileSignature,
-  faIdBadge,
-  faIdCard,
   faCodeBranch,
   faCalendarMinus
 } from '@fortawesome/free-solid-svg-icons';
@@ -26,10 +22,8 @@ import SidePanelTools from './SidePanelTools';
 import { processUrl } from '../Admin/Registries';
 import { useEffect } from 'react';
 
-import getConfig from 'next/config';
 import GenericContent from './PageJSON/Rendering/GenericContent';
 import MetadataInfo from './MetadataInfo';
-const { publicRuntimeConfig } = getConfig();
 
 /**
  * The side panel that has information about the object.

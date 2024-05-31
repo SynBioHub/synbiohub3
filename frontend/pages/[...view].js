@@ -11,9 +11,8 @@ import Shell from '../components/Viewing/Shell';
 import getMetadata from '../sparql/getMetadata';
 import getQueryResponse from '../sparql/tools/getQueryResponse';
 import { addError } from '../redux/actions';
-import styles from '../styles/view.module.css';
 import LinkedSearch from '../components/Search/StandardSearch/LinkedSearch';
-import { useTheme } from '../components/Admin/Theme'; 
+
 
 export default function View({ data, error }) {
   const dispatch = useDispatch();
@@ -25,7 +24,7 @@ export default function View({ data, error }) {
   const token = useSelector(state => state.user.token);
   const url = view ? view.join('/') : '';
   const [metadata, setMetadata] = useState();
-  const { theme } = useTheme();
+  const theme = JSON.parse(localStorage.getItem('theme')) || {};
   const [urlExists, setUrlExists] = useState(true); // New state for URL existence
   const backenduri = `${publicRuntimeConfig.backend}/${url}`;
 

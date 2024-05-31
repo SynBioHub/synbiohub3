@@ -12,12 +12,10 @@ import {
   faUsers
 } from '@fortawesome/free-solid-svg-icons';
 
-import { useTheme } from '../Admin/Theme';
-
 import styles from '../../styles/admin.module.css';
 import MenuSelector from './MenuSelector';
 export default function Menu(properties) {
-  const { theme, loading } = useTheme();
+  const theme = JSON.parse(localStorage.getItem('theme')) || {};
   return (
     <div className={styles.menucontainer}>
       <MenuSelector

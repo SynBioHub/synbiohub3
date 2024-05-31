@@ -11,7 +11,6 @@ import Options from '../AdvancedSearch/Options';
 const { publicRuntimeConfig } = getConfig();
 import SearchHeader from '../SearchHeader/SearchHeader';
 import { processUrl } from '../../Admin/Registries';
-import { useTheme } from '../../Admin/Theme';
 
 import {
   countloader,
@@ -33,7 +32,7 @@ import { filter } from 'jszip';
 
 
 export default function StandardSearch() {
-  const { theme} = useTheme();
+  const theme = JSON.parse(localStorage.getItem('theme')) || {};
   const query = useSelector(state => state.search.query);
   const offset = useSelector(state => state.search.offset);
   const limit = useSelector(state => state.search.limit);

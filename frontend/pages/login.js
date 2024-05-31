@@ -11,8 +11,6 @@ import TopLevel from '../components/TopLevel';
 import { login } from '../redux/actions';
 import styles from '../styles/login.module.css';
 
-import { useTheme } from '../components/Admin/Theme';
-
 /**
  * This page renders the login page for sbh
  */
@@ -25,7 +23,7 @@ function Login() {
   const dispatch = useDispatch();
   const router = useRouter();
 
-  const { theme} = useTheme();
+  const theme = JSON.parse(localStorage.getItem('theme')) || {};
 
   const next = router.query.next;
 

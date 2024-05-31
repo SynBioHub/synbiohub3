@@ -3,7 +3,6 @@ import { saveAs } from 'file-saver';
 import JSZip from 'jszip';
 import getConfig from 'next/config';
 import { mutate } from 'swr';
-const mime = require('mime-types');
 
 import * as types from './types';
 const { publicRuntimeConfig } = getConfig();
@@ -96,6 +95,8 @@ export const restoreLogin = (username, token) => dispatch => {
 export const logoutUser = () => dispatch => {
   localStorage.removeItem('userToken');
   localStorage.removeItem('username');
+  localStorage.removeItem('theme');
+  localStorage.removeItem('registries');
   dispatch({ type: types.LOGOUT });
 };
 

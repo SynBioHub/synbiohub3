@@ -8,8 +8,6 @@ import { useSelector } from 'react-redux';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 
-import TwinsSearch from '../Search/StandardSearch/LinkedSearch';
-
 import axios from 'axios';
 
 import Link from 'next/link';
@@ -19,8 +17,6 @@ import { isUriOwner } from './Shell';
 import getConfig from "next/config";
 const { publicRuntimeConfig } = getConfig();
 
-import { useTheme } from '../Admin/Theme';
-
 export default function ViewHeader(properties) {
   const [displayedTitle, setDisplayedTitle] = useState(properties.name);  // New state for the displayed title
   const [isEditingTitle, setIsEditingTitle] = useState(false);
@@ -29,12 +25,8 @@ export default function ViewHeader(properties) {
   const [displayedDescription, setDisplayedDescription] = useState(properties.description);
   const [isEditingDescription, setIsEditingDescription] = useState(false);
   const [editedDescription, setEditedDescription] = useState(properties.description);
-  // State variables for handling similar, twins, and uses results
-  const [similarData, setSimilarData] = useState(null);
-  const [twinsData, setTwinsData] = useState(null);
-  const [usesData, setUsesData] = useState(null);
 
-  const { theme } = useTheme();
+  const theme = JSON.parse(localStorage.getItem('theme')) || {};
 
   var displayTitle = properties.type;
   if (properties.type.includes('#')) {

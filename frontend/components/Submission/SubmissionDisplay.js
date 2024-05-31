@@ -7,7 +7,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { processUrl } from '../Admin/Registries';
-import { useDispatch, useSelector } from 'react-redux';
 
 import styles from '../../styles/submissions.module.css';
 
@@ -16,9 +15,7 @@ export default function SubmissionDisplay(properties) {
 
   const [privacyDisplay, setPrivacyDisplay] = useState();
   const [processedUri, setProcessedUri] = useState(properties.submission.uri);
-  const token = useSelector(state => state.user.token);
   const registries = JSON.parse(localStorage.getItem("registries")) || {};
-  const dispatch = useDispatch();
 
   useEffect(() => {
     if (properties.submission.privacy === 'public')

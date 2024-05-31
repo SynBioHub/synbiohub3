@@ -6,12 +6,10 @@ import {
   faCopy,
   faLink,
   faShareAlt,
-  faFunnelDollar
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { useEffect, useState } from "react";
-import { useDispatch } from 'react-redux';
+import { useState } from "react";
 import Link from 'next/link';
 
 import DeleteModal from "./Modals/DeleteModal";
@@ -28,8 +26,6 @@ const { publicRuntimeConfig } = getConfig();
 
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import CurationModal from './Modals/CurationModal';
-import axios from 'axios';
 
 /**
  * The side panel buttons and their interactions.

@@ -1,23 +1,21 @@
 import axios from 'axios';
 import getConfig from 'next/config';
-import useSWR from 'swr';
-
 import styles from '../../styles/defaulttable.module.css';
 import Loading from '../Reusable/Loading';
 import { addError } from '../../redux/actions';
-import { useDispatch } from 'react-redux';
-import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useState, useEffect } from 'react';
 import Loader from 'react-loader-spinner';
-import { useEffect } from 'react';
-import { useSelector } from 'react-redux';
 import { isValidURI } from '../Viewing/Shell';
+
 const { publicRuntimeConfig } = getConfig();
 
 export default function Theme() {
   const dispatch = useDispatch();
-  const { theme, loading } = useTheme(dispatch);
-  const [instanceName, setInstanceName] = useState('');   // default to empty
-  const [frontPageText, setFrontPageText] = useState(''); // default to empty
+  const [loading, setLoading] = useState(true); // Initialize loading state to true
+  const [theme, setTheme] = useState({});
+  const [instanceName, setInstanceName] = useState('');   // Default to empty
+  const [frontPageText, setFrontPageText] = useState(''); // Default to empty
   const [altHome, setAltHome] = useState('');
   const [baseColor, setBaseColor] = useState('');
   const [logoFile, setLogoFile] = useState(null);
@@ -26,16 +24,27 @@ export default function Theme() {
   const token = useSelector(state => state.user.token);
 
   useEffect(() => {
+    // Fetch theme data from localStorage or remote if needed
+    const fetchThemeData = () => {
+      setLoading(true);
+      const themeData = JSON.parse(localStorage.getItem('theme')) || {};
+      setTheme(themeData);
+      setLoading(false);
+    };
+    fetchThemeData();
+  }, []);
+
+  useEffect(() => {
     if (theme) {
-      setInstanceName(theme.instanceName);
-      setFrontPageText(theme.frontPageText);
-      setAltHome(theme.altHome);
+      setInstanceName(theme.instanceName || '');
+      setFrontPageText(theme.frontPageText || '');
+      setAltHome(theme.altHome || '');
     }
   }, [theme]);
 
   useEffect(() => {
     if (theme && theme.themeParameters && theme.themeParameters[0]) {
-      setBaseColor(theme.themeParameters[0].value);
+      setBaseColor(theme.themeParameters[0].value || '');
     }
   }, [theme]);
 
@@ -49,8 +58,6 @@ export default function Theme() {
 
   const handleBaseColorChange = (event) => {
     setBaseColor(event.target.value);
-    // Optionally, update themeParameters directly if needed
-    // theme.themeParameters[0].value = event.target.value;
   };
 
   const handleSave = async () => {
@@ -75,7 +82,7 @@ export default function Theme() {
     }
 
     try {
-      const response = await fetch(url, { method: 'POST', headers: headers, body: formData });
+      const response = await fetch(url, { method: 'POST', headers, body: formData });
       const data = await response.text();
 
       if (response.ok) {
@@ -87,22 +94,6 @@ export default function Theme() {
       alert("Error saving theme");
     }
   };
-
-  // If theme hasn't been set, display the loader
-  if (!theme) {
-    return (
-      <div className="loader-container">
-        <Loader
-          type="Puff"
-          color="#00BFFF"
-          height={100}
-          width={100}
-          timeout={3000}
-        />
-      </div>
-    );
-  }
-
 
   if (loading) return <Loading />;
   return (
@@ -166,21 +157,6 @@ export default function Theme() {
     </div>
   );
 }
-
-export const useTheme = () => {
-  const [theme, setTheme] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const storedTheme = localStorage.getItem('theme');
-    if (storedTheme) {
-      setTheme(JSON.parse(storedTheme));
-    }
-    setLoading(false);
-  }, []);
-
-  return { theme, loading };
-};
 
 const fetcher = (url, dispatch) =>
   axios

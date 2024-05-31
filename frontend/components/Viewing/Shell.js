@@ -9,35 +9,11 @@ import sequenceOntology from '../../namespace/sequence-ontology';
 import systemsBiologyOntology from '../../namespace/systems-biology-ontology';
 import edamOntology from '../../namespace/edam-ontology';
 
-// import { BooleanContext, checkContentExist } from './PageJSON/Rendering/TableBuilder';
-// import Section from './Sections/Section'
-// import TableBuilder from './PageJSON/Rendering/TableBuilder';
-
-// import executeQueryFromTableJSON from './PageJSON/Fetching/executeQueryFromTableJSON';
-// import parseQueryResult from './PageJSON/Fetching/parseQueryResult';
-
-// import { useState, useEffect } from 'react';
-// import { useDispatch } from 'react-redux';
-
 export default function Shell(properties) {
   const plugins = properties.plugins;
   const metadata = properties.metadata;
 
   const json = MasterJSON[properties.metadata.types];
-
-  // const [content, setContent] = useState();
-
-  // const dispatch = useDispatch();
-  // useEffect(() => {
-  //   executeQueryFromTableJSON(dispatch, properties.uri, json.prefixes, json.table).then(response => {
-  //     setContent(parseQueryResult(json.table, response, json.prefixes));
-  //   });
-  // }, [properties.uri, json.prefixes, json.table]);
-
-  // const isContentExist = checkContentExist(content);
-  // console.log(content);
-
-  // console.log(isContentExist);
 
   if (metadata && !metadata.name && metadata.displayId)
     metadata.name = metadata.displayId;
