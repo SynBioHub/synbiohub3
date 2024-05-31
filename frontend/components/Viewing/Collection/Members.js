@@ -24,7 +24,6 @@ import { processUrl, processUrlReverse } from '../../Admin/Registries';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faUnlink } from '@fortawesome/free-solid-svg-icons';
 import { getAfterThirdSlash } from '../ViewHeader';
-import Status, { useStatus } from '../../Admin/Status';
 
 /* eslint sonarjs/cognitive-complexity: "off" */
 

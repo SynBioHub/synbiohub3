@@ -12,9 +12,6 @@ import edam from './edam.json';
 import Select from 'react-select';
 import options from './SelectOptions';
 
-const { publicRuntimeConfig } = getConfig();
-import getConfig from 'next/config';
-
 import { processUrl } from '../../../Admin/Registries';
 
 import axios from 'axios';

@@ -11,12 +11,11 @@ import RowWrapper from './RowWrapper';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 import { parseTableHeaders } from '../Parsing/parseTableHeaders';
-import React, { createContext } from 'react';
+import React from 'react';
 import { isUriOwner } from '../../Shell';
 import { getAfterThirdSlash } from '../../ViewHeader';
 import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
-import axios from 'axios';
 
 /**
  * This Component renders an individual table based on given JSON

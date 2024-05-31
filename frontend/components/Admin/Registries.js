@@ -59,11 +59,11 @@ export default function Registries() {
         data={registries}
         loading={loading}
         title="Local Registries"
-        searchable={searchable} // Assuming you want to enable search
-        headers={headers} // Replace with your actual headers
-        sortOptions={options} // Replace with your actual sort options
-        defaultSortOption={'uri'} // Replace with your actual default sort option
-        sortMethods={sortMethods} // Replace with your actual sort methods
+        searchable={searchable}
+        headers={headers}
+        sortOptions={options}
+        defaultSortOption={'uri'} 
+        sortMethods={sortMethods}
         hideFooter={true}
         finalRow={<NewRegistryRow token={token} />}
         dataRowDisplay={registry => (
@@ -77,26 +77,6 @@ export default function Registries() {
     </div>
   );
 }
-
-{/* <Table
-      data={processedMembers}
-      loading={!properties.members}
-      title="Members"
-      count={count}
-      customCount={properties.currMembers}
-      customBounds={properties.customBounds}
-      outOfBoundsHandle={properties.outOfBoundsHandle}
-      customSearch={properties.customSearch}
-      hideFilter={true}
-      searchable={[]}
-      headers={headers}
-      sortOptions={sortOptions}
-      sortMethods={sortMethods}
-      defaultSortOption={properties.defaultSortOption}
-      customSortBehavior={(sortMethod, sortOption) => {
-        properties.setSort(sortMethod);
-        properties.setDefaultSortOption(sortOption);
-      }} */}
 
 function NewRegistryRow(properties) {
   const [uri, setUri] = useState('');

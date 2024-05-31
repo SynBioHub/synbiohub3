@@ -8,7 +8,7 @@ import getQueryResponse from '../../../../sparql/tools/getQueryResponse';
 import edam from './edam.json';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { downloadFiles, setAttachments } from '../../../../redux/actions';
+import { downloadFiles } from '../../../../redux/actions';
 
 import { faDownload, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';

@@ -8,8 +8,6 @@ import { useSelector } from 'react-redux';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 
-import TwinsSearch from '../Search/StandardSearch/LinkedSearch';
-
 import axios from 'axios';
 
 import Link from 'next/link';

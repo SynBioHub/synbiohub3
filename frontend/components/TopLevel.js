@@ -1,9 +1,7 @@
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useState } from 'react';
-
 import { addError, markPageVisited, restoreLogin } from '../redux/actions';
 import styles from '../styles/layout.module.css';
 import Footer from './Footer';
@@ -11,8 +9,9 @@ import Navbar from './Navbar/Navbar';
 import DownloadStatus from './Reusable/Download/DownloadStatus';
 import Errors from './Error/Errors';
 import getConfig from 'next/config';
-const { publicRuntimeConfig } = getConfig();
 import axios from 'axios';
+
+const { publicRuntimeConfig } = getConfig();
 
 /* eslint sonarjs/cognitive-complexity: "off" */
 
@@ -31,34 +30,38 @@ export default function TopLevel(properties) {
   const [theme, setTheme] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // Fetch registries once on component mount
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const [registriesResponse, themeResponse] = await Promise.all([
-          axios.get(`${publicRuntimeConfig.backend}/admin/registries`, {
-            headers: {
-              'Content-Type': 'application/json',
-              'Accept': 'application/json',
-            },
-          }),
-          axios.get(`${publicRuntimeConfig.backend}/admin/theme`, {
-            headers: {
-              'Content-Type': 'application/json',
-              'Accept': 'application/json',
-            },
-          })
-        ]);
+        let registriesData = JSON.parse(localStorage.getItem('registries'));
+        let themeData = JSON.parse(localStorage.getItem('theme'));
 
-        const registriesData = registriesResponse.data.registries || [];
-        const themeData = themeResponse.data || [];
+        if (!registriesData || !themeData) {
+          const [registriesResponse, themeResponse] = await Promise.all([
+            axios.get(`${publicRuntimeConfig.backend}/admin/registries`, {
+              headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+              },
+            }),
+            axios.get(`${publicRuntimeConfig.backend}/admin/theme`, {
+              headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+              },
+            })
+          ]);
+
+          registriesData = registriesResponse.data.registries || [];
+          themeData = themeResponse.data || [];
+
+          localStorage.setItem('registries', JSON.stringify(registriesData));
+          localStorage.setItem('theme', JSON.stringify(themeData));
+        }
 
         setRegistries(registriesData);
         setTheme(themeData);
-
-        localStorage.setItem('registries', JSON.stringify(registriesData));
-        localStorage.setItem('theme', JSON.stringify(themeData));
       } catch (error) {
         console.error('Error fetching data', error);
         dispatch(addError(error));
@@ -72,7 +75,7 @@ export default function TopLevel(properties) {
 
   useEffect(() => {
     if (!pageVisited && !properties.doNotTrack) dispatch(markPageVisited(true));
-  }, [pageVisited, properties.doNotTrack]);
+  }, [pageVisited, properties.doNotTrack, dispatch]);
 
   useEffect(() => {
     if (!loggedIn) {
@@ -85,15 +88,14 @@ export default function TopLevel(properties) {
         router.replace(`/login?next=${router.asPath}`);
       }
     }
-  }, [loggedIn, router, protectRoute]);
+  }, [loggedIn, router, protectRoute, dispatch]);
 
   try {
-    if (!protectRoute | loggedIn)
+    if (!protectRoute || loggedIn)
       return (
         <div>
           <Head>
             <title>SynBioHub</title>
-
             <link href="/favicon.ico" rel="icon" />
           </Head>
           <Errors />
