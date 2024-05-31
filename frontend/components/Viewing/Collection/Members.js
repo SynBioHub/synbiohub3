@@ -151,7 +151,7 @@ export default function Members(properties) {
   useEffect(() => {
     let isMounted = true;
     async function processUri() {
-      const result = await processUrlReverse(publicRuntimeConfig.backend, token, dispatch);
+      const result = await processUrlReverse(publicRuntimeConfig.backend, localStorage.getItem('registries'));
       if (isMounted) {
         setProcessedUri(result.uriReplacedForBackend);
       }
@@ -272,7 +272,7 @@ function MemberTable(properties) {
     async function processMembers() {
       if (properties.members) {
         const updatedMembers = await Promise.all(properties.members.map(async member => {
-          const processed = await processUrl(member.uri, token, dispatch);
+          const processed = await processUrl(member.uri, localStorage.getItem('registries'));
           return {
             ...member,
             uri: processed.urlRemovedForLink
@@ -434,13 +434,13 @@ function compareUri(memberUri, baseUri) {
   const userUriPrefix = '/user/';
   const publicUriPrefix = '/public/';
 
-  if (memberUri.startsWith(userUriPrefix)) {
+  if (memberUri && memberUri.startsWith(userUriPrefix)) {
     // Check if member.uri matches properties.uri for the first 3 slashes
     const matchUri = baseUri.split('/').slice(0, 4).join('/');
     if (memberUri.startsWith(matchUri)) {
       return faTrash;
     }
-  } else if (memberUri.startsWith(publicUriPrefix)) {
+  } else if (memberUri && memberUri.startsWith(publicUriPrefix)) {
     // Check if member.uri matches properties.uri for the first 2 slashes
     const matchUri = baseUri.split('/').slice(0, 3).join('/');
     if (memberUri.startsWith(matchUri)) {

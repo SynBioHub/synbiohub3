@@ -203,7 +203,6 @@ export default function EditSection(properties) {
 
               //Parses the citation info and sets it to a variable.
               getCitationInfo(trimmedInput).then(parsedCitations => {
-                console.log(parsedCitations);
                 if (parsedCitations === undefined || (Array.isArray(parsedCitations) && parsedCitations.length === 0) && trimmedInput !== "") {
                   alert("Invalid PMID.");
                 } else {

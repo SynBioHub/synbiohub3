@@ -69,7 +69,7 @@ export default function SubmissionStatusPanel() {
 
   useEffect(() => {
     async function processAndSetUri() {
-      const result = await processUrl(submissionUri, token, dispatch);
+      const result = await processUrl(submissionUri, localStorage.getItem('registries'));
       setProcessedUri(result.urlRemovedForLink || result.original);
     }
     

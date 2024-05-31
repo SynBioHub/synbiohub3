@@ -7,11 +7,10 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Loader from 'react-loader-spinner';
 import { useSelector } from 'react-redux';
 import { useTheme } from '../Admin/Theme';
-
 import styles from '../../styles/navbar.module.css';
 import Profile from './Profile';
 import Selector from './Selector';
@@ -30,12 +29,18 @@ export default function Navbar() {
   );
 
   useEffect(() => {
-    if (loggedIn) setProfileControl(<Profile />);
-    else
+    if (loggedIn) {
+      setProfileControl(<Profile />);
+    } else {
       setProfileControl(
         <Selector icon={faSignInAlt} name="Sign In" href="/login" />
       );
+    }
   }, [loggedIn]);
+
+  if (loading) {
+    return <div>Loading...</div>; // Adjust this to your loading indicator
+  }
 
   let linkHref = "/";
   if (theme && theme.altHome && theme.altHome.length > 0) {
@@ -43,19 +48,18 @@ export default function Navbar() {
   }
 
   return (
-    <header className={styles.container}
-    style={{ backgroundColor: theme?.themeParameters?.[0]?.value || '#465775' }} 
+    <header
+      className={styles.container}
+      style={{ backgroundColor: theme?.themeParameters?.[0]?.value || '#465775' }}
     >
-
-      <div className={styles.logoAndInstanceContainer}> {/* This is your new div container */}
+      <div className={styles.logoAndInstanceContainer}>
         <Link href={linkHref}>
           <a className={styles.logo}>
             <Image alt="logo" width={80} height={80} src="/images/logo.svg" />
-            {/* <Image alt="logo" width={80} height={80} src="/images/widevibe.gif" /> */}
           </a>
         </Link>
 
-        {!loading && theme && (
+        {theme && (
           <Selector name={theme.instanceName} href="/" isInstanceName={true} />
         )}
       </div>

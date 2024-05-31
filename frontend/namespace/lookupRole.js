@@ -1,6 +1,6 @@
 const namespace = require('./namespace')
 const sequenceOntology = require('./sequence-ontology')
-const geneOntology = require('./gene-ontology')
+// const geneOntology = require('./gene-ontology')
 
 function lookupRole (uri) {
   uri = '' + uri
@@ -17,17 +17,17 @@ function lookupRole (uri) {
     }
   }
 
-  for (let prefix of namespace.go) {
-    if (uri.startsWith(prefix)) {
-      var goTerm = uri.slice(prefix.length).split('_').join(':')
+  // for (let prefix of namespace.go) {
+  //   if (uri.startsWith(prefix)) {
+  //     var goTerm = uri.slice(prefix.length).split('_').join(':')
 
-      return {
-        uri: uri,
-        term: goTerm,
-        description: geneOntology[goTerm] ? geneOntology[goTerm] : { name: goTerm }
-      }
-    }
-  }
+  //     return {
+  //       uri: uri,
+  //       term: goTerm,
+  //       description: geneOntology[goTerm] ? geneOntology[goTerm] : { name: goTerm }
+  //     }
+  //   }
+  // }
 
   var igemPrefix = 'http://wiki.synbiohub.org/wiki/Terms/igem#partType/'
 

@@ -19,12 +19,12 @@ export default function ResultRow(properties) {
 
   useEffect(() => {
     async function processAndSetUri() {
-      const result = await processUrl(properties.uri, token, dispatch);
+      const result = await processUrl(properties.uri, localStorage.getItem('registries'));
       setProcessedUri(result.urlRemovedForLink || result.original);
     }
     
     processAndSetUri();
-  }, [properties.uri]);
+  }, [dispatch, properties.uri]);
 
   // Identify what type of object the search result is from type url
   if (potentialType.includes('component')) {

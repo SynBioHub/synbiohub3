@@ -324,7 +324,7 @@ const getTypeAndUrl = async (result, token, dispatch) => {
 
   result.type = type;
 
-  const processed = await processUrl(result.uri, token, dispatch);
+  const processed = await processUrl(result.uri, localStorage.getItem('registries'));
   result.url = processed.urlRemovedForLink || processed.original;
 
   // let newUrl = result.uri.replace('https://synbiohub.org', '');

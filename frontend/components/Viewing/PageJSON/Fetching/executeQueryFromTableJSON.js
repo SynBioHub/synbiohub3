@@ -12,8 +12,6 @@ export default function executeQueryFromTableJSON(
     uri = "URI is undefined";
   }
 
-  console.log(uri);
-
   return getQueryResponse(
     dispatch,
     prefixes + '\n' + buildQuery(uri, table),

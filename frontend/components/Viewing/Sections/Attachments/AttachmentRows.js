@@ -47,7 +47,7 @@ export default function AttachmentRows(properties) {
   //   async function processAttachments() {
   //     const processedAttachments = await Promise.all(attachments.map(async attachment => {
   //       if (!attachment.processedTopLevel) {
-  //         const result = await processUrl(attachment.topLevel, token, dispatch);
+  //         const result = await processUrl(attachment.topLevel, localStorage.getItem('registries'));
   //         return { ...attachment, processedTopLevel: result.urlRemovedForLink };
   //       }
   //       return attachment;

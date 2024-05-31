@@ -833,8 +833,6 @@ export const createCollection =
 
         let response;
 
-        console.log(id, version, name, description, citations, overwrite_merge);
-
         try {
           response = await axios.post(url, form, { headers });
         } catch (error) {
