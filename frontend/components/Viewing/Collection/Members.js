@@ -52,7 +52,9 @@ export default function Members(properties) {
   const [typeFilter, setTypeFilter] = useState('Show Only Root Objects');
   const dispatch = useDispatch();
   const [processedUri, setProcessedUri] = useState(publicRuntimeConfig.backend);
-  const { theme } = useTheme();
+  const theme = JSON.parse(localStorage.getItem('theme')) || {};
+  console.log(localStorage);
+  const registries = JSON.parse(localStorage.getItem("registries")) || {};
 
   let preparedSearch =
     search !== ''
@@ -73,7 +75,7 @@ export default function Members(properties) {
       preparedSearch += '\n FILTER(?type = <' + typeFilter + '>)';
     }
   }
-
+  
   const parameters = {
     from: '',
     graphPrefix: `${theme.uriPrefix}`, // TODO: Maybe get this from somewhere? 
@@ -151,7 +153,7 @@ export default function Members(properties) {
   useEffect(() => {
     let isMounted = true;
     async function processUri() {
-      const result = await processUrlReverse(publicRuntimeConfig.backend, localStorage.getItem('registries'));
+      const result = await processUrlReverse(publicRuntimeConfig.backend, registries);
       if (isMounted) {
         setProcessedUri(result.uriReplacedForBackend);
       }
@@ -182,6 +184,7 @@ export default function Members(properties) {
         uri={properties.uri}
         processedUri={processedUri}
         mutate={mutate}
+        registries={registries}
       />
     </React.Fragment>
   );
@@ -272,7 +275,7 @@ function MemberTable(properties) {
     async function processMembers() {
       if (properties.members) {
         const updatedMembers = await Promise.all(properties.members.map(async member => {
-          const processed = await processUrl(member.uri, localStorage.getItem('registries'));
+          const processed = await processUrl(member.uri, properties.registries);
           return {
             ...member,
             uri: processed.urlRemovedForLink
