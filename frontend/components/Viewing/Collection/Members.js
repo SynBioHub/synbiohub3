@@ -40,6 +40,7 @@ const sortOptions = [
 ];
 
 export default function Members(properties) {
+  console.log(properties);
   const token = useSelector(state => state.user.token);
   const privateGraph = useSelector(state => state.user.graphUri);
   const [search, setSearch] = useState('');
@@ -52,6 +53,7 @@ export default function Members(properties) {
   const [processedUri, setProcessedUri] = useState(publicRuntimeConfig.backend);
   const theme = JSON.parse(localStorage.getItem('theme')) || {};
   const registries = JSON.parse(localStorage.getItem("registries")) || {};
+  console.log("processedUri is ", processedUri);
 
   let preparedSearch =
     search !== ''
@@ -151,6 +153,7 @@ export default function Members(properties) {
     let isMounted = true;
     async function processUri() {
       const result = await processUrlReverse(publicRuntimeConfig.backend, registries);
+      console.log("result of process url reverse is ", result);
       if (isMounted) {
         setProcessedUri(result.uriReplacedForBackend);
       }
