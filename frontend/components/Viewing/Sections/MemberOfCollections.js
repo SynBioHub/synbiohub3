@@ -20,6 +20,7 @@ export default function MemberOfCollections(properties) {
   const [otherProps, setOtherProps] = useState();
   const dispatch = useDispatch();
   const token = useSelector(state => state.user.token);
+  const registries = JSON.parse(localStorage.getItem("registries")) || {};
 
   useEffect(() => {
     if (otherProps == undefined)
@@ -60,7 +61,7 @@ export default function MemberOfCollections(properties) {
 
     useEffect(() => {
       async function fetchProcessedUrl() {
-        const result = await processUrl(collection.subject, localStorage.getItem('registries'));
+        const result = await processUrl(collection.subject, registries);
         setUrlRemovedForLink(result.urlRemovedForLink);
       }
 

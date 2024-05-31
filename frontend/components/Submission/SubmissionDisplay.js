@@ -17,6 +17,7 @@ export default function SubmissionDisplay(properties) {
   const [privacyDisplay, setPrivacyDisplay] = useState();
   const [processedUri, setProcessedUri] = useState(properties.submission.uri);
   const token = useSelector(state => state.user.token);
+  const registries = JSON.parse(localStorage.getItem("registries")) || {};
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -34,7 +35,7 @@ export default function SubmissionDisplay(properties) {
 
   useEffect(() => {
     async function processAndSetUri() {
-      const result = await processUrl(properties.submission.uri, localStorage.getItem('registries'));
+      const result = await processUrl(properties.submission.uri, registries);
       setProcessedUri(result.urlRemovedForLink || result.original);
     }
 

@@ -27,7 +27,7 @@ function loadText(template, args) {
 export default function SectionRenderer({ section, metadata }) {
   const dispatch = useDispatch();
   const url = `${publicRuntimeConfig.backend}/admin/registries`;
-
+  const registries = JSON.parse(localStorage.getItem("registries")) || {};
   const [data, setData] = useState(null);
   const [processedLink, setProcessedLink] = useState(null);
   const token = useSelector(state => state.user.token);
@@ -40,7 +40,7 @@ export default function SectionRenderer({ section, metadata }) {
 
       // After you set the data, process the link
       if (isMounted && section.link) {
-        const processed = await processUrl(section.link, localStorage.getItem('registries')); // Assuming you have token available
+        const processed = await processUrl(section.link, registries); // Assuming you have token available
         setProcessedLink(processed);
       }
     }

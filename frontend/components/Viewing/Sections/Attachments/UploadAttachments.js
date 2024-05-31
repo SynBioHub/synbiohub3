@@ -30,6 +30,7 @@ export default function UploadAttachments(properties) {
   const dispatch = useDispatch();
   const token = useSelector(state => state.user.token);
   const uploadStatus = useSelector(state => state.attachments.uploadStatus);
+  const registries = JSON.parse(localStorage.getItem("registries")) || {};
 
   /**
    * Handles a input value change and updates the filled inputs array.
@@ -185,7 +186,7 @@ export default function UploadAttachments(properties) {
                 document.getElementById('attached-file-input').value = '';
                 setSelectedFiles([]);
 
-                processUrl(properties.uri, localStorage.getItem('registries')).then(processedUriData => {
+                processUrl(properties.uri, registries).then(processedUriData => {
                   const uriToUse = processedUriData.urlReplacedForBackend || processedUriData.original;
                   attachFromFile(selectedFiles, uriToUse).then(() => {
                     dispatch(setUploadStatus(''));
@@ -279,7 +280,7 @@ export default function UploadAttachments(properties) {
                 } else if (!urlInput.includes('http')) {
                   alert('The URL has to be a link');
                 } else {
-                  processUrl(uri, localStorage.getItem('registries')).then(processedUriData => {
+                  processUrl(uri, registries).then(processedUriData => {
                       const uriToUse = processedUriData.urlReplacedForBackend || processedUriData.original;
                       
                       const attachment = {

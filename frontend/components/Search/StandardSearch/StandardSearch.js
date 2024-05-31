@@ -38,6 +38,7 @@ export default function StandardSearch() {
   const offset = useSelector(state => state.search.offset);
   const limit = useSelector(state => state.search.limit);
   const token = useSelector(state => state.user.token);
+  const registries = JSON.parse(localStorage.getItem("registries")) || {};
   const [count, setCount] = useState();
   const dispatch = useDispatch();
   const [creator, setCreator] = useState('');
@@ -182,7 +183,7 @@ if (isError) {
     );
   }
   for (const result of results) {
-    getTypeAndUrl(result);
+    getTypeAndUrl(result, registries);
   }
   return (
   <div className={viewStyles.container}>
@@ -304,7 +305,7 @@ const useSearchCount = (query, url, token, dispatch) => {
   };
 };
 
-const getTypeAndUrl = async (result, token, dispatch) => {
+const getTypeAndUrl = async (result, registries) => {
   let type = '';
   const potentialType = result.type.toLowerCase();
 
@@ -324,7 +325,7 @@ const getTypeAndUrl = async (result, token, dispatch) => {
 
   result.type = type;
 
-  const processed = await processUrl(result.uri, localStorage.getItem('registries'));
+  const processed = await processUrl(result.uri, registries);
   result.url = processed.urlRemovedForLink || processed.original;
 
   // let newUrl = result.uri.replace('https://synbiohub.org', '');

@@ -42,13 +42,14 @@ export default function SidePanel({ metadata, type, json, uri, plugins }) {
   const [processedUrl, setProcessedUrl] = useState({ original: uri });
   const dateCreated = metadata.createdDates.split(", ")[0].replace('T', ' ').replace('Z', '');
   const dateModified = metadata.modifiedDates.replace('T', ' ').replace('Z', '');
+  const registries = JSON.parse(localStorage.getItem("registries")) || {};
   
   const token = useSelector(state => state.user.token);
   const dispatch = useDispatch();
 
   useEffect(() => {
     async function fetchAndProcessUrl() {
-      const result = await processUrl(uri, localStorage.getItem('registries'));
+      const result = await processUrl(uri, registries);
       setProcessedUrl(result);
     }
 

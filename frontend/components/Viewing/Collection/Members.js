@@ -25,7 +25,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faUnlink } from '@fortawesome/free-solid-svg-icons';
 import { getAfterThirdSlash } from '../ViewHeader';
 import Status, { useStatus } from '../../Admin/Status';
-import { useTheme } from '../../Admin/Theme';
 
 /* eslint sonarjs/cognitive-complexity: "off" */
 
@@ -53,7 +52,6 @@ export default function Members(properties) {
   const dispatch = useDispatch();
   const [processedUri, setProcessedUri] = useState(publicRuntimeConfig.backend);
   const theme = JSON.parse(localStorage.getItem('theme')) || {};
-  console.log(localStorage);
   const registries = JSON.parse(localStorage.getItem("registries")) || {};
 
   let preparedSearch =
