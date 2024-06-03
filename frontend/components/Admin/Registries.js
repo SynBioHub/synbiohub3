@@ -354,14 +354,3 @@ export async function processUrl(inputUrl, registries) {
   }
   return { original: inputUrl };
 }
-
-export async function processUrlReverse(inputUrl, registries) {
-  for (const registry of registries) {
-    if (inputUrl.startsWith(registry.url)) {
-      const uriRemovedForLink = inputUrl.replace(registry.url, "");
-      const uriReplacedForBackend = inputUrl.replace(registry.url, registry.uri);
-      return { uriRemovedForLink, uriReplacedForBackend };
-    }
-  }
-  return { original: inputUrl };
-}
