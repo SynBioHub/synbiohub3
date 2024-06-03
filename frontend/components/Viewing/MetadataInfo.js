@@ -284,7 +284,6 @@ export default function MetadataInfo({ title, link, label, icon, specific, uri, 
               </>
             )
           }
-
         </>
       )}
     </div>
@@ -344,42 +343,42 @@ export default function MetadataInfo({ title, link, label, icon, specific, uri, 
             return (
               <tr key={index}>
                 <td>
-                {isEditingThisItem ? (
-              // Edit mode
-              <div>
-                <input
-                  type="text"
-                  value={currentValue}
-                  onChange={(e) => handleEditMetadata(index, e.target.value, label)}
-                />
-                <button className={styles.button} onClick={() => handleSaveEditMetadata(index, data, label)}
-                style={{
-                  backgroundColor: theme?.themeParameters?.[0]?.value || '#333', // Use theme color or default to #333
-                  color: theme?.themeParameters?.[1]?.value || '#fff', // Use text color from theme or default to #fff
-                }} 
-                >Save</button>
-                <button className={styles.button} onClick={() => handleCancelEdit(label)}
-                style={{
-                  backgroundColor: theme?.themeParameters?.[0]?.value || '#333', // Use theme color or default to #333
-                  color: theme?.themeParameters?.[1]?.value || '#fff', // Use text color from theme or default to #fff
-                }} 
-                >Cancel</button>
-              </div>
-            ) : (
-              // Display mode
-              <a
-                href={correspondingLink ? correspondingLink : `http://localhost:3333/${processedSource}`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {processedSource}
-              </a>
-            )}
-               
-                </td>
-                {(label === "Source" || label === "Type" || label === "Role") && data && (
-                  <td>
-                    {isEditingThisItem ? null : (
+                  {isEditingThisItem ? (
+                    <div>
+                      <input
+                        type="text"
+                        value={currentValue}
+                        onChange={(e) => handleEditMetadata(index, e.target.value, label)}
+                      />
+                      <button className={styles.button} onClick={() => handleSaveEditMetadata(index, data, label)}
+                        style={{
+                          backgroundColor: theme?.themeParameters?.[0]?.value || '#333', // Use theme color or default to #333
+                          color: theme?.themeParameters?.[1]?.value || '#fff', // Use text color from theme or default to #fff
+                        }}
+                      >
+                        Save
+                      </button>
+                      <button className={styles.button} onClick={() => handleCancelEdit(label)}
+                        style={{
+                          backgroundColor: theme?.themeParameters?.[0]?.value || '#333', // Use theme color or default to #333
+                          color: theme?.themeParameters?.[1]?.value || '#fff', // Use text color from theme or default to #fff
+                        }}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  ) : (
+                    <a
+                      href={correspondingLink ? correspondingLink : `http://localhost:3333/${processedSource}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {processedSource}
+                    </a>
+                  )}
+                </td><td>
+                  {(label === "Source" || label === "Type" || label === "Role") && data && (
+                    isEditingThisItem ? null : (
                       <div>
                         {isOwner && (
                           <>
@@ -387,14 +386,14 @@ export default function MetadataInfo({ title, link, label, icon, specific, uri, 
                               <FontAwesomeIcon icon={faPencilAlt} title="Edit metadata" style={{ cursor: 'pointer' }} />
                             </button>
                             <button onClick={(e) => handleDeleteMetadata(e, data, label)}>
-                              <FontAwesomeIcon icon={faTrash} title="Delete metadata"  style={{ cursor: 'pointer' }} />
+                              <FontAwesomeIcon icon={faTrash} title="Delete metadata" style={{ cursor: 'pointer' }} />
                             </button>
                           </>
                         )}
                       </div>
-                    )}
-                  </td>
-                )}
+                    )
+                  )}
+                </td>
               </tr>
             );
           })}
@@ -440,7 +439,7 @@ export default function MetadataInfo({ title, link, label, icon, specific, uri, 
             style={{
               backgroundColor: theme?.themeParameters?.[0]?.value || '#333', // Use theme color or default to #333
               color: theme?.themeParameters?.[1]?.value || '#fff', // Use text color from theme or default to #fff
-            }} 
+            }}
           >Save</button>
           <button className={styles.button} type="button" onClick={() => {
             setIsEditing(false);
@@ -449,7 +448,7 @@ export default function MetadataInfo({ title, link, label, icon, specific, uri, 
             style={{
               backgroundColor: theme?.themeParameters?.[0]?.value || '#333', // Use theme color or default to #333
               color: theme?.themeParameters?.[1]?.value || '#fff', // Use text color from theme or default to #fff
-            }} 
+            }}
           >Cancel</button>
         </div>
       ) : null}

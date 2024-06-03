@@ -20,7 +20,7 @@ import { shortName } from '../../../namespace/namespace';
 import lookupRole from '../../../namespace/lookupRole';
 import Link from 'next/link';
 import { addError, logoutUser } from '../../../redux/actions';
-import { processUrl, processUrlReverse } from '../../Admin/Registries';
+import { processUrl } from '../../Admin/Registries';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faUnlink } from '@fortawesome/free-solid-svg-icons';
 import { getAfterThirdSlash } from '../ViewHeader';
@@ -40,7 +40,6 @@ const sortOptions = [
 ];
 
 export default function Members(properties) {
-  console.log(properties);
   const token = useSelector(state => state.user.token);
   const privateGraph = useSelector(state => state.user.graphUri);
   const [search, setSearch] = useState('');
@@ -53,7 +52,6 @@ export default function Members(properties) {
   const [processedUri, setProcessedUri] = useState(publicRuntimeConfig.backend);
   const theme = JSON.parse(localStorage.getItem('theme')) || {};
   const registries = JSON.parse(localStorage.getItem("registries")) || {};
-  console.log("processedUri is ", processedUri);
 
   let preparedSearch =
     search !== ''
@@ -152,16 +150,14 @@ export default function Members(properties) {
   useEffect(() => {
     let isMounted = true;
     async function processUri() {
-      const result = await processUrlReverse(publicRuntimeConfig.backend, registries);
-      console.log("result of process url reverse is ", result);
       if (isMounted) {
-        setProcessedUri(result.uriReplacedForBackend);
+        setProcessedUri(theme.uriPrefix);
       }
     }
 
     processUri();
     return () => { isMounted = false };
-  }, [token, dispatch]);
+  }, [dispatch]);
 
   return (
     <React.Fragment>
@@ -369,8 +365,6 @@ function MemberTable(properties) {
         };
 
         const handleUnlink = async (member, processedUri) => {
-          console.log(processedUri, member.uri);
-          console.log(objectUri);
           if (member.uri && window.confirm("Would you like to unlink this item from the collection?")) {
             try {
               await axios.post(`${objectUri}/removeMembership`, {
