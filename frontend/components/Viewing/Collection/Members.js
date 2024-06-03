@@ -154,7 +154,6 @@ export default function Members(properties) {
         setProcessedUri(theme.uriPrefix);
       }
     }
-
     processUri();
     return () => { isMounted = false };
   }, [dispatch]);
@@ -336,15 +335,18 @@ function MemberTable(properties) {
 
         const icon = compareUri(member.uri, `/${objectUriParts}`);
 
+        const removeTrailingSlash = (url) => {
+          return url.endsWith('/') ? url.slice(0, -1) : url;
+        };
+
         const handleIconClick = (member) => {
           if (icon && icon === faTrash) {
             handleDelete(member);
           } else if (icon && icon === faUnlink) {
-            handleUnlink(member, properties.processedUri);  // Use processedUri from props
+            const processedUriPrefix = removeTrailingSlash(properties.processedUri);
+            handleUnlink(member, processedUriPrefix);  // Use processedUri from props
           }
         };
-
-
 
         const handleDelete = async (member) => {
           if (member.uri && window.confirm("Would you like to remove this item from the collection?")) {
