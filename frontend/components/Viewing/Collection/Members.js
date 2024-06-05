@@ -406,13 +406,21 @@ function MemberTable(properties) {
             </td>
             <td>{getType(member)}</td>
             <td>{member.description}</td>
-            {!isPublicCollection && (
-              <td onClick={() => handleIconClick(member)}>
-                <FontAwesomeIcon icon={icon} />
+            {!isPublicCollection && icon === faTrash && (
+        
+              <td onClick={() => handleIconClick(member)} className={styles.modalicon} title="Delete Member">
+                <FontAwesomeIcon icon={faTrash} />
               </td>
-            )}
-          </tr>
-        );
+          
+          )}
+          {!isPublicCollection && icon === faUnlink && (
+              <td onClick={() => handleIconClick(member)} className={styles.modalicon} title="Remove member from collection">
+                <FontAwesomeIcon icon={faUnlink} />
+              </td>
+
+          )}
+        </tr>
+      );
       }}
 
     />
