@@ -212,14 +212,21 @@ function Dropdown() {
 }
 
 
-const compareStrings = (string1, string2) => {
-  return (string1?.toLowerCase() > string2?.toLowerCase() && 1) || -1;
-};
+// const compareStrings = (string1, string2) => {
+//   if (!string1 && !string2) return 0; // Both strings are undefined or null, they are equal
+//   if (!string1) return -1; // Only string1 is undefined or null, string1 is less
+//   if (!string2) return 1;  // Only string2 is undefined or null, string1 is greater
 
-const sortMethods = {
-  uri: (registry1, registry2) => compareStrings(registry1.uri, registry2.uri),
-  url: (registry1, registry2) => compareStrings(registry1.url, registry2.url)
-};
+//   const lowerString1 = string1.toLowerCase();
+//   const lowerString2 = string2.toLowerCase();
+
+//   return (lowerString1 > lowerString2 && 1) || (lowerString1 < lowerString2 && -1) || 0;
+// };
+
+// const sortMethods = {
+//   uri: (registry1, registry2) => compareStrings(registry1.uri, registry2.uri),
+//   url: (registry1, registry2) => compareStrings(registry1.url, registry2.url)
+// };
 
 const useRegistries = (token, dispatch) => {
   const { data, error } = useSWR(

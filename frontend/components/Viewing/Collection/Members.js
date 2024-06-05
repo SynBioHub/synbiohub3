@@ -88,9 +88,13 @@ export default function Members(properties) {
   } else {
   }
 
-  const searchQuery = preparedSearch || typeFilter !== 'Show Only Root Objects';
+  const searchQuery = typeFilter !== 'Show Only Root Objects';
 
-  let query = searchQuery ? getCollectionMembersSearch : getCollectionMembers;
+  let query = getCollectionMembers;
+
+  if (typeFilter === 'Show All Objects') {
+    query = getCollectionMembersSearch;
+  }
 
   const { members, mutate } = privateGraph
     ? useMembers(query, parameters, token, dispatch)
