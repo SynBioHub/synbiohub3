@@ -411,13 +411,11 @@ function MemberTable(properties) {
               <td onClick={() => handleIconClick(member)} className={styles.modalicon} title="Delete Member">
                 <FontAwesomeIcon icon={faTrash} />
               </td>
-          
           )}
           {!isPublicCollection && icon === faUnlink && (
               <td onClick={() => handleIconClick(member)} className={styles.modalicon} title="Remove member from collection">
                 <FontAwesomeIcon icon={faUnlink} />
               </td>
-
           )}
         </tr>
       );
