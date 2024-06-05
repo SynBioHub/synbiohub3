@@ -407,7 +407,6 @@ function MemberTable(properties) {
             <td>{getType(member)}</td>
             <td>{member.description}</td>
             {!isPublicCollection && icon === faTrash && (
-        
               <td onClick={() => handleIconClick(member)} className={styles.modalicon} title="Delete Member">
                 <FontAwesomeIcon icon={faTrash} />
               </td>
