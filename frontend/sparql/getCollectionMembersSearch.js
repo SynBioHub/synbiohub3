@@ -7,7 +7,7 @@ SELECT ?uri
        ?type
        ?sbolType
        ?role
-
+$from
 WHERE { {
 SELECT DISTINCT ?uri 
        ?displayId
