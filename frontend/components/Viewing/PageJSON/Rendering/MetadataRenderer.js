@@ -7,12 +7,16 @@ export default function MetadataRenderer({ title, content, editable, uri }) {
   const [sectionIcon, setSectionIcon] = useState(null);
   const contentConsolidated = content.map((row, index) => {
     return (
-      <RowWrapper
-        sections={row}
-        metadata={true}
-        setSectionIcon={setSectionIcon}
-        key={index}
-      />
+      <table key={index}>
+        <tbody>
+          <RowWrapper
+            sections={row}
+            metadata={true}
+            setSectionIcon={setSectionIcon}
+            key={index}
+          />
+        </tbody>
+      </table>
     );
   });
   return (
