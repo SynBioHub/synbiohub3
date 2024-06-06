@@ -262,6 +262,7 @@ export default function RowWrapper({ sections, metadata, setSectionIcon }) {
           <MiniLoading height={10} width={50} />
         </td>
       </tr>
+
     );
   }
   return <tr>{content}</tr>;

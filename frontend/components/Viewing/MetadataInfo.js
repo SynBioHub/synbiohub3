@@ -13,7 +13,7 @@ import { isUriOwner, formatMultipleTitles } from './Shell';
 
 const { publicRuntimeConfig } = getConfig();
 
-export default function MetadataInfo({ title, link, label, icon, specific, uri, editable }) {
+export default function MetadataInfo({ title, link, label, icon, specific, uri }) {
   const theme = JSON.parse(localStorage.getItem('theme')) || {};
   const [isHovered, setIsHovered] = useState(false);
 
@@ -263,8 +263,6 @@ export default function MetadataInfo({ title, link, label, icon, specific, uri, 
 
 
 
-
-
   // Rendered label with plus icon
   const renderedLabel = (
     <div className={styles.infolabel}>
@@ -311,13 +309,13 @@ export default function MetadataInfo({ title, link, label, icon, specific, uri, 
   }
   const renderedTitle = (
     <div className={styles.infotitle}>
-      <table>
-        <tbody>
+      <div>
+        <div>
           {metadata.map((data, index) => {
             let isEditingThisItem = false;
             let currentValue = "";
             let correspondingLink = (label === 'Source' || label === 'Type' || label === 'Role')
-              ? (link && link.length > 0 && typeof link === 'object' ? link[index] : null)
+              ? (link && link.length > 0 && typeof link === 'object' ? link[index] : (link ? link : null))
               : link;
             let processedSource = data;
             if (typeof (data) === 'string' && data.match(urlRegex)) {
@@ -339,10 +337,9 @@ export default function MetadataInfo({ title, link, label, icon, specific, uri, 
               default:
                 break;
             }
-
             return (
-              <tr key={index}>
-                <td>
+              <div key={index}>
+                <div>
                   {isEditingThisItem ? (
                     <div>
                       <input
@@ -369,14 +366,14 @@ export default function MetadataInfo({ title, link, label, icon, specific, uri, 
                     </div>
                   ) : (
                     <a
-                      href={correspondingLink ? correspondingLink : `http://localhost:3333/${processedSource}`}
+                      href={correspondingLink ? correspondingLink : `/${processedSource}`}
                       target="_blank"
                       rel="noopener noreferrer"
                     >
                       {processedSource}
                     </a>
                   )}
-                </td><td>
+                </div><div>
                   {(label === "Source" || label === "Type" || label === "Role") && data && (
                     isEditingThisItem ? null : (
                       <div>
@@ -393,12 +390,12 @@ export default function MetadataInfo({ title, link, label, icon, specific, uri, 
                       </div>
                     )
                   )}
-                </td>
-              </tr>
+                </div>
+              </div>
             );
           })}
-        </tbody>
-      </table>
+        </div>
+      </div>
     </div>
   );
 
