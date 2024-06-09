@@ -32,7 +32,7 @@ export default function AttachmentRows(properties) {
   const [attachments, setAttachments] = useState(properties.attachments.map(attachment => ({
     ...attachment,
     processedTopLevel: attachment.topLevel // Initialize with topLevel
-})));
+  })));
 
   //There are attachments from the parent but they haven't been added to the state yet.
   if (attachmentInfo === undefined && properties.attachments.length > 0)
