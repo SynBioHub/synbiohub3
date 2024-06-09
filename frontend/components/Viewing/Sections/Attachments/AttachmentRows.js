@@ -12,6 +12,7 @@ import { downloadFiles } from '../../../../redux/actions';
 
 import { faDownload, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { getAfterThirdSlash } from '../../ViewHeader.js';
 
 const { publicRuntimeConfig } = getConfig();
 import getConfig from 'next/config';
@@ -31,7 +32,7 @@ export default function AttachmentRows(properties) {
   const [attachments, setAttachments] = useState(properties.attachments.map(attachment => ({
     ...attachment,
     processedTopLevel: attachment.topLevel // Initialize with topLevel
-})));
+  })));
 
   //There are attachments from the parent but they haven't been added to the state yet.
   if (attachmentInfo === undefined && properties.attachments.length > 0)
