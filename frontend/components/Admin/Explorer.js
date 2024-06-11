@@ -204,105 +204,116 @@ export default function Explorer() {
                 }
             } 
         }, [config, conf]); 
-
+            
     return ( 
         // logic: 
         // if SBOLExplorer is on: automatically show all parameter options
         // else: only show 2 parameters
-        <div>
-            <div className="row">
-            {conf === 2 && <span>SBOLExplorer is disabled. Check the "Searching Using SBOLExplorer" to enable it.</span>} 
-            {conf > 2 && <span>Note: Looks like SBOLExplorer is up and running :) Endpoint fields should end with '/', SynBioHub Public Graph should end with '/public', and SPARQL/Virtuoso Endpoint should end with '/sparql?'.</span>} 
+        <div className={styles.explorerContainer}>
+            <div className={styles.item1}>
+                {conf === 2 && <span className={styles.alertInfo}>
+                    SBOLExplorer is disabled. Check the "Searching Using SBOLExplorer" to enable it.</span>} 
+                {conf > 2 && <span className={styles.alertInfo}>Note: Looks like SBOLExplorer is up and running :) Endpoint fields should end with '/', SynBioHub Public Graph should end with '/public', and SPARQL/Virtuoso Endpoint should end with '/sparql?'.</span>} 
             </div>
-            <div className="row">
-                <label >SBOLExplorer Endpoint
-                    <input 
-                        type="text" 
-                        value={SBOLEnd} 
-                        onChange={e => setSBOLEnd(e.target.value)} 
-                        id="7"/>
-                </label>
-                
-                <div>
+            <div className={styles.item2}>
+                <span className={styles.explorerFont}>SBOLExplorer Endpoint</span>
+            </div>
+            <div className={styles.item3}>
+                <input className={styles.tableinput}
+                    type="text" 
+                    value={SBOLEnd} 
+                    onChange={e => setSBOLEnd(e.target.value)} 
+                    id="7"/>
+            </div>
+            <div className={styles.item4}>
+                <input className={styles.explorerFont}
+                type="checkbox"
+                checked={checked}
+                onChange={handleUseSBOLExplorer}
+                id="8"
+                />
+                Searching Using SBOLExplorer
+            </div>
+            
+            {conf > 2 &&
+            (<div className={styles.item5}>
+                <label>
                     <input
-                    type="checkbox"
-                    checked={checked}
-                    onChange={handleUseSBOLExplorer}
-                    id="8"
-                    />
-                    Searching Using SBOLExplorer
-                </div>
-            </div>
-            {<div>
-                {conf > 2 &&
-                (<div>
-                    <label>
-                        <input
-                        type="radio"
-                        checked={USchecked}
-                        onChange={handleUSChange}
-                        id="9"/>
-                        USearch &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                    type="radio"
+                    checked={USchecked}
+                    onChange={handleUSChange}
+                    id="9"/>
+                    USearch &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 
-                        <input
-                        type="radio"
-                        checked={VSchecked}
-                        onChange={handleVSChange}
-                        id="10"/>
-                        VSearch
-                    </label>
-                    <div className={styles.actionbuttonscontainer}>
-                        <div className={styles.actionbuttonslayout}>
-                            <ActionButton
-                            action="Update Index Now"
-                            color="#00A1E4"
-                            onClick={handleUpdateIndex}
-                            />
-                        </div>
-                        <div className={styles.actionbuttonslayout}>
-                            <ActionButton
-                            action="Download General Log"
-                            color="#00A1E4"
-                            onClick={handleDownloadGeneralLog}
-                            />
-                        </div>
-                        <div className={styles.actionbuttonslayout}>
-                            <ActionButton
-                            action="Download Index Log"
-                            color="#00A1E4"
-                            onClick={handleDownloadIndexLog}
-                            />
-                        </div>
-                    </div>
-            <div>
-                <span>Start of last index update: {startIndex}<br />End of last index update: {endIndex}</span>
-            </div>
-            <div className="row">
-                <div className="col-md-6">
-                    <div>
-                        <input
-                        type="checkbox"
-                        checked={autoUpdate}
-                        onChange={handleAutoUpdate}
-                        id="12"
+                    <input
+                    type="radio"
+                    checked={VSchecked}
+                    onChange={handleVSChange}
+                    id="10"/>
+                    VSearch
+                </label>
+            </div>)}
+            {conf > 2 && 
+            (<div className={styles.itemButtons}>
+                <div >
+                    <div className={styles.actionbuttonslayout}>
+                        <ActionButton
+                        action="Update Index Now"
+                        color="#00A1E4"
+                        onClick={handleUpdateIndex}
                         />
-                        Update index automatically
-                    </div>
-
-                    <div className="form-group">
-                    Update index every &nbsp;
-                    <input 
-                        id="1" 
-                        type="number" 
-                        min="0" max="100" 
-                        value={days}
-                        onChange={e => setDays(e.target.value)}
-                        step="1"/> days
                     </div>
                 </div>
+                <div >
+                    <div className={styles.actionbuttonslayout}>
+                        <ActionButton
+                        action="Download General Log"
+                        color="#00A1E4"
+                        onClick={handleDownloadGeneralLog}
+                        />
+                    </div>
+                </div>
+                <div >
+                    <div className={styles.actionbuttonslayout}>
+                        <ActionButton
+                        action="Download Index Log"
+                        color="#00A1E4"
+                        onClick={handleDownloadIndexLog}
+                        />
+                    </div>
+                </div>
+            </div>)}
+            {conf > 2 && 
+            (
+            <div className={styles.itemOthers}>
+                <div>
+                <span className={styles.alertInfo}>Start of last index update: {startIndex}<br />End of last index update: {endIndex}</span>
+                </div>
             </div>
-            <div className="row">
-                <div className="col-md-12">
+            )}
+            <div className={styles.item7}>
+                <div>
+                    <input 
+                    type="checkbox"
+                    checked={autoUpdate}
+                    onChange={handleAutoUpdate}
+                    id="12"
+                    />
+                    Update index automatically
+                </div>
+
+                <div className={styles.explorerFont}>
+                Update index every &nbsp;
+                <input
+                    id="1" 
+                    type="number" 
+                    min="0" max="100" 
+                    value={days}
+                    onChange={e => setDays(e.target.value)}
+                    step="1"/> days
+                </div>
+            </div>
+                <div className={styles.item8}>
                     <div className="checkbox">
                         <input
                         type="checkbox"
@@ -313,57 +324,73 @@ export default function Explorer() {
                         Use Distributed Search
                     </div>
                 </div>
-            </div>
-            <div className="form-group">
-                Pagerank Tolerance &nbsp;
-                <input 
-                    id="2" 
-                    type="text" 
-                    value={tolerance} 
-                    onChange={e => {setTolerance(e.target.value);
-                    }}/>
-            </div>
-            <div className="form-group">
-            UClust Clustering Identity &nbsp;
-                <input 
-                    id="3" 
-                    type="text" 
-                    value={clusterIdentity} 
-                    onChange={e => {
-                        setClusterIdentity(e.target.value);
+                <div className={styles.item9}>
+                    <div className={styles.explorerFont}>
+                        Pagerank Tolerance &nbsp;
+                    </div>
+                </div>
+                <div className={styles.item10}>
+                    <input className={styles.tableinput} 
+                        id="2" 
+                        type="text" 
+                        value={tolerance} 
+                        onChange={e => {setTolerance(e.target.value);
                         }}/>
-            </div>
+                </div>      
 
-            <div className="form-group">
-            Elasticsearch Endpoint &nbsp;
-                <input 
-                    id="4" 
-                    type="text" 
-                    value={elasticSearchEnd} 
-                    onChange={e => setElasticSearchEnd(e.target.value)}/>
-            </div>
+                <div className={styles.item11}>
+                    <div className={styles.explorerFont}>
+                    UClust Clustering Identity &nbsp;
+                    </div>
+                </div>
+                <div className={styles.item12}>
+                <input className={styles.tableinput}
+                        id="3" 
+                        type="text" 
+                        value={clusterIdentity} 
+                        onChange={e => {
+                            setClusterIdentity(e.target.value);
+                    }}/>
+                </div>
+                <div className={styles.item13}>
+                    <div className={styles.explorerFont}>
+                    Elasticsearch Endpoint &nbsp;
+                    </div>
+                </div>
+                <div className={styles.item14}>
+                    <input className={styles.tableinput}
+                        id="4" 
+                        type="text" 
+                        value={elasticSearchEnd} 
+                        onChange={e => setElasticSearchEnd(e.target.value)}/>
+                </div >
 
-            <div className="form-group">
-            Elasticsearch Index Name &nbsp;
-                <input 
-                    id="5" 
-                    type="text" 
-                    value={elasticSearchIndex} 
-                    onChange={e => {setElasticSearchIndex(e.target.value);}}/>
-            </div>
+                <div className={styles.item15}>
+                    <div className={styles.explorerFont}>
+                        Elasticsearch Index Name &nbsp;  
+                    </div>
+                </div>
+                <div className={styles.item16}>
+                    <input className={styles.tableinput}
+                        id="5" 
+                        type="text" 
+                        value={elasticSearchIndex} 
+                        onChange={e => {setElasticSearchIndex(e.target.value);}}/>
+                </div>
+                <div className={styles.item17}>
+                    <div className={styles.explorerFont}>
+                    SPARQL/Virtuoso Endpoint &nbsp;
+                    </div>
+                </div>
+                <div className={styles.item18}>
+                    <input className={styles.tableinput}
+                        id="6" 
+                        type="text" 
+                        value={sparqlEndpoint} 
+                        onChange={e => setSparqlEndpoint(e.target.value)}/>
+                </div>
 
-            <div className="form-group">
-            SPARQL/Virtuoso Endpoint &nbsp;
-                <input 
-                    id="6" 
-                    type="text" 
-                    value={sparqlEndpoint} 
-                    onChange={e => setSparqlEndpoint(e.target.value)}/>
-            </div>
-            
-        </div>
-                )}
-                <div className={styles.actionbuttonscontainer}>
+            <div className={styles.itemSave}>
                 <div className={styles.actionbuttonslayout}>
                                 <ActionButton
                                 action="Save"
@@ -373,7 +400,6 @@ export default function Explorer() {
                                 />
                 </div>
             </div>
-            </div>}
         </div>
 );
 }
