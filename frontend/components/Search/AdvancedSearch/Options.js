@@ -49,6 +49,57 @@ export default function Options(properties) {
     <div>
       <div className={styles.inputsection}>
         <div className={styles.labelsection}>
+          <span>Select Creator</span>
+        </div>
+        <SelectLoader
+          sparql={getCreators}
+          placeholder={shortName(properties.creator)}
+          parseResult={result => {
+            return { value: result.object.value, label: result.object.value };
+          }}
+          onChange={option => properties.setCreator(option ? option.value : '')}
+        />
+      </div>
+
+      <div className={styles.inputsection}>
+        <div className={styles.labelsection}>
+          <span>Select Part Type</span> 
+        </div>
+        <SelectLoader // Select SBOL Type
+          sparql={getSBOLTypes}
+          placeholder={shortName(properties.sbolType)}
+          parseResult={result => {
+            return {
+              value: result.object.value,
+              label: shortName(result.object.value)
+            };
+          }}
+          onChange={option =>
+            properties.setSbolType(option ? option.value : '')
+          }
+        />
+      </div>
+
+      <div className={styles.inputsection}>
+        <div className={styles.labelsection}>
+          <span>Select Part Role</span>
+        </div>
+        <SelectLoader // Select Role Type
+          sparql={getRoles}
+          placeholder={shortName(properties.role)}
+          value={properties.role}
+          parseResult={result => {
+            return {
+              value: result.object.value,
+              label: shortName(result.object.value)
+            };
+          }}
+          onChange={option => properties.setRole(option ? option.value : '')}
+        />
+      </div>
+      
+      <div className={styles.inputsection}>
+        <div className={styles.labelsection}>
           <span>Select Object Type</span>
         </div>
         <SelectLoader
@@ -66,54 +117,7 @@ export default function Options(properties) {
           }
         />
       </div>
-      <div className={styles.inputsection}>
-        <div className={styles.labelsection}>
-          <span>Select Creator</span>
-        </div>
-        <SelectLoader
-          sparql={getCreators}
-          placeholder={shortName(properties.creator)}
-          parseResult={result => {
-            return { value: result.object.value, label: result.object.value };
-          }}
-          onChange={option => properties.setCreator(option ? option.value : '')}
-        />
-      </div>
-      <div className={styles.inputsection}>
-        <div className={styles.labelsection}>
-          <span>Select Role Type</span>
-        </div>
-        <SelectLoader
-          sparql={getRoles}
-          placeholder={shortName(properties.role)}
-          value={properties.role}
-          parseResult={result => {
-            return {
-              value: result.object.value,
-              label: shortName(result.object.value)
-            };
-          }}
-          onChange={option => properties.setRole(option ? option.value : '')}
-        />
-      </div>
-      <div className={styles.inputsection}>
-        <div className={styles.labelsection}>
-          <span>Select SBOL Type</span>
-        </div>
-        <SelectLoader
-          sparql={getSBOLTypes}
-          placeholder={shortName(properties.sbolType)}
-          parseResult={result => {
-            return {
-              value: result.object.value,
-              label: shortName(result.object.value)
-            };
-          }}
-          onChange={option =>
-            properties.setSbolType(option ? option.value : '')
-          }
-        />
-      </div>
+
       <div className={styles.inputsection}>
         <div className={styles.labelsection}>
           <span>Select Collections</span>
