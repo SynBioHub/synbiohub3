@@ -24,6 +24,12 @@ export default function Attachments(properties) {
   const graphUri = useSelector(state => state.user.graphUri);
   const attachments = useSelector(state => state.attachments.attachments);
 
+  const [refreshMembers, setRefreshMembers] = useState(false);
+
+  const handleSetRefreshMembers = (value) => {
+    setRefreshMembers(value);
+  };
+
   useEffect(() => {
     if (owner == undefined) {
       //The attachments in the store should be reset, a new page has been loaded.
@@ -51,15 +57,31 @@ export default function Attachments(properties) {
     }
   }, [owner]);
 
+  useEffect(() => {
+    if (refreshMembers) {
+      // Fetch attachments again and update the state
+      getQueryResponse(dispatch, getAttachments, { uri: properties.uri }).then(
+        attachments => {
+          if (attachments.length > 0) {
+            dispatch(setAttachments(attachments));
+          }
+          // Reset refreshMembers to false after refreshing
+          setRefreshMembers(false);
+        }
+      );
+      window.location.reload();
+    }
+  }, [refreshMembers, dispatch, properties.uri]);
+
   if (!owner) return <Loading />;
 
   return (
     <AttachmentsTable
       owner={isOwner}
       uri={properties.uri}
+      setRefreshMembers={handleSetRefreshMembers}
       headers={['Type', 'Name', 'Size']}
       attachments={attachments}
-      setRefreshMembers={properties.setRefreshMembers}
     />
   );
 }
