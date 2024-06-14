@@ -187,6 +187,7 @@ export default function UploadAttachments(properties) {
                   const uriToUse = processedUriData.urlReplacedForBackend || processedUriData.original;
                   attachFromFile(selectedFiles, uriToUse).then(() => {
                     dispatch(setUploadStatus(''));
+                    properties.setRefreshMembers(true);
                   });
 
                   //Query all the attachments so the store can be updated.
@@ -287,7 +288,9 @@ export default function UploadAttachments(properties) {
                           uri: uriToUse
                       };
               
-                      attachFromURL(attachment);
+                      attachFromURL(attachment).then(() => {
+                        properties.setRefreshMembers(true); // Ensure refresh after URL attachment
+                      });
                   });
 
                   const convertedUrl = uri.slice(
@@ -306,6 +309,7 @@ export default function UploadAttachments(properties) {
                   dispatch(
                     setAttachments([...properties.attachments, newAttachment])
                   );
+                  properties.setRefreshMembers(true);
 
                   //Resets all the values to their default.
                   setSelectedOption('Attachment type...');
