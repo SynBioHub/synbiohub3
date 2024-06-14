@@ -51,17 +51,26 @@ export default function Plugin(properties) {
 
   useEffect(() => {
     if (status === null) {
-      evaluatePlugin(properties.plugin, properties.type).then(status => setStatus(status));
+      evaluatePlugin(properties.plugin, properties.type).then(responseStatus => {
+        setStatus(responseStatus)
+
+        if(responseStatus) {
+          const downloadContent = async () => {
+            const renderResponse = await runPlugin(properties.plugin, pluginData);
+            setContent(renderResponse.data);
+            setStatus(renderResponse.status === 200);
+            };
+          downloadContent();
+
+        }
+
+
+    });
       
     }
     
     if (status) {
       dispatch(updateHiddenSections(hiddenSections.filter(page => page != `PLUGIN: ${properties.plugin.name}`)))
-      const downloadContent = async () => {
-      const toRender = await runPlugin(properties.plugin, pluginData);
-      setContent(toRender);
-      };
-      downloadContent();
     }
     else {
       dispatch(updateHiddenSections(hiddenSections.filter(page => page != `PLUGIN: ${properties.plugin.name}`).concat(`PLUGIN: ${properties.plugin.name}`)))
@@ -69,8 +78,6 @@ export default function Plugin(properties) {
   }, [status, pageSectionsOrder]);
 
   if (status) {
-
-    
 
     const options = {
       replace: domNode => {
@@ -172,9 +179,9 @@ async function runPlugin(plugin, pluginData) {
       category: 'rendering'
     }
   }).then(response => {
-    return response.data;
+    return response;
   }).catch(error => {
-    return `There was an error with ${plugin.name}`;
+    return error;
   })
   
 }
