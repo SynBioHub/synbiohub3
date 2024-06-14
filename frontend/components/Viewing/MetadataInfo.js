@@ -34,7 +34,7 @@ export default function MetadataInfo({ title, link, label, icon, specific, uri }
     }).filter(item => item !== '').join(", "); // Filter out empty strings and join
     [title, link] = formatMultipleTitles(concatenatedTitle);
   }
-  // console.log(title);
+
   if (Array.isArray(title) && label === 'Sequence') {
     const concatenatedTitle = title.map(item => {
       // Accessing the extra_work property for each object in the title array
