@@ -25,14 +25,16 @@ export default function MetadataInfo({ title, link, label, icon, specific, uri }
   if (Array.isArray(title) && label === 'Type' || label === 'Role') {
     const concatenatedTitle = title.map(item => {
       // Accessing the extra_work property for each object in the title array
-      if (item.props && item.props.sections && item.props.sections.extra_work &&
-        item.props.sections.extra_work.length > 0) {
-        return item.props.sections.extra_work[0].result.extra_work;
+      if (item.props && item.props.children && item.props.children.props.children.props.sections && 
+        item.props.children.props.children.props.sections.extra_work &&
+        item.props.children.props.children.props.sections.extra_work.length > 0) {
+        return item.props.children.props.children.props.sections.extra_work[0].result.extra_work;
       }
       return ''; // Return an empty string if the path doesn't exist
     }).filter(item => item !== '').join(", "); // Filter out empty strings and join
     [title, link] = formatMultipleTitles(concatenatedTitle);
   }
+  // console.log(title);
   if (Array.isArray(title) && label === 'Sequence') {
     const concatenatedTitle = title.map(item => {
       // Accessing the extra_work property for each object in the title array
