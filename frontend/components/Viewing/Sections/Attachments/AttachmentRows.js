@@ -119,7 +119,6 @@ export default function AttachmentRows(properties) {
                   type: attachment.format.split('/').pop(),
                   status: 'downloading'
                 };
-                console.log(item);
                 dispatch(downloadFiles([item]));
               }
             }}
@@ -138,10 +137,8 @@ export default function AttachmentRows(properties) {
             <div
               type="button"
               onClick={async () => {
-                console.log("reached onclick");
                 const copy = [...attachments];
                 const deletedAttachment = copy.splice(key, 1);
-                console.log(copy);
                 setAttachments(copy);
                 await getQueryResponse(
                   dispatch,
@@ -150,6 +147,7 @@ export default function AttachmentRows(properties) {
                   token,
                   true
                 );
+                window.location.reload();
               }}
             >
               <FontAwesomeIcon
