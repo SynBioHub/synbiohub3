@@ -30,6 +30,7 @@ const { publicRuntimeConfig } = getConfig();
  */
 export default function Basket() {
   const [showBasket, setShowBasket] = useState(false);
+  const token = useSelector(state => state.user.token);
   const basketItems = useSelector(state => state.basket.basket);
   const dispatch = useDispatch();
   const [selected, setSelected] = useState(new Map());
@@ -40,7 +41,7 @@ export default function Basket() {
   const theme = JSON.parse(localStorage.getItem('theme')) || {};
 
   useEffect(() => {
-    dispatch(restoreBasket());
+    dispatch(restoreBasket(token));
   }, []);
 
   useEffect(() => {

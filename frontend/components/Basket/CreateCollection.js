@@ -4,6 +4,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useDispatch, useSelector } from 'react-redux';
+import { useState } from 'react';
 
 import { getCanSubmitTo } from '../../redux/actions';
 import styles from '../../styles/basket.module.css';
@@ -12,6 +13,7 @@ import SubmissionStatusPanel from '../Submit/SubmissionStatusPanel';
 import SubmitButton from '../Submit/SubmitButton';
 
 export default function CreateCollection(properties) {
+  const [selectedHandler, setSelectedHandler] = useState({value: 'default', label: 'Default Handler'});
   const showSubmitProgress = useSelector(
     state => state.submit.showSubmitProgress
   );
@@ -49,6 +51,7 @@ export default function CreateCollection(properties) {
                 files={properties.itemsToAddToCollection}
                 overwriteCollection={false}
                 addingToCollection={true}
+                submitHandler={selectedHandler}
               />
             </div>
           )}

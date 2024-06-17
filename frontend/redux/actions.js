@@ -3,6 +3,7 @@ import { saveAs } from 'file-saver';
 import JSZip from 'jszip';
 import getConfig from 'next/config';
 import { mutate } from 'swr';
+import { useSelector } from 'react-redux';
 
 import * as types from './types';
 const { publicRuntimeConfig } = getConfig();
@@ -1145,11 +1146,11 @@ export const addToBasket = items => async (dispatch, getState) => {
   localStorage.setItem('basket', JSON.stringify(newBasket));
 };
 
-export const restoreBasket = () => dispatch => {
+export const restoreBasket = (token) => dispatch => {
   const basket = JSON.parse(localStorage.getItem('basket'));
   if (basket) {
     for (let i = 0; i < basket.length; i++) {
-      if (!checkUriExists(basket[i].uri)) {
+      if (!checkUriExists(basket[i].url, token)) {
         console.log("item not exist");
         dispatch(clearBasket(item));
       }
@@ -1181,33 +1182,25 @@ export const clearBasket = itemsToClear => (dispatch, getState) => {
   localStorage.setItem('basket', JSON.stringify(newBasket));
 };
 
-export async function checkUriExists(uri) {
-  const query = `SELECT ?subject ?predicate ?object
-  WHERE {
-      <${uri}> ?predicate ?object .
-      BIND(<${uri}> AS ?subject)
-  }`;
-  const url = `${publicRuntimeConfig.backend}/sparql?query=${encodeURIComponent(query)}`;
+async function checkUriExists(url, token) {
+
+  const uri = `${publicRuntimeConfig.backend}${url}`;
+
+  const headers = {
+    'Accept': 'application/sparql-results+json',
+    'X-authorization': token
+  };
 
   try {
-    const response = await fetch(url, {
-      headers: { 'Accept': 'application/sparql-results+json' }
-    });
+    const response = await axios.get(uri, { headers });
 
-    if (!response.ok) {
-      console.error(`HTTP error! status: ${response.status}`);
-      return false;
-    }
-
-    const data = await response.json();
+    const data = await response.data;
 
     // Check if there are any bindings in the results
-    const bindings = data.results.bindings;
+    const bindings = data;
     if (bindings && bindings.length > 0) {
-      console.log("URI exists:", bindings);
       return true; // URI exists
     } else {
-      console.log("URI does not exist.");
       return false; // URI does not exist
     }
   } catch (error) {
