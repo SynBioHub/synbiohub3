@@ -28,7 +28,7 @@ export default function SubmitButton(properties) {
           alert(
             'You must select one or more files and a destination collection before you can submit.'
           );
-        else if (properties.submitHandler.value === 'configure') {
+        else if (properties.submitHandler && properties.submitHandler.value === 'configure') {
           properties.configure()
         }
         else {
