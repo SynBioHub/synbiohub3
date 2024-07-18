@@ -22,10 +22,11 @@ export default function Setup({ setInSetupMode }) {
   );
   const [logo, setLogo] = useState(undefined);
   const [allowPublicSignup, setAllowPublicSignup] = useState(true);
+  const [requireLogin, setRequireLogin] = useState(false);
 
-  const [frontendURL, setFrontendURL] = useState('http://localhost:3333/');
-  const [instanceUrl, setInstanceUrl] = useState('http://localhost:7777/');
-  const [uriPrefix, setUriPrefix] = useState('http://localhost:7777/');
+  const [frontendURL, setFrontendURL] = useState(window.location.href);
+  const [instanceUrl, setInstanceUrl] = useState(window.location.href);
+  const [uriPrefix, setUriPrefix] = useState(window.location.href);
   const [altHome, setAltHome] = useState('');
 
   const [userName, setUserName] = useState('');
@@ -90,11 +91,11 @@ export default function Setup({ setInSetupMode }) {
                     containerStyling={styles.inputcontainer}
                     customType="file"
                     value={logo}
-                    onChange={event => setLogo(event.target.value)}
+                    onChange={event => setLogo(event.target.files[0])}
                   />
 
                   <InputField
-                    labelText="Allow Public Account Creation"
+                    labelText="Allow Public Account Creation: if unchecked, accounts can only be created through invitation"
                     inputName="Allow Public"
                     containerStyling={styles.checkboxinput}
                     customType="checkbox"
@@ -102,6 +103,15 @@ export default function Setup({ setInSetupMode }) {
                     onChange={event =>
                       setAllowPublicSignup(event.target.checked)
                     }
+                  />
+
+                  <InputField
+                    labelText="Require Login: Require login for all operations"
+                    value={requireLogin}
+                    onChange={event => setRequireLogin(event.target.checked)}
+                    inputName="Alternate Home Page"
+                    containerStyling={styles.checkboxinput}
+                    customType="checkbox"
                   />
                 </div>
               </div>
@@ -246,7 +256,8 @@ export default function Setup({ setInSetupMode }) {
                   virtuosoINI: '/etc/virtuoso-opensource-7/virtuoso.ini',
                   virtuosoDB: '/var/lib/virtuoso-opensource-7/db',
                   allowPublicSignup,
-                  altHome
+                  altHome,
+                  requireLogin
                 },
                 {
                   headers
