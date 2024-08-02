@@ -13,6 +13,8 @@ import { useSelector } from 'react-redux';
 import styles from '../../styles/navbar.module.css';
 import Profile from './Profile';
 import Selector from './Selector';
+import getConfig from 'next/config';
+const { publicRuntimeConfig } = getConfig();
 
 /**
  * This component renders the navigation bar at the top of sbh. Users use this to access
@@ -22,10 +24,13 @@ export default function Navbar() {
   const loggedIn = useSelector(state => state.user.loggedIn);
   const submitting = useSelector(state => state.submit.submitting);
   const theme = JSON.parse(localStorage.getItem('theme')) || {};
+  const defaultLogo = '/images/logo.svg'
 
   const [profileControl, setProfileControl] = useState(
     <Selector icon={faSignInAlt} name="Log in or Register" href="/login" />
   );
+
+  const [logoUrl, setLogoUrl] = useState(defaultLogo);
 
   useEffect(() => {
     if (loggedIn) {
@@ -42,6 +47,15 @@ export default function Navbar() {
     linkHref = theme.altHome;
   }
 
+  useEffect(() => {
+    if (localStorage.getItem('logo')) {
+      const urlLogo = `${publicRuntimeConfig.backend}/logo`;
+      setLogoUrl(urlLogo);
+    } else {
+      setLogoUrl(defaultLogo);
+    }
+  }, [publicRuntimeConfig.backend]);
+
   return (
     <header
       className={styles.container}
@@ -50,9 +64,16 @@ export default function Navbar() {
       <div className={styles.logoAndInstanceContainer}>
         <Link href={linkHref}>
           <a className={styles.logo}>
-            <Image alt="logo" width={80} height={80} src="/images/logo.svg" />
+            <Image
+              alt="logo"
+              src={logoUrl}
+              width={80}
+              height={80}
+              style={{ maxHeight: '50px', height: 'auto', width: '80px' }}
+            />
           </a>
         </Link>
+
 
         {theme && (
           <Selector name={theme.instanceName} href="/" isInstanceName={true} />

@@ -5,7 +5,7 @@ import { createFilter } from 'react-windowed-select';
 
 import styles from '../../../styles/advancedsearch.module.css';
 import Loading from '../../Reusable/MiniLoading';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { addError } from '../../../redux/actions';
 import axios from 'axios';
 const { publicRuntimeConfig } = getConfig();
@@ -17,7 +17,8 @@ export default function SelectLoader(properties) {
   const [error, setError] = useState(false);
   const [data, setData] = useState([]);
   const dispatch = useDispatch();
-
+  const token = useSelector(state => state.user.token);
+  
   useEffect(() => {
     if (!properties.result) {
       fetchOptions(
@@ -26,6 +27,7 @@ export default function SelectLoader(properties) {
         setData,
         properties.sparql,
         setError,
+        token,
         dispatch
       );
     } else {
@@ -66,9 +68,10 @@ const fetchOptions = async (
   setData,
   sparql,
   setError,
+  token,
   dispatch
 ) => {
-  const results = await submitQuery(sparql, dispatch);
+  const results = await submitQuery(sparql, token, dispatch);
   if (results === 'error') {
     setError(true);
   }
@@ -82,14 +85,15 @@ const fetchOptions = async (
   setLoading(false);
 };
 
-const submitQuery = async (query, dispatch) => {
+const submitQuery = async (query, token, dispatch) => {
   const url = `${publicRuntimeConfig.backend}/sparql?query=${encodeURIComponent(
     query
   )}`;
   try {
     const headers = {
       'Content-Type': 'application/json',
-      Accept: 'application/json'
+      Accept: 'application/json',
+      'X-authorization': token
     };
 
     const response = await axios.get(url, {

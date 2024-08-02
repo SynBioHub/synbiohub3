@@ -5,6 +5,7 @@ import InputField from '../components/Submit/ReusableComponents/InputField';
 import { SketchPicker } from 'react-color';
 import { useState } from 'react';
 import SubmitLabel from '../components/Submit/ReusableComponents/SubmitLabel';
+import { logoutUser } from '../redux/actions';
 
 import getConfig from 'next/config';
 import { useDispatch } from 'react-redux';
@@ -20,7 +21,7 @@ export default function Setup({ setInSetupMode }) {
   const [frontPageText, setFrontPageText] = useState(
     `<a href="/About">SynBioHub</a> is a <i>design repository</i> for people designing biological constructs. It enables DNA and protein designs to be uploaded, then provides a shareable link to allow others to view them. SynBioHub also facilitates searching for information about existing useful parts and designs by combining data from a variety of sources.`
   );
-  const [logo, setLogo] = useState(undefined);
+  const [logo, setLogo] = useState('');
   const [allowPublicSignup, setAllowPublicSignup] = useState(true);
   const [requireLogin, setRequireLogin] = useState(false);
 
@@ -91,7 +92,10 @@ export default function Setup({ setInSetupMode }) {
                     containerStyling={styles.inputcontainer}
                     customType="file"
                     value={logo}
-                    onChange={event => setLogo(event.target.files[0])}
+                    onChange={event => {
+                      console.log(event.target.value);
+                      setLogo(event.target.value);
+                    }}
                   />
 
                   <InputField
@@ -237,6 +241,7 @@ export default function Setup({ setInSetupMode }) {
               setErrors(['Alternate Home Page must either be empty or contain a valid URL.']);
               return; // Prevent the submission
             }
+            /** Move logo file into public folder */
             try {
               await axios.post(
                 `${publicRuntimeConfig.backend}/setup`,
@@ -265,6 +270,7 @@ export default function Setup({ setInSetupMode }) {
               );
               setErrors([]);
               setInSetupMode(false);
+              dispatch(logoutUser());
             } catch (error) {
               if (error.response.status === 400) {
                 const errorMessages = error.response.data.details.map(

@@ -25,14 +25,15 @@ export default function Theme() {
 
   useEffect(() => {
     // Fetch theme data from localStorage or remote if needed
-    const fetchThemeData = () => {
-      setLoading(true);
-      const themeData = JSON.parse(localStorage.getItem('theme')) || {};
-      setTheme(themeData);
-      setLoading(false);
-    };
     fetchThemeData();
   }, []);
+
+  const fetchThemeData = () => {
+    setLoading(true);
+    const themeData = JSON.parse(localStorage.getItem('theme')) || {};
+    setTheme(themeData);
+    setLoading(false);
+  };
 
   useEffect(() => {
     if (theme) {
@@ -83,10 +84,28 @@ export default function Theme() {
 
     try {
       const response = await fetch(url, { method: 'POST', headers, body: formData });
-      const data = await response.text();
+      const data = await response.json();
+      console.log(data);
+      
 
       if (response.ok) {
-        window.location.reload();
+        console.log(localStorage.getItem('theme'));
+        // localStorage.setItem('theme', JSON.stringify(data.requestBody));
+
+        if (data.requestBody) {
+          // Get the current theme from local storage
+          let currentTheme = JSON.parse(localStorage.getItem('theme')) || {};
+    
+          // Update only the values that match and are different
+          Object.keys(data.requestBody).forEach(key => {
+            if (currentTheme[key] !== undefined && currentTheme[key] !== data.requestBody[key]) {
+              currentTheme[key] = data.requestBody[key];
+            }
+          });
+    
+          // Store the updated theme in local storage
+          localStorage.setItem('theme', JSON.stringify(currentTheme));
+        }
       } else {
         alert("Error saving theme");
       }

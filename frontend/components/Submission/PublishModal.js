@@ -8,6 +8,7 @@ import axios from 'axios';
 import getConfig from 'next/config';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import useSWR from 'swr';
 
 import { addError, makePublicCollection } from '../../redux/actions';
@@ -23,7 +24,8 @@ const NEW = 'as New';
 
 export default function PublishModal(properties) {
   const dispatch = useDispatch();
-  const { collections, loading } = useRootCollections(dispatch);
+  const token = useSelector(state => state.user.token);
+  const { collections, loading } = useRootCollections(dispatch, token);
   const [selected, setSelected] = useState(EXISTING);
   const [selectedCollection, setSelectedCollection] = useState();
   const [collectionIndex, setCollectionIndex] = useState(0);
@@ -211,9 +213,9 @@ const sortMethods = {
   }
 };
 
-const useRootCollections = dispatch => {
+const useRootCollections = (dispatch, token) => {
   const { data, error } = useSWR(
-    [`${publicRuntimeConfig.backend}/rootCollections`, dispatch],
+    [`${publicRuntimeConfig.backend}/rootCollections`, token, dispatch],
     fetcher
   );
   return {
@@ -223,12 +225,13 @@ const useRootCollections = dispatch => {
   };
 };
 
-const fetcher = (url, dispatch) =>
+const fetcher = (url, token, dispatch) =>
   axios
     .get(url, {
       headers: {
         'Content-Type': 'application/json',
-        Accept: 'text/plain'
+        Accept: 'text/plain',
+        'X-authorization': token
       }
     })
     .then(response => response.data)
