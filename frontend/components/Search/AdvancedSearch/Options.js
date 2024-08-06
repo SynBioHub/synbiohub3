@@ -19,7 +19,7 @@ import AdditionalFilter from './AdditionalFilter';
 import SelectLoader from './SelectLoader';
 import axios from 'axios';
 import { addError } from '../../../redux/actions';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 const { publicRuntimeConfig } = getConfig();
 
 /* eslint sonarjs/no-identical-functions: "off" */
@@ -27,9 +27,10 @@ const { publicRuntimeConfig } = getConfig();
 export default function Options(properties) {
   const [predicates, setPredicates] = useState('loading');
   const dispatch = useDispatch();
+  const token = useSelector(state => state.user.token);
 
   useEffect(() => {
-  loadPredicates(setPredicates, dispatch);
+  loadPredicates(setPredicates, token, dispatch);
   }, []);
 
   const filterDisplay = properties.extraFilters.map((element, index) => {
@@ -179,19 +180,20 @@ export default function Options(properties) {
 
 
 
-const loadPredicates = async (setPredicates, dispatch) => {
-  const results = await fetchPredicates(dispatch);
+const loadPredicates = async (setPredicates, token, dispatch) => {
+  const results = await fetchPredicates(token, dispatch);
   setPredicates(results);
 };
 
-const fetchPredicates = async dispatch => {
+const fetchPredicates = async (token, dispatch) => {
   const url = `${publicRuntimeConfig.backend}/sparql?query=${encodeURIComponent(
     getPredicates
   )}`;
   try {
     const headers = {
       'Content-Type': 'application/json',
-      Accept: 'application/json'
+      Accept: 'application/json',
+      'X-authorization': token
     };
 
     const response = await axios.get(url, {

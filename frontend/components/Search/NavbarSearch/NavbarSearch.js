@@ -4,6 +4,10 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
+import { useState } from 'react';
+import { useEffect } from 'react';
+import getConfig from 'next/config';
+const { publicRuntimeConfig } = getConfig();
 
 import styles from '../../../styles/navbar.module.css';
 import SearchBar from './SearchBar';
@@ -12,19 +16,37 @@ export default function NavbarSearch(properties) {
   const router = useRouter();
   const pageVisited = useSelector(state => state.tracking.pageVisited);
   const theme = JSON.parse(localStorage.getItem('theme')) || {};
+  const defaultLogo = '/images/logo.svg'
 
   let linkHref = "/";
   if (theme && theme.altHome && theme.altHome.length > 0) {
     linkHref = theme.altHome;
   }
 
+  const [logoUrl, setLogoUrl] = useState(defaultLogo);
+
+  useEffect(() => {
+    if (localStorage.getItem('logo')) {
+      const urlLogo = `${publicRuntimeConfig.backend}/logo`;
+      setLogoUrl(urlLogo);
+    } else {
+      setLogoUrl(defaultLogo);
+    }
+  }, [publicRuntimeConfig.backend]);
+
   return (
     <header className={styles.container}
-    style={{ backgroundColor: theme?.themeParameters?.[0]?.value || '#465775' }} 
+      style={{ backgroundColor: theme?.themeParameters?.[0]?.value || '#465775' }}
     >
       <Link href={linkHref}>
         <a className={styles.logo}>
-          <Image alt="logo" width={86} height={86} src="/images/logo.svg" />
+          <Image
+            alt="logo"
+            src={logoUrl}
+            width={80}
+            height={80}
+            style={{ maxHeight: '50px', height: 'auto', width: '80px' }}
+          />
         </a>
       </Link>
       <div className={styles.searchcontainer}>
