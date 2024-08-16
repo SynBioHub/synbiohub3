@@ -22,6 +22,22 @@ import { addError } from '../../../redux/actions';
 import { useDispatch, useSelector } from 'react-redux';
 const { publicRuntimeConfig } = getConfig();
 
+/* adding tooltip to the span title */
+const Tooltip = ({ text, children }) => {
+  const [isVisible, setIsVisible] = useState(false);
+
+  return (
+    <div
+      className={styles.tooltipContainer}
+      onMouseEnter={() => setIsVisible(true)}
+      onMouseLeave={() => setIsVisible(false)}
+    >
+      {children}
+      {isVisible && <div className={styles.tooltip}>{text}</div>}
+    </div>
+  );
+};
+
 /* eslint sonarjs/no-identical-functions: "off" */
 
 export default function Options(properties) {
@@ -46,11 +62,16 @@ export default function Options(properties) {
     );
   });
 
+  //adding tooltip to the span title
+  // for user to see the description of the input
+
   return (
     <div>
       <div className={styles.inputsection}>
         <div className={styles.labelsection}>
-          <span>Select Creator</span>
+        <Tooltip text="input text.">  /* adding tooltip */
+            <span>Select Creator</span>
+          </Tooltip>
         </div>
         <SelectLoader
           sparql={getCreators}
@@ -64,7 +85,9 @@ export default function Options(properties) {
 
       <div className={styles.inputsection}>
         <div className={styles.labelsection}>
+          <Tooltip text="input text."> /* adding tooltip */
           <span>Select Part Type</span> 
+          </Tooltip>
         </div>
         <SelectLoader // Select SBOL Type
           sparql={getSBOLTypes}
@@ -83,7 +106,9 @@ export default function Options(properties) {
 
       <div className={styles.inputsection}>
         <div className={styles.labelsection}>
+          <Tooltip text="input text."> /* adding tooltip */
           <span>Select Part Role</span>
+          </Tooltip>
         </div>
         <SelectLoader // Select Role Type
           sparql={getRoles}
@@ -101,7 +126,9 @@ export default function Options(properties) {
       
       <div className={styles.inputsection}>
         <div className={styles.labelsection}>
+          <Tooltip text="input text"> /* adding tooltip */
           <span>Select Object Type</span>
+          </Tooltip>
         </div>
         <SelectLoader
           sparql={getTypes}
@@ -121,7 +148,9 @@ export default function Options(properties) {
 
       <div className={styles.inputsection}>
         <div className={styles.labelsection}>
+          <Tooltip text="input text"> /* adding tooltip */
           <span>Select Collections</span>
+          </Tooltip>
         </div>
         <SelectLoader
           className={styles.optionselectW}
