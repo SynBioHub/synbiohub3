@@ -7,6 +7,7 @@ import useRegistries from '../Fetching/useRegistries';
 import createRenderingObject from './createRenderingObject';
 import SectionRenderer from './SectionRenderer';
 import { useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
 
@@ -18,6 +19,7 @@ function handleExternalFetch(
   updateSectionsToParse,
   setLoading,
   registries,
+  token,
   loading,
   error
 ) {
@@ -32,6 +34,7 @@ function handleExternalFetch(
         dispatch,
         stackTrace.uri,
         stackTrace.prefixes,
+        token,
         stackTrace.table,
         queryUrl
       ).then(result => {
@@ -67,6 +70,7 @@ function createKeyToValueMap(
   setTitleToValueMap,
   setSectionsToRender,
   setLoading,
+  token,
   registries,
   registriesLoading,
   error
@@ -108,6 +112,7 @@ function createKeyToValueMap(
             updateSectionsToParse,
             setLoading,
             registries,
+            token,
             registriesLoading,
             error
           );
@@ -185,6 +190,7 @@ export default function RowWrapper({ sections, metadata, setSectionIcon }) {
   const [titleToValueMap, setTitleToValueMap] = useState({});
   const [sectionsToRender, setSectionsToRender] = useState([]);
   const [content, setContent] = useState(null);
+  const token = useSelector(state => state.user.token);
   const dispatch = useDispatch();
 
   const {
@@ -208,6 +214,7 @@ export default function RowWrapper({ sections, metadata, setSectionIcon }) {
         setTitleToValueMap,
         setSectionsToRender,
         setLoading,
+        token,
         registries,
         registriesLoading,
         error

@@ -1,0 +1,92 @@
+{
+    "type": "http://sbols.org/v3#Interaction",
+    "prefixes": [
+        "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>",
+        "PREFIX dcterms: <http://purl.org/dc/terms/>",
+        "PREFIX dc: <http://purl.org/dc/elements/1.1/>",
+        "PREFIX sbh: <http://wiki.synbiohub.org/wiki/Terms/synbiohub#>",
+        "PREFIX prov: <http://www.w3.org/ns/prov#>",
+        "PREFIX sbol: <http://sbols.org/v3#>",
+        "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>",
+        "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>",
+        "PREFIX purl: <http://purl.obolibrary.org/obo/>"
+    ],
+    "metadata": [
+        {
+            "title": "Types",
+            "rootPredicate": "sbol:type",
+            "icon": "faPalette",
+            "sections": [
+                {
+                    "title": "Extra Work",
+                    "stripAfter": "#",
+                    "predicates": [],
+                    "link": "$<typeLink>"
+                },
+                {
+                    "title": "typeLink",
+                    "predicates": [],
+                    "hide": true
+                }
+            ]
+        }
+    ],
+    "tables": [
+        {
+            "title": "Participations",
+            "rootPredicate": "sbol:participation",
+            "icon": "faPeopleArrows",
+            "sections": [
+                {
+                    "title": "Participation",
+                    "infoLink": "https://dissys.github.io/sbol-owl/sbol-owl.html#Participation",
+                    "predicates": [
+                        "sbol:displayId"
+                    ],
+                    "link": "$<ParticipationLink>"
+                },
+                {
+                    "title": "ParticipationLink",
+                    "predicates": [],
+                    "hide": true
+                },
+                {
+                    "title": "Participant Definition",
+                    "infoLink": "https://sbols.org/v2#definition",
+                    "predicates": [
+                        "sbol:participant",
+                        "sbol:displayId"
+                    ],
+                    "link": "$<ParticipationDefinitionLink>"
+                },
+                {
+                    "title": "ParticipationDefinitionLink",
+                    "predicates": [
+                        "sbol:participant"
+                    ],
+                    "hide": true
+                },
+                {
+                    "title": "Role",
+                    "infoLink": "https://sbols.org/v2#role",
+                    "predicates": [
+                        "sbol:role"
+                    ],
+                    "stripAfter": "#",
+                    "link": "$<RoleLink>"
+                },
+                {
+                    "title": "RoleLink",
+                    "predicates": [
+                        "sbol:role"
+                    ],
+                    "hide": true
+                }
+            ]
+        }
+    ],
+    "pages": [
+        "$TABLES[Participations]",
+        "Other Properties"
+    ]
+}
