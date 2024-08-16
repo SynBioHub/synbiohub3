@@ -135,14 +135,15 @@ export default function Setup({ setInSetupMode }) {
                 containerStyling={styles.inputcontainer}
               />
 
-              <InputField
+              // This is actualy hard coded in the docker-compose file for some reason !!!!!
+              {/* <InputField
                 labelText="Backend URL: We need to know where this SynBioHub instance is hosted so we can assign URLs to your submissions. In most cases, this will be the same as the frontend. If the URL below is incorrect, please change it"
                 placeholder="Backend URL"
                 value={instanceUrl}
                 onChange={event => setInstanceUrl(event.target.value)}
                 inputName="Backend URL"
                 containerStyling={styles.inputcontainer}
-              />
+              /> */}
 
               <InputField
                 labelText="URI Prefix: We need to know how to prefix URIs of objects stored in this SynBioHub. Its default is the same as the URL, and should only be changed if you are shadowing another instance."
