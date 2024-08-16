@@ -38,7 +38,7 @@ export default function SidePanelTools(properties) {
   const username = useSelector(state => state.user.username);
 
   const handleDeletionComplete = () => {
-    dispatch(restoreBasket()); // Replace with your actual dispatch action
+    dispatch(restoreBasket()); 
   };
 
   /*
@@ -170,6 +170,7 @@ export default function SidePanelTools(properties) {
           onClick={() => {
             setModal("Share");
           }}
+          title="Share this item" // Placeholder for share button description
         />
         <FontAwesomeIcon
           icon={faCloudDownloadAlt}
@@ -178,6 +179,7 @@ export default function SidePanelTools(properties) {
           onClick={() => {
             setModal("Download");
           }}
+          title="Download this item" // placeholder for download button description
         />
         {/*curationAvailable ?
         <FontAwesomeIcon
@@ -196,6 +198,7 @@ export default function SidePanelTools(properties) {
             copyToast("Copied!");
             copyToClipboard();
           }}
+          title="Copy this item" // placeholder for copy button description
         />
         <FontAwesomeIcon
           icon={faLink}
@@ -204,6 +207,7 @@ export default function SidePanelTools(properties) {
           onClick={() => {
             setModal("AddToCollection");
           }}
+          title="Add to collection" // placeholder for add to collection button description
         />
         {isOwner && (
           <FontAwesomeIcon
@@ -211,6 +215,7 @@ export default function SidePanelTools(properties) {
             size="1x"
             className={styles.actionicon}
             onClick={() => setModal("Delete")}
+            title="Delete this item" // placeholder for delete button description
           />
         )}
       </div>
