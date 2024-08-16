@@ -25,8 +25,8 @@ export default function Setup({ setInSetupMode }) {
   const [allowPublicSignup, setAllowPublicSignup] = useState(true);
   const [requireLogin, setRequireLogin] = useState(false);
 
-  const [frontendURL, setFrontendURL] = useState(window.location.href);
-  const [instanceUrl, setInstanceUrl] = useState(window.location.href);
+  const [frontendURL, setFrontendURL] = useState(window.location.protocol+"//"+window.location.hostname+":3333");
+  const [instanceUrl, setInstanceUrl] = useState(window.location.protocol+"//"+window.location.hostname+":6789");
   const [uriPrefix, setUriPrefix] = useState(window.location.href);
   const [altHome, setAltHome] = useState('');
 

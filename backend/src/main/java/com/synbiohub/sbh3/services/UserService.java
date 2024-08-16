@@ -233,16 +233,16 @@ public class UserService {
                 allParams.put("firstLaunch", false);
                 allParams.put("version", 1);
                 Map<String, String> wor = new HashMap<>();
-                wor.put("https://synbiohub.org", "http://localhost:6789");
+                wor.put("https://synbiohub.org", "http://localhost:6789"); // This hardcoding overrides the setup page frontend
                 allParams.put("webOfRegistries", wor);// TODO: Make sure web of registries is correct
                 Map<String, Object> themeParams = new HashMap<>();
-                themeParams.put("default", allParams.get("color"));
+                themeParams.put("default", allParams.get("color")); // Themes shouldnt be stored in the java backend
                 allParams.put("themeParameters", themeParams);
                 allParams.remove("color");
                 ObjectMapper objectMapper = new ObjectMapper();
                 objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
                 ObjectWriter writer = objectMapper.writerWithDefaultPrettyPrinter();
-                String json = writer.writeValueAsString(allParams);
+                String json = writer.writeValueAsString(allParams); // The frontPageText value does not prevent javascript injection attacks. The front page message should be inputed as markup and sanitized before storage
                 FileWriter fw = new FileWriter(file.getAbsoluteFile());
                 BufferedWriter bw = new BufferedWriter(fw);
                 bw.write(json);
