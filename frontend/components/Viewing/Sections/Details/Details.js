@@ -22,19 +22,20 @@ export default function Details(properties) {
   const [showEdit, setShowEdit] = useState([]);
   const [isOwner, setIsOwner] = useState(false);
   const user = useSelector(state => state.user);
+  const token = useSelector(state => state.user.token);
 
   const dispatch = useDispatch();
 
   useEffect(() => {
     if (details == undefined) {
-      getQueryResponse(dispatch, getDetails, { uri: properties.uri }).then(
+      getQueryResponse(dispatch, getDetails, { uri: properties.uri }, token).then(
         details => {
           if (details && details.length > 0) setDetails(details[0]);
         }
       );
 
       //Gets the owner of the collection to see if the current user should be able to modify the details.
-      getQueryResponse(dispatch, getOwner, { uri: properties.uri }).then(
+      getQueryResponse(dispatch, getOwner, { uri: properties.uri }, token).then(
         owner => {
           owner.map(res => {
             if (res.ownedBy === user.graphUri) setIsOwner(true);
@@ -43,7 +44,7 @@ export default function Details(properties) {
       );
 
       //Citations has to be queried individually so everything can be formatted easier.
-      getQueryResponse(dispatch, getCitations, { uri: properties.uri }).then(
+      getQueryResponse(dispatch, getCitations, { uri: properties.uri }, token).then(
         citations => {
           if (citations.length > 0) {
             //Formats the result so it can be joined.

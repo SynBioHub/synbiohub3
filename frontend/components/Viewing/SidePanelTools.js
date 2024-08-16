@@ -104,6 +104,10 @@ export default function SidePanelTools(properties) {
   if (properties.type.includes('#')) {
     displayTitle = properties.type.split('#')[1];
   }
+  if (properties.type.includes('http://') || properties.type.includes('https://')) {
+    const parts = properties.type.split('/');
+    displayTitle = parts[parts.length - 1];
+  }  
   var displayLink = properties.type;
   if (!properties.type.includes('http')) {
     displayLink = `http://sbols.org/v2#${properties.type}`;

@@ -5,6 +5,7 @@ export default function executeQueryFromTableJSON(
   dispatch,
   uri,
   prefixes,
+  token,
   table,
   urlOverride
 ) {
@@ -16,7 +17,7 @@ export default function executeQueryFromTableJSON(
     dispatch,
     prefixes + '\n' + buildQuery(uri, table),
     { uri },
-    '',
+    token,
     false,
     urlOverride, 
     uri
