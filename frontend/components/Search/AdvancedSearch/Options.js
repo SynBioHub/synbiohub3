@@ -1,11 +1,9 @@
-import 'react-date-range/dist/styles.css';
-import 'react-date-range/dist/theme/default.css';
-
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import React, { useEffect, useState } from 'react';
+import { faPlus, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import getConfig from 'next/config';
-import { useEffect, useState } from 'react';
-import { DateRangePicker } from 'react-date-range';
+import { useDispatch, useSelector } from 'react-redux';
+import axios from 'axios';
 
 import { shortName } from '../../../namespace/namespace';
 import getCollections from '../../../sparql/getCollections';
@@ -17,22 +15,38 @@ import getTypes from '../../../sparql/getTypes';
 import styles from '../../../styles/advancedsearch.module.css';
 import AdditionalFilter from './AdditionalFilter';
 import SelectLoader from './SelectLoader';
-import axios from 'axios';
 import { addError } from '../../../redux/actions';
-import { useDispatch, useSelector } from 'react-redux';
+
 const { publicRuntimeConfig } = getConfig();
 
-/* eslint sonarjs/no-identical-functions: "off" */
+// tooltip component to show descriptions on hover
+const Tooltip = ({ text, children }) => {
+  const [isVisible, setIsVisible] = useState(false);
 
+  return (
+    <div
+      className={styles.tooltipContainer}
+      onMouseEnter={() => setIsVisible(true)}
+      onMouseLeave={() => setIsVisible(false)}
+    >
+      {children}
+      {isVisible && <div className={styles.tooltip}>{text}</div>}
+    </div>
+  );
+};
+
+// main options component
 export default function Options(properties) {
   const [predicates, setPredicates] = useState('loading');
   const dispatch = useDispatch();
   const token = useSelector(state => state.user.token);
 
+  // load predicates on component mount
   useEffect(() => {
-  loadPredicates(setPredicates, token, dispatch);
+    loadPredicates(setPredicates, token, dispatch);
   }, []);
 
+  // map through extra filters to display them
   const filterDisplay = properties.extraFilters.map((element, index) => {
     return (
       <AdditionalFilter
@@ -48,9 +62,13 @@ export default function Options(properties) {
 
   return (
     <div>
+      {/* select creator section */}
       <div className={styles.inputsection}>
         <div className={styles.labelsection}>
           <span>Select Creator</span>
+          <Tooltip text="xyz">
+            <FontAwesomeIcon icon={faInfoCircle} className={styles.infoIcon} />
+          </Tooltip>
         </div>
         <SelectLoader
           sparql={getCreators}
@@ -62,17 +80,21 @@ export default function Options(properties) {
         />
       </div>
 
+      {/* select part type section */}
       <div className={styles.inputsection}>
         <div className={styles.labelsection}>
-          <span>Select Part Type</span> 
+          <span>Select Part Type</span>
+          <Tooltip text="abc">
+            <FontAwesomeIcon icon={faInfoCircle} className={styles.infoIcon} />
+          </Tooltip>
         </div>
-        <SelectLoader // Select SBOL Type
+        <SelectLoader
           sparql={getSBOLTypes}
           placeholder={shortName(properties.sbolType)}
           parseResult={result => {
             return {
               value: result.object.value,
-              label: shortName(result.object.value)
+              label: shortName(result.object.value),
             };
           }}
           onChange={option =>
@@ -81,36 +103,43 @@ export default function Options(properties) {
         />
       </div>
 
+      {/* select part role section */}
       <div className={styles.inputsection}>
         <div className={styles.labelsection}>
           <span>Select Part Role</span>
+          <Tooltip text="lmn">
+            <FontAwesomeIcon icon={faInfoCircle} className={styles.infoIcon} />
+          </Tooltip>
         </div>
-        <SelectLoader // Select Role Type
+        <SelectLoader
           sparql={getRoles}
           placeholder={shortName(properties.role)}
           value={properties.role}
           parseResult={result => {
             return {
               value: result.object.value,
-              label: shortName(result.object.value)
+              label: shortName(result.object.value),
             };
           }}
           onChange={option => properties.setRole(option ? option.value : '')}
         />
       </div>
-      
+
+      {/* select object type section */}
       <div className={styles.inputsection}>
         <div className={styles.labelsection}>
           <span>Select Object Type</span>
+          <Tooltip text="uvw.">
+            <FontAwesomeIcon icon={faInfoCircle} className={styles.infoIcon} />
+          </Tooltip>
         </div>
         <SelectLoader
           sparql={getTypes}
-          // placeholder="Select Object Type..."
           placeholder={shortName(properties.objectType)}
           parseResult={result => {
             return {
               value: result.object.value,
-              label: shortName(result.object.value)
+              label: shortName(result.object.value),
             };
           }}
           onChange={option =>
@@ -119,48 +148,29 @@ export default function Options(properties) {
         />
       </div>
 
+      {/* select collections section */}
       <div className={styles.inputsection}>
         <div className={styles.labelsection}>
           <span>Select Collections</span>
+          <Tooltip text="xyz.">
+            <FontAwesomeIcon icon={faInfoCircle} className={styles.infoIcon} />
+          </Tooltip>
         </div>
         <SelectLoader
           className={styles.optionselectW}
           sparql={getCollections}
-          placeholder={properties.collections.map(collection => collection.label)}//"Select Collections..."
+          placeholder={properties.collections.map(collection => collection.label)}
           isMulti={true}
           parseResult={result => {
             return !result.name
               ? { value: result.subject.value, label: result.displayId.value }
               : { value: result.subject.value, label: result.name.value };
           }}
-          onChange={collections => properties.setCollections(collections)
-          }
+          onChange={collections => properties.setCollections(collections)}
         />
       </div>
-      {/*<div className={styles.inputsection}>
 
-        </div>*/}
-
-      {/* <div className={styles.calendarinputsection}>
-        <label>Created Between</label>
-        <DateRangePicker
-          editableDateInputs={true}
-          onChange={item => properties.setCreated([item.selection])}
-          inputRanges={[]}
-          ranges={properties.created}
-          moveRangeOnFirstSelection={false}
-        />
-      </div> */}
-      {/* <div className={styles.calendarinputsection}>
-        <label>Modfied Between</label>
-        <DateRangePicker
-          editableDateInputs={true}
-          onChange={item => properties.setModified([item.selection])}
-          inputRanges={[]}
-          ranges={properties.modified}
-          moveRangeOnFirstSelection={false}
-        />
-      </div> */}
+      {/* display additional filters */}
       {filterDisplay}
       <div
         className={styles.newfilterbutton}
@@ -178,13 +188,13 @@ export default function Options(properties) {
   );
 }
 
-
-
+// function to load predicates
 const loadPredicates = async (setPredicates, token, dispatch) => {
   const results = await fetchPredicates(token, dispatch);
   setPredicates(results);
 };
 
+// function to fetch predicates
 const fetchPredicates = async (token, dispatch) => {
   const url = `${publicRuntimeConfig.backend}/sparql?query=${encodeURIComponent(
     getPredicates
@@ -193,17 +203,17 @@ const fetchPredicates = async (token, dispatch) => {
     const headers = {
       'Content-Type': 'application/json',
       Accept: 'application/json',
-      'X-authorization': token
+      'X-authorization': token,
     };
 
     const response = await axios.get(url, {
-      headers
+      headers,
     });
 
     return response.status === 200 ? response.data : 'error';
   } catch (error) {
-    error.customMessage = 'Error fetching predicates';
-    error.fullUrl = `Query: ${getPredicates} \n\n\n URL: ${url}`;
+    error.customMessage = 'error fetching predicates';
+    error.fullUrl = `query: ${getPredicates} \n\n\n url: ${url}`;
     dispatch(addError(error));
   }
 };
