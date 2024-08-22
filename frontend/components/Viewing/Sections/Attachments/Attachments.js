@@ -23,6 +23,7 @@ export default function Attachments(properties) {
   const dispatch = useDispatch();
   const graphUri = useSelector(state => state.user.graphUri);
   const attachments = useSelector(state => state.attachments.attachments);
+  const token = useSelector(state => state.user.token);
 
   const [refreshMembers, setRefreshMembers] = useState(false);
 
@@ -36,7 +37,7 @@ export default function Attachments(properties) {
       dispatch(setAttachments([]));
 
       //Gets the owner of the collection.
-      getQueryResponse(dispatch, getOwner, { uri: properties.uri }).then(
+      getQueryResponse(dispatch, getOwner, { uri: properties.uri }, token).then(
         owner => {
           if (owner.length > 0) setOwner(owner);
           //Handles multiple owners.
@@ -47,7 +48,7 @@ export default function Attachments(properties) {
       );
 
       //Gets the initial attachments and passes them down to the children components.
-      getQueryResponse(dispatch, getAttachments, { uri: properties.uri }).then(
+      getQueryResponse(dispatch, getAttachments, { uri: properties.uri }, token).then(
         attachments => {
           if (attachments.length > 0) {
             dispatch(setAttachments(attachments));
@@ -60,7 +61,7 @@ export default function Attachments(properties) {
   useEffect(() => {
     if (refreshMembers) {
       // Fetch attachments again and update the state
-      getQueryResponse(dispatch, getAttachments, { uri: properties.uri }).then(
+      getQueryResponse(dispatch, getAttachments, { uri: properties.uri }, token).then(
         attachments => {
           if (attachments.length > 0) {
             dispatch(setAttachments(attachments));

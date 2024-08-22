@@ -59,13 +59,22 @@ export default function Footer() {
         >
           API
         </a>
-        <a
-          href={`https://github.com/SynBioHub/synbiohub3/commit/${commitHash}`} // Incorporate the commit hash into the link
-          target="_blank"
-          rel="noreferrer"
-        >
-          Github Repo ({commitHash}) {/* Display the trimmed commit hash */}
-        </a>
+        <div className={styles.inlineLinks}>
+          <a
+            href={`https://github.com/SynBioHub/synbiohub3`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            Github Repo
+          </a>
+          <a
+            href={`https://github.com/SynBioHub/synbiohub3/commit/${commitHash}`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            &nbsp;({commitHash})
+          </a>
+        </div>
         <a
           href="https://github.com/SynBioHub/synbiohub3/issues"
           target="_blank"

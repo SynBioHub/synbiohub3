@@ -89,6 +89,8 @@ export default function View({ data, error }) {
       });
   }, [uri, metadata, token]);
 
+  console.log(metadata);
+
   // Render based on URL existence
   if (!url || !urlExists) {
     return (

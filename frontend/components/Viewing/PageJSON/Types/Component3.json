@@ -98,10 +98,9 @@
             "rootPredicate": "sbol:hasInteraction",
             "sections": [
                 {
-                    "title": "Sequence Annotation",
+                    "title": "Type",
                     "infoLink": "https://sbols.org/v3#Interaction",
                     "predicates": [
-                        "sbol:Interaction"
                     ],
                     "link": "$<interactionLink>"
                 },
