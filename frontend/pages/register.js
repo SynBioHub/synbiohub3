@@ -49,135 +49,146 @@ function Register() {
     }
   }, [loggedIn, router, next]);
 
+  const theme = JSON.parse(localStorage.getItem('theme')) || {};
+  const allowPublicSignup = theme.allowPublicSignup;
+
   return (
     <div className={styles.container}>
       <div className={styles.frame}>
-        <FontAwesomeIcon
-          icon={faGlassCheers}
-          size="3x"
-          color="#00A1E4"
-          className={styles.registericon}
-        />
-        <h1 className={styles.header}>Create Your Account</h1>
-        <div className={styles.intro}>
-          Tell us about yourself to get started
-        </div>
-        {registerError && (
-          <div className={styles.warning}>{registerErrorMessage}</div>
-        )}
-        <InputField
-          value={name}
-          onChange={event => setName(event.target.value)}
-          onKeyPress={event => {
-            if (event.key === 'Enter') usernameInput.current.focus();
-          }}
-          placeholder="Full name"
-          type="text"
-          icon={faUser}
-        />
-        <InputField
-          value={username}
-          inputRef={usernameInput}
-          onChange={event => setUsername(event.target.value)}
-          onKeyPress={event => {
-            if (event.key === 'Enter') affiliationInput.current.focus();
-          }}
-          placeholder="Username"
-          type="text"
-          icon={faUser}
-          pattern="^[a-zA-Z0-9\-_\.~]+$"
-          title="Usernames can contain letters, numbers, and the symbols - _ . ~"
-        />
-        <InputField
-          value={affiliation}
-          inputRef={affiliationInput}
-          onChange={event => setAffiliation(event.target.value)}
-          onKeyPress={event => {
-            if (event.key === 'Enter') emailInput.current.focus();
-          }}
-          placeholder="Affiliation (optional)"
-          type="text"
-          icon={faSuitcase}
-        />
-        <InputField
-          value={email}
-          inputRef={emailInput}
-          onChange={event => setEmail(event.target.value)}
-          onKeyPress={event => {
-            if (event.key === 'Enter') passwordInput.current.focus();
-          }}
-          placeholder="Email"
-          type="text"
-          icon={faEnvelope}
-        />
-        <InputField
-          value={password}
-          inputRef={passwordInput}
-          onChange={event => setPassword(event.target.value)}
-          onKeyPress={event => {
-            if (event.key === 'Enter') confirmPasswordInput.current.focus();
-          }}
-          placeholder="Password"
-          type="password"
-          icon={faLock}
-        />
-        <InputField
-          value={confirmPassword}
-          inputRef={confirmPasswordInput}
-          onChange={event => setConfirmPassword(event.target.value)}
-          onKeyPress={event => {
-            if (event.key === 'Enter') {
-              dispatch(
-                registerUser(
-                  name,
-                  username,
-                  affiliation,
-                  email,
-                  password,
-                  confirmPassword
-                )
-              );
-              setPassword('');
-              setConfirmPassword('');
-            }
-          }}
-          placeholder="Confirm password"
-          type="password"
-          icon={faLock}
-        />
-        <div
-          role="button"
-          className={styles.submitbutton}
-          onClick={() => {
-            dispatch(
-              registerUser(
-                name,
-                username,
-                affiliation,
-                email,
-                password,
-                confirmPassword
-              )
-            );
-            setPassword('');
-            setConfirmPassword('');
-          }}
-        >
-          <FontAwesomeIcon
-            icon={faSignInAlt}
-            size="1x"
-            className={styles.submiticon}
-          />{' '}
-          Create Account
-        </div>
-        <div className={styles.infocontainer}>
-          <div className={styles.info}>
-            Already have an account?{' '}
-            <Link href="/login">
-              <a className={styles.blue}>Sign in</a>
-            </Link>
+        {allowPublicSignup ? (
+          <>
+            <FontAwesomeIcon
+              icon={faGlassCheers}
+              size="3x"
+              color="#00A1E4"
+              className={styles.registericon}
+            />
+            <h1 className={styles.header}>Create Your Account</h1>
+            <div className={styles.intro}>
+              Tell us about yourself to get started
+            </div>
+            {registerError && (
+              <div className={styles.warning}>{registerErrorMessage}</div>
+            )}
+            <InputField
+              value={name}
+              onChange={event => setName(event.target.value)}
+              onKeyPress={event => {
+                if (event.key === 'Enter') usernameInput.current.focus();
+              }}
+              placeholder="Full name"
+              type="text"
+              icon={faUser}
+            />
+            <InputField
+              value={username}
+              inputRef={usernameInput}
+              onChange={event => setUsername(event.target.value)}
+              onKeyPress={event => {
+                if (event.key === 'Enter') affiliationInput.current.focus();
+              }}
+              placeholder="Username"
+              type="text"
+              icon={faUser}
+              pattern="^[a-zA-Z0-9\-_\.~]+$"
+              title="Usernames can contain letters, numbers, and the symbols - _ . ~"
+            />
+            <InputField
+              value={affiliation}
+              inputRef={affiliationInput}
+              onChange={event => setAffiliation(event.target.value)}
+              onKeyPress={event => {
+                if (event.key === 'Enter') emailInput.current.focus();
+              }}
+              placeholder="Affiliation (optional)"
+              type="text"
+              icon={faSuitcase}
+            />
+            <InputField
+              value={email}
+              inputRef={emailInput}
+              onChange={event => setEmail(event.target.value)}
+              onKeyPress={event => {
+                if (event.key === 'Enter') passwordInput.current.focus();
+              }}
+              placeholder="Email"
+              type="text"
+              icon={faEnvelope}
+            />
+            <InputField
+              value={password}
+              inputRef={passwordInput}
+              onChange={event => setPassword(event.target.value)}
+              onKeyPress={event => {
+                if (event.key === 'Enter') confirmPasswordInput.current.focus();
+              }}
+              placeholder="Password"
+              type="password"
+              icon={faLock}
+            />
+            <InputField
+              value={confirmPassword}
+              inputRef={confirmPasswordInput}
+              onChange={event => setConfirmPassword(event.target.value)}
+              onKeyPress={event => {
+                if (event.key === 'Enter') {
+                  dispatch(
+                    registerUser(
+                      name,
+                      username,
+                      affiliation,
+                      email,
+                      password,
+                      confirmPassword
+                    )
+                  );
+                  setPassword('');
+                  setConfirmPassword('');
+                }
+              }}
+              placeholder="Confirm password"
+              type="password"
+              icon={faLock}
+            />
+            <div
+              role="button"
+              className={styles.submitbutton}
+              onClick={() => {
+                dispatch(
+                  registerUser(
+                    name,
+                    username,
+                    affiliation,
+                    email,
+                    password,
+                    confirmPassword
+                  )
+                );
+                setPassword('');
+                setConfirmPassword('');
+              }}
+            >
+              <FontAwesomeIcon
+                icon={faSignInAlt}
+                size="1x"
+                className={styles.submiticon}
+              />{' '}
+              Create Account
+            </div>
+            <div className={styles.infocontainer}>
+              <div className={styles.info}>
+                Already have an account?{' '}
+                <Link href="/login">
+                  <a className={styles.blue}>Sign in</a>
+                </Link>
+              </div>
+            </div>
+          </>
+        ) : (
+          <div className={styles.nosignupmessage}>
+            <h1>Public account creation is not allowed at this time.</h1>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
