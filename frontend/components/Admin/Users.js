@@ -38,13 +38,20 @@ const headers = [
 
 export default function Users() {
   const token = useSelector(state => state.user.token);
+  const theme = JSON.parse(localStorage.getItem('theme')) || {};
   const dispatch = useDispatch();
   const { users, loading } = useUsers(token, dispatch);
 
-  const [allowPublicSignup, setAllowPublicSignup] = useState(false);
+  const [allowPublicSignup, setAllowPublicSignup] = useState(theme.allowPublicSignup);
+
+  useEffect(() => {
+    const storedTheme = JSON.parse(localStorage.getItem('theme')) || {};
+    if (storedTheme.allowPublicSignup !== undefined) {
+      setAllowPublicSignup(storedTheme.allowPublicSignup);
+    }
+  }, []);
 
   const handleAllowPublicSignup = async () => {
-    console.log(allowPublicSignup);
     try {
       const url = `${publicRuntimeConfig.backend}/admin/users`;
       const headers = {
@@ -54,16 +61,18 @@ export default function Users() {
 
       const parameters = new URLSearchParams();
       if (allowPublicSignup) {
-        parameters.append('allowPublicSignup', allowPublicSignup); 
+        parameters.append('allowPublicSignup', allowPublicSignup);
       }
-      
-
-      console.log(parameters.get('allowPublicSignup'));
 
       const response = await axios.post(url, parameters, { headers });
 
       if (response.status === 200) {
         alert("Allow Public Account Creation updated successfully!");
+        const updatedTheme = {
+          ...JSON.parse(localStorage.getItem('theme')),
+          allowPublicSignup: allowPublicSignup,
+        };
+        localStorage.setItem('theme', JSON.stringify(updatedTheme));
       }
     } catch (error) {
       console.error("Error saving:", error);
@@ -91,7 +100,7 @@ export default function Users() {
       <div className={styles.checkbox}>
         <Checkbox
           value={allowPublicSignup}
-          onChange={() => setAllowPublicSignup(!allowPublicSignup)}
+          onChange={() => setAllowPublicSignup(prevState => !prevState)}
         />
         <span className={styles.checktext}>Allow Public Account Creation</span>
         <ActionButton className={styles.checksave}
