@@ -52,7 +52,7 @@ cmake-build-*/
 *.iws
 
 # IntelliJ
-out/
+backend/*/out/
 
 # mpeltonen/sbt-idea plugin
 .idea_modules/
@@ -144,3 +144,6 @@ frontend/package-lock.json
 
 devmounts/virtuoso-db1/*
 devmounts/sbh1/*
+
+# igem extracted data
+testDataIGEM/out
