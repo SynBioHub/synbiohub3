@@ -141,3 +141,6 @@ frontend/package-lock.json
 .vscode
 
 .metals
+
+devmounts/virtuoso-db1/*
+devmounts/sbh1/*
