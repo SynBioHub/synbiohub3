@@ -1,0 +1,47 @@
+services:
+    autoheal: 
+        restart: always
+        image: willfarrell/autoheal
+        environment: 
+            - AUTOHEAL_CONTAINER_LABEL=all
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+    virtuoso:
+        image: tenforce/virtuoso:virtuoso7.2.5
+        volumes: 
+            - type: bind
+              source: ./devmounts/virtuoso-db1
+              target: /data
+        ports:
+            - "8890:8890"
+        restart: always  
+        labels:
+            - "autoheal=true"
+    synbiohub-frontend:
+        # image: synbiohub/sbh3frontend:localdev
+        build: 
+            context: ./frontend
+            dockerfile: Dockerfile
+        ports:
+            - "3333:3333"
+        restart: always
+        environment: 
+            - backend=http://localhost:7777
+            - backendSS=http://synbiohub:7777
+    synbiohub:
+        # image: synbiohub/synbiohub:localdev
+        build: 
+            context: ./backend
+            dockerfile: Dockerfile
+        depends_on: 
+            - virtuoso
+        ports:
+            - "7777:7777"
+        volumes:
+            - type: bind
+              source: ./devmounts/sbh1
+              target: /mnt
+            - type: bind
+              source: ./devmounts/virtuoso-db1
+              target: /virtuoso
+        restart: always
