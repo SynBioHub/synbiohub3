@@ -66,7 +66,7 @@ export default function Options(properties) {
       <div className={styles.inputsection}>
         <div className={styles.labelsection}>
           <span>Select Creator</span>
-          <Tooltip text="xyz">
+          <Tooltip text="Select the Creator">
             <FontAwesomeIcon icon={faInfoCircle} className={styles.infoIcon} />
           </Tooltip>
         </div>
@@ -84,7 +84,7 @@ export default function Options(properties) {
       <div className={styles.inputsection}>
         <div className={styles.labelsection}>
           <span>Select Part Type</span>
-          <Tooltip text="abc">
+          <Tooltip text="Select the Part Type">
             <FontAwesomeIcon icon={faInfoCircle} className={styles.infoIcon} />
           </Tooltip>
         </div>
@@ -107,7 +107,7 @@ export default function Options(properties) {
       <div className={styles.inputsection}>
         <div className={styles.labelsection}>
           <span>Select Part Role</span>
-          <Tooltip text="lmn">
+          <Tooltip text="Select the Part Role">
             <FontAwesomeIcon icon={faInfoCircle} className={styles.infoIcon} />
           </Tooltip>
         </div>
@@ -129,7 +129,7 @@ export default function Options(properties) {
       <div className={styles.inputsection}>
         <div className={styles.labelsection}>
           <span>Select Object Type</span>
-          <Tooltip text="uvw.">
+          <Tooltip text="Select the Object Type">
             <FontAwesomeIcon icon={faInfoCircle} className={styles.infoIcon} />
           </Tooltip>
         </div>
@@ -152,7 +152,7 @@ export default function Options(properties) {
       <div className={styles.inputsection}>
         <div className={styles.labelsection}>
           <span>Select Collections</span>
-          <Tooltip text="xyz.">
+          <Tooltip text="Select the Collections">
             <FontAwesomeIcon icon={faInfoCircle} className={styles.infoIcon} />
           </Tooltip>
         </div>
