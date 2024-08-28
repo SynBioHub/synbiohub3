@@ -1,0 +1,74 @@
+<rdf:RDF
+    xmlns:SO="https://identifiers.org/SO:"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:EDAM="https://identifiers.org/edam:"
+    xmlns:sbol="http://sbols.org/v3#"
+    xmlns:CHEBI="https://identifiers.org/CHEBI:"
+    xmlns:prov="http://www.w3.org/ns/prov#"
+    xmlns:SBO="https://identifiers.org/SBO:"
+    xmlns:GO="https://identifiers.org/GO:"
+    xmlns="https://sbolstandard.org/examples/"
+    xmlns:om="http://www.ontology-of-units-of-measure.org/resource/om-2/"
+   xml:base="https://sbolstandard.org/examples/">
+   <sbol:Component rdf:about="https://sbolstandard.org/examples/aTC">
+      <sbol:role rdf:resource="https://identifiers.org/CHEBI:35224"/>
+      <sbol:description>aTC</sbol:description>
+      <sbol:name>aTC</sbol:name>
+      <sbol:hasNamespace rdf:resource="https://sbolstandard.org/examples"/>
+      <sbol:type rdf:resource="https://identifiers.org/SBO:0000247"/>
+      <sbol:displayId>aTC</sbol:displayId>
+   </sbol:Component>
+   <sbol:Component rdf:about="https://sbolstandard.org/examples/TetR_protein">
+      <sbol:role rdf:resource="https://identifiers.org/GO:0003700"/>
+      <sbol:description>TetR protein</sbol:description>
+      <sbol:name>TetR</sbol:name>
+      <sbol:hasNamespace rdf:resource="https://sbolstandard.org/examples"/>
+      <sbol:type rdf:resource="https://identifiers.org/SBO:0000252"/>
+      <sbol:displayId>TetR_protein</sbol:displayId>
+   </sbol:Component>
+   <sbol:Component rdf:about="https://sbolstandard.org/examples/LacI_producer">
+      <sbol:hasFeature>
+         <sbol:SubComponent rdf:about="https://sbolstandard.org/examples/LacI_producer/SubComponent1">
+            <sbol:instanceOf>
+               <sbol:Component rdf:about="https://sbolstandard.org/examples/LacI_protein"/>
+            </sbol:instanceOf>
+            <sbol:displayId>SubComponent1</sbol:displayId>
+         </sbol:SubComponent>
+      </sbol:hasFeature>
+      <sbol:description>LacI producer</sbol:description>
+      <sbol:hasInterface>
+         <sbol:Interface rdf:about="https://sbolstandard.org/examples/LacI_producer/Interface1">
+            <sbol:nondirectional>
+               <sbol:SubComponent rdf:about="https://sbolstandard.org/examples/LacI_producer/SubComponent3">
+                  <sbol:instanceOf rdf:resource="https://sbolstandard.org/examples/aTC"/>
+                  <sbol:displayId>SubComponent3</sbol:displayId>
+               </sbol:SubComponent>
+            </sbol:nondirectional>
+            <sbol:output rdf:resource="https://sbolstandard.org/examples/LacI_producer/SubComponent1"/>
+            <sbol:input>
+               <sbol:SubComponent rdf:about="https://sbolstandard.org/examples/LacI_producer/SubComponent2">
+                  <sbol:instanceOf rdf:resource="https://sbolstandard.org/examples/TetR_protein"/>
+                  <sbol:displayId>SubComponent2</sbol:displayId>
+               </sbol:SubComponent>
+            </sbol:input>
+            <sbol:input rdf:resource="https://sbolstandard.org/examples/LacI_producer/SubComponent1"/>
+            <sbol:displayId>Interface1</sbol:displayId>
+         </sbol:Interface>
+      </sbol:hasInterface>
+      <sbol:displayId>LacI_producer</sbol:displayId>
+      <sbol:hasNamespace rdf:resource="https://sbolstandard.org/examples"/>
+      <sbol:hasFeature rdf:resource="https://sbolstandard.org/examples/LacI_producer/SubComponent2"/>
+      <sbol:hasFeature rdf:resource="https://sbolstandard.org/examples/LacI_producer/SubComponent3"/>
+      <sbol:role rdf:resource="https://identifiers.org/SO:0000704"/>
+      <sbol:type rdf:resource="https://identifiers.org/SBO:0000251"/>
+      <sbol:name>LacI produce</sbol:name>
+   </sbol:Component>
+   <sbol:Component rdf:about="https://sbolstandard.org/examples/LacI_protein">
+      <sbol:role rdf:resource="https://identifiers.org/GO:0003700"/>
+      <sbol:description>LacI protein</sbol:description>
+      <sbol:name>LacI</sbol:name>
+      <sbol:hasNamespace rdf:resource="https://sbolstandard.org/examples"/>
+      <sbol:type rdf:resource="https://identifiers.org/SBO:0000252"/>
+      <sbol:displayId>LacI_protein</sbol:displayId>
+   </sbol:Component>
+</rdf:RDF>

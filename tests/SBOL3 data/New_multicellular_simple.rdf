@@ -1,0 +1,147 @@
+<rdf:RDF
+    xmlns:SO="https://identifiers.org/SO:"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:EDAM="https://identifiers.org/edam:"
+    xmlns:sbol="http://sbols.org/v3#"
+    xmlns:CHEBI="https://identifiers.org/CHEBI:"
+    xmlns:prov="http://www.w3.org/ns/prov#"
+    xmlns:SBO="https://identifiers.org/SBO:"
+    xmlns:GO="https://identifiers.org/GO:"
+    xmlns="https://sbolstandard.org/examples/"
+    xmlns:om="http://www.ontology-of-units-of-measure.org/resource/om-2/"
+   xml:base="https://sbolstandard.org/examples/">
+   <sbol:Component rdf:about="https://sbolstandard.org/examples/MulticellularSystem">
+      <sbol:hasFeature>
+         <sbol:ComponentReference rdf:about="https://sbolstandard.org/examples/MulticellularSystem/ComponentReference2">
+            <sbol:refersTo>
+               <sbol:SubComponent rdf:about="https://sbolstandard.org/examples/ReceiverSystem/SubComponent2">
+                  <sbol:instanceOf>
+                     <sbol:Component rdf:about="https://sbolstandard.org/examples/AHL"/>
+                  </sbol:instanceOf>
+                  <sbol:displayId>SubComponent2</sbol:displayId>
+               </sbol:SubComponent>
+            </sbol:refersTo>
+            <sbol:inChildOf>
+               <sbol:SubComponent rdf:about="https://sbolstandard.org/examples/MulticellularSystem/SubComponent2">
+                  <sbol:instanceOf>
+                     <sbol:Component rdf:about="https://sbolstandard.org/examples/ReceiverSystem"/>
+                  </sbol:instanceOf>
+                  <sbol:displayId>SubComponent2</sbol:displayId>
+               </sbol:SubComponent>
+            </sbol:inChildOf>
+            <sbol:displayId>ComponentReference2</sbol:displayId>
+         </sbol:ComponentReference>
+      </sbol:hasFeature>
+      <sbol:hasNamespace rdf:resource="https://sbolstandard.org/examples"/>
+      <sbol:type rdf:resource="https://identifiers.org/SBO:0000241"/>
+      <sbol:description>Multicellular System</sbol:description>
+      <sbol:hasConstraint>
+         <sbol:Constraint rdf:about="https://sbolstandard.org/examples/MulticellularSystem/Constraint1">
+            <sbol:subject>
+               <sbol:ComponentReference rdf:about="https://sbolstandard.org/examples/MulticellularSystem/ComponentReference1">
+                  <sbol:refersTo>
+                     <sbol:SubComponent rdf:about="https://sbolstandard.org/examples/SenderSystem/SubComponent2">
+                        <sbol:instanceOf>
+                           <sbol:Component rdf:about="https://sbolstandard.org/examples/AHL"/>
+                        </sbol:instanceOf>
+                        <sbol:displayId>SubComponent2</sbol:displayId>
+                     </sbol:SubComponent>
+                  </sbol:refersTo>
+                  <sbol:inChildOf>
+                     <sbol:SubComponent rdf:about="https://sbolstandard.org/examples/MulticellularSystem/SubComponent1">
+                        <sbol:instanceOf>
+                           <sbol:Component rdf:about="https://sbolstandard.org/examples/SenderSystem"/>
+                        </sbol:instanceOf>
+                        <sbol:displayId>SubComponent1</sbol:displayId>
+                     </sbol:SubComponent>
+                  </sbol:inChildOf>
+                  <sbol:displayId>ComponentReference1</sbol:displayId>
+               </sbol:ComponentReference>
+            </sbol:subject>
+            <sbol:restriction rdf:resource="http://sbols.org/v3#verifyIdentical"/>
+            <sbol:object rdf:resource="https://sbolstandard.org/examples/MulticellularSystem/ComponentReference2"/>
+            <sbol:displayId>Constraint1</sbol:displayId>
+         </sbol:Constraint>
+      </sbol:hasConstraint>
+      <sbol:role rdf:resource="https://identifiers.org/SBO:0000289"/>
+      <sbol:name>MulticellularSystem</sbol:name>
+      <sbol:hasFeature rdf:resource="https://sbolstandard.org/examples/MulticellularSystem/SubComponent1"/>
+      <sbol:hasFeature rdf:resource="https://sbolstandard.org/examples/MulticellularSystem/ComponentReference1"/>
+      <sbol:hasFeature rdf:resource="https://sbolstandard.org/examples/MulticellularSystem/SubComponent2"/>
+      <sbol:displayId>MulticellularSystem</sbol:displayId>
+   </sbol:Component>
+   <sbol:Component rdf:about="https://sbolstandard.org/examples/ReceiverSystem">
+      <sbol:role rdf:resource="https://identifiers.org/SBO:0000289"/>
+      <sbol:description>Receiver System</sbol:description>
+      <sbol:name>ReceiverSystem</sbol:name>
+      <sbol:hasFeature rdf:resource="https://sbolstandard.org/examples/ReceiverSystem/SubComponent2"/>
+      <sbol:displayId>ReceiverSystem</sbol:displayId>
+      <sbol:hasConstraint>
+         <sbol:Constraint rdf:about="https://sbolstandard.org/examples/ReceiverSystem/Constraint1">
+            <sbol:subject>
+               <sbol:SubComponent rdf:about="https://sbolstandard.org/examples/ReceiverSystem/SubComponent1">
+                  <sbol:instanceOf>
+                     <sbol:Component rdf:about="https://sbolstandard.org/examples/OrganismB"/>
+                  </sbol:instanceOf>
+                  <sbol:displayId>SubComponent1</sbol:displayId>
+               </sbol:SubComponent>
+            </sbol:subject>
+            <sbol:restriction rdf:resource="http://sbols.org/v3#contains"/>
+            <sbol:object rdf:resource="https://sbolstandard.org/examples/ReceiverSystem/SubComponent2"/>
+            <sbol:displayId>Constraint1</sbol:displayId>
+         </sbol:Constraint>
+      </sbol:hasConstraint>
+      <sbol:type rdf:resource="https://identifiers.org/SBO:0000241"/>
+      <sbol:hasFeature rdf:resource="https://sbolstandard.org/examples/ReceiverSystem/SubComponent1"/>
+      <sbol:hasNamespace rdf:resource="https://sbolstandard.org/examples"/>
+   </sbol:Component>
+   <sbol:Component rdf:about="https://sbolstandard.org/examples/SenderSystem">
+      <sbol:hasNamespace rdf:resource="https://sbolstandard.org/examples"/>
+      <sbol:hasFeature>
+         <sbol:SubComponent rdf:about="https://sbolstandard.org/examples/SenderSystem/SubComponent1">
+            <sbol:instanceOf>
+               <sbol:Component rdf:about="https://sbolstandard.org/examples/OrganismA"/>
+            </sbol:instanceOf>
+            <sbol:displayId>SubComponent1</sbol:displayId>
+         </sbol:SubComponent>
+      </sbol:hasFeature>
+      <sbol:description>Sender System</sbol:description>
+      <sbol:hasConstraint>
+         <sbol:Constraint rdf:about="https://sbolstandard.org/examples/SenderSystem/Constraint1">
+            <sbol:subject rdf:resource="https://sbolstandard.org/examples/SenderSystem/SubComponent1"/>
+            <sbol:restriction rdf:resource="http://sbols.org/v3#contains"/>
+            <sbol:object rdf:resource="https://sbolstandard.org/examples/SenderSystem/SubComponent2"/>
+            <sbol:displayId>Constraint1</sbol:displayId>
+         </sbol:Constraint>
+      </sbol:hasConstraint>
+      <sbol:name>SenderSystem</sbol:name>
+      <sbol:displayId>SenderSystem</sbol:displayId>
+      <sbol:role rdf:resource="https://identifiers.org/SBO:0000289"/>
+      <sbol:type rdf:resource="https://identifiers.org/SBO:0000241"/>
+      <sbol:hasFeature rdf:resource="https://sbolstandard.org/examples/SenderSystem/SubComponent2"/>
+   </sbol:Component>
+   <sbol:Component rdf:about="https://sbolstandard.org/examples/AHL">
+      <sbol:type rdf:resource="https://identifiers.org/SBO:0000247"/>
+      <sbol:role rdf:resource="https://identifiers.org/CHEBI:35224"/>
+      <sbol:name>AHL</sbol:name>
+      <sbol:hasNamespace rdf:resource="https://sbolstandard.org/examples"/>
+      <sbol:displayId>AHL</sbol:displayId>
+      <sbol:description>AHL</sbol:description>
+   </sbol:Component>
+   <sbol:Component rdf:about="https://sbolstandard.org/examples/OrganismA">
+      <sbol:type rdf:resource="https://identifiers.org/GO:0005623"/>
+      <sbol:role rdf:resource="https://identifiers.org/SBO:0000290"/>
+      <sbol:name>OrganismA</sbol:name>
+      <sbol:hasNamespace rdf:resource="https://sbolstandard.org/examples"/>
+      <sbol:displayId>OrganismA</sbol:displayId>
+      <sbol:description>Organism A</sbol:description>
+   </sbol:Component>
+   <sbol:Component rdf:about="https://sbolstandard.org/examples/OrganismB">
+      <sbol:type rdf:resource="https://identifiers.org/GO:0005623"/>
+      <sbol:role rdf:resource="https://identifiers.org/SBO:0000290"/>
+      <sbol:name>OrganismB</sbol:name>
+      <sbol:hasNamespace rdf:resource="https://sbolstandard.org/examples"/>
+      <sbol:displayId>OrganismB</sbol:displayId>
+      <sbol:description>Organism B</sbol:description>
+   </sbol:Component>
+</rdf:RDF>

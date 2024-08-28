@@ -1,0 +1,577 @@
+<rdf:RDF
+    xmlns:SO="https://identifiers.org/SO:"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:EDAM="https://identifiers.org/edam:"
+    xmlns:sbol="http://sbols.org/v3#"
+    xmlns:CHEBI="https://identifiers.org/CHEBI:"
+    xmlns:prov="http://www.w3.org/ns/prov#"
+    xmlns:SBO="https://identifiers.org/SBO:"
+    xmlns:GO="https://identifiers.org/GO:"
+    xmlns="https://sbolstandard.org/examples/"
+    xmlns:om="http://www.ontology-of-units-of-measure.org/resource/om-2/"
+   xml:base="https://sbolstandard.org/examples/">
+   <sbol:Component rdf:about="https://sbolstandard.org/examples/MulticellularSystem">
+      <sbol:hasFeature>
+         <sbol:ComponentReference rdf:about="https://sbolstandard.org/examples/MulticellularSystem/ComponentReference2">
+            <sbol:refersTo>
+               <sbol:SubComponent rdf:about="https://sbolstandard.org/examples/ReceiverSystem/SubComponent2">
+                  <sbol:instanceOf>
+                     <sbol:Component rdf:about="https://sbolstandard.org/examples/AHL"/>
+                  </sbol:instanceOf>
+                  <sbol:displayId>SubComponent2</sbol:displayId>
+               </sbol:SubComponent>
+            </sbol:refersTo>
+            <sbol:inChildOf>
+               <sbol:SubComponent rdf:about="https://sbolstandard.org/examples/MulticellularSystem/SubComponent2">
+                  <sbol:instanceOf>
+                     <sbol:Component rdf:about="https://sbolstandard.org/examples/ReceiverSystem"/>
+                  </sbol:instanceOf>
+                  <sbol:displayId>SubComponent2</sbol:displayId>
+               </sbol:SubComponent>
+            </sbol:inChildOf>
+            <sbol:displayId>ComponentReference2</sbol:displayId>
+         </sbol:ComponentReference>
+      </sbol:hasFeature>
+      <sbol:hasNamespace rdf:resource="https://sbolstandard.org/examples"/>
+      <sbol:type rdf:resource="https://identifiers.org/SBO:0000241"/>
+      <sbol:description>Multicellular System</sbol:description>
+      <sbol:hasConstraint>
+         <sbol:Constraint rdf:about="https://sbolstandard.org/examples/MulticellularSystem/Constraint1">
+            <sbol:subject>
+               <sbol:ComponentReference rdf:about="https://sbolstandard.org/examples/MulticellularSystem/ComponentReference1">
+                  <sbol:refersTo>
+                     <sbol:SubComponent rdf:about="https://sbolstandard.org/examples/SenderSystem/SubComponent2">
+                        <sbol:instanceOf>
+                           <sbol:Component rdf:about="https://sbolstandard.org/examples/AHL"/>
+                        </sbol:instanceOf>
+                        <sbol:displayId>SubComponent2</sbol:displayId>
+                     </sbol:SubComponent>
+                  </sbol:refersTo>
+                  <sbol:inChildOf>
+                     <sbol:SubComponent rdf:about="https://sbolstandard.org/examples/MulticellularSystem/SubComponent1">
+                        <sbol:instanceOf>
+                           <sbol:Component rdf:about="https://sbolstandard.org/examples/SenderSystem"/>
+                        </sbol:instanceOf>
+                        <sbol:displayId>SubComponent1</sbol:displayId>
+                     </sbol:SubComponent>
+                  </sbol:inChildOf>
+                  <sbol:displayId>ComponentReference1</sbol:displayId>
+               </sbol:ComponentReference>
+            </sbol:subject>
+            <sbol:restriction rdf:resource="http://sbols.org/v3#verifyIdentical"/>
+            <sbol:object rdf:resource="https://sbolstandard.org/examples/MulticellularSystem/ComponentReference2"/>
+            <sbol:displayId>Constraint1</sbol:displayId>
+         </sbol:Constraint>
+      </sbol:hasConstraint>
+      <sbol:role rdf:resource="https://identifiers.org/SBO:0000289"/>
+      <sbol:name>MulticellularSystem</sbol:name>
+      <sbol:hasFeature rdf:resource="https://sbolstandard.org/examples/MulticellularSystem/SubComponent1"/>
+      <sbol:hasFeature rdf:resource="https://sbolstandard.org/examples/MulticellularSystem/ComponentReference1"/>
+      <sbol:hasFeature rdf:resource="https://sbolstandard.org/examples/MulticellularSystem/SubComponent2"/>
+      <sbol:displayId>MulticellularSystem</sbol:displayId>
+   </sbol:Component>
+   <sbol:Component rdf:about="https://sbolstandard.org/examples/luxI">
+      <sbol:type rdf:resource="https://identifiers.org/SBO:0000251"/>
+      <sbol:role rdf:resource="https://identifiers.org/SO:0000316"/>
+      <sbol:name>luxI</sbol:name>
+      <sbol:hasNamespace rdf:resource="https://sbolstandard.org/examples"/>
+      <sbol:displayId>luxI</sbol:displayId>
+      <sbol:description>luxI coding sequence</sbol:description>
+   </sbol:Component>
+   <sbol:Component rdf:about="https://sbolstandard.org/examples/rbs_luxI">
+      <sbol:type rdf:resource="https://identifiers.org/SBO:0000251"/>
+      <sbol:role rdf:resource="https://identifiers.org/SO:0000139"/>
+      <sbol:name>rbs</sbol:name>
+      <sbol:hasNamespace rdf:resource="https://sbolstandard.org/examples"/>
+      <sbol:displayId>rbs_luxI</sbol:displayId>
+      <sbol:description>RBS</sbol:description>
+   </sbol:Component>
+   <sbol:Component rdf:about="https://sbolstandard.org/examples/GFP_protein">
+      <sbol:type rdf:resource="https://identifiers.org/SBO:0000252"/>
+      <sbol:name>GFP</sbol:name>
+      <sbol:hasNamespace rdf:resource="https://sbolstandard.org/examples"/>
+      <sbol:displayId>GFP_protein</sbol:displayId>
+      <sbol:description>GFP</sbol:description>
+   </sbol:Component>
+   <sbol:Component rdf:about="https://sbolstandard.org/examples/LuxR_AHL">
+      <sbol:type rdf:resource="https://identifiers.org/SBO:0000252"/>
+      <sbol:role rdf:resource="https://identifiers.org/GO:0003700"/>
+      <sbol:name>LuxR_AHL</sbol:name>
+      <sbol:hasNamespace rdf:resource="https://sbolstandard.org/examples"/>
+      <sbol:displayId>LuxR_AHL</sbol:displayId>
+      <sbol:description>LuxR_AHL complex</sbol:description>
+   </sbol:Component>
+   <sbol:Component rdf:about="https://sbolstandard.org/examples/rbs_gfp">
+      <sbol:type rdf:resource="https://identifiers.org/SBO:0000251"/>
+      <sbol:role rdf:resource="https://identifiers.org/SO:0000139"/>
+      <sbol:name>rbs</sbol:name>
+      <sbol:hasNamespace rdf:resource="https://sbolstandard.org/examples"/>
+      <sbol:displayId>rbs_gfp</sbol:displayId>
+      <sbol:description>RBS</sbol:description>
+   </sbol:Component>
+   <sbol:Component rdf:about="https://sbolstandard.org/examples/ter_gfp">
+      <sbol:type rdf:resource="https://identifiers.org/SBO:0000251"/>
+      <sbol:role rdf:resource="https://identifiers.org/SO:0000141"/>
+      <sbol:name>gfp terminator</sbol:name>
+      <sbol:hasNamespace rdf:resource="https://sbolstandard.org/examples"/>
+      <sbol:displayId>ter_gfp</sbol:displayId>
+      <sbol:description>Terminator</sbol:description>
+   </sbol:Component>
+   <sbol:Component rdf:about="https://sbolstandard.org/examples/OrganismA">
+      <sbol:type rdf:resource="https://identifiers.org/GO:0005623"/>
+      <sbol:role rdf:resource="https://identifiers.org/SBO:0000290"/>
+      <sbol:name>OrganismA</sbol:name>
+      <sbol:hasNamespace rdf:resource="https://sbolstandard.org/examples"/>
+      <sbol:displayId>OrganismA</sbol:displayId>
+      <sbol:description>Organism A</sbol:description>
+   </sbol:Component>
+   <sbol:Component rdf:about="https://sbolstandard.org/examples/AHL_receiver">
+      <sbol:hasInteraction>
+         <sbol:Interaction rdf:about="https://sbolstandard.org/examples/AHL_receiver/Interaction4">
+            <sbol:type rdf:resource="https://identifiers.org/SBO:0000177"/>
+            <sbol:hasParticipation>
+               <sbol:Participation rdf:about="https://sbolstandard.org/examples/AHL_receiver/Interaction4/Participation1">
+                  <sbol:role rdf:resource="https://identifiers.org/SBO:0000010"/>
+                  <sbol:participant>
+                     <sbol:SubComponent rdf:about="https://sbolstandard.org/examples/AHL_receiver/SubComponent10">
+                        <sbol:instanceOf>
+                           <sbol:Component rdf:about="https://sbolstandard.org/examples/LuxR_protein"/>
+                        </sbol:instanceOf>
+                        <sbol:displayId>SubComponent10</sbol:displayId>
+                     </sbol:SubComponent>
+                  </sbol:participant>
+                  <sbol:displayId>Participation1</sbol:displayId>
+               </sbol:Participation>
+            </sbol:hasParticipation>
+            <sbol:hasParticipation>
+               <sbol:Participation rdf:about="https://sbolstandard.org/examples/AHL_receiver/Interaction4/Participation2">
+                  <sbol:role rdf:resource="https://identifiers.org/SBO:0000010"/>
+                  <sbol:participant>
+                     <sbol:SubComponent rdf:about="https://sbolstandard.org/examples/AHL_receiver/SubComponent9">
+                        <sbol:instanceOf>
+                           <sbol:Component rdf:about="https://sbolstandard.org/examples/AHL"/>
+                        </sbol:instanceOf>
+                        <sbol:displayId>SubComponent9</sbol:displayId>
+                     </sbol:SubComponent>
+                  </sbol:participant>
+                  <sbol:displayId>Participation2</sbol:displayId>
+               </sbol:Participation>
+            </sbol:hasParticipation>
+            <sbol:hasParticipation>
+               <sbol:Participation rdf:about="https://sbolstandard.org/examples/AHL_receiver/Interaction4/Participation3">
+                  <sbol:role rdf:resource="https://identifiers.org/SBO:0000011"/>
+                  <sbol:participant>
+                     <sbol:SubComponent rdf:about="https://sbolstandard.org/examples/AHL_receiver/SubComponent12">
+                        <sbol:instanceOf rdf:resource="https://sbolstandard.org/examples/LuxR_AHL"/>
+                        <sbol:displayId>SubComponent12</sbol:displayId>
+                     </sbol:SubComponent>
+                  </sbol:participant>
+                  <sbol:displayId>Participation3</sbol:displayId>
+               </sbol:Participation>
+            </sbol:hasParticipation>
+            <sbol:displayId>Interaction4</sbol:displayId>
+         </sbol:Interaction>
+      </sbol:hasInteraction>
+      <sbol:hasFeature>
+         <sbol:SubComponent rdf:about="https://sbolstandard.org/examples/AHL_receiver/SubComponent11">
+            <sbol:instanceOf rdf:resource="https://sbolstandard.org/examples/GFP_protein"/>
+            <sbol:displayId>SubComponent11</sbol:displayId>
+         </sbol:SubComponent>
+      </sbol:hasFeature>
+      <sbol:type rdf:resource="https://identifiers.org/SBO:0000251"/>
+      <sbol:hasInteraction>
+         <sbol:Interaction rdf:about="https://sbolstandard.org/examples/AHL_receiver/Interaction1">
+            <sbol:type rdf:resource="https://identifiers.org/SBO:0000589"/>
+            <sbol:hasParticipation>
+               <sbol:Participation rdf:about="https://sbolstandard.org/examples/AHL_receiver/Interaction1/Participation1">
+                  <sbol:role rdf:resource="https://identifiers.org/SBO:0000645"/>
+                  <sbol:participant>
+                     <sbol:SubComponent rdf:about="https://sbolstandard.org/examples/AHL_receiver/SubComponent3">
+                        <sbol:orientation rdf:resource="https://identifiers.org/SO:0001030"/>
+                        <sbol:instanceOf>
+                           <sbol:Component rdf:about="https://sbolstandard.org/examples/luxR"/>
+                        </sbol:instanceOf>
+                        <sbol:displayId>SubComponent3</sbol:displayId>
+                     </sbol:SubComponent>
+                  </sbol:participant>
+                  <sbol:displayId>Participation1</sbol:displayId>
+               </sbol:Participation>
+            </sbol:hasParticipation>
+            <sbol:hasParticipation>
+               <sbol:Participation rdf:about="https://sbolstandard.org/examples/AHL_receiver/Interaction1/Participation2">
+                  <sbol:role rdf:resource="https://identifiers.org/SBO:0000011"/>
+                  <sbol:participant rdf:resource="https://sbolstandard.org/examples/AHL_receiver/SubComponent10"/>
+                  <sbol:displayId>Participation2</sbol:displayId>
+               </sbol:Participation>
+            </sbol:hasParticipation>
+            <sbol:displayId>Interaction1</sbol:displayId>
+         </sbol:Interaction>
+      </sbol:hasInteraction>
+      <sbol:name>AHL receiver</sbol:name>
+      <sbol:hasFeature>
+         <sbol:SubComponent rdf:about="https://sbolstandard.org/examples/AHL_receiver/SubComponent5">
+            <sbol:orientation rdf:resource="https://identifiers.org/SO:0001030"/>
+            <sbol:instanceOf>
+               <sbol:Component rdf:about="https://sbolstandard.org/examples/pLuxR"/>
+            </sbol:instanceOf>
+            <sbol:displayId>SubComponent5</sbol:displayId>
+         </sbol:SubComponent>
+      </sbol:hasFeature>
+      <sbol:hasFeature rdf:resource="https://sbolstandard.org/examples/AHL_receiver/SubComponent12"/>
+      <sbol:hasFeature>
+         <sbol:SubComponent rdf:about="https://sbolstandard.org/examples/AHL_receiver/SubComponent7">
+            <sbol:orientation rdf:resource="https://sbolstandard.org/examples/https://identifiers.org/SO:0001030"/>
+            <sbol:instanceOf>
+               <sbol:Component rdf:about="https://sbolstandard.org/examples/gfp"/>
+            </sbol:instanceOf>
+            <sbol:displayId>SubComponent7</sbol:displayId>
+         </sbol:SubComponent>
+      </sbol:hasFeature>
+      <sbol:hasFeature>
+         <sbol:SubComponent rdf:about="https://sbolstandard.org/examples/AHL_receiver/SubComponent6">
+            <sbol:orientation rdf:resource="https://identifiers.org/SO:0001030"/>
+            <sbol:instanceOf rdf:resource="https://sbolstandard.org/examples/rbs_gfp"/>
+            <sbol:displayId>SubComponent6</sbol:displayId>
+         </sbol:SubComponent>
+      </sbol:hasFeature>
+      <sbol:hasInteraction>
+         <sbol:Interaction rdf:about="https://sbolstandard.org/examples/AHL_receiver/Interaction2">
+            <sbol:type rdf:resource="https://identifiers.org/SBO:0000589"/>
+            <sbol:hasParticipation>
+               <sbol:Participation rdf:about="https://sbolstandard.org/examples/AHL_receiver/Interaction2/Participation1">
+                  <sbol:role rdf:resource="https://identifiers.org/SBO:0000645"/>
+                  <sbol:participant rdf:resource="https://sbolstandard.org/examples/AHL_receiver/SubComponent7"/>
+                  <sbol:displayId>Participation1</sbol:displayId>
+               </sbol:Participation>
+            </sbol:hasParticipation>
+            <sbol:hasParticipation>
+               <sbol:Participation rdf:about="https://sbolstandard.org/examples/AHL_receiver/Interaction2/Participation2">
+                  <sbol:role rdf:resource="https://identifiers.org/SBO:0000011"/>
+                  <sbol:participant rdf:resource="https://sbolstandard.org/examples/AHL_receiver/SubComponent11"/>
+                  <sbol:displayId>Participation2</sbol:displayId>
+               </sbol:Participation>
+            </sbol:hasParticipation>
+            <sbol:displayId>Interaction2</sbol:displayId>
+         </sbol:Interaction>
+      </sbol:hasInteraction>
+      <sbol:hasFeature>
+         <sbol:SubComponent rdf:about="https://sbolstandard.org/examples/AHL_receiver/SubComponent8">
+            <sbol:orientation rdf:resource="https://identifiers.org/SO:0001030"/>
+            <sbol:instanceOf rdf:resource="https://sbolstandard.org/examples/ter_gfp"/>
+            <sbol:displayId>SubComponent8</sbol:displayId>
+         </sbol:SubComponent>
+      </sbol:hasFeature>
+      <sbol:hasNamespace rdf:resource="https://sbolstandard.org/examples"/>
+      <sbol:displayId>AHL_receiver</sbol:displayId>
+      <sbol:hasFeature rdf:resource="https://sbolstandard.org/examples/AHL_receiver/SubComponent9"/>
+      <sbol:hasFeature>
+         <sbol:SubComponent rdf:about="https://sbolstandard.org/examples/AHL_receiver/SubComponent1">
+            <sbol:orientation rdf:resource="https://identifiers.org/SO:0001030"/>
+            <sbol:instanceOf>
+               <sbol:Component rdf:about="https://sbolstandard.org/examples/pConstLuxR"/>
+            </sbol:instanceOf>
+            <sbol:displayId>SubComponent1</sbol:displayId>
+         </sbol:SubComponent>
+      </sbol:hasFeature>
+      <sbol:hasFeature rdf:resource="https://sbolstandard.org/examples/AHL_receiver/SubComponent3"/>
+      <sbol:role rdf:resource="https://identifiers.org/SO:0000704"/>
+      <sbol:hasFeature>
+         <sbol:SubComponent rdf:about="https://sbolstandard.org/examples/AHL_receiver/SubComponent2">
+            <sbol:orientation rdf:resource="https://identifiers.org/SO:0001030"/>
+            <sbol:instanceOf>
+               <sbol:Component rdf:about="https://sbolstandard.org/examples/rbs_luxR"/>
+            </sbol:instanceOf>
+            <sbol:displayId>SubComponent2</sbol:displayId>
+         </sbol:SubComponent>
+      </sbol:hasFeature>
+      <sbol:hasFeature rdf:resource="https://sbolstandard.org/examples/AHL_receiver/SubComponent10"/>
+      <sbol:hasFeature>
+         <sbol:SubComponent rdf:about="https://sbolstandard.org/examples/AHL_receiver/SubComponent4">
+            <sbol:orientation rdf:resource="https://identifiers.org/SO:0001030"/>
+            <sbol:instanceOf>
+               <sbol:Component rdf:about="https://sbolstandard.org/examples/ter_luxR"/>
+            </sbol:instanceOf>
+            <sbol:displayId>SubComponent4</sbol:displayId>
+         </sbol:SubComponent>
+      </sbol:hasFeature>
+      <sbol:description>AHL receiver</sbol:description>
+      <sbol:hasInteraction>
+         <sbol:Interaction rdf:about="https://sbolstandard.org/examples/AHL_receiver/Interaction3">
+            <sbol:type rdf:resource="https://identifiers.org/SBO:0000170"/>
+            <sbol:hasParticipation>
+               <sbol:Participation rdf:about="https://sbolstandard.org/examples/AHL_receiver/Interaction3/Participation1">
+                  <sbol:role rdf:resource="https://identifiers.org/SBO:0000643"/>
+                  <sbol:participant rdf:resource="https://sbolstandard.org/examples/AHL_receiver/SubComponent5"/>
+                  <sbol:displayId>Participation1</sbol:displayId>
+               </sbol:Participation>
+            </sbol:hasParticipation>
+            <sbol:hasParticipation>
+               <sbol:Participation rdf:about="https://sbolstandard.org/examples/AHL_receiver/Interaction3/Participation2">
+                  <sbol:role rdf:resource="https://identifiers.org/SBO:0000459"/>
+                  <sbol:participant rdf:resource="https://sbolstandard.org/examples/AHL_receiver/SubComponent12"/>
+                  <sbol:displayId>Participation2</sbol:displayId>
+               </sbol:Participation>
+            </sbol:hasParticipation>
+            <sbol:displayId>Interaction3</sbol:displayId>
+         </sbol:Interaction>
+      </sbol:hasInteraction>
+   </sbol:Component>
+   <sbol:Component rdf:about="https://sbolstandard.org/examples/ter_luxI">
+      <sbol:type rdf:resource="https://identifiers.org/SBO:0000251"/>
+      <sbol:role rdf:resource="https://identifiers.org/SO:0000141"/>
+      <sbol:name>luxI terminator</sbol:name>
+      <sbol:hasNamespace rdf:resource="https://sbolstandard.org/examples"/>
+      <sbol:displayId>ter_luxI</sbol:displayId>
+      <sbol:description>Terminator</sbol:description>
+   </sbol:Component>
+   <sbol:Component rdf:about="https://sbolstandard.org/examples/OrganismB">
+      <sbol:type rdf:resource="https://identifiers.org/GO:0005623"/>
+      <sbol:role rdf:resource="https://identifiers.org/SBO:0000290"/>
+      <sbol:name>OrganismB</sbol:name>
+      <sbol:hasNamespace rdf:resource="https://sbolstandard.org/examples"/>
+      <sbol:displayId>OrganismB</sbol:displayId>
+      <sbol:description>Organism B</sbol:description>
+   </sbol:Component>
+   <sbol:Component rdf:about="https://sbolstandard.org/examples/ReceiverSystem">
+      <sbol:role rdf:resource="https://identifiers.org/SBO:0000289"/>
+      <sbol:description>Receiver System</sbol:description>
+      <sbol:hasFeature>
+         <sbol:SubComponent rdf:about="https://sbolstandard.org/examples/ReceiverSystem/SubComponent3">
+            <sbol:instanceOf rdf:resource="https://sbolstandard.org/examples/AHL_receiver"/>
+            <sbol:displayId>SubComponent3</sbol:displayId>
+         </sbol:SubComponent>
+      </sbol:hasFeature>
+      <sbol:name>ReceiverSystem</sbol:name>
+      <sbol:hasFeature>
+         <sbol:ComponentReference rdf:about="https://sbolstandard.org/examples/ReceiverSystem/ComponentReference1">
+            <sbol:refersTo rdf:resource="https://sbolstandard.org/examples/AHL_receiver/SubComponent9"/>
+            <sbol:inChildOf rdf:resource="https://sbolstandard.org/examples/ReceiverSystem/SubComponent3"/>
+            <sbol:displayId>ComponentReference1</sbol:displayId>
+         </sbol:ComponentReference>
+      </sbol:hasFeature>
+      <sbol:hasFeature rdf:resource="https://sbolstandard.org/examples/ReceiverSystem/SubComponent2"/>
+      <sbol:displayId>ReceiverSystem</sbol:displayId>
+      <sbol:hasConstraint>
+         <sbol:Constraint rdf:about="https://sbolstandard.org/examples/ReceiverSystem/Constraint3">
+            <sbol:subject rdf:resource="https://sbolstandard.org/examples/ReceiverSystem/ComponentReference1"/>
+            <sbol:restriction rdf:resource="http://sbols.org/v3#verifyIdentical"/>
+            <sbol:object rdf:resource="https://sbolstandard.org/examples/ReceiverSystem/SubComponent2"/>
+            <sbol:displayId>Constraint3</sbol:displayId>
+         </sbol:Constraint>
+      </sbol:hasConstraint>
+      <sbol:type rdf:resource="https://identifiers.org/SBO:0000241"/>
+      <sbol:hasConstraint>
+         <sbol:Constraint rdf:about="https://sbolstandard.org/examples/ReceiverSystem/Constraint1">
+            <sbol:subject>
+               <sbol:SubComponent rdf:about="https://sbolstandard.org/examples/ReceiverSystem/SubComponent1">
+                  <sbol:instanceOf rdf:resource="https://sbolstandard.org/examples/OrganismB"/>
+                  <sbol:displayId>SubComponent1</sbol:displayId>
+               </sbol:SubComponent>
+            </sbol:subject>
+            <sbol:restriction rdf:resource="http://sbols.org/v3#contains"/>
+            <sbol:object rdf:resource="https://sbolstandard.org/examples/ReceiverSystem/SubComponent2"/>
+            <sbol:displayId>Constraint1</sbol:displayId>
+         </sbol:Constraint>
+      </sbol:hasConstraint>
+      <sbol:hasFeature rdf:resource="https://sbolstandard.org/examples/ReceiverSystem/SubComponent1"/>
+      <sbol:hasConstraint>
+         <sbol:Constraint rdf:about="https://sbolstandard.org/examples/ReceiverSystem/Constraint2">
+            <sbol:subject rdf:resource="https://sbolstandard.org/examples/ReceiverSystem/SubComponent1"/>
+            <sbol:restriction rdf:resource="http://sbols.org/v3#contains"/>
+            <sbol:object rdf:resource="https://sbolstandard.org/examples/ReceiverSystem/SubComponent3"/>
+            <sbol:displayId>Constraint2</sbol:displayId>
+         </sbol:Constraint>
+      </sbol:hasConstraint>
+      <sbol:hasNamespace rdf:resource="/examples"/>
+   </sbol:Component>
+   <sbol:Component rdf:about="https://sbolstandard.org/examples/pConstLuxR">
+      <sbol:type rdf:resource="https://identifiers.org/SBO:0000251"/>
+      <sbol:role rdf:resource="https://identifiers.org/SO:0000167"/>
+      <sbol:name>pLuxR</sbol:name>
+      <sbol:hasNamespace rdf:resource="https://sbolstandard.org/examples"/>
+      <sbol:displayId>pConstLuxR</sbol:displayId>
+      <sbol:description>Constituve promoter</sbol:description>
+   </sbol:Component>
+   <sbol:Component rdf:about="https://sbolstandard.org/examples/AHL_producer">
+      <sbol:type rdf:resource="https://identifiers.org/SBO:0000251"/>
+      <sbol:description>AHL producer</sbol:description>
+      <sbol:hasFeature>
+         <sbol:SubComponent rdf:about="https://sbolstandard.org/examples/AHL_producer/SubComponent3">
+            <sbol:orientation rdf:resource="https://identifiers.org/SO:0001030"/>
+            <sbol:instanceOf rdf:resource="https://sbolstandard.org/examples/luxI"/>
+            <sbol:displayId>SubComponent3</sbol:displayId>
+         </sbol:SubComponent>
+      </sbol:hasFeature>
+      <sbol:displayId>AHL_producer</sbol:displayId>
+      <sbol:hasFeature>
+         <sbol:SubComponent rdf:about="https://sbolstandard.org/examples/AHL_producer/SubComponent2">
+            <sbol:orientation rdf:resource="https://identifiers.org/SO:0001030"/>
+            <sbol:instanceOf rdf:resource="https://sbolstandard.org/examples/rbs_luxI"/>
+            <sbol:displayId>SubComponent2</sbol:displayId>
+         </sbol:SubComponent>
+      </sbol:hasFeature>
+      <sbol:hasInteraction>
+         <sbol:Interaction rdf:about="https://sbolstandard.org/examples/AHL_producer/Interaction1">
+            <sbol:type rdf:resource="https://identifiers.org/SBO:0000589"/>
+            <sbol:hasParticipation>
+               <sbol:Participation rdf:about="https://sbolstandard.org/examples/AHL_producer/Interaction1/Participation1">
+                  <sbol:role rdf:resource="https://identifiers.org/SBO:0000645"/>
+                  <sbol:participant rdf:resource="https://sbolstandard.org/examples/AHL_producer/SubComponent3"/>
+                  <sbol:displayId>Participation1</sbol:displayId>
+               </sbol:Participation>
+            </sbol:hasParticipation>
+            <sbol:hasParticipation>
+               <sbol:Participation rdf:about="https://sbolstandard.org/examples/AHL_producer/Interaction1/Participation2">
+                  <sbol:role rdf:resource="https://identifiers.org/SBO:0000011"/>
+                  <sbol:participant>
+                     <sbol:SubComponent rdf:about="https://sbolstandard.org/examples/AHL_producer/SubComponent5">
+                        <sbol:instanceOf>
+                           <sbol:Component rdf:about="https://sbolstandard.org/examples/AHL"/>
+                        </sbol:instanceOf>
+                        <sbol:displayId>SubComponent5</sbol:displayId>
+                     </sbol:SubComponent>
+                  </sbol:participant>
+                  <sbol:displayId>Participation2</sbol:displayId>
+               </sbol:Participation>
+            </sbol:hasParticipation>
+            <sbol:displayId>Interaction1</sbol:displayId>
+         </sbol:Interaction>
+      </sbol:hasInteraction>
+      <sbol:role rdf:resource="https://identifiers.org/SO:0000704"/>
+      <sbol:hasFeature>
+         <sbol:SubComponent rdf:about="https://sbolstandard.org/examples/AHL_producer/SubComponent1">
+            <sbol:orientation rdf:resource="https://identifiers.org/SO:0001030"/>
+            <sbol:instanceOf>
+               <sbol:Component rdf:about="https://sbolstandard.org/examples/pConstLuxI"/>
+            </sbol:instanceOf>
+            <sbol:displayId>SubComponent1</sbol:displayId>
+         </sbol:SubComponent>
+      </sbol:hasFeature>
+      <sbol:hasFeature>
+         <sbol:SubComponent rdf:about="https://sbolstandard.org/examples/AHL_producer/SubComponent4">
+            <sbol:orientation rdf:resource="https://identifiers.org/SO:0001030"/>
+            <sbol:instanceOf rdf:resource="https://sbolstandard.org/examples/ter_luxI"/>
+            <sbol:displayId>SubComponent4</sbol:displayId>
+         </sbol:SubComponent>
+      </sbol:hasFeature>
+      <sbol:hasFeature rdf:resource="https://sbolstandard.org/examples/AHL_producer/SubComponent5"/>
+      <sbol:hasNamespace rdf:resource="https://sbolstandard.org/examples"/>
+      <sbol:name>AHL producer</sbol:name>
+   </sbol:Component>
+   <sbol:Component rdf:about="https://sbolstandard.org/examples/SenderSystem">
+      <sbol:hasNamespace rdf:resource="https://sbolstandard.org/examples"/>
+      <sbol:hasFeature>
+         <sbol:SubComponent rdf:about="https://sbolstandard.org/examples/SenderSystem/SubComponent1">
+            <sbol:instanceOf rdf:resource="https://sbolstandard.org/examples/OrganismA"/>
+            <sbol:displayId>SubComponent1</sbol:displayId>
+         </sbol:SubComponent>
+      </sbol:hasFeature>
+      <sbol:description>Sender System</sbol:description>
+      <sbol:hasConstraint>
+         <sbol:Constraint rdf:about="https://sbolstandard.org/examples/SenderSystem/Constraint1">
+            <sbol:subject rdf:resource="https://sbolstandard.org/examples/SenderSystem/SubComponent1"/>
+            <sbol:restriction rdf:resource="http://sbols.org/v3#contains"/>
+            <sbol:object rdf:resource="https://sbolstandard.org/examples/SenderSystem/SubComponent2"/>
+            <sbol:displayId>Constraint1</sbol:displayId>
+         </sbol:Constraint>
+      </sbol:hasConstraint>
+      <sbol:name>SenderSystem</sbol:name>
+      <sbol:hasConstraint>
+         <sbol:Constraint rdf:about="https://sbolstandard.org/examples/SenderSystem/Constraint3">
+            <sbol:subject>
+               <sbol:ComponentReference rdf:about="https://sbolstandard.org/examples/SenderSystem/ComponentReference1">
+                  <sbol:refersTo rdf:resource="https://sbolstandard.org/examples/AHL_producer/SubComponent5"/>
+                  <sbol:inChildOf>
+                     <sbol:SubComponent rdf:about="https://sbolstandard.org/examples/SenderSystem/SubComponent3">
+                        <sbol:instanceOf rdf:resource="https://sbolstandard.org/examples/AHL_producer"/>
+                        <sbol:displayId>SubComponent3</sbol:displayId>
+                     </sbol:SubComponent>
+                  </sbol:inChildOf>
+                  <sbol:displayId>ComponentReference1</sbol:displayId>
+               </sbol:ComponentReference>
+            </sbol:subject>
+            <sbol:restriction rdf:resource="http://sbols.org/v3#verifyIdentical"/>
+            <sbol:object rdf:resource="https://sbolstandard.org/examples/SenderSystem/SubComponent2"/>
+            <sbol:displayId>Constraint3</sbol:displayId>
+         </sbol:Constraint>
+      </sbol:hasConstraint>
+      <sbol:displayId>SenderSystem</sbol:displayId>
+      <sbol:role rdf:resource="https://identifiers.org/SBO:0000289"/>
+      <sbol:hasConstraint>
+         <sbol:Constraint rdf:about="https://sbolstandard.org/examples/SenderSystem/Constraint2">
+            <sbol:subject rdf:resource="https://sbolstandard.org/examples/SenderSystem/SubComponent1"/>
+            <sbol:restriction rdf:resource="http://sbols.org/v3#contains"/>
+            <sbol:object rdf:resource="https://sbolstandard.org/examples/SenderSystem/SubComponent3"/>
+            <sbol:displayId>Constraint2</sbol:displayId>
+         </sbol:Constraint>
+      </sbol:hasConstraint>
+      <sbol:hasFeature rdf:resource="https://sbolstandard.org/examples/SenderSystem/ComponentReference1"/>
+      <sbol:type rdf:resource="https://identifiers.org/SBO:0000241"/>
+      <sbol:hasFeature rdf:resource="https://sbolstandard.org/examples/SenderSystem/SubComponent3"/>
+      <sbol:hasFeature rdf:resource="https://sbolstandard.org/examples/SenderSystem/SubComponent2"/>
+   </sbol:Component>
+   <sbol:Component rdf:about="https://sbolstandard.org/examples/ter_luxR">
+      <sbol:type rdf:resource="https://identifiers.org/SBO:0000251"/>
+      <sbol:role rdf:resource="https://identifiers.org/SO:0000141"/>
+      <sbol:name>luxR terminator</sbol:name>
+      <sbol:hasNamespace rdf:resource="https://sbolstandard.org/examples"/>
+      <sbol:displayId>ter_luxR</sbol:displayId>
+      <sbol:description>Terminator</sbol:description>
+   </sbol:Component>
+   <sbol:Component rdf:about="https://sbolstandard.org/examples/AHL">
+      <sbol:type rdf:resource="https://identifiers.org/SBO:0000247"/>
+      <sbol:role rdf:resource="https://identifiers.org/CHEBI:35224"/>
+      <sbol:name>AHL</sbol:name>
+      <sbol:hasNamespace rdf:resource="https://sbolstandard.org/examples"/>
+      <sbol:displayId>AHL</sbol:displayId>
+      <sbol:description>AHL</sbol:description>
+   </sbol:Component>
+   <sbol:Component rdf:about="https://sbolstandard.org/examples/pConstLuxI">
+      <sbol:type rdf:resource="https://identifiers.org/SBO:0000251"/>
+      <sbol:role rdf:resource="https://identifiers.org/SO:0000167"/>
+      <sbol:name>pConstLuxI</sbol:name>
+      <sbol:hasNamespace rdf:resource="https://sbolstandard.org/examples"/>
+      <sbol:displayId>pConstLuxI</sbol:displayId>
+      <sbol:description>Constitutive promoter</sbol:description>
+   </sbol:Component>
+   <sbol:Component rdf:about="https://sbolstandard.org/examples/pLuxR">
+      <sbol:type rdf:resource="https://identifiers.org/SBO:0000251"/>
+      <sbol:role rdf:resource="https://identifiers.org/SO:0000167"/>
+      <sbol:name>pLuxR</sbol:name>
+      <sbol:hasNamespace rdf:resource="https://sbolstandard.org/examples"/>
+      <sbol:displayId>pLuxR</sbol:displayId>
+      <sbol:description>LuxR inducible promoter</sbol:description>
+   </sbol:Component>
+   <sbol:Component rdf:about="https://sbolstandard.org/examples/luxR">
+      <sbol:type rdf:resource="https://identifiers.org/SBO:0000251"/>
+      <sbol:role rdf:resource="https://identifiers.org/SO:0000316"/>
+      <sbol:name>luxR</sbol:name>
+      <sbol:hasNamespace rdf:resource="https://sbolstandard.org/examples"/>
+      <sbol:displayId>luxR</sbol:displayId>
+      <sbol:description>luxR coding sequence</sbol:description>
+   </sbol:Component>
+   <sbol:Component rdf:about="https://sbolstandard.org/examples/rbs_luxR">
+      <sbol:type rdf:resource="https://identifiers.org/SBO:0000251"/>
+      <sbol:role rdf:resource="https://identifiers.org/SO:0000139"/>
+      <sbol:name>rbs</sbol:name>
+      <sbol:hasNamespace rdf:resource="https://sbolstandard.org/examples"/>
+      <sbol:displayId>rbs_luxR</sbol:displayId>
+      <sbol:description>RBS</sbol:description>
+   </sbol:Component>
+   <sbol:Component rdf:about="https://sbolstandard.org/examples/LuxR_protein">
+      <sbol:type rdf:resource="https://identifiers.org/SBO:0000252"/>
+      <sbol:role rdf:resource="https://identifiers.org/GO:0003700"/>
+      <sbol:name>LuxR_protein</sbol:name>
+      <sbol:hasNamespace rdf:resource="https://sbolstandard.org/examples"/>
+      <sbol:displayId>LuxR_protein</sbol:displayId>
+      <sbol:description>LuxR</sbol:description>
+   </sbol:Component>
+   <sbol:Component rdf:about="https://sbolstandard.org/examples/gfp">
+      <sbol:type rdf:resource="https://identifiers.org/SBO:0000251"/>
+      <sbol:role rdf:resource="https://identifiers.org/SO:0000316"/>
+      <sbol:name>gfp</sbol:name>
+      <sbol:hasNamespace rdf:resource="https://sbolstandard.org/examples"/>
+      <sbol:displayId>gfp</sbol:displayId>
+      <sbol:description>gfp coding sequence</sbol:description>
+   </sbol:Component>
+</rdf:RDF>
