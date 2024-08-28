@@ -1,0 +1,9 @@
+{
+    "type": "http://sbols.org/v3#Collection",
+    "pages": [
+      "Members",
+      "Details",
+      "Other Properties",
+      "Attachments"
+    ]
+  }
