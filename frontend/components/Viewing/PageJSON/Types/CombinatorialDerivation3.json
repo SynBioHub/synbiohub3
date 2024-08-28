@@ -1,0 +1,133 @@
+{
+    "type": "http://sbols.org/v3#CombinatorialDerivation",
+    "prefixes": [
+        "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>",
+        "PREFIX dcterms: <http://purl.org/dc/terms/>",
+        "PREFIX dc: <http://purl.org/dc/elements/1.1/>",
+        "PREFIX sbh: <http://wiki.synbiohub.org/wiki/Terms/synbiohub#>",
+        "PREFIX prov: <http://www.w3.org/ns/prov#>",
+        "PREFIX sbol: <http://sbols.org/v3#>",
+        "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>",
+        "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>",
+        "PREFIX purl: <http://purl.obolibrary.org/obo/>"
+    ],
+    "metadata": [
+        {
+            "title": "Template",
+            "rootPredicate": "sbol:template",
+            "icon": "faStickyNote",
+            "sections": [
+                {
+                    "title": "Extra Work",
+                    "predicates": [
+                    ],
+                    "link": "$<templateLink>",
+                    "stripAfter": "/"
+                },
+                {
+                    "title": "templateLink",
+                    "predicates": [],
+                    "hide": true
+                }
+            ]
+        },
+        {
+            "title": "Strategy",
+            "rootPredicate": "sbol:strategy",
+            "icon": "faLightbulb",
+            "sections": [
+                {
+                    "title": "Extra Work",
+                    "stripAfter": "#",
+                    "predicates": [],
+                    "link": "$<strategyLink>"
+                },
+                {
+                    "title": "strategyLink",
+                    "predicates": [],
+                    "hide": true
+                }
+            ]
+        }
+    ],
+    "tables": [
+        {
+            "title": "Variable Components",
+            "rootPredicate": "sbol:variableComponent",
+            "icon": "faQuestionCircle",
+            "sections": [
+                {
+                    "title": "Variable Components",
+                    "infoLink": "https://sbols.org/v3#VariableComponent",
+                    "predicates": [
+                        "sbol:displayId"
+                    ],
+                    "link": "$<VariableComponentsLink>"
+                },
+
+                {
+                    "title": "VariableComponentsLink",
+                    "predicates": [
+                    ],
+                    "hide": true
+                },
+
+                {
+                    "title": "Variable",
+                    "infoLink": "https://sbols.org/v3#variable",
+                    "predicates": [
+                        "sbol:variable"
+                    ],
+                    "link": "$<VariableLink>",
+                    "stripAfter": "/"
+                },
+
+                {
+                    "title": "VariableLink",
+                    "predicates": [
+                    ],
+                    "hide": true
+                },
+                {
+                    "title": "Operator",
+                    "infoLink": "https://sbols.org/v3#operator",
+                    "predicates": [
+                        "sbol:operator"
+                    ],
+                    "stripAfter": "#",
+                    "link": "$<operatorLink>"
+                },
+                {
+                    "title": "operatorLink",
+                    "predicates": [
+                        "sbol:operator"
+                    ],
+                    "hide": true
+                },
+                {
+                    "title": "Variant",
+                    "infoLink": "https://sbols.org/v3#variant",
+                    "predicates": [
+                        "sbol:variant", "sbol:displayId"
+                    ],
+                    "link": "$<VariantLink>"
+                },
+                {
+                    "title": "VariantLink",
+                    "predicates": [
+                        "sbol:variant"
+                    ],
+                    "hide": true
+                }
+            ]
+        }
+    ],
+
+    "pages": [
+        "Details",
+        "$TABLES[Variable Components]",
+        "Other Properties",
+        "Member of these Collections",
+        "Attachments"
+    ]
+}
