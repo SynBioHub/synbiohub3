@@ -7,7 +7,8 @@ import { useSelector } from 'react-redux';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import getConfig from 'next/config';
-const { publicRuntimeConfig } = getConfig();
+// const { publicRuntimeConfig } = getConfig();
+import backendUrl from '../../GetUrl/GetBackend';
 
 import styles from '../../../styles/navbar.module.css';
 import SearchBar from './SearchBar';
@@ -27,12 +28,12 @@ export default function NavbarSearch(properties) {
 
   useEffect(() => {
     if (localStorage.getItem('logo')) {
-      const urlLogo = `${publicRuntimeConfig.backend}/logo`;
+      const urlLogo = `${backendUrl}/logo`;
       setLogoUrl(urlLogo);
     } else {
       setLogoUrl(defaultLogo);
     }
-  }, [publicRuntimeConfig.backend]);
+  }, [backendUrl]);
 
   return (
     <header className={styles.container}

@@ -8,7 +8,8 @@ import { useState, useEffect } from 'react';
 import Loader from 'react-loader-spinner';
 import { isValidURI } from '../Viewing/Shell';
 
-const { publicRuntimeConfig } = getConfig();
+// const { publicRuntimeConfig } = getConfig();
+import backendUrl from '../GetUrl/GetBackend';
 
 export default function Theme() {
   const dispatch = useDispatch();
@@ -62,7 +63,7 @@ export default function Theme() {
   };
 
   const handleSave = async () => {
-    const url = `${publicRuntimeConfig.backend}/admin/theme`;
+    const url = `${backendUrl}/admin/theme`;
     const headers = {
       Accept: 'text/plain',
       'X-authorization': token

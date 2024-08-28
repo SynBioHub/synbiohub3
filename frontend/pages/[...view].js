@@ -3,7 +3,8 @@ import getConfig from 'next/config';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-const { publicRuntimeConfig } = getConfig();
+// const { publicRuntimeConfig } = getConfig();
+import backendUrl from '../components/GetUrl/GetBackend';
 
 import Loading from '../components/Reusable/Loading';
 import TopLevel from '../components/TopLevel';
@@ -26,10 +27,10 @@ export default function View({ data, error }) {
   const [metadata, setMetadata] = useState();
   const theme = JSON.parse(localStorage.getItem('theme')) || {};
   const [urlExists, setUrlExists] = useState(true); // New state for URL existence
-  const backenduri = `${publicRuntimeConfig.backend}/${url}`;
+  const backenduri = `${backendUrl}/${url}`;
 
   if (url.endsWith('/twins')) {
-    const searchUrl = `${publicRuntimeConfig.backend}/${url}`;
+    const searchUrl = `${backendUrl}/${url}`;
     return (
       <LinkedSearch
         url={searchUrl}
@@ -38,7 +39,7 @@ export default function View({ data, error }) {
     )
   }
   if (url.endsWith('/uses')) {
-    const searchUrl = `${publicRuntimeConfig.backend}/${url}`;
+    const searchUrl = `${backendUrl}/${url}`;
     return (
       <LinkedSearch
         url={searchUrl}
@@ -47,7 +48,7 @@ export default function View({ data, error }) {
     )
   }
   if (url.endsWith('/similar')) {
-    const searchUrl = `${publicRuntimeConfig.backend}/${url}`;
+    const searchUrl = `${backendUrl}/${url}`;
     return (
       <LinkedSearch
         url={searchUrl}
@@ -141,7 +142,7 @@ export async function getServerSideProps() {
   // Fetch data from external API
   try {
     const response = await axios.get(
-      `${publicRuntimeConfig.backendSS}/admin/plugins`,
+      `${backendUrlSS}/admin/plugins`,
       {
         headers: {
           'Content-Type': 'application/json',
@@ -159,7 +160,7 @@ export async function getServerSideProps() {
         error: {
           customMessage:
             'Request and/or processing failed for GET /admin/plugins',
-          fullUrl: `${publicRuntimeConfig.backendSS}/admin/plugins`,
+          fullUrl: `${backendUrlSS}/admin/plugins`,
           message: error.message,
           name: 'Server side error',
           stack: error.stack

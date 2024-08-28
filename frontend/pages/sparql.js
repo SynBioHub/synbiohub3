@@ -4,7 +4,8 @@ import getConfig from 'next/config';
 import dynamic from 'next/dynamic';
 import { useState } from 'react';
 import Select from 'react-select';
-const { publicRuntimeConfig } = getConfig();
+// const { publicRuntimeConfig } = getConfig();
+import backendUrl from '../components/GetUrl/GetBackend';
 
 import Table from '../components/Reusable/Table/Table';
 import SearchHeader from '../components/Search/SearchHeader/SearchHeader';
@@ -116,7 +117,7 @@ const submitQuery = async (
 ) => {
   setError();
   setLoading(true);
-  const url = `${publicRuntimeConfig.backend}/sparql?query=${encodeURIComponent(
+  const url = `${backendUrl}/sparql?query=${encodeURIComponent(
     query
   )}`;
 

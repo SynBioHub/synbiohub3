@@ -9,7 +9,8 @@ config.autoAddCss = false; // Tell Font Awesome to skip adding the CSS automatic
 
 import App from 'next/app';
 import getConfig from 'next/config';
-const { publicRuntimeConfig } = getConfig();
+// const { publicRuntimeConfig } = getConfig();
+import backendUrl from '../components/GetUrl/GetBackend';
 
 import { ToastContainer } from 'react-toastify';
 import axios from 'axios';
@@ -34,7 +35,7 @@ function MyApp({ Component, pageProps }) {
 
     useEffect(() => {
         axios
-            .get(`${publicRuntimeConfig.backend}/admin/theme`, {
+            .get(`${backendUrl}/admin/theme`, {
                 headers: {
                     'Content-Type': 'application/json',
                     Accept: 'text/plain'
@@ -60,7 +61,7 @@ function MyApp({ Component, pageProps }) {
                 // Update the error object
                 error.customMessage = customMessage;
                 console.log(error);
-                error.fullUrl = `${publicRuntimeConfig.backend}/admin/theme`;
+                error.fullUrl = `${backendUrl}/admin/theme`;
 
                 // Dispatch the error to your Redux store
                 store.dispatch(addError(error));

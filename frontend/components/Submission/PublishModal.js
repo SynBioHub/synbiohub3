@@ -17,7 +17,8 @@ import SelectorButton from '../Reusable/SelectorButton';
 import Table from '../Reusable/Table/Table';
 import PublishCollectionButton from './PublishCollectionButton';
 import NewCollectionForm from './PublishNewCollectionForm';
-const { publicRuntimeConfig } = getConfig();
+// const { publicRuntimeConfig } = getConfig();
+import backendUrl from '../GetUrl/GetBackend';
 
 const EXISTING = 'to Existing';
 const NEW = 'as New';
@@ -215,7 +216,7 @@ const sortMethods = {
 
 const useRootCollections = (dispatch, token) => {
   const { data, error } = useSWR(
-    [`${publicRuntimeConfig.backend}/rootCollections`, token, dispatch],
+    [`${backendUrl}/rootCollections`, token, dispatch],
     fetcher
   );
   return {

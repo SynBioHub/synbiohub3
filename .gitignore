@@ -124,7 +124,7 @@ fabric.properties
 *.nar
 *.ear
 *.zip
-!data.zip
+
 *.tar.gz
 *.rar
 

@@ -9,7 +9,8 @@ import SectionRenderer from './SectionRenderer';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 import getConfig from 'next/config';
-const { publicRuntimeConfig } = getConfig();
+// const { publicRuntimeConfig } = getConfig();
+import backendUrl from '../../../GetUrl/GetBackend';
 
 function handleExternalFetch(
   dispatch,
@@ -28,7 +29,7 @@ function handleExternalFetch(
     // const queryUrl = registries.find(registry => {
     //   return stackTrace.uri.startsWith(registry.uri);
     // })?.url;
-    const queryUrl = publicRuntimeConfig.backend;
+    const queryUrl = backendUrl;
     if (queryUrl) {
       executeQueryFromTableJSON(
         dispatch,

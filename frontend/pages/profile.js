@@ -257,7 +257,7 @@ const loadPluginData = token => {
   // });
   // var result = fetcher(temp, token);
   // const { data, error } = useSWR(
-  //   [`${publicRuntimeConfig.backend}/plugin/servers`, token],
+  //   [`${backendUrl}/plugin/servers`, token],
   //   fetcher
   // );
   // return {

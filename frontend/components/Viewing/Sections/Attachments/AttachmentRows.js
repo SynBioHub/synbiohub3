@@ -14,7 +14,8 @@ import { faDownload, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getAfterThirdSlash } from '../../ViewHeader.js';
 
-const { publicRuntimeConfig } = getConfig();
+// const { publicRuntimeConfig } = getConfig();
+import backendUrl from '../../../GetUrl/GetBackend';
 import getConfig from 'next/config';
 
 import styles from '../../../../styles/view.module.css';
@@ -106,7 +107,7 @@ export default function AttachmentRows(properties) {
                 });
               } else {
                 const item = {
-                  url: `${publicRuntimeConfig.backend
+                  url: `${backendUrl
                     }/${attachment.processedTopLevel}/download`,
                   name: attachment.title.substring(
                     0,

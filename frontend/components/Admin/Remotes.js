@@ -16,7 +16,8 @@ import Table from '../Reusable/Table/Table';
 import ActionButton from './Reusable/ActionButton';
 import TableInput from './Reusable/TableInput';
 import { addError } from '../../redux/actions';
-const { publicRuntimeConfig } = getConfig();
+// const { publicRuntimeConfig } = getConfig();
+import backendUrl from '../GetUrl/GetBackend';
 
 /* eslint sonarjs/cognitive-complexity: "off" */
 
@@ -230,7 +231,7 @@ function Dropdown() {
 
 const useRegistries = (token, dispatch) => {
   const { data, error } = useSWR(
-    [`${publicRuntimeConfig.backend}/admin/remotes`, token, dispatch],
+    [`${backendUrl}/admin/remotes`, token, dispatch],
     fetcher
   );
   return {

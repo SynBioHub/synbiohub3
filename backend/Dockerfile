@@ -3,6 +3,7 @@ WORKDIR /synbiohub3
 COPY pom.xml /synbiohub3
 COPY src /synbiohub3/src/
 RUN mvn -B package --file pom.xml -DskipTests
+
 FROM openjdk:17-slim
 WORKDIR /synbiohub3
 # Copy src directory over

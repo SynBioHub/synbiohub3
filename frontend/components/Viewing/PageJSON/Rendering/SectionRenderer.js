@@ -11,7 +11,8 @@ import { addError } from '../../../../redux/actions';
 import sequenceOntology from '../../../../namespace/sequence-ontology';
 import systemsBiologyOntology from '../../../../namespace/systems-biology-ontology';
 import edamOntology from '../../../../namespace/edam-ontology';
-const { publicRuntimeConfig } = getConfig();
+// const { publicRuntimeConfig } = getConfig();
+import backendUrl from '../../../GetUrl/GetBackend';
 
 import { processUrl } from '../../../Admin/Registries';
 
@@ -24,7 +25,7 @@ function loadText(template, args) {
 
 export default function SectionRenderer({ section, metadata }) {
   const dispatch = useDispatch();
-  const url = `${publicRuntimeConfig.backend}/admin/registries`;
+  const url = `${backendUrl}/admin/registries`;
   const registries = JSON.parse(localStorage.getItem("registries")) || {};
   const [data, setData] = useState(null);
   const [processedLink, setProcessedLink] = useState(null);

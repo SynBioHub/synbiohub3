@@ -6,10 +6,6 @@ module.exports = {
   images: {
     domains: ['localhost'],
   },
-  publicRuntimeConfig: {
-    backend: process.env.backend,
-    backendSS: process.env.backendSS
-  },
   async redirects() {
     return [
       {

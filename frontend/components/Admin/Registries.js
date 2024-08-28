@@ -16,7 +16,8 @@ import Table from '../Reusable/Table/Table';
 import ActionButton from './Reusable/ActionButton';
 import TableInput from './Reusable/TableInput';
 import { addError } from '../../redux/actions';
-const { publicRuntimeConfig } = getConfig();
+// const { publicRuntimeConfig } = getConfig();
+import backendUrl from '../GetUrl/GetBackend';
 
 /* eslint sonarjs/cognitive-complexity: "off" */
 
@@ -208,11 +209,11 @@ function RegistryActions() {
   const token = useSelector(state => state.user.token);
   const dispatch = useDispatch();
 
-  const url = `${publicRuntimeConfig.backend}/admin/deleteRegistry`;
+  const url = `${backendUrl}/admin/deleteRegistry`;
 
   const handleFederate = async () => {
     try {
-      await axios.post(`${publicRuntimeConfig.backend}/admin/federate`, {
+      await axios.post(`${backendUrl}/admin/federate`, {
         administratorEmail: inputTwo,
         webOfRegistries: inputOne
       }, {
@@ -230,7 +231,7 @@ function RegistryActions() {
 
   const handleRetrieve = async () => {
     try {
-      const response = await axios.post(`${publicRuntimeConfig.backend}/admin/retrieveFromWebOfRegistries`, {}, {
+      const response = await axios.post(`${backendUrl}/admin/retrieveFromWebOfRegistries`, {}, {
         headers: {
           'Accept': 'application/json',
           'X-authorization': token
@@ -240,7 +241,7 @@ function RegistryActions() {
       if (response.data && Array.isArray(response.data.registries)) {
         // Assuming 'registries' is the correct key in response and it's an array of registry objects
         mutate([
-          `${publicRuntimeConfig.backend}/admin/registries`,
+          `${backendUrl}/admin/registries`,
           token,
           dispatch
         ]);
@@ -272,7 +273,7 @@ function RegistryActions() {
 }
 
 const deleteRegistry = async (uri, token, dispatch) => {
-  const url = `${publicRuntimeConfig.backend}/admin/deleteRegistry`;
+  const url = `${backendUrl}/admin/deleteRegistry`;
   const headers = {
     Accept: 'text/plain',
     'X-authorization': token
@@ -293,7 +294,7 @@ const deleteRegistry = async (uri, token, dispatch) => {
 
   if (response.status === 200) {
     mutate([
-      `${publicRuntimeConfig.backend}/admin/registries`,
+      `${backendUrl}/admin/registries`,
       token,
       dispatch
     ]);
@@ -301,7 +302,7 @@ const deleteRegistry = async (uri, token, dispatch) => {
 };
 
 const saveRegistry = async (uri, sbhUrl, token, dispatch) => {
-  const url = `${publicRuntimeConfig.backend}/admin/saveRegistry`;
+  const url = `${backendUrl}/admin/saveRegistry`;
   const headers = {
     Accept: 'text/plain',
     'X-authorization': token
@@ -323,7 +324,7 @@ const saveRegistry = async (uri, sbhUrl, token, dispatch) => {
 
   if (response.status === 200) {
     mutate([
-      `${publicRuntimeConfig.backend}/admin/registries`,
+      `${backendUrl}/admin/registries`,
       token,
       dispatch
     ]);

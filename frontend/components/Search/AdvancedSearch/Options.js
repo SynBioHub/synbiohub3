@@ -17,7 +17,8 @@ import AdditionalFilter from './AdditionalFilter';
 import SelectLoader from './SelectLoader';
 import { addError } from '../../../redux/actions';
 
-const { publicRuntimeConfig } = getConfig();
+// const { publicRuntimeConfig } = getConfig();
+import backendUrl from '../../GetUrl/GetBackend';
 
 // tooltip component to show descriptions on hover
 const Tooltip = ({ text, children }) => {
@@ -196,7 +197,7 @@ const loadPredicates = async (setPredicates, token, dispatch) => {
 
 // function to fetch predicates
 const fetchPredicates = async (token, dispatch) => {
-  const url = `${publicRuntimeConfig.backend}/sparql?query=${encodeURIComponent(
+  const url = `${backendUrl}/sparql?query=${encodeURIComponent(
     getPredicates
   )}`;
   try {

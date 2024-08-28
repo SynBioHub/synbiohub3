@@ -4,11 +4,12 @@ import getConfig from 'next/config';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import useSWR from 'swr';
-const { publicRuntimeConfig } = getConfig();
+// const { publicRuntimeConfig } = getConfig();
 
 import styles from '../../styles/admin.module.css';
 import Loading from '../Reusable/Loading';
 import { addError } from '../../redux/actions';
+import backendUrl from '../GetUrl/GetBackend';
 
 export default function Log() {
   const token = useSelector(state => state.user.token);
@@ -72,7 +73,7 @@ const decodeHtml = (line, index) => {
 
 const useLog = (token, dispatch) => {
   const { data, error } = useSWR(
-    [`${publicRuntimeConfig.backend}/admin/log`, token, dispatch],
+    [`${backendUrl}/admin/log`, token, dispatch],
     fetcher
   );
   return {

@@ -8,7 +8,8 @@ import Select from "react-select";
 import CustomModal from "./CustomModal";
 
 import getConfig from "next/config";
-const { publicRuntimeConfig } = getConfig();
+// const { publicRuntimeConfig } = getConfig();
+import backendUrl from '../../GetUrl/GetBackend';
 
 import axios from "axios";
 import parse from 'html-react-parser';
@@ -65,7 +66,7 @@ export default function CurationModal(properties) {
 
         axios({
             method: 'GET',
-            url: `${publicRuntimeConfig.backend}/admin/plugins`,
+            url: `${backendUrl}/admin/plugins`,
             params: {
                 category: 'curation'
             },
@@ -78,7 +79,7 @@ export default function CurationModal(properties) {
             for(let plugin of curatePlugins) {
                 axios({
                     method: 'POST',
-                    url: `${publicRuntimeConfig.backend}/call`,
+                    url: `${backendUrl}/call`,
                     params: {
                         name: plugin.name,
                         endpoint: 'evaluate',
@@ -141,7 +142,7 @@ export default function CurationModal(properties) {
 async function runPlugin(pluginName, pluginData) {
     return await axios({
       method: 'POST',
-      url: `${publicRuntimeConfig.backend}/call`,
+      url: `${backendUrl}/call`,
       params: {
         name: pluginName,
         endpoint: 'run',

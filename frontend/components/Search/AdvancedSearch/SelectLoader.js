@@ -8,7 +8,8 @@ import Loading from '../../Reusable/MiniLoading';
 import { useDispatch, useSelector } from 'react-redux';
 import { addError } from '../../../redux/actions';
 import axios from 'axios';
-const { publicRuntimeConfig } = getConfig();
+// const { publicRuntimeConfig } = getConfig();
+import backendUrl from '../../GetUrl/GetBackend';
 
 const customFilter = createFilter({ ignoreAccents: false });
 
@@ -86,7 +87,7 @@ const fetchOptions = async (
 };
 
 const submitQuery = async (query, token, dispatch) => {
-  const url = `${publicRuntimeConfig.backend}/sparql?query=${encodeURIComponent(
+  const url = `${backendUrl}/sparql?query=${encodeURIComponent(
     query
   )}`;
   try {

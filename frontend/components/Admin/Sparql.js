@@ -8,7 +8,8 @@ import Select from 'react-select';
 
 import styles from '../../styles/sparql.module.css';
 import Table from '../Reusable/Table/Table';
-const { publicRuntimeConfig } = getConfig();
+// const { publicRuntimeConfig } = getConfig();
+import backendUrl from '../GetUrl/GetBackend';
 
 const CodeMirror = dynamic(
   () => {
@@ -121,7 +122,7 @@ const submitQuery = async (
   setError();
   setLoading(true);
   const url = `${
-    publicRuntimeConfig.backend
+    backendUrl
   }/admin/sparql?query=${encodeURIComponent(query)}`;
 
   const headers = {

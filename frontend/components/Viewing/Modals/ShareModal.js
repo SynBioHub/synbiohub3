@@ -10,7 +10,8 @@ import { useSelector } from "react-redux";
 import Select from "react-select";
 
 import getConfig from "next/config";
-const { publicRuntimeConfig } = getConfig();
+// const { publicRuntimeConfig } = getConfig();
+import backendUrl from '../../GetUrl/GetBackend';
 
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -52,7 +53,7 @@ export default function ShareModal(properties) {
    * @param {String} owner The owner to add.
    */
   const addOwner = async (owner) => {
-    const url = `${publicRuntimeConfig.backend}${properties.url}/addOwner`;
+    const url = `${backendUrl}${properties.url}/addOwner`;
     var headers = {
       Accept: "text/plain; charset=UTF-8",
       "X-authorization": token
@@ -60,7 +61,7 @@ export default function ShareModal(properties) {
 
     const parameters = new URLSearchParams();
     parameters.append("user", owner);
-    parameters.append("uri", publicRuntimeConfig.backend + properties.url);
+    parameters.append("uri", backendUrl + properties.url);
 
     let response;
 
@@ -79,7 +80,7 @@ export default function ShareModal(properties) {
    * Copies the link to the users clipboard.
    */
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(`${publicRuntimeConfig.backend}${properties.url}`).then(() => {
+    navigator.clipboard.writeText(`${backendUrl}${properties.url}`).then(() => {
       setTimeout(() => {
         setCopyText("Copy");
       }, 1000);
@@ -139,7 +140,7 @@ export default function ShareModal(properties) {
                 size="1x"
               />
             </label>
-            <input placeholder={`${publicRuntimeConfig.backend}${properties.url}`} className={styles.copylinktext} type="text" readOnly={true} />
+            <input placeholder={`${backendUrl}${properties.url}`} className={styles.copylinktext} type="text" readOnly={true} />
             <label
               className={styles.copylinkbutton}
               onClick={() => {

@@ -8,10 +8,11 @@ import Footer from './Footer';
 import Navbar from './Navbar/Navbar';
 import DownloadStatus from './Reusable/Download/DownloadStatus';
 import Errors from './Error/Errors';
+import backendUrl from './GetUrl/GetBackend';
 import getConfig from 'next/config';
 import axios from 'axios';
 
-const { publicRuntimeConfig } = getConfig();
+// const { publicRuntimeConfig } = getConfig();
 
 /* eslint sonarjs/cognitive-complexity: "off" */
 
@@ -39,13 +40,13 @@ export default function TopLevel(properties) {
 
         if (!registriesData || !themeData) {
           const [registriesResponse, themeResponse] = await Promise.all([
-            axios.get(`${publicRuntimeConfig.backend}/admin/registries`, {
+            axios.get(`${backendUrl}/admin/registries`, {
               headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
               },
             }),
-            axios.get(`${publicRuntimeConfig.backend}/admin/theme`, {
+            axios.get(`${backendUrl}/admin/theme`, {
               headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',

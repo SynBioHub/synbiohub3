@@ -1,7 +1,8 @@
 import getConfig from 'next/config';
 import axios from 'axios';
 
-const { publicRuntimeConfig } = getConfig();
+// const { publicRuntimeConfig } = getConfig();
+import backendUrl from '../../../GetUrl/GetBackend';
 
 import useSWR from 'swr';
 import { addError } from '../../../../redux/actions';
@@ -18,7 +19,7 @@ export const fetcher = (url, dispatch) =>
 
 export default function useRegistries(dispatch) {
   const { data, error } = useSWR(
-    [`${publicRuntimeConfig.backend}/admin/registries`, dispatch],
+    [`${backendUrl}/admin/registries`, dispatch],
     fetcher
   );
   return {

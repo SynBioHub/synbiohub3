@@ -3,7 +3,8 @@ import getConfig from 'next/config';
 import Loader from 'react-loader-spinner';
 import { useDispatch, useSelector } from 'react-redux';
 import useSWR from 'swr';
-const { publicRuntimeConfig } = getConfig();
+// const { publicRuntimeConfig } = getConfig();
+import backendUrl from '../GetUrl/GetBackend';
 
 import styles from '../../styles/defaulttable.module.css';
 import { addError } from '../../redux/actions';
@@ -94,7 +95,7 @@ export default function Status() {
 
 export const useStatus = (token, dispatch) => {
   const { data, error } = useSWR(
-    [`${publicRuntimeConfig.backend}/admin`, token, dispatch],
+    [`${backendUrl}/admin`, token, dispatch],
     fetcher
   );
   return {

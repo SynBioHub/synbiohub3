@@ -4,7 +4,8 @@ import parse, { domToReact } from 'html-react-parser';
 import React from 'react';
 
 import getConfig from 'next/config';
-const { publicRuntimeConfig } = getConfig();
+// const { publicRuntimeConfig } = getConfig();
+import backendUrl from '../GetUrl/GetBackend';
 import { useSelector, useDispatch } from 'react-redux';
 
 import Section from './Sections/Section';
@@ -44,7 +45,7 @@ export default function Plugin(properties) {
 
   const pluginData = {
     uri: uri,
-    instanceUrl: `${publicRuntimeConfig.backend}/`,
+    instanceUrl: `${backendUrl}/`,
     size: 1,
     type: type
   };
@@ -151,7 +152,7 @@ async function evaluatePlugin(plugin, type) {
   }
   return await axios({
     method: 'POST',
-    url: `${publicRuntimeConfig.backend}/call`,
+    url: `${backendUrl}/call`,
     params: {
       name: plugin.name,
       endpoint: 'evaluate',
@@ -171,7 +172,7 @@ async function evaluatePlugin(plugin, type) {
 async function runPlugin(plugin, pluginData) {
   return await axios({
     method: 'POST',
-    url: `${publicRuntimeConfig.backend}/call`,
+    url: `${backendUrl}/call`,
     params: {
       name: plugin.name,
       endpoint: 'run',

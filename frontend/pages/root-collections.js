@@ -9,7 +9,8 @@ import styles from '../styles/standardsearch.module.css';
 import { addError } from '../redux/actions';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
-const { publicRuntimeConfig } = getConfig();
+// const { publicRuntimeConfig } = getConfig();
+import backendUrl from '../components/GetUrl/GetBackend';
 
 /**
  * This page renders the default search for the /search url
@@ -25,7 +26,7 @@ export default function RootCollections() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const url = `${publicRuntimeConfig.backend}/rootCollections`;
+        const url = `${backendUrl}/rootCollections`;
         const headers = {
           Accept: 'text/plain; charset=UTF-8',
           'X-authorization': token
@@ -43,7 +44,7 @@ export default function RootCollections() {
         console.error('Error:', err.message);
         setError({
           customMessage: 'Request and/or processing failed for GET /rootCollections',
-          fullUrl: `${publicRuntimeConfig.backendSS}/rootCollections`,
+          fullUrl: `${backendUrlSS}/rootCollections`,
           message: err.message,
           name: 'Client side error',
           stack: err.stack

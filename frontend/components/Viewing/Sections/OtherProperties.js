@@ -16,7 +16,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import next from 'next';
 
-const { publicRuntimeConfig } = getConfig();
+// const { publicRuntimeConfig } = getConfig();
+import backendUrl from '../../GetUrl/GetBackend';
 
 
 export default function OtherProperties(properties) {
@@ -50,7 +51,7 @@ export default function OtherProperties(properties) {
   if (properties.uri) {
     objectUriParts = getAfterThirdSlash(properties.uri);
   }
-  const objectUri = `${publicRuntimeConfig.backend}/${objectUriParts}`;
+  const objectUri = `${backendUrl}/${objectUriParts}`;
   var isOwner = isUriOwner(objectUri, username);
 
   const handleAddAnnotation = () => {

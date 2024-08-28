@@ -15,7 +15,8 @@ import React from 'react';
 import { isUriOwner } from '../../Shell';
 import { getAfterThirdSlash } from '../../ViewHeader';
 import getConfig from 'next/config';
-const { publicRuntimeConfig } = getConfig();
+// const { publicRuntimeConfig } = getConfig();
+import backendUrl from '../../../GetUrl/GetBackend';
 
 /**
  * This Component renders an individual table based on given JSON
@@ -28,7 +29,7 @@ export default function TableBuilder({ uri, prefixes, table, metadata }) {
   prefixes = prefixes.join('\n');
   const objectUriParts = getAfterThirdSlash(uri);
   const username = useSelector(state => state.user.username);
-  const objectUri = `${publicRuntimeConfig.backend}/${objectUriParts}`;
+  const objectUri = `${backendUrl}/${objectUriParts}`;
   var isOwner = isUriOwner(objectUri, username);
   return (
     <div>

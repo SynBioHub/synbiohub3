@@ -3,7 +3,8 @@ import getConfig from 'next/config';
 
 import loadTemplate from './loadTemplate';
 import { addError } from '../../redux/actions';
-const { publicRuntimeConfig } = getConfig();
+// const { publicRuntimeConfig } = getConfig();
+import backendUrl from '../../components/GetUrl/GetBackend';
 
 export default async function getQueryResponse(
   dispatch,
@@ -31,7 +32,7 @@ export default async function getQueryResponse(
   const params = admin ? '/admin/sparql?query=' : '/sparql?query=';
   const graph = urlOverride ? '' : graphEx;
   const url = `${
-    urlOverride || publicRuntimeConfig.backend
+    urlOverride || backendUrl
   }${params}${encodeURIComponent(query)}${graph}`;
 
   const headers = {

@@ -12,7 +12,8 @@ import { useDispatch } from 'react-redux';
 import { addError } from '../redux/actions';
 import { isValidURI } from '../components/Viewing/Shell';
 import axios from 'axios';
-const { publicRuntimeConfig } = getConfig();
+// const { publicRuntimeConfig } = getConfig();
+import backendUrl from '../components/GetUrl/GetBackend';
 
 export default function Setup({ setInSetupMode }) {
   const dispatch = useDispatch();
@@ -244,7 +245,7 @@ export default function Setup({ setInSetupMode }) {
             /** Move logo file into public folder */
             try {
               await axios.post(
-                `${publicRuntimeConfig.backend}/setup`,
+                `${backendUrl}/setup`,
                 {
                   instanceName,
                   frontendURL,
@@ -281,7 +282,7 @@ export default function Setup({ setInSetupMode }) {
               }
               error.customMessage =
                 'Request and/or processing failed for POST /setup';
-              error.fullUrl = `${publicRuntimeConfig.backend}/setup`;
+              error.fullUrl = `${backendUrl}/setup`;
               dispatch(addError(error));
             }
           }}

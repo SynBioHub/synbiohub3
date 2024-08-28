@@ -15,7 +15,8 @@ import { addError, addToBasket, downloadFiles } from '../../redux/actions';
 import styles from '../../styles/submissions.module.css';
 import TableButton from '../Reusable/TableButton';
 import PublishModal from './PublishModal';
-const { publicRuntimeConfig } = getConfig();
+// const { publicRuntimeConfig } = getConfig();
+import backendUrl from '../GetUrl/GetBackend';
 
 export default function TableButtons(properties) {
   const dispatch = useDispatch();
@@ -44,7 +45,7 @@ export default function TableButtons(properties) {
       properties.setSelected,
       function (submission) {
         return {
-          url: `${publicRuntimeConfig.backend}${submission.url}/sbol`,
+          url: `${backendUrl}${submission.url}/sbol`,
           name: submission.name,
           displayId: submission.displayId,
           type: 'xml',
@@ -63,7 +64,7 @@ export default function TableButtons(properties) {
       properties.setSelected,
       function (submission) {
         return {
-          url: `${publicRuntimeConfig.backend}${submission.url}/removeCollection`,
+          url: `${backendUrl}${submission.url}/removeCollection`,
           name: submission.name,
           privacy: submission.privacy
         };
@@ -172,8 +173,8 @@ const removeCollections = (
   Promise.all(removeCollectionPromises)
     .then(() => {
       setProcessUnderway(false);
-      mutate([`${publicRuntimeConfig.backend}/shared`, token, dispatch]);
-      mutate([`${publicRuntimeConfig.backend}/manage`, token, dispatch]);
+      mutate([`${backendUrl}/shared`, token, dispatch]);
+      mutate([`${backendUrl}/manage`, token, dispatch]);
     })
     .catch(error => {
       setProcessUnderway(false);

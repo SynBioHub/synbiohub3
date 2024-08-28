@@ -5,7 +5,8 @@ import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import useSWR from 'swr';
 import ActionButton from './Reusable/ActionButton';
-const { publicRuntimeConfig } = getConfig();
+import backendUrl from '../GetUrl/GetBackend';
+// const { publicRuntimeConfig } = getConfig();
 
 export default function Explorer() {
     const token = useSelector(state => state.user.token);
@@ -39,7 +40,7 @@ export default function Explorer() {
     //Update SBOLExplorer Index
     const handleUpdateIndex = async () => {
         const params = new URLSearchParams();
-        const url = `${publicRuntimeConfig.backend}/admin/explorerUpdateIndex`;
+        const url = `${backendUrl}/admin/explorerUpdateIndex`;
         const response = await axios
         .post(url, params, {
         headers: {
@@ -56,7 +57,7 @@ export default function Explorer() {
 
     //View SBOLExplorer Log
     const handleDownloadGeneralLog = async () => { 
-        const url = `${publicRuntimeConfig.backend}/admin/explorerlog`;
+        const url = `${backendUrl}/admin/explorerlog`;
         const res = await axios
             .get(url, {
                 headers: {
@@ -84,7 +85,7 @@ export default function Explorer() {
 
     //admin/explorerIndexingLog
     const handleDownloadIndexLog = async () => { 
-        const url = `${publicRuntimeConfig.backend}/admin/explorerIndexingLog`;
+        const url = `${backendUrl}/admin/explorerIndexingLog`;
         const res = await axios
             .get(url, {
                 headers: {
@@ -137,7 +138,7 @@ export default function Explorer() {
             'whichSearch': USchecked ? 'usearch' : 'vsearch'
         };
 
-        const url = `${publicRuntimeConfig.backend}/admin/explorer`;
+        const url = `${backendUrl}/admin/explorer`;
         let res = await axios
         .post(url, params, {
         headers: {
@@ -406,7 +407,7 @@ export default function Explorer() {
 // if SBOLExplorer is on
 const useConfig = (token, dispatch) => {
     const { data, error } = useSWR(
-      [`${publicRuntimeConfig.backend}/admin/explorer`, token, dispatch],
+      [`${backendUrl}/admin/explorer`, token, dispatch],
       fetcher
     );
     return {
