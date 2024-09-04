@@ -1,4 +1,5 @@
 const query = `PREFIX sbol2: <http://sbols.org/v2#>
+PREFIX sbol3: <http://sbols.org/v3#>
 PREFIX dcterms: <http://purl.org/dc/terms/>
 PREFIX synbiohub: <http://synbiohub.org#>
 PREFIX dc: <http://purl.org/dc/elements/1.1/>
@@ -23,6 +24,9 @@ WHERE {
       OPTIONAL { <$uri> sbol2:persistentIdentity ?persistentIdentity . }
       OPTIONAL { <$uri> sbol2:displayId ?displayId . }
       OPTIONAL { <$uri> sbol2:version ?version . }
+      OPTIONAL { <$uri> sbol3:persistentIdentity ?persistentIdentity . }
+      OPTIONAL { <$uri> sbol3:displayId ?displayId . }
+      OPTIONAL { <$uri> sbol3:version ?version . }
       OPTIONAL { <$uri> dcterms:title ?name . }
       OPTIONAL { <$uri> dcterms:description ?description . }
       OPTIONAL { <$uri> dc:creator ?creator . }
