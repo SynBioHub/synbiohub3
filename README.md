@@ -19,6 +19,8 @@ npm run dev
 yarn dev
 ```
 
+NOTE, we use the legacy openssl with security vulnerabilities. This makes the dev command only work on mac and linux and introduces security vulnerablilites, to read more see [here](https://stackoverflow.com/questions/69692842/error-message-error0308010cdigital-envelope-routinesunsupported).
+
 Open [http://localhost:3333](http://localhost:3333) with your browser to see the result.
 
 ### Developer Notes
