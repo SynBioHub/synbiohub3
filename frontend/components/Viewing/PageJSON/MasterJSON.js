@@ -34,7 +34,19 @@ import SubComponent3 from './Types/SubComponent3.json';
 import LocalSubComponent3 from './Types/LocalSubComponent3.json';
 import ExternallyDefined3 from './Types/ExternallyDefined3.json';
 import SequenceFeature3 from './Types/SequenceFeature3.json';
-
+import Attachment3 from './Types/Attachment3.json';
+import Collection3 from './Types/Collection3.json';
+import Cut3 from './Types/Cut3.json';
+import CombinatorialDerivation3 from './Types/CombinatorialDerivation3.json';
+import EntireSequence3 from './Types/EntireSequence3.json';
+import Experiment3 from './Types/Experiment3.json';
+import ExperimentalData3 from './Types/ExperimentalData3.json';
+import Implementation3 from './Types/Implementation3.json';
+import Location3 from './Types/Location3.json';
+import Model3 from './Types/Model3.json';
+import Participation3 from './Types/Participation3.json';
+import Range3 from './Types/Range3.json';
+import VariableFeature3 from './Types/VariableFeature3.json';
 
 const TypeToJson = {
   'http://sbols.org/v2#ComponentDefinition': ComponentDefinition,
@@ -72,8 +84,21 @@ const TypeToJson = {
   'http://sbols.org/v3#SubComponent': SubComponent3,
   'http://sbols.org/v3#LocalSubComponent': LocalSubComponent3,
   'http://sbols.org/v3#ExternallyDefined': ExternallyDefined3,
-  'http://sbols.org/v3#SequenceFeature': SequenceFeature3
-
+  'http://sbols.org/v3#SequenceFeature': SequenceFeature3,
+  'http://sbols.org/v3#Attachment': Attachment3,
+  'http://sbols.org/v3#Collection': Collection3,
+  'http://sbols.org/v3#Cut': Cut3,
+  'http://sbols.org/v3#CombinatorialDerivation': CombinatorialDerivation3,
+  'http://sbols.org/v3#EntireSequence': EntireSequence3,
+  'http://sbols.org/v3#Experiment': Experiment3,
+  'http://sbols.org/v3#ExperimentalData': ExperimentalData3,
+  'http://sbols.org/v3#Implementation': Implementation3,
+  'http://sbols.org/v3#Interaction': Interaction3,
+  'http://sbols.org/v3#Location': Location3,
+  'http://sbols.org/v3#Model': Model3,
+  'http://sbols.org/v3#Participation': Participation3,
+  'http://sbols.org/v3#Range': Range3,
+  'http://sbols.org/v3#VariableFeature': VariableFeature3
 };
 
 export default TypeToJson;

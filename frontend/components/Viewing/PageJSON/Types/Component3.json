@@ -79,7 +79,6 @@
                     "title": "SubComponents",
                     "infoLink": "https://sbols.org/v3#SubComponent",
                     "predicates": [
-                        "rdf:type"
                     ],
                     "stripAfter": "#",
                     "link": "$<subcomponentLink>"
@@ -112,20 +111,34 @@
             ]
         },
         {
-            "title": "Sequence Constraints",
+            "title": "Constraints",
             "rootPredicate": "sbol:hasConstraint",
             "icon": "faVirusSlash",
             "sections": [
                 {
-                    "title": "Sequence Constraint",
+                    "title": "Constraint",
                     "infoLink": "https://sbols.org/v3#Constraint",
                     "predicates": [
-                        "sbol:Constraint"
                     ],
+                    "stripAfter": "#",
                     "link": "$<constraintLink>"
                 },
                 {
                     "title": "constraintLink",
+                    "hide": true,
+                    "predicates": []
+                },
+                {
+                    "title": "Subject",
+                    "infoLink": "https://sbols.org/v3#Subject",
+                    "predicates": [
+                        "sbol:subject"
+                    ],
+                    "stripAfter": "#",
+                    "link": "$<subjectLink>"
+                },
+                {
+                    "title": "subjectLink",
                     "hide": true,
                     "predicates": []
                 }
@@ -140,12 +153,37 @@
                     "title": "Interface",
                     "infoLink": "https://sbols.org/v3#Interface",
                     "predicates": [
-
                     ],
                     "link": "$<interfaceLink>"
                 },
                 {
                     "title": "interfaceLink",
+                    "hide": true,
+                    "predicates": []
+                },
+                {
+                    "title": "Output",
+                    "infoLink": "https://sbols.org/v3#Output",
+                    "predicates": [
+                        "sbol:output"
+                    ],
+                    "link": "$<outputLink>"
+                },
+                {
+                    "title": "outputLink",
+                    "hide": true,
+                    "predicates": []
+                },
+                {
+                    "title": "Input",
+                    "infoLink": "https://sbols.org/v3#Input",
+                    "predicates": [
+                        "sbol:input"
+                    ],
+                    "link": "$<inputLink>"
+                },
+                {
+                    "title": "inputLink",
                     "hide": true,
                     "predicates": []
                 }
@@ -160,7 +198,7 @@
                     "title": "Model",
                     "infoLink": "https://sbols.org/v3#Model",
                     "predicates": [
-
+                        "sbol:displayId"
                     ],
                     "link": "$<modelLink>"
                 },
@@ -168,6 +206,51 @@
                     "title": "modelLink",
                     "hide": true,
                     "predicates": []
+                },
+                {
+                    "title": "Framework",
+                    "infoLink": "https://sbols.org/v3#Framework",
+                    "predicates": [
+                        "sbol:framework"
+                    ],
+                    "link": "$<frameworkLink>"
+                },
+                {
+                    "title": "frameworkLink",
+                    "hide": true,
+                    "predicates": [
+                        "sbol:framework"
+                    ]
+                },
+                {
+                    "title": "Source",
+                    "infoLink": "https://sbols.org/v3#Source",
+                    "predicates": [
+                        "sbol:source"
+                    ],
+                    "link": "$<sourceLink>"
+                },
+                {
+                    "title": "sourceLink",
+                    "hide": true,
+                    "predicates": [
+                        "sbol:source"
+                    ]
+                },
+                {
+                    "title": "Language",
+                    "infoLink": "https://sbols.org/v3#Language",
+                    "predicates": [
+                        "sbol:language"
+                    ],
+                    "link": "$<languageLink>"
+                },
+                {
+                    "title": "languageLink",
+                    "hide": true,
+                    "predicates": [
+                        "sbol:language"
+                    ]
                 }
             ]
         }
@@ -177,7 +260,7 @@
         "$TABLES[Sequences]",
         "$TABLES[Features]",
         "$TABLES[Interactions]",
-        "$TABLES[Sequence Constraints]",
+        "$TABLES[Constraints]",
         "$TABLES[Interfaces]",
         "$TABLES[Models]",
         "Other Properties",
