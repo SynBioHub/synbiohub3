@@ -47,6 +47,7 @@ import Model3 from './Types/Model3.json';
 import Participation3 from './Types/Participation3.json';
 import Range3 from './Types/Range3.json';
 import VariableFeature3 from './Types/VariableFeature3.json';
+import Interaction3 from './Types/Interaction3.json';
 
 const TypeToJson = {
   'http://sbols.org/v2#ComponentDefinition': ComponentDefinition,
