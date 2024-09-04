@@ -20,7 +20,6 @@
             {
                "title": "Encoding",
                "stripAfter": "/",
-               "text": "Encoding",
                "predicates": [
                ],
                "link": "$<encodingLink>"

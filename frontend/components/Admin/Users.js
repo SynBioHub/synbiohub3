@@ -38,26 +38,80 @@ const headers = [
 
 export default function Users() {
   const token = useSelector(state => state.user.token);
+  const theme = JSON.parse(localStorage.getItem('theme')) || {};
   const dispatch = useDispatch();
   const { users, loading } = useUsers(token, dispatch);
 
+  const [allowPublicSignup, setAllowPublicSignup] = useState(theme.allowPublicSignup);
+
+  useEffect(() => {
+    const storedTheme = JSON.parse(localStorage.getItem('theme')) || {};
+    if (storedTheme.allowPublicSignup !== undefined) {
+      setAllowPublicSignup(storedTheme.allowPublicSignup);
+    }
+  }, []);
+
+  const handleAllowPublicSignup = async () => {
+    try {
+      const url = `${publicRuntimeConfig.backend}/admin/users`;
+      const headers = {
+        Accept: 'text/plain',
+        'X-authorization': token,
+      };
+
+      const parameters = new URLSearchParams();
+      if (allowPublicSignup) {
+        parameters.append('allowPublicSignup', allowPublicSignup);
+      }
+
+      const response = await axios.post(url, parameters, { headers });
+
+      if (response.status === 200) {
+        alert("Allow Public Account Creation updated successfully!");
+        const updatedTheme = {
+          ...JSON.parse(localStorage.getItem('theme')),
+          allowPublicSignup: allowPublicSignup,
+        };
+        localStorage.setItem('theme', JSON.stringify(updatedTheme));
+      }
+    } catch (error) {
+      console.error("Error saving:", error);
+    }
+  };
+
   return (
-    <div className={styles.plugintable}>
-      <Table
-        data={users ? users.users : undefined}
-        loading={loading}
-        title="Users"
-        searchable={searchable}
-        headers={headers}
-        sortOptions={options}
-        defaultSortOption={options[0]}
-        sortMethods={sortMethods}
-        finalRow={<NewUserRow token={token} />}
-        dataRowDisplay={user => (
-          <UserDisplay key={user.id} user={user} token={token} />
-        )}
-      />
+    <div>
+      <div className={styles.plugintable}>
+        <Table
+          data={users ? users.users : undefined}
+          loading={loading}
+          title="Users"
+          searchable={searchable}
+          headers={headers}
+          sortOptions={options}
+          defaultSortOption={options[0]}
+          sortMethods={sortMethods}
+          finalRow={<NewUserRow token={token} />}
+          dataRowDisplay={user => (
+            <UserDisplay key={user.id} user={user} token={token} />
+          )}
+        />
+      </div>
+      <div className={styles.checkbox}>
+        <Checkbox
+          value={allowPublicSignup}
+          onChange={() => setAllowPublicSignup(prevState => !prevState)}
+        />
+        <span className={styles.checktext}>Allow Public Account Creation</span>
+        <ActionButton className={styles.checksave}
+          action="Save"
+          icon={faSave}
+          color="#1C7C54"
+          onClick={handleAllowPublicSignup}
+        />
+      </div>
     </div>
+
   );
 }
 
@@ -386,7 +440,7 @@ const createUser = async (
   isMember && parameters.append('isMember', '1');
   isCurator && parameters.append('isCurator', '1');
   isAdmin && parameters.append('isAdmin', '1');
-  
+
   let response;
 
   try {

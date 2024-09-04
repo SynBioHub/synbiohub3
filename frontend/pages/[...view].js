@@ -70,7 +70,7 @@ export default function View({ data, error }) {
   if (theme) {
     uri = `${theme.uriPrefix}${url}`;
   }
-  
+
 
   useEffect(() => {
     // Check if URL exists
@@ -88,6 +88,8 @@ export default function View({ data, error }) {
         setUrlExists(false);
       });
   }, [uri, metadata, token]);
+
+  console.log(metadata);
 
   // Render based on URL existence
   if (!url || !urlExists) {
@@ -114,7 +116,10 @@ export default function View({ data, error }) {
   } else if (metadata.length === 0) {
     return (
       <TopLevel publicPage={true}>
-        <div>Page not found</div>
+        <div style={centerStyle}>
+          <h1>Page Not Found</h1>
+          <p>The requested URL {url && <code>{`/${url}`}</code>} was not found on this server.</p>
+        </div>
       </TopLevel>
     );
   }

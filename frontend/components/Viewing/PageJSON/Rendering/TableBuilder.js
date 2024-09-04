@@ -48,7 +48,7 @@ function TableRenderer({ uri, prefixes, table, metadata, owner }) {
   const [content, setContent] = useState(null);
   const dispatch = useDispatch();
   useEffect(() => {
-    executeQueryFromTableJSON(dispatch, uri, prefixes, table).then(response => {
+    executeQueryFromTableJSON(dispatch, uri, prefixes, token, table).then(response => {
       setContent(parseQueryResult(table, response, prefixes));
     });
   }, [uri, prefixes, table]);

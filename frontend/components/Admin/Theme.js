@@ -78,6 +78,8 @@ export default function Theme() {
     formData.append('frontPageText', frontPageText);
     formData.append('altHome', altHome);
     formData.append('baseColor', baseColor);
+    formData.append('removePublicEnabled', removePublicEnabled);
+    formData.append('showModuleInteractions', showModuleInteractions);
     if (logoFile) {
       formData.append('logo', logoFile);
     }

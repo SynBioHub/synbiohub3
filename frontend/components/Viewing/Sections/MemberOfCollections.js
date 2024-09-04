@@ -26,7 +26,7 @@ export default function MemberOfCollections(properties) {
     if (otherProps == undefined)
       getQueryResponse(dispatch, getOtherProperties, {
         uri: properties.uri
-      }).then(props => {
+      }, token).then(props => {
           if (props.length > 0) setOtherProps(props);
         });
   }, [otherProps]);
