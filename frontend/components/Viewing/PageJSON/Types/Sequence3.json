@@ -11,27 +11,39 @@
        "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>",
        "PREFIX purl: <http://purl.obolibrary.org/obo/>"
     ],
-    "metadata": [],
+    "metadata": [
+      {
+         "title": "Encoding",
+         "rootPredicate": "sbol:encoding",
+         "icon": "faCode",
+         "sections": [
+            {
+               "title": "Encoding",
+               "stripAfter": "/",
+               "predicates": [
+               ],
+               "link": "$<encodingLink>"
+            },
+            {
+               "title": "encodingLink",
+               "predicates": [],
+               "hide": true
+            }
+         ]
+      }
+    ],
     "tables": [
       {
-        "icon": "faDna",
-        "title": "Sequence",
-        "rootPredicate": "sbol:elements",
-        "sections": [ 
-          {
-             "title": "Sequence",
-             "infoLink": "$<Encoding>",
-             "predicates": []
-          },
-          {
-             "title": "Encoding",
-             "rootPredicateOverride": "sbol:encoding",
-             "predicates": [
-                "rdf:resource"
-             ],
-             "hide": true
-          }
-       ]
+         "icon": "faDna",
+         "title": "Sequence",
+         "rootPredicate": "sbol:elements",
+         "sections": [
+            {
+               "title": "Sequence",
+               "infoLink": "https://sbols.org/v3#sequence",
+               "predicates": []
+            }
+         ]
       }
     ],
     "pages": [

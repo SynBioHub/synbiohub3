@@ -10,6 +10,7 @@ import systemsBiologyOntology from '../../namespace/systems-biology-ontology';
 import edamOntology from '../../namespace/edam-ontology';
 
 export default function Shell(properties) {
+  console.log(properties);
   const plugins = properties.plugins;
   const metadata = properties.metadata;
 
@@ -22,6 +23,7 @@ export default function Shell(properties) {
   metadata.search = getSearchData;
 
   if (!json) {
+    console.log("NO JSON");
     return (
       <div className={styles.container}>
         <SidePanel
