@@ -51,7 +51,19 @@
         },
         {
             "title": "Hash",
-            "rootPredicate": "sbh:hash",
+            "rootPredicate": "sbol:hash",
+            "icon": "faHashtag",
+            "sections": [
+                {
+                    "title": "Extra Work",
+                    "stripAfter": "#",
+                    "predicates": []
+                }
+            ]
+        },
+        {
+            "title": "HashAlgorithm",
+            "rootPredicate": "sbol:hashAlgorithm",
             "icon": "faHashtag",
             "sections": [
                 {
