@@ -48,7 +48,7 @@
       ]
     },
     {
-      "title": "Model File",
+      "title": "Source",
       "rootPredicate": "sbol:source",
       "icon": "faVials",
       "sections": [

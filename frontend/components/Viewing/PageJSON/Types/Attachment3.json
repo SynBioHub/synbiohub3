@@ -71,6 +71,18 @@
                     "predicates": []
                 }
             ]
+        },
+        {
+            "title": "HashAlgorithm",
+            "rootPredicate": "sbol:hashAlgorithm",
+            "icon": "faHashtag",
+            "sections": [
+                {
+                    "title": "Extra Work",
+                    "stripAfter": "#",
+                    "predicates": []
+                }
+            ]
         }
     ],
     "tables": [],
