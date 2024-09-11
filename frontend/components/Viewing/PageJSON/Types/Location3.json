@@ -21,7 +21,7 @@
                     "title": "Extra Work",
                     "stripAfter": "#",
                     "predicates": [],
-                    "link": "$<orientationLink"
+                    "link": "$<orientationLink>"
                 },
                 {
                     "title": "orientationLink",
