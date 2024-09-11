@@ -20,8 +20,8 @@
                 {
                     "title": "Subject",
                     "predicates": [
-                     "sbol:displayId"
                     ],
+                    "stripAfter": "#",
                     "link": "$<subjectLink>"
                 },
                 {
@@ -57,7 +57,8 @@
                   "sections": [
                       {
                           "title": "Object",
-                          "predicates": ["sbol:displayId"],
+                          "predicates": [],
+                          "stripAfter": "#",
                           "link": "$<objectLink>"
                       },
                       {
