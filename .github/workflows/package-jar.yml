@@ -40,7 +40,7 @@ jobs:
             java-version: 17
         - run: cd backend && mvn -B package --file pom.xml -DskipTests
         - run: cd backend && mkdir staging && cp target/*.jar staging
-        - uses: actions/upload-artifact@v1
+        - uses: actions/upload-artifact@v3
           with:
             name: Package
             path: backend/staging
