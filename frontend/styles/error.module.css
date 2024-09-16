@@ -81,7 +81,7 @@
 
 .errorInfoContainer {
    flex-grow: 1;
-   overflow: scroll;
+   overflow: auto;
    z-index: 99999;
    background-color: #fff;
    padding: 0 1rem;

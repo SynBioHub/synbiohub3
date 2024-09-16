@@ -78,12 +78,16 @@ export default function View({ data, error }) {
       .then(response => {
         // URL exists
         setUrlExists(true);
-        if (!metadata && uri)
+      })
+      .then(response => {
+        if (!metadata && uri) {
           getQueryResponse(dispatch, getMetadata, { uri: uri }, token).then(
             metadata => setMetadata(metadata)
           );
+        }
       })
       .catch(error => {
+        console.error("Caught Error", error);
         // URL does not exist
         setUrlExists(false);
       });

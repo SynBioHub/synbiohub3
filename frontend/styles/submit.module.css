@@ -324,7 +324,7 @@
 
 .concatenatefiles {
    max-height: 15rem;
-   overflow: scroll;
+   overflow: auto;
 }
 
 .clearfilesbuttoncontainer {
@@ -415,7 +415,7 @@
   margin: 0 auto;
   padding: 0rem 0 4rem 0;
   max-height: 20rem;
-   overflow: scroll;
+   overflow: auto;
 }
 
 .modalicon {
