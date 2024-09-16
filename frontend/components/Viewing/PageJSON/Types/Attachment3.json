@@ -21,7 +21,12 @@
                     "title": "Extra Work",
                     "stripAfter": "#",
                     "predicates": [],
-                    "link": "$<This>"
+                    "link": "$<sourceLink>"
+                },
+                {
+                    "title": "sourceLink",
+                    "predicates": [],
+                    "hide": true
                 }
             ]
         },
@@ -33,7 +38,13 @@
                 {
                     "title": "Extra Work",
                     "stripAfter": "#",
-                    "predicates": []
+                    "predicates": [],
+                    "link": "$<formatLink>"
+                },
+                {
+                    "title": "formatLink",
+                    "predicates": [],
+                    "hide": true
                 }
             ]
         },
@@ -51,7 +62,19 @@
         },
         {
             "title": "Hash",
-            "rootPredicate": "sbh:hash",
+            "rootPredicate": "sbol:hash",
+            "icon": "faHashtag",
+            "sections": [
+                {
+                    "title": "Extra Work",
+                    "stripAfter": "#",
+                    "predicates": []
+                }
+            ]
+        },
+        {
+            "title": "HashAlgorithm",
+            "rootPredicate": "sbol:hashAlgorithm",
             "icon": "faHashtag",
             "sections": [
                 {

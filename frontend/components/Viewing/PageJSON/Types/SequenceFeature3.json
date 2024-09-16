@@ -12,6 +12,27 @@
         "PREFIX purl: <http://purl.obolibrary.org/obo/>"
     ],
     "metadata": [
+        {
+            "title": "Orientation",
+            "rootPredicate": "sbol:orientation",
+            "infoLink": "https://sbols.org/v3#orientation",
+            "icon": "faCompass",
+            "sections": [
+                {
+                    "title": "Extra Work",
+                    "stripAfter": "#",
+                    "predicates": [
+
+                    ],
+                    "link": "$<orientationLink>"
+                },
+                {
+                    "title": "orientationLink",
+                    "predicates": [],
+                    "hide": true
+                }
+            ]
+        }
     ],
     "tables": [
         {

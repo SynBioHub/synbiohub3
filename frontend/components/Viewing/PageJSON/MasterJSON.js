@@ -48,6 +48,8 @@ import Participation3 from './Types/Participation3.json';
 import Range3 from './Types/Range3.json';
 import VariableFeature3 from './Types/VariableFeature3.json';
 import Interaction3 from './Types/Interaction3.json';
+import Constraint3 from './Types/Constraint3.json';
+import Interface3  from './Types/Interface3.json';
 
 const TypeToJson = {
   'http://sbols.org/v2#ComponentDefinition': ComponentDefinition,
@@ -99,7 +101,9 @@ const TypeToJson = {
   'http://sbols.org/v3#Model': Model3,
   'http://sbols.org/v3#Participation': Participation3,
   'http://sbols.org/v3#Range': Range3,
-  'http://sbols.org/v3#VariableFeature': VariableFeature3
+  'http://sbols.org/v3#VariableFeature': VariableFeature3,
+  'http://sbols.org/v3#Constraint': Constraint3,
+  'http://sbols.org/v3#Interface': Interface3,
 };
 
 export default TypeToJson;

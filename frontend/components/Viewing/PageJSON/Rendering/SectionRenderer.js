@@ -80,7 +80,6 @@ export default function SectionRenderer({ section, metadata }) {
         }
       })
     }
-    console.log(section.text);
     if (/SO:\s*(\d{7})/.test(section.text)) {
       for (let key in sequenceOntology) {
         if (section.text === key) {
@@ -145,7 +144,7 @@ export default function SectionRenderer({ section, metadata }) {
     }
     return (
       <td>
-        {section.id === "Sequence" && section.link == null ? (
+        {section.id === "Sequence" && !section.link ? (
           section.text.map((line, index) => (
             <div
               key={index}
@@ -155,7 +154,7 @@ export default function SectionRenderer({ section, metadata }) {
               {line}
             </div>
           ))
-        ) : section.link ? (
+        ) : typeof section.link === 'string' ? (
           <ColumnLink
             link={section.link}
             text={section.text}
@@ -168,6 +167,7 @@ export default function SectionRenderer({ section, metadata }) {
         )}
       </td>
     );
+
 
   } else {
     return <td>
