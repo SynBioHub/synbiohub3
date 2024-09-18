@@ -41,7 +41,6 @@
                     "title": "Component",
                     "stripAfter": "#",
                     "predicates": [
-                        "sbol:Component"
                     ],
                     "link": "$<componentLink>"
                 },
