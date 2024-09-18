@@ -72,7 +72,7 @@
    flex-direction: column;
    align-items: center;
    max-height: calc(100vh - 8rem);
-   overflow: scroll;
+   overflow: auto;
 }
 
 .body {

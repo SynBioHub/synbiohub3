@@ -2,6 +2,7 @@
   display: flex;
   padding: 0;
   margin: 0;
+  width: 100vw;
 }
 
 .emptySpace {
@@ -52,6 +53,7 @@
   bottom: 0;
   padding-bottom: 3rem;
   z-index: 5;
+  overflow-x: hidden;
 }
 
 .standardcontainer {
@@ -64,12 +66,14 @@
 
 .boundedheightforsidepanel {
   max-height: calc(100vh - 11rem);
-  overflow: scroll;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .searchBoundedheightforsidepanel {
   max-height: calc(100vh - 5rem);
-  overflow: scroll;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .headercontainer {
@@ -103,7 +107,6 @@
 
 .titleHolder {
   max-width: 17rem;
-  overflow: scroll;
   padding-bottom: 1rem;
 }
 
@@ -301,13 +304,11 @@
   margin: 1rem 0;
   padding: 0 1rem;
   width: 100%;
-  overflow: scroll;
 }
 
 .searchContent {
   margin: 0rem 0 0 0;
   width: 100%;
-  overflow: scroll;
 }
 
 .contentheader {
@@ -393,7 +394,7 @@
 
 .sectionchildcontainer {
   padding: 0.5rem;
-  overflow: scroll;
+  overflow: auto;
   /* height: 0; */
   transition: 1s;
   height: 100%;
@@ -533,7 +534,7 @@
   padding: 0.5rem 1rem 0.5rem 0.5rem;
   border: 1px solid #ccc;
   font-family: inherit;
-  overflow: scroll;
+  overflow: auto;
 }
 
 .detailstext {
@@ -593,7 +594,7 @@
 .table {
   min-width: 100%;
   text-align: left;
-  overflow: scroll;
+  overflow: auto;
   border-spacing: 0;
   font-size: 0.9rem;
   font-weight: 400;

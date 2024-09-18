@@ -21,7 +21,7 @@
 .table {
    min-width: 100%;
    text-align: left;
-   overflow: scroll;
+   overflow: auto;
    border-spacing: 0;
    font-size: 0.9rem;
    font-weight: 400;
