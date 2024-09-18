@@ -29,17 +29,19 @@ export default function AttachmentRows(properties) {
   const dispatch = useDispatch();
   const token = useSelector(state => state.user.token);
   const [attachmentInfo, setStateAttachments] = useState();
-  const [attachments, setAttachments] = useState(properties.attachments.map(attachment => ({
+
+  const [attachments, setAttachments] = useState((properties.attachments || []).map(attachment => ({
     ...attachment,
     processedTopLevel: attachment.topLevel // Initialize with topLevel
   })));
 
+
   //There are attachments from the parent but they haven't been added to the state yet.
-  if (attachmentInfo === undefined && properties.attachments.length > 0)
+  if (attachmentInfo === undefined && properties.attachments && properties.attachments.length > 0)
     setStateAttachments(properties.attachments);
 
   //There are no attachments to get.
-  if (properties.attachments.length === 0) return null;
+  if (properties.attachments && properties.attachments.length === 0) return null;
 
   // useEffect(() => {
   //   async function processAttachments() {
