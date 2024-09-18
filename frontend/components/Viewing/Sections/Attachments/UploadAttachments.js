@@ -193,7 +193,7 @@ export default function UploadAttachments(properties) {
                   //Query all the attachments so the store can be updated.
                   getQueryResponse(dispatch, getAttachments, {
                     uri: properties.uri
-                  }).then(allAttachments => {
+                  }, token).then(allAttachments => {
                     dispatch(setAttachments(allAttachments));
                   });
                 });
