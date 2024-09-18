@@ -34,7 +34,7 @@
     "tables": [
         {
             "title": "Participations",
-            "rootPredicate": "sbol:participation",
+            "rootPredicate": "sbol:hasParticipation",
             "icon": "faPeopleArrows",
             "sections": [
                 {
