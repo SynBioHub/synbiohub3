@@ -80,19 +80,19 @@ export default function Theme() {
     formData.append('baseColor', baseColor);
     formData.append('removePublicEnabled', removePublicEnabled);
     formData.append('showModuleInteractions', showModuleInteractions);
-    if (logoFile) {
-      formData.append('logo', logoFile);
-    }
+    // if (logoFile) {
+    //   formData.append('logo', logoFile);
+    // }
 
     try {
       const response = await fetch(url, { method: 'POST', headers, body: formData });
-      const data = await response.json();
-      console.log(data);
-      
+      console.log(response);
+      const data = await response.text();
 
       if (response.ok) {
         console.log(localStorage.getItem('theme'));
-        // localStorage.setItem('theme', JSON.stringify(data.requestBody));
+
+        console.log(data);
 
         if (data.requestBody) {
           // Get the current theme from local storage
@@ -107,6 +107,7 @@ export default function Theme() {
     
           // Store the updated theme in local storage
           localStorage.setItem('theme', JSON.stringify(currentTheme));
+          console.log(localStorage);
         }
       } else {
         alert("Error saving theme");

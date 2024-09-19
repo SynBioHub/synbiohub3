@@ -90,9 +90,7 @@
         }
     ],
     "pages": [
-        "Details",
         "$TABLES[MapsTo]",
-        "Other Properties",
-        "Attachments"
+        "Other Properties"
     ]
 }

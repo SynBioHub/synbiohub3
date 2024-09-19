@@ -47,8 +47,6 @@
     ],
     "pages": [
        "$TABLES[Features]",
-       "Details",
-       "Other Properties",
-       "Attachments"
+       "Other Properties"
     ]
  }

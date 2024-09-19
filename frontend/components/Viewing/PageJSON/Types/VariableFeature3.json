@@ -72,9 +72,7 @@
         }
     ],
     "pages": [
-        "Details",
         "$TABLES[Variants]",
-        "Other Properties",
-        "Attachments"
+        "Other Properties"
     ]
 }
