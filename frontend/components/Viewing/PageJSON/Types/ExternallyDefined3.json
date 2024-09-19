@@ -54,8 +54,6 @@
     "tables": [
     ],
     "pages": [
-        "Details",
-        "Other Properties",
-        "Attachments"
+        "Other Properties"
     ]
 }

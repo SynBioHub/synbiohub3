@@ -65,7 +65,6 @@
     }
     ],
     "pages": [
-        "Details",
         "$TABLES[Measures]",
         "Other Properties"
     ]

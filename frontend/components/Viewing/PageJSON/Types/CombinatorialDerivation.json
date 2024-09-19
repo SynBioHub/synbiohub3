@@ -124,10 +124,7 @@
     ],
 
     "pages": [
-        "Details",
         "$TABLES[Variable Components]",
-        "Other Properties",
-        "Member of these Collections",
-        "Attachments"
+        "Other Properties"
     ]
 }

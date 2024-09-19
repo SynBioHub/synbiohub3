@@ -8,7 +8,6 @@ import styles from '../../../../styles/view.module.css';
  */
 export default function AttachmentsTable(properties) {
   const header = createHeader(properties.headers);
-  console.log(properties);
   if (properties.attachments && properties.attachments.length === 0 && !properties.owner) return null;
 
   return (
