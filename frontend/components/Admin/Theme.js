@@ -64,15 +64,17 @@ export default function Theme() {
   const handleSave = async () => {
     const url = `${publicRuntimeConfig.backend}/admin/theme`;
     const headers = {
-      Accept: 'text/plain',
-      'X-authorization': token
+        Accept: 'text/plain',
+        'X-authorization': token
     };
 
+    // Validate alternate home URL
     if (altHome !== '' && !isValidURI(altHome)) {
-      alert('Alternate Home Page must be empty or contain a valid URL.');
-      return; // Prevent form submission
+        alert('Alternate Home Page must be empty or contain a valid URL.');
+        return;
     }
 
+    // Create FormData to hold the theme data
     const formData = new FormData();
     formData.append('instanceName', instanceName);
     formData.append('frontPageText', frontPageText);
@@ -80,42 +82,42 @@ export default function Theme() {
     formData.append('baseColor', baseColor);
     formData.append('removePublicEnabled', removePublicEnabled);
     formData.append('showModuleInteractions', showModuleInteractions);
-    // if (logoFile) {
-    //   formData.append('logo', logoFile);
-    // }
+    if (logoFile) {
+        formData.append('logo', logoFile);
+    }
 
     try {
-      const response = await fetch(url, { method: 'POST', headers, body: formData });
-      console.log(response);
-      const data = await response.text();
+        const response = await fetch(url, {
+            method: 'POST',
+            headers,
+            body: formData
+        });
 
-      if (response.ok) {
-        console.log(localStorage.getItem('theme'));
+        if (!response.ok) {
+            throw new Error("Error saving theme");
+        }
 
-        console.log(data);
+        const data = await response.text();
 
         if (data.requestBody) {
-          // Get the current theme from local storage
-          let currentTheme = JSON.parse(localStorage.getItem('theme')) || {};
-    
-          // Update only the values that match and are different
-          Object.keys(data.requestBody).forEach(key => {
-            if (currentTheme[key] !== undefined && currentTheme[key] !== data.requestBody[key]) {
-              currentTheme[key] = data.requestBody[key];
-            }
-          });
-    
-          // Store the updated theme in local storage
-          localStorage.setItem('theme', JSON.stringify(currentTheme));
-          console.log(localStorage);
+            // Update local storage with the new theme data
+            const currentTheme = JSON.parse(localStorage.getItem('theme')) || {};
+            Object.keys(data.requestBody).forEach(key => {
+                if (currentTheme[key] !== undefined && currentTheme[key] !== data.requestBody[key]) {
+                    currentTheme[key] = data.requestBody[key];
+                }
+            });
+            localStorage.setItem('theme', JSON.stringify(currentTheme));
         }
-      } else {
-        alert("Error saving theme");
-      }
+
+        alert("Theme saved successfully!");
+
     } catch (error) {
-      alert("Error saving theme");
+        console.error(error);
+        alert("Error saving theme: " + error.message);
     }
-  };
+};
+
 
   if (loading) return <Loading />;
   return (
