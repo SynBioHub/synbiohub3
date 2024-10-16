@@ -25,6 +25,7 @@ export default function Setup({ setInSetupMode }) {
   const [allowPublicSignup, setAllowPublicSignup] = useState(true);
   const [requireLogin, setRequireLogin] = useState(false);
 
+  const [advancedMode, setAdvancedMode] = useState(false);
   const [frontendURL, setFrontendURL] = useState(window.location.href);
   const [instanceUrl, setInstanceUrl] = useState(window.location.href);
   const [uriPrefix, setUriPrefix] = useState(window.location.href);
@@ -126,6 +127,7 @@ export default function Setup({ setInSetupMode }) {
           title="2. Some Technical Details"
           content={
             <div>
+              <button onClick={() => setAdvancedMode(~advancedMode)}>{advancedMode?"Disable":"Enable"} Advanced Options (Not Recomended)</button>
               <InputField
                 labelText="Frontend URL: We need to know where this SynBioHub instance is is displayed. If the URL below is incorrect, please change it"
                 placeholder="Frontend URL"
@@ -133,6 +135,7 @@ export default function Setup({ setInSetupMode }) {
                 onChange={event => setFrontendURL(event.target.value)}
                 inputName="Frontend URL"
                 containerStyling={styles.inputcontainer}
+                disabled={!advancedMode}
               />
 
               <InputField
@@ -142,6 +145,7 @@ export default function Setup({ setInSetupMode }) {
                 onChange={event => setInstanceUrl(event.target.value)}
                 inputName="Backend URL"
                 containerStyling={styles.inputcontainer}
+                disabled={!advancedMode}
               />
 
               <InputField
@@ -151,6 +155,7 @@ export default function Setup({ setInSetupMode }) {
                 onChange={event => setUriPrefix(event.target.value)}
                 inputName="URI Prefix"
                 containerStyling={styles.inputcontainer}
+                disabled={!advancedMode}
               />
 
               <InputField

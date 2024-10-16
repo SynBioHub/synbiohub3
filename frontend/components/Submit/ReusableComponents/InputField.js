@@ -36,6 +36,7 @@ export default function InputField(properties) {
         onChange={event => properties.onChange(event)}
         className={`${styles.submitinput} ${properties.customStyling}`}
         placeholder={properties.placeholder}
+        disabled={properties.disabled}
       />
     </div>
   );
