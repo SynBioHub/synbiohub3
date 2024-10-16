@@ -55,9 +55,7 @@
         }
     ],
     "pages": [
-        "Details",
         "$TABLES[Locations]",
-        "Other Properties",
-        "Attachments"
+        "Other Properties"
     ]
 }
