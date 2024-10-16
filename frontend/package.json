@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "NODE_OPTIONS=--openssl-legacy-provider node customDev.js",
     "dev1": "node customDev.js",
-    "build": "NODE_OPTIONS=--openssl-legacy-provider next build",
+    "build": "next build",
     "start": "next start -p 3333",
     "lint": "eslint '*/**/*.{js,jsx}'",
     "lint.fix": "eslint '*/**/*.{js,jsx}' --fix",
