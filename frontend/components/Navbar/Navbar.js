@@ -77,7 +77,7 @@ export default function Navbar() {
 
 
         {theme && (
-          <Selector icon={faHome} name={theme.instanceName} href="/" isInstanceName={true} />
+          <Selector icon={faHome} name={theme.instanceName} href={linkHref} isInstanceName={true} />
         )}
       </div>
 
