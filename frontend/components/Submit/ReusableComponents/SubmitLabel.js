@@ -10,7 +10,7 @@ export default function SubmitLabel(properties) {
         htmlFor={properties.for}
         className={`${styles.submitlabel} ${styles.submitlabeloptional}`}
       >
-        {properties.text}
+        {properties.link ? <a href={`${properties.link}`}>{properties.text}</a> : properties.text}
       </label>
     );
   return (
