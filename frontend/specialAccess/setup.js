@@ -95,9 +95,9 @@ export default function Setup({ setInSetupMode }) {
               />
               <div className={styles.compressor}>
                 <div>
-                  <SubmitLabel text="Instance Primary Color"
+                  <SubmitLabel text="Instance Primary Color" 
                     style={secondaryTitleStyle}
-                  />
+                    />
                   <SketchPicker
                     color={color}
                     onChange={color => setColor(color.hex)}
