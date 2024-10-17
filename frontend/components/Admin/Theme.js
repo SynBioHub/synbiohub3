@@ -68,10 +68,10 @@ export default function Theme() {
       'X-authorization': token
     };
 
-    if (altHome !== '' && !isValidURI(altHome)) {
-      alert('Alternate Home Page must be empty or contain a valid URL.');
-      return; // Prevent form submission
-    }
+    // if (altHome !== '' && !isValidURI(altHome)) {
+    //   alert('Alternate Home Page must be empty or contain a valid URL.');
+    //   return; // Prevent form submission
+    // }
 
     const formData = new FormData();
     formData.append('instanceName', instanceName);

@@ -56,8 +56,6 @@ export default function Setup({ setInSetupMode }) {
 
   useEffect(() => {
     setPrimaryTitleStyle({ color: color });
-    console.log(color);
-    
     setSecondaryTitleStyle({ color: reduceBrightness(color, 0.25) });
   }, [color]);
 
@@ -122,7 +120,7 @@ export default function Setup({ setInSetupMode }) {
                     style={secondaryTitleStyle}
                     value={logo}
                     onChange={event => {
-                      console.log(event.target.value);
+                      // console.log(event.target.value);
                       setLogo(event.target.value);
                     }}
                   />
@@ -167,7 +165,10 @@ export default function Setup({ setInSetupMode }) {
                 customInput="select"
                 options={altHomePaths}
                 value={altHome}
-                onChange={event => {setAltHome(event.target.value) ; console.log(event.target.value)}}
+                onChange={event => {
+                  setAltHome(event.target.value);
+                  // console.log(event.target.value);
+                }}
                 inputName="Alternate Home Page"
                 containerStyling={styles.inputcontainer}
                 style={secondaryTitleStyle}
@@ -305,10 +306,10 @@ export default function Setup({ setInSetupMode }) {
               'Content-Type': 'application/json',
               Accept: 'text/plain'
             };
-            if (altHome !== '' && !isValidURI(altHome)) {
-              setErrors(['Alternate Home Page must either be empty or contain a valid URL.']);
-              return; // Prevent the submission
-            }
+            // if (altHome !== '' && !isValidURI(altHome)) {
+            //   setErrors(['Alternate Home Page must either be empty or contain a valid URL.']);
+            //   return; // Prevent the submission
+            // }
             /** Move logo file into public folder */
             try {
               await axios.post(
