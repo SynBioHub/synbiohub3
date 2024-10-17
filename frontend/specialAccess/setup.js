@@ -127,7 +127,32 @@ export default function Setup({ setInSetupMode }) {
           title="2. Some Technical Details"
           content={
             <div>
-              <button onClick={() => setAdvancedMode(~advancedMode)}>{advancedMode?"Disable":"Enable"} Advanced Options (Not Recomended)</button>
+
+              <InputField
+                labelText="Alternate Home Page: If you would like to set your own version of the home page, set the uri here. For example, typing https://mysynbiohub.org would make this the default page, while mysynbiohub would make https://synbiohub.org/mysynbiohub the default page."
+                placeholder="Alternate Home Page"
+                value={altHome}
+                onChange={event => setAltHome(event.target.value)}
+                inputName="Alternate Home Page"
+                containerStyling={styles.inputcontainer}
+              />
+
+              <button 
+                className={styles.advancedbutton}
+                onClick={
+                  () => {
+                    if (advancedMode) {
+                      setAdvancedMode(false);
+                      return;
+                    }
+                    const userConfirmed = window.confirm("You probably want to leave these settings alone. If they arent right, make sure you are hosting on the domain you intend to use. Are you sure you want to change these settings?");
+                    if (userConfirmed) {
+                      setAdvancedMode(true);
+                    }
+                  }
+                }>
+                {advancedMode?"Disable":"Enable"} Advanced Options (Not Recomended)
+              </button>
               <InputField
                 labelText="Frontend URL: We need to know where this SynBioHub instance is is displayed. If the URL below is incorrect, please change it"
                 placeholder="Frontend URL"
@@ -156,15 +181,6 @@ export default function Setup({ setInSetupMode }) {
                 inputName="URI Prefix"
                 containerStyling={styles.inputcontainer}
                 disabled={!advancedMode}
-              />
-
-              <InputField
-                labelText="Alternate Home Page: If you would like to set your own version of the home page, set the uri here. For example, typing https://mysynbiohub.org would make this the default page, while mysynbiohub would make https://synbiohub.org/mysynbiohub the default page."
-                placeholder="Alternate Home Page"
-                value={altHome}
-                onChange={event => setAltHome(event.target.value)}
-                inputName="Alternate Home Page"
-                containerStyling={styles.inputcontainer}
               />
 
             </div>

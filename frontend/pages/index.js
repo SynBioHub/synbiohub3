@@ -10,38 +10,34 @@ import TopLevel from '../components/TopLevel';
 import styles from '../styles/home.module.css';
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-
+// var showdown  = require('showdown'),
+//     sdconverter = new showdown.Converter()
+import showdown from "showdown"
+const sdconverter = new showdown.Converter()
 
 /**
  * This page renders the home/landing page for sbh.
  */
 function Home() {
-  const [loading, setLoading] = useState(true);
-  const [theme, setTheme] = useState({});
+  const [frontPageText, setFrontPageText] = useState('Loading front page text...'); 
+  // "SynBioHub is a design repository for people designing biological constructs. It enables DNA and protein designs to be uploaded, then facilitates sharing and viewing of such designs. SynBioHub also facilitates searching for information about existing useful parts and designs by combining data from a variety of sources." 
   const token = useSelector(state => state.user.token);
 
   useEffect(() => {
-    // Simulate data fetching
-    const fetchData = () => {
-      setLoading(true);
-      const themeData = JSON.parse(localStorage.getItem('theme')) || {};
-      setTheme(themeData);
-      setLoading(false);
-    };
-    fetchData();
+    const themeData = JSON.parse(localStorage.getItem('theme'), (key,value) => {
+      if (key === 'frontPageText') {
+        return sdconverter.makeHtml(value.replace(/\\n/g, '\n'));
+      }
+      return value;
+    });
+    
+    if (themeData.frontPageText){
+      setFrontPageText(
+        themeData.frontPageText 
+      );
+    }
+
   }, []);
-
-  if (loading) {
-    return (
-      <div className={styles.container}>
-        <main className={styles.main}>
-          Loading...
-        </main>
-      </div>
-    );
-  }
-
-  const frontPageText = theme && theme.frontPageText ? theme.frontPageText : "SynBioHub is a design repository for people designing biological constructs. It enables DNA and protein designs to be uploaded, then facilitates sharing and viewing of such designs. SynBioHub also facilitates searching for information about existing useful parts and designs by combining data from a variety of sources.";
 
   return (
     <div className={styles.container}>
@@ -56,8 +52,8 @@ function Home() {
             SynBio<span className={styles.hubtitle}>Hub</span>
           </a>
         </h1>
-
-        <p className={styles.description} dangerouslySetInnerHTML={createMarkup(frontPageText)} />
+        
+        <p className={styles.description} dangerouslySetInnerHTML={{__html: frontPageText}} />
 
         <div className={styles.grid}>
           <Card
@@ -104,8 +100,3 @@ export default function HomeWrapped() {
     </TopLevel>
   );
 }
-
-const createMarkup = (text) => {
-  // Replace newline characters with <br> tags
-  return { __html: text.replace(/\n/g, '<br />') };
-};

@@ -45,6 +45,16 @@
    margin-bottom: 1rem;
 }
 
+.advancedbutton {
+   background-color: #9c9c9c;
+   color: white;
+   padding: 0.5rem 1rem;
+   font-size: 1rem;
+   border-radius: 0.4rem;
+   cursor: pointer;
+   transition: transform 0.3s;
+}
+
 .colorpicker {
    margin: 0.3rem 0 1.4rem 0;
 }

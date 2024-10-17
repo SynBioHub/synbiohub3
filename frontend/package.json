@@ -76,6 +76,7 @@
     "redux-devtools-extension": "^2.13.9",
     "redux-persist": "^6.0.0",
     "redux-thunk": "^2.3.0",
+    "showdown": "^2.1.0",
     "swr": "^0.3.9"
   },
   "proxy": "http://localhost:7777/",
