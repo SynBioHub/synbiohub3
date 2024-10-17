@@ -95,7 +95,7 @@ export default function TopLevel(properties) {
       return (
         <div>
           <Head>
-            <title>SynBioHub</title>
+            <title>{theme.instanceName} | SynBioHub</title>
             <link href="/favicon.ico" rel="icon" />
           </Head>
           <Errors />
