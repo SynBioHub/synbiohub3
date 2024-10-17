@@ -26,9 +26,9 @@ export default function Setup({ setInSetupMode }) {
   const [requireLogin, setRequireLogin] = useState(false);
 
   const [advancedMode, setAdvancedMode] = useState(false);
-  const [frontendURL, setFrontendURL] = useState(window.location.href);
-  const [instanceUrl, setInstanceUrl] = useState(window.location.href);
-  const [uriPrefix, setUriPrefix] = useState(window.location.href);
+  const [frontendURL, setFrontendURL] = useState(window.location.origin+'/');
+  const [instanceUrl, setInstanceUrl] = useState(window.location.origin+'/');
+  const [uriPrefix, setUriPrefix] = useState(window.location.origin+'/');
   const [altHome, setAltHome] = useState('');
 
   const [userName, setUserName] = useState('');
@@ -58,6 +58,11 @@ export default function Setup({ setInSetupMode }) {
     setPrimaryTitleStyle({ color: color });
     setSecondaryTitleStyle({ color: reduceBrightness(color, 0.25) });
   }, [color]);
+
+  // change the url to the base url
+  useEffect(() => {
+    window.history.pushState({}, '', '/setup');
+  });
 
   return (
     <TopLevel doNotTrack={true} navbar={<div></div>} publicPage={true}>
