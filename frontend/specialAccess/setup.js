@@ -26,9 +26,9 @@ export default function Setup({ setInSetupMode }) {
   const [requireLogin, setRequireLogin] = useState(false);
 
   const [advancedMode, setAdvancedMode] = useState(false);
-  const [frontendURL, setFrontendURL] = useState(window.location.origin + '/');
-  const [instanceUrl, setInstanceUrl] = useState('http://localhost:7777/');
-  const [uriPrefix, setUriPrefix] = useState(window.location.origin + '/');
+  const [frontendURL, setFrontendURL] = useState(window.location.origin+'/');
+  const [instanceUrl, setInstanceUrl] = useState(window.location.origin+'/');
+  const [uriPrefix, setUriPrefix] = useState(window.location.origin+'/');
   const [altHome, setAltHome] = useState('');
 
   const [userName, setUserName] = useState('');
