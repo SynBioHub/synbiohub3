@@ -19,7 +19,7 @@ export default function Setup({ setInSetupMode }) {
   const [instanceName, setInstanceName] = useState('');
   const [color, setColor] = useState('#D25627');
   const [frontPageText, setFrontPageText] = useState(
-    `<a href="/About">SynBioHub</a> is a <i>design repository</i> for people designing biological constructs. It enables DNA and protein designs to be uploaded, then provides a shareable link to allow others to view them. SynBioHub also facilitates searching for information about existing useful parts and designs by combining data from a variety of sources.`
+    `[SynBioHub](/About) is a *design repository* for people designing biological constructs. It enables DNA and protein designs to be uploaded, then provides a shareable link to allow others to view them. SynBioHub also facilitates searching for information about existing useful parts and designs by combining data from a variety of sources.`
   );
   const [logo, setLogo] = useState('');
   const [allowPublicSignup, setAllowPublicSignup] = useState(true);
@@ -78,7 +78,8 @@ export default function Setup({ setInSetupMode }) {
                 </div>
                 <div className={styles.notrequired}>
                   <InputField
-                    labelText="Homepage Welcome Message"
+                    labelText="Homepage Welcome Message (Markdown Supported)"
+                    labelLink="https://www.markdownguide.org/basic-syntax/"
                     placeholder="Write welcome message here..."
                     inputName="Welcome Message"
                     containerStyling={styles.inputcontainer}

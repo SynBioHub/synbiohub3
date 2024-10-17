@@ -24,6 +24,7 @@ export default function InputField(properties) {
     <div className={properties.containerStyling}>
       <SubmitLabel
         text={properties.labelText}
+        link={properties.labelLink}
         for={properties.inputName}
         required={properties.setNeedsVerification ? true : false}
         verified={verified}

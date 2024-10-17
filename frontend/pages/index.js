@@ -31,7 +31,7 @@ function Home() {
       return value;
     });
     
-    if (themeData.frontPageText){
+    if (themeData && themeData.frontPageText){
       setFrontPageText(
         themeData.frontPageText 
       );
