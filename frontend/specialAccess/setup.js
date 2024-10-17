@@ -3,7 +3,7 @@ import Image from 'next/image';
 import styles from '../styles/setup.module.css';
 import InputField from '../components/Submit/ReusableComponents/InputField';
 import { SketchPicker } from 'react-color';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import SubmitLabel from '../components/Submit/ReusableComponents/SubmitLabel';
 import { logoutUser } from '../redux/actions';
 
@@ -40,6 +40,27 @@ export default function Setup({ setInSetupMode }) {
 
   const [errors, setErrors] = useState([]);
 
+  const [primaryTitleStyle, setPrimaryTitleStyle] = useState({ color: color });
+  const [secondaryTitleStyle, setSecondaryTitleStyle] = useState({ color: color });
+
+  const altHomePaths = [
+    '',
+    '/submit',
+    '/submissions',
+    '/search',
+    '/profile',
+    '/register',
+    '/admin',
+    '/login',
+  ]
+
+  useEffect(() => {
+    setPrimaryTitleStyle({ color: color });
+    console.log(color);
+    
+    setSecondaryTitleStyle({ color: reduceBrightness(color, 0.25) });
+  }, [color]);
+
   return (
     <TopLevel doNotTrack={true} navbar={<div></div>} publicPage={true}>
       <div className={styles.container}>
@@ -50,13 +71,14 @@ export default function Setup({ setInSetupMode }) {
             height={100}
             src="/images/logo_secondary.svg"
           />
-          <div className={styles.titletext}>Welcome to SynBioHub!</div>
+          <div className={styles.titletext} style={primaryTitleStyle}>Welcome to SynBioHub!</div>
         </div>
         <div className={styles.titlesubtext}>
           We just need a few more details to configure your SynBioHub instance
         </div>
         <SetupBlock
           title="1. Brand Your SynBioHub"
+          style={primaryTitleStyle}
           content={
             <div>
               <InputField
@@ -66,10 +88,13 @@ export default function Setup({ setInSetupMode }) {
                 onChange={event => setInstanceName(event.target.value)}
                 inputName="Instance Name"
                 containerStyling={styles.inputcontainer}
+                style={secondaryTitleStyle}
               />
               <div className={styles.compressor}>
                 <div>
-                  <SubmitLabel text="Instance Primary Color" />
+                  <SubmitLabel text="Instance Primary Color" 
+                    style={secondaryTitleStyle}
+                    />
                   <SketchPicker
                     color={color}
                     onChange={color => setColor(color.hex)}
@@ -86,6 +111,7 @@ export default function Setup({ setInSetupMode }) {
                     value={frontPageText}
                     onChange={event => setFrontPageText(event.target.value)}
                     customInput="textarea"
+                    style={secondaryTitleStyle}
                   />
 
                   <InputField
@@ -93,6 +119,7 @@ export default function Setup({ setInSetupMode }) {
                     inputName="Upload Photo"
                     containerStyling={styles.inputcontainer}
                     customType="file"
+                    style={secondaryTitleStyle}
                     value={logo}
                     onChange={event => {
                       console.log(event.target.value);
@@ -104,6 +131,8 @@ export default function Setup({ setInSetupMode }) {
                     labelText="Allow Public Account Creation: if unchecked, accounts can only be created through invitation"
                     inputName="Allow Public"
                     containerStyling={styles.checkboxinput}
+                    style={secondaryTitleStyle}
+                    inputStyle={{ accentColor: color }}
                     customType="checkbox"
                     value={allowPublicSignup}
                     onChange={event =>
@@ -117,6 +146,8 @@ export default function Setup({ setInSetupMode }) {
                     onChange={event => setRequireLogin(event.target.checked)}
                     inputName="Alternate Home Page"
                     containerStyling={styles.checkboxinput}
+                    style={secondaryTitleStyle}
+                    inputStyle={{ accentColor: color }}
                     customType="checkbox"
                   />
                 </div>
@@ -126,16 +157,20 @@ export default function Setup({ setInSetupMode }) {
         />
         <SetupBlock
           title="2. Some Technical Details"
+          style={primaryTitleStyle}
           content={
             <div>
 
               <InputField
                 labelText="Alternate Home Page: If you would like to set your own version of the home page, set the uri here. For example, typing https://mysynbiohub.org would make this the default page, while mysynbiohub would make https://synbiohub.org/mysynbiohub the default page."
                 placeholder="Alternate Home Page"
+                customInput="select"
+                options={altHomePaths}
                 value={altHome}
-                onChange={event => setAltHome(event.target.value)}
+                onChange={event => {setAltHome(event.target.value) ; console.log(event.target.value)}}
                 inputName="Alternate Home Page"
                 containerStyling={styles.inputcontainer}
+                style={secondaryTitleStyle}
               />
 
               <button 
@@ -162,6 +197,7 @@ export default function Setup({ setInSetupMode }) {
                 inputName="Frontend URL"
                 containerStyling={styles.inputcontainer}
                 disabled={!advancedMode}
+                style={secondaryTitleStyle}
               />
 
               <InputField
@@ -172,6 +208,7 @@ export default function Setup({ setInSetupMode }) {
                 inputName="Backend URL"
                 containerStyling={styles.inputcontainer}
                 disabled={!advancedMode}
+                style={secondaryTitleStyle}
               />
 
               <InputField
@@ -182,6 +219,7 @@ export default function Setup({ setInSetupMode }) {
                 inputName="URI Prefix"
                 containerStyling={styles.inputcontainer}
                 disabled={!advancedMode}
+                style={secondaryTitleStyle}
               />
 
             </div>
@@ -189,6 +227,7 @@ export default function Setup({ setInSetupMode }) {
         />
         <SetupBlock
           title="3. Create First Account (Administrator Account)"
+          style={primaryTitleStyle}
           content={
             <div>
               <InputField
@@ -198,6 +237,7 @@ export default function Setup({ setInSetupMode }) {
                 onChange={event => setUserName(event.target.value)}
                 inputName="username"
                 containerStyling={styles.inputcontainer}
+                style={secondaryTitleStyle}
                 pattern="^[a-zA-Z0-9\-_\.~]+$"
                 title="Usernames can only contain letters, numbers, and the symbols - _ . ~"
               />
@@ -210,6 +250,7 @@ export default function Setup({ setInSetupMode }) {
                 onChange={event => setUserFullName(event.target.value)}
                 inputName="full name"
                 containerStyling={styles.inputcontainer}
+                style={secondaryTitleStyle}
               />
 
               <InputField
@@ -219,6 +260,7 @@ export default function Setup({ setInSetupMode }) {
                 onChange={event => setAffiliation(event.target.value)}
                 inputName="affiliation"
                 containerStyling={styles.inputcontainer}
+                style={secondaryTitleStyle}
               />
 
               <InputField
@@ -228,6 +270,7 @@ export default function Setup({ setInSetupMode }) {
                 onChange={event => setUserEmail(event.target.value)}
                 inputName="email"
                 containerStyling={styles.inputcontainer}
+                style={secondaryTitleStyle}
               />
 
               <InputField
@@ -238,6 +281,7 @@ export default function Setup({ setInSetupMode }) {
                 inputName="password"
                 containerStyling={styles.inputcontainer}
                 customType="password"
+                style={secondaryTitleStyle}
               />
 
               <InputField
@@ -248,12 +292,14 @@ export default function Setup({ setInSetupMode }) {
                 inputName="password (again)"
                 containerStyling={styles.inputcontainer}
                 customType="password"
+                style={secondaryTitleStyle}
               />
             </div>
           }
         />
         <div
           className={styles.createbutton}
+          style={{ backgroundColor: color }}
           onClick={async () => {
             const headers = {
               'Content-Type': 'application/json',
@@ -316,11 +362,11 @@ export default function Setup({ setInSetupMode }) {
   );
 }
 
-function SetupBlock({ title, content }) {
+function SetupBlock({ title, content, style }) {
   return (
     <div className={styles.setupcontainer}>
       <div className={styles.setup}>
-        <div className={styles.setuptitle}>{title}</div>
+        <div className={styles.setuptitle} style={style}>{title}</div>
         {content}
       </div>
     </div>
@@ -338,4 +384,24 @@ function ErrorMessages({ errors }) {
     </div>
   ));
   return <div style={{ paddingBottom: '2rem' }}>{renderedErrors}</div>;
+}
+
+function reduceBrightness(hexColor, percentage) {
+  // Remove the hash at the start if it's there
+  hexColor = hexColor.replace(/^#/, '');
+
+  // Parse the r, g, b values
+  let r = parseInt(hexColor.substring(0, 2), 16);
+  let g = parseInt(hexColor.substring(2, 4), 16);
+  let b = parseInt(hexColor.substring(4, 6), 16);
+
+  // Reduce each component by the percentage
+  r = Math.max(0, Math.min(255, Math.floor(r * (1 - percentage))));
+  g = Math.max(0, Math.min(255, Math.floor(g * (1 - percentage))));
+  b = Math.max(0, Math.min(255, Math.floor(b * (1 - percentage))));
+
+  // Convert back to hex and pad with zeros if necessary
+  const newHexColor = `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+
+  return newHexColor;
 }
