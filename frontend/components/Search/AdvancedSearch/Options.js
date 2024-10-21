@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { faPlus, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import getConfig from 'next/config';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 
@@ -17,7 +16,7 @@ import AdditionalFilter from './AdditionalFilter';
 import SelectLoader from './SelectLoader';
 import { addError } from '../../../redux/actions';
 
-const { publicRuntimeConfig } = getConfig();
+import feConfig from "../../../config.json";
 
 // tooltip component to show descriptions on hover
 const Tooltip = ({ text, children }) => {
@@ -196,7 +195,7 @@ const loadPredicates = async (setPredicates, token, dispatch) => {
 
 // function to fetch predicates
 const fetchPredicates = async (token, dispatch) => {
-  const url = `${publicRuntimeConfig.backend}/sparql?query=${encodeURIComponent(
+  const url = `${feConfig.backend}/sparql?query=${encodeURIComponent(
     getPredicates
   )}`;
   try {

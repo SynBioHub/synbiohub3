@@ -15,7 +15,7 @@ import Link from 'next/link';
 import { isUriOwner } from './Shell';
 
 import getConfig from "next/config";
-const { publicRuntimeConfig } = getConfig();
+import feConfig from "../../config.json";
 
 export default function ViewHeader(properties) {
   const [displayedTitle, setDisplayedTitle] = useState(properties.name);  // New state for the displayed title
@@ -52,7 +52,7 @@ export default function ViewHeader(properties) {
 
   const token = useSelector(state => state.user.token);
   const username = useSelector(state => state.user.username);
-  const objectUri = `${publicRuntimeConfig.backend}/${objectUriParts}`;
+  const objectUri = `${feConfig.backend}/${objectUriParts}`;
   var isOwner = isUriOwner(objectUri, username);
 
 
@@ -178,7 +178,7 @@ export default function ViewHeader(properties) {
   };
 
   const checkSBOLExplorer = () => {
-    axios.get(`${publicRuntimeConfig.backend}/admin/explorer`, {
+    axios.get(`${feConfig.backend}/admin/explorer`, {
       headers: {
         "Accept": "text/plain; charset=UTF-8",
         "X-authorization": token

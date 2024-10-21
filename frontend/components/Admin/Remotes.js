@@ -6,7 +6,6 @@ import {
   faTrashAlt
 } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
-import getConfig from 'next/config';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import useSWR, { mutate } from 'swr';
@@ -16,7 +15,7 @@ import Table from '../Reusable/Table/Table';
 import ActionButton from './Reusable/ActionButton';
 import TableInput from './Reusable/TableInput';
 import { addError } from '../../redux/actions';
-const { publicRuntimeConfig } = getConfig();
+import feConfig from "../../config.json";
 
 /* eslint sonarjs/cognitive-complexity: "off" */
 
@@ -230,7 +229,7 @@ function Dropdown() {
 
 const useRegistries = (token, dispatch) => {
   const { data, error } = useSWR(
-    [`${publicRuntimeConfig.backend}/admin/remotes`, token, dispatch],
+    [`${feConfig.backend}/admin/remotes`, token, dispatch],
     fetcher
   );
   return {

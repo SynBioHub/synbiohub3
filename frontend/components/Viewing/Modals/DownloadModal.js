@@ -8,7 +8,7 @@ import Select from "react-select";
 import CustomModal from "./CustomModal";
 
 import getConfig from "next/config";
-const { publicRuntimeConfig } = getConfig();
+import feConfig from "../../../config.json";
 
 import { useDispatch } from "react-redux";
 import { downloadFiles } from "../../../redux/actions";
@@ -41,7 +41,7 @@ export default function DownloadModal(properties) {
     
     if (type != 'plugin') {
     const item = {
-      url: `${publicRuntimeConfig.backend}${properties.url}/${type}`,
+      url: `${feConfig.backend}${properties.url}/${type}`,
       name: properties.name,
       displayId: properties.displayId,
       type: "xml",
@@ -62,7 +62,7 @@ export default function DownloadModal(properties) {
     
     const pluginData = {
       uri: properties.uri,
-      instanceUrl: `${publicRuntimeConfig.backend}/`,
+      instanceUrl: `${feConfig.backend}/`,
       size: 1,
       type: properties.type
     };
@@ -95,7 +95,7 @@ export default function DownloadModal(properties) {
     
     axios({
       method: 'GET',
-      url: `${publicRuntimeConfig.backend}/admin/plugins`,
+      url: `${feConfig.backend}/admin/plugins`,
       params: {
         category: 'download'
       },
@@ -128,7 +128,7 @@ export default function DownloadModal(properties) {
 
         axios({
           method: 'POST',
-          url: `${publicRuntimeConfig.backend}/call`,
+          url: `${feConfig.backend}/call`,
           params: {
             name: plugin.name,
             endpoint: 'status',
@@ -140,7 +140,7 @@ export default function DownloadModal(properties) {
 
             axios({
               method: 'POST',
-              url: `${publicRuntimeConfig.backend}/call`,
+              url: `${feConfig.backend}/call`,
               params: {
                 name: plugin.name,
                 endpoint: 'evaluate',

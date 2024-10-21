@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import axios from "axios";
 
-const { publicRuntimeConfig } = getConfig();
+import feConfig from "../../../../config.json";
 import getConfig from "next/config";
 
 /**
@@ -36,7 +36,7 @@ export default function EditSection(properties) {
     else if (title === "Source") endpoint = "updateMutableSource";
     else if (title === "References") endpoint = "updateCitations";
 
-    const url = `${publicRuntimeConfig.backend}/${endpoint}`;
+    const url = `${feConfig.backend}/${endpoint}`;
     const headers = {
       Accept: "text/plain; charset=UTF-8",
       "X-authorization": properties.token

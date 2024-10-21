@@ -6,8 +6,7 @@ import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
 import { useState } from 'react';
 import { useEffect } from 'react';
-import getConfig from 'next/config';
-const { publicRuntimeConfig } = getConfig();
+import feConfig from "../../../config.json";
 
 import styles from '../../../styles/navbar.module.css';
 import SearchBar from './SearchBar';
@@ -27,12 +26,12 @@ export default function NavbarSearch(properties) {
 
   useEffect(() => {
     if (localStorage.getItem('logo')) {
-      const urlLogo = `${publicRuntimeConfig.backend}/logo`;
+      const urlLogo = `${feConfig.backend}/logo`;
       setLogoUrl(urlLogo);
     } else {
       setLogoUrl(defaultLogo);
     }
-  }, [publicRuntimeConfig.backend]);
+  }, [feConfig.backend]);
 
   return (
     <header className={styles.container}

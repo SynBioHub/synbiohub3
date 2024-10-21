@@ -2,7 +2,7 @@ import styles from '../../../styles/submit.module.css'
 import Select from "react-select";
 import axios from 'axios';
 import getConfig from "next/config";
-const { publicRuntimeConfig } = getConfig();
+import feConfig from "../../../config.json";
 
 export default function SubmissionHandler(properties) {
 
@@ -17,7 +17,7 @@ export default function SubmissionHandler(properties) {
     
         axios({
           method: 'GET',
-          url: `${publicRuntimeConfig.backend}/admin/plugins`,
+          url: `${feConfig.backend}/admin/plugins`,
           params: {
             category: 'submit'
           },
@@ -30,7 +30,7 @@ export default function SubmissionHandler(properties) {
           for(let plugin of submitPlugins) {
             axios({
               method: 'POST',
-              url: `${publicRuntimeConfig.backend}/call`,
+              url: `${feConfig.backend}/call`,
               params: {
                 name: plugin.name,
                 endpoint: 'status',

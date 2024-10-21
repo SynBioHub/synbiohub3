@@ -1,9 +1,8 @@
 import axios from 'axios';
-import getConfig from 'next/config';
 import Loader from 'react-loader-spinner';
 import { useDispatch, useSelector } from 'react-redux';
 import useSWR from 'swr';
-const { publicRuntimeConfig } = getConfig();
+import feConfig from "../../config.json";
 
 import styles from '../../styles/defaulttable.module.css';
 import { addError } from '../../redux/actions';
@@ -94,7 +93,7 @@ export default function Status() {
 
 export const useStatus = (token, dispatch) => {
   const { data, error } = useSWR(
-    [`${publicRuntimeConfig.backend}/admin`, token, dispatch],
+    [`${feConfig.backend}/admin`, token, dispatch],
     fetcher
   );
   return {

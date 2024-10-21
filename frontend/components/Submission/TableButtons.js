@@ -5,7 +5,6 @@ import {
   faTrashAlt
 } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
-import getConfig from 'next/config';
 import React from 'react';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -15,7 +14,7 @@ import { addError, addToBasket, downloadFiles } from '../../redux/actions';
 import styles from '../../styles/submissions.module.css';
 import TableButton from '../Reusable/TableButton';
 import PublishModal from './PublishModal';
-const { publicRuntimeConfig } = getConfig();
+import feConfig from "../../config.json";
 
 export default function TableButtons(properties) {
   const dispatch = useDispatch();
@@ -44,7 +43,7 @@ export default function TableButtons(properties) {
       properties.setSelected,
       function (submission) {
         return {
-          url: `${publicRuntimeConfig.backend}${submission.url}/sbol`,
+          url: `${feConfig.backend}${submission.url}/sbol`,
           name: submission.name,
           displayId: submission.displayId,
           type: 'xml',
@@ -63,7 +62,7 @@ export default function TableButtons(properties) {
       properties.setSelected,
       function (submission) {
         return {
-          url: `${publicRuntimeConfig.backend}${submission.url}/removeCollection`,
+          url: `${feConfig.backend}${submission.url}/removeCollection`,
           name: submission.name,
           privacy: submission.privacy
         };
@@ -172,8 +171,8 @@ const removeCollections = (
   Promise.all(removeCollectionPromises)
     .then(() => {
       setProcessUnderway(false);
-      mutate([`${publicRuntimeConfig.backend}/shared`, token, dispatch]);
-      mutate([`${publicRuntimeConfig.backend}/manage`, token, dispatch]);
+      mutate([`${feConfig.backend}/shared`, token, dispatch]);
+      mutate([`${feConfig.backend}/manage`, token, dispatch]);
     })
     .catch(error => {
       setProcessUnderway(false);

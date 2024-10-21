@@ -6,7 +6,6 @@ import {
   faTrashAlt
 } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
-import getConfig from 'next/config';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import useSWR, { mutate } from 'swr';
@@ -17,7 +16,7 @@ import ActionButton from './Reusable/ActionButton';
 import Checkbox from './Reusable/CheckBox';
 import TableInput from './Reusable/TableInput';
 import { addError } from '../../redux/actions';
-const { publicRuntimeConfig } = getConfig();
+import feConfig from "../../config.json";
 
 /* eslint sonarjs/cognitive-complexity: "off" */
 
@@ -53,7 +52,7 @@ export default function Users() {
 
   const handleAllowPublicSignup = async () => {
     try {
-      const url = `${publicRuntimeConfig.backend}/admin/users`;
+      const url = `${feConfig.backend}/admin/users`;
       const headers = {
         Accept: 'text/plain',
         'X-authorization': token,
@@ -350,7 +349,7 @@ function UserDisplay(properties) {
 }
 
 const deleteUser = async (id, token, dispatch) => {
-  const url = `${publicRuntimeConfig.backend}/admin/deleteUser`;
+  const url = `${feConfig.backend}/admin/deleteUser`;
   const headers = {
     Accept: 'text/plain',
     'X-authorization': token
@@ -370,7 +369,7 @@ const deleteUser = async (id, token, dispatch) => {
   }
 
   if (response && response.status === 200) {
-    mutate([`${publicRuntimeConfig.backend}/admin/users`, token, dispatch]);
+    mutate([`${feConfig.backend}/admin/users`, token, dispatch]);
   }
 };
 
@@ -385,7 +384,7 @@ const saveUser = async (
   token,
   dispatch
 ) => {
-  const url = `${publicRuntimeConfig.backend}/admin/updateUser`;
+  const url = `${feConfig.backend}/admin/updateUser`;
   const headers = {
     Accept: 'text/plain',
     'X-authorization': token
@@ -411,7 +410,7 @@ const saveUser = async (
   }
 
   if (response.status === 200) {
-    mutate([`${publicRuntimeConfig.backend}/admin/users`, token, dispatch]);
+    mutate([`${feConfig.backend}/admin/users`, token, dispatch]);
   }
 };
 
@@ -426,7 +425,7 @@ const createUser = async (
   token,
   dispatch
 ) => {
-  const url = `${publicRuntimeConfig.backend}/admin/newUser`;
+  const url = `${feConfig.backend}/admin/newUser`;
   const headers = {
     Accept: 'text/plain',
     'X-authorization': token
@@ -454,7 +453,7 @@ const createUser = async (
   // const responseText = await response.data;
 
   if (response && response.status === 200) {
-    mutate([`${publicRuntimeConfig.backend}/admin/users`, token, dispatch]);
+    mutate([`${feConfig.backend}/admin/users`, token, dispatch]);
   }
 };
 
@@ -501,7 +500,7 @@ const sortMethods = {
 
 const useUsers = (token, dispatch) => {
   const { data, error } = useSWR(
-    [`${publicRuntimeConfig.backend}/admin/users`, token, dispatch],
+    [`${feConfig.backend}/admin/users`, token, dispatch],
     fetcher
   );
   return {

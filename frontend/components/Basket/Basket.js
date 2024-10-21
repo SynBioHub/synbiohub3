@@ -20,8 +20,7 @@ import CreateCollection from './CreateCollection';
 
 const searchable = ['name', 'displayId', 'type', 'description'];
 
-import getConfig from 'next/config';
-const { publicRuntimeConfig } = getConfig();
+import feConfig from "../../config.json";
 
 /**
  * This component represents the basket in the search page. It stores the uri/name/displayId of
@@ -203,7 +202,7 @@ const downloadCheckedItems = (items, selected, setSelected, dispatch) => {
     setSelected,
     function (item) {
       return {
-        url: `${publicRuntimeConfig.backend}${item.url}/sbol`,
+        url: `${feConfig.backend}${item.url}/sbol`,
         name: item.name,
         displayId: item.displayId,
         type: 'xml',

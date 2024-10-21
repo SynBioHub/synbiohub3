@@ -1,9 +1,8 @@
 import axios from 'axios';
-import getConfig from 'next/config';
+import feConfig from '../../config';
 
 import loadTemplate from './loadTemplate';
 import { addError } from '../../redux/actions';
-const { publicRuntimeConfig } = getConfig();
 
 export default async function getQueryResponse(
   dispatch,
@@ -33,7 +32,7 @@ export default async function getQueryResponse(
   const params = admin ? '/admin/sparql?query=' : '/sparql?query=';
   const graph = urlOverride ? '' : graphEx;
   const url = `${
-    urlOverride || publicRuntimeConfig.backend
+    urlOverride || feConfig.backend
   }${params}${encodeURIComponent(query)}${graph}`;
 
   const headers = {

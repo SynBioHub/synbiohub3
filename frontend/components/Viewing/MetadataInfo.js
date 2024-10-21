@@ -11,7 +11,7 @@ import getConfig from "next/config";
 import { getAfterThirdSlash } from './ViewHeader';
 import { isUriOwner, formatMultipleTitles } from './Shell';
 
-const { publicRuntimeConfig } = getConfig();
+import feConfig from "../../config.json";
 
 export default function MetadataInfo({ title, link, label, icon, specific, uri }) {
   const theme = JSON.parse(localStorage.getItem('theme')) || {};
@@ -52,7 +52,7 @@ export default function MetadataInfo({ title, link, label, icon, specific, uri }
   if (uri) {
     objectUriParts = getAfterThirdSlash(uri);
   }
-  const objectUri = `${publicRuntimeConfig.backend}/${objectUriParts}`;
+  const objectUri = `${feConfig.backend}/${objectUriParts}`;
 
   const [editSourceIndex, setEditSourceIndex] = useState(null);
   const [editedSource, setEditedSource] = useState('');
