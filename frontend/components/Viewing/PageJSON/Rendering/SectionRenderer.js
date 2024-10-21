@@ -3,7 +3,6 @@ import Link from 'next/link';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import { useDispatch, useSelector } from 'react-redux';
-import getConfig from 'next/config';
 import axios from 'axios';
 import { useEffect } from 'react';
 import { useState } from 'react';
@@ -11,7 +10,7 @@ import { addError } from '../../../../redux/actions';
 import sequenceOntology from '../../../../namespace/sequence-ontology';
 import systemsBiologyOntology from '../../../../namespace/systems-biology-ontology';
 import edamOntology from '../../../../namespace/edam-ontology';
-const { publicRuntimeConfig } = getConfig();
+import feConfig from "../../../../config.json";
 
 import { processUrl } from '../../../Admin/Registries';
 
@@ -24,7 +23,7 @@ function loadText(template, args) {
 
 export default function SectionRenderer({ section, metadata }) {
   const dispatch = useDispatch();
-  const url = `${publicRuntimeConfig.backend}/admin/registries`;
+  const url = `${feConfig.backend}/admin/registries`;
   const registries = JSON.parse(localStorage.getItem("registries")) || {};
   const [data, setData] = useState(null);
   const [processedLink, setProcessedLink] = useState(null);

@@ -1,4 +1,4 @@
-import getConfig from 'next/config';
+
 import { useEffect, useState } from 'react';
 
 import NavbarSearch from '../components/Search/NavbarSearch/NavbarSearch';
@@ -9,7 +9,7 @@ import styles from '../styles/standardsearch.module.css';
 import { addError } from '../redux/actions';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
-const { publicRuntimeConfig } = getConfig();
+import feConfig from "../config.json"
 
 /**
  * This page renders the default search for the /search url
@@ -25,7 +25,7 @@ export default function RootCollections() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const url = `${publicRuntimeConfig.backend}/rootCollections`;
+        const url = `${feConfig.backend}/rootCollections`;
         const headers = {
           Accept: 'text/plain; charset=UTF-8',
           'X-authorization': token
@@ -43,7 +43,7 @@ export default function RootCollections() {
         console.error('Error:', err.message);
         setError({
           customMessage: 'Request and/or processing failed for GET /rootCollections',
-          fullUrl: `${publicRuntimeConfig.backendSS}/rootCollections`,
+          fullUrl: `${feConfig.backendSS}/rootCollections`,
           message: err.message,
           name: 'Client side error',
           stack: err.stack

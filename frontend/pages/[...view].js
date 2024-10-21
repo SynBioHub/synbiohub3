@@ -1,9 +1,9 @@
 import axios from 'axios';
-import getConfig from 'next/config';
+
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-const { publicRuntimeConfig } = getConfig();
+import feConfig from "../config.json"
 
 import Loading from '../components/Reusable/Loading';
 import TopLevel from '../components/TopLevel';
@@ -26,10 +26,10 @@ export default function View({ data, error }) {
   const [metadata, setMetadata] = useState();
   const theme = JSON.parse(localStorage.getItem('theme')) || {};
   const [urlExists, setUrlExists] = useState(true); // New state for URL existence
-  const backenduri = `${publicRuntimeConfig.backend}/${url}`;
+  const backenduri = `${feConfig.backend}/${url}`;
 
   if (url.endsWith('/twins')) {
-    const searchUrl = `${publicRuntimeConfig.backend}/${url}`;
+    const searchUrl = `${feConfig.backend}/${url}`;
     return (
       <LinkedSearch
         url={searchUrl}
@@ -38,7 +38,7 @@ export default function View({ data, error }) {
     )
   }
   if (url.endsWith('/uses')) {
-    const searchUrl = `${publicRuntimeConfig.backend}/${url}`;
+    const searchUrl = `${feConfig.backend}/${url}`;
     return (
       <LinkedSearch
         url={searchUrl}
@@ -47,7 +47,7 @@ export default function View({ data, error }) {
     )
   }
   if (url.endsWith('/similar')) {
-    const searchUrl = `${publicRuntimeConfig.backend}/${url}`;
+    const searchUrl = `${feConfig.backend}/${url}`;
     return (
       <LinkedSearch
         url={searchUrl}
@@ -145,7 +145,7 @@ export async function getServerSideProps() {
   // Fetch data from external API
   try {
     const response = await axios.get(
-      `${publicRuntimeConfig.backendSS}/admin/plugins`,
+      `${feConfig.backendSS}/admin/plugins`,
       {
         headers: {
           'Content-Type': 'application/json',
@@ -163,7 +163,7 @@ export async function getServerSideProps() {
         error: {
           customMessage:
             'Request and/or processing failed for GET /admin/plugins',
-          fullUrl: `${publicRuntimeConfig.backendSS}/admin/plugins`,
+          fullUrl: `${feConfig.backendSS}/admin/plugins`,
           message: error.message,
           name: 'Server side error',
           stack: error.stack

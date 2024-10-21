@@ -7,12 +7,11 @@ import { useState, useEffect } from 'react';
 import SubmitLabel from '../components/Submit/ReusableComponents/SubmitLabel';
 import { logoutUser } from '../redux/actions';
 
-import getConfig from 'next/config';
 import { useDispatch } from 'react-redux';
 import { addError } from '../redux/actions';
 import { isValidURI } from '../components/Viewing/Shell';
 import axios from 'axios';
-const { publicRuntimeConfig } = getConfig();
+import feConfig from '../config.json';
 
 export default function Setup({ setInSetupMode }) {
   const dispatch = useDispatch();
@@ -318,7 +317,7 @@ export default function Setup({ setInSetupMode }) {
             /** Move logo file into public folder */
             try {
               await axios.post(
-                `${publicRuntimeConfig.backend}/setup`,
+                `${feConfig.backend}/setup`,
                 {
                   instanceName,
                   frontendURL,
@@ -355,7 +354,7 @@ export default function Setup({ setInSetupMode }) {
               }
               error.customMessage =
                 'Request and/or processing failed for POST /setup';
-              error.fullUrl = `${publicRuntimeConfig.backend}/setup`;
+              error.fullUrl = `${feConfig.backend}/setup`;
               dispatch(addError(error));
             }
           }}

@@ -1,5 +1,4 @@
 import axios from 'axios';
-import getConfig from 'next/config';
 import { useEffect, useState } from 'react';
 import Loader from 'react-loader-spinner';
 import { useDispatch, useSelector } from 'react-redux';
@@ -8,7 +7,7 @@ import { faHatWizard, faBars} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRouter } from 'next/router';
 import Options from '../AdvancedSearch/Options';
-const { publicRuntimeConfig } = getConfig();
+import feConfig from "../../../config.json";
 import SearchHeader from '../SearchHeader/SearchHeader';
 import { processUrl } from '../../Admin/Registries';
 
@@ -278,7 +277,7 @@ const useSearchResults = (query, url, offset, limit, token, dispatch) => {
   query = url + query;
   const { data, error } = useSWR(
     [
-      `${publicRuntimeConfig.backend}/search/${query}?offset=${offset}&limit=${limit}`,
+      `${feConfig.backend}/search/${query}?offset=${offset}&limit=${limit}`,
       token,
       dispatch
     ],
@@ -294,7 +293,7 @@ const useSearchResults = (query, url, offset, limit, token, dispatch) => {
 const useSearchCount = (query, url, token, dispatch) => {
   query = url + query;
   const { data, error } = useSWR(
-    [`${publicRuntimeConfig.backend}/searchCount/${query}`, token, dispatch],
+    [`${feConfig.backend}/searchCount/${query}`, token, dispatch],
     fetcher
   );
   return {

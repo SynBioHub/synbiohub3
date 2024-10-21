@@ -11,7 +11,7 @@ import { getCanSubmitTo } from '../../../redux/actions';
 import { useSelector, useDispatch } from "react-redux";
 
 import getConfig from "next/config";
-const { publicRuntimeConfig } = getConfig();
+import feConfig from "../../../config.json";
 
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -87,7 +87,7 @@ export default function AddToCollectionModal(properties) {
    * @param {String} collection The uri of the collection to add to.
    */
   const addToCollection = async (collection) => {
-    const url = `${publicRuntimeConfig.backend}${properties.url}/addToCollection`;
+    const url = `${feConfig.backend}${properties.url}/addToCollection`;
     var headers = {
       Accept: "text/plain; charset=UTF-8",
       "X-authorization": token

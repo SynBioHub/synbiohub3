@@ -1,4 +1,3 @@
-import getConfig from 'next/config';
 import { useEffect, useState } from 'react';
 import WindowedSelect from 'react-windowed-select';
 import { createFilter } from 'react-windowed-select';
@@ -8,7 +7,7 @@ import Loading from '../../Reusable/MiniLoading';
 import { useDispatch, useSelector } from 'react-redux';
 import { addError } from '../../../redux/actions';
 import axios from 'axios';
-const { publicRuntimeConfig } = getConfig();
+import feConfig from "../../../config.json";
 
 const customFilter = createFilter({ ignoreAccents: false });
 
@@ -86,7 +85,7 @@ const fetchOptions = async (
 };
 
 const submitQuery = async (query, token, dispatch) => {
-  const url = `${publicRuntimeConfig.backend}/sparql?query=${encodeURIComponent(
+  const url = `${feConfig.backend}/sparql?query=${encodeURIComponent(
     query
   )}`;
   try {

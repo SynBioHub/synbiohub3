@@ -14,8 +14,7 @@ import { useSelector } from 'react-redux';
 import styles from '../../styles/navbar.module.css';
 import Profile from './Profile';
 import Selector from './Selector';
-import getConfig from 'next/config';
-const { publicRuntimeConfig } = getConfig();
+import feConfig from "../../config.json";
 
 /**
  * This component renders the navigation bar at the top of sbh. Users use this to access
@@ -50,12 +49,12 @@ export default function Navbar() {
 
   useEffect(() => {
     if (localStorage.getItem('logo')) {
-      const urlLogo = `${publicRuntimeConfig.backend}/logo`;
+      const urlLogo = `${feConfig.backend}/logo`;
       setLogoUrl(urlLogo);
     } else {
       setLogoUrl(defaultLogo);
     }
-  }, [publicRuntimeConfig.backend]);
+  }, [feConfig.backend]);
 
   return (
     <header
