@@ -3,8 +3,7 @@ import { useEffect, useState } from 'react';
 import parse, { domToReact } from 'html-react-parser';
 import React from 'react';
 
-import getConfig from 'next/config';
-const { publicRuntimeConfig } = getConfig();
+import feConfig from "../../config.json";
 import { useSelector, useDispatch } from 'react-redux';
 
 import Section from './Sections/Section';
@@ -44,7 +43,7 @@ export default function Plugin(properties) {
 
   const pluginData = {
     uri: uri,
-    instanceUrl: `${publicRuntimeConfig.backend}/`,
+    instanceUrl: `${feConfig.backend}/`,
     size: 1,
     type: type
   };
@@ -151,7 +150,7 @@ async function evaluatePlugin(plugin, type) {
   }
   return await axios({
     method: 'POST',
-    url: `${publicRuntimeConfig.backend}/call`,
+    url: `${feConfig.backend}/call`,
     params: {
       name: plugin.name,
       endpoint: 'evaluate',
@@ -171,7 +170,7 @@ async function evaluatePlugin(plugin, type) {
 async function runPlugin(plugin, pluginData) {
   return await axios({
     method: 'POST',
-    url: `${publicRuntimeConfig.backend}/call`,
+    url: `${feConfig.backend}/call`,
     params: {
       name: plugin.name,
       endpoint: 'run',

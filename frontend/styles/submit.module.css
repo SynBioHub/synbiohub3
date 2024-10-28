@@ -131,15 +131,11 @@
    align-items: center;
    margin-top: 0.8rem;
    font-size: 0.9rem;
-   color: #D25627;
+   /* color: #D25627; */
 }
 
 .submitlabelverified {
    color: #549F93;
-}
-
-.submitlabeloptional {
-   color: #888;
 }
 
 .inputstatus {
@@ -163,6 +159,10 @@
    border-radius: 0.4rem;
    font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+}
+.submitinput:disabled {
+   background-color: #c2787d;
+   color: #ffffff;
 }
 
 .submitinput::placeholder {
@@ -350,7 +350,7 @@
 .clearfilesbuttonlabel {
    font-size: 0.7rem;
    margin-top: 0.1rem;
-   color: #888;
+   color: #f52828;
 }
 
 .fileuploadingcontainer {

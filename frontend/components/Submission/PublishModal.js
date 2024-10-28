@@ -5,7 +5,6 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import axios from 'axios';
-import getConfig from 'next/config';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
@@ -17,7 +16,7 @@ import SelectorButton from '../Reusable/SelectorButton';
 import Table from '../Reusable/Table/Table';
 import PublishCollectionButton from './PublishCollectionButton';
 import NewCollectionForm from './PublishNewCollectionForm';
-const { publicRuntimeConfig } = getConfig();
+import feConfig from "../../config.json";
 
 const EXISTING = 'to Existing';
 const NEW = 'as New';
@@ -215,7 +214,7 @@ const sortMethods = {
 
 const useRootCollections = (dispatch, token) => {
   const { data, error } = useSWR(
-    [`${publicRuntimeConfig.backend}/rootCollections`, token, dispatch],
+    [`${feConfig.backend}/rootCollections`, token, dispatch],
     fetcher
   );
   return {

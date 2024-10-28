@@ -22,7 +22,7 @@ import { useSelector } from 'react-redux';
 import styles from '../../styles/view.module.css';
 
 import getConfig from "next/config";
-const { publicRuntimeConfig } = getConfig();
+import feConfig from "../../config.json";
 
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -97,7 +97,7 @@ export default function SidePanelTools(properties) {
    */
   const copyToClipboard = () => {
     navigator.clipboard.writeText(
-      `${properties.name} was a gift from ${properties.creator === "" ? "undefined" : properties.creator} ; ${publicRuntimeConfig.backend}${properties.url}`
+      `${properties.name} was a gift from ${properties.creator === "" ? "undefined" : properties.creator} ; ${feConfig.backend}${properties.url}`
     );
   }
   var displayTitle = properties.type;
@@ -231,7 +231,7 @@ export default function SidePanelTools(properties) {
 async function checkCuration(pluginData) {
   return await axios({
     method: 'GET',
-    url: `${publicRuntimeConfig.backend}/admin/plugins`,
+    url: `${feConfig.backend}/admin/plugins`,
     responseType: 'application/json',
     params: {
       category: 'curation'
@@ -244,7 +244,7 @@ async function checkCuration(pluginData) {
         for(let plugin of curatePlugins) {
         pluginPromises.push(axios({
           method: 'POST',
-          url: `${publicRuntimeConfig.backend}/call`,
+          url: `${feConfig.backend}/call`,
           params: {
             name: plugin.name,
             endpoint: 'evaluate',

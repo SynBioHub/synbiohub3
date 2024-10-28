@@ -24,9 +24,11 @@ export default function InputField(properties) {
     <div className={properties.containerStyling}>
       <SubmitLabel
         text={properties.labelText}
+        link={properties.labelLink}
         for={properties.inputName}
         required={properties.setNeedsVerification ? true : false}
         verified={verified}
+        style={properties.style}
       />
       <Input
         type={properties.customType || 'text'}
@@ -36,7 +38,19 @@ export default function InputField(properties) {
         onChange={event => properties.onChange(event)}
         className={`${styles.submitinput} ${properties.customStyling}`}
         placeholder={properties.placeholder}
-      />
+        disabled={properties.disabled}
+        style={properties.inputStyle}
+      >
+        {
+          (properties.options) ?
+            properties.options.map((option, index) => (
+            <option key={index} value={option}>
+              {option}
+            </option>
+            ))
+          : null
+        }
+      </Input>
     </div>
   );
 }

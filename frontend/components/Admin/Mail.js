@@ -1,10 +1,9 @@
 import { faEnvelope, faKey } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
-import getConfig from 'next/config';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import useSWR, { mutate } from 'swr';
-const { publicRuntimeConfig } = getConfig();
+import feConfig from "../../config.json";
 
 import styles from '../../styles/admin.module.css';
 import InputField from '../Login/InputField';
@@ -97,7 +96,7 @@ export default function Mail() {
 
 const useEmail = (token, dispatch) => {
   const { data, error } = useSWR(
-    [`${publicRuntimeConfig.backend}/admin/mail`, token, dispatch],
+    [`${feConfig.backend}/admin/mail`, token, dispatch],
     fetcher
   );
   return {
@@ -134,7 +133,7 @@ const updateEmail = async (
   actualSendGridEmail,
   dispatch
 ) => {
-  const url = `${publicRuntimeConfig.backend}/admin/mail`;
+  const url = `${feConfig.backend}/admin/mail`;
   const headers = {
     Accept: 'text/plain',
     'X-authorization': token
@@ -161,6 +160,6 @@ const updateEmail = async (
     setSendGridEmail(actualSendGridEmail);
   } else {
     setError('');
-    mutate([`${publicRuntimeConfig.backend}/admin/mail`, token, dispatch]);
+    mutate([`${feConfig.backend}/admin/mail`, token, dispatch]);
   }
 };
