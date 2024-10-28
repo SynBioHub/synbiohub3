@@ -25,9 +25,9 @@ export default function Setup({ setInSetupMode }) {
   const [requireLogin, setRequireLogin] = useState(false);
 
   const [advancedMode, setAdvancedMode] = useState(false);
-  const [frontendURL, setFrontendURL] = useState(window.location.origin+'/');
-  const [instanceUrl, setInstanceUrl] = useState(window.location.origin+'/');
-  const [uriPrefix, setUriPrefix] = useState(window.location.origin+'/');
+  const [frontendURL, setFrontendURL] = useState(window.location.origin + '/');
+  const [instanceUrl, setInstanceUrl] = useState('http://localhost:7777');
+  const [uriPrefix, setUriPrefix] = useState(window.location.origin + '/');
   const [altHome, setAltHome] = useState('');
 
   const [userName, setUserName] = useState('');
@@ -94,9 +94,9 @@ export default function Setup({ setInSetupMode }) {
               />
               <div className={styles.compressor}>
                 <div>
-                  <SubmitLabel text="Instance Primary Color" 
+                  <SubmitLabel text="Instance Primary Color"
                     style={secondaryTitleStyle}
-                    />
+                  />
                   <SketchPicker
                     color={color}
                     onChange={color => setColor(color.hex)}
@@ -178,7 +178,7 @@ export default function Setup({ setInSetupMode }) {
                 style={secondaryTitleStyle}
               />
 
-              <button 
+              <button
                 className={styles.advancedbutton}
                 onClick={
                   () => {
@@ -192,7 +192,7 @@ export default function Setup({ setInSetupMode }) {
                     }
                   }
                 }>
-                {advancedMode?"Disable":"Enable"} Advanced Options (Not Recomended)
+                {advancedMode ? "Disable" : "Enable"} Advanced Options (Not Recomended)
               </button>
               <InputField
                 labelText="Frontend URL: We need to know where this SynBioHub instance is is displayed. If the URL below is incorrect, please change it"
@@ -227,6 +227,16 @@ export default function Setup({ setInSetupMode }) {
                 style={secondaryTitleStyle}
               />
 
+              {/* <InputField
+                labelText="Plugin Prefix: If you are running SynBioHub on Docker, this will be the prefix that will tell SynBioHub where the plugin is located."
+                placeholder="Plugin Prefix"
+                value={pluginPrefix}
+                onChange={event => setPluginPrefix(event.target.value)}
+                inputName="Plugin Prefix"
+                containerStyling={styles.inputcontainer}
+                disabled={!advancedMode}
+                style={secondaryTitleStyle}
+              /> */}
             </div>
           }
         />
