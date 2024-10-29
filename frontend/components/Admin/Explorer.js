@@ -129,9 +129,9 @@ export default function Explorer() {
             'useDistributedSearch': distrib,
             'pagerankTolerance': tolerance,
             'uclustIdentity': clusterIdentity,
-            'elasticsearchEndpont': elasticSearchEnd,
+            'elasticsearchEndpoint': elasticSearchEnd,
             'elasticsearchIndexName': elasticSearchIndex,
-            'spraqlEndpoint': sparqlEndpoint,
+            'sparqlEndpoint': sparqlEndpoint,
             'useCron': autoUpdate,
             'cronDay': days,
             'whichSearch': USchecked ? 'usearch' : 'vsearch'
