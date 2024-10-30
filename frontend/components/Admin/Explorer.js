@@ -1,10 +1,11 @@
 import axios from 'axios';
+import getConfig from 'next/config';
 import styles from '../../styles/admin.module.css';
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import useSWR from 'swr';
 import ActionButton from './Reusable/ActionButton';
-import feConfig from "../../config.json";
+const { publicRuntimeConfig } = getConfig();
 
 export default function Explorer() {
     const token = useSelector(state => state.user.token);
@@ -38,7 +39,7 @@ export default function Explorer() {
     //Update SBOLExplorer Index
     const handleUpdateIndex = async () => {
         const params = new URLSearchParams();
-        const url = `${feConfig.backend}/admin/explorerUpdateIndex`;
+        const url = `${publicRuntimeConfig.backend}/admin/explorerUpdateIndex`;
         const response = await axios
         .post(url, params, {
         headers: {
@@ -55,7 +56,7 @@ export default function Explorer() {
 
     //View SBOLExplorer Log
     const handleDownloadGeneralLog = async () => { 
-        const url = `${feConfig.backend}/admin/explorerlog`;
+        const url = `${publicRuntimeConfig.backend}/admin/explorerlog`;
         const res = await axios
             .get(url, {
                 headers: {
@@ -83,7 +84,7 @@ export default function Explorer() {
 
     //admin/explorerIndexingLog
     const handleDownloadIndexLog = async () => { 
-        const url = `${feConfig.backend}/admin/explorerIndexingLog`;
+        const url = `${publicRuntimeConfig.backend}/admin/explorerIndexingLog`;
         const res = await axios
             .get(url, {
                 headers: {
@@ -136,7 +137,7 @@ export default function Explorer() {
             'whichSearch': USchecked ? 'usearch' : 'vsearch'
         };
 
-        const url = `${feConfig.backend}/admin/explorer`;
+        const url = `${publicRuntimeConfig.backend}/admin/explorer`;
         let res = await axios
         .post(url, params, {
         headers: {
@@ -405,7 +406,7 @@ export default function Explorer() {
 // if SBOLExplorer is on
 const useConfig = (token, dispatch) => {
     const { data, error } = useSWR(
-      [`${feConfig.backend}/admin/explorer`, token, dispatch],
+      [`${publicRuntimeConfig.backend}/admin/explorer`, token, dispatch],
       fetcher
     );
     return {

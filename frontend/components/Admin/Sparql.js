@@ -4,10 +4,11 @@ import dynamic from 'next/dynamic';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import Select from 'react-select';
+import getConfig from 'next/config';
 
 import styles from '../../styles/sparql.module.css';
 import Table from '../Reusable/Table/Table';
-import feConfig from "../../config.json";
+const { publicRuntimeConfig } = getConfig();
 
 const CodeMirror = dynamic(
   () => {
@@ -120,7 +121,7 @@ const submitQuery = async (
   setError();
   setLoading(true);
   const url = `${
-    feConfig.backend
+    publicRuntimeConfig.backend
   }/admin/sparql?query=${encodeURIComponent(query)}`;
 
   const headers = {

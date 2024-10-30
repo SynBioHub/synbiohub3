@@ -8,7 +8,8 @@ import createRenderingObject from './createRenderingObject';
 import SectionRenderer from './SectionRenderer';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
-import feConfig from "../../../../config.json";
+import getConfig from 'next/config';
+const { publicRuntimeConfig } = getConfig();
 
 function handleExternalFetch(
   dispatch,
@@ -27,7 +28,7 @@ function handleExternalFetch(
     // const queryUrl = registries.find(registry => {
     //   return stackTrace.uri.startsWith(registry.uri);
     // })?.url;
-    const queryUrl = feConfig.backend;
+    const queryUrl = publicRuntimeConfig.backend;
     if (queryUrl) {
       executeQueryFromTableJSON(
         dispatch,

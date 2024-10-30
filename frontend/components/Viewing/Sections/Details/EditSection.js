@@ -3,9 +3,8 @@ import { faBold, faGlobeAmericas, faImage, faItalic, faUnderline } from "@fortaw
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import axios from "axios";
-
-import feConfig from "../../../../config.json";
-import getConfig from "next/config";
+import getConfig from 'next/config';
+const { publicRuntimeConfig } = getConfig();
 
 /**
  * Rendered when the user is adding an attribute or they are editing a current attribute.
@@ -36,7 +35,7 @@ export default function EditSection(properties) {
     else if (title === "Source") endpoint = "updateMutableSource";
     else if (title === "References") endpoint = "updateCitations";
 
-    const url = `${feConfig.backend}/${endpoint}`;
+    const url = `${publicRuntimeConfig.backend}/${endpoint}`;
     const headers = {
       Accept: "text/plain; charset=UTF-8",
       "X-authorization": properties.token

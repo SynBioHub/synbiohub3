@@ -10,7 +10,8 @@ import { addError } from '../../../../redux/actions';
 import sequenceOntology from '../../../../namespace/sequence-ontology';
 import systemsBiologyOntology from '../../../../namespace/systems-biology-ontology';
 import edamOntology from '../../../../namespace/edam-ontology';
-import feConfig from "../../../../config.json";
+import getConfig from 'next/config';
+const { publicRuntimeConfig } = getConfig();
 
 import { processUrl } from '../../../Admin/Registries';
 
@@ -23,7 +24,7 @@ function loadText(template, args) {
 
 export default function SectionRenderer({ section, metadata }) {
   const dispatch = useDispatch();
-  const url = `${feConfig.backend}/admin/registries`;
+  const url = `${publicRuntimeConfig.backend}/admin/registries`;
   const registries = JSON.parse(localStorage.getItem("registries")) || {};
   const [data, setData] = useState(null);
   const [processedLink, setProcessedLink] = useState(null);

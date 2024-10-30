@@ -7,7 +7,8 @@ import { faHatWizard, faBars} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRouter } from 'next/router';
 import Options from '../AdvancedSearch/Options';
-import feConfig from "../../../config.json";
+import getConfig from 'next/config';
+const { publicRuntimeConfig } = getConfig();
 import SearchHeader from '../SearchHeader/SearchHeader';
 import { processUrl } from '../../Admin/Registries';
 
@@ -277,7 +278,7 @@ const useSearchResults = (query, url, offset, limit, token, dispatch) => {
   query = url + query;
   const { data, error } = useSWR(
     [
-      `${feConfig.backend}/search/${query}?offset=${offset}&limit=${limit}`,
+      `${publicRuntimeConfig.backend}/search/${query}?offset=${offset}&limit=${limit}`,
       token,
       dispatch
     ],
@@ -293,7 +294,7 @@ const useSearchResults = (query, url, offset, limit, token, dispatch) => {
 const useSearchCount = (query, url, token, dispatch) => {
   query = url + query;
   const { data, error } = useSWR(
-    [`${feConfig.backend}/searchCount/${query}`, token, dispatch],
+    [`${publicRuntimeConfig.backend}/searchCount/${query}`, token, dispatch],
     fetcher
   );
   return {

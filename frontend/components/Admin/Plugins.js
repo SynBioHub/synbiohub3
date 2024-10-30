@@ -8,6 +8,7 @@ import {
   faRedo
 } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
+import getConfig from 'next/config';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import useSWR, { mutate } from 'swr';
@@ -17,6 +18,7 @@ import styles from '../../styles/admin.module.css';
 import Table from '../Reusable/Table/Table';
 import ActionButton from './Reusable/ActionButton';
 import TableInput from './Reusable/TableInput';
+const { publicRuntimeConfig } = getConfig();
 
 const renderingType = 'rendering';
 const submittingType = 'submit';
@@ -28,7 +30,6 @@ const searchable = ['index', 'name', 'url'];
 const headers = ['ID', 'Name', 'URL', ''];
 
 import { addError } from '../../redux/actions';
-import feConfig from "../../config.json";
 
 /* eslint sonarjs/no-duplicate-string: "off" */
 
@@ -295,7 +296,7 @@ function PluginDisplay(properties) {
 }
 
 const deletePlugin = async (id, type, token, dispatch) => {
-  const url = `${feConfig.backend}/admin/deletePlugin`;
+  const url = `${publicRuntimeConfig.backend}/admin/deletePlugin`;
   const headers = {
     Accept: 'text/plain',
     'X-authorization': token
@@ -316,12 +317,12 @@ const deletePlugin = async (id, type, token, dispatch) => {
   }
 
   if (response.status === 200) {
-    mutate([`${feConfig.backend}/admin/plugins`, token, dispatch]);
+    mutate([`${publicRuntimeConfig.backend}/admin/plugins`, token, dispatch]);
   }
 };
 
 const savePlugin = async (id, type, name, pluginUrl, token, dispatch) => {
-  const url = `${feConfig.backend}/admin/savePlugin`;
+  const url = `${publicRuntimeConfig.backend}/admin/savePlugin`;
   const headers = {
     Accept: 'text/plain',
     'X-authorization': token
@@ -344,7 +345,7 @@ const savePlugin = async (id, type, name, pluginUrl, token, dispatch) => {
   }
 
   if (response.status === 200) {
-    mutate([`${feConfig.backend}/admin/plugins`, token, dispatch]);
+    mutate([`${publicRuntimeConfig.backend}/admin/plugins`, token, dispatch]);
   }
 };
 
@@ -375,7 +376,7 @@ const sortMethods = {
 
 const usePlugins = (token, dispatch) => {
   const { data, error } = useSWR(
-    [`${feConfig.backend}/admin/plugins`, token, dispatch],
+    [`${publicRuntimeConfig.backend}/admin/plugins`, token, dispatch],
     fetcher
   );
   return {
@@ -389,7 +390,7 @@ const usePlugins = (token, dispatch) => {
 async function fetchStatus(plugin, type) {
   return await axios({
     method: 'POST',
-    url: `${feConfig.backend}/call`,
+    url: `${publicRuntimeConfig.backend}/call`,
     params: {
       name: plugin.name,
       endpoint: 'status',

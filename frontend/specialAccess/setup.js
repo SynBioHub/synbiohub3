@@ -11,7 +11,8 @@ import { useDispatch } from 'react-redux';
 import { addError } from '../redux/actions';
 import { isValidURI } from '../components/Viewing/Shell';
 import axios from 'axios';
-import feConfig from '../config.json';
+import getConfig from 'next/config';
+const { publicRuntimeConfig } = getConfig();
 
 export default function Setup({ setInSetupMode }) {
   const dispatch = useDispatch();
@@ -26,7 +27,7 @@ export default function Setup({ setInSetupMode }) {
 
   const [advancedMode, setAdvancedMode] = useState(false);
   const [frontendURL, setFrontendURL] = useState(window.location.origin + '/');
-  const [instanceUrl, setInstanceUrl] = useState('http://localhost:7777');
+  const [instanceUrl, setInstanceUrl] = useState('http://localhost:7777/');
   const [uriPrefix, setUriPrefix] = useState(window.location.origin + '/');
   const [altHome, setAltHome] = useState('');
 
@@ -327,7 +328,7 @@ export default function Setup({ setInSetupMode }) {
             /** Move logo file into public folder */
             try {
               await axios.post(
-                `${feConfig.backend}/setup`,
+                `${publicRuntimeConfig.backend}/setup`,
                 {
                   instanceName,
                   frontendURL,
@@ -364,7 +365,7 @@ export default function Setup({ setInSetupMode }) {
               }
               error.customMessage =
                 'Request and/or processing failed for POST /setup';
-              error.fullUrl = `${feConfig.backend}/setup`;
+              error.fullUrl = `${publicRuntimeConfig.backend}/setup`;
               dispatch(addError(error));
             }
           }}

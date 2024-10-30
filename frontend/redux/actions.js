@@ -6,7 +6,8 @@ import { mutate } from 'swr';
 import { useSelector } from 'react-redux';
 
 import * as types from './types';
-import feConfig from '../config';
+import getConfig from 'next/config';
+const { publicRuntimeConfig } = getConfig();
 
 /* eslint sonarjs/no-duplicate-string: "off" */
 
@@ -27,7 +28,7 @@ redux state.
  * @returns
  */
 export const login = (username, password) => async dispatch => {
-  const url = `${feConfig.backend}/login`;
+  const url = `${publicRuntimeConfig.backend}/login`;
   const headers = {
     Accept: 'text/plain'
   };
@@ -104,7 +105,7 @@ export const logoutUser = () => dispatch => {
 export const updateUser =
   (name, affiliation, email, password, confirmPassword) =>
     async (dispatch, getState) => {
-      const url = `${feConfig.backend}/profile`;
+      const url = `${publicRuntimeConfig.backend}/profile`;
       try {
         const token = getState().user.token;
         const headers = {
@@ -134,13 +135,13 @@ export const updateUser =
         if (response.status === 200) dispatch(fetchUserInfo());
       } catch (error) {
         error.customMessage = 'There was an error updating your profile.';
-        error.url = `${feConfig.backend}/profile`;
+        error.url = `${publicRuntimeConfig.backend}/profile`;
         dispatch(addError(error));
       }
     };
 
 export const fetchUserInfo = () => async (dispatch, getState) => {
-  const url = `${feConfig.backend}/profile`;
+  const url = `${publicRuntimeConfig.backend}/profile`;
   const token = getState().user.token;
   const headers = {
     Accept: 'text/plain',
@@ -176,7 +177,7 @@ export const fetchUserInfo = () => async (dispatch, getState) => {
 export const registerUser =
   (fullName, username, affiliation, email, password, confirmPassword) =>
     async dispatch => {
-      const url = `${feConfig.backend}/register`;
+      const url = `${publicRuntimeConfig.backend}/register`;
       const headers = {
         Accept: 'text/plain'
       };
@@ -400,7 +401,7 @@ async function singlePluginHandler(files, plugin, dispatch, getState) {
       'Accepts': 'application/json'
     },
     method: 'POST',
-    url: `${feConfig.backend}/call`,
+    url: `${publicRuntimeConfig.backend}/call`,
     params: {
       name: plugin,
       endpoint: 'evaluate',
@@ -426,7 +427,7 @@ async function singlePluginHandler(files, plugin, dispatch, getState) {
         url: file.url,
         filename: file.name,
         type: mime.lookup(file.name),
-        instanceUrl: feConfig.backend
+        instanceUrl: publicRuntimeConfig.backend
       })
     }
 
@@ -442,7 +443,7 @@ async function singlePluginHandler(files, plugin, dispatch, getState) {
         'Accept': 'application/zip'
       },
       method: 'POST',
-      url: `${feConfig.backend}/call`,
+      url: `${publicRuntimeConfig.backend}/call`,
       responseType: 'arraybuffer',
       responseEncoding: 'binary',
       params: {
@@ -600,7 +601,7 @@ async function uploadFiles(
     payload: filesUploading
   });
 
-  let url = `${feConfig.backend}/submit`;
+  let url = `${publicRuntimeConfig.backend}/submit`;
   const headers = {
     Accept: 'text/plain; charset=UTF-8',
     'X-authorization': token
@@ -609,7 +610,7 @@ async function uploadFiles(
   // upload all files
   for (var fileIndex = 0; fileIndex < filesUploading.length; fileIndex++) {
     if (addingToCollection) {
-      url = `${feConfig.backend}${filesUploading[fileIndex].url}/addToCollection`;
+      url = `${publicRuntimeConfig.backend}${filesUploading[fileIndex].url}/addToCollection`;
     }
     filesUploading[fileIndex].status = 'uploading';
 
@@ -749,7 +750,7 @@ export const addAttachments = (files, uri) => async (dispatch, getState) => {
 
   const token = getState().user.token;
 
-  const url = `${feConfig.backend}/submit`;
+  const url = `${publicRuntimeConfig.backend}/submit`;
   const headers = {
     Accept: 'text/plain; charset=UTF-8',
     'X-authorization': token
@@ -811,7 +812,7 @@ export const addAttachments = (files, uri) => async (dispatch, getState) => {
 export const createCollection =
   (id, version, name, description, citations, overwrite_merge) =>
     async (dispatch, getState) => {
-      const url = `${feConfig.backend}/submit`;
+      const url = `${publicRuntimeConfig.backend}/submit`;
       try {
         dispatch({ type: types.CREATINGCOLLECTIONERRORS, payload: [] });
         dispatch({ type: types.CREATINGCOLLECTION, payload: true });
@@ -897,7 +898,7 @@ export const resetSubmit = () => dispatch => {
 
 // MANAGE SUBMISSION ACTIONS
 export const getCanSubmitTo = () => async (dispatch, getState) => {
-  var url = `${feConfig.backend}/manage`;
+  var url = `${publicRuntimeConfig.backend}/manage`;
   try {
     dispatch({ type: types.GETTINGCANSUBMITTO, payload: true });
     const token = getState().user.token;
@@ -923,7 +924,7 @@ export const getCanSubmitTo = () => async (dispatch, getState) => {
       // Logic in case data is undefined or null
       console.error('No data received');
     }
-    url = `${feConfig.backend}/shared`;
+    url = `${publicRuntimeConfig.backend}/shared`;
     try {
       data = await axios.get(url, { headers });
     } catch (error) {
@@ -968,7 +969,7 @@ export const makePublicCollection =
     setProcessUnderway
   ) =>
     async (dispatch, getState) => {
-      const url = `${feConfig.backend}${submissionUrl}/makePublic`;
+      const url = `${publicRuntimeConfig.backend}${submissionUrl}/makePublic`;
       try {
         setProcessUnderway(true);
         dispatch({ type: types.PUBLISHING, payload: true });
@@ -1000,8 +1001,8 @@ export const makePublicCollection =
         }
 
         if (response.status === 200) {
-          mutate([`${feConfig.backend}/shared`, token, dispatch]);
-          mutate([`${feConfig.backend}/manage`, token, dispatch]);
+          mutate([`${publicRuntimeConfig.backend}/shared`, token, dispatch]);
+          mutate([`${publicRuntimeConfig.backend}/manage`, token, dispatch]);
         }
 
         setProcessUnderway(false);
@@ -1076,7 +1077,7 @@ const zippedFilePromise = (
           headers: {
             'Accept': 'application/octet-stream'
           },
-          url: `${feConfig.backend}/call`,
+          url: `${publicRuntimeConfig.backend}/call`,
           method: 'POST',
           responseType: 'blob',
           params: {
@@ -1184,7 +1185,7 @@ export const clearBasket = itemsToClear => (dispatch, getState) => {
 
 async function checkUriExists(url, token) {
 
-  const uri = `${feConfig.backend}${url}`;
+  const uri = `${publicRuntimeConfig.backend}${url}`;
 
   const headers = {
     'Accept': 'application/sparql-results+json',

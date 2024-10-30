@@ -1,7 +1,8 @@
 import axios from 'axios';
+import getConfig from 'next/config';
 import { useDispatch, useSelector } from 'react-redux';
 import useSWR from 'swr';
-import feConfig from "../../config.json";
+const { publicRuntimeConfig } = getConfig();
 
 import Table from '../Reusable/Table/Table';
 import { addError } from '../../redux/actions';
@@ -48,7 +49,7 @@ const sortMethods = {
 
 const useGraphs = (token, dispatch) => {
   const { data, error } = useSWR(
-    [`${feConfig.backend}/admin/graphs`, token, dispatch],
+    [`${publicRuntimeConfig.backend}/admin/graphs`, token, dispatch],
     fetcher
   );
   return {

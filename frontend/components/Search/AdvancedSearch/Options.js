@@ -15,8 +15,8 @@ import styles from '../../../styles/advancedsearch.module.css';
 import AdditionalFilter from './AdditionalFilter';
 import SelectLoader from './SelectLoader';
 import { addError } from '../../../redux/actions';
-
-import feConfig from "../../../config.json";
+import getConfig from 'next/config';
+const { publicRuntimeConfig } = getConfig();
 
 // tooltip component to show descriptions on hover
 const Tooltip = ({ text, children }) => {
@@ -195,7 +195,7 @@ const loadPredicates = async (setPredicates, token, dispatch) => {
 
 // function to fetch predicates
 const fetchPredicates = async (token, dispatch) => {
-  const url = `${feConfig.backend}/sparql?query=${encodeURIComponent(
+  const url = `${publicRuntimeConfig.backend}/sparql?query=${encodeURIComponent(
     getPredicates
   )}`;
   try {

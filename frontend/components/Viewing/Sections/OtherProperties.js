@@ -8,16 +8,13 @@ import { getAfterThirdSlash } from '../ViewHeader';
 import { isUriOwner, isValidURI } from '../Shell';
 import Loading from '../../Reusable/Loading';
 import Link from 'next/link';
-import getConfig from "next/config";
 
 import styles from '../../../styles/view.module.css';
 import { useDispatch, useSelector } from 'react-redux';
 
 import axios from 'axios';
-import next from 'next';
-
-import feConfig from "../../../config.json";
-
+import getConfig from 'next/config';
+const { publicRuntimeConfig } = getConfig();
 
 export default function OtherProperties(properties) {
   const [otherProps, setOtherProps] = useState();
@@ -50,7 +47,7 @@ export default function OtherProperties(properties) {
   if (properties.uri) {
     objectUriParts = getAfterThirdSlash(properties.uri);
   }
-  const objectUri = `${feConfig.backend}/${objectUriParts}`;
+  const objectUri = `${publicRuntimeConfig.backend}/${objectUriParts}`;
   var isOwner = isUriOwner(objectUri, username);
 
   const handleAddAnnotation = () => {

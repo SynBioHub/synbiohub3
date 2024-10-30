@@ -11,7 +11,8 @@ import { useDispatch } from 'react-redux';
 import { addToBasket, downloadFiles } from '../../../../redux/actions';
 import styles from '../../../../styles/resulttable.module.css';
 import Navigation from './Navigation';
-import feConfig from "../../../../config.json";
+import getConfig from 'next/config';
+const { publicRuntimeConfig } = getConfig();
 
 export default function TableButtons(properties) {
   const dispatch = useDispatch();
@@ -96,7 +97,7 @@ export default function TableButtons(properties) {
 
 const convertToDownloadableFile = item => {
   return {
-    url: `${feConfig.backend}${item.url}/sbol`,
+    url: `${publicRuntimeConfig.backend}${item.url}/sbol`,
     name: item.name,
     displayId: item.displayId,
     type: 'xml',
