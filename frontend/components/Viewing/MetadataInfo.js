@@ -6,12 +6,11 @@ import { faPlus, faTrash, faPencilAlt } from '@fortawesome/free-solid-svg-icons'
 import RenderIcon from './PageJSON/Rendering/RenderIcon';
 import styles from '../../styles/view.module.css';
 import axios from 'axios';
-import getConfig from "next/config";
 
 import { getAfterThirdSlash } from './ViewHeader';
 import { isUriOwner, formatMultipleTitles } from './Shell';
-
-import feConfig from "../../config.json";
+import getConfig from 'next/config';
+const { publicRuntimeConfig } = getConfig();
 
 export default function MetadataInfo({ title, link, label, icon, specific, uri }) {
   const theme = JSON.parse(localStorage.getItem('theme')) || {};
@@ -52,7 +51,7 @@ export default function MetadataInfo({ title, link, label, icon, specific, uri }
   if (uri) {
     objectUriParts = getAfterThirdSlash(uri);
   }
-  const objectUri = `${feConfig.backend}/${objectUriParts}`;
+  const objectUri = `${publicRuntimeConfig.backend}/${objectUriParts}`;
 
   const [editSourceIndex, setEditSourceIndex] = useState(null);
   const [editedSource, setEditedSource] = useState('');

@@ -1,4 +1,5 @@
 import axios from 'axios';
+import getConfig from 'next/config';
 import styles from '../../styles/defaulttable.module.css';
 import Loading from '../Reusable/Loading';
 import { addError } from '../../redux/actions';
@@ -6,8 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useState, useEffect } from 'react';
 import Loader from 'react-loader-spinner';
 import { isValidURI } from '../Viewing/Shell';
-
-import feConfig from "../../config.json";
+const { publicRuntimeConfig } = getConfig();
 
 export default function Theme() {
   const dispatch = useDispatch();
@@ -61,16 +61,16 @@ export default function Theme() {
   };
 
   const handleSave = async () => {
-    const url = `${feConfig.backend}/admin/theme`;
+    const url = `${publicRuntimeConfig.backend}/admin/theme`;
     const headers = {
       Accept: 'text/plain',
       'X-authorization': token
     };
 
-    // if (altHome !== '' && !isValidURI(altHome)) {
-    //   alert('Alternate Home Page must be empty or contain a valid URL.');
-    //   return; // Prevent form submission
-    // }
+    if (altHome !== '' && !isValidURI(altHome)) {
+      alert('Alternate Home Page must be empty or contain a valid URL.');
+      return; // Prevent form submission
+    }
 
     const formData = new FormData();
     formData.append('instanceName', instanceName);

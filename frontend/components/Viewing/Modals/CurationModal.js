@@ -7,8 +7,8 @@ import React, { useEffect, useState } from "react";
 import Select from "react-select";
 import CustomModal from "./CustomModal";
 
-import getConfig from "next/config";
-import feConfig from "../../../config.json";
+import getConfig from 'next/config';
+const { publicRuntimeConfig } = getConfig();
 
 import axios from "axios";
 import parse from 'html-react-parser';
@@ -65,7 +65,7 @@ export default function CurationModal(properties) {
 
         axios({
             method: 'GET',
-            url: `${feConfig.backend}/admin/plugins`,
+            url: `${publicRuntimeConfig.backend}/admin/plugins`,
             params: {
                 category: 'curation'
             },
@@ -78,7 +78,7 @@ export default function CurationModal(properties) {
             for(let plugin of curatePlugins) {
                 axios({
                     method: 'POST',
-                    url: `${feConfig.backend}/call`,
+                    url: `${publicRuntimeConfig.backend}/call`,
                     params: {
                         name: plugin.name,
                         endpoint: 'evaluate',
@@ -141,7 +141,7 @@ export default function CurationModal(properties) {
 async function runPlugin(pluginName, pluginData) {
     return await axios({
       method: 'POST',
-      url: `${feConfig.backend}/call`,
+      url: `${publicRuntimeConfig.backend}/call`,
       params: {
         name: pluginName,
         endpoint: 'run',

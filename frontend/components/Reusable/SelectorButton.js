@@ -1,7 +1,8 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
-import feConfig from "../../config.json";
+import getConfig from 'next/config';
+const { publicRuntimeConfig } = getConfig();
 
 import styles from '../../styles/searchheader.module.css';
 
@@ -30,7 +31,7 @@ export default function SearchTypeSelector(properties) {
       onClick={() => {
         if (properties.onClick) properties.onClick();
         else if (!properties.external) router.replace(`/${properties.route}`);
-        else router.push(`${feConfig.backend}/${properties.route}`);
+        else router.push(`${publicRuntimeConfig.backend}/${properties.route}`);
       }}
     >
       {properties.icon ? (

@@ -16,7 +16,8 @@ import SelectorButton from '../Reusable/SelectorButton';
 import Table from '../Reusable/Table/Table';
 import PublishCollectionButton from './PublishCollectionButton';
 import NewCollectionForm from './PublishNewCollectionForm';
-import feConfig from "../../config.json";
+import getConfig from 'next/config';
+const { publicRuntimeConfig } = getConfig();
 
 const EXISTING = 'to Existing';
 const NEW = 'as New';
@@ -214,7 +215,7 @@ const sortMethods = {
 
 const useRootCollections = (dispatch, token) => {
   const { data, error } = useSWR(
-    [`${feConfig.backend}/rootCollections`, token, dispatch],
+    [`${publicRuntimeConfig.backend}/rootCollections`, token, dispatch],
     fetcher
   );
   return {

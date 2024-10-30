@@ -4,7 +4,8 @@ import useSWR from 'swr';
 import axios from 'axios';
 import Select from 'react-select';
 
-import feConfig from "../../../config.json";
+import getConfig from 'next/config';
+const { publicRuntimeConfig } = getConfig();
 
 import CountMembers from '../../../sparql/CountMembers';
 import CountMembersTotal from '../../../sparql/CountMembersSearch';
@@ -48,7 +49,7 @@ export default function Members(properties) {
   const [customBounds, setCustomBounds] = useState([0, 10000]);
   const [typeFilter, setTypeFilter] = useState('Show Only Root Objects');
   const dispatch = useDispatch();
-  const [processedUri, setProcessedUri] = useState(feConfig.backend);
+  const [processedUri, setProcessedUri] = useState(publicRuntimeConfig.backend);
   const theme = JSON.parse(localStorage.getItem('theme')) || {};
   const registries = JSON.parse(localStorage.getItem("registries")) || {};
 
@@ -334,7 +335,7 @@ function MemberTable(properties) {
         }
 
         const objectUriParts = getAfterThirdSlash(properties.uri);
-        const objectUri = `${feConfig.backend}/${objectUriParts}`;
+        const objectUri = `${publicRuntimeConfig.backend}/${objectUriParts}`;
 
         const icon = compareUri(member.uri, `/${objectUriParts}`);
 
@@ -354,7 +355,7 @@ function MemberTable(properties) {
         const handleDelete = async (member) => {
           if (member.uri && window.confirm("Would you like to remove this item from the collection?")) {
             try {
-              await axios.get(`${feConfig.backend}${member.uri}/remove`, {
+              await axios.get(`${publicRuntimeConfig.backend}${member.uri}/remove`, {
                 headers: {
                   "Accept": "text/plain; charset=UTF-8",
                   "X-authorization": token
@@ -461,7 +462,7 @@ function compareUri(memberUri, baseUri) {
 
 const createUrl = (query, options) => {
   query = loadTemplate(query, options);
-  return `${feConfig.backend}/sparql?query=${encodeURIComponent(
+  return `${publicRuntimeConfig.backend}/sparql?query=${encodeURIComponent(
     query
   )}`;
 };

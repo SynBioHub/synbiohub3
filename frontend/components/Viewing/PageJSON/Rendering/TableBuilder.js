@@ -14,7 +14,8 @@ import { parseTableHeaders } from '../Parsing/parseTableHeaders';
 import React from 'react';
 import { isUriOwner } from '../../Shell';
 import { getAfterThirdSlash } from '../../ViewHeader';
-import feConfig from "../../../../config.json";
+import getConfig from 'next/config';
+const { publicRuntimeConfig } = getConfig();
 
 /**
  * This Component renders an individual table based on given JSON
@@ -27,7 +28,7 @@ export default function TableBuilder({ uri, prefixes, table, metadata }) {
   prefixes = prefixes.join('\n');
   const objectUriParts = getAfterThirdSlash(uri);
   const username = useSelector(state => state.user.username);
-  const objectUri = `${feConfig.backend}/${objectUriParts}`;
+  const objectUri = `${publicRuntimeConfig.backend}/${objectUriParts}`;
   var isOwner = isUriOwner(objectUri, username);
   return (
     <div>

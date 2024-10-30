@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-import feConfig from "../../../../config.json";
+import getConfig from 'next/config';
+const { publicRuntimeConfig } = getConfig();
 
 import useSWR from 'swr';
 import { addError } from '../../../../redux/actions';
@@ -17,7 +18,7 @@ export const fetcher = (url, dispatch) =>
 
 export default function useRegistries(dispatch) {
   const { data, error } = useSWR(
-    [`${feConfig.backend}/admin/registries`, dispatch],
+    [`${publicRuntimeConfig.backend}/admin/registries`, dispatch],
     fetcher
   );
   return {

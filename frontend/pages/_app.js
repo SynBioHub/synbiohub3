@@ -8,7 +8,8 @@ import { useStore } from '../redux/store';
 config.autoAddCss = false; // Tell Font Awesome to skip adding the CSS automatically since it's being imported above
 
 import App from 'next/app';
-import feConfig from "../config.json"
+import getConfig from 'next/config';
+const { publicRuntimeConfig } = getConfig();
 
 import { ToastContainer } from 'react-toastify';
 import axios from 'axios';
@@ -31,13 +32,11 @@ function MyApp({ Component, pageProps }) {
     const [inSetupMode, setInSetupMode] = useState(false);
     const router = useRouter();
 
-    // console.log(`${feConfig.backend}`)
-
     useEffect(() => {
         console.log('Checking if in setup mode...');
         
         axios
-            .get(`${feConfig.backend}/admin/theme`, {
+            .get(`${publicRuntimeConfig.backend}/admin/theme`, {
                 headers: {
                     'Content-Type': 'application/json',
                     Accept: 'text/plain'
@@ -63,7 +62,7 @@ function MyApp({ Component, pageProps }) {
                 // Update the error object
                 error.customMessage = customMessage;
                 console.log(error);
-                error.fullUrl = `${feConfig.backend}/admin/theme`;
+                error.fullUrl = `${publicRuntimeConfig.backend}/admin/theme`;
 
                 // Dispatch the error to your Redux store
                 store.dispatch(addError(error));

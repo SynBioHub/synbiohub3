@@ -9,8 +9,8 @@ import Navbar from './Navbar/Navbar';
 import DownloadStatus from './Reusable/Download/DownloadStatus';
 import Errors from './Error/Errors';
 import axios from 'axios';
-
-import feConfig from "../config.json";
+import getConfig from 'next/config';
+const { publicRuntimeConfig } = getConfig();
 
 /* eslint sonarjs/cognitive-complexity: "off" */
 
@@ -38,13 +38,13 @@ export default function TopLevel(properties) {
 
         if (!registriesData || !themeData) {
           const [registriesResponse, themeResponse] = await Promise.all([
-            axios.get(`${feConfig.backend}/admin/registries`, {
+            axios.get(`${publicRuntimeConfig.backend}/admin/registries`, {
               headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
               },
             }),
-            axios.get(`${feConfig.backend}/admin/theme`, {
+            axios.get(`${publicRuntimeConfig.backend}/admin/theme`, {
               headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
@@ -94,7 +94,7 @@ export default function TopLevel(properties) {
       return (
         <div>
           <Head>
-            <title>{theme.instanceName} | SynBioHub</title>
+            <title>SynBioHub</title>
             <link href="/favicon.ico" rel="icon" />
           </Head>
           <Errors />

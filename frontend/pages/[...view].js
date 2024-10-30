@@ -3,7 +3,8 @@ import axios from 'axios';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import feConfig from "../config.json"
+import getConfig from 'next/config';
+const { publicRuntimeConfig } = getConfig();
 
 import Loading from '../components/Reusable/Loading';
 import TopLevel from '../components/TopLevel';
@@ -26,10 +27,10 @@ export default function View({ data, error }) {
   const [metadata, setMetadata] = useState();
   const theme = JSON.parse(localStorage.getItem('theme')) || {};
   const [urlExists, setUrlExists] = useState(true); // New state for URL existence
-  const backenduri = `${feConfig.backend}/${url}`;
+  const backenduri = `${publicRuntimeConfig.backend}/${url}`;
 
   if (url.endsWith('/twins')) {
-    const searchUrl = `${feConfig.backend}/${url}`;
+    const searchUrl = `${publicRuntimeConfig.backend}/${url}`;
     return (
       <LinkedSearch
         url={searchUrl}
@@ -38,7 +39,7 @@ export default function View({ data, error }) {
     )
   }
   if (url.endsWith('/uses')) {
-    const searchUrl = `${feConfig.backend}/${url}`;
+    const searchUrl = `${publicRuntimeConfig.backend}/${url}`;
     return (
       <LinkedSearch
         url={searchUrl}
@@ -47,7 +48,7 @@ export default function View({ data, error }) {
     )
   }
   if (url.endsWith('/similar')) {
-    const searchUrl = `${feConfig.backend}/${url}`;
+    const searchUrl = `${publicRuntimeConfig.backend}/${url}`;
     return (
       <LinkedSearch
         url={searchUrl}
@@ -145,7 +146,7 @@ export async function getServerSideProps() {
   // Fetch data from external API
   try {
     const response = await axios.get(
-      `${feConfig.backendSS}/admin/plugins`,
+      `${publicRuntimeConfig.backendSS}/admin/plugins`,
       {
         headers: {
           'Content-Type': 'application/json',
@@ -163,7 +164,7 @@ export async function getServerSideProps() {
         error: {
           customMessage:
             'Request and/or processing failed for GET /admin/plugins',
-          fullUrl: `${feConfig.backendSS}/admin/plugins`,
+          fullUrl: `${publicRuntimeConfig.backendSS}/admin/plugins`,
           message: error.message,
           name: 'Server side error',
           stack: error.stack

@@ -2,8 +2,7 @@ import {
   faAlignLeft,
   faCloudUploadAlt,
   faSearch,
-  faSignInAlt,
-  faHome
+  faSignInAlt
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Image from 'next/image';
@@ -14,7 +13,8 @@ import { useSelector } from 'react-redux';
 import styles from '../../styles/navbar.module.css';
 import Profile from './Profile';
 import Selector from './Selector';
-import feConfig from "../../config.json";
+import getConfig from 'next/config';
+const { publicRuntimeConfig } = getConfig();
 
 /**
  * This component renders the navigation bar at the top of sbh. Users use this to access
@@ -49,12 +49,12 @@ export default function Navbar() {
 
   useEffect(() => {
     if (localStorage.getItem('logo')) {
-      const urlLogo = `${feConfig.backend}/logo`;
+      const urlLogo = `${publicRuntimeConfig.backend}/logo`;
       setLogoUrl(urlLogo);
     } else {
       setLogoUrl(defaultLogo);
     }
-  }, [feConfig.backend]);
+  }, [publicRuntimeConfig.backend]);
 
   return (
     <header
@@ -76,7 +76,7 @@ export default function Navbar() {
 
 
         {theme && (
-          <Selector icon={faHome} name={theme.instanceName} href={linkHref} isInstanceName={true} />
+          <Selector name={theme.instanceName} href="/" isInstanceName={true} />
         )}
       </div>
 

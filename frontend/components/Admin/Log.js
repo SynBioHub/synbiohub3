@@ -1,9 +1,10 @@
 import axios from 'axios';
+import getConfig from 'next/config';
 import he from 'he';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import useSWR from 'swr';
-import feConfig from "../../config.json";
+const { publicRuntimeConfig } = getConfig();
 
 import styles from '../../styles/admin.module.css';
 import Loading from '../Reusable/Loading';
@@ -71,7 +72,7 @@ const decodeHtml = (line, index) => {
 
 const useLog = (token, dispatch) => {
   const { data, error } = useSWR(
-    [`${feConfig.backend}/admin/log`, token, dispatch],
+    [`${publicRuntimeConfig.backend}/admin/log`, token, dispatch],
     fetcher
   );
   return {

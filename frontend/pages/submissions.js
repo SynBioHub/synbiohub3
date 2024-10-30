@@ -3,7 +3,8 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import useSWR from 'swr';
-import feConfig from "../config.json"
+import getConfig from 'next/config';
+const { publicRuntimeConfig } = getConfig();
 
 import Basket from '../components/Basket/Basket';
 import Table from '../components/Reusable/Table/Table';
@@ -153,7 +154,7 @@ const sortMethods = {
 
 const useMySubmissions = (token, dispatch) => {
   const { data, error } = useSWR(
-    [`${feConfig.backend}/manage`, token, dispatch],
+    [`${publicRuntimeConfig.backend}/manage`, token, dispatch],
     fetcher
   );
 
@@ -166,7 +167,7 @@ const useMySubmissions = (token, dispatch) => {
 
 const useSharedSubmissions = (token, dispatch) => {
   const { data, error } = useSWR(
-    [`${feConfig.backend}/shared`, token, dispatch],
+    [`${publicRuntimeConfig.backend}/shared`, token, dispatch],
     fetcher
   );
 
