@@ -19,7 +19,6 @@ import BasketItem from './BasketItem';
 import CreateCollection from './CreateCollection';
 
 const searchable = ['name', 'displayId', 'type', 'description'];
-
 import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
 

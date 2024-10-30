@@ -1,4 +1,3 @@
-import getConfig from 'next/config';
 import { useEffect, useState } from 'react';
 import WindowedSelect from 'react-windowed-select';
 import { createFilter } from 'react-windowed-select';
@@ -8,6 +7,7 @@ import Loading from '../../Reusable/MiniLoading';
 import { useDispatch, useSelector } from 'react-redux';
 import { addError } from '../../../redux/actions';
 import axios from 'axios';
+import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
 
 const customFilter = createFilter({ ignoreAccents: false });

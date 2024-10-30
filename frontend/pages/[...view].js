@@ -1,8 +1,9 @@
 import axios from 'axios';
-import getConfig from 'next/config';
+
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
 
 import Loading from '../components/Reusable/Loading';

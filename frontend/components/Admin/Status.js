@@ -1,13 +1,13 @@
 import axios from 'axios';
-import getConfig from 'next/config';
 import Loader from 'react-loader-spinner';
 import { useDispatch, useSelector } from 'react-redux';
 import useSWR from 'swr';
-const { publicRuntimeConfig } = getConfig();
+import getConfig from 'next/config';
 
 import styles from '../../styles/defaulttable.module.css';
 import { addError } from '../../redux/actions';
 import { logoutUser } from '../../redux/actions';
+const { publicRuntimeConfig } = getConfig();
 
 export default function Status() {
   const dispatch = useDispatch();

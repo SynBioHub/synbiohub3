@@ -2,7 +2,6 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import parse, { domToReact } from 'html-react-parser';
 import React from 'react';
-
 import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
 import { useSelector, useDispatch } from 'react-redux';

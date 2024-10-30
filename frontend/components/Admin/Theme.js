@@ -7,7 +7,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useState, useEffect } from 'react';
 import Loader from 'react-loader-spinner';
 import { isValidURI } from '../Viewing/Shell';
-
 const { publicRuntimeConfig } = getConfig();
 
 export default function Theme() {

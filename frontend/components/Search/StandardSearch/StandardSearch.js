@@ -1,5 +1,4 @@
 import axios from 'axios';
-import getConfig from 'next/config';
 import { useEffect, useState } from 'react';
 import Loader from 'react-loader-spinner';
 import { useDispatch, useSelector } from 'react-redux';
@@ -8,6 +7,7 @@ import { faHatWizard, faBars} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRouter } from 'next/router';
 import Options from '../AdvancedSearch/Options';
+import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
 import SearchHeader from '../SearchHeader/SearchHeader';
 import { processUrl } from '../../Admin/Registries';

@@ -8,6 +8,7 @@ import {
   faRedo
 } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
+import getConfig from 'next/config';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import useSWR, { mutate } from 'swr';
@@ -17,6 +18,7 @@ import styles from '../../styles/admin.module.css';
 import Table from '../Reusable/Table/Table';
 import ActionButton from './Reusable/ActionButton';
 import TableInput from './Reusable/TableInput';
+const { publicRuntimeConfig } = getConfig();
 
 const renderingType = 'rendering';
 const submittingType = 'submit';
@@ -27,9 +29,7 @@ const authorizationType = 'authorization';
 const searchable = ['index', 'name', 'url'];
 const headers = ['ID', 'Name', 'URL', ''];
 
-import getConfig from 'next/config';
 import { addError } from '../../redux/actions';
-const { publicRuntimeConfig } = getConfig();
 
 /* eslint sonarjs/no-duplicate-string: "off" */
 

@@ -9,7 +9,7 @@ import { useSelector } from "react-redux";
 
 import Select from "react-select";
 
-import getConfig from "next/config";
+import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
 
 import { toast } from "react-toastify";

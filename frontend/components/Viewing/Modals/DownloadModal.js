@@ -7,7 +7,7 @@ import React, { useEffect, useState } from "react";
 import Select from "react-select";
 import CustomModal from "./CustomModal";
 
-import getConfig from "next/config";
+import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
 
 import { useDispatch } from "react-redux";

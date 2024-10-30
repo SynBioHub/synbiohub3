@@ -20,8 +20,7 @@ import { isUriOwner } from './Shell';
 import { useSelector } from 'react-redux';
 
 import styles from '../../styles/view.module.css';
-
-import getConfig from "next/config";
+import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
 
 import { toast } from "react-toastify";

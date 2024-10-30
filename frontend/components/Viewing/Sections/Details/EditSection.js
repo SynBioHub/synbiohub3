@@ -3,9 +3,8 @@ import { faBold, faGlobeAmericas, faImage, faItalic, faUnderline } from "@fortaw
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import axios from "axios";
-
+import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
-import getConfig from "next/config";
 
 /**
  * Rendered when the user is adding an attribute or they are editing a current attribute.

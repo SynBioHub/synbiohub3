@@ -43,6 +43,11 @@
   margin: 1.1rem 1rem;
 }
 
+/* .description * {
+  margin: 0;
+  padding: 0;
+} */
+
 .grid {
   display: flex;
   align-items: center;

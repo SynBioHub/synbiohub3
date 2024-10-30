@@ -1,7 +1,7 @@
 import styles from '../../../styles/submit.module.css'
 import Select from "react-select";
 import axios from 'axios';
-import getConfig from "next/config";
+import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
 
 export default function SubmissionHandler(properties) {

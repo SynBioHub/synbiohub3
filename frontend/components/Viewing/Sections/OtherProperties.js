@@ -8,16 +8,13 @@ import { getAfterThirdSlash } from '../ViewHeader';
 import { isUriOwner, isValidURI } from '../Shell';
 import Loading from '../../Reusable/Loading';
 import Link from 'next/link';
-import getConfig from "next/config";
 
 import styles from '../../../styles/view.module.css';
 import { useDispatch, useSelector } from 'react-redux';
 
 import axios from 'axios';
-import next from 'next';
-
+import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
-
 
 export default function OtherProperties(properties) {
   const [otherProps, setOtherProps] = useState();

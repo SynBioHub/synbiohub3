@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { faPlus, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import getConfig from 'next/config';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 
@@ -16,7 +15,7 @@ import styles from '../../../styles/advancedsearch.module.css';
 import AdditionalFilter from './AdditionalFilter';
 import SelectLoader from './SelectLoader';
 import { addError } from '../../../redux/actions';
-
+import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
 
 // tooltip component to show descriptions on hover

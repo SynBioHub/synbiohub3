@@ -13,9 +13,8 @@ import { downloadFiles } from '../../../../redux/actions';
 import { faDownload, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getAfterThirdSlash } from '../../ViewHeader.js';
-
-const { publicRuntimeConfig } = getConfig();
 import getConfig from 'next/config';
+const { publicRuntimeConfig } = getConfig();
 
 import styles from '../../../../styles/view.module.css';
 

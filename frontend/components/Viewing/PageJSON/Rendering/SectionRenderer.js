@@ -3,7 +3,6 @@ import Link from 'next/link';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import { useDispatch, useSelector } from 'react-redux';
-import getConfig from 'next/config';
 import axios from 'axios';
 import { useEffect } from 'react';
 import { useState } from 'react';
@@ -11,6 +10,7 @@ import { addError } from '../../../../redux/actions';
 import sequenceOntology from '../../../../namespace/sequence-ontology';
 import systemsBiologyOntology from '../../../../namespace/systems-biology-ontology';
 import edamOntology from '../../../../namespace/edam-ontology';
+import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
 
 import { processUrl } from '../../../Admin/Registries';

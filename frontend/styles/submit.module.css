@@ -138,10 +138,6 @@
    color: #549F93;
 }
 
-.submitlabeloptional {
-   color: #888;
-}
-
 .inputstatus {
    transition: opacity 0.4s;
    margin-left: 0.2rem;
@@ -164,6 +160,10 @@
    font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 }
+/* .submitinput:disabled {
+   background-color: #c2787d;
+   color: #ffffff;
+} */
 
 .submitinput::placeholder {
    color: #465775b7;
@@ -350,7 +350,7 @@
 .clearfilesbuttonlabel {
    font-size: 0.7rem;
    margin-top: 0.1rem;
-   color: #888;
+   color: #f52828;
 }
 
 .fileuploadingcontainer {

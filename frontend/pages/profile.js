@@ -231,13 +231,6 @@ function PluginDisplay(properties) {
   );
 }
 
-// this.state = {
-//   username: "",
-//   loggedin: false,
-//   message: "",
-//   gameStarted: false,
-// };
-
 var state = {
   data: ''
 };
@@ -247,24 +240,6 @@ const loadPluginData = token => {
   axios.get(temp).then(res => {
     axiosresult = res.data;
   });
-
-  // const axiostemp = await axios({
-  //   method: 'get',
-  //   url: temp,
-
-  // }).then(response => {
-  //     axiosresult = response.data;
-  // });
-  // var result = fetcher(temp, token);
-  // const { data, error } = useSWR(
-  //   [`${publicRuntimeConfig.backend}/plugin/servers`, token],
-  //   fetcher
-  // );
-  // return {
-  //   plugins: result,
-  //   loading: !error && !data,
-  //   error: error
-  // };
   return {
     plugins: axiosresult,
     loading: false

@@ -8,9 +8,8 @@ import Footer from './Footer';
 import Navbar from './Navbar/Navbar';
 import DownloadStatus from './Reusable/Download/DownloadStatus';
 import Errors from './Error/Errors';
-import getConfig from 'next/config';
 import axios from 'axios';
-
+import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
 
 /* eslint sonarjs/cognitive-complexity: "off" */

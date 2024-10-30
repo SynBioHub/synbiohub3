@@ -1,4 +1,3 @@
-import getConfig from 'next/config';
 import { useEffect, useState } from 'react';
 
 import NavbarSearch from '../components/Search/NavbarSearch/NavbarSearch';
@@ -9,6 +8,7 @@ import styles from '../styles/standardsearch.module.css';
 import { addError } from '../redux/actions';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
+import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
 
 /**

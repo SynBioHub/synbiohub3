@@ -13,8 +13,7 @@ import axios from 'axios';
 import Link from 'next/link';
 
 import { isUriOwner } from './Shell';
-
-import getConfig from "next/config";
+import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
 
 export default function ViewHeader(properties) {

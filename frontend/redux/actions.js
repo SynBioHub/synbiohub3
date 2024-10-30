@@ -1,11 +1,12 @@
 import axios from 'axios';
 import { saveAs } from 'file-saver';
 import JSZip from 'jszip';
-import getConfig from 'next/config';
+
 import { mutate } from 'swr';
 import { useSelector } from 'react-redux';
 
 import * as types from './types';
+import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
 
 /* eslint sonarjs/no-duplicate-string: "off" */

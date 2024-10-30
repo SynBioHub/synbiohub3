@@ -18,6 +18,7 @@ export default function SubmitLabel(properties) {
       className={`${styles.submitlabel} ${
         properties.verified && styles.submitlabelverified
       }`}
+      style={properties.style}
       htmlFor={properties.for}
     >
       {properties.text}

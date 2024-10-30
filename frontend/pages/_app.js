@@ -33,6 +33,8 @@ function MyApp({ Component, pageProps }) {
     const router = useRouter();
 
     useEffect(() => {
+        console.log('Checking if in setup mode...');
+        
         axios
             .get(`${publicRuntimeConfig.backend}/admin/theme`, {
                 headers: {

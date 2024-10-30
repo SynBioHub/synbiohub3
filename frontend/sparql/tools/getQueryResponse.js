@@ -1,9 +1,9 @@
 import axios from 'axios';
 import getConfig from 'next/config';
+const { publicRuntimeConfig } = getConfig();
 
 import loadTemplate from './loadTemplate';
 import { addError } from '../../redux/actions';
-const { publicRuntimeConfig } = getConfig();
 
 export default async function getQueryResponse(
   dispatch,

@@ -1,8 +1,6 @@
-import getConfig from 'next/config';
 import { useRouter } from 'next/router';
 
 import styles from '../../styles/submissions.module.css';
-const { publicRuntimeConfig } = getConfig();
 import { processUrl } from '../Admin/Registries';
 
 import { useSelector } from 'react-redux';

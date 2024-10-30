@@ -10,7 +10,7 @@ import Select from "react-select";
 import { getCanSubmitTo } from '../../../redux/actions';
 import { useSelector, useDispatch } from "react-redux";
 
-import getConfig from "next/config";
+import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
 
 import { toast } from "react-toastify";
