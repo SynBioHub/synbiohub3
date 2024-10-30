@@ -36,8 +36,7 @@
       <sbol:type rdf:resource="https://identifiers.org/SBO:0000241"/>
       <sbol:description>Multicellular System</sbol:description>
       <sbol:hasConstraint>
-         <sbol:Constraint rdf:about="https://sbolstandard.org/examples/MulticellularSystem/Constraint1">
-            <sbol:subject>
+         <sbol:C	
                <sbol:ComponentReference rdf:about="https://sbolstandard.org/examples/MulticellularSystem/ComponentReference1">
                   <sbol:refersTo>
                      <sbol:SubComponent rdf:about="https://sbolstandard.org/examples/SenderSystem/SubComponent2">
