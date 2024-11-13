@@ -48,7 +48,7 @@ export default async function getQueryResponse(
     const response = urlOverride
       ? await axios.post('/api/wor-proxy', { url, headers })
       : await axios.get(url, { headers });
-
+    // const response = await axios.get(url, { headers });
     if (response.status === 200) {
       return processResults(response.data);
     } else return;
