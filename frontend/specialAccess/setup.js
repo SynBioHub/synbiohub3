@@ -60,9 +60,9 @@ export default function Setup({ setInSetupMode }) {
   }, [color]);
 
   // change the url to the base url
-  useEffect(() => {
-    window.history.pushState({}, '', '/setup');
-  });
+  // useEffect(() => {
+  //   window.history.pushState({}, '', '/setup');
+  // });
 
   return (
     <TopLevel doNotTrack={true} navbar={<div></div>} publicPage={true}>
