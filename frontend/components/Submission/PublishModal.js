@@ -63,6 +63,7 @@ export default function PublishModal(properties) {
         collection => collection.displayId !== collectionToPublish.displayId
       )
     );
+    window.location.reload();
   };
 
   const collectionSelectors = toPublish.map((collection, index) => {
