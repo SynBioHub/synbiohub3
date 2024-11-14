@@ -16,7 +16,7 @@ export default function Theme() {
   const [frontPageText, setFrontPageText] = useState('');
   const [altHome, setAltHome] = useState('');
   const [baseColor, setBaseColor] = useState('');
-  // const [logoFile, setLogoFile] = useState(null);
+  const [logoFile, setLogoFile] = useState(null);
   const [showModuleInteractions, setShowModuleInteractions] = useState(true);
   const [removePublicEnabled, setRemovePublicEnabled] = useState(true);
   const token = useSelector(state => state.user.token);
@@ -69,7 +69,6 @@ export default function Theme() {
   };
 
   const handleSave = async () => {
-    window.location.reload();
     if (altHome !== '' && !isValidURI(altHome)) {
       alert('Alternate Home Page must be empty or contain a valid URL.');
       return;
@@ -144,7 +143,6 @@ export default function Theme() {
           type="text"
           value={instanceName}
           onChange={(e) => setInstanceName(e.target.value)}
-          className="w-full max-w-md p-2 border rounded"
         />
 
         <div className="font-medium mb-2 mt-4">Front Page Description</div>
@@ -160,7 +158,6 @@ export default function Theme() {
           type="text"
           value={altHome}
           onChange={(e) => setAltHome(e.target.value)}
-          className="w-full max-w-2xl p-2 border rounded"
         />
 
         <div className="font-medium mb-2 mt-4">Color Settings</div>
@@ -173,7 +170,6 @@ export default function Theme() {
                   type="text"
                   value={baseColor}
                   onChange={handleBaseColorChange}
-                  className="p-2 border rounded"
                 />
               </td>
             </tr>
