@@ -115,6 +115,7 @@ export default function Theme() {
         updateThemeState(updatedTheme);
         
         alert('Theme saved successfully!');
+        window.location.reload();
       } else {
         throw new Error('Failed to save theme');
       }
