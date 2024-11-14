@@ -19,24 +19,20 @@ const sdconverter = new showdown.Converter()
  * This page renders the home/landing page for sbh.
  */
 function Home() {
-  const [frontPageText, setFrontPageText] = useState('Loading front page text...'); 
-  // "SynBioHub is a design repository for people designing biological constructs. It enables DNA and protein designs to be uploaded, then facilitates sharing and viewing of such designs. SynBioHub also facilitates searching for information about existing useful parts and designs by combining data from a variety of sources." 
+  const [frontPageText, setFrontPageText] = useState('Loading front page text...');
   const token = useSelector(state => state.user.token);
 
   useEffect(() => {
-    const themeData = JSON.parse(localStorage.getItem('theme'), (key,value) => {
-      if (key === 'frontPageText') {
-        return sdconverter.makeHtml(value.replace(/\\n/g, '\n'));
-      }
-      return value;
-    });
-    
-    if (themeData && themeData.frontPageText){
-      setFrontPageText(
-        themeData.frontPageText 
-      );
-    }
+    // Attempt to retrieve frontPageText from localStorage
+    const themeData = JSON.parse(localStorage.getItem('theme') || '{}');
 
+    if (themeData.frontPageText) {
+      // Convert Markdown to HTML if data is found
+      setFrontPageText(sdconverter.makeHtml(themeData.frontPageText.replace(/\\n/g, '\n')));
+    } else {
+      // Set fallback text if data is not found
+      setFrontPageText('Welcome to SynBioHub! Refresh to ensure front page text is loaded.');
+    }
   }, []);
 
   return (
