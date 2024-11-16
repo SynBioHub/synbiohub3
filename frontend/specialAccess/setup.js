@@ -62,9 +62,9 @@ export default function Setup({ setInSetupMode }) {
   }, [color]);
 
   // change the url to the base url
-  // useEffect(() => {
-  //   window.history.pushState({}, '', '/setup');
-  // });
+  useEffect(() => {
+    router.push('/setup');
+  }, [router]);
 
   return (
     <TopLevel doNotTrack={true} navbar={<div></div>} publicPage={true}>
