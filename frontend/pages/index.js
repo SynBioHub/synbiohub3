@@ -32,6 +32,16 @@ function Home() {
     } else {
       // Set fallback text if data is not found
       setFrontPageText('Welcome to SynBioHub! Refresh to ensure front page text is loaded.');
+
+      // Store a local storage entry that counts up to 3 reloads
+      const reloadCount = parseInt(localStorage.getItem('reloadCount') || '0', 10);
+      if (reloadCount < 3) {
+        // Refresh the page to ensure front page text is loaded
+        setTimeout(() => {
+          localStorage.setItem('reloadCount', reloadCount + 1);
+          window.location.reload();
+        }, 1500);
+      }
     }
   }, []);
 

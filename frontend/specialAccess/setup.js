@@ -391,6 +391,12 @@ export default function Setup({ setInSetupMode }) {
               error.fullUrl = `${publicRuntimeConfig.backend}/setup`;
               dispatch(addError(error));
             }
+
+            if (altHome) {
+              router.push(altHome);
+            } else {
+              router.push('/');
+            }
           }}
         >
           Create My SynBioHub!
