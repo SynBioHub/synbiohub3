@@ -161,8 +161,8 @@
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 }
 .submitinput:disabled {
-   background-color: #c2787d;
-   color: #ffffff;
+   background-color: #6b4245;
+   color: #d3d3d3;
 }
 
 .submitinput::placeholder {

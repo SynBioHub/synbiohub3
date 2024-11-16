@@ -6,6 +6,7 @@ import { SketchPicker } from 'react-color';
 import { useState, useEffect } from 'react';
 import SubmitLabel from '../components/Submit/ReusableComponents/SubmitLabel';
 import { logoutUser } from '../redux/actions';
+import { useRouter } from 'next/router';
 
 import { useDispatch } from 'react-redux';
 import { addError } from '../redux/actions';
@@ -15,6 +16,7 @@ import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
 
 export default function Setup({ setInSetupMode }) {
+  const router = useRouter();
   const dispatch = useDispatch();
   const [instanceName, setInstanceName] = useState('');
   const [color, setColor] = useState('#D25627');
