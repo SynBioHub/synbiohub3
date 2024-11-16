@@ -44,9 +44,6 @@
 .inputcontainer {
    margin-bottom: 1rem;
 }
-.inputcontainer textarea {
-   resize: vertical;
-}
 
 .advancedbutton {
    background-color: #9c9c9c;
@@ -58,7 +55,8 @@
    transition: transform 0.3s;
 }
 
-.advancedbutton {
+.growWrapDropdown {
+   /* button */
    background-color: #9c9c9c;
    color: white;
    padding: 0.5rem 1rem;
@@ -66,6 +64,11 @@
    border-radius: 0.4rem;
    cursor: pointer;
    transition: transform 0.3s;
+}
+
+.wrapAdvanced {
+   overflow: hidden;
+   transition: max-height 0.3s;
 }
 
 .colorpicker {

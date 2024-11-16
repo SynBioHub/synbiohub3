@@ -28,6 +28,7 @@ export default function Setup({ setInSetupMode }) {
   const [requireLogin, setRequireLogin] = useState(false);
 
   const [advancedMode, setAdvancedMode] = useState(false);
+  const [advancedWrap, setAdvancedWrap] = useState(false);
   const [frontendURL, setFrontendURL] = useState(window.location.origin+'/');
   const [instanceUrl, setInstanceUrl] = useState(window.location.origin+'/');
   const [uriPrefix, setUriPrefix] = useState(window.location.origin+'/');
@@ -181,65 +182,85 @@ export default function Setup({ setInSetupMode }) {
                 style={secondaryTitleStyle}
               />
 
+
               <button
-                className={styles.advancedbutton}
-                onClick={
-                  () => {
-                    if (advancedMode) {
-                      setAdvancedMode(false);
-                      return;
-                    }
-                    const userConfirmed = window.confirm("You probably want to leave these settings alone. If they arent right, make sure you are hosting on the domain you intend to use. Are you sure you want to change these settings?");
-                    if (userConfirmed) {
-                      setAdvancedMode(true);
-                    }
+                className={styles.growWrapDropdown}
+                onClick={() => {
+                  if (advancedWrap) {
+                    setAdvancedWrap(false);
+                    return;
                   }
-                }>
-                {advancedMode ? "Disable" : "Enable"} Advanced Options (Not Recomended)
+                  if (!advancedWrap) {
+                    setAdvancedWrap(true);
+                  }
+                }}
+              >
+                {advancedWrap ? "Hide" : "Show"} Advanced Options
               </button>
-              <InputField
-                labelText="Frontend URL: We need to know where this SynBioHub instance is is displayed. If the URL below is incorrect, please change it"
-                placeholder="Frontend URL"
-                value={frontendURL}
-                onChange={event => setFrontendURL(event.target.value)}
-                inputName="Frontend URL"
-                containerStyling={styles.inputcontainer}
-                disabled={!advancedMode}
-                style={secondaryTitleStyle}
-              />
+              <div 
+                className={styles.wrapAdvanced}
+                style={{ maxHeight: advancedWrap ? '400px' : '0px' }}
+                >
+                <button
+                  className={styles.advancedbutton}
+                  onClick={
+                    () => {
+                      if (advancedMode) {
+                        setAdvancedMode(false);
+                        return;
+                      }
+                      const userConfirmed = window.confirm("You probably want to leave these settings alone. If they arent right, make sure you are hosting on the domain you intend to use. Are you sure you want to change these settings?");
+                      if (userConfirmed) {
+                        setAdvancedMode(true);
+                      }
+                    }
+                  }>
+                  {advancedMode ? "Disable" : "Enable"} Advanced Options (Not Recomended)
+                </button>
+                <InputField
+                  labelText="Frontend URL: We need to know where this SynBioHub instance is is displayed. If the URL below is incorrect, please change it"
+                  placeholder="Frontend URL"
+                  value={frontendURL}
+                  onChange={event => setFrontendURL(event.target.value)}
+                  inputName="Frontend URL"
+                  containerStyling={styles.inputcontainer}
+                  disabled={!advancedMode}
+                  style={secondaryTitleStyle}
+                />
 
-              <InputField
-                labelText="Backend URL: We need to know where this SynBioHub instance is hosted so we can assign URLs to your submissions. In most cases, this will be the same as the frontend. If the URL below is incorrect, please change it"
-                placeholder="Backend URL"
-                value={instanceUrl}
-                onChange={event => setInstanceUrl(event.target.value)}
-                inputName="Backend URL"
-                containerStyling={styles.inputcontainer}
-                disabled={!advancedMode}
-                style={secondaryTitleStyle}
-              />
+                <InputField
+                  labelText="Backend URL: We need to know where this SynBioHub instance is hosted so we can assign URLs to your submissions. In most cases, this will be the same as the frontend. If the URL below is incorrect, please change it"
+                  placeholder="Backend URL"
+                  value={instanceUrl}
+                  onChange={event => setInstanceUrl(event.target.value)}
+                  inputName="Backend URL"
+                  containerStyling={styles.inputcontainer}
+                  disabled={!advancedMode}
+                  style={secondaryTitleStyle}
+                />
 
-              <InputField
-                labelText="URI Prefix: We need to know how to prefix URIs of objects stored in this SynBioHub. Its default is the same as the URL, and should only be changed if you are shadowing another instance."
-                placeholder="URI Prefix"
-                value={uriPrefix}
-                onChange={event => setUriPrefix(event.target.value)}
-                inputName="URI Prefix"
-                containerStyling={styles.inputcontainer}
-                disabled={!advancedMode}
-                style={secondaryTitleStyle}
-              />
+                <InputField
+                  labelText="URI Prefix: We need to know how to prefix URIs of objects stored in this SynBioHub. Its default is the same as the URL, and should only be changed if you are shadowing another instance."
+                  placeholder="URI Prefix"
+                  value={uriPrefix}
+                  onChange={event => setUriPrefix(event.target.value)}
+                  inputName="URI Prefix"
+                  containerStyling={styles.inputcontainer}
+                  disabled={!advancedMode}
+                  style={secondaryTitleStyle}
+                />
 
-              {/* <InputField
-                labelText="Plugin Prefix: If you are running SynBioHub on Docker, this will be the prefix that will tell SynBioHub where the plugin is located."
-                placeholder="Plugin Prefix"
-                value={pluginPrefix}
-                onChange={event => setPluginPrefix(event.target.value)}
-                inputName="Plugin Prefix"
-                containerStyling={styles.inputcontainer}
-                disabled={!advancedMode}
-                style={secondaryTitleStyle}
-              /> */}
+                {/* <InputField
+                  labelText="Plugin Prefix: If you are running SynBioHub on Docker, this will be the prefix that will tell SynBioHub where the plugin is located."
+                  placeholder="Plugin Prefix"
+                  value={pluginPrefix}
+                  onChange={event => setPluginPrefix(event.target.value)}
+                  inputName="Plugin Prefix"
+                  containerStyling={styles.inputcontainer}
+                  disabled={!advancedMode}
+                  style={secondaryTitleStyle}
+                /> */}
+              </div>
             </div>
           }
         />
