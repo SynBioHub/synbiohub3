@@ -6,7 +6,7 @@ import { SketchPicker } from 'react-color';
 import { useState, useEffect } from 'react';
 import SubmitLabel from '../components/Submit/ReusableComponents/SubmitLabel';
 import { logoutUser } from '../redux/actions';
-
+import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
 import { addError } from '../redux/actions';
 import { isValidURI } from '../components/Viewing/Shell';
@@ -15,6 +15,7 @@ import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
 
 export default function Setup({ setInSetupMode }) {
+  const router = useRouter();
   const dispatch = useDispatch();
   const [instanceName, setInstanceName] = useState('');
   const [color, setColor] = useState('#D25627');
@@ -26,6 +27,7 @@ export default function Setup({ setInSetupMode }) {
   const [requireLogin, setRequireLogin] = useState(false);
 
   const [advancedMode, setAdvancedMode] = useState(false);
+  const [advancedWrap, setAdvancedWrap] = useState(false);
   const [frontendURL, setFrontendURL] = useState(window.location.origin + '/');
   const [instanceUrl, setInstanceUrl] = useState('http://localhost:7777/');
   const [uriPrefix, setUriPrefix] = useState(window.location.origin + '/');
@@ -43,26 +45,14 @@ export default function Setup({ setInSetupMode }) {
   const [primaryTitleStyle, setPrimaryTitleStyle] = useState({ color: color });
   const [secondaryTitleStyle, setSecondaryTitleStyle] = useState({ color: color });
 
-  const altHomePaths = [
-    '',
-    '/submit',
-    '/submissions',
-    '/search',
-    '/profile',
-    '/register',
-    '/admin',
-    '/login',
-  ]
-
   useEffect(() => {
     setPrimaryTitleStyle({ color: color });
     setSecondaryTitleStyle({ color: reduceBrightness(color, 0.25) });
   }, [color]);
 
-  // change the url to the base url
-  // useEffect(() => {
-  //   window.history.pushState({}, '', '/setup');
-  // });
+  useEffect(() => {
+    router.push('/setup');
+  }, [router]);
 
   return (
     <TopLevel doNotTrack={true} navbar={<div></div>} publicPage={true}>
@@ -163,12 +153,9 @@ export default function Setup({ setInSetupMode }) {
           style={primaryTitleStyle}
           content={
             <div>
-
               <InputField
-                labelText="Alternate Home Page: If you would like to set your own version of the home page, set the uri here. For example, typing https://mysynbiohub.org would make this the default page, while mysynbiohub would make https://synbiohub.org/mysynbiohub the default page."
+                labelText="Alternate Home Page: If you would like to set your own version of the home page, set the url here. For example, typing https://mysynbiohub.org would make this the default page, while mysynbiohub would make https://synbiohub.org/mysynbiohub the default page."
                 placeholder="Alternate Home Page"
-                customInput="select"
-                options={altHomePaths}
                 value={altHome}
                 onChange={event => {
                   setAltHome(event.target.value);
@@ -180,64 +167,83 @@ export default function Setup({ setInSetupMode }) {
               />
 
               <button
-                className={styles.advancedbutton}
-                onClick={
-                  () => {
-                    if (advancedMode) {
-                      setAdvancedMode(false);
-                      return;
-                    }
-                    const userConfirmed = window.confirm("You probably want to leave these settings alone. If they arent right, make sure you are hosting on the domain you intend to use. Are you sure you want to change these settings?");
-                    if (userConfirmed) {
-                      setAdvancedMode(true);
-                    }
+                className={styles.growWrapDropdown}
+                onClick={() => {
+                  if (advancedWrap) {
+                    setAdvancedWrap(false);
+                    return;
                   }
-                }>
-                {advancedMode ? "Disable" : "Enable"} Advanced Options (Not Recomended)
+                  if (!advancedWrap) {
+                    setAdvancedWrap(true);
+                  }
+                }}
+              >
+                {advancedWrap ? "Hide" : "Show"} Advanced Options
               </button>
-              <InputField
-                labelText="Frontend URL: We need to know where this SynBioHub instance is is displayed. If the URL below is incorrect, please change it"
-                placeholder="Frontend URL"
-                value={frontendURL}
-                onChange={event => setFrontendURL(event.target.value)}
-                inputName="Frontend URL"
-                containerStyling={styles.inputcontainer}
-                disabled={!advancedMode}
-                style={secondaryTitleStyle}
-              />
+              <div
+                className={styles.wrapAdvanced}
+                style={{ maxHeight: advancedWrap ? '400px' : '0px' }}
+              >
+                <button
+                  className={styles.advancedbutton}
+                  onClick={
+                    () => {
+                      if (advancedMode) {
+                        setAdvancedMode(false);
+                        return;
+                      }
+                      const userConfirmed = window.confirm("You probably want to leave these settings alone. If they arent right, make sure you are hosting on the domain you intend to use. Are you sure you want to change these settings?");
+                      if (userConfirmed) {
+                        setAdvancedMode(true);
+                      }
+                    }
+                  }>
+                  {advancedMode ? "Disable" : "Enable"} Advanced Options (Not Recomended)
+                </button>
+                <InputField
+                  labelText="Frontend URL: We need to know where this SynBioHub instance is is displayed. If the URL below is incorrect, please change it"
+                  placeholder="Frontend URL"
+                  value={frontendURL}
+                  onChange={event => setFrontendURL(event.target.value)}
+                  inputName="Frontend URL"
+                  containerStyling={styles.inputcontainer}
+                  disabled={!advancedMode}
+                  style={secondaryTitleStyle}
+                />
 
-              <InputField
-                labelText="Backend URL: We need to know where this SynBioHub instance is hosted so we can assign URLs to your submissions. In most cases, this will be the same as the frontend. If the URL below is incorrect, please change it"
-                placeholder="Backend URL"
-                value={instanceUrl}
-                onChange={event => setInstanceUrl(event.target.value)}
-                inputName="Backend URL"
-                containerStyling={styles.inputcontainer}
-                disabled={!advancedMode}
-                style={secondaryTitleStyle}
-              />
+                <InputField
+                  labelText="Backend URL: We need to know where this SynBioHub instance is hosted so we can assign URLs to your submissions. In most cases, this will be the same as the frontend. If the URL below is incorrect, please change it"
+                  placeholder="Backend URL"
+                  value={instanceUrl}
+                  onChange={event => setInstanceUrl(event.target.value)}
+                  inputName="Backend URL"
+                  containerStyling={styles.inputcontainer}
+                  disabled={!advancedMode}
+                  style={secondaryTitleStyle}
+                />
 
-              <InputField
-                labelText="URI Prefix: We need to know how to prefix URIs of objects stored in this SynBioHub. Its default is the same as the URL, and should only be changed if you are shadowing another instance."
-                placeholder="URI Prefix"
-                value={uriPrefix}
-                onChange={event => setUriPrefix(event.target.value)}
-                inputName="URI Prefix"
-                containerStyling={styles.inputcontainer}
-                disabled={!advancedMode}
-                style={secondaryTitleStyle}
-              />
+                <InputField
+                  labelText="URI Prefix: We need to know how to prefix URIs of objects stored in this SynBioHub. Its default is the same as the URL, and should only be changed if you are shadowing another instance."
+                  placeholder="URI Prefix"
+                  value={uriPrefix}
+                  onChange={event => setUriPrefix(event.target.value)}
+                  inputName="URI Prefix"
+                  containerStyling={styles.inputcontainer}
+                  disabled={!advancedMode}
+                  style={secondaryTitleStyle}
+                />
 
-              {/* <InputField
-                labelText="Plugin Prefix: If you are running SynBioHub on Docker, this will be the prefix that will tell SynBioHub where the plugin is located."
-                placeholder="Plugin Prefix"
-                value={pluginPrefix}
-                onChange={event => setPluginPrefix(event.target.value)}
-                inputName="Plugin Prefix"
-                containerStyling={styles.inputcontainer}
-                disabled={!advancedMode}
-                style={secondaryTitleStyle}
-              /> */}
+                {/* <InputField
+                  labelText="Plugin Prefix: If you are running SynBioHub on Docker, this will be the prefix that will tell SynBioHub where the plugin is located."
+                  placeholder="Plugin Prefix"
+                  value={pluginPrefix}
+                  onChange={event => setPluginPrefix(event.target.value)}
+                  inputName="Plugin Prefix"
+                  containerStyling={styles.inputcontainer}
+                  disabled={!advancedMode}
+                  style={secondaryTitleStyle}
+                /> */}
+              </div>
             </div>
           }
         />
@@ -367,6 +373,11 @@ export default function Setup({ setInSetupMode }) {
                 'Request and/or processing failed for POST /setup';
               error.fullUrl = `${publicRuntimeConfig.backend}/setup`;
               dispatch(addError(error));
+            }
+            if (altHome) {
+              router.push(altHome);
+            } else {
+              router.push('/');
             }
           }}
         >

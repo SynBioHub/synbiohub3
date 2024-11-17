@@ -2,7 +2,8 @@ import {
   faAlignLeft,
   faCloudUploadAlt,
   faSearch,
-  faSignInAlt
+  faSignInAlt,
+  faHome
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Image from 'next/image';
@@ -76,7 +77,7 @@ export default function Navbar() {
 
 
         {theme && (
-          <Selector name={theme.instanceName} href="/" isInstanceName={true} />
+          <Selector icon={faHome} name={theme.instanceName} href={linkHref} isInstanceName={true} />
         )}
       </div>
 

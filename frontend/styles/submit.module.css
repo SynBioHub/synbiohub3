@@ -131,7 +131,7 @@
    align-items: center;
    margin-top: 0.8rem;
    font-size: 0.9rem;
-   color: #D25627;
+   /* color: #D25627; */
 }
 
 .submitlabelverified {
@@ -160,10 +160,10 @@
    font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 }
-/* .submitinput:disabled {
-   background-color: #c2787d;
-   color: #ffffff;
-} */
+.submitinput:disabled {
+   background-color: #6b4245;
+   color: #d3d3d3;
+}
 
 .submitinput::placeholder {
    color: #465775b7;

@@ -69,10 +69,16 @@ export default function Theme() {
   };
 
   const handleSave = async () => {
-    if (altHome !== '' && !isValidURI(altHome)) {
-      alert('Alternate Home Page must be empty or contain a valid URL.');
-      return;
-    }
+    const url = `${publicRuntimeConfig.backend}/admin/theme`;
+    const headers = {
+      Accept: 'text/plain',
+      'X-authorization': token
+    };
+
+    // if (altHome !== '' && !isValidURI(altHome)) {
+    //   alert('Alternate Home Page must be empty or contain a valid URL.');
+    //   return; // Prevent form submission
+    // }
 
     setLoading(true);
     const formData = new FormData();
