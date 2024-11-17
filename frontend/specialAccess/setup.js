@@ -7,7 +7,6 @@ import { useState, useEffect } from 'react';
 import SubmitLabel from '../components/Submit/ReusableComponents/SubmitLabel';
 import { logoutUser } from '../redux/actions';
 import { useRouter } from 'next/router';
-
 import { useDispatch } from 'react-redux';
 import { addError } from '../redux/actions';
 import { isValidURI } from '../components/Viewing/Shell';
@@ -29,9 +28,9 @@ export default function Setup({ setInSetupMode }) {
 
   const [advancedMode, setAdvancedMode] = useState(false);
   const [advancedWrap, setAdvancedWrap] = useState(false);
-  const [frontendURL, setFrontendURL] = useState(window.location.origin+'/');
-  const [instanceUrl, setInstanceUrl] = useState(window.location.origin+'/');
-  const [uriPrefix, setUriPrefix] = useState(window.location.origin+'/');
+  const [frontendURL, setFrontendURL] = useState(window.location.origin + '/');
+  const [instanceUrl, setInstanceUrl] = useState('http://localhost:7777/');
+  const [uriPrefix, setUriPrefix] = useState(window.location.origin + '/');
   const [altHome, setAltHome] = useState('');
 
   const [userName, setUserName] = useState('');
@@ -46,23 +45,11 @@ export default function Setup({ setInSetupMode }) {
   const [primaryTitleStyle, setPrimaryTitleStyle] = useState({ color: color });
   const [secondaryTitleStyle, setSecondaryTitleStyle] = useState({ color: color });
 
-  const altHomePaths = [
-    '',
-    '/submit',
-    '/submissions',
-    '/search',
-    '/profile',
-    '/register',
-    '/admin',
-    '/login',
-  ]
-
   useEffect(() => {
     setPrimaryTitleStyle({ color: color });
     setSecondaryTitleStyle({ color: reduceBrightness(color, 0.25) });
   }, [color]);
 
-  // change the url to the base url
   useEffect(() => {
     router.push('/setup');
   }, [router]);
@@ -98,9 +85,9 @@ export default function Setup({ setInSetupMode }) {
               />
               <div className={styles.compressor}>
                 <div>
-                  <SubmitLabel text="Instance Primary Color" 
+                  <SubmitLabel text="Instance Primary Color"
                     style={secondaryTitleStyle}
-                    />
+                  />
                   <SketchPicker
                     color={color}
                     onChange={color => setColor(color.hex)}
@@ -166,12 +153,9 @@ export default function Setup({ setInSetupMode }) {
           style={primaryTitleStyle}
           content={
             <div>
-
               <InputField
-                labelText="Alternate Home Page: If you would like to set your own version of the home page, set the uri here. For example, typing https://mysynbiohub.org would make this the default page, while mysynbiohub would make https://synbiohub.org/mysynbiohub the default page."
+                labelText="Alternate Home Page: If you would like to set your own version of the home page, set the url here. For example, typing https://mysynbiohub.org would make this the default page, while mysynbiohub would make https://synbiohub.org/mysynbiohub the default page."
                 placeholder="Alternate Home Page"
-                customInput="select"
-                options={altHomePaths}
                 value={altHome}
                 onChange={event => {
                   setAltHome(event.target.value);
@@ -181,7 +165,6 @@ export default function Setup({ setInSetupMode }) {
                 containerStyling={styles.inputcontainer}
                 style={secondaryTitleStyle}
               />
-
 
               <button
                 className={styles.growWrapDropdown}
@@ -197,10 +180,10 @@ export default function Setup({ setInSetupMode }) {
               >
                 {advancedWrap ? "Hide" : "Show"} Advanced Options
               </button>
-              <div 
+              <div
                 className={styles.wrapAdvanced}
                 style={{ maxHeight: advancedWrap ? '400px' : '0px' }}
-                >
+              >
                 <button
                   className={styles.advancedbutton}
                   onClick={
@@ -391,7 +374,6 @@ export default function Setup({ setInSetupMode }) {
               error.fullUrl = `${publicRuntimeConfig.backend}/setup`;
               dispatch(addError(error));
             }
-
             if (altHome) {
               router.push(altHome);
             } else {
