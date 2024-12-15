@@ -29,7 +29,11 @@ export default function Setup({ setInSetupMode }) {
   const [advancedMode, setAdvancedMode] = useState(false);
   const [advancedWrap, setAdvancedWrap] = useState(false);
   const [frontendURL, setFrontendURL] = useState(window.location.origin + '/');
-  const [instanceUrl, setInstanceUrl] = useState('http://localhost:7777/');
+  const [instanceUrl, setInstanceUrl] = useState(
+    window.location.origin.includes('localhost')
+      ? 'http://localhost:7777/'
+      : window.location.origin + '/'
+  );
   const [uriPrefix, setUriPrefix] = useState(window.location.origin + '/');
   const [altHome, setAltHome] = useState('');
 
@@ -166,6 +170,16 @@ export default function Setup({ setInSetupMode }) {
                 style={secondaryTitleStyle}
               />
 
+              <InputField
+                labelText="Backend URL: We need to know where this SynBioHub instance is hosted so we can assign URLs to your submissions. In most cases, the backend URL will be the same as the frontend. An exception is if you are running a local instance, the backend URL would be http://localhost:7777. If the URL below is incorrect, please change it."
+                placeholder="Backend URL"
+                value={instanceUrl}
+                onChange={event => setInstanceUrl(event.target.value)}
+                inputName="Backend URL"
+                containerStyling={styles.inputcontainer}
+                style={secondaryTitleStyle}
+              />
+
               <button
                 className={styles.growWrapDropdown}
                 onClick={() => {
@@ -206,17 +220,6 @@ export default function Setup({ setInSetupMode }) {
                   value={frontendURL}
                   onChange={event => setFrontendURL(event.target.value)}
                   inputName="Frontend URL"
-                  containerStyling={styles.inputcontainer}
-                  disabled={!advancedMode}
-                  style={secondaryTitleStyle}
-                />
-
-                <InputField
-                  labelText="Backend URL: We need to know where this SynBioHub instance is hosted so we can assign URLs to your submissions. In most cases, this will be the same as the frontend. If the URL below is incorrect, please change it"
-                  placeholder="Backend URL"
-                  value={instanceUrl}
-                  onChange={event => setInstanceUrl(event.target.value)}
-                  inputName="Backend URL"
                   containerStyling={styles.inputcontainer}
                   disabled={!advancedMode}
                   style={secondaryTitleStyle}
