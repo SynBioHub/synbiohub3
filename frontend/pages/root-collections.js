@@ -39,7 +39,7 @@ export default function RootCollections() {
     }
     const fetchData = async () => {
       try {
-        const url = `${publicRuntimeConfig.backend}/browse`;
+        const url = `${publicRuntimeConfig.backend}/rootCollections`;
         const headers = {
           Accept: 'text/plain; charset=UTF-8',
           'X-authorization': token
@@ -57,7 +57,7 @@ export default function RootCollections() {
         console.error('Error:', err.message);
         setError({
           customMessage: 'Request and/or processing failed for GET /rootCollections',
-          fullUrl: `${publicRuntimeConfig.backendSS}/browse`,
+          fullUrl: `${publicRuntimeConfig.backendSS}/rootCollections`,
           message: err.message,
           name: 'Client side error',
           stack: err.stack
