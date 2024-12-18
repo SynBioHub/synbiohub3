@@ -37,6 +37,7 @@ export default function StandardSearch() {
   const offset = useSelector(state => state.search.offset);
   const limit = useSelector(state => state.search.limit);
   const token = useSelector(state => state.user.token);
+  const loggedIn = useSelector(state => state.user.loggedIn);
   const registries = JSON.parse(localStorage.getItem("registries")) || {};
   const [count, setCount] = useState();
   const dispatch = useDispatch();
@@ -63,8 +64,13 @@ export default function StandardSearch() {
 
   const [url, setUrl] = useState('');
   const [translation, setTranslation] = useState(0);
-
   const router = useRouter();
+  useEffect(() => {
+    if (theme.requireLogin && !loggedIn) {
+      router.push('/login'); // Redirect to the login page
+    }
+  }, [theme.requireLogin, router]);
+  
 
   const constructSearch = () => {
     let collectionUrls = '';
