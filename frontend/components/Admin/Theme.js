@@ -19,6 +19,7 @@ export default function Theme() {
   const [logoFile, setLogoFile] = useState(null);
   const [showModuleInteractions, setShowModuleInteractions] = useState(true);
   const [removePublicEnabled, setRemovePublicEnabled] = useState(true);
+  const [requireLogin, setRequireLogin] = useState(false)
   const token = useSelector(state => state.user.token);
 
   useEffect(() => {
@@ -52,8 +53,9 @@ export default function Theme() {
     setFrontPageText(themeData.frontPageText || '');
     setAltHome(themeData.altHome || '');
     setBaseColor(themeData.themeParameters?.[0]?.value || '');
-    setShowModuleInteractions(themeData.showModuleInteractions ?? true);
-    setRemovePublicEnabled(themeData.removePublicEnabled ?? true);
+    setShowModuleInteractions(themeData.showModuleInteractions === 'true' || themeData.showModuleInteractions === true);
+    setRemovePublicEnabled(themeData.removePublicEnabled === 'true' || themeData.removePublicEnabled === true);
+    setRequireLogin(themeData.requireLogin === 'true' || themeData.requireLogin === true);
   };
 
   const handleShowModuleInteractionsChange = (event) => {
@@ -63,6 +65,10 @@ export default function Theme() {
   const handleRemovePublicEnabledChange = (event) => {
     setRemovePublicEnabled(event.target.checked);
   };
+
+  const handleRequireLoginChange = (event) => {
+    setRequireLogin(event.target.checked);
+  }
 
   const handleBaseColorChange = (event) => {
     setBaseColor(event.target.value);
@@ -86,8 +92,9 @@ export default function Theme() {
     formData.append('frontPageText', frontPageText);
     formData.append('altHome', altHome);
     formData.append('baseColor', baseColor);
-    formData.append('removePublicEnabled', removePublicEnabled);
-    formData.append('showModuleInteractions', showModuleInteractions);
+    formData.append('removePublicEnabled', String(removePublicEnabled));
+    formData.append('showModuleInteractions', String(showModuleInteractions));
+    formData.append('requireLogin', String(requireLogin));
     if (logoFile) {
       formData.append('logo', logoFile);
     }
@@ -111,15 +118,16 @@ export default function Theme() {
           altHome,
           themeParameters: [{ value: baseColor }],
           showModuleInteractions,
-          removePublicEnabled
+          removePublicEnabled,
+          requireLogin
         };
 
         // Update localStorage
         localStorage.setItem('theme', JSON.stringify(updatedTheme));
-        
+
         // Update component state
         updateThemeState(updatedTheme);
-        
+
         alert('Theme saved successfully!');
         window.location.reload();
       } else {
@@ -137,83 +145,97 @@ export default function Theme() {
 
   return (
     <div className="p-4">
-      <div className="mb-4">
-        <div className="font-medium mb-2">Logo</div>
-        <input 
-          type="file" 
-          onChange={(e) => setLogoFile(e.target.files[0])}
-          className="mb-4" 
-        />
+      {theme && (
+        <div className="mb-4">
+          <div className="font-medium mb-2">Logo</div>
+          <input
+            type="file"
+            onChange={(e) => setLogoFile(e.target.files[0])}
+            className="mb-4"
+          />
 
-        <div className="font-medium mb-2">Instance Name</div>
-        <input
-          type="text"
-          value={instanceName}
-          onChange={(e) => setInstanceName(e.target.value)}
-        />
+          <div className="font-medium mb-2">Instance Name</div>
+          <input
+            type="text"
+            value={instanceName}
+            onChange={(e) => setInstanceName(e.target.value)}
+          />
 
-        <div className="font-medium mb-2 mt-4">Front Page Description</div>
-        <textarea
-          value={frontPageText}
-          onChange={(e) => setFrontPageText(e.target.value)}
-          rows={10}
-          cols={100}
-        />
+          <div className="font-medium mb-2 mt-4">Front Page Description</div>
+          <textarea
+            value={frontPageText}
+            onChange={(e) => setFrontPageText(e.target.value)}
+            rows={10}
+            cols={100}
+          />
 
-        <div className="font-medium mb-2 mt-4">Alternate Home Page</div>
-        <input
-          type="text"
-          value={altHome}
-          onChange={(e) => setAltHome(e.target.value)}
-        />
+          <div className="font-medium mb-2 mt-4">Alternate Home Page</div>
+          <input
+            type="text"
+            value={altHome}
+            onChange={(e) => setAltHome(e.target.value)}
+          />
 
-        <div className="font-medium mb-2 mt-4">Color Settings</div>
-        <table className={styles.table}>
-          <tbody>
-            <tr>
-              <td>Base Color</td>
-              <td>
-                <input
-                  type="text"
-                  value={baseColor}
-                  onChange={handleBaseColorChange}
-                />
-              </td>
-            </tr>
-          </tbody>
-        </table>
+          <div className="font-medium mb-2 mt-4">Color Settings</div>
+          <table className={styles.table}>
+            <tbody>
+              <tr>
+                <td>Base Color</td>
+                <td>
+                  <input
+                    type="text"
+                    value={baseColor}
+                    onChange={handleBaseColorChange}
+                  />
+                </td>
+              </tr>
+            </tbody>
+          </table>
 
-        <div className="mt-4">
-          <label className="flex items-center space-x-2">
-            <input
-              type="checkbox"
-              checked={showModuleInteractions}
-              onChange={handleShowModuleInteractionsChange}
-              className="form-checkbox"
-            />
-            <span>Show Module Interactions</span>
-          </label>
+          <div className="mt-4">
+            <label className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                checked={showModuleInteractions}
+                onChange={handleShowModuleInteractionsChange}
+                className="form-checkbox"
+              />
+              <span>Show Module Interactions</span>
+            </label>
+          </div>
+
+          <div className="mt-2">
+            <label className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                checked={removePublicEnabled}
+                onChange={handleRemovePublicEnabledChange}
+                className="form-checkbox"
+              />
+              <span>Remove Public Enabled</span>
+            </label>
+          </div>
+
+          <div className="mt-4">
+            <label className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                checked={requireLogin}
+                onChange={handleRequireLoginChange}
+                className="form-checkbox"
+              />
+              <span>Require Login</span>
+            </label>
+          </div>
+
+          <button
+            onClick={handleSave}
+            className="mt-6 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+          >
+            Save
+          </button>
         </div>
-
-        <div className="mt-2">
-          <label className="flex items-center space-x-2">
-            <input
-              type="checkbox"
-              checked={removePublicEnabled}
-              onChange={handleRemovePublicEnabledChange}
-              className="form-checkbox"
-            />
-            <span>Remove Public Enabled</span>
-          </label>
-        </div>
-
-        <button
-          onClick={handleSave}
-          className="mt-6 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
-        >
-          Save
-        </button>
-      </div>
+      )}
     </div>
   );
 }

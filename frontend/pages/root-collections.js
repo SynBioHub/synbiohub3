@@ -7,6 +7,7 @@ import TopLevel from '../components/TopLevel';
 import styles from '../styles/standardsearch.module.css';
 import { addError } from '../redux/actions';
 import { useDispatch, useSelector } from 'react-redux';
+import { useRouter } from 'next/router';
 import axios from 'axios';
 import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
@@ -16,13 +17,26 @@ const { publicRuntimeConfig } = getConfig();
  */
 export default function RootCollections() {
   const dispatch = useDispatch();
+  const theme = JSON.parse(localStorage.getItem('theme')) || {};
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
   const [query, setQuery] = useState('');
   const [filteredData, setFilteredData] = useState([]);
   const token = useSelector(state => state.user.token);
 
+  const loggedIn = useSelector(state => state.user.loggedIn);
+
+  const router = useRouter();
   useEffect(() => {
+    if (theme.requireLogin && !loggedIn) {
+      router.push('/login'); // Redirect to the login page
+    }
+  }, [theme.requireLogin, router]);
+
+  useEffect(() => {
+    if (theme.requireLogin && !loggedIn) {
+      return; // Skip fetching data if login is required and the user is not logged in
+    }
     const fetchData = async () => {
       try {
         const url = `${publicRuntimeConfig.backend}/rootCollections`;
