@@ -21,7 +21,7 @@ export default function ResultRow(properties) {
   useEffect(() => {
     async function processAndSetUri() {
       const result = await processUrl(properties.uri, registries);
-      setProcessedUri(result.urlRemovedForLink || result.original);
+      setProcessedUri(result.urlRemovedForLink || result.urlReplacedForBackend);
     }
     
     processAndSetUri();
@@ -41,9 +41,9 @@ export default function ResultRow(properties) {
     type = 'Collection';
   }
 
-  let privacy = <FontAwesomeIcon icon={faGlobeAmericas} size="1x" />;
-  if (!properties.uri.includes('/public/'))
-    privacy = <FontAwesomeIcon icon={faUserLock} color="#ff0000" size="1x" />;
+  let privacy = <FontAwesomeIcon icon={faUserLock} color="#ff0000" size="1x" />;
+  if (!properties.uri.includes('/user/'))
+    privacy = <FontAwesomeIcon icon={faGlobeAmericas} size="1x" />;
 
   return (
     <tr
