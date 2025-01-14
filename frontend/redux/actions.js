@@ -98,7 +98,6 @@ export const logoutUser = () => dispatch => {
   localStorage.removeItem('userToken');
   localStorage.removeItem('username');
   localStorage.removeItem('theme');
-  localStorage.removeItem('registries');
   dispatch({ type: types.LOGOUT });
 };
 

@@ -35,9 +35,10 @@ export default function SidePanelTools(properties) {
   const [modal, setModal] = useState();
 
   const username = useSelector(state => state.user.username);
+  const loggedIn = useSelector(state => state.user.loggedIn);
 
   const handleDeletionComplete = () => {
-    dispatch(restoreBasket()); 
+    dispatch(restoreBasket());
   };
 
   /*
@@ -106,7 +107,7 @@ export default function SidePanelTools(properties) {
   if (properties.type.includes('http://') || properties.type.includes('https://')) {
     const parts = properties.type.split('/');
     displayTitle = parts[parts.length - 1];
-  }  
+  }
   var displayLink = properties.type;
   if (!properties.type.includes('http')) {
     displayLink = `http://sbols.org/v2#${properties.type}`;
@@ -203,15 +204,17 @@ export default function SidePanelTools(properties) {
           }}
           title="Copy this item" // placeholder for copy button description
         />
-        <FontAwesomeIcon
-          icon={faLink}
-          size="1x"
-          className={styles.actionicon}
-          onClick={() => {
-            setModal("AddToCollection");
-          }}
-          title="Add to collection" // placeholder for add to collection button description
-        />
+        {loggedIn && (
+          <FontAwesomeIcon
+            icon={faLink}
+            size="1x"
+            className={styles.actionicon}
+            onClick={() => {
+              setModal("AddToCollection");
+            }}
+            title="Add to collection" // placeholder for add to collection button description
+          />
+        )}
         {isOwner && (
           <FontAwesomeIcon
             icon={faTrashAlt}

@@ -70,7 +70,7 @@ export default function RootCollections() {
   }, [dispatch]);
 
   useEffect(() => {
-    if (data) {
+    if (Array.isArray(data) && data.length > 0) {
       const newFilteredData = data.filter(result => {
         for (const key of Object.keys(result)) {
           if (result[key] !== null && result[key] !== undefined && query !== undefined && result[key].toString().toLowerCase().includes(query.toLowerCase()))
@@ -79,8 +79,11 @@ export default function RootCollections() {
         return false;
       });
       setFilteredData(newFilteredData);
+    } else {
+      setFilteredData([]); // Ensure filteredData is always an array
     }
   }, [data, query]);
+
 
 
   if (error) {
