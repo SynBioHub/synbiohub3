@@ -36,6 +36,8 @@ export default function Setup({ setInSetupMode }) {
   );
   const [uriPrefix, setUriPrefix] = useState(window.location.origin + '/');
   const [altHome, setAltHome] = useState('');
+  const [pluginsUseLocalCompose, setpluginsUseLocalCompose] = useState(false);
+  const [pluginLocalComposePrefix, setPluginLocalComposePrefix] = useState('');
 
   const [userName, setUserName] = useState('');
   const [userFullName, setUserFullName] = useState('');
@@ -236,6 +238,20 @@ export default function Setup({ setInSetupMode }) {
                   style={secondaryTitleStyle}
                 />
 
+                <InputField
+                  labelText="Plugin Local Compose Prefix: Used only for local testing of plugins"
+                  placeholder="pluginLocalComposePrefix"
+                  value={pluginLocalComposePrefix}
+                  onChange={(event) => {
+                    setPluginLocalComposePrefix(event.target.value);
+                    setpluginsUseLocalCompose(true);
+                  }}
+                  inputName="pluginLocalComposePrefix"
+                  containerStyling={styles.inputcontainer}
+                  disabled={!advancedMode}
+                  style={secondaryTitleStyle}
+                />
+
                 {/* <InputField
                   labelText="Plugin Prefix: If you are running SynBioHub on Docker, this will be the prefix that will tell SynBioHub where the plugin is located."
                   placeholder="Plugin Prefix"
@@ -326,6 +342,8 @@ export default function Setup({ setInSetupMode }) {
           className={styles.createbutton}
           style={{ backgroundColor: color }}
           onClick={async () => {
+            console.log(pluginLocalComposePrefix);
+            console.log(pluginsUseLocalCompose);
             const headers = {
               'Content-Type': 'application/json',
               Accept: 'text/plain'
@@ -355,7 +373,9 @@ export default function Setup({ setInSetupMode }) {
                   virtuosoDB: '/var/lib/virtuoso-opensource-7/db',
                   allowPublicSignup,
                   altHome,
-                  requireLogin
+                  requireLogin,
+                  pluginsUseLocalCompose,
+                  pluginLocalComposePrefix
                 },
                 {
                   headers
