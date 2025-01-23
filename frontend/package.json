@@ -77,10 +77,7 @@
     "redux-persist": "^6.0.0",
     "redux-thunk": "^2.3.0",
     "showdown": "^2.1.0",
-    "swr": "^0.3.9",
-    "unist-util-stringify-position": "^4.0.0",
-    "vfile": "^6.0.3",
-    "vfile-message": "^4.0.2"
+    "swr": "^0.3.9"
   },
   "proxy": "http://localhost:7777/",
   "devDependencies": {
