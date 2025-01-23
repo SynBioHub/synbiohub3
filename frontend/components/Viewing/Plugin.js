@@ -17,8 +17,6 @@ export default function Plugin(properties) {
   const dispatch = useDispatch();
 
   const acceptedTags = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'a', 'img', 'ul', 'ol', 'li', 'table', 'tr', 'td', 'th', 'thead', 'tbody', 'tfoot', 'caption', 'div', 'span', 'br', 'hr', 'pre', 'code', 'blockquote', 'strong', 'em', 'i', 'b', 'u', 's', 'sub', 'sup', 'del', 'ins', 'mark', 'small', 'big', 'abbr', 'cite', 'dfn', 'kbd', 'q', 'samp', 'var', 'time', 'address', 'article', 'aside', 'footer', 'header', 'nav', 'section', 'main', 'figure', 'figcaption', 'details', 'summary', 'dialog', 'menu', 'menuitem', 'menuitem', 'meter', 'progress', 'output', 'canvas', 'audio', 'video', 'iframe', 'object', 'embed', 'param', 'source', 'track', 'map', 'area', 'form', 'label', 'input', 'button', 'select', 'datalist', 'optgroup', 'option', 'textarea', 'fieldset', 'legend', 'datalist', 'output', 'progress', 'meter', 'details', 'summary', 'command', 'menu', 'menuitem', 'menuitem', 'script', 'noscript', 'style', 'link', 'meta', 'title', 'base', 'head', 'body', 'html', 'br', 'hr', 'wbr', 'img', 'area', 'map', 'track', 'source', 'param', 'iframe', 'embed', 'object', 'canvas', 'script', 'noscript', 'style', 'link', 'meta', 'title', 'base', 'head', 'body', 'html', 'br', 'hr', 'wbr', 'img', 'area', 'map', 'track', 'source', 'param', 'iframe', 'embed', 'object', 'canvas', 'script', 'noscript', 'style', 'link', 'meta', 'title', 'base', 'head', 'body', 'html', 'br', 'hr', 'wbr', 'img', 'area', ]
-
-  
   
   const uri = properties.uri;
 
@@ -55,6 +53,10 @@ export default function Plugin(properties) {
 
         if(responseStatus) {
           const downloadContent = async () => {
+            if(!pluginData.uri.includes('/public/')) {
+              const shareLink = await getShareLink(uri);
+              pluginData.uri = shareLink;
+            }
             const renderResponse = await runPlugin(properties.plugin, pluginData);
             setContent(renderResponse.data);
             setStatus(renderResponse.status === 200);
@@ -164,6 +166,18 @@ async function evaluatePlugin(plugin, type) {
   })
   .catch(error => {
     return false;
+  });
+}
+
+async function getShareLink(uri) {
+  return await axios({
+    method: 'GET',
+    url: `${uri}/shareLink`,
+  }).then(response => {
+    return response.data;
+  }
+  ).catch(error => {
+    return error;
   });
 }
 

@@ -37,7 +37,7 @@ export default function DownloadModal(properties) {
    * 
    * @param {String} type The download endpoint the user has chosen.
    */
-  const download = (type, pluginName) => {
+  const download = async (type, pluginName) => {
     
     if (type != 'plugin') {
     const item = {
@@ -58,6 +58,20 @@ export default function DownloadModal(properties) {
       type: "xml",
       status: "downloading"
     };
+
+    let uri = properties.uri;
+
+    if(!uri.includes('/public/')) {
+      const shareLink =  await axios({
+        method: 'GET',
+        url: `${uri}/shareLink`,
+      }).then(response => {
+        return response.data;
+
+      }).catch(error => {
+        return error;
+      })
+    }
 
     
     const pluginData = {
