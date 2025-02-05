@@ -21,6 +21,11 @@
    height: fit-content;
 }
 
+.wfull {
+   width: 100%;
+   resize: vertical;
+}
+
 .menuselector {
    padding: 0.6rem 0.7rem;
    margin: 0.1rem 0;

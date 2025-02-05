@@ -1,12 +1,16 @@
 import axios from 'axios';
 import getConfig from 'next/config';
-import styles from '../../styles/defaulttable.module.css';
+import styles from '../../styles/admin.module.css';
 import Loading from '../Reusable/Loading';
+import { SketchPicker } from 'react-color';
 import { addError } from '../../redux/actions';
 import { useDispatch, useSelector } from 'react-redux';
 import { useState, useEffect } from 'react';
 import { isValidURI } from '../Viewing/Shell';
 const { publicRuntimeConfig } = getConfig();
+
+import showdown from "showdown"
+const sdconverter = new showdown.Converter()
 
 export default function Theme() {
   const dispatch = useDispatch();
@@ -144,7 +148,7 @@ export default function Theme() {
   if (loading) return <Loading />;
 
   return (
-    <div className="p-4">
+    <div className="p-4" style={{ padding: '1rem' }}>
       {theme && (
         <div className="mb-4">
           <div className="font-medium mb-2">Logo</div>
@@ -161,36 +165,34 @@ export default function Theme() {
             onChange={(e) => setInstanceName(e.target.value)}
           />
 
-          <div className="font-medium mb-2 mt-4">Front Page Description</div>
+          <div className="font-medium mb-2 mt-4"><b>Front Page Description</b></div>
+          <b>Preview:</b>
+          <p className={styles.description} dangerouslySetInnerHTML={{__html: sdconverter.makeHtml(frontPageText.replace(/\\n/g, '\n'))}} />
+
+          <p><b>Edit:</b></p>
           <textarea
+            className={styles.wfull}
             value={frontPageText}
             onChange={(e) => setFrontPageText(e.target.value)}
-            rows={10}
-            cols={100}
+            // rows={10}
+            // cols={100}
           />
 
-          <div className="font-medium mb-2 mt-4">Alternate Home Page</div>
+          <div className="font-medium mb-2 mt-4"><b>Alternate Home Page</b></div>
           <input
             type="text"
             value={altHome}
             onChange={(e) => setAltHome(e.target.value)}
           />
 
-          <div className="font-medium mb-2 mt-4">Color Settings</div>
-          <table className={styles.table}>
-            <tbody>
-              <tr>
-                <td>Base Color</td>
-                <td>
-                  <input
-                    type="text"
-                    value={baseColor}
-                    onChange={handleBaseColorChange}
-                  />
-                </td>
-              </tr>
-            </tbody>
-          </table>
+          <p><b>Base Color</b></p>
+          <p>
+            <SketchPicker
+              color={baseColor}
+              onChange={color => setBaseColor(color.hex)}
+              className={styles.colorpicker}
+            />
+          </p>
 
           <div className="mt-4">
             <label className="flex items-center space-x-2">
