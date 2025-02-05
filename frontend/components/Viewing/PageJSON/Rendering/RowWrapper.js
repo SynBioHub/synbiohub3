@@ -164,8 +164,6 @@ function createKeyToValueMap(
     }
   });
   setSectionsToRender(sectionsToRender);
-  // console.log([...sectionsToRender]);
-  // console.log({ ...map });
   Object.keys(map).forEach(key => {
     map[key].value = loadText(map[key].value, map);
   });
