@@ -121,7 +121,6 @@ export default function Setup({ setInSetupMode }) {
                     style={secondaryTitleStyle}
                     value={logo}
                     onChange={event => {
-                      // console.log(event.target.value);
                       setLogo(event.target.value);
                     }}
                   />
@@ -165,7 +164,6 @@ export default function Setup({ setInSetupMode }) {
                 value={altHome}
                 onChange={event => {
                   setAltHome(event.target.value);
-                  // console.log(event.target.value);
                 }}
                 inputName="Alternate Home Page"
                 containerStyling={styles.inputcontainer}
@@ -342,8 +340,6 @@ export default function Setup({ setInSetupMode }) {
           className={styles.createbutton}
           style={{ backgroundColor: color }}
           onClick={async () => {
-            console.log(pluginLocalComposePrefix);
-            console.log(pluginsUseLocalCompose);
             const headers = {
               'Content-Type': 'application/json',
               Accept: 'text/plain'
