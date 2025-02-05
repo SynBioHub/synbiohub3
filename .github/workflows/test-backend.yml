@@ -22,7 +22,7 @@ jobs:
       - name: Package image
         run: |
           docker save synbiohub/sbh3backend:snapshot | gzip > sbh3.tar.gz
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         name: Upload Docker image
         with:
           name: sbh3-image
