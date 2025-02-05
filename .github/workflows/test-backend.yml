@@ -34,7 +34,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         name: Checkout source tree
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         name: Download Docker image
         with:
           name: sbh3-image
