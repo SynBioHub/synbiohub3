@@ -148,24 +148,26 @@ export default function Theme() {
   if (loading) return <Loading />;
 
   return (
-    <div className="p-4" style={{ padding: '1rem' }}>
+    <div className={styles.container}>
       {theme && (
-        <div className="mb-4">
-          <div className="font-medium mb-2">Logo</div>
+        <div className={styles.ExplorerContainer}>
+          <div className={styles.title}>Theme</div>
+          <div className={styles.themeFont}>Logo</div>
           <input
             type="file"
             onChange={(e) => setLogoFile(e.target.files[0])}
-            className="mb-4"
-          />
+            className={styles.logheader}
+          /> 
 
-          <div className="font-medium mb-2">Instance Name</div>
+          <div className={styles.themeFont}>Instance Name</div>
           <input
             type="text"
             value={instanceName}
             onChange={(e) => setInstanceName(e.target.value)}
+            className={styles.tableinput}
           />
 
-          <div className="font-medium mb-2 mt-4"><b>Front Page Description</b></div>
+          <div className={styles.themeFont}>Front Page Description</div>
           <b>Preview:</b>
           <p className={styles.description} dangerouslySetInnerHTML={{__html: sdconverter.makeHtml(frontPageText.replace(/\\n/g, '\n'))}} />
 
@@ -174,18 +176,16 @@ export default function Theme() {
             className={styles.wfull}
             value={frontPageText}
             onChange={(e) => setFrontPageText(e.target.value)}
-            // rows={10}
-            // cols={100}
           />
-
-          <div className="font-medium mb-2 mt-4"><b>Alternate Home Page</b></div>
+          <div className={styles.themeFont}>Alternate Home Page</div>
           <input
             type="text"
             value={altHome}
             onChange={(e) => setAltHome(e.target.value)}
+            className={styles.tableinput}
           />
 
-          <p><b>Base Color</b></p>
+          <div className={styles.themeFont}>Color Settings</div>
           <p>
             <SketchPicker
               color={baseColor}
@@ -194,48 +194,49 @@ export default function Theme() {
             />
           </p>
 
-          <div className="mt-4">
-            <label className="flex items-center space-x-2">
+          <div className={styles.menucontainer}>
+            <label className={styles.menuselector}>
               <input
                 type="checkbox"
                 checked={showModuleInteractions}
                 onChange={handleShowModuleInteractionsChange}
-                className="form-checkbox"
+                className={styles.themecheckbox}
               />
-              <span>Show Module Interactions</span>
+              <span className={styles.checktext}>Show Module Interactions</span>
             </label>
           </div>
 
-          <div className="mt-2">
-            <label className="flex items-center space-x-2">
+          <div className={styles.menucontainer}>
+            <label className={styles.menuselector}>
               <input
                 type="checkbox"
                 checked={removePublicEnabled}
                 onChange={handleRemovePublicEnabledChange}
-                className="form-checkbox"
+                className={styles.themecheckbox}
               />
-              <span>Remove Public Enabled</span>
+              <span className={styles.checktext}>Remove Public Enabled</span>
             </label>
           </div>
 
-          <div className="mt-4">
-            <label className="flex items-center space-x-2">
+          <div className={styles.menucontainer}>
+            <label className={styles.menuselector}>
               <input
                 type="checkbox"
                 checked={requireLogin}
                 onChange={handleRequireLoginChange}
-                className="form-checkbox"
+                className={styles.themecheckbox}
               />
-              <span>Require Login</span>
+              <span className={styles.checktext}>Require Login</span>
             </label>
           </div>
-
-          <button
-            onClick={handleSave}
-            className="mt-6 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
-          >
-            Save
-          </button>
+          <div className={styles.actionbuttonslayout}>
+            <button
+              onClick={handleSave}
+              className={styles.actionbutton}
+            >
+              Save
+            </button>
+          </div>
         </div>
       )}
     </div>
