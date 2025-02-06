@@ -46,6 +46,10 @@
    height: fit-content;
 }
 
+.newLogoFilePicker {
+   display: none;
+}
+
 .wfull {
    width: 100%;
    resize: vertical;
@@ -59,6 +63,83 @@
    font-weight: 600;
    display: flex;
    cursor: pointer;
+}
+
+.themeChecksFlex {
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+   align-items: left;
+   margin: 15px;
+   gap: 15px;
+   width: 100%;
+}
+
+.centeredTitle {
+   text-align: center;
+}
+
+.bottomSettings {
+   display: flex;
+   flex-direction: row;
+   justify-content: center;
+   align-items: center;
+   margin: 15px;
+   gap: 20%;
+   width: 100%;
+}
+@media screen and (max-width: 990px) {
+   .bottomSettings {
+      flex-direction: column;
+   }
+}
+/* .colorpickerContainer {
+   display: flex;
+   flex-direction: row;
+   justify-content: center;
+   align-items: center;
+   margin: 15px;
+   gap: 15px;
+   width: 100%;
+} */
+.colorpicker {
+   margin: 0.3rem 0 1.4rem 0;
+   width: 100%;
+}
+
+.themecheckbox {
+   /* width: 1.3em;
+   height: 1.3em;
+   background-color: rgb(218, 218, 218);
+   border-radius: 15%;
+   vertical-align: middle;
+   border: 1px solid #1d1d1d;
+   appearance: none;
+   -webkit-appearance: none;
+   outline: none;
+   cursor: pointer; */
+   transition: all 0.2s ease-in-out;
+   transform: scale(1.6);
+   margin-right: 10px;
+}
+
+/* animate the checkboxes */
+/* .themecheckbox:hover:not(:checked) {
+   transform: scale(1.2);
+} */
+.themecheckbox:checked {
+   /* background-color: #00A1E4; */
+   border-radius: 100%;
+   transform: scale(1.6) rotate(-10deg);
+}
+.themecheckbox:not(:checked) {
+   transform: scale(1.2) rotate(0deg);
+}
+
+.themecheckboxLabel {
+   margin-left: 0.5rem;
+   font-size: 0.9rem;
+   font-weight: 500;
 }
 
 .menuselectorselected {

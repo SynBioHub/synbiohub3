@@ -152,14 +152,14 @@ export default function Theme() {
       {theme && (
         <div className={styles.ExplorerContainer}>
           <div className={styles.title}>Theme</div>
-          <div className={styles.themeFont}>Logo</div>
+          {/* <div className={styles.themeFont}>Logo</div>
           <input
+            className={styles.newLogoFilePicker}
             type="file"
             onChange={(e) => setLogoFile(e.target.files[0])}
-            className={styles.logheader}
-          /> 
+          />  */}
 
-          <div className={styles.themeFont}>Instance Name</div>
+          <h2 className={styles.themeFont}>Instance Name</h2>
           <input
             type="text"
             value={instanceName}
@@ -167,17 +167,18 @@ export default function Theme() {
             className={styles.tableinput}
           />
 
-          <div className={styles.themeFont}>Front Page Description</div>
-          <b>Preview:</b>
-          <p className={styles.description} dangerouslySetInnerHTML={{__html: sdconverter.makeHtml(frontPageText.replace(/\\n/g, '\n'))}} />
+          <h2 className={styles.themeFont}>Front Page Description</h2>
+          <h3><b>Preview:</b></h3>
+          <p className={styles.description} dangerouslySetInnerHTML={{ __html: sdconverter.makeHtml(frontPageText.replace(/\\n/g, '\n')) }} />
 
-          <p><b>Edit:</b></p>
+          <h3><b>Edit:</b></h3>
           <textarea
             className={styles.wfull}
             value={frontPageText}
             onChange={(e) => setFrontPageText(e.target.value)}
+            rows={5}
           />
-          <div className={styles.themeFont}>Alternate Home Page</div>
+          <h2 className={styles.themeFont}>Alternate Home Page</h2>
           <input
             type="text"
             value={altHome}
@@ -185,58 +186,59 @@ export default function Theme() {
             className={styles.tableinput}
           />
 
-          <div className={styles.themeFont}>Color Settings</div>
-          <p>
-            <SketchPicker
-              color={baseColor}
-              onChange={color => setBaseColor(color.hex)}
-              className={styles.colorpicker}
-            />
-          </p>
-
-          <div className={styles.menucontainer}>
-            <label className={styles.menuselector}>
-              <input
-                type="checkbox"
-                checked={showModuleInteractions}
-                onChange={handleShowModuleInteractionsChange}
-                className={styles.themecheckbox}
+          <div className={styles.bottomSettings}>
+            <div>
+              <h2 className={styles.themeFont}>Color Settings</h2>
+              <SketchPicker
+                color={baseColor}
+                onChange={color => setBaseColor(color.hex)}
+                className={styles.colorpicker}
               />
-              <span className={styles.checktext}>Show Module Interactions</span>
-            </label>
-          </div>
+            </div>
 
-          <div className={styles.menucontainer}>
-            <label className={styles.menuselector}>
-              <input
-                type="checkbox"
-                checked={removePublicEnabled}
-                onChange={handleRemovePublicEnabledChange}
-                className={styles.themecheckbox}
-              />
-              <span className={styles.checktext}>Remove Public Enabled</span>
-            </label>
-          </div>
+            <div>
+              <h2 className={`${styles.themeFont} ${styles.centeredTitle}`}>Msc Theme Settings</h2>
+              <div className={styles.themeChecksFlex}>
 
-          <div className={styles.menucontainer}>
-            <label className={styles.menuselector}>
-              <input
-                type="checkbox"
-                checked={requireLogin}
-                onChange={handleRequireLoginChange}
-                className={styles.themecheckbox}
-              />
-              <span className={styles.checktext}>Require Login</span>
-            </label>
+                <label className={styles.themecheckboxLabel}>
+                  <input
+                    type="checkbox"
+                    checked={showModuleInteractions}
+                    onChange={handleShowModuleInteractionsChange}
+                    className={styles.themecheckbox}
+                  />
+                  Show Module Interactions
+                </label>
+
+                <label className={styles.themecheckboxLabel}>
+                  <input
+                    type="checkbox"
+                    checked={removePublicEnabled}
+                    onChange={handleRemovePublicEnabledChange}
+                    className={styles.themecheckbox}
+                  />
+                  Remove Public Enabled
+                </label>
+
+                <label className={styles.themecheckboxLabel}>
+                  <input
+                    type="checkbox"
+                    checked={requireLogin}
+                    onChange={handleRequireLoginChange}
+                    className={styles.themecheckbox}
+                  />
+                  Require Login
+                </label>
+
+              </div>
+            </div>
           </div>
-          <div className={styles.actionbuttonslayout}>
-            <button
-              onClick={handleSave}
-              className={styles.actionbutton}
-            >
-              Save
-            </button>
-          </div>
+          <button
+            onClick={handleSave}
+            className={styles.actionbutton}
+          >
+            Save
+          </button>
         </div>
       )}
     </div>
