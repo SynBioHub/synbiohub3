@@ -30,6 +30,7 @@ export default function ShareModal(properties) {
   const [userList, setUserList] = useState([]);
   const token = useSelector(state => state.user.token);
   const currentUser = useSelector(state => state.user.username);
+  const theme = JSON.parse(localStorage.getItem('theme')) || {};
 
   //Properties for the error toast.
   const errorToast = (message) => toast.error(message, {
@@ -46,7 +47,7 @@ export default function ShareModal(properties) {
   //Checks if the submit button has been clicked and adds to owner and then hides the modal.
   useEffect(() => {
     if (submitted) {
-      addOwner(selectedOption.value);
+      addOwner(theme, selectedOption.value);
     }
   }, [submitted]);
 
@@ -112,17 +113,16 @@ export default function ShareModal(properties) {
    * 
    * @param {String} owner The owner to add.
    */
-  const addOwner = async (owner) => {
+  const addOwner = async (theme, owner) => {
     const url = `${publicRuntimeConfig.backend}${properties.url}/addOwner`;
     var headers = {
       Accept: "text/plain; charset=UTF-8",
       "X-authorization": token
     };
-    console.log(`${publicRuntimeConfig.backend}/user/${owner}`);
-    console.log(publicRuntimeConfig.backend + properties.url);
+    const fullUri = theme.uriPrefix.replace(/\/$/, '') + properties.url;
     const parameters = new URLSearchParams();
-    parameters.append("user", `${publicRuntimeConfig.backend}/user/${owner}`);
-    parameters.append("uri", publicRuntimeConfig.backend + properties.url);
+    parameters.append("user", `${theme.uriPrefix}user/${owner}`);
+    parameters.append("uri", fullUri);
 
     let response;
 
