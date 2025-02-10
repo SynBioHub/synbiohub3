@@ -82,12 +82,9 @@ export default function ShareModal(properties) {
         "X-authorization": token
       };
 
-      console.log(url);
-
       try {
         const response = await axios.get(url, { headers });
         if (response.status === 200 && response.data && response.data.users) {
-          console.log(response.data);
           // Extract only the usernames
           const usernames = response.data.users
           .filter(user => user.username !== currentUser)  // Exclude current user
@@ -105,8 +102,6 @@ export default function ShareModal(properties) {
 
     fetchUserList();
   }, [properties.url, token]);
-
-  console.log(localStorage);
 
   /**
    * Posts the new owner.
@@ -134,7 +129,11 @@ export default function ShareModal(properties) {
       }
     }
 
-    if (response && response.status !== 200) errorToast("Something went wrong with adding an owner.");
+    if (response && response.status !== 200) {
+      errorToast("Something went wrong with adding an owner.");
+    } else {
+      window.location.reload();
+    }
   }
 
   /**
