@@ -133,7 +133,7 @@ export default function StandardSearch() {
       if (isDate) return `${term}=${encodeURIComponent(value.toISOString().slice(0, 10))}&`;
       if (isValidURI(value)) {
         console.log(`<${term}=<${encodeURIComponent(value)}>&`)
-        return `<${term}=<${encodeURIComponent(value)}>&`;
+        return `${term}=<${encodeURIComponent(value)}>&`;
       } 
       return `${term}='${encodeURIComponent(value)}'&`;
     }
