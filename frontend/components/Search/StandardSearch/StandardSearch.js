@@ -77,6 +77,7 @@ export default function StandardSearch() {
     for (const collection of collections) {
       collectionUrls += getUrl(collection.value, 'collection');
     }
+    console.log(creator);
     const url = `${getUrl(objectType, 'objectType')}${getUrl(
       creator,
       'dc:creator'
@@ -96,6 +97,7 @@ export default function StandardSearch() {
       'modifedBefore',
       true
     )}${constructExtraFilters()}`;
+    console.log(url);
     setUrl(url);
   };
   
@@ -126,7 +128,10 @@ export default function StandardSearch() {
   };
 
   const getUrl = (value, term, isDate = false) => {
+    console.log(value);
+    console.log(term);
     if (value) {
+      if (term === 'dc:creator') return `${term}='${encodeURIComponent(value)}'&`;
       if (!isDate) return `${term}=<${encodeURIComponent(value)}>&`;
       return `${term}=${encodeURIComponent(value.toISOString().slice(0, 10))}&`;
     }
