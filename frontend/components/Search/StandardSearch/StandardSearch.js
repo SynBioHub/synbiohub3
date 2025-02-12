@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import Loader from 'react-loader-spinner';
 import { useDispatch, useSelector } from 'react-redux';
 import useSWR from 'swr';
-import { faHatWizard, faBars} from '@fortawesome/free-solid-svg-icons';
+import { faHatWizard, faBars } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRouter } from 'next/router';
 import Options from '../AdvancedSearch/Options';
@@ -11,6 +11,7 @@ import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
 import SearchHeader from '../SearchHeader/SearchHeader';
 import { processUrl } from '../../Admin/Registries';
+import { isValidURI } from '../../Viewing/Shell';
 
 import {
   countloader,
@@ -70,14 +71,13 @@ export default function StandardSearch() {
       router.push('/login'); // Redirect to the login page
     }
   }, [theme.requireLogin, router]);
-  
+
 
   const constructSearch = () => {
     let collectionUrls = '';
     for (const collection of collections) {
       collectionUrls += getUrl(collection.value, 'collection');
     }
-    console.log(creator);
     const url = `${getUrl(objectType, 'objectType')}${getUrl(
       creator,
       'dc:creator'
@@ -100,13 +100,13 @@ export default function StandardSearch() {
     console.log(url);
     setUrl(url);
   };
-  
-  const handleDelete = (delFilterIndex) => { 
-    setExtraFilters(prevFilters => { 
-      return prevFilters.filter((_, index) => index !== delFilterIndex); 
-    }); 
-  }; 
-  
+
+  const handleDelete = (delFilterIndex) => {
+    setExtraFilters(prevFilters => {
+      return prevFilters.filter((_, index) => index !== delFilterIndex);
+    });
+  };
+
 
   const addFilter = filters => {
     return [
@@ -128,12 +128,14 @@ export default function StandardSearch() {
   };
 
   const getUrl = (value, term, isDate = false) => {
-    console.log(value);
-    console.log(term);
     if (value) {
-      if (term === 'dc:creator') return `${term}='${encodeURIComponent(value)}'&`;
-      if (!isDate) return `${term}=<${encodeURIComponent(value)}>&`;
-      return `${term}=${encodeURIComponent(value.toISOString().slice(0, 10))}&`;
+      console.log(value);
+      if (isDate) return `${term}=${encodeURIComponent(value.toISOString().slice(0, 10))}&`;
+      if (isValidURI(value)) {
+        console.log(`<${term}=<${encodeURIComponent(value)}>&`)
+        return `<${term}=<${encodeURIComponent(value)}>&`;
+      } 
+      return `${term}='${encodeURIComponent(value)}'&`;
     }
     return '';
   };
@@ -178,7 +180,7 @@ export default function StandardSearch() {
     dispatch
   );
 
-if (isError) {
+  if (isError) {
     return (
       <div className={standarderror}>
         Errors were encountered while fetching the data
@@ -187,102 +189,102 @@ if (isError) {
   }
   if (isLoading) {
     return (
-        <div className={standardresultsloading}>
-          <Loader color="#D25627" type="ThreeDots" />
-        </div>
+      <div className={standardresultsloading}>
+        <Loader color="#D25627" type="ThreeDots" />
+      </div>
     );
   }
   for (const result of results) {
     getTypeAndUrl(result, registries);
   }
   return (
-  <div className={viewStyles.container}>
-    <div
-      className={
-        translation === 0
-          ? viewStyles.searchSidepanelcontaineropen
-          : viewStyles.searchSidepanelcontainercollapse
-      }
-    >
-      <div className={viewStyles.sidepanel}
-        style={{
-          transform: `translateX(-${translation}rem)`,
-          transition: 'transform 0.3s'
-        }}
+    <div className={viewStyles.container}>
+      <div
+        className={
+          translation === 0
+            ? viewStyles.searchSidepanelcontaineropen
+            : viewStyles.searchSidepanelcontainercollapse
+        }
       >
-        <div className={viewStyles.headercontainer}>
-          <div className={viewStyles.emptySpace}>
-          </div>
-          <div
+        <div className={viewStyles.sidepanel}
+          style={{
+            transform: `translateX(-${translation}rem)`,
+            transition: 'transform 0.3s'
+          }}
+        >
+          <div className={viewStyles.headercontainer}>
+            <div className={viewStyles.emptySpace}>
+            </div>
+            <div
               className={viewStyles.panelbutton}
               role="button"
               onClick={() => {
                 translation == 14 ? setTranslation(0) : setTranslation(14);
               }}
             >
-            <FontAwesomeIcon icon={faBars} size="1x" />
+              <FontAwesomeIcon icon={faBars} size="1x" />
+            </div>
           </div>
-        </div>
 
-        <div className={viewStyles.searchBoundedheightforsidepanel}
-          style={{
-            transform: `translateX(-${translation === 14 ? 2.5 : 0}rem)`,
-            transition: 'transform 0.3s'
-          }}
-        >
-          <div>
-            <Options
-              creator={creator}
-              setCreator={setCreator}
+          <div className={viewStyles.searchBoundedheightforsidepanel}
+            style={{
+              transform: `translateX(-${translation === 14 ? 2.5 : 0}rem)`,
+              transition: 'transform 0.3s'
+            }}
+          >
+            <div>
+              <Options
+                creator={creator}
+                setCreator={setCreator}
 
-              objectType={objectType}
-              setObjectType={setObjectType}
+                objectType={objectType}
+                setObjectType={setObjectType}
 
-              sbolType={sbolType}
-              setSbolType={setSbolType}
+                sbolType={sbolType}
+                setSbolType={setSbolType}
 
-              role={role}
-              setRole={setRole}
+                role={role}
+                setRole={setRole}
 
-              collections={collections}
-              setCollections={setCollections}
+                collections={collections}
+                setCollections={setCollections}
 
-              modified={modifed}
-              setModified={setModified}
+                modified={modifed}
+                setModified={setModified}
 
-              extraFilters={extraFilters}
-              setExtraFilters={setExtraFilters}
+                extraFilters={extraFilters}
+                setExtraFilters={setExtraFilters}
 
-              addFilter={addFilter}
-              handleDelete={handleDelete}
-            />
-            <div
-              className={advStyles.searchbutton}
-              role="button"
-              onClick={constructSearch}
-              style={{
-                backgroundColor: theme?.themeParameters?.[0]?.value || '#333', // Use theme color or default to #333
-                color: theme?.themeParameters?.[1]?.value || '#fff', // Use text color from theme or default to #fff
-              }}
-            >
-            <FontAwesomeIcon
-              icon={faHatWizard}
-              size="1x"
-              className={advStyles.dnaicon}
-              color="#F2E86D"
-            />
-            <div>Search</div>
+                addFilter={addFilter}
+                handleDelete={handleDelete}
+              />
+              <div
+                className={advStyles.searchbutton}
+                role="button"
+                onClick={constructSearch}
+                style={{
+                  backgroundColor: theme?.themeParameters?.[0]?.value || '#333', // Use theme color or default to #333
+                  color: theme?.themeParameters?.[1]?.value || '#fff', // Use text color from theme or default to #fff
+                }}
+              >
+                <FontAwesomeIcon
+                  icon={faHatWizard}
+                  size="1x"
+                  className={advStyles.dnaicon}
+                  color="#F2E86D"
+                />
+                <div>Search</div>
+              </div>
+            </div>
+
           </div>
-        </div>
-
         </div>
       </div>
-    </div>
-    <div className={viewStyles.searchContent}>
+      <div className={viewStyles.searchContent}>
         <SearchHeader selected="Standard Search" />
         <ResultTable count={count} data={results} />
+      </div>
     </div>
-  </div>
   );
 }
 const useSearchResults = (query, url, offset, limit, token, dispatch) => {
