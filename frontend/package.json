@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 3333",
+    "dev": "node customDev.js",
     "devNextGen": "git rev-parse HEAD > ./public/commitHash.txt; NODE_OPTIONS=--openssl-legacy-provider next dev -p 3333",
     "build": "git rev-parse HEAD > ./public/commitHash.txt; next build",
     "buildNextGen": "git rev-parse HEAD > ./public/commitHash.txt; NODE_OPTIONS=--openssl-legacy-provider next build",
