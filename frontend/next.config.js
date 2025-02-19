@@ -7,8 +7,7 @@ module.exports = {
     domains: ['localhost'],
   },
   publicRuntimeConfig: {
-    backend: process.env.backend,
-    backendSS: process.env.backendSS
+    backend: process.env.backend
   },
   async redirects() {
     return [
@@ -18,5 +17,13 @@ module.exports = {
         permanent: true
       }
     ];
-  }
+  },
+  async rewrites() {
+    return [
+      {
+        source: '/backend/:path*',
+        destination: 'http://localhost:7777/:path*', // Proxy to Backend
+      },
+    ];
+  },
 };

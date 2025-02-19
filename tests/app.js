@@ -7,19 +7,6 @@ const cache = require('./cache')
 const setupAppMiddleware = require('./app-middleware')
 const cors = require('cors')
 
-/*
-var whitelist = ['http://localhost:7777', 'http://localhost:3000']
-var corsOptions = {
-  origin: function (origin, callback) {
-    if (!origin || whitelist.indexOf(origin) !== -1) {
-      callback(null, true)
-    } else {
-      callback(new Error('Not allowed by CORS: ' + origin))
-    }
-  }
-}
-*/
-
 const views = {
   index: require('./views/index'),
   about: require('./views/about'),

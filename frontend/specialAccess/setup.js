@@ -31,7 +31,7 @@ export default function Setup({ setInSetupMode }) {
   const [frontendURL, setFrontendURL] = useState(window.location.origin + '/');
   const [instanceUrl, setInstanceUrl] = useState(
     window.location.origin.includes('localhost')
-      ? 'http://localhost:7777/'
+      ? 'http://synbiohub.org'
       : window.location.origin + '/'
   );
   const [uriPrefix, setUriPrefix] = useState(window.location.origin + '/');
@@ -171,7 +171,7 @@ export default function Setup({ setInSetupMode }) {
               />
 
               <InputField
-                labelText="Backend URL: We need to know where this SynBioHub instance is hosted so we can assign URLs to your submissions. In most cases, the backend URL will be the same as the frontend. An exception is if you are running a local instance, the backend URL would be http://localhost:7777. If the URL below is incorrect, please change it."
+                labelText="Backend URL: We need to know where this SynBioHub instance is hosted so we can assign URLs to your submissions. In most cases, the backend URL will be the same as the frontend. An exception is if you are running a local instance, the backend URL would be http://localhost:3333 proxied by nextjs from the http://localhost:7777 route. If the URL below is incorrect, please change it."
                 placeholder="Backend URL"
                 value={instanceUrl}
                 onChange={event => setInstanceUrl(event.target.value)}

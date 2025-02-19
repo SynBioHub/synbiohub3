@@ -79,7 +79,6 @@
     "showdown": "^2.1.0",
     "swr": "^0.3.9"
   },
-  "proxy": "http://localhost:7777/",
   "devDependencies": {
     "@testing-library/dom": "^7.31.0",
     "@testing-library/jest-dom": "^5.12.0",
