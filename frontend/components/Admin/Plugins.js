@@ -30,6 +30,7 @@ const searchable = ['index', 'name', 'url'];
 const headers = ['ID', 'Name', 'URL', ''];
 
 import { addError } from '../../redux/actions';
+import { use } from 'react';
 
 /* eslint sonarjs/no-duplicate-string: "off" */
 
@@ -37,6 +38,8 @@ export default function Plugins() {
   const token = useSelector(state => state.user.token);
   const dispatch = useDispatch();
   const { plugins, loading } = usePlugins(token, dispatch);
+  const pluginsUseLocalCompose = useSelector(state => state.pluginsUseLocalCompose);
+  const pluginLocalComposePrefix = useSelector(state => state.pluginLocalComposePrefix);
   return (
     <div>
       <PluginTable
@@ -394,7 +397,8 @@ async function fetchStatus(plugin, type) {
     params: {
       name: plugin.name,
       endpoint: 'status',
-      category: type
+      category: type,
+      prefix: pluginsUseLocalCompose ? pluginLocalComposePrefix : ''
     }
   })
     .then(response => {
