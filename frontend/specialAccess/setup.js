@@ -36,6 +36,8 @@ export default function Setup({ setInSetupMode }) {
   );
   const [uriPrefix, setUriPrefix] = useState(window.location.origin + '/');
   const [altHome, setAltHome] = useState('');
+  const [pluginsUseLocalCompose, setpluginsUseLocalCompose] = useState(false);
+  const [pluginLocalComposePrefix, setPluginLocalComposePrefix] = useState('');
 
   const [userName, setUserName] = useState('');
   const [userFullName, setUserFullName] = useState('');
@@ -119,7 +121,6 @@ export default function Setup({ setInSetupMode }) {
                     style={secondaryTitleStyle}
                     value={logo}
                     onChange={event => {
-                      // console.log(event.target.value);
                       setLogo(event.target.value);
                     }}
                   />
@@ -163,7 +164,6 @@ export default function Setup({ setInSetupMode }) {
                 value={altHome}
                 onChange={event => {
                   setAltHome(event.target.value);
-                  // console.log(event.target.value);
                 }}
                 inputName="Alternate Home Page"
                 containerStyling={styles.inputcontainer}
@@ -231,6 +231,20 @@ export default function Setup({ setInSetupMode }) {
                   value={uriPrefix}
                   onChange={event => setUriPrefix(event.target.value)}
                   inputName="URI Prefix"
+                  containerStyling={styles.inputcontainer}
+                  disabled={!advancedMode}
+                  style={secondaryTitleStyle}
+                />
+
+                <InputField
+                  labelText="Plugin Local Compose Prefix: Used only for local testing of plugins"
+                  placeholder="pluginLocalComposePrefix"
+                  value={pluginLocalComposePrefix}
+                  onChange={(event) => {
+                    setPluginLocalComposePrefix(event.target.value);
+                    setpluginsUseLocalCompose(true);
+                  }}
+                  inputName="pluginLocalComposePrefix"
                   containerStyling={styles.inputcontainer}
                   disabled={!advancedMode}
                   style={secondaryTitleStyle}
@@ -355,7 +369,9 @@ export default function Setup({ setInSetupMode }) {
                   virtuosoDB: '/var/lib/virtuoso-opensource-7/db',
                   allowPublicSignup,
                   altHome,
-                  requireLogin
+                  requireLogin,
+                  pluginsUseLocalCompose,
+                  pluginLocalComposePrefix
                 },
                 {
                   headers
