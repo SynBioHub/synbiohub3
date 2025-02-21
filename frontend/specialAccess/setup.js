@@ -56,10 +56,6 @@ export default function Setup({ setInSetupMode }) {
     setSecondaryTitleStyle({ color: reduceBrightness(color, 0.25) });
   }, [color]);
 
-  useEffect(() => {
-    router.push('/setup');
-  }, [router]);
-
   return (
     <TopLevel doNotTrack={true} navbar={<div></div>} publicPage={true}>
       <div className={styles.container}>
