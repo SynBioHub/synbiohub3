@@ -19,7 +19,8 @@ export default function Theme() {
   const [logoFile, setLogoFile] = useState(null);
   const [showModuleInteractions, setShowModuleInteractions] = useState(true);
   const [removePublicEnabled, setRemovePublicEnabled] = useState(true);
-  const [requireLogin, setRequireLogin] = useState(false)
+  const [requireLogin, setRequireLogin] = useState(false);
+  const [allowPublicSignup, setAllowPublicSignup] = useState(true);
   const token = useSelector(state => state.user.token);
 
   useEffect(() => {
@@ -56,6 +57,7 @@ export default function Theme() {
     setShowModuleInteractions(themeData.showModuleInteractions === 'true' || themeData.showModuleInteractions === true);
     setRemovePublicEnabled(themeData.removePublicEnabled === 'true' || themeData.removePublicEnabled === true);
     setRequireLogin(themeData.requireLogin === 'true' || themeData.requireLogin === true);
+    setAllowPublicSignup(themeData.allowPublicSignup === 'true' || themeData.allowPublicSignup === true);
   };
 
   const handleShowModuleInteractionsChange = (event) => {
