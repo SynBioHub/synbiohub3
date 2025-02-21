@@ -8,6 +8,8 @@ import { useSelector } from 'react-redux';
 import * as types from './types';
 import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
+const pluginsUseLocalCompose = useSelector(state => state.pluginsUseLocalCompose);
+const pluginLocalComposePrefix = useSelector(state => state.pluginLocalComposePrefix);
 
 /* eslint sonarjs/no-duplicate-string: "off" */
 
@@ -1091,7 +1093,8 @@ const zippedFilePromise = (
             name: pluginName,
             endpoint: 'run',
             data: encodeURIComponent(JSON.stringify(pluginData)),
-            category: 'download'
+            category: 'download',
+            prefix: pluginsUseLocalCompose ? pluginLocalComposePrefix : '',
           }
         }
         :
