@@ -10,8 +10,6 @@ import TopLevel from '../components/TopLevel';
 import styles from '../styles/home.module.css';
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-// var showdown  = require('showdown'),
-//     sdconverter = new showdown.Converter()
 import showdown from "showdown"
 const sdconverter = new showdown.Converter()
 
