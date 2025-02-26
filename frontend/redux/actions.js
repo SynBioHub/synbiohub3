@@ -8,8 +8,6 @@ import { useSelector } from 'react-redux';
 import * as types from './types';
 import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
-const pluginsUseLocalCompose = useSelector(state => state.pluginsUseLocalCompose);
-const pluginLocalComposePrefix = useSelector(state => state.pluginLocalComposePrefix);
 
 /* eslint sonarjs/no-duplicate-string: "off" */
 
@@ -1030,6 +1028,8 @@ export const downloadFiles =
       dispatch({ type: types.DOWNLOADLIST, payload: files });
       dispatch({ type: types.SHOWDOWNLOAD, payload: true });
 
+      
+
       const token = getState().user.token;
       var zip = new JSZip();
       var zipFilename = 'sbhdownload.zip';
@@ -1079,6 +1079,9 @@ const zippedFilePromise = (
   pluginName,
   pluginData
 ) => {
+
+  const pluginsUseLocalCompose = useSelector(state => state.pluginsUseLocalCompose);
+  const pluginLocalComposePrefix = useSelector(state => state.pluginLocalComposePrefix);
   return new Promise((resolve, reject) => {
     axios(
       plugin
