@@ -1024,6 +1024,10 @@ export const makePublicCollection =
 export const downloadFiles =
   (files, plugin = false, pluginName = null, pluginData = null) =>
     (dispatch, getState) => {
+      const state = getState();
+      const pluginsUseLocalCompose = state.pluginsUseLocalCompose;
+      const pluginLocalComposePrefix = state.pluginLocalComposePrefix;
+
       dispatch({ type: types.DOWNLOADSTATUS, payload: 'Downloading' });
       dispatch({ type: types.DOWNLOADLIST, payload: files });
       dispatch({ type: types.SHOWDOWNLOAD, payload: true });
@@ -1043,7 +1047,9 @@ export const downloadFiles =
           dispatch,
           plugin,
           pluginName,
-          pluginData
+          pluginData,
+          pluginsUseLocalCompose,
+          pluginLocalComposePrefix
         );
       });
 
@@ -1077,11 +1083,10 @@ const zippedFilePromise = (
   dispatch,
   plugin,
   pluginName,
-  pluginData
+  pluginData,
+  pluginsUseLocalCompose = false,
+  pluginLocalComposePrefix = ''
 ) => {
-
-  const pluginsUseLocalCompose = useSelector(state => state.pluginsUseLocalCompose);
-  const pluginLocalComposePrefix = useSelector(state => state.pluginLocalComposePrefix);
   return new Promise((resolve, reject) => {
     axios(
       plugin
