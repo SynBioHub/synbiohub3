@@ -1,5 +1,5 @@
 import styles from "../../../styles/view.module.css";
-import { faCloudDownloadAlt } from "@fortawesome/free-solid-svg-icons";
+import { faCloudDownloadAlt, prefix } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import React, { useEffect, useState } from "react";
@@ -24,6 +24,8 @@ export default function DownloadModal(properties) {
   const [submitted, setSubmitted] = useState(false);
   const [submittable, setSubmittable] = useState(false);
   const dispatch = useDispatch();
+  const pluginsUseLocalCompose = useSelector(state => state.pluginsUseLocalCompose);
+  const pluginLocalComposePrefix = useSelector(state => state.pluginLocalComposePrefix);
 
   //Checks if the modal has been submitted and downloads in the format the user chose.
   useEffect(() => {
@@ -132,7 +134,8 @@ export default function DownloadModal(properties) {
           params: {
             name: plugin.name,
             endpoint: 'status',
-            category: 'download'
+            category: 'download',
+            prefix: pluginsUseLocalCompose ? pluginLocalComposePrefix : ''
           }
         }).then(response => {
 
@@ -147,7 +150,8 @@ export default function DownloadModal(properties) {
                 category: 'download',
                 data: {
                   type: properties.type
-                }
+                },
+                prefix: pluginsUseLocalCompose ? pluginLocalComposePrefix : ''
               }
               
             }).then(response => {
