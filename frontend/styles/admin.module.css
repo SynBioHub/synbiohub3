@@ -315,6 +315,10 @@
    border-radius: 5px;
 }
 
+.themeContainer {
+   width: 100%;
+}
+
 .item1 {
    grid-column: 1 / -1;
    grid-row: 1 / 3;

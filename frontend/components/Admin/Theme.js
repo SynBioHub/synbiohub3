@@ -150,7 +150,7 @@ export default function Theme() {
   return (
     <div className={styles.container}>
       {theme && (
-        <div className={styles.ExplorerContainer}>
+        <div className={styles.themeContainer}>
           <div className={styles.title}>Theme</div>
           {/* <div className={styles.themeFont}>Logo</div>
           <input
