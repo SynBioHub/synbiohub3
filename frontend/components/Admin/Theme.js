@@ -193,6 +193,7 @@ export default function Theme() {
                 color={baseColor}
                 onChange={color => setBaseColor(color.hex)}
                 className={styles.colorpicker}
+                width='20vw'
               />
             </div>
 

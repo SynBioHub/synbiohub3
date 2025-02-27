@@ -84,7 +84,7 @@
    display: flex;
    flex-direction: row;
    justify-content: center;
-   align-items: center;
+   align-items: flex-start;
    margin: 15px;
    gap: 20%;
    width: 100%;
