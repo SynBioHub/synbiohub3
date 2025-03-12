@@ -38,8 +38,14 @@ export default function Plugins() {
   const token = useSelector(state => state.user.token);
   const dispatch = useDispatch();
   const { plugins, loading } = usePlugins(token, dispatch);
-  const pluginsUseLocalCompose = useSelector(state => state.pluginsUseLocalCompose);
-  const pluginLocalComposePrefix = useSelector(state => state.pluginLocalComposePrefix);
+  const theme = JSON.parse(localStorage.getItem('theme')) || {};
+  let pluginsUseLocalCompose = useState(false);
+  let pluginLocalComposePrefix = useState('');
+  if (theme && theme.pluginsUseLocalCompose && theme.pluginLocalComposePrefix) {
+    console.log(theme);
+    pluginsUseLocalCompose = theme.pluginsUseLocalCompose;
+    pluginLocalComposePrefix = theme.pluginLocalComposePrefix;
+  }
   return (
     <div>
       <PluginTable
@@ -48,6 +54,8 @@ export default function Plugins() {
         type={renderingType}
         loading={loading}
         data={plugins ? plugins.rendering : undefined}
+        pluginsUseLocalCompose={pluginsUseLocalCompose}
+        pluginLocalComposePrefix={pluginLocalComposePrefix}
       />
       <PluginTable
         token={token}
@@ -55,6 +63,8 @@ export default function Plugins() {
         type={submittingType}
         loading={loading}
         data={plugins ? plugins.submit : undefined}
+        pluginsUseLocalCompose={pluginsUseLocalCompose}
+        pluginLocalComposePrefix={pluginLocalComposePrefix}
       />
       <PluginTable
         token={token}
@@ -62,6 +72,8 @@ export default function Plugins() {
         type={downloadingType}
         loading={loading}
         data={plugins ? plugins.download : undefined}
+        pluginsUseLocalCompose={pluginsUseLocalCompose}
+        pluginLocalComposePrefix={pluginLocalComposePrefix}
       />
     </div>
   );
@@ -111,6 +123,8 @@ function PluginTable(properties) {
             plugin={plugin}
             type={properties.type}
             token={properties.token}
+            pluginsUseLocalCompose={properties.pluginsUseLocalCompose}
+            pluginLocalComposePrefix={properties.pluginLocalComposePrefix}
           />
         )}
       />
@@ -209,7 +223,7 @@ function PluginDisplay(properties) {
         icon={faRedo}
         onClick={() => {
           const checkStatus = async () => {
-            const hidden = await fetchStatus(properties.plugin, properties.type);
+            const hidden = await fetchStatus(properties.plugin, properties.type, properties.pluginsUseLocalCompose, properties.pluginLocalComposePrefix);
             setStatus(hidden);
           };
           checkStatus();
@@ -390,7 +404,7 @@ const usePlugins = (token, dispatch) => {
 };
 
 
-async function fetchStatus(plugin, type) {
+async function fetchStatus(plugin, type, pluginsUseLocalCompose, pluginLocalComposePrefix) {
   return await axios({
     method: 'POST',
     url: `${publicRuntimeConfig.backend}/call`,
