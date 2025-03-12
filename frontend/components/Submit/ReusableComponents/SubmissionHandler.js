@@ -42,7 +42,7 @@ export default function SubmissionHandler(properties) {
                 name: plugin.name,
                 endpoint: 'status',
                 category: 'submit',
-                prefix: pluginsUseLocalCompose ? pluginLocalComposePrefix : ''
+                prefix: pluginsUseLocalCompose ? pluginLocalComposePrefix : null
               }
             }).then(response => {
               if(response.status === 200) selectOptions.push({value: plugin.index, label: plugin.name});

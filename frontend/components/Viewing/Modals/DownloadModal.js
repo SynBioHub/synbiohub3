@@ -24,6 +24,7 @@ export default function DownloadModal(properties) {
   const [submitted, setSubmitted] = useState(false);
   const [submittable, setSubmittable] = useState(false);
   const dispatch = useDispatch();
+  const theme = JSON.parse(localStorage.getItem('theme')) || {};
   const pluginsUseLocalCompose = useSelector(state => state.pluginsUseLocalCompose);
   const pluginLocalComposePrefix = useSelector(state => state.pluginLocalComposePrefix);
 
@@ -63,7 +64,7 @@ export default function DownloadModal(properties) {
 
     
     const pluginData = {
-      uri: properties.uri,
+      uriSuffix: properties.uri.split(theme.uriPrefix).join(''),
       instanceUrl: `${publicRuntimeConfig.backend}/`,
       size: 1,
       type: properties.type
@@ -135,7 +136,7 @@ export default function DownloadModal(properties) {
             name: plugin.name,
             endpoint: 'status',
             category: 'download',
-            prefix: pluginsUseLocalCompose ? pluginLocalComposePrefix : ''
+            prefix: pluginsUseLocalCompose ? pluginLocalComposePrefix : null
           }
         }).then(response => {
 
@@ -151,7 +152,7 @@ export default function DownloadModal(properties) {
                 data: {
                   type: properties.type
                 },
-                prefix: pluginsUseLocalCompose ? pluginLocalComposePrefix : ''
+                prefix: pluginsUseLocalCompose ? pluginLocalComposePrefix : null
               }
               
             }).then(response => {
