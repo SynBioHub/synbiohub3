@@ -15,8 +15,6 @@ export default async function getQueryResponse(
 ) {
 
   query = loadTemplate(query, options);
-
-  // console.log("q",query);
   
   const currentURL = window.location.href;
   const isPublic = currentURL.includes('/public/');

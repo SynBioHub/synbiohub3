@@ -20,11 +20,6 @@ export default function View({ data, error }) {
   if (error) {
     dispatch(addError(error));
   }
-  const insideState = useSelector(state => {
-    console.log(state); // Check what the full state looks like
-    return 1;
-  });
-  console.log(localStorage);
   const router = useRouter();
   const { view } = router.query;
   const token = useSelector(state => state.user.token);

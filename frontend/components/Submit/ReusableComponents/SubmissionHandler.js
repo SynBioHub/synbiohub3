@@ -6,10 +6,6 @@ const { publicRuntimeConfig } = getConfig();
 import { useSelector } from 'react-redux';
 
 export default function SubmissionHandler(properties) {
-  const insideState = useSelector(state => {
-    console.log(state); // Check what the full state looks like
-    return 1;
-  });
   const pluginsUseLocalCompose = useSelector(state => state.pluginsUseLocalCompose);
   const pluginLocalComposePrefix = useSelector(state => state.pluginLocalComposePrefix);
 
