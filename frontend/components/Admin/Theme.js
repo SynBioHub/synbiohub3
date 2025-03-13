@@ -2,11 +2,15 @@ import axios from 'axios';
 import getConfig from 'next/config';
 import styles from '../../styles/admin.module.css';
 import Loading from '../Reusable/Loading';
+import { SketchPicker } from 'react-color';
 import { addError } from '../../redux/actions';
 import { useDispatch, useSelector } from 'react-redux';
 import { useState, useEffect } from 'react';
 import { isValidURI } from '../Viewing/Shell';
 const { publicRuntimeConfig } = getConfig();
+
+import showdown from "showdown"
+const sdconverter = new showdown.Converter()
 
 export default function Theme() {
   const dispatch = useDispatch();
@@ -146,16 +150,16 @@ export default function Theme() {
   return (
     <div className={styles.container}>
       {theme && (
-        <div className={styles.ExplorerContainer}>
+        <div className={styles.themeContainer}>
           <div className={styles.title}>Theme</div>
-          <div className={styles.themeFont}>Logo</div>
+          {/* <div className={styles.themeFont}>Logo</div>
           <input
+            className={styles.newLogoFilePicker}
             type="file"
             onChange={(e) => setLogoFile(e.target.files[0])}
-            className={styles.logheader}
-          /> 
+          />  */}
 
-          <div className={styles.themeFont}>Instance Name</div>
+          <h2 className={styles.themeFont}>Instance Name</h2>
           <input
             type="text"
             value={instanceName}
@@ -163,16 +167,18 @@ export default function Theme() {
             className={styles.tableinput}
           />
 
-          <div className={styles.themeFont}>Front Page Description</div>
+          <h2 className={styles.themeFont}>Front Page Description</h2>
+          <h3><b>Preview:</b></h3>
+          <p className={styles.description} dangerouslySetInnerHTML={{ __html: sdconverter.makeHtml(frontPageText.replace(/\\n/g, '\n')) }} />
+
+          <h3><b>Edit:</b></h3>
           <textarea
+            className={styles.wfull}
             value={frontPageText}
             onChange={(e) => setFrontPageText(e.target.value)}
-            rows={10}
-            cols={100}
-            className={styles.tableinput}
+            rows={5}
           />
-
-          <div className={styles.themeFont}>Alternate Home Page</div>
+          <h2 className={styles.themeFont}>Alternate Home Page</h2>
           <input
             type="text"
             value={altHome}
@@ -180,66 +186,60 @@ export default function Theme() {
             className={styles.tableinput}
           />
 
-          <div className={styles.themeFont}>Color Settings</div>
-          <table className={styles.table}>
-            <tbody>
-              <tr>
-                <td>Base Color</td>
-                <td>
+          <div className={styles.bottomSettings}>
+            <div>
+              <h2 className={styles.themeFont}>Color Settings</h2>
+              <SketchPicker
+                color={baseColor}
+                onChange={color => setBaseColor(color.hex)}
+                className={styles.colorpicker}
+                width='20vw'
+              />
+            </div>
+
+            <div>
+              <h2 className={`${styles.themeFont} ${styles.centeredTitle}`}>Msc Theme Settings</h2>
+              <div className={styles.themeChecksFlex}>
+
+                <label className={styles.themecheckboxLabel}>
                   <input
-                    type="text"
-                    value={baseColor}
-                    onChange={handleBaseColorChange}
-                    className={styles.tableinput}
+                    type="checkbox"
+                    checked={showModuleInteractions}
+                    onChange={handleShowModuleInteractionsChange}
+                    className={styles.themecheckbox}
                   />
-                </td>
-              </tr>
-            </tbody>
-          </table>
+                  Show Module Interactions
+                </label>
 
-          <div className={styles.menucontainer}>
-            <label className={styles.menuselector}>
-              <input
-                type="checkbox"
-                checked={showModuleInteractions}
-                onChange={handleShowModuleInteractionsChange}
-                className={styles.themecheckbox}
-              />
-              <span className={styles.checktext}>Show Module Interactions</span>
-            </label>
-          </div>
+                <label className={styles.themecheckboxLabel}>
+                  <input
+                    type="checkbox"
+                    checked={removePublicEnabled}
+                    onChange={handleRemovePublicEnabledChange}
+                    className={styles.themecheckbox}
+                  />
+                  Remove Public Enabled
+                </label>
 
-          <div className={styles.menucontainer}>
-            <label className={styles.menuselector}>
-              <input
-                type="checkbox"
-                checked={removePublicEnabled}
-                onChange={handleRemovePublicEnabledChange}
-                className={styles.themecheckbox}
-              />
-              <span className={styles.checktext}>Remove Public Enabled</span>
-            </label>
-          </div>
+                <label className={styles.themecheckboxLabel}>
+                  <input
+                    type="checkbox"
+                    checked={requireLogin}
+                    onChange={handleRequireLoginChange}
+                    className={styles.themecheckbox}
+                  />
+                  Require Login
+                </label>
 
-          <div className={styles.menucontainer}>
-            <label className={styles.menuselector}>
-              <input
-                type="checkbox"
-                checked={requireLogin}
-                onChange={handleRequireLoginChange}
-                className={styles.themecheckbox}
-              />
-              <span className={styles.checktext}>Require Login</span>
-            </label>
+              </div>
+            </div>
           </div>
-          <div className={styles.actionbuttonslayout}>
-            <button
-              onClick={handleSave}
-              className={styles.actionbutton}
-            >
-              Save
-            </button>
-          </div>
+          <button
+            onClick={handleSave}
+            className={styles.actionbutton}
+          >
+            Save
+          </button>
         </div>
       )}
     </div>
