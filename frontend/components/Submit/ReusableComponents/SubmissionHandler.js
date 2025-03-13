@@ -3,8 +3,11 @@ import Select from "react-select";
 import axios from 'axios';
 import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
+import { useSelector } from 'react-redux';
 
 export default function SubmissionHandler(properties) {
+  const pluginsUseLocalCompose = useSelector(state => state.pluginsUseLocalCompose);
+  const pluginLocalComposePrefix = useSelector(state => state.pluginLocalComposePrefix);
 
     const getSelectOptions = () => {
         let selectOptions;
@@ -34,7 +37,8 @@ export default function SubmissionHandler(properties) {
               params: {
                 name: plugin.name,
                 endpoint: 'status',
-                category: 'submit'
+                category: 'submit',
+                prefix: pluginsUseLocalCompose ? pluginLocalComposePrefix : null
               }
             }).then(response => {
               if(response.status === 200) selectOptions.push({value: plugin.index, label: plugin.name});
