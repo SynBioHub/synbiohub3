@@ -110,9 +110,14 @@ export default function OtherProperties(properties) {
   };
 
   const confirmDeletion = (key, name, value) => {
+    handleRemoveOwner(name, value);
     const confirmDelete = window.confirm("Are you sure you want to delete this annotation?");
     if (confirmDelete) {
       handleRemoveItem(key, name, value);
+      const userRemove = value.split('/').pop();
+      if (name.endsWith('#ownedBy') && userRemove !== username) {
+        handleRemoveOwner(value, userRemove);
+      }
     }
   };
 
@@ -133,6 +138,25 @@ export default function OtherProperties(properties) {
       })
       .catch(error => {
         console.error("Error removing item: ", error);
+      });
+  };
+
+  const handleRemoveOwner = (value, userRemove) => {
+    axios.post(`${objectUri}/removeOwner/${userRemove}`, {
+      userUri: value
+    }, {
+      headers: {
+        "Accept": "text/plain; charset=UTF-8",
+        "X-authorization": token
+      }
+    })
+      .then(response => {
+        if (response && response.status == 200) {
+          console.log("Successfully removed owner");
+        }
+      })
+      .catch(error => {
+        console.error('Error removing owner', error);
       });
   };
 
