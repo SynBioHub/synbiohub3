@@ -1,5 +1,5 @@
 import styles from "../../../styles/view.module.css";
-import { faFunnelDollar } from "@fortawesome/free-solid-svg-icons";
+import { faFunnelDollar, prefix } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import React, { useEffect, useState } from "react";
@@ -20,6 +20,8 @@ export default function CurationModal(properties) {
 
     const [selectedOption, setSelectedOption] = useState({value: "default", label: "Clear Selection"});
     const [content, setContent] = useState("");
+    const pluginsUseLocalCompose = useSelector(state => state.pluginsUseLocalCompose);
+    const pluginLocalComposePrefix = useSelector(state => state.pluginLocalComposePrefix);
 
     const pluginData = {
         complete_sbol: '',
@@ -82,7 +84,8 @@ export default function CurationModal(properties) {
                     params: {
                         name: plugin.name,
                         endpoint: 'evaluate',
-                        data: pluginData
+                        data: pluginData,
+                        prefix: pluginsUseLocalCompose ? pluginLocalComposePrefix : ''
                     }
                     
                 }).then(response => {
@@ -145,7 +148,8 @@ async function runPlugin(pluginName, pluginData) {
       params: {
         name: pluginName,
         endpoint: 'run',
-        data: pluginData
+        data: pluginData,
+        prefix: pluginsUseLocalCompose ? pluginLocalComposePrefix : ''
       }
     }).then(response => {
         if(response.data.own_interface) {

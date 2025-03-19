@@ -15,12 +15,17 @@ export default function Plugin(properties) {
   const pageSectionsOrder = useSelector(state => state.pageSections.order);
   const hiddenSections = useSelector(state => state.pageSections.hiddenSections);
   const dispatch = useDispatch();
+  const theme = JSON.parse(localStorage.getItem('theme')) || {};
+  let pluginsUseLocalCompose = useState(false);
+  let pluginLocalComposePrefix = useState('');
+  if (theme && theme.pluginsUseLocalCompose && theme.pluginLocalComposePrefix) {
+    pluginsUseLocalCompose = theme.pluginsUseLocalCompose;
+    pluginLocalComposePrefix = theme.pluginLocalComposePrefix;
+  }
 
   const acceptedTags = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'a', 'img', 'ul', 'ol', 'li', 'table', 'tr', 'td', 'th', 'thead', 'tbody', 'tfoot', 'caption', 'div', 'span', 'br', 'hr', 'pre', 'code', 'blockquote', 'strong', 'em', 'i', 'b', 'u', 's', 'sub', 'sup', 'del', 'ins', 'mark', 'small', 'big', 'abbr', 'cite', 'dfn', 'kbd', 'q', 'samp', 'var', 'time', 'address', 'article', 'aside', 'footer', 'header', 'nav', 'section', 'main', 'figure', 'figcaption', 'details', 'summary', 'dialog', 'menu', 'menuitem', 'menuitem', 'meter', 'progress', 'output', 'canvas', 'audio', 'video', 'iframe', 'object', 'embed', 'param', 'source', 'track', 'map', 'area', 'form', 'label', 'input', 'button', 'select', 'datalist', 'optgroup', 'option', 'textarea', 'fieldset', 'legend', 'datalist', 'output', 'progress', 'meter', 'details', 'summary', 'command', 'menu', 'menuitem', 'menuitem', 'script', 'noscript', 'style', 'link', 'meta', 'title', 'base', 'head', 'body', 'html', 'br', 'hr', 'wbr', 'img', 'area', 'map', 'track', 'source', 'param', 'iframe', 'embed', 'object', 'canvas', 'script', 'noscript', 'style', 'link', 'meta', 'title', 'base', 'head', 'body', 'html', 'br', 'hr', 'wbr', 'img', 'area', 'map', 'track', 'source', 'param', 'iframe', 'embed', 'object', 'canvas', 'script', 'noscript', 'style', 'link', 'meta', 'title', 'base', 'head', 'body', 'html', 'br', 'hr', 'wbr', 'img', 'area', ]
 
   
-  
-  const uri = properties.uri;
 
   let type;
 
@@ -42,7 +47,7 @@ export default function Plugin(properties) {
   }
 
   const pluginData = {
-    uri: uri,
+    uriSuffix: properties.uri.split(theme.uriPrefix).join(''),
     instanceUrl: `${publicRuntimeConfig.backend}/`,
     size: 1,
     type: type
@@ -50,12 +55,12 @@ export default function Plugin(properties) {
 
   useEffect(() => {
     if (status === null) {
-      evaluatePlugin(properties.plugin, properties.type).then(responseStatus => {
+      evaluatePlugin(properties.plugin, properties.type, pluginsUseLocalCompose, pluginLocalComposePrefix).then(responseStatus => {
         setStatus(responseStatus)
 
         if(responseStatus) {
           const downloadContent = async () => {
-            const renderResponse = await runPlugin(properties.plugin, pluginData);
+            const renderResponse = await runPlugin(properties.plugin, pluginData, pluginsUseLocalCompose, pluginLocalComposePrefix);
             setContent(renderResponse.data);
             setStatus(renderResponse.status === 200);
             };
@@ -132,7 +137,7 @@ export default function Plugin(properties) {
 }
 
 
-async function evaluatePlugin(plugin, type) {
+async function evaluatePlugin(plugin, type, pluginsUseLocalCompose, pluginLocalComposePrefix) {
 
   switch(type) {
     case 'Component':
@@ -157,7 +162,8 @@ async function evaluatePlugin(plugin, type) {
       category: 'rendering',
       data: {
         type: type
-      }
+      },
+      prefix: pluginsUseLocalCompose ? pluginLocalComposePrefix : ''
     }
   }).then(response => {
     return response.status === 200;
@@ -167,7 +173,7 @@ async function evaluatePlugin(plugin, type) {
   });
 }
 
-async function runPlugin(plugin, pluginData) {
+async function runPlugin(plugin, pluginData, pluginsUseLocalCompose, pluginLocalComposePrefix) {
   return await axios({
     method: 'POST',
     url: `${publicRuntimeConfig.backend}/call`,
@@ -175,7 +181,8 @@ async function runPlugin(plugin, pluginData) {
       name: plugin.name,
       endpoint: 'run',
       data: pluginData,
-      category: 'rendering'
+      category: 'rendering',
+      prefix: pluginsUseLocalCompose ? pluginLocalComposePrefix : null
     }
   }).then(response => {
     return response;
