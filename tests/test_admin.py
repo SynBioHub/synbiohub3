@@ -27,10 +27,10 @@ class TestAdmin(TestCase):
         compare_get_request("/admin/virtuoso", headers = {"Accept":"text/plain"}, test_type = test_type)
         test_print("test_admin_virtuoso completed")
 
-        # test_print("test_admin_graphs starting")
-        # compare_get_request("/admin/graphs", headers = {"Accept":"text/plain"}, test_type = test_type, comparison_type="jsonlist", fields=["graphUri", "numTriples"], key='graphUri')
-        # test_print("test_admin_graphs completed")
-
+        test_print("test_admin_graphs starting")
+        compare_get_request("/admin/graphs", headers = {"Accept":"text/plain"}, test_type = test_type, comparison_type="jsonlist", fields=["graphUri", "numTriples"], key='graphUri')
+        test_print("test_admin_graphs completed")
+        
         # test_print("test_admin_log starting")
         # compare_get_request("admin/log", headers = {"Accept":"text/plain"}, test_type = test_type, comparison_type="jsonlist", fields=["level", "line"], key='line')
         # test_print("test_admin_log completed")
