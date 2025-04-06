@@ -34,18 +34,18 @@ class TestAdmin(TestCase):
         # test_print("test_admin_log starting")
         # compare_get_request("admin/log", headers = {"Accept":"text/plain"}, test_type = test_type, comparison_type="jsonlist", fields=["level", "line"], key='line')
         # test_print("test_admin_log completed")
+        
+        test_print("test_admin_mail starting")
+        compare_get_request("/admin/mail", headers = {"Accept":"text/plain"}, test_type = test_type, comparison_type="json", fields=["sendGridApiKey", "sendGridFromEmail"])
+        test_print("test_admin_mail completed")
 
-        # test_print("test_admin_mail starting")
-        # compare_get_request("/admin/mail", headers = {"Accept":"text/plain"}, test_type = test_type, comparison_type="json", fields=["sendGridApiKey", "sendGridFromEmail"])
-        # test_print("test_admin_mail completed")
-
-        # test_print("test_post_admin_mail starting")
-        # data={
-        #     'key': 'SG.Dummy_Token',
-        #     'fromEmail' : 'synbiohub@synbiohub.utah.edu',
-        # }
-        # compare_post_request("/admin/mail", data, headers = {"Accept": "text/plain"}, test_name = "admin_mail", test_type = test_type)
-        # test_print("test_post_admin_mail completed")
+        test_print("test_post_admin_mail starting")
+        data={
+            'key': 'SG.Dummy_Token',
+            'fromEmail' : 'synbiohub@synbiohub.utah.edu',
+        }
+        compare_post_request("/admin/mail", data, headers = {"Accept": "text/plain"}, test_name = "admin_mail", test_type = test_type)
+        test_print("test_post_admin_mail completed")
 
         test_print("test_admin_plugins starting")
         compare_get_request("/admin/plugins", headers = {"Accept":"text/plain"}, test_type = test_type, comparison_type="json", fields=["rendering", "download", "submit"])
