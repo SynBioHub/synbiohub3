@@ -72,7 +72,7 @@ export default function Members(properties) {
       preparedSearch += '\n FILTER(?type = <' + typeFilter + '>)';
     }
   }
-  
+
   const parameters = {
     from: '',
     graphPrefix: `${theme.uriPrefix}`, // TODO: Maybe get this from somewhere? 
@@ -83,9 +83,18 @@ export default function Members(properties) {
     limit: ' LIMIT 10000 '
   };
 
+  if (properties.uri.endsWith("/share")) {
+    const parts = properties.uri.split('/');
+    const firstHalf = parts.slice(0, 8).join('/');
+    console.log(firstHalf);
+  }
+
   if (token) {
     parameters.from = "FROM <" + privateGraph + ">";
-  } else {
+  } else if (properties.uri.endsWith("/share")) {
+    const parts = properties.uri.split('/');
+    const firstHalf = parts.slice(0, 8).join('/');
+    parameters.from = "FROM <" + firstHalf + ">";
   }
 
   const searchQuery = typeFilter !== 'Show Only Root Objects';
@@ -101,29 +110,29 @@ export default function Members(properties) {
     : useMembers(query, parameters, dispatch);
 
   const { count: totalMemberCount } = privateGraph
-  ? useCount(
-    CountMembersTotal,
-    { ...parameters, search: '' },
-    privateGraph ? token : undefined, // Pass token only if privateGraph is true
-    dispatch
-  )
-  : useCount(
-    CountMembersTotal,
-    { ...parameters, search: '' },
-    dispatch);
+    ? useCount(
+      CountMembersTotal,
+      { ...parameters, search: '' },
+      privateGraph ? token : undefined, // Pass token only if privateGraph is true
+      dispatch
+    )
+    : useCount(
+      CountMembersTotal,
+      { ...parameters, search: '' },
+      dispatch);
 
   const { count: currentMemberCount } = privateGraph
-  ? useCount(
-    searchQuery ? CountMembersTotal : CountMembers,
-    parameters,
-    privateGraph ? token : undefined, // Pass token only if privateGraph is true
-    dispatch
-  )
-  : useCount(
-    searchQuery ? CountMembersTotal : CountMembers,
-    parameters,
-    dispatch
-  );
+    ? useCount(
+      searchQuery ? CountMembersTotal : CountMembers,
+      parameters,
+      privateGraph ? token : undefined, // Pass token only if privateGraph is true
+      dispatch
+    )
+    : useCount(
+      searchQuery ? CountMembersTotal : CountMembers,
+      parameters,
+      dispatch
+    );
 
   useEffect(() => {
     if (properties.refreshMembers) {
@@ -132,18 +141,18 @@ export default function Members(properties) {
     }
   }, [properties.refreshMembers, mutate]);
 
-  const { filters } = privateGraph 
-  ? useFilters(
-    getTypesRoles,
-    { uri: properties.uri },
-    token,
-    dispatch
-  )
-  : useFilters(
-    getTypesRoles,
-    { uri: properties.uri },
-    dispatch
-  );
+  const { filters } = privateGraph
+    ? useFilters(
+      getTypesRoles,
+      { uri: properties.uri },
+      token,
+      dispatch
+    )
+    : useFilters(
+      getTypesRoles,
+      { uri: properties.uri },
+      dispatch
+    );
 
   const outOfBoundsHandle = offset => {
     const newBounds = getNewBounds(offset, currentMemberCount);
@@ -269,7 +278,7 @@ function MemberTable(properties) {
   const isPublicCollection = properties.uri.includes("/public/");
   const token = useSelector(state => state.user.token);
   const dispatch = useDispatch();
-  
+
   useEffect(() => {
     async function processMembers() {
       if (properties.members) {
@@ -410,14 +419,14 @@ function MemberTable(properties) {
               <td onClick={() => handleIconClick(member)} className={styles.modalicon} title="Delete Member">
                 <FontAwesomeIcon icon={faTrash} />
               </td>
-          )}
-          {!isPublicCollection && icon === faUnlink && (
+            )}
+            {!isPublicCollection && icon === faUnlink && (
               <td onClick={() => handleIconClick(member)} className={styles.modalicon} title="Remove member from collection">
                 <FontAwesomeIcon icon={faUnlink} />
               </td>
-          )}
-        </tr>
-      );
+            )}
+          </tr>
+        );
       }}
 
     />
@@ -484,6 +493,7 @@ const useCount = (query, options, token, dispatch) => {
 };
 
 const useMembers = (query, options, token, dispatch) => {
+  console.log(options);
   const url = createUrl(query, options);
   let data, error, mutate;
 

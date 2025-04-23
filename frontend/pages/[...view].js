@@ -82,7 +82,9 @@ export default function View({ data, error }) {
       })
       .then(response => {
         if (!metadata && uri) {
-          getQueryResponse(dispatch, getMetadata, { uri: uri }, token).then(
+          const parts = uri.split('/');
+          const firstHalf = parts.slice(0, 8).join('/');
+          getQueryResponse(dispatch, getMetadata, { uri: firstHalf }, token).then(
             metadata => setMetadata(metadata)
           );
         }

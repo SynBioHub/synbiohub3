@@ -51,7 +51,6 @@ export default function ShareModal(properties) {
     }
   }, [submitted]);
 
-
   useEffect(() => {
     const fetchShareLink = async () => {
       const url = `${publicRuntimeConfig.backend}${properties.url}/shareLink`;
@@ -63,7 +62,21 @@ export default function ShareModal(properties) {
       try {
         const response = await axios.get(url, { headers });
         if (response.status === 200 && response.data) {
-          setShareLink(response.data);
+          const originalUrl = response.data;
+          const urlObj = new URL(originalUrl);
+
+          const base = theme.frontendURL.endsWith('/')
+            ? theme.frontendURL.slice(0, -1)
+            : theme.frontendURL;
+
+          const path = urlObj.pathname.startsWith('/')
+            ? urlObj.pathname
+            : '/' + urlObj.pathname;
+
+          const newUrl = base + path + urlObj.search + urlObj.hash;
+
+          console.log(newUrl);
+          setShareLink(newUrl);
         }
       } catch (error) {
         console.error("Error fetching share link:", error.message);
@@ -87,11 +100,11 @@ export default function ShareModal(properties) {
         if (response.status === 200 && response.data && response.data.users) {
           // Extract only the usernames
           const usernames = response.data.users
-          .filter(user => user.username !== currentUser)  // Exclude current user
-          .map(user => ({
-            value: user.username,
-            label: user.username
-          }));
+            .filter(user => user.username !== currentUser)  // Exclude current user
+            .map(user => ({
+              value: user.username,
+              label: user.username
+            }));
 
           setUserList(usernames);
         }
