@@ -52,6 +52,11 @@ export default function Members(properties) {
   const [processedUri, setProcessedUri] = useState(publicRuntimeConfig.backend);
   const theme = JSON.parse(localStorage.getItem('theme')) || {};
   const registries = JSON.parse(localStorage.getItem("registries")) || {};
+  const persistRoot = JSON.parse(localStorage.getItem("persist:root"));
+  const rootUser = JSON.parse(persistRoot.username);
+  const parts = properties.uri.split('/');
+  const urlUsername = parts[4];
+  const isOwner = urlUsername === rootUser;
 
   let preparedSearch =
     search !== ''
@@ -84,7 +89,6 @@ export default function Members(properties) {
   };
 
   if (properties.uri.endsWith("/share")) {
-    const parts = properties.uri.split('/');
     const firstHalf = parts.slice(0, 8).join('/');
     console.log(firstHalf);
   }
@@ -93,8 +97,10 @@ export default function Members(properties) {
     parameters.from = "FROM <" + privateGraph + ">";
   } else if (properties.uri.endsWith("/share")) {
     const parts = properties.uri.split('/');
-    const firstHalf = parts.slice(0, 8).join('/');
-    parameters.from = "FROM <" + firstHalf + ">";
+    const fromPart = parts.slice(0, 5).join('/');
+    parameters.from = "FROM <" + fromPart + ">";
+    const collectionPart = parts.slice(0, 8).join('/');
+    parameters.collection = collectionPart;
   }
 
   const searchQuery = typeFilter !== 'Show Only Root Objects';
@@ -105,11 +111,11 @@ export default function Members(properties) {
     query = getCollectionMembersSearch;
   }
 
-  const { members, mutate } = privateGraph
+  const { members, mutate } = isOwner
     ? useMembers(query, parameters, token, dispatch)
     : useMembers(query, parameters, dispatch);
 
-  const { count: totalMemberCount } = privateGraph
+  const { count: totalMemberCount } = isOwner
     ? useCount(
       CountMembersTotal,
       { ...parameters, search: '' },
@@ -121,7 +127,7 @@ export default function Members(properties) {
       { ...parameters, search: '' },
       dispatch);
 
-  const { count: currentMemberCount } = privateGraph
+  const { count: currentMemberCount } = isOwner
     ? useCount(
       searchQuery ? CountMembersTotal : CountMembers,
       parameters,
@@ -141,7 +147,7 @@ export default function Members(properties) {
     }
   }, [properties.refreshMembers, mutate]);
 
-  const { filters } = privateGraph
+  const { filters } = isOwner
     ? useFilters(
       getTypesRoles,
       { uri: properties.uri },
@@ -170,7 +176,7 @@ export default function Members(properties) {
     processUri();
     return () => { isMounted = false };
   }, [dispatch]);
-
+  console.log(members);
   return (
     <React.Fragment>
       <FilterHeader filters={filters} setTypeFilter={setTypeFilter} />
@@ -295,6 +301,8 @@ function MemberTable(properties) {
 
     processMembers();
   }, [properties.members]);
+
+  console.log(properties);
 
   let count = (
     <div className={styles.loadinginline}>
@@ -492,16 +500,23 @@ const useCount = (query, options, token, dispatch) => {
   };
 };
 
-const useMembers = (query, options, token, dispatch) => {
+const useMembers = (query, options, dispatch, token) => {
   console.log(options);
+  console.log(query);
+  console.log(token);
+  console.log(dispatch);
   const url = createUrl(query, options);
+  console.log(url);
   let data, error, mutate;
 
   if (typeof token === 'string') {
     ({ data, error, mutate } = useSWR([url, token, dispatch], fetcher));
   } else {
+    console.log(url);
     ({ data, error, mutate } = useSWR([url, dispatch], fetcher));
   }
+
+  console.log(data);
 
   let processedData = data ? processResults(data) : undefined;
   return {
