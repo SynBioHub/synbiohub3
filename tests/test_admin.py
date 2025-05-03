@@ -73,25 +73,32 @@ class TestAdmin(TestCase):
         compare_post_request("/admin/deletePlugin", data, headers = {"Accept": "text/plain"}, test_name = "admin_deletePlugin", test_type = test_type)
         test_print("test_admin_deletePlugin completed")
 
-        # test_print("test_admin_registries starting")
-        # #SBH3 throws error
-        # compare_get_request("admin/registries", headers = {"Accept": "text/plain"}, test_type = test_type, comparison_type="json", fields=["registries", "errors"])
-        # test_print("test_admin_registries completed")
+        test_print("test_admin_registries starting")
+        #SBH3 throws error
+        compare_get_request("admin/registries", headers = {"Accept": "text/plain"}, test_type = test_type, comparison_type="json", fields=["registries", "errors"])
+        test_print("test_admin_registries completed")
 
-        # test_print("test_admin_saveRegistry starting")
-        # data={
-        #     'uri': 'testurl.com',
-        #     'url' : 'testurl.com',
-        # }
-        # compare_post_request("/admin/saveRegistry", data, headers = {"Accept": "text/plain"}, test_name = "admin_saveRegistry", test_type = test_type)
-        # test_print("test_admin_saveRegistry completed")
+        test_print("test_admin_deleteRegistry starting")
+        data={
+            'uri': 'testurl.com',
+        }
+        compare_post_request("/admin/deleteRegistry", data, headers = {"Accept": "text/plain"}, test_name = "admin_deleteRegistry_notSaved", test_type = test_type)
+        test_print("test_admin_deleteRegistry completed")
 
-        # test_print("test_admin_deleteRegistry starting")
-        # data={
-        #     'uri': 'testurl.com',
-        # }
-        # compare_post_request("/admin/deleteRegistry", data, headers = {"Accept": "text/plain"}, test_name = "admin_deleteRegistry", test_type = test_type)
-        # test_print("test_admin_deleteRegistry completed")
+        test_print("test_admin_saveRegistry starting")
+        data={
+            'uri': 'testurl.com',
+            'url' : 'testurl.com',
+        }
+        compare_post_request("/admin/saveRegistry", data, headers = {"Accept": "text/plain"}, test_name = "admin_saveRegistry", test_type = test_type)
+        test_print("test_admin_saveRegistry completed")
+
+        test_print("test_admin_deleteRegistry starting")
+        data={
+            'uri': 'testurl.com',
+        }
+        compare_post_request("/admin/deleteRegistry", data, headers = {"Accept": "text/plain"}, test_name = "admin_deleteRegistry", test_type = test_type)
+        test_print("test_admin_deleteRegistry completed")
 
         test_print("test_admin_setAdministratorEmail starting")
         data={
