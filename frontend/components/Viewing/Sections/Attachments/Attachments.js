@@ -25,6 +25,16 @@ export default function Attachments(properties) {
   const attachments = useSelector(state => state.attachments.attachments);
   const token = useSelector(state => state.user.token);
 
+  // console.log(properties);
+  // let uri;
+  // if (properties.uri && properties.uri.endsWith('/share')) {
+  //   const parts = properties.uri.split('/');
+  //   if (parts.length >= 9) {
+  //     // Keep everything before the 8th slash (index 8 is 'share', index 7 is hash)
+  //     uri = parts.slice(0, 8).join('/');
+  //   }
+  // }
+  // console.log(uri);
   const [refreshMembers, setRefreshMembers] = useState(false);
 
   const handleSetRefreshMembers = (value) => {
@@ -44,6 +54,9 @@ export default function Attachments(properties) {
           owner.map(res => {
             if (res.ownedBy === graphUri) setIsOwner(true);
           });
+          if (properties.uri && properties.uri.endsWith('/share')) {
+            setIsOwner(true);
+          }
         }
       );
 

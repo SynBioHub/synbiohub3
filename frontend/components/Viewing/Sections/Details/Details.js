@@ -39,6 +39,9 @@ export default function Details(properties) {
         owner => {
           owner.map(res => {
             if (res.ownedBy === user.graphUri) setIsOwner(true);
+            if (properties.uri && properties.uri.endsWith('/share')) {
+              setIsOwner(true)
+            }
           });
         }
       );
