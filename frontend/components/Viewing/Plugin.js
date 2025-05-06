@@ -16,8 +16,8 @@ export default function Plugin(properties) {
   const hiddenSections = useSelector(state => state.pageSections.hiddenSections);
   const dispatch = useDispatch();
   const theme = JSON.parse(localStorage.getItem('theme')) || {};
-  let pluginsUseLocalCompose = useState(false);
-  let pluginLocalComposePrefix = useState('');
+  const pluginsUseLocalCompose = useSelector(state => state.pluginsUseLocalCompose);
+  const pluginLocalComposePrefix = useSelector(state => state.pluginLocalComposePrefix);
   if (theme && theme.pluginsUseLocalCompose && theme.pluginLocalComposePrefix) {
     pluginsUseLocalCompose = theme.pluginsUseLocalCompose;
     pluginLocalComposePrefix = theme.pluginLocalComposePrefix;
@@ -163,7 +163,7 @@ async function evaluatePlugin(plugin, type, pluginsUseLocalCompose, pluginLocalC
       data: {
         type: type
       },
-      prefix: pluginsUseLocalCompose ? pluginLocalComposePrefix : ''
+      prefix: pluginsUseLocalCompose ? pluginLocalComposePrefix : null
     }
   }).then(response => {
     return response.status === 200;
