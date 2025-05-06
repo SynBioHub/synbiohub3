@@ -57,6 +57,8 @@ export default function Members(properties) {
   const parts = properties.uri.split('/');
   const urlUsername = parts[4];
   const isOwner = urlUsername === rootUser;
+  const currentURL = window.location.href;
+  const isPublic = currentURL.includes('/public/');
 
   let preparedSearch =
     search !== ''
@@ -88,12 +90,7 @@ export default function Members(properties) {
     limit: ' LIMIT 10000 '
   };
 
-  if (properties.uri.endsWith("/share")) {
-    const firstHalf = parts.slice(0, 8).join('/');
-    console.log(firstHalf);
-  }
-
-  if (token) {
+  if (token && !isPublic) {
     parameters.from = "FROM <" + privateGraph + ">";
   } else if (properties.uri.endsWith("/share")) {
     const parts = properties.uri.split('/');
@@ -176,7 +173,6 @@ export default function Members(properties) {
     processUri();
     return () => { isMounted = false };
   }, [dispatch]);
-  console.log(members);
   return (
     <React.Fragment>
       <FilterHeader filters={filters} setTypeFilter={setTypeFilter} />
@@ -301,8 +297,6 @@ function MemberTable(properties) {
 
     processMembers();
   }, [properties.members]);
-
-  console.log(properties);
 
   let count = (
     <div className={styles.loadinginline}>
@@ -486,12 +480,22 @@ const createUrl = (query, options) => {
 
 const useCount = (query, options, token, dispatch) => {
   const url = createUrl(query, options, token);
+  const currentURL = window.location.href;
+  let finalUrl = url;
+
+  if (currentURL.endsWith('/share')) {
+    const currentURLObj = new URL(currentURL);
+    const urlObj = new URL(url);
+
+    // Replace base (protocol + host + port) of `url` with that of current page
+    finalUrl = `${publicRuntimeConfig.backend}${currentURLObj.pathname}${urlObj.pathname}${urlObj.search}`;
+  }
   let data, error;
 
   if (typeof token === 'string') {
-    ({ data, error } = useSWR([url, token, dispatch], fetcher));
+    ({ data, error } = useSWR([finalUrl, token, dispatch], fetcher));
   } else {
-    ({ data, error } = useSWR([url, dispatch], fetcher));
+    ({ data, error } = useSWR([finalUrl, dispatch], fetcher));
   }
 
   let processedData = data ? processResults(data)[0].count : undefined;
@@ -500,23 +504,25 @@ const useCount = (query, options, token, dispatch) => {
   };
 };
 
-const useMembers = (query, options, dispatch, token) => {
-  console.log(options);
-  console.log(query);
-  console.log(token);
-  console.log(dispatch);
+const useMembers = (query, options, token, dispatch) => {
   const url = createUrl(query, options);
-  console.log(url);
+  const currentURL = window.location.href;
+  let finalUrl = url;
+
+  if (currentURL.endsWith('/share')) {
+    const currentURLObj = new URL(currentURL);
+    const urlObj = new URL(url);
+
+    // Replace base (protocol + host + port) of `url` with that of current page
+    finalUrl = `${publicRuntimeConfig.backend}${currentURLObj.pathname}${urlObj.pathname}${urlObj.search}`;
+  }
   let data, error, mutate;
 
   if (typeof token === 'string') {
-    ({ data, error, mutate } = useSWR([url, token, dispatch], fetcher));
+    ({ data, error, mutate } = useSWR([finalUrl, token, dispatch], fetcher));
   } else {
-    console.log(url);
-    ({ data, error, mutate } = useSWR([url, dispatch], fetcher));
+    ({ data, error, mutate } = useSWR([finalUrl, dispatch], fetcher));
   }
-
-  console.log(data);
 
   let processedData = data ? processResults(data) : undefined;
   return {
@@ -527,13 +533,22 @@ const useMembers = (query, options, dispatch, token) => {
 
 const useFilters = (query, options, token, dispatch) => {
   const url = createUrl(query, options);
+  const currentURL = window.location.href;
+  let finalUrl = url;
 
+  if (currentURL.endsWith('/share')) {
+    const currentURLObj = new URL(currentURL);
+    const urlObj = new URL(url);
+
+    // Replace base (protocol + host + port) of `url` with that of current page
+    finalUrl = `${publicRuntimeConfig.backend}${currentURLObj.pathname}${urlObj.pathname}${urlObj.search}`;
+  }
   let data, error, mutate;
 
   if (typeof token === 'string') {
-    ({ data, error, mutate } = useSWR([url, token, dispatch], fetcher));
+    ({ data, error, mutate } = useSWR([finalUrl, token, dispatch], fetcher));
   } else {
-    ({ data, error, mutate } = useSWR([url, dispatch], fetcher));
+    ({ data, error, mutate } = useSWR([finalUrl, dispatch], fetcher));
   }
 
   let processedData = data ? processResults(data) : undefined;
@@ -553,7 +568,8 @@ const fetcher = (url, token, dispatch) =>
         'X-authorization': token
       }
     })
-    .then(response => response.data)
+    .then(response => {response.data;
+    })
     .catch(error => {
       error.customMessage =
         'Request failed while getting collection members info';
