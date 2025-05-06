@@ -20,7 +20,6 @@ export default async function getQueryResponse(
       options.uri = parts.slice(0, 8).join('/');
     }
   }
-  console.log(options.uri); 
   query = loadTemplate(query, options);
   const currentURL = window.location.href;
   const isPublic = currentURL.includes('/public/');
@@ -40,7 +39,6 @@ export default async function getQueryResponse(
   const url = `${
     urlOverride || publicRuntimeConfig.backend
   }${params}${encodeURIComponent(query)}${graph}`;
-  console.log(url);
   const headers = {
     'Content-Type': 'application/json',
     Accept: 'application/json',
