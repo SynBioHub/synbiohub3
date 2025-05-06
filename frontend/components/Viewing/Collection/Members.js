@@ -569,7 +569,6 @@ const fetcher = (url, token, dispatch) =>
       }
     })
     .then(response => {
-      console.log("Axios Response:", response);
       return response.data;
     })
     .catch(error => {

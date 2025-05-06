@@ -32,6 +32,8 @@ export default function OtherProperties(properties) {
 
   const dispatch = useDispatch();
 
+  console.log(properties);
+
   useEffect(() => {
     if (otherProps == undefined)
       getQueryResponse(dispatch, getOtherProperties, {
