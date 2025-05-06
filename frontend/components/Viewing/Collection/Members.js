@@ -568,7 +568,9 @@ const fetcher = (url, token, dispatch) =>
         'X-authorization': token
       }
     })
-    .then(response => {response.data;
+    .then(response => {
+      console.log("Axios Response:", response);
+      return response.data;
     })
     .catch(error => {
       error.customMessage =
