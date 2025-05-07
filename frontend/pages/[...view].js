@@ -28,6 +28,22 @@ export default function View({ data, error }) {
   const theme = JSON.parse(localStorage.getItem('theme')) || {};
   const [urlExists, setUrlExists] = useState(true); // New state for URL existence
   const backenduri = `${publicRuntimeConfig.backend}/${url}`;
+  const currentURL = window.location.href;
+  const parts = currentURL.split('/');
+  const [isOwner, setIsOwner] = useState(false);
+  const isPublic = typeof window !== 'undefined' && window.location.href.includes('/public/');
+
+  useEffect(() => {
+    const currentURL = window.location.href;
+    const urlUsername = parts[4]; // adjust as needed
+    const persistRoot = JSON.parse(localStorage.getItem("persist:root") || '{}');
+    const rootUser = JSON.parse(persistRoot.username || '""');
+
+    if (currentURL.endsWith('/share') || currentURL.includes('/public/') || urlUsername === rootUser) {
+      setIsOwner(true);
+    }
+  }, []);
+
 
   if (url.endsWith('/twins')) {
     const searchUrl = `${publicRuntimeConfig.backend}/${url}`;
@@ -97,7 +113,7 @@ export default function View({ data, error }) {
   }, [uri, metadata, token]);
 
   // Render based on URL existence
-  if (!url || !urlExists) {
+  if (!url || !urlExists || !isOwner) {
     return (
       <TopLevel publicPage={true}>
         <div style={centerStyle}>

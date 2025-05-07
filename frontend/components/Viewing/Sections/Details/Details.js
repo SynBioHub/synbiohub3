@@ -27,52 +27,44 @@ export default function Details(properties) {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (details == undefined) {
-      getQueryResponse(dispatch, getDetails, { uri: properties.uri }, token).then(
-        details => {
-          if (details && details.length > 0) setDetails(details[0]);
-        }
-      );
-
-      //Gets the owner of the collection to see if the current user should be able to modify the details.
-      getQueryResponse(dispatch, getOwner, { uri: properties.uri }, token).then(
-        owner => {
-          owner.map(res => {
-            if (res.ownedBy === user.graphUri) setIsOwner(true);
-            if (properties.uri && properties.uri.endsWith('/share')) {
-              setIsOwner(true)
-            }
-          });
-        }
-      );
-
-      //Citations has to be queried individually so everything can be formatted easier.
-      getQueryResponse(dispatch, getCitations, { uri: properties.uri }, token).then(
-        citations => {
-          if (citations.length > 0) {
-            //Formats the result so it can be joined.
-            const results = [];
-            citations.forEach(res => {
-              results.push(res.citation);
-            });
-
-            //Get the citation info and parse it.
-            getCitationInfo(results.join(', ')).then(parsedCitations => {
-              if (parsedCitations !== undefined) {
-                const list = [];
-                parsedCitations.forEach(citation => {
-                  list.push(citation);
-                });
-
-                //Joins the list with line breaks so html-react-parser renders line breaks between citations.
-                setReferences(list.join('<br><br>'));
-              }
-            });
+    let isMounted = true; // ✅ flag to prevent state updates on unmounted component
+  
+    if (!properties.uri) return;
+  
+    getQueryResponse(dispatch, getDetails, { uri: properties.uri }, token).then(details => {
+      if (isMounted && details?.length > 0) {
+        setDetails(details[0]);
+      }
+    });
+  
+    getQueryResponse(dispatch, getOwner, { uri: properties.uri }, token).then(owner => {
+      if (isMounted && (
+        owner?.some(res => res.ownedBy === user.graphUri) ||
+        properties.uri.endsWith('/share')
+      )) {
+        setIsOwner(true);
+      }
+    });
+  
+    getQueryResponse(dispatch, getCitations, { uri: properties.uri }, token).then(citations => {
+      if (isMounted && citations?.length > 0) {
+        const citationIds = citations.map(res => res.citation).join(', ');
+  
+        getCitationInfo(citationIds).then(parsedCitations => {
+          if (isMounted && parsedCitations !== undefined) {
+            setReferences(parsedCitations.join('<br><br>'));
           }
-        }
-      );
-    }
-  }, [details]);
+        });
+      }
+    });
+  
+    // 🧼 Cleanup function
+    return () => {
+      isMounted = false;
+    };
+  }, [dispatch, properties.uri, token, user.graphUri]);
+  
+
 
   if (!details) return <Loading />;
 

@@ -42,34 +42,33 @@ export default function Attachments(properties) {
   };
 
   useEffect(() => {
-    if (owner == undefined) {
-      //The attachments in the store should be reset, a new page has been loaded.
-      dispatch(setAttachments([]));
-
-      //Gets the owner of the collection.
-      getQueryResponse(dispatch, getOwner, { uri: properties.uri }, token).then(
-        owner => {
-          if (owner.length > 0) setOwner(owner);
-          //Handles multiple owners.
-          owner.map(res => {
-            if (res.ownedBy === graphUri) setIsOwner(true);
-          });
-          if (properties.uri && properties.uri.endsWith('/share')) {
-            setIsOwner(true);
-          }
+    // Always reset attachments on new URI
+    dispatch(setAttachments([]));
+  
+    // Fetch owner
+    getQueryResponse(dispatch, getOwner, { uri: properties.uri }, token).then(owner => {
+      if (owner.length > 0) setOwner(owner);
+  
+      const owned = owner.some(res => res.ownedBy === graphUri);
+      const isShare = properties.uri && properties.uri.endsWith('/share');
+  
+      if (owned || isShare) {
+        setIsOwner(true);
+      } else {
+        setIsOwner(false); // Optional: explicitly reset
+      }
+    });
+  
+    // Fetch attachments
+    getQueryResponse(dispatch, getAttachments, { uri: properties.uri }, token).then(
+      attachments => {
+        if (attachments.length > 0) {
+          dispatch(setAttachments(attachments));
         }
-      );
-
-      //Gets the initial attachments and passes them down to the children components.
-      getQueryResponse(dispatch, getAttachments, { uri: properties.uri }, token).then(
-        attachments => {
-          if (attachments.length > 0) {
-            dispatch(setAttachments(attachments));
-          }
-        }
-      );
-    }
-  }, [owner]);
+      }
+    );
+  }, [dispatch, properties.uri, token, graphUri]);
+  
 
   useEffect(() => {
     if (refreshMembers) {

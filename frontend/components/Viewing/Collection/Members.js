@@ -347,6 +347,7 @@ function MemberTable(properties) {
 
         const objectUriParts = getAfterThirdSlash(properties.uri);
         const objectUri = `${publicRuntimeConfig.backend}/${objectUriParts}`;
+        const parts = properties.uri.split('/');
 
         const icon = compareUri(member.uri, `/${objectUriParts}`);
 
@@ -401,17 +402,21 @@ function MemberTable(properties) {
           }
         };
 
+        const isShareLink = properties.uri.endsWith('/share');
+        const customSuffix = isShareLink ? `/${parts.slice(-2).join('/')}` : '';
+        console.log(customSuffix);
+
         return (
           <tr key={member.displayId + member.description}>
             <td>
-              <Link href={member.uri}>
+              <Link href={`${member.uri}${customSuffix}`}>
                 <a className={styles.membername}>
                   <code>{textArea.value}</code>
                 </a>
               </Link>
             </td>
             <td>
-              <Link href={member.uri}>
+              <Link href={`${member.uri}${customSuffix}`}>
                 <a className={styles.memberid}>{member.displayId}</a>
               </Link>
             </td>

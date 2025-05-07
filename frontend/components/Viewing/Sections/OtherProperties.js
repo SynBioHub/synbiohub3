@@ -33,13 +33,17 @@ export default function OtherProperties(properties) {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (otherProps == undefined)
-      getQueryResponse(dispatch, getOtherProperties, {
-        uri: properties.uri
-      }, token).then(props => {
-        if (props.length > 0) setOtherProps(props);
-      });
-  }, [otherProps]);
+    getQueryResponse(dispatch, getOtherProperties, {
+      uri: properties.uri
+    }, token).then(props => {
+      if (props.length > 0) {
+        setOtherProps(props);
+      } else {
+        setOtherProps([]); // clear if nothing
+      }
+    });
+  }, [dispatch, properties.uri, token]);
+  
 
   if (!otherProps) return <Loading />;
 
