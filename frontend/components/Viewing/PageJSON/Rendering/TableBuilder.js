@@ -30,12 +30,8 @@ export default function TableBuilder({ uri, prefixes, table, metadata }) {
   const username = useSelector(state => state.user.username);
   const objectUri = `${publicRuntimeConfig.backend}/${objectUriParts}`;
   var isOwner = isUriOwner(objectUri, username);
-  console.log(uri);
-  console.log(table);
-  console.log(metadata);
   if (uri.endsWith('/share')) {
     isOwner = true;
-    console.log(isOwner);
   }
   return (
     <div>
@@ -51,7 +47,6 @@ export default function TableBuilder({ uri, prefixes, table, metadata }) {
 }
 
 function TableRenderer({ uri, prefixes, table, metadata, owner }) {
-  console.log(uri);
   const token = useSelector(state => state.user.token);
   const [content, setContent] = useState(null);
   const dispatch = useDispatch();

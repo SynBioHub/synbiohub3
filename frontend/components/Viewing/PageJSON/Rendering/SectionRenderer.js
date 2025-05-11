@@ -73,12 +73,26 @@ export default function SectionRenderer({ section, metadata }) {
     };
   }, []);
   if (data) {
+    let usedProcessedLink = false;
+
     if (section.link) {
       data.forEach(registry => {
-        if (section.link.startsWith(registry.uri) && processedLink && processedLink.urlRemovedForLink) {
+        if (
+          section.link.startsWith(registry.uri) &&
+          processedLink &&
+          processedLink.urlRemovedForLink
+        ) {
           section.link = processedLink.urlRemovedForLink;
+          usedProcessedLink = true; // ✅ mark that replacement occurred
         }
-      })
+      });
+    }
+
+    const currentURL = window.location.href;
+    if (usedProcessedLink && currentURL.endsWith('/share')) {
+      const parts = currentURL.split('/');
+      const shareSuffix = parts.slice(-2).join('/'); // e.g., "abc123/share"
+      section.link = `${section.link}/${shareSuffix}`;
     }
     if (/SO:\s*(\d{7})/.test(section.text)) {
       for (let key in sequenceOntology) {
