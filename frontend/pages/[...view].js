@@ -99,7 +99,9 @@ export default function View({ data, error }) {
       .then(response => {
         if (!metadata && uri) {
           const parts = uri.split('/');
-          const firstHalf = parts.slice(0, 8).join('/');
+          const lastIndex = parts.lastIndexOf("1");
+          const firstHalf = parts.slice(0, lastIndex+1).join('/');
+          console.log(firstHalf);
           getQueryResponse(dispatch, getMetadata, { uri: firstHalf }, token).then(
             metadata => setMetadata(metadata)
           );
