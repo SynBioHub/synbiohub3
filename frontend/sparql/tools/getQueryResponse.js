@@ -16,8 +16,8 @@ export default async function getQueryResponse(
   if (options.uri && options.uri.endsWith('/share')) {
     const parts = options.uri.split('/');
     if (parts.length >= 9) {
-      // Keep everything before the 8th slash (index 8 is 'share', index 7 is hash)
-      options.uri = parts.slice(0, 8).join('/');
+      const lastIndex = parts.lastIndexOf("1");
+      options.uri = parts.slice(0, lastIndex + 1).join('/');
     }
   }
   query = loadTemplate(query, options);
@@ -32,13 +32,11 @@ export default async function getQueryResponse(
     const uriPrefix = getUrlBeforeThirdSlash(options.uri);
     graphEx = `&default-graph-uri=${uriPrefix}${graphURL}`;
   }
-   
 
   const params = admin ? '/admin/sparql?query=' : '/sparql?query=';
   const graph = urlOverride ? '' : graphEx;
-  const url = `${
-    urlOverride || publicRuntimeConfig.backend
-  }${params}${encodeURIComponent(query)}${graph}`;
+  const url = `${urlOverride || publicRuntimeConfig.backend
+    }${params}${encodeURIComponent(query)}${graph}`;
   const headers = {
     'Content-Type': 'application/json',
     Accept: 'application/json',
