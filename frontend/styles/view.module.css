@@ -852,19 +852,31 @@
 }
 
 .modalcontainer {
-  margin: auto;
-  height: 65%;
-  width: 65%;
   position: fixed;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: 2rem;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* Center the modal */
+
+  width: 65%;  /* Keep previous width */
+  max-width: 800px; /* Prevent modal from getting too wide */
+  min-width: 300px; /* Prevent modal from being too small */
+
   background-color: #efefef;
   border-radius: 0.4rem;
   text-align: center;
   border: 1px solid #999999;
+
+  padding: 2rem;
+
+  max-height: 90vh; /* Prevents excessive height */
+  height: auto; /* Allows dynamic height adjustment */
+
+  overflow-y: auto; /* Enables scrolling only when needed */
+  overflow-x: hidden; /* 🔹 Prevents unwanted horizontal scrolling */
+
+  display: flex;
+  flex-direction: column; /* Ensures content stacks properly */
+  box-sizing: border-box; /* 🔹 Ensures padding doesn't cause overflow */
 }
 
 .modalanimationadd {
@@ -910,7 +922,7 @@
 }
 
 .modalbuttons {
-  margin: 2rem 0 2rem 0;
+  margin: 2% 0 0 0;
   float: right;
 }
 
@@ -1026,6 +1038,7 @@
 .copylinkcontainer {
   display: table;
   line-height: 0 !important;
+  margin-top: 5%;
 }
 
 .copylinktext {

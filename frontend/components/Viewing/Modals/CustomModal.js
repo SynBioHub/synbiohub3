@@ -87,7 +87,6 @@ export default function CustomModal(properties) {
         {properties.header}
         <hr></hr>
         {properties.content}
-        <hr></hr>
         <div className={styles.modalbuttons}>
           {properties.buttonText[0] ? (
             <div
