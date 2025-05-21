@@ -41,33 +41,6 @@ export default function SidePanelTools(properties) {
     dispatch(restoreBasket());
   };
 
-  /*
-  const [curationAvailable, setCurationAvailable] = useState(false);
-
-  useEffect(() => {
-    /*
-    const checkCurateAvailability = async () => {
-      const available = await checkCuration(pluginData);
-      setCurationAvailable(available);
-    }
-    checkCurateAvailability();
-    
-  })
-  
-
-
-  const pluginData = {
-    complete_sbol: '',
-    shallow_sbol: '',
-    genbank: '',
-    top_level: '',
-    instanceUrl: '',
-    size: 0,
-    type: properties.type,
-    submit_link: ''
-  }
-  */
-
   //The styles for the toast saying the citation has been copied.
   const copyToast = (message) => toast(
     <div>
