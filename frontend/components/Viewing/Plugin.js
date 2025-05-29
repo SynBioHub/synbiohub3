@@ -73,7 +73,8 @@ export default function Plugin(properties) {
               instanceUrl: `${publicRuntimeConfig.backend}/`,
               size: 1,
               type: type,
-              top: properties.uri
+              top: properties.uri,
+              apiToken: localStorage.getItem('userToken')
             };
 
             const renderResponse = await runPlugin(properties.plugin, pluginData, pluginsUseLocalCompose, pluginLocalComposePrefix);
