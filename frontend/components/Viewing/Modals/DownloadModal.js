@@ -83,7 +83,8 @@ export default function DownloadModal(properties) {
       instanceUrl: `${publicRuntimeConfig.backend}/`,
       size: 1,
       type: properties.type,
-      top: properties.uri
+      top: properties.uri,
+      apiToken: localStorage.getItem('userToken')
     };
     
 
