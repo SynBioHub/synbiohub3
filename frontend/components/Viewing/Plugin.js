@@ -25,7 +25,7 @@ export default function Plugin(properties) {
 
   const acceptedTags = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'a', 'img', 'ul', 'ol', 'li', 'table', 'tr', 'td', 'th', 'thead', 'tbody', 'tfoot', 'caption', 'div', 'span', 'br', 'hr', 'pre', 'code', 'blockquote', 'strong', 'em', 'i', 'b', 'u', 's', 'sub', 'sup', 'del', 'ins', 'mark', 'small', 'big', 'abbr', 'cite', 'dfn', 'kbd', 'q', 'samp', 'var', 'time', 'address', 'article', 'aside', 'footer', 'header', 'nav', 'section', 'main', 'figure', 'figcaption', 'details', 'summary', 'dialog', 'menu', 'menuitem', 'menuitem', 'meter', 'progress', 'output', 'canvas', 'audio', 'video', 'iframe', 'object', 'embed', 'param', 'source', 'track', 'map', 'area', 'form', 'label', 'input', 'button', 'select', 'datalist', 'optgroup', 'option', 'textarea', 'fieldset', 'legend', 'datalist', 'output', 'progress', 'meter', 'details', 'summary', 'command', 'menu', 'menuitem', 'menuitem', 'script', 'noscript', 'style', 'link', 'meta', 'title', 'base', 'head', 'body', 'html', 'br', 'hr', 'wbr', 'img', 'area', 'map', 'track', 'source', 'param', 'iframe', 'embed', 'object', 'canvas', 'script', 'noscript', 'style', 'link', 'meta', 'title', 'base', 'head', 'body', 'html', 'br', 'hr', 'wbr', 'img', 'area', 'map', 'track', 'source', 'param', 'iframe', 'embed', 'object', 'canvas', 'script', 'noscript', 'style', 'link', 'meta', 'title', 'base', 'head', 'body', 'html', 'br', 'hr', 'wbr', 'img', 'area', ]
 
-  
+  let uri = properties.uri;
 
   let type;
 
@@ -46,12 +46,7 @@ export default function Plugin(properties) {
       type = properties.type
   }
 
-  const pluginData = {
-    uriSuffix: properties.uri.split(theme.uriPrefix).join(''),
-    instanceUrl: `${publicRuntimeConfig.backend}/`,
-    size: 1,
-    type: type
-  };
+  
 
   useEffect(() => {
     if (status === null) {
@@ -60,6 +55,28 @@ export default function Plugin(properties) {
 
         if(responseStatus) {
           const downloadContent = async () => {
+            if(!uri.includes('/public/')) {
+              const shareLink = await getShareLink(uri.split(theme.uriPrefix).join(''));
+              uri = shareLink;
+              //Replace backend with uriPrefix
+              uri = uri.replace(publicRuntimeConfig.backend, theme.uriPrefix);
+            }
+
+            let uriSuffix = uri.split(theme.uriPrefix).join('');
+            //Remove first slash if it exists
+            if (uriSuffix.startsWith('/')) {
+              uriSuffix = uriSuffix.slice(1);
+            }
+
+            const pluginData = {
+              uriSuffix: uriSuffix,
+              instanceUrl: `${publicRuntimeConfig.backend}/`,
+              size: 1,
+              type: type,
+              top: properties.uri,
+              apiToken: localStorage.getItem('userToken')
+            };
+
             const renderResponse = await runPlugin(properties.plugin, pluginData, pluginsUseLocalCompose, pluginLocalComposePrefix);
             setContent(renderResponse.data);
             setStatus(renderResponse.status === 200);
@@ -170,6 +187,24 @@ async function evaluatePlugin(plugin, type, pluginsUseLocalCompose, pluginLocalC
   })
   .catch(error => {
     return false;
+  });
+}
+
+async function getShareLink(uriSuffix) {
+  const token = localStorage.getItem('userToken');
+  return await axios({
+    method: 'GET',
+    url: `${publicRuntimeConfig.backend}/${uriSuffix}/shareLink`,
+    user: token, // Assuming the API requires a user token for authentication
+    headers: {
+      'Accept': 'text/plain',
+      'X-authorization': token
+    }
+  }).then(response => {
+    return response.data;
+  }
+  ).catch(error => {
+    return error;
   });
 }
 
