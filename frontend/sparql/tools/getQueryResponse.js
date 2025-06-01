@@ -13,9 +13,14 @@ export default async function getQueryResponse(
   admin,
   urlOverride
 ) {
-
+  if (options.uri && options.uri.endsWith('/share')) {
+    const parts = options.uri.split('/');
+    if (parts.length >= 9) {
+      const lastIndex = parts.lastIndexOf("1");
+      options.uri = parts.slice(0, lastIndex + 1).join('/');
+    }
+  }
   query = loadTemplate(query, options);
-  
   const currentURL = window.location.href;
   const isPublic = currentURL.includes('/public/');
   let graphEx = '';
@@ -30,23 +35,23 @@ export default async function getQueryResponse(
 
   const params = admin ? '/admin/sparql?query=' : '/sparql?query=';
   const graph = urlOverride ? '' : graphEx;
-  const url = `${
-    urlOverride || publicRuntimeConfig.backend
-  }${params}${encodeURIComponent(query)}${graph}`;
-
+  const url = `${urlOverride || publicRuntimeConfig.backend
+    }${params}${encodeURIComponent(query)}${graph}`;
   const headers = {
     'Content-Type': 'application/json',
     Accept: 'application/json',
     'X-authorization': token
   };
-
   try {
     // if the uri lives in an external sbh, use proxy to
     // circumvent cors errors
     // const response = urlOverride
     //   ? await axios.post('/api/wor-proxy', { url, headers })
     //   : await axios.get(url, { headers });
-    const response = await axios.get(url, { headers });
+    let response;
+    if (options.uri) {
+      response = await axios.get(url, { headers });
+    }
     if (response.status === 200) {
       return processResults(response.data);
     } else return;
