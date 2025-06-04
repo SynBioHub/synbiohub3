@@ -404,7 +404,7 @@ async function uploadFiles(
         },
         method: 'POST',
         url: `${publicRuntimeConfig.backend}/callPlugin`,
-        params: {
+        data: {
           name: pluginName,
           endpoint: 'evaluate',
           category: 'submit',
@@ -930,10 +930,10 @@ const zippedFilePromise = (
           url: `${publicRuntimeConfig.backend}/callPlugin`,
           method: 'POST',
           responseType: 'blob',
-          params: {
+          data: {
             name: pluginName,
             endpoint: 'run',
-            data: encodeURIComponent(JSON.stringify(pluginData)),
+            data: pluginData,
             category: 'download',
             prefix: pluginsUseLocalCompose ? pluginLocalComposePrefix : '',
           }

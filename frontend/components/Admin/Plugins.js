@@ -408,7 +408,7 @@ async function fetchStatus(plugin, type, pluginsUseLocalCompose, pluginLocalComp
   return await axios({
     method: 'POST',
     url: `${publicRuntimeConfig.backend}/callPlugin`,
-    params: {
+    data: {
       name: plugin.name,
       endpoint: 'status',
       category: type,

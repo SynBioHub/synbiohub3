@@ -173,7 +173,7 @@ async function evaluatePlugin(plugin, type, pluginsUseLocalCompose, pluginLocalC
   return await axios({
     method: 'POST',
     url: `${publicRuntimeConfig.backend}/callPlugin`,
-    params: {
+    data: {
       name: plugin.name,
       endpoint: 'evaluate',
       category: 'rendering',
@@ -212,7 +212,7 @@ async function runPlugin(plugin, pluginData, pluginsUseLocalCompose, pluginLocal
   return await axios({
     method: 'POST',
     url: `${publicRuntimeConfig.backend}/callPlugin`,
-    params: {
+    data: {
       name: plugin.name,
       endpoint: 'run',
       data: pluginData,
