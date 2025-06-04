@@ -172,7 +172,7 @@ async function evaluatePlugin(plugin, type, pluginsUseLocalCompose, pluginLocalC
   }
   return await axios({
     method: 'POST',
-    url: `${publicRuntimeConfig.backend}/call`,
+    url: `${publicRuntimeConfig.backend}/callPlugin`,
     params: {
       name: plugin.name,
       endpoint: 'evaluate',
@@ -211,7 +211,7 @@ async function getShareLink(uriSuffix) {
 async function runPlugin(plugin, pluginData, pluginsUseLocalCompose, pluginLocalComposePrefix) {
   return await axios({
     method: 'POST',
-    url: `${publicRuntimeConfig.backend}/call`,
+    url: `${publicRuntimeConfig.backend}/callPlugin`,
     params: {
       name: plugin.name,
       endpoint: 'run',

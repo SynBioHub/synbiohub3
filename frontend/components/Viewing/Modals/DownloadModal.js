@@ -148,7 +148,7 @@ export default function DownloadModal(properties) {
 
         axios({
           method: 'POST',
-          url: `${publicRuntimeConfig.backend}/call`,
+          url: `${publicRuntimeConfig.backend}/callPlugin`,
           params: {
             name: plugin.name,
             endpoint: 'status',
@@ -161,7 +161,7 @@ export default function DownloadModal(properties) {
 
             axios({
               method: 'POST',
-              url: `${publicRuntimeConfig.backend}/call`,
+              url: `${publicRuntimeConfig.backend}/callPlugin`,
               params: {
                 name: plugin.name,
                 endpoint: 'evaluate',
