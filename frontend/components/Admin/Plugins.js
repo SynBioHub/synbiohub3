@@ -407,7 +407,7 @@ const usePlugins = (token, dispatch) => {
 async function fetchStatus(plugin, type, pluginsUseLocalCompose, pluginLocalComposePrefix) {
   return await axios({
     method: 'POST',
-    url: `${publicRuntimeConfig.backend}/call`,
+    url: `${publicRuntimeConfig.backend}/callPlugin`,
     params: {
       name: plugin.name,
       endpoint: 'status',

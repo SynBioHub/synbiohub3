@@ -33,7 +33,7 @@ export default function SubmissionHandler(properties) {
           for(let plugin of submitPlugins) {
             axios({
               method: 'POST',
-              url: `${publicRuntimeConfig.backend}/call`,
+              url: `${publicRuntimeConfig.backend}/callPlugin`,
               params: {
                 name: plugin.name,
                 endpoint: 'status',

@@ -863,7 +863,7 @@ const zippedFilePromise = (
           headers: {
             'Accept': 'application/octet-stream'
           },
-          url: `${publicRuntimeConfig.backend}/call`,
+          url: `${publicRuntimeConfig.backend}/callPlugin`,
           method: 'POST',
           responseType: 'blob',
           params: {
