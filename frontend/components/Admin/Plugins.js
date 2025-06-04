@@ -361,7 +361,7 @@ const savePlugin = async (id, type, name, pluginUrl, token, dispatch) => {
     }
   }
 
-  if (response.status === 200) {
+  if (response && response.status === 200) {
     mutate([`${publicRuntimeConfig.backend}/admin/plugins`, token, dispatch]);
   }
 };
