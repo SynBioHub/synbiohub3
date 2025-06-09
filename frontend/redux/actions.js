@@ -9,6 +9,8 @@ import * as types from './types';
 import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
 
+import mime from 'mime-types';
+
 /* eslint sonarjs/no-duplicate-string: "off" */
 
 /*
@@ -300,10 +302,6 @@ export const submit =
       const token = getState().user.token;
 
 
-      //const convertedFiles = await submitPluginHandler(files, plugin, dispatch, getState);
-
-
-
       await uploadFiles(
         dispatch,
         getState,
@@ -320,14 +318,6 @@ export const submit =
         payload: false
       });
     };
-
-function findFile(files, filename) {
-  for (let file of files) {
-    if (file.name === filename) {
-      return file;
-    }
-  }
-}
 
 /**
  * Helper function called by the submit action
@@ -375,6 +365,75 @@ async function uploadFiles(
 
   // upload all files
   for (var fileIndex = 0; fileIndex < filesUploading.length; fileIndex++) {
+
+    if (filesUploading[fileIndex].plugin != 'default' && filesUploading[fileIndex].plugin != null) {
+      let pluginName = null;
+      try {
+        const response = await axios({
+          method: 'GET',
+          url: `${publicRuntimeConfig.backend}/admin/plugins`,
+          params: { category: 'submit' },
+          headers: { Accept: 'application/json' }
+        });
+        const submitPlugins = response.data.submit;
+        pluginName = submitPlugins[filesUploading[fileIndex].plugin].name;
+        console.log('Plugin Name:', pluginName);
+      } catch (error) {
+        console.error('Error Finding Plugin:', error.response);
+        return;
+      }
+
+      let type = mime.lookup(filesUploading[fileIndex].name) || 'application/octet-stream';
+
+      let evaluateManifest = {
+        manifest: {
+          files: [
+            {
+              url: URL.createObjectURL(filesUploading[fileIndex].file),
+              filename: filesUploading[fileIndex].name,
+              type: type
+            }
+          ]
+        }
+      }
+
+      response = await axios({
+        headers: {
+          'Content-Type': 'application/json',
+          'Accepts': 'application/json'
+        },
+        method: 'POST',
+        url: `${publicRuntimeConfig.backend}/callPlugin`,
+        data: {
+          name: pluginName,
+          endpoint: 'evaluate',
+          category: 'submit',
+          data: JSON.stringify(evaluateManifest)
+        }
+      });
+
+      const requiredFiles = response.data.manifest;
+
+      if(requiredFiles[0].requirement !== 2) {
+        filesUploading[fileIndex].status = 'failed';
+        filesUploading[fileIndex].errors = `The plugin ${pluginName} requires a different file type.`;
+        failedFiles.push(filesUploading[fileIndex]);
+        filesUploading.splice(fileIndex, 1);
+        fileIndex -= 1;
+        dispatch({ type: types.FILEFAILED, payload: true });
+        dispatch({
+          type: types.FAILEDFILES,
+          payload: [...failedFiles]
+        });
+        dispatch({
+          type: types.FILESUPLOADING,
+          payload: [...filesUploading]
+        });
+        continue;
+      }
+    }
+
+
     if (addingToCollection) {
       url = `${publicRuntimeConfig.backend}${filesUploading[fileIndex].url}/addToCollection`;
     }
@@ -403,6 +462,11 @@ async function uploadFiles(
     } catch (error) {
       if (error.response) {
         console.error('Error:', error.message);
+        var fileErrorMessages = error.response.data;
+        fileErrorMessages =
+          fileErrorMessages.charAt(0) !== '['
+            ? [fileErrorMessages]
+            : JSON.parse(fileErrorMessages);
       }
     }
 
@@ -866,10 +930,10 @@ const zippedFilePromise = (
           url: `${publicRuntimeConfig.backend}/callPlugin`,
           method: 'POST',
           responseType: 'blob',
-          params: {
+          data: {
             name: pluginName,
             endpoint: 'run',
-            data: encodeURIComponent(JSON.stringify(pluginData)),
+            data: pluginData,
             category: 'download',
             prefix: pluginsUseLocalCompose ? pluginLocalComposePrefix : '',
           }
