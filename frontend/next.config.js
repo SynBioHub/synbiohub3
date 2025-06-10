@@ -7,8 +7,7 @@ module.exports = {
     domains: ['localhost'],
   },
   publicRuntimeConfig: {
-    backend: process.env.backend,
-    backendSS: process.env.backendSS
+    backend: process.env.backend
   },
   async redirects() {
     return [
