@@ -96,7 +96,7 @@ export default function Plugin(properties) {
     else {
       dispatch(updateHiddenSections(hiddenSections.filter(page => page != `PLUGIN: ${properties.plugin.name}`).concat(`PLUGIN: ${properties.plugin.name}`)))
     }
-  }, [status, pageSectionsOrder]);
+  }, [pageSectionsOrder]);
 
   if (status) {
 
