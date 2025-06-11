@@ -49,7 +49,7 @@ export default function Plugin(properties) {
   
 
   useEffect(() => {
-    if (status === null) {
+    
       evaluatePlugin(properties.plugin, properties.type, pluginsUseLocalCompose, pluginLocalComposePrefix).then(responseStatus => {
         setStatus(responseStatus)
 
@@ -88,7 +88,7 @@ export default function Plugin(properties) {
 
     });
       
-    }
+    
     
     if (status) {
       dispatch(updateHiddenSections(hiddenSections.filter(page => page != `PLUGIN: ${properties.plugin.name}`)))
@@ -96,7 +96,7 @@ export default function Plugin(properties) {
     else {
       dispatch(updateHiddenSections(hiddenSections.filter(page => page != `PLUGIN: ${properties.plugin.name}`).concat(`PLUGIN: ${properties.plugin.name}`)))
     }
-  }, [status, pageSectionsOrder]);
+  }, [pageSectionsOrder]);
 
   if (status) {
 
@@ -137,7 +137,7 @@ export default function Plugin(properties) {
     }
 
     return (
-      <Section title={properties.title} key={properties.index} pluginID={properties.page} >
+      <Section title={properties.title} key={properties.key} pluginID={properties.pluginID} >
         <div id={properties.plugin.name}>
           {parse(`${content}`, options)}
         </div>
