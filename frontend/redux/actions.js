@@ -1167,12 +1167,19 @@ export const updateSelectedSections = (selectedSections, type) => dispatch => {
   });
 };
 
-export const updateHiddenSections = hiddenSections => dispatch => {
+export const hidePluginSection = pluginName => dispatch => {
   dispatch({
-    type: types.UPDATEHIDDENSECTIONS,
-    payload: hiddenSections
-  })
-}
+    type: types.HIDE_PLUGIN_SECTION,
+    payload: `PLUGIN: ${pluginName}`
+  });
+};
+
+export const showPluginSection = pluginName => dispatch => {
+  dispatch({
+    type: types.SHOW_PLUGIN_SECTION,
+    payload: `PLUGIN: ${pluginName}`
+  });
+};
 
 // ATTACHMENTS SECTION
 
