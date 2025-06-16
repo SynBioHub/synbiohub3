@@ -27,7 +27,7 @@ import { PersistGate } from 'redux-persist/integration/react';
 */
 function MyApp({ Component, pageProps }) {
     const store = useStore(pageProps.initialReduxState);
-    const persistor = persistStore(store);
+    const persister = persistStore(store);
     const [isInitializing, setIsInitializing] = useState(true);
     const [inSetupMode, setInSetupMode] = useState(false);
     const router = useRouter();
@@ -74,7 +74,7 @@ function MyApp({ Component, pageProps }) {
     if (isInitializing) {
         return (
             <Provider store={store}>
-                <PersistGate loading={null} persistor={persistor}>
+                <PersistGate loading={null} persister={persister}>
                     <div
                         style={{
                             display: 'flex',
@@ -94,7 +94,7 @@ function MyApp({ Component, pageProps }) {
 
     return (
         <Provider store={store}>
-            <PersistGate loading={null} persistor={persistor} >
+            <PersistGate loading={null} persister={persister} >
                 {inSetupMode ? (
                     <Setup setInSetupMode={setInSetupMode} />
                 ) : (
