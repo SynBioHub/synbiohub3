@@ -27,7 +27,7 @@ module.exports = {
     'plugin:unicorn/recommended',
     'plugin:security/recommended',
     'plugin:react-hooks/recommended',
-    'unused-imports'
+    'plugin:unused-imports/recommended'
   ],
   rules: {
     'unused-imports/no-unused-imports': 'error',
