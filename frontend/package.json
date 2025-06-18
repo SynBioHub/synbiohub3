@@ -77,12 +77,7 @@
   },
   "resolutions": {
     "pretty-format": "27.5.1",
-    "@types/jest": "27.5.2",
-    "expect": "27.5.1",
-    "jest-diff": "27.5.1",
-    "jest-matcher-utils": "27.5.1",
-    "jest-message-util": "27.5.1",
-    "jest-util": "27.5.1"
+    "expect": "27.5.1"
   },
   "proxy": "http://localhost:7777/",
   "devDependencies": {
