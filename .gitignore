@@ -1,4 +1,3 @@
-
 # Created by https://www.toptal.com/developers/gitignore/api/java,intellij
 # Edit at https://www.toptal.com/developers/gitignore?templates=java,intellij
 
@@ -134,8 +133,29 @@ hs_err_pid*
 
 .DS_Store
 
-frontend/package-lock.json
-
 .vscode
 
 .metals
+
+node_modules
+package-lock.json
+
+# Frontend
+/frontend/node_modules
+/frontend/.pnp
+.pnp.js
+/frontend/coverage
+/frontend/.next/
+/frontend/out/
+/frontend/build
+*.pem
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.env.development.local
+.env.test.local
+.env.production.local
+.vercel
+synbiohub-docker/
+**/commitHash.txt
+
