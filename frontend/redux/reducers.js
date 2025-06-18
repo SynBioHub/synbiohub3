@@ -357,12 +357,17 @@ const pageSectionsReducer = (
       return {
         ...state,
         selected: payload
-      }
-    case types.UPDATEHIDDENSECTIONS:
+      };
+    case types.HIDE_PLUGIN_SECTION:
       return {
         ...state,
-        hiddenSections: payload
-      }
+        hiddenSections: [...new Set([...state.hiddenSections, payload])]
+      };
+    case types.SHOW_PLUGIN_SECTION:
+      return {
+        ...state,
+        hiddenSections: state.hiddenSections.filter(page => page !== payload)
+      };
     default:
       return state;
   }
