@@ -7,9 +7,11 @@ const { publicRuntimeConfig } = getConfig();
 import { useSelector, useDispatch } from 'react-redux';
 
 import Section from './Sections/Section';
-import { updateHiddenSections } from '../../redux/actions';
+import { showPluginSection, hidePluginSection } from '../../redux/actions';
+import { use } from 'react';
 
 export default function Plugin(properties) {
+
   const [status, setStatus] = useState(null);
   const [content, setContent] = useState('<div>Loading Data From Plugin...</div>');
   const pageSectionsOrder = useSelector(state => state.pageSections.order);
@@ -49,11 +51,12 @@ export default function Plugin(properties) {
   
 
   useEffect(() => {
-    if (status === null) {
+    
       evaluatePlugin(properties.plugin, properties.type, pluginsUseLocalCompose, pluginLocalComposePrefix).then(responseStatus => {
         setStatus(responseStatus)
 
         if(responseStatus) {
+          dispatch(showPluginSection(properties.plugin.name)); // To unhide
           const downloadContent = async () => {
             if(!uri.includes('/public/')) {
               const shareLink = await getShareLink(uri.split(theme.uriPrefix).join(''));
@@ -84,19 +87,22 @@ export default function Plugin(properties) {
           downloadContent();
 
         }
+        else {
+          setStatus(false); 
+        }
 
 
-    });
+    }).catch(error => {
+      setStatus(false);
+  });
       
+  }, [pageSectionsOrder]);
+
+  useEffect(() => {
+    if (status === false) {
+      dispatch(hidePluginSection(properties.plugin.name));
     }
-    
-    if (status) {
-      dispatch(updateHiddenSections(hiddenSections.filter(page => page != `PLUGIN: ${properties.plugin.name}`)))
-    }
-    else {
-      dispatch(updateHiddenSections(hiddenSections.filter(page => page != `PLUGIN: ${properties.plugin.name}`).concat(`PLUGIN: ${properties.plugin.name}`)))
-    }
-  }, [status, pageSectionsOrder]);
+  }, [status]);
 
   if (status) {
 
@@ -137,7 +143,7 @@ export default function Plugin(properties) {
     }
 
     return (
-      <Section title={properties.title} key={properties.index} pluginID={properties.page} >
+      <Section title={properties.title} pluginID={properties.pluginID} >
         <div id={properties.plugin.name}>
           {parse(`${content}`, options)}
         </div>
@@ -172,8 +178,8 @@ async function evaluatePlugin(plugin, type, pluginsUseLocalCompose, pluginLocalC
   }
   return await axios({
     method: 'POST',
-    url: `${publicRuntimeConfig.backend}/call`,
-    params: {
+    url: `${publicRuntimeConfig.backend}/callPlugin`,
+    data: {
       name: plugin.name,
       endpoint: 'evaluate',
       category: 'rendering',
@@ -184,9 +190,8 @@ async function evaluatePlugin(plugin, type, pluginsUseLocalCompose, pluginLocalC
     }
   }).then(response => {
     return response.status === 200;
-  })
-  .catch(error => {
-    return false;
+  }).catch(error => {
+    return false
   });
 }
 
@@ -211,8 +216,8 @@ async function getShareLink(uriSuffix) {
 async function runPlugin(plugin, pluginData, pluginsUseLocalCompose, pluginLocalComposePrefix) {
   return await axios({
     method: 'POST',
-    url: `${publicRuntimeConfig.backend}/call`,
-    params: {
+    url: `${publicRuntimeConfig.backend}/callPlugin`,
+    data: {
       name: plugin.name,
       endpoint: 'run',
       data: pluginData,

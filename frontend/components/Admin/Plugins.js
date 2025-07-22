@@ -360,7 +360,7 @@ const savePlugin = async (id, type, name, pluginUrl, token, dispatch) => {
     }
   }
 
-  if (response.status === 200) {
+  if (response && response.status === 200) {
     mutate([`${publicRuntimeConfig.backend}/admin/plugins`, token, dispatch]);
   }
 };
@@ -406,8 +406,8 @@ const usePlugins = (token, dispatch) => {
 async function fetchStatus(plugin, type, pluginsUseLocalCompose, pluginLocalComposePrefix) {
   return await axios({
     method: 'POST',
-    url: `${publicRuntimeConfig.backend}/call`,
-    params: {
+    url: `${publicRuntimeConfig.backend}/callPlugin`,
+    data: {
       name: plugin.name,
       endpoint: 'status',
       category: type,

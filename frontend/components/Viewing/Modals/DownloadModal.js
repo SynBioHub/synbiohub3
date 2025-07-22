@@ -13,6 +13,7 @@ const { publicRuntimeConfig } = getConfig();
 import { useDispatch } from "react-redux";
 import { downloadFiles } from "../../../redux/actions";
 import axios from "axios";
+import { useSelector } from "react-redux";
 
 /**
  * A modal that lets the user choose what format they want to download the object in.
@@ -148,8 +149,8 @@ export default function DownloadModal(properties) {
 
         axios({
           method: 'POST',
-          url: `${publicRuntimeConfig.backend}/call`,
-          params: {
+          url: `${publicRuntimeConfig.backend}/callPlugin`,
+          data: {
             name: plugin.name,
             endpoint: 'status',
             category: 'download',
@@ -161,8 +162,8 @@ export default function DownloadModal(properties) {
 
             axios({
               method: 'POST',
-              url: `${publicRuntimeConfig.backend}/call`,
-              params: {
+              url: `${publicRuntimeConfig.backend}/callPlugin`,
+              data: {
                 name: plugin.name,
                 endpoint: 'evaluate',
                 category: 'download',
