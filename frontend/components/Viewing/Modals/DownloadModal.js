@@ -28,6 +28,7 @@ export default function DownloadModal(properties) {
   const theme = JSON.parse(localStorage.getItem('theme')) || {};
   const pluginsUseLocalCompose = useSelector(state => state.pluginsUseLocalCompose);
   const pluginLocalComposePrefix = useSelector(state => state.pluginLocalComposePrefix);
+  const token = useSelector(state => state.user.token);
 
   //Checks if the modal has been submitted and downloads in the format the user chose.
   useEffect(() => {
@@ -150,6 +151,9 @@ export default function DownloadModal(properties) {
         axios({
           method: 'POST',
           url: `${publicRuntimeConfig.backend}/callPlugin`,
+          headers: {
+            'X-authorization': token
+          },
           data: {
             name: plugin.name,
             endpoint: 'status',
@@ -163,6 +167,9 @@ export default function DownloadModal(properties) {
             axios({
               method: 'POST',
               url: `${publicRuntimeConfig.backend}/callPlugin`,
+              headers: {
+                'X-authorization': token
+              },
               data: {
                 name: plugin.name,
                 endpoint: 'evaluate',

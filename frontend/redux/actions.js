@@ -404,6 +404,9 @@ async function uploadFiles(
         },
         method: 'POST',
         url: `${publicRuntimeConfig.backend}/callPlugin`,
+        headers: {
+          'X-authorization': token
+        },
         data: {
           name: pluginName,
           endpoint: 'evaluate',
@@ -925,7 +928,8 @@ const zippedFilePromise = (
       plugin
         ? {
           headers: {
-            'Accept': 'application/octet-stream'
+            'Accept': 'application/octet-stream',
+            'X-authorization': token
           },
           url: `${publicRuntimeConfig.backend}/callPlugin`,
           method: 'POST',
