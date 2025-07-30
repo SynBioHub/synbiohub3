@@ -78,7 +78,7 @@ export default function Plugin(properties) {
               size: 1,
               type: type,
               top: properties.uri,
-              apiToken: localStorage.getItem('userToken')
+              token: localStorage.getItem('userToken')
             };
 
             const renderResponse = await runPlugin(properties.plugin, pluginData, pluginsUseLocalCompose, pluginLocalComposePrefix, token);

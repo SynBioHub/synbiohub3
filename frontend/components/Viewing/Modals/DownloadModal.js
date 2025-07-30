@@ -86,7 +86,7 @@ export default function DownloadModal(properties) {
       size: 1,
       type: properties.type,
       top: properties.uri,
-      apiToken: localStorage.getItem('userToken')
+      token: localStorage.getItem('userToken')
     };
     
 
