@@ -5,7 +5,8 @@ import {
   faTrashAlt,
   faCopy,
   faLink,
-  faShareAlt,
+  faShare,
+  faPlus
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -119,14 +120,6 @@ export default function SidePanelTools(properties) {
                 setModal={setModal}
               />
               : null
-        /*
-        modal === "Curation" ?
-          <CurationModal
-            setModal={setModal}
-            type={properties.type}
-          />
-          : null
-          */
       }
       <div className={styles.id}>
         <Link href={displayLink}>
@@ -142,7 +135,7 @@ export default function SidePanelTools(properties) {
       </div>
       <div className={styles.actionicons}>
         <FontAwesomeIcon
-          icon={faShareAlt}
+          icon={faShare}
           size="1x"
           className={styles.actionicon}
           onClick={() => {
@@ -159,28 +152,19 @@ export default function SidePanelTools(properties) {
           }}
           title="Download this item" // placeholder for download button description
         />
-        {/*curationAvailable ?
-        <FontAwesomeIcon
-          icon={faFunnelDollar}
-          size="1x"
-          className={styles.actionicon}
-          onClick={() => {
-            setModal("Curation");
-          }}
-        /> : null */}
         <FontAwesomeIcon
           icon={faQuoteRight}
           size="1x"
           className={styles.actionicon}
           onClick={() => {
-            copyToast("Copied!");
+            copyToast("Citation Copied!");
             copyToClipboard();
           }}
-          title="Copy this item" // placeholder for copy button description
+          title="Copy Citation" // placeholder for copy button description
         />
         {loggedIn && (
           <FontAwesomeIcon
-            icon={faLink}
+            icon={faPlus}
             size="1x"
             className={styles.actionicon}
             onClick={() => {
