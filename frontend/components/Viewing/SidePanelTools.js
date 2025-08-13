@@ -4,9 +4,11 @@ import {
   faQuoteRight,
   faTrashAlt,
   faCopy,
-  faLink,
   faShare,
-  faPlus
+  faPlus,
+  faSearch,
+  faGlobeAmericas,
+  faUserPlus
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -135,13 +137,22 @@ export default function SidePanelTools(properties) {
       </div>
       <div className={styles.actionicons}>
         <FontAwesomeIcon
+          icon={faSearch}
+          size="1x"
+          className={styles.actionicon}
+          onClick={() => {
+            setModal("AddToCollection");
+          }}
+          title="Search Options" // Placeholder for add to collection button description
+        />
+        <FontAwesomeIcon
           icon={faShare}
           size="1x"
           className={styles.actionicon}
           onClick={() => {
             setModal("Share");
           }}
-          title="Share this item" // Placeholder for share button description
+          title="Share Item" // Placeholder for share button description
         />
         <FontAwesomeIcon
           icon={faCloudDownloadAlt}
@@ -150,7 +161,7 @@ export default function SidePanelTools(properties) {
           onClick={() => {
             setModal("Download");
           }}
-          title="Download this item" // placeholder for download button description
+          title="Download Item" // placeholder for download button description
         />
         <FontAwesomeIcon
           icon={faQuoteRight}
@@ -162,6 +173,15 @@ export default function SidePanelTools(properties) {
           }}
           title="Copy Citation" // placeholder for copy button description
         />
+        <FontAwesomeIcon
+          icon={faGlobeAmericas}
+          size="1x"
+          className={styles.actionicon}
+          onClick={() => {
+            setModal("Unlock");
+          }}
+          title="Make Public" // placeholder for unlock button description
+        />
         {loggedIn && (
           <FontAwesomeIcon
             icon={faPlus}
@@ -170,7 +190,7 @@ export default function SidePanelTools(properties) {
             onClick={() => {
               setModal("AddToCollection");
             }}
-            title="Add to collection" // placeholder for add to collection button description
+            title="Add to Collection" // placeholder for add to collection button description
           />
         )}
         {isOwner && (
@@ -179,7 +199,7 @@ export default function SidePanelTools(properties) {
             size="1x"
             className={styles.actionicon}
             onClick={() => setModal("Delete")}
-            title="Delete this item" // placeholder for delete button description
+            title="Delete Item" // placeholder for delete button description
           />
         )}
       </div>
