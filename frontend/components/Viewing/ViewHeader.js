@@ -319,7 +319,10 @@ export default function ViewHeader(properties) {
           <button className={styles.button} onClick={similar}> Similar
           </button>
         )} */}
-        
+
+        {(properties.search.twins || properties.search.uses || properties.search.similar) && (
+          <span>Search For:</span>
+        )}
         {properties.search.twins && (
           <button
             className={styles.button}
