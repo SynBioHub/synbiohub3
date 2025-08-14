@@ -7,8 +7,7 @@ import {
   faShare,
   faPlus,
   faSearch,
-  faGlobeAmericas,
-  faUserPlus
+  faGlobeAmericas
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -19,6 +18,8 @@ import DeleteModal from "./Modals/DeleteModal";
 import ShareModal from "./Modals/ShareModal";
 import DownloadModal from "./Modals/DownloadModal";
 import AddToCollectionModal from "./Modals/AddToCollectionModal";
+import ReactDOM from 'react-dom';
+import PublishModal from '../Submission/PublishModal';
 import { isUriOwner } from './Shell';
 import { useSelector } from 'react-redux';
 
@@ -36,6 +37,7 @@ import "react-toastify/dist/ReactToastify.css";
  */
 export default function SidePanelTools(properties) {
   const [modal, setModal] = useState();
+  const [processUnderway, setProcessUnderway] = useState(false);
 
   const username = useSelector(state => state.user.username);
   const loggedIn = useSelector(state => state.user.loggedIn);
@@ -43,6 +45,14 @@ export default function SidePanelTools(properties) {
   const handleDeletionComplete = () => {
     dispatch(restoreBasket());
   };
+
+  const publishInfo = {
+    displayId: properties.displayId,
+    name: properties.name,
+    uri: properties.uri,
+    type: properties.type,
+    url: properties.url
+  }
 
 
   //The styles for the toast saying the citation has been copied.
@@ -121,7 +131,19 @@ export default function SidePanelTools(properties) {
                 url={properties.url}
                 setModal={setModal}
               />
-              : null
+              :
+              modal === "MakePublic" ?
+              ReactDOM.createPortal(
+                <PublishModal
+                  toPublish={[publishInfo]}
+                  showPublishModal={true}
+                  setShowPublishModal={setModal}
+                  setProcessUnderway={setProcessUnderway}
+                  inCollectionPage={true}
+                />,
+                typeof window !== "undefined" ? document.body : null
+              )
+                : null
       }
       <div className={styles.id}>
         <Link href={displayLink}>
@@ -178,7 +200,7 @@ export default function SidePanelTools(properties) {
           size="1x"
           className={styles.actionicon}
           onClick={() => {
-            setModal("Unlock");
+            setModal("MakePublic");
           }}
           title="Make Public" // placeholder for unlock button description
         />

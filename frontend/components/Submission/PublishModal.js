@@ -167,6 +167,7 @@ export default function PublishModal(properties) {
             setToPublish={setToPublish}
             toPublish={toPublish}
             setCollectionIndex={setCollectionIndex}
+            inCollectionPage={properties.inCollectionPage}
           />
         )}
       </div>

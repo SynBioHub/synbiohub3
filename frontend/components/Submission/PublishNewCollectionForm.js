@@ -53,7 +53,12 @@ export default function NewCollectionForm(properties) {
         collection => collection.displayId !== properties.filler.displayId
       )
     );
-    window.location.reload();
+    if (properties.inCollectionPage) {
+      //window.location.reload();
+    }
+    else {
+      window.location.reload();
+    }
   };
 
   return (
