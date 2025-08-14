@@ -20,7 +20,7 @@
 .sidepanelcontaineropen {
   display: flex;
   flex-shrink: 0;
-  width: 25rem;
+  width: 23rem;
   transition: width 0.3s;
 }
 
@@ -157,7 +157,7 @@
 .actionicon {
   margin-left: 0.4rem;
   color: #D25627;
-  font-size: 1.05rem;
+  font-size: 1.2rem;
   cursor: pointer;
   transition: transform .2s;
 }

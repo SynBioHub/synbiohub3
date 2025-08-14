@@ -38,6 +38,7 @@ import "react-toastify/dist/ReactToastify.css";
 export default function SidePanelTools(properties) {
   const [modal, setModal] = useState();
   const [processUnderway, setProcessUnderway] = useState(false);
+  const theme = JSON.parse(localStorage.getItem('theme')) || {};
 
   const username = useSelector(state => state.user.username);
   const loggedIn = useSelector(state => state.user.loggedIn);
@@ -45,6 +46,10 @@ export default function SidePanelTools(properties) {
   const handleDeletionComplete = () => {
     dispatch(restoreBasket());
   };
+
+  const publicPrefix = theme.uriPrefix + 'public/';
+
+  const isPublic = properties.uri.includes(publicPrefix);
 
   const publishInfo = {
     displayId: properties.displayId,
@@ -161,15 +166,6 @@ export default function SidePanelTools(properties) {
       </div>
       <div className={styles.actionicons}>
         <FontAwesomeIcon
-          icon={faSearch}
-          size="1x"
-          className={styles.actionicon}
-          onClick={() => {
-            setModal("AddToCollection");
-          }}
-          title="Search Options" // Placeholder for add to collection button description
-        />
-        <FontAwesomeIcon
           icon={faShare}
           size="1x"
           className={styles.actionicon}
@@ -197,7 +193,7 @@ export default function SidePanelTools(properties) {
           }}
           title="Copy Citation" // placeholder for copy button description
         />
-        <FontAwesomeIcon
+        {!isPublic && (<FontAwesomeIcon
           icon={faGlobeAmericas}
           size="1x"
           className={styles.actionicon}
@@ -206,6 +202,7 @@ export default function SidePanelTools(properties) {
           }}
           title="Make Public" // placeholder for unlock button description
         />
+        )}
         {loggedIn && (
           <FontAwesomeIcon
             icon={faPlus}
