@@ -20,8 +20,16 @@
 .sidepanelcontaineropen {
   display: flex;
   flex-shrink: 0;
-  width: 22.2rem;
+  width: 25rem;
   transition: width 0.3s;
+}
+
+.sidepanel::-webkit-scrollbar {
+  display: none;
+}
+
+.boundedheightforsidepanel::-webkit-scrollbar {
+  display: none;
 }
 
 .searchSidepanelcontainercollapse {
@@ -147,9 +155,9 @@
 }
 
 .actionicon {
-  margin-left: 0.6rem;
+  margin-left: 0.4rem;
   color: #D25627;
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   cursor: pointer;
   transition: transform .2s;
 }
