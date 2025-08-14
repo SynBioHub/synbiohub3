@@ -51,7 +51,9 @@ export default function SidePanelTools(properties) {
     name: properties.name,
     uri: properties.uri,
     type: properties.type,
-    url: properties.url
+    url: properties.url,
+    description: properties.description,
+    version: properties.version
   }
 
 

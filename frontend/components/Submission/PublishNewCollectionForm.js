@@ -27,6 +27,8 @@ export default function NewCollectionForm(properties) {
 
   const dispatch = useDispatch();
 
+  const theme = JSON.parse(localStorage.getItem('theme')) || {};
+
   const publishNewCollection = (
     displayId,
     version,
@@ -54,7 +56,8 @@ export default function NewCollectionForm(properties) {
       )
     );
     if (properties.inCollectionPage) {
-      //window.location.reload();
+      const redirect = `${theme.uriPrefix}submissions`;
+      window.location.href = redirect;
     }
     else {
       window.location.reload();
