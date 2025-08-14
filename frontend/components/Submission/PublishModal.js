@@ -30,6 +30,7 @@ export default function PublishModal(properties) {
   const [selectedCollection, setSelectedCollection] = useState();
   const [collectionIndex, setCollectionIndex] = useState(0);
   const [toPublish, setToPublish] = useState(properties.toPublish);
+  
 
   useEffect(() => {
     setToPublish(properties.toPublish);
@@ -227,8 +228,15 @@ const useRootCollections = (dispatch, token) => {
     [`${publicRuntimeConfig.backend}/rootCollections`, token, dispatch],
     fetcher
   );
+  const theme = JSON.parse(localStorage.getItem('theme')) || {};
+
+  const publicPrefix = theme.uriPrefix + 'public/';
+  let publicCollections = [];
+  if (data) {
+    publicCollections = data.filter(collection => collection.uri.includes(publicPrefix));
+  }
   return {
-    collections: data,
+    collections: publicCollections,
     loading: !error && !data,
     error: error
   };
