@@ -63,7 +63,14 @@ export default function PublishModal(properties) {
         collection => collection.displayId !== collectionToPublish.displayId
       )
     );
-    window.location.reload();
+
+    if (properties.inCollectionPage) {
+      const redirect = `${selectedCollection.uri}`;
+      window.location.href = redirect;
+    } else {
+      window.location.reload();
+    }
+    
   };
 
   const collectionSelectors = toPublish.map((collection, index) => {
