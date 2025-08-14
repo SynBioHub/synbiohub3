@@ -20,8 +20,16 @@
 .sidepanelcontaineropen {
   display: flex;
   flex-shrink: 0;
-  width: 22.2rem;
+  width: 23rem;
   transition: width 0.3s;
+}
+
+.sidepanel::-webkit-scrollbar {
+  display: none;
+}
+
+.boundedheightforsidepanel::-webkit-scrollbar {
+  display: none;
 }
 
 .searchSidepanelcontainercollapse {
@@ -128,7 +136,7 @@
 }
 
 .subheader {
-  margin: 0 1rem;
+  margin: 0.5rem 1rem;
   display: flex;
   justify-content: space-between;
 }
@@ -147,9 +155,9 @@
 }
 
 .actionicon {
-  margin-left: 0.75rem;
+  margin-left: 0.4rem;
   color: #D25627;
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   cursor: pointer;
   transition: transform .2s;
 }
