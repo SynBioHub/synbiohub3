@@ -193,7 +193,7 @@ export default function SidePanelTools(properties) {
           }}
           title="Copy Citation" // placeholder for copy button description
         />
-        {!isPublic && (<FontAwesomeIcon
+        {!isPublic && ( <FontAwesomeIcon
           icon={faGlobeAmericas}
           size="1x"
           className={styles.actionicon}
