@@ -57,7 +57,6 @@ export default function NewCollectionForm(properties) {
     );
     if (properties.inCollectionPage) {
       const redirect = `${theme.uriPrefix}public/${displayId}/${displayId}_collection/${version}`
-      //const redirect = `${theme.uriPrefix}submissions`;
       window.location.href = redirect;
     }
     else {
