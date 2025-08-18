@@ -70,6 +70,7 @@ export default function Basket() {
 
   if (!showBasket) {
     return (
+      <div className={styles.basketiconcontainer}>
       <FontAwesomeIcon
         icon={faShoppingBasket}
         size="2x"
@@ -77,6 +78,7 @@ export default function Basket() {
         className={styles.basketicon}
         onClick={() => setShowBasket(true)}
       />
+      </div>
     );
   }
 
