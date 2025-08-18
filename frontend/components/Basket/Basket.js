@@ -38,6 +38,7 @@ export default function Basket() {
   const [itemsToAddToCollection, setItemsToAddToCollection] = useState([]);
   const [createCollectionMode, setCreateCollectionMode] = useState(false);
   const theme = JSON.parse(localStorage.getItem('theme')) || {};
+  const loggedIn = useSelector(state => state.user.loggedIn);
 
   useEffect(() => {
     dispatch(restoreBasket(token));
@@ -93,6 +94,7 @@ export default function Basket() {
     <div>
       <div className={styles.basketcontent}>
         <div className={styles.heading}>
+          {loggedIn && (
           <TableButton
             title="Add to Collection"
             icon={faPlus}
@@ -106,7 +108,7 @@ export default function Basket() {
                 setCreateCollectionMode
               );
             }}
-          />
+          /> )}
           <TableButton
             title="Download"
             icon={faCloudDownloadAlt}

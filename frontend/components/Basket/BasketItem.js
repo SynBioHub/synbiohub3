@@ -26,7 +26,9 @@ export default function BasketItem(properties) {
     <tr
       key={properties.item.displayId}
       className={styles.submission}
-      onClick={handleClick}
+      onClick={() => {
+        router.push(properties.item.uri);
+      }}
     >
       <td>
         <input
