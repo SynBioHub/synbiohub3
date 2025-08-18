@@ -4,13 +4,11 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useDispatch, useSelector } from 'react-redux';
-import { useState } from 'react';
 
 import { getCanSubmitTo } from '../../redux/actions';
 import styles from '../../styles/basket.module.css';
 import ChooseCollection from '../Submit/ChooseCollection/ChooseCollection';
 import SubmissionStatusPanel from '../Submit/SubmissionStatusPanel';
-import SubmitButton from '../Submit/SubmitButton';
 import AddToCollectionButton from './AddToCollectionButton';
 
 export default function CreateCollection(properties) {
@@ -62,6 +60,7 @@ export default function CreateCollection(properties) {
           <SubmissionStatusPanel />
         </div>
       )}
+      <div className={styles.basketiconcontainer}>
       <FontAwesomeIcon
         icon={faTimesCircle}
         size="2x"
@@ -73,6 +72,7 @@ export default function CreateCollection(properties) {
           properties.setCreateCollectionMode(false);
         }}
       />
+      </div>
     </div>
   );
 }
