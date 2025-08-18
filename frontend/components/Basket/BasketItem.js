@@ -8,8 +8,6 @@ import { useDispatch } from 'react-redux';
 
 export default function BasketItem(properties) {
   const router = useRouter();
-  const token = useSelector(state => state.user.token); // assuming you use Redux for state management
-  const dispatch = useDispatch();
   const registries = JSON.parse(localStorage.getItem("registries")) || {};
 
   // Process the URI using processUrl function
