@@ -67,6 +67,7 @@
    transition: opacity .2s;
    font-size: 1rem;
    white-space: nowrap;
+   margin-left: 0.25rem;
 }
 
 .navoption:hover .navoptionname {
