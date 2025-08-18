@@ -10,6 +10,7 @@ import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
 
 import mime from 'mime-types';
+import { defaultTheme } from 'react-select';
 
 /* eslint sonarjs/no-duplicate-string: "off" */
 
@@ -998,13 +999,15 @@ export const addToBasket = items => async (dispatch, getState) => {
   localStorage.setItem('basket', JSON.stringify(newBasket));
 };
 
-export const restoreBasket = (token) => dispatch => {
+export const restoreBasket = (token) => async (dispatch) => {
   const basket = JSON.parse(localStorage.getItem('basket'));
+  const theme = JSON.parse(localStorage.getItem('theme')) || {};
   if (basket) {
     for (let i = 0; i < basket.length; i++) {
-      if (!checkUriExists(basket[i].url, token)) {
-        console.log("item not exist");
-        dispatch(clearBasket(item));
+      const exists = await checkUriExists(basket[i].uri.replace(theme.uriPrefix, ''), token);
+      if (!exists) {
+          console.log("item does not exist");
+          dispatch(clearBasket([basket[i]]));
       }
     }
     dispatch({
@@ -1036,7 +1039,7 @@ export const clearBasket = itemsToClear => (dispatch, getState) => {
 
 async function checkUriExists(url, token) {
 
-  const uri = `${publicRuntimeConfig.backend}${url}`;
+  const uri = `${publicRuntimeConfig.backend}/${url}`;
 
   const headers = {
     'Accept': 'application/sparql-results+json',

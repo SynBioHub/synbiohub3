@@ -42,7 +42,7 @@ export default function Basket() {
 
   useEffect(() => {
     dispatch(restoreBasket(token));
-  }, []);
+  }, [showBasket]);
 
   useEffect(() => {
     if (basketItems) {
