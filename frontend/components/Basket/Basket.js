@@ -171,15 +171,16 @@ export default function Basket() {
           />
         </div>
       </div>
-
-      <FontAwesomeIcon
-        icon={faTimesCircle}
-        size="2x"
-        color="#D25627"
-        spin
-        className={styles.basketicon}
-        onClick={() => setShowBasket(false)}
-      />
+      <div className={styles.basketiconcontainer}>
+        <FontAwesomeIcon
+          icon={faTimesCircle}
+          size="2x"
+          color="#D25627"
+          spin
+          className={styles.basketicon}
+          onClick={() => setShowBasket(false)}
+        />
+      </div>
     </div>
   );
 }
