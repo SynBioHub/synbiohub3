@@ -11,9 +11,9 @@ import styles from '../../styles/basket.module.css';
 import ChooseCollection from '../Submit/ChooseCollection/ChooseCollection';
 import SubmissionStatusPanel from '../Submit/SubmissionStatusPanel';
 import SubmitButton from '../Submit/SubmitButton';
+import AddToCollectionButton from './AddToCollectionButton';
 
 export default function CreateCollection(properties) {
-  const [selectedHandler, setSelectedHandler] = useState({value: 'default', label: 'Default Handler'});
   const showSubmitProgress = useSelector(
     state => state.submit.showSubmitProgress
   );
@@ -47,11 +47,10 @@ export default function CreateCollection(properties) {
           <ChooseCollection label="Select Destination Collection" />
           {!promptNewCollection && (
             <div>
-              <SubmitButton
+              <AddToCollectionButton
                 files={properties.itemsToAddToCollection}
-                overwriteCollection={false}
-                addingToCollection={true}
-                submitHandler={selectedHandler}
+                setCreateCollectionMode={properties.setCreateCollectionMode}
+                setShowBasket={properties.setShowBasket}
               />
             </div>
           )}
