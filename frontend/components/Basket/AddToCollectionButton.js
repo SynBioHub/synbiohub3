@@ -88,7 +88,7 @@ export default function AddToCollectionButton(properties) {
             let allSuccessful = true;
             
             results.forEach((result, idx) => {
-              if (!result) {
+              if (result.status === 'rejected' || !result.value) {
                 errorToast(`Failed to add file ${files[idx].name} to collection.`);
                 allSuccessful = false;
               }
