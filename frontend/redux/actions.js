@@ -10,7 +10,6 @@ import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
 
 import mime from 'mime-types';
-import { defaultTheme } from 'react-select';
 
 /* eslint sonarjs/no-duplicate-string: "off" */
 
