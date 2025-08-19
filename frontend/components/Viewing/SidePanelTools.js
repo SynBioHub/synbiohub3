@@ -21,7 +21,7 @@ import AddToCollectionModal from "./Modals/AddToCollectionModal";
 import ReactDOM from 'react-dom';
 import PublishModal from '../Submission/PublishModal';
 import { isUriOwner } from './Shell';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 
 import styles from '../../styles/view.module.css';
 import getConfig from 'next/config';
@@ -39,6 +39,7 @@ export default function SidePanelTools(properties) {
   const [modal, setModal] = useState();
   const [processUnderway, setProcessUnderway] = useState(false);
   const theme = JSON.parse(localStorage.getItem('theme')) || {};
+  const dispatch = useDispatch();
 
   const username = useSelector(state => state.user.username);
   const loggedIn = useSelector(state => state.user.loggedIn);
@@ -221,6 +222,7 @@ export default function SidePanelTools(properties) {
             className={styles.actionicon}
             onClick={() => setModal("Delete")}
             title="Delete Item" // placeholder for delete button description
+            uri={properties.url}
           />
         )}
       </div>

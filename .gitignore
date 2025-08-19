@@ -158,4 +158,5 @@ yarn-error.log*
 .vercel
 synbiohub-docker/
 **/commitHash.txt
+frontend/yarn.lock
 
