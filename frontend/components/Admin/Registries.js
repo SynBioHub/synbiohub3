@@ -212,16 +212,21 @@ function RegistryActions() {
 
   const handleFederate = async () => {
     try {
-      await axios.post(`${publicRuntimeConfig.backend}/admin/federate`, {
-        administratorEmail: inputTwo,
-        webOfRegistries: inputOne
-      }, {
-        headers: {
-          'Accept': 'application/json',
-          'X-authorization': token
+      const params = new URLSearchParams();
+      params.append('administratorEmail', inputTwo);
+      params.append('webOfRegistries', inputOne);
+
+      await axios.post(
+        `${publicRuntimeConfig.backend}/admin/federate`,
+        params,
+        {
+          headers: {
+            'Accept': 'text/html',
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-authorization': token
+          }
         }
-      });
-      // Add additional logic here if needed after successful POST
+      );
     } catch (error) {
       console.error('Error with federate: ', error);
       // Handle errors here
