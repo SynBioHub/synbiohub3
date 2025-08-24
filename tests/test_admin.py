@@ -100,11 +100,11 @@ class TestAdmin(TestCase):
         compare_post_request("/admin/setAdministratorEmail", data, headers = {"Accept": "text/plain"}, test_name = "admin_setAdministratorEmail", test_type = test_type)
         test_print("test_admin_setAdministratorEmail completed")
 
-        # test_print("test_admin_retrieveFromWebOfRegistries starting")
-        # data={
-        # }
-        # compare_post_request("/admin/retrieveFromWebOfRegistries", data, headers = {"Accept": "text/plain"}, test_name = "admin_retrieveFromWebOfRegistries")
-        # test_print("test_admin_retrieveFromWebOfRegistries completed")
+        test_print("test_admin_retrieveFromWebOfRegistries starting")
+        data={
+        }
+        compare_post_request("/admin/retrieveFromWebOfRegistries", data, headers = {"Accept": "text/plain"}, test_name = "admin_retrieveFromWebOfRegistries")
+        test_print("test_admin_retrieveFromWebOfRegistries completed")
 
         # test_print("test_admin_federate starting")
         # #TODO: We should not have the testing requesting to join web-of-registries.  Likely the test would be done by adding web-of-registries application to our docker-compose and making the request to our local one.
