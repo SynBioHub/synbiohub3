@@ -59,7 +59,8 @@ export default function Plugin(properties) {
         if(responseStatus) {
           dispatch(showPluginSection(properties.plugin.name)); // To unhide
           const downloadContent = async () => {
-            if(!uri.includes('/public/')) {
+            const publicPrefix = theme.uriPrefix + 'public/';
+            if(!uri.includes(publicPrefix)) {
               const shareLink = await getShareLink(uri.split(theme.uriPrefix).join(''));
               uri = shareLink;
               //Replace backend with uriPrefix

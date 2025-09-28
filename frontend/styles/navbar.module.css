@@ -66,6 +66,8 @@
    opacity: 0.7;
    transition: opacity .2s;
    font-size: 1rem;
+   white-space: nowrap;
+   margin-left: 0.25rem;
 }
 
 .navoption:hover .navoptionname {
@@ -99,6 +101,7 @@
 
 .searchiconactive {
    height: 1.4rem;
+   padding-right: 0.4rem;
 }
 
 .searchbar {
@@ -121,10 +124,22 @@
 }
 
 .searchcontainer {
+   position: absolute;
+   top: 50%;
+   left: 50%;
+   transform: translate(-50%, -50%);
+   width: 100%;
    display: flex;
    align-items: center;
    justify-content: center;
-   width: 100%;
+}
+
+.searchcontainer {
+  pointer-events: none;
+}
+
+.searchbar, .cancelsearch, .searchicon {
+  pointer-events: auto;
 }
 
 .cancelsearch {

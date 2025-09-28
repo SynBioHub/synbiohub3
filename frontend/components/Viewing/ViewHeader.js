@@ -314,9 +314,14 @@ export default function ViewHeader(properties) {
         )}
       </div>
       <div>
-        {properties.search.similar && typeof checkSBOLExplorer?.data === 'string' && ( //TODO: Add check for SBOLExplorer
+        
+        {/* {properties.search.similar && typeof checkSBOLExplorer?.data === 'string' && ( //TODO: Add check for SBOLExplorer
           <button className={styles.button} onClick={similar}> Similar
           </button>
+        )} */}
+
+        {(properties.search.twins || properties.search.uses || properties.search.similar) && (
+          <span>Search For:</span>
         )}
         {properties.search.twins && (
           <button
@@ -337,6 +342,14 @@ export default function ViewHeader(properties) {
               color: theme?.themeParameters?.[1]?.value || '#fff', // Use text color from theme or default to #fff
             }}
           > Uses </button>
+        )}
+        {properties.search.similar && (
+          <button className={styles.button} onClick={similar}
+            style={{
+              backgroundColor: theme?.themeParameters?.[0]?.value || '#333', // Use theme color or default to #333
+              color: theme?.themeParameters?.[1]?.value || '#fff', // Use text color from theme or default to #fff
+            }}
+          > Similar </button>
         )}
       </div>
     </div>

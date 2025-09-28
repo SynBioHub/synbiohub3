@@ -106,6 +106,8 @@ export default function SidePanel({ metadata, type, json, uri, plugins }) {
             name={metadata.name}
             url={processedUrl.urlRemovedForLink || processedUrl.original}
             uri={uri}
+            description={metadata.description}
+            version={metadata.version}
           />
           <div className={styles.infocontainer}>
             <MetadataInfo

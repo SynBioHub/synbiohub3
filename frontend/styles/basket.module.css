@@ -1,9 +1,21 @@
 .basketicon {
-   position: fixed;
-   top: 4.6rem;
-   right: 1rem;
    cursor: pointer;
    transition: transform 0.2s;
+}
+
+.basketiconcontainer {
+   position: fixed;
+   top: 4.2rem;
+   right: 1rem;
+   background-color: white;
+   border-radius: 0.5rem;
+   width: 2.5rem;
+   height: 2.5rem;
+   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   z-index: 10;
 }
 
 .basketicon:hover {
