@@ -28,7 +28,7 @@ jobs:
         restore-keys: ${{ runner.os }}-m2 
         
     - name: Build project with Maven
-      run: cd backend && mvn -B package 
+      run: cd backend && mvn -B package --file pom.xml
      
   publish-job:
       runs-on: ubuntu-latest
