@@ -9,10 +9,6 @@ on:
 
 jobs:
   build-and-push:
-  - name: Check network access
-    run: |
-      ping -c 3 google.com
-      curl -I https://oss.sonatype.org/content/repositories/snapshots/
     name: Build backend image and push to Docker Hub
     runs-on: ubuntu-latest
     steps:
