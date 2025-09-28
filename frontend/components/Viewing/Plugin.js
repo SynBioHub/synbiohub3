@@ -20,6 +20,7 @@ export default function Plugin(properties) {
   const theme = JSON.parse(localStorage.getItem('theme')) || {};
   const pluginsUseLocalCompose = useSelector(state => state.pluginsUseLocalCompose);
   const pluginLocalComposePrefix = useSelector(state => state.pluginLocalComposePrefix);
+  const token = useSelector(state => state.user.token);
   if (theme && theme.pluginsUseLocalCompose && theme.pluginLocalComposePrefix) {
     pluginsUseLocalCompose = theme.pluginsUseLocalCompose;
     pluginLocalComposePrefix = theme.pluginLocalComposePrefix;
@@ -52,7 +53,7 @@ export default function Plugin(properties) {
 
   useEffect(() => {
     
-      evaluatePlugin(properties.plugin, properties.type, pluginsUseLocalCompose, pluginLocalComposePrefix).then(responseStatus => {
+      evaluatePlugin(properties.plugin, properties.type, pluginsUseLocalCompose, pluginLocalComposePrefix, token).then(responseStatus => {
         setStatus(responseStatus)
 
         if(responseStatus) {
@@ -78,10 +79,10 @@ export default function Plugin(properties) {
               size: 1,
               type: type,
               top: properties.uri,
-              apiToken: localStorage.getItem('userToken')
+              token: localStorage.getItem('userToken')
             };
 
-            const renderResponse = await runPlugin(properties.plugin, pluginData, pluginsUseLocalCompose, pluginLocalComposePrefix);
+            const renderResponse = await runPlugin(properties.plugin, pluginData, pluginsUseLocalCompose, pluginLocalComposePrefix, token);
             setContent(renderResponse.data);
             setStatus(renderResponse.status === 200);
             };
@@ -161,7 +162,7 @@ export default function Plugin(properties) {
 }
 
 
-async function evaluatePlugin(plugin, type, pluginsUseLocalCompose, pluginLocalComposePrefix) {
+async function evaluatePlugin(plugin, type, pluginsUseLocalCompose, pluginLocalComposePrefix, token) {
 
   switch(type) {
     case 'Component':
@@ -180,6 +181,9 @@ async function evaluatePlugin(plugin, type, pluginsUseLocalCompose, pluginLocalC
   return await axios({
     method: 'POST',
     url: `${publicRuntimeConfig.backend}/callPlugin`,
+    headers: {
+      'X-authorization': token
+    },
     data: {
       name: plugin.name,
       endpoint: 'evaluate',
@@ -214,7 +218,7 @@ async function getShareLink(uriSuffix) {
   });
 }
 
-async function runPlugin(plugin, pluginData, pluginsUseLocalCompose, pluginLocalComposePrefix) {
+async function runPlugin(plugin, pluginData, pluginsUseLocalCompose, pluginLocalComposePrefix, token) {
   return await axios({
     method: 'POST',
     url: `${publicRuntimeConfig.backend}/callPlugin`,
@@ -224,6 +228,9 @@ async function runPlugin(plugin, pluginData, pluginsUseLocalCompose, pluginLocal
       data: pluginData,
       category: 'rendering',
       prefix: pluginsUseLocalCompose ? pluginLocalComposePrefix : null
+    },
+    headers: {
+      'X-authorization': token
     }
   }).then(response => {
     return response;
