@@ -20,8 +20,8 @@ jobs:
       with:
         java-version: 17
     - name: Test Maven snapshot repo access
-        run: |
-          mvn dependency:get -DgroupId=org.sbolstandard -DartifactId=libSBOLj -Dversion=2.4.1-SNAPSHOT -DrepoUrl=https://oss.sonatype.org/content/repositories/snapshots/    
+      run: |
+        mvn dependency:get -DgroupId=org.sbolstandard -DartifactId=libSBOLj -Dversion=2.4.1-SNAPSHOT -DrepoUrl=https://oss.sonatype.org/content/repositories/snapshots/    
     - name: Cache the Maven packages to speed up build
       uses: actions/cache@v3
       with:
