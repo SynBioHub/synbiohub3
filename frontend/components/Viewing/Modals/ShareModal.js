@@ -75,7 +75,6 @@ export default function ShareModal(properties) {
 
           const newUrl = base + path + urlObj.search + urlObj.hash;
 
-          console.log(newUrl);
           setShareLink(newUrl);
         }
       } catch (error) {
