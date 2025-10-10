@@ -145,6 +145,7 @@ export default function Members(properties) {
   : useFilters(
     getTypesRoles,
     { uri: properties.uri },
+    token,
     dispatch
   );
 
