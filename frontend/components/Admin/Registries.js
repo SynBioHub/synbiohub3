@@ -3,8 +3,12 @@ import {
   faPlusCircle,
   faSave,
   faTimesCircle,
-  faTrashAlt
+  faTrashAlt,
+  faClock,
+  faGlobeAmericas,
+  faCheck
 } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import axios from 'axios';
 import getConfig from 'next/config';
 import { useEffect, useState } from 'react';
@@ -36,25 +40,40 @@ export default function Registries() {
   const dispatch = useDispatch();
   const [registries, setRegistries] = useState([]);
   const [loading, setLoading] = useState(false);
-
-
+  const [worInfo, setWorInfo] = useState(null);
+  
 
   useEffect(() => {
     setLoading(true);
-    try {
-      const registriesData = JSON.parse(localStorage.getItem('registries')) || [];
-      setRegistries(registriesData);
-    } catch (error) {
-      console.error('Error fetching registries from localStorage', error);
-      dispatch(addError(error));
-    } finally {
-      setLoading(false);
-    }
-  }, [dispatch]);
+    const fetchRegistries = async () => {
+      try {
+        const response = await axios.get(
+          `${publicRuntimeConfig.backend}/admin/registries`,
+          {
+            headers: {
+              'Accept': 'application/json',
+              'X-authorization': token
+            }
+          }
+        );
+        setWorInfo(response.data); // <-- update state here
+        setRegistries(response.data.registries || []);
+      } catch (error) {
+        console.error('Error fetching registries from backend', error);
+        dispatch(addError(error));
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchRegistries();
+  }, [dispatch, token]);
 
   return (
     <div className={styles.plugintable}>
-      <RegistryActions />
+      <RegistryActions 
+        worInfo={worInfo}
+        setRegistries={setRegistries}
+      />
       <Table
         data={registries}
         loading={loading}
@@ -202,19 +221,27 @@ function RegistryDisplay(properties) {
   );
 }
 
-function RegistryActions() {
+function RegistryActions({ worInfo, setRegistries }) {
   const [inputOne, setInputOne] = useState('');
   const [inputTwo, setInputTwo] = useState('');
   const token = useSelector(state => state.user.token);
   const dispatch = useDispatch();
+  const theme = JSON.parse(localStorage.getItem('theme')) || {};
 
-  const url = `${publicRuntimeConfig.backend}/admin/deleteRegistry`;
+  useEffect(() => {
+    if (worInfo && worInfo.registered) {
+      setInputOne(worInfo.wor || '');
+      setInputTwo(worInfo.adminEmail || '');
+    }
+  }, [worInfo]);
 
   const handleFederate = async () => {
     try {
       const params = new URLSearchParams();
       params.append('administratorEmail', inputTwo);
-      params.append('webOfRegistries', inputOne);
+      //remove trailing slash if it exists
+      let urlToSend = inputOne.endsWith('/') ? inputOne.slice(0, -1) : inputOne;
+      params.append('webOfRegistries', urlToSend);
 
       await axios.post(
         `${publicRuntimeConfig.backend}/admin/federate`,
@@ -227,6 +254,7 @@ function RegistryActions() {
           }
         }
       );
+      window.location.reload();
     } catch (error) {
       console.error('Error with federate: ', error);
       // Handle errors here
@@ -234,7 +262,7 @@ function RegistryActions() {
   };
 
   const handleRetrieve = async () => {
-    try {
+    /* try {
       const response = await axios.post(`${publicRuntimeConfig.backend}/admin/retrieveFromWebOfRegistries`, {}, {
         headers: {
           'Accept': 'application/json',
@@ -242,13 +270,32 @@ function RegistryActions() {
         }
       });
 
-      if (response.data && Array.isArray(response.data.registries)) {
-        // Assuming 'registries' is the correct key in response and it's an array of registry objects
-        mutate([
-          `${publicRuntimeConfig.backend}/admin/registries`,
-          token,
-          dispatch
-        ]);
+      if (response.status === 200) {
+        setRegistries(response.data.registries || []);
+        dispatch(addError('Successfully retrieved registries from Web of Registries'));
+      } else {
+        dispatch(addError('Failed to retrieve registries from Web of Registries'));
+      }
+    } catch (error) {
+      console.error('Error with retrieving from Web Of Registries: ', error);
+      // Handle errors here
+    } */
+   try {
+      const response = await axios.post(
+        `${publicRuntimeConfig.backend}/admin/retrieveFromWebOfRegistries`,
+        {}, // empty body
+        {
+          headers: {
+            'Accept': 'application/json',
+            'X-authorization': token
+          }
+        }
+      );
+
+      if (response.status === 200) {
+        window.location.reload();
+      } else {
+        dispatch(addError('Failed to retrieve registries from Web of Registries'));
       }
     } catch (error) {
       console.error('Error with retrieving from Web Of Registries: ', error);
@@ -256,23 +303,130 @@ function RegistryActions() {
     }
   };
 
+  const handleUpdate = async () => {
+    try {
+      const params = new URLSearchParams();
+      params.append('administratorEmail', inputTwo);
+
+      await axios.post(
+        `${publicRuntimeConfig.backend}/admin/setAdministratorEmail`,
+        params,
+        {
+          headers: {
+            'Accept': 'text/html',
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-authorization': token
+          }
+        }
+      );
+      window.location.reload();
+    } catch (error) {
+      console.error('Error with update: ', error);
+      // Handle errors here
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      const url = `${worInfo.wor}/instances/${worInfo.worId}/`
+      const headers = {
+        'updateSecret': worInfo.secret
+      };
+
+
+      const response = await axios.delete(url, { headers });
+
+      if (response.status === 200) {
+        window.location.reload();
+      }
+    } catch (error) {
+      console.error('Error deleting registry:', error);
+      // Optionally dispatch an error or show a toast here
+    }
+  };
+
   return (
-    <div className={styles.registryActionsContainer}>
-      <input
-        type="text"
-        value={inputOne}
-        onChange={(e) => setInputOne(e.target.value)}
-        placeholder="Web of Registries URL"
-      />
-      <input
-        type="text"
-        value={inputTwo}
-        onChange={(e) => setInputTwo(e.target.value)}
-        placeholder="Administrator Email"
-      />
-      <button onClick={handleFederate}>Federate</button>
-      <button onClick={handleRetrieve}>Retrieve</button>
+    <div>
+      <h3 className={styles.tableheadertitle}>Web of Registries</h3>
+        {worInfo && worInfo.registered ? (
+          <div>
+            <div className={styles.registryinfo}>
+              {worInfo.approved ? (
+                <div>
+                  <FontAwesomeIcon
+                    icon={faCheck}
+                    size="1x"
+                    color="#34eb83ff"
+                    className={styles.backtobasketarrow}
+                  />
+                  {theme.instanceName} is part of the Web of Registries
+                </div>
+
+              ) : (
+                <div>
+                  <FontAwesomeIcon
+                    icon={faClock}
+                    size="1x"
+                    color="#6db2f2ff"
+                    className={styles.backtobasketarrow}
+                  />
+                  {theme.instanceName} pending approval by the Web of Registries Administrator
+                </div>
+              )}
+              <div>
+                <FontAwesomeIcon
+                  icon={faGlobeAmericas}
+                  size="1x"
+                  color="#34eb83ff"
+                  className={styles.backtobasketarrow}
+                />
+                The Web of Registries can update {theme.instanceName}
+              </div>
+            </div>
+
+            <div className={styles.registryActionsContainer}>
+              <input
+                type="text"
+                value={inputOne}
+                placeholder="Web of Registries URL"
+                readOnly
+              />
+              <input
+                type="text"
+                value={inputTwo}
+                onChange={(e) => setInputTwo(e.target.value)}
+                placeholder="Administrator Email"
+              />
+              <button onClick={handleUpdate}>Update</button>
+              <button onClick={handleRetrieve}>Retrieve</button>
+              <button onClick={handleDelete}>Delete</button>
+            </div>
+          </div>
+
+          
+
+        )
+      
+      :
+      
+      <div className={styles.registryActionsContainer}>
+        <input
+          type="text"
+          value={inputOne}
+          onChange={(e) => setInputOne(e.target.value)}
+          placeholder="Web of Registries URL"
+        />
+        <input
+          type="text"
+          value={inputTwo}
+          onChange={(e) => setInputTwo(e.target.value)}
+          placeholder="Administrator Email"
+        />
+        <button onClick={handleFederate}>Federate</button>
+      </div>
+      }
     </div>
+    
   );
 }
 
