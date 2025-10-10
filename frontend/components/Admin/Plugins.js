@@ -384,9 +384,6 @@ async function fetchStatus(plugin, type, pluginsUseLocalCompose, pluginLocalComp
   return await axios({
     method: 'POST',
     url: `${publicRuntimeConfig.backend}/callPlugin`,
-    headers: {
-      'X-authorization': token
-    },
     data: {
       name: plugin.name,
       endpoint: 'status',
