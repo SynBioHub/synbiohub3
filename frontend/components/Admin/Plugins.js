@@ -23,14 +23,11 @@ const { publicRuntimeConfig } = getConfig();
 const renderingType = 'rendering';
 const submittingType = 'submit';
 const downloadingType = 'download';
-const curatingType = 'curation';
-const authorizationType = 'authorization';
 
 const searchable = ['index', 'name', 'url'];
 const headers = ['ID', 'Name', 'URL', ''];
 
 import { addError } from '../../redux/actions';
-import { use } from 'react';
 
 /* eslint sonarjs/no-duplicate-string: "off" */
 
@@ -387,6 +384,9 @@ async function fetchStatus(plugin, type, pluginsUseLocalCompose, pluginLocalComp
   return await axios({
     method: 'POST',
     url: `${publicRuntimeConfig.backend}/callPlugin`,
+    headers: {
+      'X-authorization': token
+    },
     data: {
       name: plugin.name,
       endpoint: 'status',
