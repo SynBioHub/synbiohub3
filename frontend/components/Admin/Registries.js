@@ -262,24 +262,6 @@ function RegistryActions({ worInfo, setRegistries }) {
   };
 
   const handleRetrieve = async () => {
-    /* try {
-      const response = await axios.post(`${publicRuntimeConfig.backend}/admin/retrieveFromWebOfRegistries`, {}, {
-        headers: {
-          'Accept': 'application/json',
-          'X-authorization': token
-        }
-      });
-
-      if (response.status === 200) {
-        setRegistries(response.data.registries || []);
-        dispatch(addError('Successfully retrieved registries from Web of Registries'));
-      } else {
-        dispatch(addError('Failed to retrieve registries from Web of Registries'));
-      }
-    } catch (error) {
-      console.error('Error with retrieving from Web Of Registries: ', error);
-      // Handle errors here
-    } */
    try {
       const response = await axios.post(
         `${publicRuntimeConfig.backend}/admin/retrieveFromWebOfRegistries`,
@@ -351,36 +333,67 @@ function RegistryActions({ worInfo, setRegistries }) {
         {worInfo && worInfo.registered ? (
           <div>
             <div className={styles.registryinfo}>
-              {worInfo.approved ? (
-                <div>
-                  <FontAwesomeIcon
-                    icon={faCheck}
-                    size="1x"
-                    color="#34eb83ff"
-                    className={styles.backtobasketarrow}
-                  />
-                  {theme.instanceName} is part of the Web of Registries
+              <div className={styles.registryFlexContainer}>
+                <div
+                  className={
+                    worInfo.approved
+                      ? `${styles.registryStatusBox} ${styles.registryStatusBoxApproved}`
+                      : `${styles.registryStatusBox} ${styles.registryStatusBoxPending}`
+                  }
+                >
+                  <div className={styles.registryStatusContent}>
+                    {worInfo.approved ? (
+                      <>
+                        <FontAwesomeIcon
+                          icon={faCheck}
+                          size="1x"
+                          color="#34eb83ff"
+                          className={styles.backtobasketarrow}
+                        />
+                        <span>{theme.instanceName} is part of the Web of Registries</span>
+                      </>
+                    ) : (
+                      <>
+                        <FontAwesomeIcon
+                          icon={faClock}
+                          size="1x"
+                          color="#6db2f2ff"
+                          className={styles.backtobasketarrow}
+                        />
+                        <span>{theme.instanceName} pending approval by the Web of Registries Administrator</span>
+                      </>
+                    )}
+                  </div>
                 </div>
-
-              ) : (
-                <div>
-                  <FontAwesomeIcon
-                    icon={faClock}
-                    size="1x"
-                    color="#6db2f2ff"
-                    className={styles.backtobasketarrow}
-                  />
-                  {theme.instanceName} pending approval by the Web of Registries Administrator
+                <div className={
+                  worInfo.updateWorking
+                    ? `${styles.registryUpdateBox} ${styles.registryUpdateBoxCanUpdate}`
+                    : `${styles.registryUpdateBox} ${styles.registryUpdateBoxCannotUpdate}`
+                }>
+                  <div className={styles.registryUpdateContent}>
+                    {worInfo.updateWorking ? (
+                      <>
+                        <FontAwesomeIcon
+                          icon={faGlobeAmericas}
+                          size="1x"
+                          color="#34eb83ff"
+                          className={styles.backtobasketarrow}
+                        />
+                        <span>The Web of Registries can update {theme.instanceName}</span>
+                      </>
+                    ) : (
+                      <>
+                        <FontAwesomeIcon
+                          icon={faTimesCircle}
+                          size="1x"
+                          color="#ff4d4dff"
+                          className={styles.backtobasketarrow}
+                        />
+                        <span>The Web of Registries cannot update {theme.instanceName}</span>
+                      </>
+                    )}
+                  </div>
                 </div>
-              )}
-              <div>
-                <FontAwesomeIcon
-                  icon={faGlobeAmericas}
-                  size="1x"
-                  color="#34eb83ff"
-                  className={styles.backtobasketarrow}
-                />
-                The Web of Registries can update {theme.instanceName}
               </div>
             </div>
 
@@ -451,11 +464,7 @@ const deleteRegistry = async (uri, token, dispatch) => {
   }
 
   if (response.status === 200) {
-    mutate([
-      `${publicRuntimeConfig.backend}/admin/registries`,
-      token,
-      dispatch
-    ]);
+    window.location.reload();
   }
 };
 
@@ -481,11 +490,7 @@ const saveRegistry = async (uri, sbhUrl, token, dispatch) => {
   }
 
   if (response.status === 200) {
-    mutate([
-      `${publicRuntimeConfig.backend}/admin/registries`,
-      token,
-      dispatch
-    ]);
+    window.location.reload();
   }
 };
 
