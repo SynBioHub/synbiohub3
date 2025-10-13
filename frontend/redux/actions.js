@@ -197,9 +197,8 @@ export const registerUser =
         const response = await axios.post(url, parameters, { headers });
 
         const message = response.data;
+        console.log("Token:", message);
         if (response.status === 200) {
-          localStorage.setItem('userToken', message); // save the token of the user locally
-          localStorage.setItem('username', username); // save the username of the user locally
           dispatch(login(username, password));
         } else {
           dispatch({
