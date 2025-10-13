@@ -79,28 +79,6 @@ export default function Plugins() {
   );
 }
 
-/*
-
-      <PluginTable
-        token={token}
-        title="Curation"
-        type={curatingType}
-        loading={loading}
-        data={plugins ? plugins.curation : undefined}
-      />
-      <PluginTable
-        token={token}
-        title="Authorization"
-        type={authorizationType}
-        loading={loading}
-        data={plugins ? plugins.authorization : undefined}
-        
-      />
-
-
-//Insert the above code into the table when curation and authorization plugins will be implemented. Other frontend code should then become functional once these plugins can be added
-
-*/
 function PluginTable(properties) {
   return (
     <div className={styles.plugintable}>
@@ -185,6 +163,7 @@ function PluginDisplay(properties) {
   const [name, setName] = useState(properties.plugin.name);
   const [url, setUrl] = useState(properties.plugin.url);
   const [status, setStatus] = useState(true);
+  const token = useSelector(state => state.user.token);
 
   const dispatch = useDispatch();
 
@@ -193,7 +172,7 @@ function PluginDisplay(properties) {
     setUrl(properties.plugin.url);
 
       const checkStatus = async () => {
-        const hidden = await fetchStatus(properties.plugin, properties.type);
+        const hidden = await fetchStatus(properties.plugin, properties.type, properties.pluginsUseLocalCompose, properties.pluginLocalComposePrefix, token);
         setStatus(hidden);
       };
       checkStatus();
@@ -223,7 +202,7 @@ function PluginDisplay(properties) {
         icon={faRedo}
         onClick={() => {
           const checkStatus = async () => {
-            const hidden = await fetchStatus(properties.plugin, properties.type, properties.pluginsUseLocalCompose, properties.pluginLocalComposePrefix);
+            const hidden = await fetchStatus(properties.plugin, properties.type, properties.pluginsUseLocalCompose, properties.pluginLocalComposePrefix, token);
             setStatus(hidden);
           };
           checkStatus();
@@ -404,7 +383,7 @@ const usePlugins = (token, dispatch) => {
 };
 
 
-async function fetchStatus(plugin, type, pluginsUseLocalCompose, pluginLocalComposePrefix) {
+async function fetchStatus(plugin, type, pluginsUseLocalCompose, pluginLocalComposePrefix, token) {
   return await axios({
     method: 'POST',
     url: `${publicRuntimeConfig.backend}/callPlugin`,
@@ -413,6 +392,9 @@ async function fetchStatus(plugin, type, pluginsUseLocalCompose, pluginLocalComp
       endpoint: 'status',
       category: type,
       prefix: pluginsUseLocalCompose ? pluginLocalComposePrefix : ''
+    },
+    headers: {
+      'X-authorization': token
     }
   })
     .then(response => {
