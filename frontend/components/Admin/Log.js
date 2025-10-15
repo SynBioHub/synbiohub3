@@ -13,7 +13,17 @@ import { addError } from '../../redux/actions';
 export default function Log() {
   const token = useSelector(state => state.user.token);
   const dispatch = useDispatch();
-  const { log, loading } = useLog(token, dispatch);
+  const [selectedLog, setSelectedLog] = useState(null);
+
+  // Fetch log list for dropdown
+  const { data: logFiles, error: logFilesError } = useSWR(
+    [`${publicRuntimeConfig.backend}/admin/listLogs`, token, dispatch],
+    fetcher
+  );
+
+  // Fetch log data for selected log file
+  const { log, loading } = useLog(token, dispatch, selectedLog);
+
   const [logDisplay, setLogDisplay] = useState();
   const [viewing, setViewing] = useState('error');
 
@@ -31,6 +41,21 @@ export default function Log() {
 
   return (
     <div>
+      {/* Dropdown selector for log files */}
+      <div className={styles.logdropdown}>
+        <select
+          value={selectedLog || ''}
+          onChange={e => setSelectedLog(e.target.value || null)}
+        >
+          <option value="">Most Recent Log</option>
+          {Array.isArray(logFiles?.logs) &&
+            logFiles.logs.map((log, idx) => (
+              <option key={idx} value={log.filename}>
+                {log.title}
+              </option>
+            ))}
+        </select>
+      </div>
       <div className={styles.logheaders}>
         <LogHeader title="Error" viewing={viewing} setViewing={setViewing} />
         <LogHeader title="Warn" viewing={viewing} setViewing={setViewing} />
@@ -70,11 +95,13 @@ const decodeHtml = (line, index) => {
   });
 };
 
-const useLog = (token, dispatch) => {
-  const { data, error } = useSWR(
-    [`${publicRuntimeConfig.backend}/admin/log`, token, dispatch],
-    fetcher
-  );
+const useLog = (token, dispatch, filename = null) => {
+  // Build the URL with filename as a query parameter if present
+  let url = `${publicRuntimeConfig.backend}/admin/log`;
+  if (filename) {
+    url += `?filename=${encodeURIComponent(filename)}`;
+  }
+  const { data, error } = useSWR([url, token, dispatch], fetcher);
   return {
     log: data,
     loading: !error && !data
