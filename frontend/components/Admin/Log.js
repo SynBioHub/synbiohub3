@@ -4,6 +4,8 @@ import he from 'he';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import useSWR from 'swr';
+import Select from 'react-select';
+
 const { publicRuntimeConfig } = getConfig();
 
 import styles from '../../styles/admin.module.css';
@@ -21,8 +23,37 @@ export default function Log() {
     fetcher
   );
 
+  const logOptions = Array.isArray(logFiles?.logs)
+    ? logFiles.logs
+        .slice() // make a copy to avoid mutating original
+        .sort((a, b) => {
+          // Extract date and suffix from filename
+          const parse = filename => {
+            const match = filename.match(/^synbiohub-(\d{4}-\d{2}-\d{2})\.debug(?:\.(\d+))?$/);
+            return {
+              date: match ? match[1] : '',
+              suffix: match && match[2] ? parseInt(match[2], 10) : 0
+            };
+          };
+          const aParsed = parse(a.filename);
+          const bParsed = parse(b.filename);
+
+          // Compare dates (descending)
+          if (aParsed.date !== bParsed.date) {
+            return bParsed.date.localeCompare(aParsed.date);
+          }
+          // Compare suffix (descending)
+          return bParsed.suffix - aParsed.suffix;
+        })
+        .map(log => ({
+          value: log.filename,
+          label: log.title
+        }))
+    : [];
+
+
   // Fetch log data for selected log file
-  const { log, loading } = useLog(token, dispatch, selectedLog);
+  const { log, loading } = useLog(token, dispatch, selectedLog ? selectedLog.value : null);
 
   const [logDisplay, setLogDisplay] = useState();
   const [viewing, setViewing] = useState('error');
@@ -41,20 +72,13 @@ export default function Log() {
 
   return (
     <div>
-      {/* Dropdown selector for log files */}
       <div className={styles.logdropdown}>
-        <select
-          value={selectedLog || ''}
-          onChange={e => setSelectedLog(e.target.value || null)}
-        >
-          <option value="">Most Recent Log</option>
-          {Array.isArray(logFiles?.logs) &&
-            logFiles.logs.map((log, idx) => (
-              <option key={idx} value={log.filename}>
-                {log.title}
-              </option>
-            ))}
-        </select>
+        <Select
+          options={logOptions}
+          value={selectedLog}
+          onChange={option => setSelectedLog(option)}
+          placeholder="Most Recent Log"
+        />
       </div>
       <div className={styles.logheaders}>
         <LogHeader title="Error" viewing={viewing} setViewing={setViewing} />
