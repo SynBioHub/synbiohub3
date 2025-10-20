@@ -134,7 +134,7 @@
 		<dependency>
 			<groupId>org.sbolstandard</groupId>
 			<artifactId>libSBOLj3</artifactId>
-			<version>1.4-SNAPSHOT</version>
+			<version>1.0.3-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mapstruct</groupId>
@@ -153,14 +153,10 @@
 		</dependency>
 	</dependencies>
 	<repositories>
-		<repository>
-			<id>oss-sonatype</id>
-			<name>oss-sonatype</name>
-			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
+          <repository>
+            <id>local-repo</id>
+            <url>file://${project.basedir}/repo</url>
+          </repository>
 	</repositories>
 
 	<build>
