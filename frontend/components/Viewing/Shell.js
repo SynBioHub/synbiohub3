@@ -154,8 +154,8 @@ export function formatMultipleTitles(titles) {
 
 function getSearch(type) {
   // list the top levels
-  const toplevel = ["Activity", "Agent", "Association", "Attachment", "Collection", "CombinatorialDerivation", "Component", "Datasheet", "Experiment", "FunctionalComponent", "Implementation", "Model", "ModuleDefinition", "Plan", "Sequence", "Usage"]
-  //return tru"e,false based on type
+  const toplevel = ["Activity", "Agent", "Association", "Attachment", "CombinatorialDerivation", "Datasheet", "Experiment", "FunctionalComponent", "Implementation", "Model", "ModuleDefinition", "Plan", "Sequence", "Usage"]
+  //return true,false based on type
   if (type === "ComponentDefinition") {
     return {
       twins: true,
