@@ -7,9 +7,11 @@ const { publicRuntimeConfig } = getConfig();
 import { useSelector, useDispatch } from 'react-redux';
 
 import Section from './Sections/Section';
-import { updateHiddenSections } from '../../redux/actions';
+import { showPluginSection, hidePluginSection } from '../../redux/actions';
+import { use } from 'react';
 
 export default function Plugin(properties) {
+
   const [status, setStatus] = useState(null);
   const [content, setContent] = useState('<div>Loading Data From Plugin...</div>');
   const pageSectionsOrder = useSelector(state => state.pageSections.order);
@@ -18,6 +20,7 @@ export default function Plugin(properties) {
   const theme = JSON.parse(localStorage.getItem('theme')) || {};
   const pluginsUseLocalCompose = useSelector(state => state.pluginsUseLocalCompose);
   const pluginLocalComposePrefix = useSelector(state => state.pluginLocalComposePrefix);
+  const token = useSelector(state => state.user.token);
   if (theme && theme.pluginsUseLocalCompose && theme.pluginLocalComposePrefix) {
     pluginsUseLocalCompose = theme.pluginsUseLocalCompose;
     pluginLocalComposePrefix = theme.pluginLocalComposePrefix;
@@ -25,7 +28,7 @@ export default function Plugin(properties) {
 
   const acceptedTags = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'a', 'img', 'ul', 'ol', 'li', 'table', 'tr', 'td', 'th', 'thead', 'tbody', 'tfoot', 'caption', 'div', 'span', 'br', 'hr', 'pre', 'code', 'blockquote', 'strong', 'em', 'i', 'b', 'u', 's', 'sub', 'sup', 'del', 'ins', 'mark', 'small', 'big', 'abbr', 'cite', 'dfn', 'kbd', 'q', 'samp', 'var', 'time', 'address', 'article', 'aside', 'footer', 'header', 'nav', 'section', 'main', 'figure', 'figcaption', 'details', 'summary', 'dialog', 'menu', 'menuitem', 'menuitem', 'meter', 'progress', 'output', 'canvas', 'audio', 'video', 'iframe', 'object', 'embed', 'param', 'source', 'track', 'map', 'area', 'form', 'label', 'input', 'button', 'select', 'datalist', 'optgroup', 'option', 'textarea', 'fieldset', 'legend', 'datalist', 'output', 'progress', 'meter', 'details', 'summary', 'command', 'menu', 'menuitem', 'menuitem', 'script', 'noscript', 'style', 'link', 'meta', 'title', 'base', 'head', 'body', 'html', 'br', 'hr', 'wbr', 'img', 'area', 'map', 'track', 'source', 'param', 'iframe', 'embed', 'object', 'canvas', 'script', 'noscript', 'style', 'link', 'meta', 'title', 'base', 'head', 'body', 'html', 'br', 'hr', 'wbr', 'img', 'area', 'map', 'track', 'source', 'param', 'iframe', 'embed', 'object', 'canvas', 'script', 'noscript', 'style', 'link', 'meta', 'title', 'base', 'head', 'body', 'html', 'br', 'hr', 'wbr', 'img', 'area', ]
 
-  
+  let uri = properties.uri;
 
   let type;
 
@@ -46,40 +49,62 @@ export default function Plugin(properties) {
       type = properties.type
   }
 
-  const pluginData = {
-    uriSuffix: properties.uri.split(theme.uriPrefix).join(''),
-    instanceUrl: `${publicRuntimeConfig.backend}/`,
-    size: 1,
-    type: type
-  };
+  
 
   useEffect(() => {
-    if (status === null) {
-      evaluatePlugin(properties.plugin, properties.type, pluginsUseLocalCompose, pluginLocalComposePrefix).then(responseStatus => {
+    
+      evaluatePlugin(properties.plugin, properties.type, pluginsUseLocalCompose, pluginLocalComposePrefix, token).then(responseStatus => {
         setStatus(responseStatus)
 
         if(responseStatus) {
+          dispatch(showPluginSection(properties.plugin.name)); // To unhide
           const downloadContent = async () => {
-            const renderResponse = await runPlugin(properties.plugin, pluginData, pluginsUseLocalCompose, pluginLocalComposePrefix);
+            const publicPrefix = theme.uriPrefix + 'public/';
+            if(!uri.includes(publicPrefix)) {
+              const shareLink = await getShareLink(uri.split(theme.uriPrefix).join(''));
+              uri = shareLink;
+              //Replace backend with uriPrefix
+              uri = uri.replace(publicRuntimeConfig.backend, theme.uriPrefix);
+            }
+
+            let uriSuffix = uri.split(theme.uriPrefix).join('');
+            //Remove first slash if it exists
+            if (uriSuffix.startsWith('/')) {
+              uriSuffix = uriSuffix.slice(1);
+            }
+
+            const pluginData = {
+              uriSuffix: uriSuffix,
+              instanceUrl: `${publicRuntimeConfig.backend}/`,
+              size: 1,
+              type: type,
+              top: properties.uri,
+              token: localStorage.getItem('userToken')
+            };
+
+            const renderResponse = await runPlugin(properties.plugin, pluginData, pluginsUseLocalCompose, pluginLocalComposePrefix, token);
             setContent(renderResponse.data);
             setStatus(renderResponse.status === 200);
             };
           downloadContent();
 
         }
+        else {
+          setStatus(false); 
+        }
 
 
-    });
+    }).catch(error => {
+      setStatus(false);
+  });
       
+  }, [pageSectionsOrder]);
+
+  useEffect(() => {
+    if (status === false) {
+      dispatch(hidePluginSection(properties.plugin.name));
     }
-    
-    if (status) {
-      dispatch(updateHiddenSections(hiddenSections.filter(page => page != `PLUGIN: ${properties.plugin.name}`)))
-    }
-    else {
-      dispatch(updateHiddenSections(hiddenSections.filter(page => page != `PLUGIN: ${properties.plugin.name}`).concat(`PLUGIN: ${properties.plugin.name}`)))
-    }
-  }, [status, pageSectionsOrder]);
+  }, [status]);
 
   if (status) {
 
@@ -120,7 +145,7 @@ export default function Plugin(properties) {
     }
 
     return (
-      <Section title={properties.title} key={properties.index} pluginID={properties.page} >
+      <Section title={properties.title} pluginID={properties.pluginID} >
         <div id={properties.plugin.name}>
           {parse(`${content}`, options)}
         </div>
@@ -137,7 +162,7 @@ export default function Plugin(properties) {
 }
 
 
-async function evaluatePlugin(plugin, type, pluginsUseLocalCompose, pluginLocalComposePrefix) {
+async function evaluatePlugin(plugin, type, pluginsUseLocalCompose, pluginLocalComposePrefix, token) {
 
   switch(type) {
     case 'Component':
@@ -155,8 +180,11 @@ async function evaluatePlugin(plugin, type, pluginsUseLocalCompose, pluginLocalC
   }
   return await axios({
     method: 'POST',
-    url: `${publicRuntimeConfig.backend}/call`,
-    params: {
+    url: `${publicRuntimeConfig.backend}/callPlugin`,
+    headers: {
+      'X-authorization': token
+    },
+    data: {
       name: plugin.name,
       endpoint: 'evaluate',
       category: 'rendering',
@@ -167,22 +195,42 @@ async function evaluatePlugin(plugin, type, pluginsUseLocalCompose, pluginLocalC
     }
   }).then(response => {
     return response.status === 200;
-  })
-  .catch(error => {
-    return false;
+  }).catch(error => {
+    return false
   });
 }
 
-async function runPlugin(plugin, pluginData, pluginsUseLocalCompose, pluginLocalComposePrefix) {
+async function getShareLink(uriSuffix) {
+  const token = localStorage.getItem('userToken');
+  return await axios({
+    method: 'GET',
+    url: `${publicRuntimeConfig.backend}/${uriSuffix}/shareLink`,
+    user: token, // Assuming the API requires a user token for authentication
+    headers: {
+      'Accept': 'text/plain',
+      'X-authorization': token
+    }
+  }).then(response => {
+    return response.data;
+  }
+  ).catch(error => {
+    return error;
+  });
+}
+
+async function runPlugin(plugin, pluginData, pluginsUseLocalCompose, pluginLocalComposePrefix, token) {
   return await axios({
     method: 'POST',
-    url: `${publicRuntimeConfig.backend}/call`,
-    params: {
+    url: `${publicRuntimeConfig.backend}/callPlugin`,
+    data: {
       name: plugin.name,
       endpoint: 'run',
       data: pluginData,
       category: 'rendering',
       prefix: pluginsUseLocalCompose ? pluginLocalComposePrefix : null
+    },
+    headers: {
+      'X-authorization': token
     }
   }).then(response => {
     return response;

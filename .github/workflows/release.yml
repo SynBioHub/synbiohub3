@@ -12,7 +12,7 @@ jobs:
       - name: Build the frontend Docker image
         run: |
           RELEASE=$(echo $GITHUB_REF | cut -d'/' -f 3)
-          docker build . --build-arg TEST_VAR=production ./frontend --tag synbiohub/sbh3frontend:$RELEASE-release
+          docker build ./frontend --tag synbiohub/sbh3frontend:$RELEASE-release
       - uses: azure/docker-login@v1
         with:
           username: ${{ secrets.DOCKER_USERNAME }}

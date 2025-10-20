@@ -33,7 +33,7 @@ export default function ConfigureModal(properties) {
         if(submitted) {
             const pluginMapping = new Map();
             fileMap.forEach((plugin, file) => {
-                pluginMapping.set(file.name, plugin.value)
+                pluginMapping.set(file, plugin.value);
             })
     
                 dispatch(

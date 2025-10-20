@@ -13,6 +13,7 @@ const { publicRuntimeConfig } = getConfig();
 import { useDispatch } from "react-redux";
 import { downloadFiles } from "../../../redux/actions";
 import axios from "axios";
+import { useSelector } from "react-redux";
 
 /**
  * A modal that lets the user choose what format they want to download the object in.
@@ -27,6 +28,7 @@ export default function DownloadModal(properties) {
   const theme = JSON.parse(localStorage.getItem('theme')) || {};
   const pluginsUseLocalCompose = useSelector(state => state.pluginsUseLocalCompose);
   const pluginLocalComposePrefix = useSelector(state => state.pluginLocalComposePrefix);
+  const token = useSelector(state => state.user.token);
 
   //Checks if the modal has been submitted and downloads in the format the user chose.
   useEffect(() => {
@@ -40,7 +42,7 @@ export default function DownloadModal(properties) {
    * 
    * @param {String} type The download endpoint the user has chosen.
    */
-  const download = (type, pluginName) => {
+  const download = async (type, pluginName) => {
     
     if (type != 'plugin') {
     const item = {
@@ -62,12 +64,29 @@ export default function DownloadModal(properties) {
       status: "downloading"
     };
 
+    let uri = properties.uri;
+
+    if(!uri.includes('/public/')) {
+      const shareLink = await getShareLink(uri.split(theme.uriPrefix).join(''));
+      uri = shareLink;
+      //Replace backend with uriPrefix
+      uri = uri.replace(publicRuntimeConfig.backend, theme.uriPrefix);
+    }
+
+    let uriSuffix = uri.split(theme.uriPrefix).join('');
+    //Remove first slash if it exists
+    if (uriSuffix.startsWith('/')) {
+      uriSuffix = uriSuffix.slice(1);
+    }
+
     
     const pluginData = {
-      uriSuffix: properties.uri.split(theme.uriPrefix).join(''),
+      uriSuffix: uriSuffix,
       instanceUrl: `${publicRuntimeConfig.backend}/`,
       size: 1,
-      type: properties.type
+      type: properties.type,
+      top: properties.uri,
+      token: localStorage.getItem('userToken')
     };
     
 
@@ -131,8 +150,11 @@ export default function DownloadModal(properties) {
 
         axios({
           method: 'POST',
-          url: `${publicRuntimeConfig.backend}/call`,
-          params: {
+          url: `${publicRuntimeConfig.backend}/callPlugin`,
+          headers: {
+            'X-authorization': token
+          },
+          data: {
             name: plugin.name,
             endpoint: 'status',
             category: 'download',
@@ -144,8 +166,11 @@ export default function DownloadModal(properties) {
 
             axios({
               method: 'POST',
-              url: `${publicRuntimeConfig.backend}/call`,
-              params: {
+              url: `${publicRuntimeConfig.backend}/callPlugin`,
+              headers: {
+                'X-authorization': token
+              },
+              data: {
                 name: plugin.name,
                 endpoint: 'evaluate',
                 category: 'download',
@@ -212,4 +237,23 @@ export default function DownloadModal(properties) {
       }
     />
   );
+}
+
+
+async function getShareLink(uriSuffix) {
+  const token = localStorage.getItem('userToken');
+  return await axios({
+    method: 'GET',
+    url: `${publicRuntimeConfig.backend}/${uriSuffix}/shareLink`,
+    user: token, // Assuming the API requires a user token for authentication
+    headers: {
+      'Accept': 'text/plain',
+      'X-authorization': token
+    }
+  }).then(response => {
+    return response.data;
+  }
+  ).catch(error => {
+    return error;
+  });
 }
