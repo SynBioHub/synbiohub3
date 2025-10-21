@@ -6,7 +6,6 @@ import {
   faHome
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import Image from 'next/image';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 import Loader from 'react-loader-spinner';
@@ -31,7 +30,8 @@ export default function Navbar() {
     <Selector icon={faSignInAlt} name="Log in or Register" href="/login" />
   );
 
-  const [logoUrl, setLogoUrl] = useState(defaultLogo);
+  // initialize logo like index.js: prefer theme.logoUrl, then localStorage 'sbh_logo', else null/default
+  const [logoUrl, setLogoUrl] = useState(theme.logoUrl || localStorage.getItem('sbh_logo') || null);
 
   useEffect(() => {
     if (loggedIn) {
@@ -48,14 +48,34 @@ export default function Navbar() {
     linkHref = theme.altHome;
   }
 
+  // fetch logo from backend/logo if we don't already have one (same approach as index.js)
   useEffect(() => {
-    if (localStorage.getItem('logo')) {
-      const urlLogo = `${publicRuntimeConfig.backend}/logo`;
-      setLogoUrl(urlLogo);
-    } else {
-      setLogoUrl(defaultLogo);
+    if (!logoUrl) {
+      fetch(`${publicRuntimeConfig.backend}/logo`, { method: 'GET', cache: 'no-store' })
+        .then(res => {
+          if (!res.ok) throw new Error('No logo');
+          return res.blob();
+        })
+        .then(blob => {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            const dataUrl = reader.result;
+            try {
+              localStorage.setItem('sbh_logo', dataUrl);
+              const updatedTheme = JSON.parse(localStorage.getItem('theme') || '{}');
+              updatedTheme.logoUrl = dataUrl;
+              localStorage.setItem('theme', JSON.stringify(updatedTheme));
+            } catch (e) { /* ignore storage errors */ }
+            setLogoUrl(dataUrl);
+          };
+          reader.readAsDataURL(blob);
+        })
+        .catch(() => {
+          // fallback to default
+          setLogoUrl(defaultLogo);
+        });
     }
-  }, [publicRuntimeConfig.backend]);
+  }, []); // run once on mount
 
   return (
     <header
@@ -65,12 +85,10 @@ export default function Navbar() {
       <div className={styles.logoAndInstanceContainer}>
         <Link href={linkHref}>
           <a className={styles.logo}>
-            <Image
+            <img
               alt="logo"
-              src={logoUrl}
-              width={80}
-              height={80}
-              style={{ maxHeight: '50px', height: 'auto', width: '80px' }}
+              src={logoUrl || defaultLogo}
+              style={{height: '50px', width: 'auto', maxWidth: '100px', paddingTop: '5px' }}
             />
           </a>
         </Link>
