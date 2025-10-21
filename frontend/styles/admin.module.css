@@ -274,6 +274,12 @@
    font-weight: 500;
 }
 
+.logdropdown {
+   justify-content: center;
+   align-items: center;
+   margin: 2rem 1rem;
+}
+
 .logselected {
    background-color: #F2E86D;
    cursor: default !important;
