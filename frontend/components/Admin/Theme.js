@@ -71,21 +71,6 @@ export default function Theme() {
     setLogoFile(themeData.logo || null);
   };
 
-  const handleSuppressDebugLogsChange = (event) => {
-    setSuppressDebugLogs(event.target.checked);
-  };
-
-  const handleSuppressInfoLogsChange = (event) => {
-    setSuppressInfoLogs(event.target.checked);
-  };
-
-  const handleSuppressWarningLogsChange = (event) => {
-    setSuppressWarningLogs(event.target.checked);
-  };
-
-  const handleSuppressErrorLogsChange = (event) => {
-    setSuppressErrorLogs(event.target.checked);
-  };
 
   const handleSave = async () => {
 
@@ -256,7 +241,7 @@ export default function Theme() {
                   <input
                     type="checkbox"
                     checked={suppressDebugLogs}
-                    onChange={handleSuppressDebugLogsChange}
+                    onChange={event => setSuppressDebugLogs(event.target.checked)}
                     className={styles.themecheckbox}
                   />
                   Suppress Debug Logs
@@ -265,7 +250,7 @@ export default function Theme() {
                   <input
                     type="checkbox"
                     checked={suppressInfoLogs}
-                    onChange={handleSuppressInfoLogsChange}
+                    onChange={event => setSuppressInfoLogs(event.target.checked)}
                     className={styles.themecheckbox}
                   />
                   Suppress Info Logs
@@ -274,7 +259,7 @@ export default function Theme() {
                   <input
                     type="checkbox"
                     checked={suppressWarningLogs}
-                    onChange={handleSuppressWarningLogsChange}
+                    onChange={event => setSuppressWarningLogs(event.target.checked)}
                     className={styles.themecheckbox}
                   />
                   Suppress Warning Logs
@@ -283,7 +268,7 @@ export default function Theme() {
                   <input
                     type="checkbox"
                     checked={suppressErrorLogs}
-                    onChange={handleSuppressErrorLogsChange}
+                    onChange={event => setSuppressErrorLogs(event.target.checked)}
                     className={styles.themecheckbox}
                   />
                   Suppress Error Logs
