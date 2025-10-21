@@ -2,6 +2,7 @@ FROM maven:3-openjdk-17-slim AS build
 WORKDIR /synbiohub3
 COPY pom.xml /synbiohub3
 COPY src /synbiohub3/src/
+COPY repo /synbiohub3/repo/
 RUN mvn -B package --file pom.xml -DskipTests
 FROM openjdk:17-slim
 WORKDIR /synbiohub3

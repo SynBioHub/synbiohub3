@@ -23,7 +23,11 @@ export default function Theme() {
   const [logoFile, setLogoFile] = useState(null);
   const [showModuleInteractions, setShowModuleInteractions] = useState(true);
   const [removePublicEnabled, setRemovePublicEnabled] = useState(true);
-  const [requireLogin, setRequireLogin] = useState(false)
+  const [requireLogin, setRequireLogin] = useState(false);
+  const [suppressDebugLogs, setSuppressDebugLogs] = useState(false);
+  const [suppressInfoLogs, setSuppressInfoLogs] = useState(false);
+  const [suppressWarningLogs, setSuppressWarningLogs] = useState(false);
+  const [suppressErrorLogs, setSuppressErrorLogs] = useState(false);
   const token = useSelector(state => state.user.token);
 
   useEffect(() => {
@@ -60,7 +64,27 @@ export default function Theme() {
     setShowModuleInteractions(themeData.showModuleInteractions === 'true' || themeData.showModuleInteractions === true);
     setRemovePublicEnabled(themeData.removePublicEnabled === 'true' || themeData.removePublicEnabled === true);
     setRequireLogin(themeData.requireLogin === 'true' || themeData.requireLogin === true);
+    setSuppressDebugLogs(themeData.suppressDebugLogs === 'true' || themeData.suppressDebugLogs === true);
+    setSuppressInfoLogs(themeData.suppressInfoLogs === 'true' || themeData.suppressInfoLogs === true);
+    setSuppressWarningLogs(themeData.suppressWarningLogs === 'true' || themeData.suppressWarningLogs === true);
+    setSuppressErrorLogs(themeData.suppressErrorLogs === 'true' || themeData.suppressErrorLogs === true);
     setLogoFile(themeData.logo || null);
+  };
+
+  const handleSuppressDebugLogsChange = (event) => {
+    setSuppressDebugLogs(event.target.checked);
+  };
+
+  const handleSuppressInfoLogsChange = (event) => {
+    setSuppressInfoLogs(event.target.checked);
+  };
+
+  const handleSuppressWarningLogsChange = (event) => {
+    setSuppressWarningLogs(event.target.checked);
+  };
+
+  const handleSuppressErrorLogsChange = (event) => {
+    setSuppressErrorLogs(event.target.checked);
   };
 
   const handleSave = async () => {
@@ -74,6 +98,10 @@ export default function Theme() {
     formData.append('removePublicEnabled', String(removePublicEnabled));
     formData.append('showModuleInteractions', String(showModuleInteractions));
     formData.append('requireLogin', String(requireLogin));
+    formData.append('suppressDebugLogs', String(suppressDebugLogs));
+    formData.append('suppressInfoLogs', String(suppressInfoLogs));
+    formData.append('suppressWarningLogs', String(suppressWarningLogs));
+    formData.append('suppressErrorLogs', String(suppressErrorLogs));
     if (logoFile) {
       formData.append('logo', logoFile);
     }
@@ -223,6 +251,42 @@ export default function Theme() {
                     className={styles.themecheckbox}
                   />
                   Require Login
+                </label>
+                <label className={styles.themecheckboxLabel}>
+                  <input
+                    type="checkbox"
+                    checked={suppressDebugLogs}
+                    onChange={handleSuppressDebugLogsChange}
+                    className={styles.themecheckbox}
+                  />
+                  Suppress Debug Logs
+                </label>
+                <label className={styles.themecheckboxLabel}>
+                  <input
+                    type="checkbox"
+                    checked={suppressInfoLogs}
+                    onChange={handleSuppressInfoLogsChange}
+                    className={styles.themecheckbox}
+                  />
+                  Suppress Info Logs
+                </label>
+                <label className={styles.themecheckboxLabel}>
+                  <input
+                    type="checkbox"
+                    checked={suppressWarningLogs}
+                    onChange={handleSuppressWarningLogsChange}
+                    className={styles.themecheckbox}
+                  />
+                  Suppress Warning Logs
+                </label>
+                <label className={styles.themecheckboxLabel}>
+                  <input
+                    type="checkbox"
+                    checked={suppressErrorLogs}
+                    onChange={handleSuppressErrorLogsChange}
+                    className={styles.themecheckbox}
+                  />
+                  Suppress Error Logs
                 </label>
 
               </div>
