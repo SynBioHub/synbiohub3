@@ -48,7 +48,23 @@
 }
 
 .newLogoFilePicker {
-   display: none;
+  display: block;
+  margin: 1rem 0 2rem 0;
+  padding: 0.7rem 1rem;
+  border: 2px solid #D25627;
+  border-radius: 8px;
+  background: #fff;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #333;
+  box-shadow: 0 2px 8px rgba(210,86,39,0.08);
+  transition: border-color 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+}
+
+.newLogoFilePicker:hover, .newLogoFilePicker:focus {
+  border-color: #00A1E4;
+  box-shadow: 0 2px 12px rgba(0,161,228,0.12);
 }
 
 .wfull {
