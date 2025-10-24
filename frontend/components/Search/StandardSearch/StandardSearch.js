@@ -2,6 +2,7 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import Loader from 'react-loader-spinner';
 import { useDispatch, useSelector } from 'react-redux';
+import { setOffset } from '../../../redux/actions'
 import useSWR from 'swr';
 import { faHatWizard, faBars} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -254,7 +255,10 @@ if (isError) {
             <div
               className={advStyles.searchbutton}
               role="button"
-              onClick={constructSearch}
+              onClick={() => {
+                dispatch(setOffset(0));
+                constructSearch();
+              }}
               style={{
                 backgroundColor: theme?.themeParameters?.[0]?.value || '#333', // Use theme color or default to #333
                 color: theme?.themeParameters?.[1]?.value || '#fff', // Use text color from theme or default to #fff
