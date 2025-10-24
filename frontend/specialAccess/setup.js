@@ -60,11 +60,10 @@ export default function Setup({ setInSetupMode }) {
     <TopLevel doNotTrack={true} navbar={<div></div>} publicPage={true}>
       <div className={styles.container}>
         <div className={styles.title}>
-          <Image
-            alt="logo"
-            width={150}
-            height={100}
+          <img
             src="/images/logo_secondary.svg"
+            alt="logo"
+            style={{ width: '150px', height: 'auto' }}
           />
           <div className={styles.titletext} style={primaryTitleStyle}>Welcome to SynBioHub!</div>
         </div>
@@ -138,7 +137,7 @@ export default function Setup({ setInSetupMode }) {
                     labelText="Require Login: Require login for all operations"
                     value={requireLogin}
                     onChange={event => setRequireLogin(event.target.checked)}
-                    inputName="Alternate Home Page"
+                    inputName="Require Login"
                     containerStyling={styles.checkboxinput}
                     style={secondaryTitleStyle}
                     inputStyle={{ accentColor: color }}
