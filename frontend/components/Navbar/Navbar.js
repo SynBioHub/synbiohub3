@@ -83,20 +83,14 @@ export default function Navbar() {
       style={{ backgroundColor: theme?.themeParameters?.[0]?.value || '#465775' }}
     >
       <div className={styles.logoAndInstanceContainer}>
-        <Link href={linkHref}>
-          <a className={styles.logo}>
-            <img
-              alt="logo"
-              src={logoUrl || defaultLogo}
-              style={{height: '50px', width: 'auto', maxWidth: '100px', paddingTop: '5px' }}
-            />
-          </a>
-        </Link>
-
-
-        {theme && (
-          <Selector icon={faHome} name={theme.instanceName} href={linkHref} isInstanceName={true} />
-        )}
+          <Selector
+            icon={faHome}
+            href={linkHref}
+            logoUrl={logoUrl}
+            name={theme.instanceName || 'SynBioHub'}
+            defaultLogo={defaultLogo}
+            isInstanceName={true}
+          />
       </div>
 
       <div className={styles.navcontainer}>
