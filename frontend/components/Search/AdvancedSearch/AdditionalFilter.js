@@ -11,6 +11,7 @@ import { faTimesCircle } from '@fortawesome/free-solid-svg-icons';
 export default function AdditionalFilter(properties) {
   const [selectedPredicate, setSelectedPredicate] = useState("");
   const [selectedValue, setSelectedValue] = useState("");
+  const wrapIRI = v => (v?.startsWith("http") ? `<${v}>` : v);
 
   useEffect(() => {
     const newFilters = [...properties.extraFilters];
@@ -59,9 +60,9 @@ export default function AdditionalFilter(properties) {
         )}
       {properties.extraFilters[properties.index].filter && 
         (<SelectLoader
-          placeholder={shortName(properties.extraFilters[properties.index].value)}//{selectedValue}
+          placeholder={shortName(wrapIRI(properties.extraFilters[properties.index].value))}//{selectedValue}
           sparql={configureQuery(searchObject, {
-            predicate: properties.extraFilters[properties.index].filter //selectedPredicate
+            predicate: wrapIRI(properties.extraFilters[properties.index].filter) //selectedPredicate
           })}
           parseResult={result => {
             return {

@@ -66,6 +66,7 @@ export default function StandardSearch() {
   const [url, setUrl] = useState('');
   const [translation, setTranslation] = useState(0);
   const router = useRouter();
+
   useEffect(() => {
     if (theme.requireLogin && !loggedIn) {
       router.push('/login'); // Redirect to the login page
@@ -120,8 +121,9 @@ export default function StandardSearch() {
   const constructExtraFilters = () => {
     let url = '';
     for (const filter of extraFilters) {
-      if (filter.filter && filter.value)
-        url += getUrl(filter.value, filter.filter);
+      if (filter.filter && filter.value){
+        url += getUrl(filter.value, filter.filter);        
+      }
     }
     return url;
   };
@@ -286,6 +288,7 @@ if (isError) {
 }
 const useSearchResults = (query, url, offset, limit, token, dispatch) => {
   query = url + query;
+  console.log("useSearchResults - full query url: ", query);
   const { data, error } = useSWR(
     [
       `${publicRuntimeConfig.backend}/search/${query}?offset=${offset}&limit=${limit}`,
