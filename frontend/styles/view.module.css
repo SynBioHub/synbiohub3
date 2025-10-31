@@ -3,6 +3,7 @@
   padding: 0;
   margin: 0;
   width: 100vw;
+  min-height: calc(100vh - 150px - 4rem);
 }
 
 .emptySpace {
@@ -13,7 +14,8 @@
 .sidepanelcontainercollapse {
   display: flex;
   flex-shrink: 0;
-  width: 4.2rem;
+  width: 23rem;
+  overflow: hidden;
   transition: width 0.3s;
 }
 
@@ -21,6 +23,7 @@
   display: flex;
   flex-shrink: 0;
   width: 23rem;
+  overflow: hidden;
   transition: width 0.3s;
 }
 
@@ -36,6 +39,7 @@
   display: flex;
   flex-shrink: 0;
   width: 3.5rem;
+  overflow: hidden;
   transition: width 0.3s;
 }
 
@@ -43,6 +47,7 @@
   display: flex;
   flex-shrink: 0;
   width: 17.5rem;
+  overflow: hidden;
   transition: width 0.3s;
 }
 
@@ -54,14 +59,14 @@
 .sidepanel {
   background-color: rgb(242, 242, 242);
   box-shadow: 0px 0px 5px #7e7e7e;
-  position: fixed;
+  position: relative;
   left: 0;
   top: 0;
-  padding-top: 4rem;
-  bottom: 0;
+  padding-top: 3.5rem;
   padding-bottom: 3rem;
   z-index: 5;
   overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .standardcontainer {
@@ -87,7 +92,7 @@
 
 .headercontainer {
   display: flex;
-  margin: 1rem 1rem 0.75rem 1rem;
+  margin: 0 1rem 0.75rem 1rem;
   align-items: center;
   word-break: break-word;
   white-space: normal;
@@ -106,13 +111,23 @@
 }
 
 .panelbutton {
-  position: absolute;
+  position: fixed;
   top: 5rem;
-  right: 1rem;
+  left: 1rem;
   font-size: 1.3rem;
   color: #D25627;
   cursor: pointer;
   transition: transform .3s;
+  z-index: 6;
+  background-color: rgba(255, 255, 255, 0.1);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .panelbutton:hover {
