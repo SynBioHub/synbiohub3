@@ -66,6 +66,7 @@ export default function StandardSearch() {
   const [url, setUrl] = useState('');
   const [translation, setTranslation] = useState(0);
   const router = useRouter();
+
   useEffect(() => {
     if (theme.requireLogin && !loggedIn) {
       router.push('/login'); // Redirect to the login page
@@ -120,14 +121,19 @@ export default function StandardSearch() {
   const constructExtraFilters = () => {
     let url = '';
     for (const filter of extraFilters) {
-      if (filter.filter && filter.value)
-        url += getUrl(filter.value, filter.filter);
+      if (filter.filter && filter.value){
+        url += getUrl(filter.value, filter.filter);        
+      }
     }
     return url;
   };
 
   const getUrl = (value, term, isDate = false) => {
     if (value) {
+      if(term.startsWith('http')) {
+          term = encodeURIComponent(term); // IRI needs to be encoded
+        }
+      
       if (!isDate) return `${term}=<${encodeURIComponent(value)}>&`;
       return `${term}=${encodeURIComponent(value.toISOString().slice(0, 10))}&`;
     }

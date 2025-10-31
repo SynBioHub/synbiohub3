@@ -182,5 +182,9 @@ PREFIX sbol: <http://sbols.org/v2#>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX purl: <http://purl.obolibrary.org/obo/>
+PREFIX biopax: <http://www.biopax.org/release/biopax-level3.owl#>
+PREFIX so: <http://identifiers.org/so/>
+PREFIX bench: <http://wiki.synbiohub.org/wiki/Terms/benchling#>
+PREFIX genbank: <http://www.ncbi.nlm.nih.gov/genbank#>
 
 `;
