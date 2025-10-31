@@ -82,7 +82,7 @@ function Home() {
           <img
             src={logoUrl}
             alt="Instance Logo"
-            style={{ width: 'auto', maxHeight: '15rem', marginBottom: '1rem' }}
+            style={{ maxWidth: '800px', height: 'auto', maxHeight: '10rem', marginBottom: '1rem' }}
           />
         )}
 
