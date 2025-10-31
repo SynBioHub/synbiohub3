@@ -97,6 +97,7 @@ export default function NewCollectionForm(properties) {
         needsVerification={needsVerification}
         postCollection={postCollection}
         title="Create"
+        hideCancel={properties.hideCancel}
       />
     </div>
   );
