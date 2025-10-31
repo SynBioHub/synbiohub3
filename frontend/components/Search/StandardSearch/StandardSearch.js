@@ -130,6 +130,10 @@ export default function StandardSearch() {
 
   const getUrl = (value, term, isDate = false) => {
     if (value) {
+      if(term.startsWith('http')) {
+          term = encodeURIComponent(term); // IRI needs to be encoded
+        }
+      
       if (!isDate) return `${term}=<${encodeURIComponent(value)}>&`;
       return `${term}=${encodeURIComponent(value.toISOString().slice(0, 10))}&`;
     }
@@ -288,7 +292,6 @@ if (isError) {
 }
 const useSearchResults = (query, url, offset, limit, token, dispatch) => {
   query = url + query;
-  console.log("useSearchResults - full query url: ", query);
   const { data, error } = useSWR(
     [
       `${publicRuntimeConfig.backend}/search/${query}?offset=${offset}&limit=${limit}`,
