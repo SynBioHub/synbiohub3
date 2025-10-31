@@ -4,6 +4,21 @@
    margin-top: 1rem;
 }
 
+.searchInputWrapper {
+   position: relative;
+   flex: 1;
+   display: flex;
+   align-items: center;
+}
+
+.searchIcon {
+   position: absolute;
+   left: 0.7rem;
+   color: #575757;
+   pointer-events: none;
+   z-index: 1;
+}
+
 .createcollectionbuttons {
    display: flex;
    margin-top: 1rem;
@@ -105,14 +120,13 @@
 .collectionfilter {
    width: 100%;
    border: none;
-   padding: 0.7rem;
+   padding: 0.7rem 0.7rem 0.7rem 2.5rem;
    font-size: 1rem;
    background-color: #ECF0F1;
    color: #171D26;
    border-radius: 0.4rem;
    font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
-   transition: width .35s;
 }
 
 .collectionfilteraactive::placeholder {
@@ -129,7 +143,7 @@
    margin-top: 1rem;
    width: 100%;
    overflow: auto;
-   max-height: 20rem;
+   max-height: 25rem;
    color: #171D26;   
 }
 

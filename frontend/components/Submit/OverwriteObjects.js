@@ -1,5 +1,3 @@
-import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
 
 import styles from '../../styles/submit.module.css';
@@ -28,34 +26,36 @@ export default function OverwriteObjects(properties) {
     }
   }, []);
 
+  const handleContainerClick = () => {
+    if (!properties.checked && enablePrompt) {
+      setWarnUser(true);
+    } else {
+      properties.setChecked(!properties.checked);
+    }
+  };
+
   return (
     <div className={styles.overwritecontainer}>
-      <div className={styles.overwriteinputcontainer}>
+      <div 
+        className={styles.overwriteinputcontainer}
+        onClick={handleContainerClick}
+        role="button"
+        tabIndex={0}
+        onKeyPress={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            handleContainerClick();
+          }
+        }}
+      >
         <input
           type="checkbox"
           checked={properties.checked}
-          onChange={event => {
-            if (event.target.checked && enablePrompt) setWarnUser(true);
-            else properties.setChecked(event.target.checked);
-          }}
+          onChange={() => {}} // Controlled by container click
+          readOnly
         />
         <div className={styles.overwritemessage}>
           Overwrite Existing Collection
         </div>
-      </div>
-      <div>
-        <a
-          href="https://wiki.synbiohub.org/userdocumentation/managingsubmitting#411-creating-a-new-collection"
-          target="_blank"
-          rel="noreferrer"
-        >
-          <FontAwesomeIcon
-            icon={faInfoCircle}
-            size="1x"
-            className={`${styles.submitinfoicon} ${styles.enlargeicononhover}`}
-            color="#00A1E4"
-          />
-        </a>
       </div>
       {warnUser && enablePrompt ? (
         <Message

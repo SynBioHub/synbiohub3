@@ -721,16 +721,6 @@ export const setSelectedCollection = collection => dispatch => {
 
 export const setPromptNewCollection = promptNewCollection => dispatch => {
   dispatch({ type: types.PROMPTNEWCOLLECTION, payload: promptNewCollection });
-  if (promptNewCollection)
-    dispatch({
-      type: types.CREATINGCOLLECTIONBUTTONTEXT,
-      payload: 'Tell us about your collection'
-    });
-  else
-    dispatch({
-      type: types.CREATINGCOLLECTIONBUTTONTEXT,
-      payload: 'New Collection'
-    });
 };
 
 export const resetSubmit = () => dispatch => {
