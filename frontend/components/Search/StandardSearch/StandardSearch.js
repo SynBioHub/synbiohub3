@@ -2,6 +2,7 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import Loader from 'react-loader-spinner';
 import { useDispatch, useSelector } from 'react-redux';
+import { setOffset } from '../../../redux/actions'
 import useSWR from 'swr';
 import { faHatWizard, faBars} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -65,6 +66,7 @@ export default function StandardSearch() {
   const [url, setUrl] = useState('');
   const [translation, setTranslation] = useState(0);
   const router = useRouter();
+
   useEffect(() => {
     if (theme.requireLogin && !loggedIn) {
       router.push('/login'); // Redirect to the login page
@@ -119,14 +121,19 @@ export default function StandardSearch() {
   const constructExtraFilters = () => {
     let url = '';
     for (const filter of extraFilters) {
-      if (filter.filter && filter.value)
-        url += getUrl(filter.value, filter.filter);
+      if (filter.filter && filter.value){
+        url += getUrl(filter.value, filter.filter);        
+      }
     }
     return url;
   };
 
   const getUrl = (value, term, isDate = false) => {
     if (value) {
+      if(term.startsWith('http')) {
+          term = encodeURIComponent(term); // IRI needs to be encoded
+        }
+      
       if (!isDate) return `${term}=<${encodeURIComponent(value)}>&`;
       return `${term}=${encodeURIComponent(value.toISOString().slice(0, 10))}&`;
     }
@@ -254,7 +261,10 @@ if (isError) {
             <div
               className={advStyles.searchbutton}
               role="button"
-              onClick={constructSearch}
+              onClick={() => {
+                dispatch(setOffset(0));
+                constructSearch();
+              }}
               style={{
                 backgroundColor: theme?.themeParameters?.[0]?.value || '#333', // Use theme color or default to #333
                 color: theme?.themeParameters?.[1]?.value || '#fff', // Use text color from theme or default to #fff

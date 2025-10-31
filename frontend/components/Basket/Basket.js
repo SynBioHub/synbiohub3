@@ -38,10 +38,11 @@ export default function Basket() {
   const [itemsToAddToCollection, setItemsToAddToCollection] = useState([]);
   const [createCollectionMode, setCreateCollectionMode] = useState(false);
   const theme = JSON.parse(localStorage.getItem('theme')) || {};
+  const loggedIn = useSelector(state => state.user.loggedIn);
 
   useEffect(() => {
     dispatch(restoreBasket(token));
-  }, []);
+  }, [showBasket]);
 
   useEffect(() => {
     if (basketItems) {
@@ -69,6 +70,7 @@ export default function Basket() {
 
   if (!showBasket) {
     return (
+      <div className={styles.basketiconcontainer}>
       <FontAwesomeIcon
         icon={faShoppingBasket}
         size="2x"
@@ -76,6 +78,7 @@ export default function Basket() {
         className={styles.basketicon}
         onClick={() => setShowBasket(true)}
       />
+      </div>
     );
   }
 
@@ -93,6 +96,7 @@ export default function Basket() {
     <div>
       <div className={styles.basketcontent}>
         <div className={styles.heading}>
+          {loggedIn && (
           <TableButton
             title="Add to Collection"
             icon={faPlus}
@@ -106,7 +110,7 @@ export default function Basket() {
                 setCreateCollectionMode
               );
             }}
-          />
+          /> )}
           <TableButton
             title="Download"
             icon={faCloudDownloadAlt}
@@ -167,15 +171,16 @@ export default function Basket() {
           />
         </div>
       </div>
-
-      <FontAwesomeIcon
-        icon={faTimesCircle}
-        size="2x"
-        color="#D25627"
-        spin
-        className={styles.basketicon}
-        onClick={() => setShowBasket(false)}
-      />
+      <div className={styles.basketiconcontainer}>
+        <FontAwesomeIcon
+          icon={faTimesCircle}
+          size="2x"
+          color="#D25627"
+          spin
+          className={styles.basketicon}
+          onClick={() => setShowBasket(false)}
+        />
+      </div>
     </div>
   );
 }
