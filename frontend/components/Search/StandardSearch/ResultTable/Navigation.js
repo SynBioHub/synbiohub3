@@ -121,7 +121,7 @@ export default function Navigation(properties) {
 
       {/* Showing X - Y of Z */}
       <div className={styles.count}>
-        Showing {offset + 1} - {Math.min(offset + limit, properties.count)} of {properties.count} result(s)
+        Showing {Math.min(properties.count, offset + 1)} - {Math.min(offset + limit, properties.count)} of {properties.count} result(s)
       </div>
 
       {/* Results per page dropdown */}
@@ -130,8 +130,7 @@ export default function Navigation(properties) {
           display: 'flex',
           alignItems: 'center',
           gap: '0.4rem',
-          marginLeft: '1rem',
-          fontFamily: 'inherit',
+          fontFamily: 'inherit'
         }}
       >
         <label htmlFor="limit" style={{ fontWeight: 500 }}>
