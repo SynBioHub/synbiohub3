@@ -1,17 +1,14 @@
-import { faCloudUploadAlt } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 
 import ChooseCollection from '../components/Submit/ChooseCollection/ChooseCollection';
 import UploadFileSection from '../components/Submit/FileComponents/UploadFileSection';
 import OverwriteObjects from '../components/Submit/OverwriteObjects';
-import SubmitHeader from '../components/Submit/ReusableComponents/SubmitHeader';
 import SubmissionStatusPanel from '../components/Submit/SubmissionStatusPanel';
 import SubmitButton from '../components/Submit/SubmitButton';
 import TopLevel from '../components/TopLevel';
-import { getCanSubmitTo } from '../redux/actions';
+import { getCanSubmitTo, setPromptNewCollection } from '../redux/actions';
 import styles from '../styles/submit.module.css';
 
 import ConfigureModal from '../components/Viewing/Modals/ConfigureModal';
@@ -22,6 +19,7 @@ function Submit() {
   const [overwriteCollection, setOverwriteCollection] = useState(false);
   const [selectedHandler, setSelectedHandler] = useState({value: 'default', label: 'Default Handler'});
   const [modal, setModal] = useState();
+  const [activeTab, setActiveTab] = useState('select'); // 'select' or 'create'
 
   const showSubmitProgress = useSelector(
     state => state.submit.showSubmitProgress
@@ -29,6 +27,15 @@ function Submit() {
 
   const dispatch = useDispatch();
   dispatch(getCanSubmitTo());
+
+  // Handle tab switching and update Redux state accordingly
+  useEffect(() => {
+    if (activeTab === 'select') {
+      dispatch(setPromptNewCollection(false));
+    } else if (activeTab === 'create') {
+      dispatch(setPromptNewCollection(true));
+    }
+  }, [activeTab, dispatch]);
 
   const handleClick = () => {
     if(selectedHandler.value === 'configure') {
@@ -52,31 +59,53 @@ function Submit() {
         )
       : null}
       <div className={styles.submitpanel}>
-        <SubmitHeader
-          icon={
-            <FontAwesomeIcon
-              icon={faCloudUploadAlt}
-              size="3x"
-              color="#00A1E4"
-            />
-          }
-          title="Tell us about your submission"
-          description="SynBioHub organizes your uploads into collections. Parts can be
-            uploaded into an existing or new collection."
-        />
+        {/* File Upload Section - Top */}
         <UploadFileSection files={files} setFiles={setFiles} />
-          <SubmissionHandler 
-            selectedHandler={selectedHandler}
-            setSelectedHandler={setSelectedHandler}
-            configureOption={true}
-            failed={false}
-          
-          />
-        <ChooseCollection label="Select Destination Collection" />
-        <OverwriteObjects
-          checked={overwriteCollection}
-          setChecked={setOverwriteCollection}
+        
+        {/* Submission Handler */}
+        <SubmissionHandler 
+          selectedHandler={selectedHandler}
+          setSelectedHandler={setSelectedHandler}
+          configureOption={true}
+          failed={false}
         />
+        
+        {/* Tab Layout for Collection Selection */}
+        <div className={styles.collectionTabsContainer}>
+          <div className={styles.tabs}>
+            <div 
+              className={`${styles.tab} ${activeTab === 'select' ? styles.activeTab : ''}`}
+              onClick={() => setActiveTab('select')}
+            >
+              Select Existing Collection
+            </div>
+            <div 
+              className={`${styles.tab} ${activeTab === 'create' ? styles.activeTab : ''}`}
+              onClick={() => setActiveTab('create')}
+            >
+              Create New Collection
+            </div>
+          </div>
+          
+          <div className={styles.tabContent}>
+            {activeTab === 'select' ? (
+              <>
+                {/* Overwrite Option - Fixed at the top */}
+                <OverwriteObjects
+                  checked={overwriteCollection}
+                  setChecked={setOverwriteCollection}
+                />
+                {/* Scrollable collection list */}
+                <div className={styles.collectionScrollArea}>
+                  <ChooseCollection label="" showCreateButton={false} />
+                </div>
+              </>
+            ) : (
+              <ChooseCollection label="" forceNewCollection={true} hideCancel={true} />
+            )}
+          </div>
+        </div>
+        
         <SubmitButton files={files} overwriteCollection={overwriteCollection} submitHandler={selectedHandler} configure={handleClick} />
         
       </div>
