@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import styles from '../../styles/view.module.css';
 
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
@@ -24,6 +24,24 @@ export default function ViewHeader(properties) {
   const [displayedDescription, setDisplayedDescription] = useState(properties.description);
   const [isEditingDescription, setIsEditingDescription] = useState(false);
   const [editedDescription, setEditedDescription] = useState(properties.description);
+  const [counts, setCounts] = useState({ twins: 0, uses: 0, similar: 0 });
+
+  useEffect(() => {
+    const base = `${publicRuntimeConfig.backend}/${getAfterThirdSlash(properties.uri)}`;
+    Promise.all([
+      axios.get(`${base}/twinsCount`),
+      axios.get(`${base}/usesCount`),
+      axios.get(`${base}/similarCount`)
+    ])
+    .then(([twinsRes, usesRes, similarRes]) => {
+      setCounts({
+        twins: twinsRes.data.count ?? twinsRes.data,
+        uses: usesRes.data.count ?? usesRes.data,
+        similar: similarRes.data.count ?? similarRes.data
+      });
+    })
+    .catch(err => console.error("Error fetching linked counts:", err));
+  }, [properties.uri]);
 
   const theme = JSON.parse(localStorage.getItem('theme')) || {};
 
@@ -56,15 +74,25 @@ export default function ViewHeader(properties) {
 
 
   const router = useRouter();
-
   const twins = () => {
-    router.push(`${window.location.href}/twins`);
+    router.push({
+      pathname: `${window.location.pathname}/twins`,
+      query: { count: counts.twins }
+    });
   };
+
   const uses = () => {
-    router.push(`${window.location.href}/uses`);
+    router.push({
+      pathname: `${window.location.pathname}/uses`,
+      query: { count: counts.uses }
+    });
   };
+
   const similar = () => {
-    router.push(`${window.location.href}/similar`);
+    router.push({
+      pathname: `${window.location.pathname}/similar`,
+      query: { count: counts.similar }
+    });
   };
 
   const saveDescription = () => {
