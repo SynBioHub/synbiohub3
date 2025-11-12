@@ -28,12 +28,11 @@ COPY . .
 RUN yarn build
 
 # Production dependencies stage
-FROM node:14-alpine AS prod-deps
+FROM deps AS prod-deps
 
-RUN apk add --no-cache libc6-compat
-WORKDIR /app
-COPY package.json yarn.lock ./
+# Install only production dependencies
 RUN yarn install --production --frozen-lockfile
+
 # Production image, copy all the files and run next
 FROM node:14-alpine AS runner
 WORKDIR /app
