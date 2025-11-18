@@ -285,8 +285,6 @@ if (isError) {
     </div>
     <div className={viewStyles.searchContent}>
         <SearchHeader selected="Standard Search" />
-        {console.log("StandardSearch")}
-        {console.log("count: " + count)}
         <ResultTable count={count} data={results} />
     </div>
   </div>

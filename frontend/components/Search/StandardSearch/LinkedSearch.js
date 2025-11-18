@@ -47,12 +47,15 @@ export default function LinkedSearch(properties) {
   return (
     <TopLevel
       doNotTrack={true}
-      navbar={<NavbarSearch placeholder="Search SynBioHub" />}
+      navbar={<NavbarSearch
+                value={properties.uri}
+                placeholder="Search SynBioHub"
+                />}
       hideFooter={true}
       publicPage={true}
     >
       <div className={styles.searchContent}>
-        <SearchHeader selected="Linked Search" />
+        <SearchHeader selected="Standard Search" />
         <ResultTable count={totalCount || Data.length} data={Data} />
       </div>
     </TopLevel>
