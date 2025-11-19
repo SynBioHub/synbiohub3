@@ -14,6 +14,8 @@ export default function Navigation(properties) {
   const offset = useSelector(state => state.search.offset);
   const limit = useSelector(state => state.search.limit);
   const dispatch = useDispatch();
+  const totalPages = Math.ceil(properties.count / limit);
+  const currentPage = Math.floor(offset / limit) + 1;
 
   useEffect(() => {
     if (offset - limit >= 0) {
@@ -35,59 +37,100 @@ export default function Navigation(properties) {
     dispatch(setOffset(0)); 
   };
 
+  const handlePageClick = (pageNum) => {
+    dispatch(setOffset((pageNum - 1) * limit));
+  };
+
+  // Calculate visible page range (initial 5 pages, then 5 left + 4 right = total 10)
+  const pageNumbers = [];
+  const maxPagesToShow = 10;
+
+  // Case 1: show first 5 pages if user is still near the beginning
+  let startPage, endPage;
+  if (currentPage <= 5) {
+    startPage = 1;
+    endPage = Math.min(totalPages, 5);
+  }
+  // Case 2: later pages: always show 5 pages to the left and 4 to the right (10 total)
+  else {
+    startPage = Math.max(1, currentPage - 5);
+    endPage = Math.min(totalPages, currentPage + 4);
+
+    // Adjust window if near the end so total 10 pages visible
+    if (endPage - startPage + 1 < maxPagesToShow) {
+      startPage = Math.max(1, endPage - maxPagesToShow + 1);
+    }
+  }
+
+  // Push numbers to array
+  for (let i = startPage; i <= endPage; i++) {
+    pageNumbers.push(i);
+  }
+
   return (
-    <div className={styles.navigation}
-    style={{
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    gap: '0.75rem',
-    fontFamily: 'inherit',
-    fontSize: '0.95rem',
-    color: '#333',
-    flexWrap: 'wrap',
-    paddingRight: '2rem',   //  shift everything slightly left
-  }}
+    <div
+      className={styles.navigation}
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'flex-end',
+        gap: '0.75rem',
+        fontFamily: 'inherit',
+        fontSize: '0.95rem',
+        color: '#333',
+        flexWrap: 'wrap',
+        paddingRight: '2rem',
+      }}
     >
+      {/* Previous */}
       <div
         role="button"
         className={`${styles.tablebutton} ${previous}`}
-        onClick={() => {
-          if (previous !== styles.disabled) {
-            dispatch(setOffset(offset - limit));
-          }
-        }}
+        onClick={() => previous !== styles.disabled && dispatch(setOffset(offset - limit))}
       >
         «
       </div>
 
-      <div className={styles.count}>
-        <span className={styles.range}>
-          {Math.min(properties.count, offset + 1)}-
-          {Math.min(offset + limit, properties.count)}
-        </span>{' '}
-        of {properties.count} result(s)
+      {/* Page numbers */}
+      <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
+        {pageNumbers.map((num) => (
+          <div
+            key={num}
+            role="button"
+            onClick={() => handlePageClick(num)}
+            style={{
+              cursor: 'pointer',
+              fontWeight: num === currentPage ? '700' : '400',
+              color: num === currentPage ? '#D25627' : '#333',
+              textDecoration: num === currentPage ? 'underline' : 'none',
+            }}
+          >
+            {num}
+          </div>
+        ))}
       </div>
 
+      {/* Next */}
       <div
         role="button"
         className={`${styles.tablebutton} ${next}`}
-        onClick={() => {
-          if (next !== styles.disabled) {
-            dispatch(setOffset(offset + limit));
-          }
-        }}
+        onClick={() => next !== styles.disabled && dispatch(setOffset(offset + limit))}
       >
         »
       </div>
+
+      {/* Showing X - Y of Z */}
+      <div className={styles.count}>
+        Showing {Math.min(properties.count, offset + 1)} - {Math.min(offset + limit, properties.count)} of {properties.count} result(s)
+      </div>
+
       {/* Results per page dropdown */}
       <div
         style={{
           display: 'flex',
           alignItems: 'center',
           gap: '0.4rem',
-          marginLeft: '1rem',
-          fontFamily: 'inherit',
+          fontFamily: 'inherit'
         }}
       >
         <label htmlFor="limit" style={{ fontWeight: 500 }}>
@@ -103,8 +146,8 @@ export default function Navigation(properties) {
             padding: '4px 8px',
             borderRadius: '6px',
             border: '1px solid #ccc',
-            backgroundColor: '#ffffff', // white background
-            color: '#333'
+            backgroundColor: '#ffffff',
+            color: '#333',
           }}
           onFocus={(e) => (e.target.style.borderColor = '#D25627')}
           onBlur={(e) => (e.target.style.borderColor = '#ccc')}
