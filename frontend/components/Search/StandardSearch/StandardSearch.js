@@ -4,7 +4,7 @@ import Loader from 'react-loader-spinner';
 import { useDispatch, useSelector } from 'react-redux';
 import { setOffset } from '../../../redux/actions'
 import useSWR from 'swr';
-import { faHatWizard, faBars} from '@fortawesome/free-solid-svg-icons';
+import { faSearch, faBars} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRouter } from 'next/router';
 import Options from '../AdvancedSearch/Options';
@@ -200,6 +200,15 @@ if (isError) {
   return (
   <div className={viewStyles.container}>
     <div
+      className={viewStyles.panelbutton}
+      role="button"
+      onClick={() => {
+        translation == 14 ? setTranslation(0) : setTranslation(14);
+      }}
+    >
+      <FontAwesomeIcon icon={faBars} size="1x" />
+    </div>
+    <div
       className={
         translation === 0
           ? viewStyles.searchSidepanelcontaineropen
@@ -214,15 +223,6 @@ if (isError) {
       >
         <div className={viewStyles.headercontainer}>
           <div className={viewStyles.emptySpace}>
-          </div>
-          <div
-              className={viewStyles.panelbutton}
-              role="button"
-              onClick={() => {
-                translation == 14 ? setTranslation(0) : setTranslation(14);
-              }}
-            >
-            <FontAwesomeIcon icon={faBars} size="1x" />
           </div>
         </div>
 
@@ -266,15 +266,15 @@ if (isError) {
                 constructSearch();
               }}
               style={{
-                backgroundColor: theme?.themeParameters?.[0]?.value || '#333', // Use theme color or default to #333
-                color: theme?.themeParameters?.[1]?.value || '#fff', // Use text color from theme or default to #fff
+                backgroundColor: theme?.themeParameters?.[0]?.value || '#D25627',
+                color: theme?.themeParameters?.[1]?.value || '#fff',
               }}
             >
             <FontAwesomeIcon
-              icon={faHatWizard}
+              icon={faSearch}
               size="1x"
-              className={advStyles.dnaicon}
-              color="#F2E86D"
+              color="#fff"
+              className={advStyles.searchicon}
             />
             <div>Search</div>
           </div>
