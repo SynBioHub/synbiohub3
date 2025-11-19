@@ -12,21 +12,23 @@ export default function NewCollectionButtons(properties) {
   const dispatch = useDispatch();
   return (
     <div className={styles.createcollectionbuttons}>
-      <div
-        className={`${styles.createcollectionbutton} ${styles.cancelbutton}`}
-        role="button"
-        onClick={() => {
-          dispatch(getCanSubmitTo());
-          dispatch(setPromptNewCollection(false));
-        }}
-      >
-        <FontAwesomeIcon
-          icon={faArrowCircleLeft}
-          size="1x"
-          className={styles.cancelbuttonicon}
-        />
-        Cancel
-      </div>
+      {!properties.hideCancel && (
+        <div
+          className={`${styles.createcollectionbutton} ${styles.cancelbutton}`}
+          role="button"
+          onClick={() => {
+            dispatch(getCanSubmitTo());
+            dispatch(setPromptNewCollection(false));
+          }}
+        >
+          <FontAwesomeIcon
+            icon={faArrowCircleLeft}
+            size="1x"
+            className={styles.cancelbuttonicon}
+          />
+          Cancel
+        </div>
+      )}
       <div
         className={`${styles.createcollectionbutton} ${styles.createbutton} ${
           properties.needsVerification ? '' : styles.createbuttonenabled
