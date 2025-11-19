@@ -12,7 +12,7 @@ module.exports = {
     es6: true,
     jest: true
   },
-  plugins: ['simple-import-sort'],
+  plugins: ['simple-import-sort', 'unused-imports'],
   settings: {
     react: {
       version: 'detect'
@@ -26,8 +26,7 @@ module.exports = {
     'plugin:sonarjs/recommended',
     'plugin:unicorn/recommended',
     'plugin:security/recommended',
-    'plugin:react-hooks/recommended',
-    'plugin:unused-imports/recommended'
+    'plugin:react-hooks/recommended'
   ],
   rules: {
     'unused-imports/no-unused-imports': 'error',
