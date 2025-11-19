@@ -2,9 +2,17 @@ import styles from "../../../styles/view.module.css";
 import { faTrashAlt, faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import CustomModal from "./CustomModal";
 import { useSelector } from "react-redux";
+
+import axios from "axios";
+
+import { toast } from "react-toastify";
+
+import getConfig from 'next/config';
+const { publicRuntimeConfig } = getConfig();
+import { useRouter } from 'next/router';
 
 /**
  * A modal that handles deleting an element.
@@ -13,12 +21,43 @@ import { useSelector } from "react-redux";
  */
 export default function DeleteModal(properties) {
   const [submitted, setSubmitted] = useState(false);
-  const [submittable, setSubmittable] = useState(false);
+  const [submittable, setSubmittable] = useState(true);
   const token = useSelector(state => state.user.token);
+  const router = useRouter();
 
-  const handleDelete = () => {
-    properties.onDeletionComplete?.(); // Call the callback function
-  };
+  const warningToast = (message) => toast.warn(message, {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      className: styles.modaltoast
+    });
+
+  useEffect(() => {
+    if(submitted) {
+      const deleteElement = async () => {
+        const url = `${publicRuntimeConfig.backend}${properties.url}/removeCollection`;
+        try {
+          const result = await axios.get(url, {
+            headers: {
+              'X-authorization': token
+            }
+          });
+          if (result.status === 200) {
+            router.push('/submissions');
+          }
+        } catch (error) {
+          console.error("Error deleting item:", error);
+          warningToast("Error Deleting Item");
+          setSubmitted(false);
+        }
+      }
+      deleteElement();
+    }
+  }, [submitted])
 
   return (
     <CustomModal
@@ -48,7 +87,6 @@ export default function DeleteModal(properties) {
           </div>
         </React.Fragment>
       }
-      onConfirm={handleDelete}
     />
   );
 }

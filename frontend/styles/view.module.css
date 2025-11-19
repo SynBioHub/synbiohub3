@@ -20,8 +20,16 @@
 .sidepanelcontaineropen {
   display: flex;
   flex-shrink: 0;
-  width: 22.2rem;
+  width: 23rem;
   transition: width 0.3s;
+}
+
+.sidepanel::-webkit-scrollbar {
+  display: none;
+}
+
+.boundedheightforsidepanel::-webkit-scrollbar {
+  display: none;
 }
 
 .searchSidepanelcontainercollapse {
@@ -61,6 +69,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  
 }
 
 
@@ -80,6 +89,9 @@
   display: flex;
   margin: 1rem 1rem 0.75rem 1rem;
   align-items: center;
+  word-break: break-word;
+  white-space: normal;
+  overflow-wrap: break-word;
 }
 
 .title {
@@ -88,7 +100,9 @@
   padding: 0;
   margin: 0 0.5rem 0 0;
   font-size: 1.4rem;
-  white-space: nowrap;
+  word-break: break-word;
+  white-space: normal;
+  overflow-wrap: break-word;
 }
 
 .panelbutton {
@@ -128,7 +142,7 @@
 }
 
 .subheader {
-  margin: 0 1rem;
+  margin: 0.5rem 1rem;
   display: flex;
   justify-content: space-between;
 }
@@ -147,9 +161,9 @@
 }
 
 .actionicon {
-  margin-left: 0.75rem;
+  margin-left: 0.4rem;
   color: #D25627;
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   cursor: pointer;
   transition: transform .2s;
 }
@@ -239,6 +253,7 @@
 
 .pagesections {
   margin: 0.5rem;
+  max-width: 100%;
 }
 
 .pagesectionstitle {
@@ -329,6 +344,9 @@
   font-weight: 500;
   color: #888;
   font-size: 1.4rem;
+  word-break: break-word;
+  white-space: normal;
+  overflow-wrap: break-word;
 }
 
 .maintitleid:hover {
@@ -361,7 +379,7 @@
 }
 
 .section {
-  width: 100%;
+  width: calc(100vw - 27rem);
   border-radius: 0.4rem;
   box-shadow: 0px 0px 5px #948b87;
   padding: 0.5rem;
@@ -602,6 +620,9 @@
 
 .table tr {
   width: 100%;
+  word-break: break-word;
+  white-space: normal;
+  overflow-wrap: break-word;
 }
 
 .table td {
