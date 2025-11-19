@@ -64,6 +64,7 @@ export default function Setup({ setInSetupMode }) {
             alt="logo"
             width={150}
             height={100}
+            src="/images/logo_secondary.svg"
           />
           <div className={styles.titletext} style={primaryTitleStyle}>Welcome to SynBioHub!</div>
         </div>
