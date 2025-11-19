@@ -60,10 +60,10 @@ export default function Setup({ setInSetupMode }) {
     <TopLevel doNotTrack={true} navbar={<div></div>} publicPage={true}>
       <div className={styles.container}>
         <div className={styles.title}>
-          <img
-            src="/images/logo_secondary.svg"
+          <Image
             alt="logo"
-            style={{ width: '150px', height: 'auto' }}
+            width={150}
+            height={100}
           />
           <div className={styles.titletext} style={primaryTitleStyle}>Welcome to SynBioHub!</div>
         </div>
