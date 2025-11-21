@@ -90,7 +90,7 @@ export default function Members(properties) {
     limit: ' LIMIT 10000 '
   };
 
-  if (token && !isPublic) {
+  if (token && !isPublic && !properties.uri.endsWith("/share")) {
     parameters.from = "FROM <" + privateGraph + ">";
   } else if (properties.uri.endsWith("/share")) {
     const parts = properties.uri.split('/');
@@ -404,7 +404,6 @@ function MemberTable(properties) {
 
         const isShareLink = properties.uri.endsWith('/share');
         const customSuffix = isShareLink ? `/${parts.slice(-2).join('/')}` : '';
-        console.log(customSuffix);
 
         return (
           <tr key={member.displayId + member.description}>
@@ -540,7 +539,6 @@ const useFilters = (query, options, token, dispatch) => {
   const url = createUrl(query, options);
   const currentURL = window.location.href;
   let finalUrl = url;
-
   if (currentURL.endsWith('/share')) {
     const currentURLObj = new URL(currentURL);
     const urlObj = new URL(url);

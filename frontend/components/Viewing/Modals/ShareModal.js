@@ -54,6 +54,7 @@ export default function ShareModal(properties) {
   useEffect(() => {
     const fetchShareLink = async () => {
       const url = `${publicRuntimeConfig.backend}${properties.url}/shareLink`;
+      console.log("URL:", url);
       const headers = {
         Accept: "text/plain; charset=UTF-8",
         "X-authorization": token
