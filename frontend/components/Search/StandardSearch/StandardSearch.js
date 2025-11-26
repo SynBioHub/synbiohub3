@@ -12,6 +12,8 @@ import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
 import SearchHeader from '../SearchHeader/SearchHeader';
 import { processUrl } from '../../Admin/Registries';
+import lookupRole from '../../../namespace/lookupRole';
+
 
 import {
   countloader,
@@ -320,6 +322,20 @@ const useSearchCount = (query, url, token, dispatch) => {
   };
 };
 
+function getType(member) {
+  var memberType = member.type
+    ? member.type.slice(member.type.lastIndexOf('#') + 1)
+    : 'Unknown';
+  if (member.sbolType) {
+    memberType = member.sbolType.slice(member.sbolType.lastIndexOf('#') + 1);
+  }
+  if (member.role) {
+    memberType = lookupRole(member.role).description.name;
+  }
+  return memberType;
+}
+
+
 const getTypeAndUrl = async (result, registries) => {
   let type = '';
   const potentialType = result.type.toLowerCase();
@@ -339,6 +355,7 @@ const getTypeAndUrl = async (result, registries) => {
   }
 
   result.type = type;
+  result.derivedType = getType(result);
 
   const processed = await processUrl(result.uri, registries);
   result.url = processed.urlRemovedForLink || processed.original;
