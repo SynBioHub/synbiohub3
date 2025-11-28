@@ -82,7 +82,7 @@ const fetchOptions = async (
     }
   }
 
-  // Sort the data array by label (or by value, depending on what you want)
+  // Sort the data array by label
   newData.sort((a, b) => {
     const la = (a.label || '').toString().toLowerCase();
     const lb = (b.label || '').toString().toLowerCase();
@@ -90,7 +90,7 @@ const fetchOptions = async (
     if (la > lb) return 1;
     return 0;
   });
-  
+
   setData(newData);
   setLoading(false);
 };
@@ -127,7 +127,7 @@ const processResults = (result, setLoading, setData, setError, parseResult) => {
       newData.push(parseResult(result));
     }
 
-    // Sort the data array by label (or by value, depending on what you want)
+    // Sort the data array by label 
     newData.sort((a, b) => {
       const la = (a.label || '').toString().toLowerCase();
       const lb = (b.label || '').toString().toLowerCase();
