@@ -52,6 +52,13 @@ export default function Members(properties) {
   const [processedUri, setProcessedUri] = useState(publicRuntimeConfig.backend);
   const theme = JSON.parse(localStorage.getItem('theme')) || {};
   const registries = JSON.parse(localStorage.getItem("registries")) || {};
+  const persistRoot = JSON.parse(localStorage.getItem("persist:root"));
+  const rootUser = JSON.parse(persistRoot.username);
+  const parts = properties.uri.split('/');
+  const urlUsername = parts[4];
+  const isOwner = urlUsername === rootUser;
+  const currentURL = window.location.href;
+  const isPublic = currentURL.includes('/public/');
 
   let preparedSearch =
     search !== ''
@@ -72,7 +79,7 @@ export default function Members(properties) {
       preparedSearch += '\n FILTER(?type = <' + typeFilter + '>)';
     }
   }
-  
+
   const parameters = {
     from: '',
     graphPrefix: `${theme.uriPrefix}`, // TODO: Maybe get this from somewhere? 
@@ -83,9 +90,14 @@ export default function Members(properties) {
     limit: ' LIMIT 10000 '
   };
 
-  if (token) {
+  if (token && !isPublic && !properties.uri.endsWith("/share")) {
     parameters.from = "FROM <" + privateGraph + ">";
-  } else {
+  } else if (properties.uri.endsWith("/share")) {
+    const parts = properties.uri.split('/');
+    const fromPart = parts.slice(0, 5).join('/');
+    parameters.from = "FROM <" + fromPart + ">";
+    const collectionPart = parts.slice(0, 8).join('/');
+    parameters.collection = collectionPart;
   }
 
   const searchQuery = typeFilter !== 'Show Only Root Objects';
@@ -96,34 +108,34 @@ export default function Members(properties) {
     query = getCollectionMembersSearch;
   }
 
-  const { members, mutate } = privateGraph
+  const { members, mutate } = isOwner
     ? useMembers(query, parameters, token, dispatch)
     : useMembers(query, parameters, dispatch);
 
-  const { count: totalMemberCount } = privateGraph
-  ? useCount(
-    CountMembersTotal,
-    { ...parameters, search: '' },
-    privateGraph ? token : undefined, // Pass token only if privateGraph is true
-    dispatch
-  )
-  : useCount(
-    CountMembersTotal,
-    { ...parameters, search: '' },
-    dispatch);
+  const { count: totalMemberCount } = isOwner
+    ? useCount(
+      CountMembersTotal,
+      { ...parameters, search: '' },
+      privateGraph ? token : undefined, // Pass token only if privateGraph is true
+      dispatch
+    )
+    : useCount(
+      CountMembersTotal,
+      { ...parameters, search: '' },
+      dispatch);
 
-  const { count: currentMemberCount } = privateGraph
-  ? useCount(
-    searchQuery ? CountMembersTotal : CountMembers,
-    parameters,
-    privateGraph ? token : undefined, // Pass token only if privateGraph is true
-    dispatch
-  )
-  : useCount(
-    searchQuery ? CountMembersTotal : CountMembers,
-    parameters,
-    dispatch
-  );
+  const { count: currentMemberCount } = isOwner
+    ? useCount(
+      searchQuery ? CountMembersTotal : CountMembers,
+      parameters,
+      privateGraph ? token : undefined, // Pass token only if privateGraph is true
+      dispatch
+    )
+    : useCount(
+      searchQuery ? CountMembersTotal : CountMembers,
+      parameters,
+      dispatch
+    );
 
   useEffect(() => {
     if (properties.refreshMembers) {
@@ -135,19 +147,19 @@ export default function Members(properties) {
   const publicPrefix =  theme.uriPrefix + 'public/';
 
   const { filters } = !properties.uri.includes(publicPrefix)
-  ? useFilters(
-    getTypesRoles,
-    { uri: properties.uri },
-    token,
-    dispatch,
-    privateGraph
-  )
-  : useFilters(
-    getTypesRoles,
-    { uri: properties.uri },
-    token,
-    dispatch
-  );
+    ? useFilters(
+      getTypesRoles,
+      { uri: properties.uri },
+      token,
+      dispatch,
+      privateGraph
+    )
+    : useFilters(
+      getTypesRoles,
+      { uri: properties.uri },
+      token,
+      dispatch
+    );
 
   const outOfBoundsHandle = offset => {
     const newBounds = getNewBounds(offset, currentMemberCount);
@@ -165,7 +177,6 @@ export default function Members(properties) {
     processUri();
     return () => { isMounted = false };
   }, [dispatch]);
-
   return (
     <React.Fragment>
       <FilterHeader filters={filters} setTypeFilter={setTypeFilter} />
@@ -273,7 +284,7 @@ function MemberTable(properties) {
   const isPublicCollection = properties.uri.includes("/public/");
   const token = useSelector(state => state.user.token);
   const dispatch = useDispatch();
-  
+
   useEffect(() => {
     async function processMembers() {
       if (properties.members) {
@@ -340,6 +351,7 @@ function MemberTable(properties) {
 
         const objectUriParts = getAfterThirdSlash(properties.uri);
         const objectUri = `${publicRuntimeConfig.backend}/${objectUriParts}`;
+        const parts = properties.uri.split('/');
 
         const icon = compareUri(member.uri, `/${objectUriParts}`);
 
@@ -394,17 +406,20 @@ function MemberTable(properties) {
           }
         };
 
+        const isShareLink = properties.uri.endsWith('/share');
+        const customSuffix = isShareLink ? `/${parts.slice(-2).join('/')}` : '';
+
         return (
           <tr key={member.displayId + member.description}>
             <td>
-              <Link href={member.uri}>
+              <Link href={`${member.uri}${customSuffix}`}>
                 <a className={styles.membername}>
                   <code>{textArea.value}</code>
                 </a>
               </Link>
             </td>
             <td>
-              <Link href={member.uri}>
+              <Link href={`${member.uri}${customSuffix}`}>
                 <a className={styles.memberid}>{member.displayId}</a>
               </Link>
             </td>
@@ -414,14 +429,14 @@ function MemberTable(properties) {
               <td onClick={() => handleIconClick(member)} className={styles.modalicon} title="Delete Member">
                 <FontAwesomeIcon icon={faTrash} />
               </td>
-          )}
-          {!isPublicCollection && icon === faUnlink && (
+            )}
+            {!isPublicCollection && icon === faUnlink && (
               <td onClick={() => handleIconClick(member)} className={styles.modalicon} title="Remove member from collection">
                 <FontAwesomeIcon icon={faUnlink} />
               </td>
-          )}
-        </tr>
-      );
+            )}
+          </tr>
+        );
       }}
 
     />
@@ -473,12 +488,22 @@ const createUrl = (query, options) => {
 
 const useCount = (query, options, token, dispatch) => {
   const url = createUrl(query, options, token);
+  const currentURL = window.location.href;
+  let finalUrl = url;
+
+  if (currentURL.endsWith('/share')) {
+    const currentURLObj = new URL(currentURL);
+    const urlObj = new URL(url);
+
+    // Replace base (protocol + host + port) of `url` with that of current page
+    finalUrl = `${publicRuntimeConfig.backend}${currentURLObj.pathname}${urlObj.pathname}${urlObj.search}`;
+  }
   let data, error;
 
   if (typeof token === 'string') {
-    ({ data, error } = useSWR([url, token, dispatch], fetcher));
+    ({ data, error } = useSWR([finalUrl, token, dispatch], fetcher));
   } else {
-    ({ data, error } = useSWR([url, dispatch], fetcher));
+    ({ data, error } = useSWR([finalUrl, dispatch], fetcher));
   }
 
   let processedData = data ? processResults(data)[0].count : undefined;
@@ -489,12 +514,22 @@ const useCount = (query, options, token, dispatch) => {
 
 const useMembers = (query, options, token, dispatch) => {
   const url = createUrl(query, options);
+  const currentURL = window.location.href;
+  let finalUrl = url;
+
+  if (currentURL.endsWith('/share')) {
+    const currentURLObj = new URL(currentURL);
+    const urlObj = new URL(url);
+
+    // Replace base (protocol + host + port) of `url` with that of current page
+    finalUrl = `${publicRuntimeConfig.backend}${currentURLObj.pathname}${urlObj.pathname}${urlObj.search}`;
+  }
   let data, error, mutate;
 
   if (typeof token === 'string') {
-    ({ data, error, mutate } = useSWR([url, token, dispatch], fetcher));
+    ({ data, error, mutate } = useSWR([finalUrl, token, dispatch], fetcher));
   } else {
-    ({ data, error, mutate } = useSWR([url, dispatch], fetcher));
+    ({ data, error, mutate } = useSWR([finalUrl, dispatch], fetcher));
   }
 
   let processedData = data ? processResults(data) : undefined;
@@ -506,17 +541,24 @@ const useMembers = (query, options, token, dispatch) => {
 
 const useFilters = (query, options, token, dispatch, privateGraph=null) => {
   let url = createUrl(query, options);
+  if (privateGraph) {
+    url += `&default-graph-uri=${privateGraph}`;
+  }
+  const currentURL = window.location.href;
+  let finalUrl = url;
+  if (currentURL.endsWith('/share')) {
+    const currentURLObj = new URL(currentURL);
+    const urlObj = new URL(url);
 
-if (privateGraph) {
-  url += `&default-graph-uri=${privateGraph}`;
-}
-
+    // Replace base (protocol + host + port) of `url` with that of current page
+    finalUrl = `${publicRuntimeConfig.backend}${currentURLObj.pathname}${urlObj.pathname}${urlObj.search}`;
+  }
   let data, error, mutate;
 
   if (typeof token === 'string') {
-    ({ data, error, mutate } = useSWR([url, token, dispatch], fetcher));
+    ({ data, error, mutate } = useSWR([finalUrl, token, dispatch], fetcher));
   } else {
-    ({ data, error, mutate } = useSWR([url, dispatch], fetcher));
+    ({ data, error, mutate } = useSWR([finalUrl, dispatch], fetcher));
   }
 
   let processedData = data ? processResults(data) : undefined;
@@ -536,7 +578,9 @@ const fetcher = (url, token, dispatch) =>
         'X-authorization': token
       }
     })
-    .then(response => response.data)
+    .then(response => {
+      return response.data;
+    })
     .catch(error => {
       error.customMessage =
         'Request failed while getting collection members info';

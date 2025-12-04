@@ -212,6 +212,7 @@ function getSearch(type) {
 }
 
 export function isValidURI(uri) {
-  const pattern = /^(https?|ftp|file):\/\/([A-Z0-9.-]+)(:[0-9]+)?(\/[A-Z0-9.-_]*)*$/i;
+  console.log(uri);
+  const pattern = /^(https?|ftp|file):\/\/([A-Za-z0-9.-]+)(:[0-9]+)?(\/[A-Za-z0-9._:-]+)*(\/)?(\?[^\s#]*)?(#[^\s]*)?$/i;
   return pattern.test(uri);
 }

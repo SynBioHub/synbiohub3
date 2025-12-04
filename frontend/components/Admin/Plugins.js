@@ -39,7 +39,6 @@ export default function Plugins() {
   let pluginsUseLocalCompose = useState(false);
   let pluginLocalComposePrefix = useState('');
   if (theme && theme.pluginsUseLocalCompose && theme.pluginLocalComposePrefix) {
-    console.log(theme);
     pluginsUseLocalCompose = theme.pluginsUseLocalCompose;
     pluginLocalComposePrefix = theme.pluginLocalComposePrefix;
   }

@@ -24,6 +24,7 @@ export default function Theme() {
   const [showModuleInteractions, setShowModuleInteractions] = useState(true);
   const [removePublicEnabled, setRemovePublicEnabled] = useState(true);
   const [requireLogin, setRequireLogin] = useState(false);
+  const [allowPublicSignup, setAllowPublicSignup] = useState(true);
   const [suppressDebugLogs, setSuppressDebugLogs] = useState(false);
   const [suppressInfoLogs, setSuppressInfoLogs] = useState(false);
   const [suppressWarningLogs, setSuppressWarningLogs] = useState(false);
@@ -64,6 +65,7 @@ export default function Theme() {
     setShowModuleInteractions(themeData.showModuleInteractions === 'true' || themeData.showModuleInteractions === true);
     setRemovePublicEnabled(themeData.removePublicEnabled === 'true' || themeData.removePublicEnabled === true);
     setRequireLogin(themeData.requireLogin === 'true' || themeData.requireLogin === true);
+    setAllowPublicSignup(themeData.allowPublicSignup === 'true' || themeData.allowPublicSignup === true);
     setSuppressDebugLogs(themeData.suppressDebugLogs === 'true' || themeData.suppressDebugLogs === true);
     setSuppressInfoLogs(themeData.suppressInfoLogs === 'true' || themeData.suppressInfoLogs === true);
     setSuppressWarningLogs(themeData.suppressWarningLogs === 'true' || themeData.suppressWarningLogs === true);

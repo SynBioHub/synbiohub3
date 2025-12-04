@@ -4,7 +4,7 @@ import Loader from 'react-loader-spinner';
 import { useDispatch, useSelector } from 'react-redux';
 import { setOffset } from '../../../redux/actions'
 import useSWR from 'swr';
-import { faSearch, faBars} from '@fortawesome/free-solid-svg-icons';
+import { faHatWizard, faSearch, faBars } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRouter } from 'next/router';
 import Options from '../AdvancedSearch/Options';
@@ -12,6 +12,7 @@ import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
 import SearchHeader from '../SearchHeader/SearchHeader';
 import { processUrl } from '../../Admin/Registries';
+import { isValidURI } from '../../Viewing/Shell';
 import lookupRole from '../../../namespace/lookupRole';
 
 
@@ -74,7 +75,7 @@ export default function StandardSearch() {
       router.push('/login'); // Redirect to the login page
     }
   }, [theme.requireLogin, router]);
-  
+
 
   const constructSearch = () => {
     let collectionUrls = '';
@@ -100,15 +101,16 @@ export default function StandardSearch() {
       'modifedBefore',
       true
     )}${constructExtraFilters()}`;
+    console.log(url);
     setUrl(url);
   };
-  
-  const handleDelete = (delFilterIndex) => { 
-    setExtraFilters(prevFilters => { 
-      return prevFilters.filter((_, index) => index !== delFilterIndex); 
-    }); 
-  }; 
-  
+
+  const handleDelete = (delFilterIndex) => {
+    setExtraFilters(prevFilters => {
+      return prevFilters.filter((_, index) => index !== delFilterIndex);
+    });
+  };
+
 
   const addFilter = filters => {
     return [
@@ -132,12 +134,11 @@ export default function StandardSearch() {
 
   const getUrl = (value, term, isDate = false) => {
     if (value) {
-      if(term.startsWith('http')) {
-          term = encodeURIComponent(term); // IRI needs to be encoded
-        }
-      
-      if (!isDate) return `${term}=<${encodeURIComponent(value)}>&`;
-      return `${term}=${encodeURIComponent(value.toISOString().slice(0, 10))}&`;
+      if (isDate) return `${term}=${encodeURIComponent(value.toISOString().slice(0, 10))}&`;
+      if (isValidURI(value)) {
+        return `${term}=<${encodeURIComponent(value)}>&`;
+      } 
+      return `${term}='${encodeURIComponent(value)}'&`;
     }
     return '';
   };
@@ -182,7 +183,7 @@ export default function StandardSearch() {
     dispatch
   );
 
-if (isError) {
+  if (isError) {
     return (
       <div className={standarderror}>
         Errors were encountered while fetching the data
@@ -191,9 +192,9 @@ if (isError) {
   }
   if (isLoading) {
     return (
-        <div className={standardresultsloading}>
-          <Loader color="#D25627" type="ThreeDots" />
-        </div>
+      <div className={standardresultsloading}>
+        <Loader color="#D25627" type="ThreeDots" />
+      </div>
     );
   }
   for (const result of results) {
@@ -228,34 +229,34 @@ if (isError) {
           </div>
         </div>
 
-        <div className={viewStyles.searchBoundedheightforsidepanel}
-          style={{
-            transform: `translateX(-${translation === 14 ? 2.5 : 0}rem)`,
-            transition: 'transform 0.3s'
-          }}
-        >
-          <div>
-            <Options
-              creator={creator}
-              setCreator={setCreator}
+          <div className={viewStyles.searchBoundedheightforsidepanel}
+            style={{
+              transform: `translateX(-${translation === 14 ? 2.5 : 0}rem)`,
+              transition: 'transform 0.3s'
+            }}
+          >
+            <div>
+              <Options
+                creator={creator}
+                setCreator={setCreator}
 
-              objectType={objectType}
-              setObjectType={setObjectType}
+                objectType={objectType}
+                setObjectType={setObjectType}
 
-              sbolType={sbolType}
-              setSbolType={setSbolType}
+                sbolType={sbolType}
+                setSbolType={setSbolType}
 
-              role={role}
-              setRole={setRole}
+                role={role}
+                setRole={setRole}
 
-              collections={collections}
-              setCollections={setCollections}
+                collections={collections}
+                setCollections={setCollections}
 
-              modified={modifed}
-              setModified={setModified}
+                modified={modifed}
+                setModified={setModified}
 
-              extraFilters={extraFilters}
-              setExtraFilters={setExtraFilters}
+                extraFilters={extraFilters}
+                setExtraFilters={setExtraFilters}
 
               addFilter={addFilter}
               handleDelete={handleDelete}
@@ -282,14 +283,14 @@ if (isError) {
           </div>
         </div>
 
+          </div>
         </div>
       </div>
-    </div>
-    <div className={viewStyles.searchContent}>
+      <div className={viewStyles.searchContent}>
         <SearchHeader selected="Standard Search" />
         <ResultTable count={count} data={results} />
+      </div>
     </div>
-  </div>
   );
 }
 const useSearchResults = (query, url, offset, limit, token, dispatch) => {
