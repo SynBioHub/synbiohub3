@@ -151,7 +151,7 @@ export default function Members(properties) {
       getTypesRoles,
       { uri: properties.uri },
       token,
-      dispatch
+      dispatch,
       privateGraph
     )
     : useFilters(
