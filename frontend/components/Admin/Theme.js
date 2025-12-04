@@ -25,6 +25,10 @@ export default function Theme() {
   const [removePublicEnabled, setRemovePublicEnabled] = useState(true);
   const [requireLogin, setRequireLogin] = useState(false);
   const [allowPublicSignup, setAllowPublicSignup] = useState(true);
+  const [suppressDebugLogs, setSuppressDebugLogs] = useState(false);
+  const [suppressInfoLogs, setSuppressInfoLogs] = useState(false);
+  const [suppressWarningLogs, setSuppressWarningLogs] = useState(false);
+  const [suppressErrorLogs, setSuppressErrorLogs] = useState(false);
   const token = useSelector(state => state.user.token);
 
   useEffect(() => {
@@ -62,35 +66,15 @@ export default function Theme() {
     setRemovePublicEnabled(themeData.removePublicEnabled === 'true' || themeData.removePublicEnabled === true);
     setRequireLogin(themeData.requireLogin === 'true' || themeData.requireLogin === true);
     setAllowPublicSignup(themeData.allowPublicSignup === 'true' || themeData.allowPublicSignup === true);
+    setSuppressDebugLogs(themeData.suppressDebugLogs === 'true' || themeData.suppressDebugLogs === true);
+    setSuppressInfoLogs(themeData.suppressInfoLogs === 'true' || themeData.suppressInfoLogs === true);
+    setSuppressWarningLogs(themeData.suppressWarningLogs === 'true' || themeData.suppressWarningLogs === true);
+    setSuppressErrorLogs(themeData.suppressErrorLogs === 'true' || themeData.suppressErrorLogs === true);
+    setLogoFile(themeData.logo || null);
   };
 
-  const handleShowModuleInteractionsChange = (event) => {
-    setShowModuleInteractions(event.target.checked);
-  };
-
-  const handleRemovePublicEnabledChange = (event) => {
-    setRemovePublicEnabled(event.target.checked);
-  };
-
-  const handleRequireLoginChange = (event) => {
-    setRequireLogin(event.target.checked);
-  }
-
-  const handleBaseColorChange = (event) => {
-    setBaseColor(event.target.value);
-  };
 
   const handleSave = async () => {
-    const url = `${publicRuntimeConfig.backend}/admin/theme`;
-    const headers = {
-      Accept: 'text/plain',
-      'X-authorization': token
-    };
-
-    // if (altHome !== '' && !isValidURI(altHome)) {
-    //   alert('Alternate Home Page must be empty or contain a valid URL.');
-    //   return; // Prevent form submission
-    // }
 
     setLoading(true);
     const formData = new FormData();
@@ -101,6 +85,10 @@ export default function Theme() {
     formData.append('removePublicEnabled', String(removePublicEnabled));
     formData.append('showModuleInteractions', String(showModuleInteractions));
     formData.append('requireLogin', String(requireLogin));
+    formData.append('suppressDebugLogs', String(suppressDebugLogs));
+    formData.append('suppressInfoLogs', String(suppressInfoLogs));
+    formData.append('suppressWarningLogs', String(suppressWarningLogs));
+    formData.append('suppressErrorLogs', String(suppressErrorLogs));
     if (logoFile) {
       formData.append('logo', logoFile);
     }
@@ -134,8 +122,27 @@ export default function Theme() {
         // Update component state
         updateThemeState(updatedTheme);
 
-        alert('Theme saved successfully!');
-        window.location.reload();
+        // additionally persist uploaded logo to localStorage (if provided),
+        // then continue with the existing success flow (alert + reload).
+        if (logoFile) {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            const dataUrl = reader.result;
+            try {
+              localStorage.setItem('sbh_logo', dataUrl);
+              const updatedThemeWithLogo = { ...updatedTheme, logoUrl: dataUrl };
+              localStorage.setItem('theme', JSON.stringify(updatedThemeWithLogo));
+            } catch (e) {
+              // ignore storage errors
+            }
+            alert('Theme saved successfully!');
+            window.location.reload();
+          };
+          reader.readAsDataURL(logoFile);
+        } else {
+          alert('Theme saved successfully!');
+          window.location.reload();
+        }
       } else {
         throw new Error('Failed to save theme');
       }
@@ -154,13 +161,13 @@ export default function Theme() {
       {theme && (
         <div className={styles.themeContainer}>
           <div className={styles.title}>Theme</div>
-          {/* <div className={styles.themeFont}>Logo</div>
+          <div className={styles.themeFont}>Logo</div>
           <input
             className={styles.newLogoFilePicker}
             type="file"
             onChange={(e) => setLogoFile(e.target.files[0])}
-          />  */}
-
+            accept="image/*"
+          />
           <h2 className={styles.themeFont}>Instance Name</h2>
           <input
             type="text"
@@ -207,7 +214,7 @@ export default function Theme() {
                   <input
                     type="checkbox"
                     checked={showModuleInteractions}
-                    onChange={handleShowModuleInteractionsChange}
+                    onChange={event => setShowModuleInteractions(event.target.checked)}
                     className={styles.themecheckbox}
                   />
                   Show Module Interactions
@@ -217,7 +224,7 @@ export default function Theme() {
                   <input
                     type="checkbox"
                     checked={removePublicEnabled}
-                    onChange={handleRemovePublicEnabledChange}
+                    onChange={event => setRemovePublicEnabled(event.target.checked)}
                     className={styles.themecheckbox}
                   />
                   Remove Public Enabled
@@ -227,10 +234,46 @@ export default function Theme() {
                   <input
                     type="checkbox"
                     checked={requireLogin}
-                    onChange={handleRequireLoginChange}
+                    onChange={event => setRequireLogin(event.target.checked)}
                     className={styles.themecheckbox}
                   />
                   Require Login
+                </label>
+                <label className={styles.themecheckboxLabel}>
+                  <input
+                    type="checkbox"
+                    checked={suppressDebugLogs}
+                    onChange={event => setSuppressDebugLogs(event.target.checked)}
+                    className={styles.themecheckbox}
+                  />
+                  Suppress Debug Logs
+                </label>
+                <label className={styles.themecheckboxLabel}>
+                  <input
+                    type="checkbox"
+                    checked={suppressInfoLogs}
+                    onChange={event => setSuppressInfoLogs(event.target.checked)}
+                    className={styles.themecheckbox}
+                  />
+                  Suppress Info Logs
+                </label>
+                <label className={styles.themecheckboxLabel}>
+                  <input
+                    type="checkbox"
+                    checked={suppressWarningLogs}
+                    onChange={event => setSuppressWarningLogs(event.target.checked)}
+                    className={styles.themecheckbox}
+                  />
+                  Suppress Warning Logs
+                </label>
+                <label className={styles.themecheckboxLabel}>
+                  <input
+                    type="checkbox"
+                    checked={suppressErrorLogs}
+                    onChange={event => setSuppressErrorLogs(event.target.checked)}
+                    className={styles.themecheckbox}
+                  />
+                  Suppress Error Logs
                 </label>
 
               </div>

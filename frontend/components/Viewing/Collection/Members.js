@@ -144,16 +144,20 @@ export default function Members(properties) {
     }
   }, [properties.refreshMembers, mutate]);
 
-  const { filters } = isOwner
+  const publicPrefix =  theme.uriPrefix + 'public/';
+
+  const { filters } = !properties.uri.includes(publicPrefix)
     ? useFilters(
       getTypesRoles,
       { uri: properties.uri },
       token,
       dispatch
+      privateGraph
     )
     : useFilters(
       getTypesRoles,
       { uri: properties.uri },
+      token,
       dispatch
     );
 
@@ -535,8 +539,11 @@ const useMembers = (query, options, token, dispatch) => {
   };
 };
 
-const useFilters = (query, options, token, dispatch) => {
-  const url = createUrl(query, options);
+const useFilters = (query, options, token, dispatch, privateGraph=null) => {
+  let url = createUrl(query, options);
+  if (privateGraph) {
+    url += `&default-graph-uri=${privateGraph}`;
+  }
   const currentURL = window.location.href;
   let finalUrl = url;
   if (currentURL.endsWith('/share')) {

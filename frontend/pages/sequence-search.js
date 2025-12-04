@@ -2,6 +2,11 @@ import { faDna } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
+
+import useSWR from 'swr';
+import axios from 'axios';
+import getConfig from 'next/config';
 
 import SearchHeader from '../components/Search/SearchHeader/SearchHeader';
 import Options from '../components/Search/SequenceSearch/Options';
@@ -10,7 +15,20 @@ import InputField from '../components/Submit/ReusableComponents/InputField';
 import TopLevel from '../components/TopLevel';
 import styles from '../styles/sequencesearch.module.css';
 
+const { publicRuntimeConfig } = getConfig();
+
+const fetcher = (url, token) =>
+  axios
+    .get(url, {
+      headers: {
+        Accept: 'application/json',
+        'X-authorization': token
+      }
+    })
+    .then(res => res.data);
+
 export default function SequenceSearch() {
+
   const [sequence, setSequence] = useState('');
   const [needsVerification, setNeedsVerification] = useState('');
   const [files, setFiles] = useState([]);
@@ -23,6 +41,17 @@ export default function SequenceSearch() {
   const [percentMatch, setPercentMatch] = useState();
 
   const router = useRouter();
+  const token = useSelector(state => state.user.token)
+
+  const { data: config } = useSWR(
+    token ? [`${publicRuntimeConfig.backend}/admin/explorer`, token] : null,
+    fetcher
+  );
+
+  const sbolExplorerEnabled =
+    config && typeof config.useSBOLExplorer === 'boolean'
+      ? config.useSBOLExplorer
+      : false;
 
   const constructSearch = () => {
     let search = `${searchMethod}=${sequence}`;
@@ -65,8 +94,8 @@ export default function SequenceSearch() {
             />
 
             <UploadFile files={files} setFiles={setFiles} />
-
-            <Options
+            {/* only show options if SBOL Explorer is enabled */}
+            {sbolExplorerEnabled && (<Options
               setSearchMethod={setSearchMethod}
               setPairwiseIdentity={setPairwiseIdentity}
               numResults={numberResults}
@@ -79,7 +108,7 @@ export default function SequenceSearch() {
               setMaxRejects={setMaxRejects}
               percentMatch={percentMatch}
               setPercentMatch={setPercentMatch}
-            />
+            />)}
 
             <div
               className={styles.searchbutton}

@@ -1,4 +1,3 @@
-import { faBackward, faSearch } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -8,6 +7,17 @@ import { useState } from 'react';
 import { useEffect } from 'react';
 import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
+import Profile from '../../Navbar/Profile';
+import Selector from '../../Navbar/Selector';
+import {
+  faAlignLeft,
+  faCloudUploadAlt,
+  faSearch,
+  faSignInAlt,
+  faBackward
+} from '@fortawesome/free-solid-svg-icons';
+import Loader from 'react-loader-spinner';
+
 
 import styles from '../../../styles/navbar.module.css';
 import SearchBar from './SearchBar';
@@ -16,7 +26,13 @@ export default function NavbarSearch(properties) {
   const router = useRouter();
   const pageVisited = useSelector(state => state.tracking.pageVisited);
   const theme = JSON.parse(localStorage.getItem('theme')) || {};
-  const defaultLogo = '/images/logo.svg'
+  const defaultLogo = '/images/logo.svg';
+  const loggedIn = useSelector(state => state.user.loggedIn);
+  const submitting = useSelector(state => state.submit.submitting);
+
+  const [profileControl, setProfileControl] = useState(
+      <Selector icon={faSignInAlt} name="Log in or Register" href="/login" />
+    );
 
   let linkHref = "/";
   if (theme && theme.altHome && theme.altHome.length > 0) {
@@ -33,6 +49,16 @@ export default function NavbarSearch(properties) {
       setLogoUrl(defaultLogo);
     }
   }, [publicRuntimeConfig.backend]);
+
+  useEffect(() => {
+      if (loggedIn) {
+        setProfileControl(<Profile />);
+      } else {
+        setProfileControl(
+          <Selector icon={faSignInAlt} name="Sign In" href="/login" />
+        );
+      }
+    }, [loggedIn]);
 
   return (
     <header className={styles.container}
@@ -76,6 +102,35 @@ export default function NavbarSearch(properties) {
           />
         </div>
       </div>
+      <div className={styles.navcontainer}>
+              {loggedIn && (
+                <nav className={styles.nav}>
+                  <Selector
+                    icon={faCloudUploadAlt}
+                    customIcon={
+                      submitting ? (
+                        <Loader
+                          color="#F2E86D"
+                          type="Puff"
+                          height={25}
+                          width={25}
+                          className={styles.loader}
+                        />
+                      ) : undefined
+                    }
+                    name="Submit"
+                    href="/submit"
+                  />
+                  <Selector
+                    icon={faAlignLeft}
+                    name="Submissions"
+                    href="/submissions"
+                  />
+                </nav>
+              )}
+      
+              {profileControl}
+            </div>
     </header>
   );
 }

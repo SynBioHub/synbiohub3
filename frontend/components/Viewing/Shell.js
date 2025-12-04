@@ -9,7 +9,12 @@ import sequenceOntology from '../../namespace/sequence-ontology';
 import systemsBiologyOntology from '../../namespace/systems-biology-ontology';
 import edamOntology from '../../namespace/edam-ontology';
 
+import { useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBars } from '@fortawesome/free-solid-svg-icons';
+
 export default function Shell(properties) {
+  const [translation, setTranslation] = useState(0);
   const plugins = properties.plugins;
   const metadata = properties.metadata;
 
@@ -23,13 +28,25 @@ export default function Shell(properties) {
 
   if (!json) {
     return (
-      <div className={styles.container}>
-        <SidePanel
-          metadata={metadata}
-          type={properties.type}
-          uri={properties.uri}
-        />
-        <div className={styles.content}>
+      <>
+        <div
+          className={styles.panelbutton}
+          role="button"
+          onClick={() => {
+            translation == 18 ? setTranslation(0) : setTranslation(18);
+          }}
+        >
+          <FontAwesomeIcon icon={faBars} size="1x" />
+        </div>
+        <div className={styles.container}>
+          <SidePanel
+            metadata={metadata}
+            type={properties.type}
+            uri={properties.uri}
+            translation={translation}
+            setTranslation={setTranslation}
+          />
+          <div className={styles.content}>
           <ViewHeader
             name={metadata.name}
             displayId={metadata.displayId}
@@ -45,19 +62,32 @@ export default function Shell(properties) {
         </div>
         <div></div>
       </div>
+      </>
     );
   }
 
   return (
-    <div className={styles.container}>
-      <SidePanel
-        metadata={metadata}
-        type={properties.type}
-        uri={properties.uri}
-        json={json}
-        plugins={plugins}
-      />
-      <div className={styles.content}>
+    <>
+      <div
+        className={styles.panelbutton}
+        role="button"
+        onClick={() => {
+          translation == 18 ? setTranslation(0) : setTranslation(18);
+        }}
+      >
+        <FontAwesomeIcon icon={faBars} size="1x" />
+      </div>
+      <div className={styles.container}>
+        <SidePanel
+          metadata={metadata}
+          type={properties.type}
+          uri={properties.uri}
+          json={json}
+          plugins={plugins}
+          translation={translation}
+          setTranslation={setTranslation}
+        />
+        <div className={styles.content}>
         <ViewHeader
           name={metadata.name}
           displayId={metadata.displayId}
@@ -72,6 +102,7 @@ export default function Shell(properties) {
       </div>
       <div></div>
     </div>
+    </>
   );
 }
 
@@ -154,8 +185,8 @@ export function formatMultipleTitles(titles) {
 
 function getSearch(type) {
   // list the top levels
-  const toplevel = ["Activity", "Agent", "Association", "Attachment", "Collection", "CombinatorialDerivation", "Component", "Datasheet", "Experiment", "FunctionalComponent", "Implementation", "Model", "ModuleDefinition", "Plan", "Sequence", "Usage"]
-  //return tru"e,false based on type
+  const toplevel = ["Activity", "Agent", "Association", "Attachment", "CombinatorialDerivation", "Datasheet", "Experiment", "FunctionalComponent", "Implementation", "Model", "ModuleDefinition", "Plan", "Sequence", "Usage"]
+  //return true,false based on type
   if (type === "ComponentDefinition") {
     return {
       twins: true,

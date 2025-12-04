@@ -11,7 +11,9 @@ import styles from '../styles/home.module.css';
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import showdown from "showdown"
+import getConfig from 'next/config';
 const sdconverter = new showdown.Converter()
+const { publicRuntimeConfig } = getConfig();
 
 /**
  * This page renders the home/landing page for sbh.
@@ -19,10 +21,13 @@ const sdconverter = new showdown.Converter()
 function Home() {
   const [frontPageText, setFrontPageText] = useState('Loading front page text...');
   const token = useSelector(state => state.user.token);
+  const themeData = JSON.parse(localStorage.getItem('theme') || '{}');
+
+  // new: logo state (prefer theme stored value, then separate sbh_logo entry)
+  const [logoUrl, setLogoUrl] = useState(themeData.logoUrl || localStorage.getItem('sbh_logo') || null);
 
   useEffect(() => {
     // Attempt to retrieve frontPageText from localStorage
-    const themeData = JSON.parse(localStorage.getItem('theme') || '{}');
 
     if (themeData.frontPageText) {
       // Convert Markdown to HTML if data is found
@@ -41,11 +46,46 @@ function Home() {
         }, 1500);
       }
     }
-  }, []);
+
+    // new: fetch logo endpoint if we don't already have one
+    if (!logoUrl) {
+      fetch(`${publicRuntimeConfig.backend}/logo`, { method: 'GET', cache: 'no-store' })
+        .then(res => {
+          if (!res.ok) throw new Error('No logo');
+          return res.blob();
+        })
+        .then(blob => {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            const dataUrl = reader.result;
+            // store in localStorage and theme object for reuse
+            try {
+              localStorage.setItem('sbh_logo', dataUrl);
+              const updatedTheme = JSON.parse(localStorage.getItem('theme') || '{}');
+              updatedTheme.logoUrl = dataUrl;
+              localStorage.setItem('theme', JSON.stringify(updatedTheme));
+            } catch (e) { /* ignore storage errors */ }
+            setLogoUrl(dataUrl);
+          };
+          reader.readAsDataURL(blob);
+        })
+        .catch(() => { /* ignore if no logo available */ });
+    }
+  }, []); // run once on mount
 
   return (
     <div className={styles.container}>
+      
       <main className={styles.main}>
+        {/* render logo at top if available */}
+        {logoUrl && (
+          <img
+            src={logoUrl}
+            alt="Instance Logo"
+            style={{ maxWidth: '800px', height: 'auto', maxHeight: '10rem', marginBottom: '1rem' }}
+          />
+        )}
+
         <h1 className={styles.title}>
           Welcome to{' '}
           <a
@@ -53,7 +93,7 @@ function Home() {
             rel="noreferrer"
             target="_blank"
           >
-            SynBio<span className={styles.hubtitle}>Hub</span>
+            {themeData.instanceName || 'SynBioHub'}!
           </a>
         </h1>
         

@@ -118,7 +118,6 @@ fabric.properties
 .mtj.tmp/
 
 # Package Files #
-*.jar
 *.war
 *.nar
 *.ear
@@ -158,4 +157,5 @@ yarn-error.log*
 .vercel
 synbiohub-docker/
 **/commitHash.txt
+frontend/yarn.lock
 

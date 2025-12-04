@@ -31,8 +31,7 @@ import MetadataInfo from './MetadataInfo';
  *
  * @param {Any} properties Information from the parent component.
  */
-export default function SidePanel({ metadata, type, json, uri, plugins }) {
-  const [translation, setTranslation] = useState(0);
+export default function SidePanel({ metadata, type, json, uri, plugins, translation = 0, setTranslation = () => {} }) {
   const [processedUrl, setProcessedUrl] = useState({ original: uri });
   const dateCreated = metadata.createdDates.split(", ")[0].replace('T', ' ').replace('Z', '');
   const dateModified = metadata.modifiedDates.replace('T', ' ').replace('Z', '');
@@ -82,15 +81,6 @@ export default function SidePanel({ metadata, type, json, uri, plugins }) {
               </Link>
             </div>
           </div>
-          <div
-            className={styles.panelbutton}
-            role="button"
-            onClick={() => {
-              translation == 18 ? setTranslation(0) : setTranslation(18);
-            }}
-          >
-            <FontAwesomeIcon icon={faBars} size="1x" />
-          </div>
         </div>
         <div
           className={styles.boundedheightforsidepanel}
@@ -106,6 +96,8 @@ export default function SidePanel({ metadata, type, json, uri, plugins }) {
             name={metadata.name}
             url={processedUrl.urlRemovedForLink || processedUrl.original}
             uri={uri}
+            description={metadata.description}
+            version={metadata.version}
           />
           <div className={styles.infocontainer}>
             <MetadataInfo

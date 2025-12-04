@@ -30,6 +30,7 @@ export default function PublishModal(properties) {
   const [selectedCollection, setSelectedCollection] = useState();
   const [collectionIndex, setCollectionIndex] = useState(0);
   const [toPublish, setToPublish] = useState(properties.toPublish);
+  
 
   useEffect(() => {
     setToPublish(properties.toPublish);
@@ -63,7 +64,14 @@ export default function PublishModal(properties) {
         collection => collection.displayId !== collectionToPublish.displayId
       )
     );
-    window.location.reload();
+
+    if (properties.inCollectionPage) {
+      const redirect = `${selectedCollection.uri}`;
+      window.location.href = redirect;
+    } else {
+      window.location.reload();
+    }
+    
   };
 
   const collectionSelectors = toPublish.map((collection, index) => {
@@ -167,6 +175,7 @@ export default function PublishModal(properties) {
             setToPublish={setToPublish}
             toPublish={toPublish}
             setCollectionIndex={setCollectionIndex}
+            inCollectionPage={properties.inCollectionPage}
           />
         )}
       </div>
@@ -219,8 +228,15 @@ const useRootCollections = (dispatch, token) => {
     [`${publicRuntimeConfig.backend}/rootCollections`, token, dispatch],
     fetcher
   );
+  const theme = JSON.parse(localStorage.getItem('theme')) || {};
+
+  const publicPrefix = theme.uriPrefix + 'public/';
+  let publicCollections = [];
+  if (data) {
+    publicCollections = data.filter(collection => collection.uri.includes(publicPrefix));
+  }
   return {
-    collections: data,
+    collections: publicCollections,
     loading: !error && !data,
     error: error
   };

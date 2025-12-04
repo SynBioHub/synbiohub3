@@ -81,7 +81,7 @@
 
 .searchbutton {
    background-color: #D25627;
-   padding: 1rem;
+   padding: 0.7rem;
    border-radius: 0.4rem;
    font-weight: 500;
    justify-content: center;
@@ -89,18 +89,14 @@
    display: flex;
    color: #fff;
    cursor: pointer;
-   margin: 1rem 0;
+   margin: 0.6rem;
+   transition: background-color 0.3s;
 }
 
 .searchbutton:hover {
    background-color: #00A1E4;
 }
 
-.searchbutton:hover .dnaicon {
-   transform: rotate(180deg);
-}
-
-.dnaicon {
+.searchicon {
    margin-right: 1rem;
-   transition: transform .3s;
 }
