@@ -36,7 +36,7 @@ function MyApp({ Component, pageProps }) {
         console.log('Checking if in setup mode...');
         
         axios
-            .get(`${publicRuntimeConfig.backendSS}/admin/theme`, {
+            .get(`${process.env.backendSS}/admin/theme`, {
                 headers: {
                     'Content-Type': 'application/json',
                     Accept: 'text/plain'
@@ -62,7 +62,7 @@ function MyApp({ Component, pageProps }) {
                 // Update the error object
                 error.customMessage = customMessage;
                 console.log(error);
-                error.fullUrl = `${publicRuntimeConfig.backendSS}/admin/theme`;
+                error.fullUrl = `${process.env.backendSS}/admin/theme`;
 
                 // Dispatch the error to your Redux store
                 store.dispatch(addError(error));
