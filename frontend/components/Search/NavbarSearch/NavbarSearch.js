@@ -3,8 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
-import { useState } from 'react';
-import { useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
 import Profile from '../../Navbar/Profile';
@@ -34,12 +33,49 @@ export default function NavbarSearch(properties) {
       <Selector icon={faSignInAlt} name="Log in or Register" href="/login" />
     );
 
+  const [navbarWidth, setNavbarWidth] = useState('100%');
+  const navbarRef = useRef(null);
+
   let linkHref = "/";
   if (theme && theme.altHome && theme.altHome.length > 0) {
     linkHref = theme.altHome;
   }
 
   const [logoUrl, setLogoUrl] = useState(defaultLogo);
+
+  useEffect(() => {
+    const calculateWidth = () => {
+      // Get the full scrollable width of the page (including any horizontal scroll area)
+      const scrollWidth = Math.max(
+        document.documentElement.scrollWidth,
+        document.documentElement.offsetWidth,
+        document.body.scrollWidth
+      );
+      setNavbarWidth(`${scrollWidth}px`);
+    };
+
+    // Calculate width on mount
+    calculateWidth();
+
+    // Recalculate on window resize and load
+    window.addEventListener('resize', calculateWidth);
+    window.addEventListener('load', calculateWidth);
+
+    // Also recalculate when content changes (debounced)
+    const observer = new MutationObserver(calculateWidth);
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['style']
+    });
+
+    return () => {
+      window.removeEventListener('resize', calculateWidth);
+      window.removeEventListener('load', calculateWidth);
+      observer.disconnect();
+    };
+  }, []);
 
   useEffect(() => {
     if (localStorage.getItem('logo')) {
@@ -61,8 +97,14 @@ export default function NavbarSearch(properties) {
     }, [loggedIn]);
 
   return (
-    <header className={styles.container}
-      style={{ backgroundColor: theme?.themeParameters?.[0]?.value || '#465775' }}
+    <header
+      ref={navbarRef}
+      className={styles.container}
+      style={{
+        backgroundColor: theme?.themeParameters?.[0]?.value || '#465775',
+        width: navbarWidth,
+        minWidth: navbarWidth
+      }}
     >
       <Link href={linkHref}>
         <a className={styles.logo}>

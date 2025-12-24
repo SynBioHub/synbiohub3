@@ -1,6 +1,6 @@
 .container {
    background-color: #465775;
-   width: 100vw;
+   width: 100%;
    min-width: 100%;
    left: 0;
    right: 0;
@@ -128,6 +128,7 @@
 .searchexpand {
    width: calc(50% - 2rem);
 }
+
 
 .searchcontainer {
    position: absolute;

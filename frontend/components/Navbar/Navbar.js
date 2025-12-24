@@ -7,7 +7,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Link from 'next/link';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import Loader from 'react-loader-spinner';
 import { useSelector } from 'react-redux';
 import styles from '../../styles/navbar.module.css';
@@ -32,6 +32,8 @@ export default function Navbar() {
 
   // initialize logo like index.js: prefer theme.logoUrl, then localStorage 'sbh_logo', else null/default
   const [logoUrl, setLogoUrl] = useState(theme.logoUrl || localStorage.getItem('sbh_logo') || null);
+  const [navbarWidth, setNavbarWidth] = useState('100%');
+  const navbarRef = useRef(null);
 
   useEffect(() => {
     if (loggedIn) {
@@ -77,10 +79,49 @@ export default function Navbar() {
     }
   }, []); // run once on mount
 
+  useEffect(() => {
+    const calculateWidth = () => {
+      // Get the full scrollable width of the page (including any horizontal scroll area)
+      const scrollWidth = Math.max(
+        document.documentElement.scrollWidth,
+        document.documentElement.offsetWidth,
+        document.body.scrollWidth
+      );
+      setNavbarWidth(`${scrollWidth}px`);
+    };
+
+    // Calculate width on mount
+    calculateWidth();
+
+    // Recalculate on window resize and load
+    window.addEventListener('resize', calculateWidth);
+    window.addEventListener('load', calculateWidth);
+
+    // Also recalculate when content changes (debounced)
+    const observer = new MutationObserver(calculateWidth);
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['style']
+    });
+
+    return () => {
+      window.removeEventListener('resize', calculateWidth);
+      window.removeEventListener('load', calculateWidth);
+      observer.disconnect();
+    };
+  }, []);
+
   return (
     <header
+      ref={navbarRef}
       className={styles.container}
-      style={{ backgroundColor: theme?.themeParameters?.[0]?.value || '#465775' }}
+      style={{
+        backgroundColor: theme?.themeParameters?.[0]?.value || '#465775',
+        width: navbarWidth,
+        minWidth: navbarWidth
+      }}
     >
       <div className={styles.logoAndInstanceContainer}>
           <Selector
