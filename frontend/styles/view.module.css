@@ -14,7 +14,7 @@
 .sidepanelcontainercollapse {
   display: flex;
   flex-shrink: 0;
-  width: 23rem;
+  width: 3.5rem;
   overflow: hidden;
   transition: width 0.3s;
 }
@@ -395,6 +395,26 @@
 
 .section {
   width: calc(100vw - 27rem);
+  border-radius: 0.4rem;
+  box-shadow: 0px 0px 5px #948b87;
+  padding: 0.5rem;
+  position: relative;
+  margin-bottom: 1.5rem;
+  scroll-margin-top: 5rem;
+}
+
+.sectionexpanded {
+  width: calc(100vw - 27rem);
+  border-radius: 0.4rem;
+  box-shadow: 0px 0px 5px #948b87;
+  padding: 0.5rem;
+  position: relative;
+  margin-bottom: 1.5rem;
+  scroll-margin-top: 5rem;
+}
+
+.sectioncollapsed {
+  width: calc(100vw - 7.5rem);
   border-radius: 0.4rem;
   box-shadow: 0px 0px 5px #948b87;
   padding: 0.5rem;

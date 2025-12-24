@@ -1,14 +1,20 @@
 .container {
    background-color: #465775;
-   width: 100%;
+   width: 100vw;
+   min-width: 100%;
+   left: 0;
+   right: 0;
    top: 0;
    height: 4rem;
+   margin: 0;
+   padding: 0;
    filter: drop-shadow(0px 2px 4px #00000042);
    display: flex;
    align-items: center;
    justify-content: space-between;
    position: sticky;
    z-index: 9999;
+   box-sizing: border-box;
 }
 
 .instanceNameSize {
@@ -126,16 +132,14 @@
 .searchcontainer {
    position: absolute;
    top: 50%;
-   left: 50%;
-   transform: translate(-50%, -50%);
+   left: 0;
+   right: 0;
+   transform: translateY(-50%);
    width: 100%;
    display: flex;
    align-items: center;
    justify-content: center;
-}
-
-.searchcontainer {
-  pointer-events: none;
+   pointer-events: none;
 }
 
 .searchbar, .cancelsearch, .searchicon {
