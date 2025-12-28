@@ -97,7 +97,7 @@ export default function Shell(properties) {
           search={metadata.search}
         />
         <div className={styles.sections}>
-          <GenericContent json={json} uri={properties.uri} metadata={false} plugins={plugins} type={properties.type} />
+          <GenericContent json={json} uri={properties.uri} metadata={false} plugins={plugins} type={properties.type} translation={translation} />
         </div>
       </div>
       <div></div>

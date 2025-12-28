@@ -8,7 +8,7 @@ import TableBuilder from './TableBuilder';
 import CustomComponents from '../CustomComponents.js';
 import { compileFile } from '../Parsing/compileFile';
 
-export default function GenericContent({ json, uri, metadata, plugins, type }) {
+export default function GenericContent({ json, uri, metadata, plugins, type, translation }) {
   if (metadata) {
     if (!json || !json.metadata) return null;
     compileFile(json);
@@ -36,7 +36,7 @@ export default function GenericContent({ json, uri, metadata, plugins, type }) {
         return null;
       }
       return (
-        <Section id={page} title={table.title} key={index}>
+        <Section id={page} title={table.title} key={index} translation={translation}>
           <TableBuilder uri={uri} prefixes={json.prefixes} table={table} />
         </Section>
       );
@@ -53,7 +53,7 @@ export default function GenericContent({ json, uri, metadata, plugins, type }) {
     const ComponentToRender = CustomComponents[page];
     if (ComponentToRender) {
       return (
-        <Section title={page} key={index}>
+        <Section title={page} key={index} translation={translation}>
           <ComponentToRender uri={uri} />
         </Section>
       );
