@@ -103,7 +103,7 @@ function Home() {
           <Card
             description="Browse SynBioHub for useful parts and designs"
             icon={faSearch}
-            title="Search"
+            title="Search Designs"
             route={'/search'}
             redirect={false}
           />
@@ -119,7 +119,7 @@ function Home() {
           <Card
             description="Prepare designs for publication or collaboration"
             icon={faAlignLeft}
-            title="Manage Submissions"
+            title="Manage Your Submissions"
             route={'/submissions'}
             redirect={true}
           />
@@ -127,7 +127,7 @@ function Home() {
           <Card
             description="View collections made available to the public"
             icon={faBoxOpen}
-            title="View Collections"
+            title="Browse Design Collections"
             route={'/root-collections'}
             redirect={true}
           />
