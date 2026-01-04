@@ -5,8 +5,11 @@ import router from 'next/router';
 import React, { useState, useEffect } from 'react';
 import { processUrl } from '../../../Admin/Registries';
 import { useSelector, useDispatch } from 'react-redux';
+import showdown from 'showdown';
 
 import styles from '../../../../styles/resulttable.module.css';
+
+const sdconverter = new showdown.Converter();
 
 /**
  * This component renders a single result row in the result table in standard search
@@ -66,7 +69,7 @@ export default function ResultRow(properties) {
 
       <td>{properties.displayId}</td>
 
-      <td>{properties.description}</td>
+      <td className={styles.markdownContent} dangerouslySetInnerHTML={{ __html: sdconverter.makeHtml(properties.description || '') }} />
 
       <td>{displayType}</td>
 

@@ -50,15 +50,12 @@ export default function SubmissionDisplay(properties) {
       // Extract the path from the full URI
       const urlObj = new URL(uri);
       const path = urlObj.pathname;
-      console.log(token);
       const url = `${publicRuntimeConfig.backend}${path}/shareLink`;
       const headers = {
         Accept: "text/plain; charset=UTF-8",
         "X-authorization": token
       };
-      console.log("URL:", url);
       const response = await axios.get(url, { headers });
-      console.log("Response:", response.data);
       if (response.status === 200 && response.data) {
         const originalUrl = response.data;
         const urlObj = new URL(originalUrl);
@@ -85,10 +82,8 @@ export default function SubmissionDisplay(properties) {
 
   const handleRowClick = async () => {
     if (properties.submission.privacy === 'shared') {
-      console.log("Generating share link for:", properties.submission.uri);
       const shareLink = await generateShareLink(properties.submission.uri);
       if (shareLink) {
-        console.log("Share link:", shareLink);
         router.push(shareLink);
       } else {
         // Fallback to processed URI if share link generation fails

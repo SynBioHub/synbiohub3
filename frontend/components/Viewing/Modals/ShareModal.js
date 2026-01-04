@@ -1,5 +1,5 @@
 import styles from "../../../styles/view.module.css";
-import { faCopy, faExclamationTriangle, faShare } from "@fortawesome/free-solid-svg-icons";
+import { faCopy, faExclamationTriangle, faShareAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import React, { useEffect, useState } from "react";
@@ -54,7 +54,6 @@ export default function ShareModal(properties) {
   useEffect(() => {
     const fetchShareLink = async () => {
       const url = `${publicRuntimeConfig.backend}${properties.url}/shareLink`;
-      console.log("URL:", url);
       const headers = {
         Accept: "text/plain; charset=UTF-8",
         "X-authorization": token
@@ -171,7 +170,7 @@ export default function ShareModal(properties) {
       header={
         <React.Fragment>
           <FontAwesomeIcon
-            icon={faShare}
+            icon={faShareAlt}
             size="1x"
             className={styles.modalicon}
           />
