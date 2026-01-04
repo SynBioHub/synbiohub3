@@ -585,21 +585,18 @@ const fetcher = (url, token, dispatch) =>
       error.customMessage =
         'Request failed while getting collection members info';
       error.fullUrl = url;
+      console.log(error.response.status);
       // Check if the error is 401 Unauthorized or 400 Bad Request
       if (error.response && (error.response.status === 401 || error.response.status === 400)) {
-        // Check if the user is logged in by looking for 'userToken' in local storage
-        if (!localStorage.getItem('userToken')) {
-          console.log('Missing user token');
-          // User is not logged in, redirect to the login page
-          dispatch(logoutUser());
-          window.location.href = '/login';
-        } else {
-          console.error(error);
-        }
+        // Token is invalid (either missing or expired/invalidated by backend restart)
+        // Always clear the token and log out the user
+        console.log('Token invalid or expired, logging out user');
+        dispatch(logoutUser());
+        window.location.href = '/login';
+      } else {
+        // For other errors, just dispatch the error
+        dispatch(addError(error));
       }
-
-      // Dispatch the error regardless of whether the user is logged in
-      dispatch(addError(error));
     });
 
 const processResults = results => {
