@@ -3,7 +3,7 @@ import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
 
 import loadTemplate from './loadTemplate';
-import { addError } from '../../redux/actions';
+import { addError, logoutUser } from '../../redux/actions';
 
 export default async function getQueryResponse(
   dispatch,
@@ -77,6 +77,24 @@ export default async function getQueryResponse(
       return processResults(response.data);
     } else return;
   } catch (error) {
+    // Check if error is related to undefined user
+    const errorMessage = error.response?.data?.toString() || '';
+    const queryString = query || '';
+    const urlString = url || '';
+    const hasUndefinedUser = 
+      errorMessage.toLowerCase().includes('undefineduser') ||
+      queryString.toLowerCase().includes('undefineduser') ||
+      urlString.toLowerCase().includes('undefineduser') ||
+      (error.response?.status === 400 && errorMessage.toLowerCase().includes('cannot resolve'));
+
+    if (hasUndefinedUser) {
+      // User information is undefined, logout and redirect to login
+      console.log('Undefined user detected, logging out user');
+      dispatch(logoutUser());
+      window.location.href = '/login';
+      return;
+    }
+
     error.customMessage = `Request and/or processing failed for SPARQL query`;
     error.fullUrl = `===QUERY===\n\n${query}\n\n===URL===\n\n${url}`;
     dispatch(addError(error));
