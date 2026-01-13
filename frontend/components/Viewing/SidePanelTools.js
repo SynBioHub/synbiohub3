@@ -7,7 +7,8 @@ import {
   faShare,
   faPlus,
   faSearch,
-  faGlobeAmericas
+  faGlobeAmericas,
+  faCamera
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -18,6 +19,7 @@ import DeleteModal from "./Modals/DeleteModal";
 import ShareModal from "./Modals/ShareModal";
 import DownloadModal from "./Modals/DownloadModal";
 import AddToCollectionModal from "./Modals/AddToCollectionModal";
+import CollectionIconModal from "./Modals/CollectionIconModal";
 import ReactDOM from 'react-dom';
 import PublishModal from '../Submission/PublishModal';
 import { isUriOwner } from './Shell';
@@ -51,6 +53,7 @@ export default function SidePanelTools(properties) {
   const publicPrefix = theme.uriPrefix + 'public/';
 
   const isPublic = properties.uri.includes(publicPrefix);
+  const isCollection = properties.type && properties.type.toLowerCase().includes('collection');
 
   const publishInfo = {
     displayId: properties.displayId,
@@ -151,6 +154,14 @@ export default function SidePanelTools(properties) {
                 />,
                 typeof window !== "undefined" ? document.body : null
               )
+              :
+              modal === "CollectionIcon" ?
+                <CollectionIconModal
+                  url={properties.url}
+                  name={properties.name}
+                  uri={properties.uri}
+                  setModal={setModal}
+                />
                 : null
       }
       <div className={styles.id}>
@@ -203,6 +214,17 @@ export default function SidePanelTools(properties) {
           }}
           title="Make Public" // placeholder for unlock button description
         />
+        )}
+        {isPublic && isCollection && (
+          <FontAwesomeIcon
+            icon={faCamera}
+            size="1x"
+            className={styles.actionicon}
+            onClick={() => {
+              setModal("CollectionIcon");
+            }}
+            title="Change Collection Icon"
+          />
         )}
         {loggedIn && (
           <FontAwesomeIcon

@@ -99,15 +99,23 @@
   overflow-wrap: break-word;
 }
 
+.collectionIcon {
+  width: 3rem;
+  height: 3rem;
+  object-fit: contain;
+  border-radius: 0.4rem;
+  margin-left: 0.75rem;
+  flex-shrink: 0;
+}
+
 .title {
   color: #D25627;
   font-weight: 500;
   padding: 0;
   margin: 0 0.5rem 0 0;
   font-size: 1.4rem;
-  word-break: break-word;
-  white-space: normal;
-  overflow-wrap: break-word;
+  white-space: nowrap;
+  flex-shrink: 1;
 }
 
 .panelbutton {
@@ -135,8 +143,11 @@
 }
 
 .titleHolder {
-  max-width: 17rem;
   padding-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  min-width: 0;
 }
 
 .displayId {
@@ -145,6 +156,8 @@
   font-weight: 500;
   color: #888;
   cursor: pointer;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .displayId:hover {
