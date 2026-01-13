@@ -215,7 +215,7 @@ export default function SidePanelTools(properties) {
           title="Make Public" // placeholder for unlock button description
         />
         )}
-        {isPublic && isCollection && (
+        {isPublic && isCollection && loggedIn && (
           <FontAwesomeIcon
             icon={faCamera}
             size="1x"
