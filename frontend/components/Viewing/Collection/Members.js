@@ -334,6 +334,7 @@ function MemberTable(properties) {
       hideFilter={true}
       searchable={[]}
       headers={headers}
+      customIcon={properties.customIcon}
       sortOptions={sortOptions}
       sortMethods={sortMethods}
       defaultSortOption={properties.defaultSortOption}

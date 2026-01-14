@@ -57,7 +57,7 @@ export default function RootCollections() {
         console.error('Error:', err.message);
         setError({
           customMessage: 'Request and/or processing failed for GET /rootCollections',
-          fullUrl: `${publicRuntimeConfig.backendSS}/rootCollections`,
+          fullUrl: `${publicRuntimeConfig.backend}/rootCollections`,
           message: err.message,
           name: 'Client side error',
           stack: err.stack

@@ -21,6 +21,9 @@ import SidePanelTools from './SidePanelTools';
 
 import { processUrl } from '../Admin/Registries';
 import { useEffect } from 'react';
+import axios from 'axios';
+import getConfig from 'next/config';
+const { publicRuntimeConfig } = getConfig();
 
 import GenericContent from './PageJSON/Rendering/GenericContent';
 import MetadataInfo from './MetadataInfo';
@@ -31,12 +34,13 @@ import MetadataInfo from './MetadataInfo';
  *
  * @param {Any} properties Information from the parent component.
  */
-export default function SidePanel({ metadata, type, json, uri, plugins, translation = 0, setTranslation = () => {} }) {
+export default function SidePanel({ metadata, type, json, uri, plugins, translation = 0, setTranslation = () => { } }) {
   const [processedUrl, setProcessedUrl] = useState({ original: uri });
+  const [collectionIcon, setCollectionIcon] = useState(null);
   const dateCreated = metadata.createdDates.split(", ")[0].replace('T', ' ').replace('Z', '');
   const dateModified = metadata.modifiedDates.replace('T', ' ').replace('Z', '');
   const registries = JSON.parse(localStorage.getItem("registries")) || {};
-  
+
   const token = useSelector(state => state.user.token);
   const dispatch = useDispatch();
 
@@ -48,6 +52,33 @@ export default function SidePanel({ metadata, type, json, uri, plugins, translat
 
     fetchAndProcessUrl();
   }, [uri]);
+
+  useEffect(() => {
+    // Check if it's a collection and if URI contains /public/
+    const isCollection = type && type.toLowerCase().includes('collection');
+    const isPublic = uri && uri.includes('/public/');
+
+    if (isCollection && isPublic) {
+      // Extract the path from the URI
+      let iconPath = '';
+      try {
+        const uriObj = new URL(uri);
+        iconPath = uriObj.pathname;
+      } catch (e) {
+        // If URI parsing fails, try to extract path manually
+        const publicIndex = uri.indexOf('/public/');
+        if (publicIndex !== -1) {
+          iconPath = uri.substring(publicIndex);
+        }
+      }
+
+      if (iconPath) {
+        // Construct the icon URL with cache busting to ensure fresh image loads
+        const iconUrl = `${publicRuntimeConfig.backend}${iconPath}/icon?t=${Date.now()}`;
+        setCollectionIcon(iconUrl);
+      }
+    }
+  }, [type, uri]);
 
   const pagesInfo = getPagesInfo(type, json, plugins);
   return (
@@ -68,7 +99,20 @@ export default function SidePanel({ metadata, type, json, uri, plugins, translat
         <div className={styles.headercontainer}>
           <div className={styles.headeroverflowcontainer}>
             <div className={styles.titleHolder}>
-              <h2 className={styles.title}>{metadata.name}</h2>
+              <div className={styles.titleRow}>
+                <h2 className={styles.title}>{metadata.name}</h2>
+                {collectionIcon && (
+                  <img
+                    src={collectionIcon}
+                    alt="Collection icon"
+                    className={styles.collectionIcon}
+                    onError={(e) => {
+                      // Hide the image if it fails to load
+                      e.target.style.display = 'none';
+                    }}
+                  />
+                )}
+              </div>
               <Link
                 href={`/search/displayId='${metadata.displayId}'&`}
               >
