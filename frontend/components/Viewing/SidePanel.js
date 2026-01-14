@@ -99,7 +99,20 @@ export default function SidePanel({ metadata, type, json, uri, plugins, translat
         <div className={styles.headercontainer}>
           <div className={styles.headeroverflowcontainer}>
             <div className={styles.titleHolder}>
-              <h2 className={styles.title}>{metadata.name}</h2>
+              <div className={styles.titleRow}>
+                <h2 className={styles.title}>{metadata.name}</h2>
+                {collectionIcon && (
+                  <img
+                    src={collectionIcon}
+                    alt="Collection icon"
+                    className={styles.collectionIcon}
+                    onError={(e) => {
+                      // Hide the image if it fails to load
+                      e.target.style.display = 'none';
+                    }}
+                  />
+                )}
+              </div>
               <Link
                 href={`/search/displayId='${metadata.displayId}'&`}
               >
@@ -110,18 +123,6 @@ export default function SidePanel({ metadata, type, json, uri, plugins, translat
                   <div className={styles.displayId}>({metadata.displayId})</div>
                 </a>
               </Link>
-              {collectionIcon && (
-                <img
-                  src={collectionIcon}
-                  alt="Collection icon"
-                  className={styles.collectionIcon}
-                  onError={(e) => {
-                    // Hide the image if it fails to load
-                    e.target.style.display = 'none';
-                  }}
-                />
-              )}
-
             </div>
           </div>
         </div>
