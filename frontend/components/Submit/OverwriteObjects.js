@@ -40,7 +40,7 @@ export default function OverwriteObjects(properties) {
           }}
         />
         <div className={styles.overwritemessage}>
-          Overwrite Existing Collection
+          Overwrite Objects In Existing Collection
         </div>
       </div>
       <div>
