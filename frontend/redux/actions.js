@@ -794,7 +794,11 @@ export const getCanSubmitTo = () => async (dispatch, getState) => {
   } catch (error) {
     error.customMessage = "Couldn't get and/or process submissions";
     error.fullUrl = url;
-    dispatch(addError(error));
+    // Log out user and redirect to login when backend is unavailable
+    dispatch(logoutUser());
+    if (typeof window !== 'undefined') {
+      window.location.href = '/login';
+    }
   }
 };
 
