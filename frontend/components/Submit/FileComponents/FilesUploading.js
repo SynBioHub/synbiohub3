@@ -40,7 +40,7 @@ export default function FilesUploading() {
         {filesUploading.length > 0 && (
           <MajorLabel
             text="Design Files"
-            link="https://wiki.synbiohub.org/userdocumentation/managingsubmitting/"
+            link="https://wiki2.synbiohub.org/2_micro_guides/submitting%2C_managing_and_updating_submissions/"
           />
         )}
         <div className={styles.designfilescontainer}>{filesUploadingDisplay}</div>
