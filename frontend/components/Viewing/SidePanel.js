@@ -213,6 +213,10 @@ function getPagesInfo(type, json, plugins) {
       }
     }
 
+    if(type === 'ComponentDefinition' || type === 'ModuleDefinition') {
+      order.unshift('Visualization');
+    }
+
     return { type: type, order: order };
   }
 
@@ -238,6 +242,11 @@ function getPagesInfo(type, json, plugins) {
         orderUpdated.push('PLUGIN: ' + plugin.name);
       }
     }
+  }
+
+  if (type === 'ComponentDefinition' || type === 'ModuleDefinition') {
+    if (!orderUpdated.includes('Visualization'))
+    orderUpdated.unshift('Visualization');
   }
 
   return { type: type, order: orderUpdated };

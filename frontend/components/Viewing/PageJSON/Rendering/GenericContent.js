@@ -1,5 +1,5 @@
 import Section from '../../Sections/Section';
-import Plugin from '../../Plugin';
+import Plugin from '../../Sections/Plugin.js';
 
 import { useSelector } from 'react-redux';
 import { Fragment } from 'react';
@@ -7,6 +7,7 @@ import TableBuilder from './TableBuilder';
 
 import CustomComponents from '../CustomComponents.js';
 import { compileFile } from '../Parsing/compileFile';
+import Visualization from '../../Sections/Visualization.js';
 
 export default function GenericContent({ json, uri, metadata, plugins, type, translation }) {
   if (metadata) {
@@ -48,6 +49,12 @@ export default function GenericContent({ json, uri, metadata, plugins, type, tra
         <Plugin plugin={plugin} type={type} uri={uri} title={title} key={index} pluginKey={index} pluginID={page} />
       );
         
+    }
+
+    if (page === 'Visualization') {
+      return (
+        <Visualization uri={uri} />
+      )
     }
 
     const ComponentToRender = CustomComponents[page];

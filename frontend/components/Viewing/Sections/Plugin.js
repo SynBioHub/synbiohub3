@@ -1,14 +1,12 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import parse, { domToReact } from 'html-react-parser';
-import React from 'react';
 import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
 import { useSelector, useDispatch } from 'react-redux';
 
-import Section from './Sections/Section';
-import { showPluginSection, hidePluginSection } from '../../redux/actions';
-import { use } from 'react';
+import Section from './Section';
+import { showPluginSection, hidePluginSection } from '../../../redux/actions';
 
 export default function Plugin(properties) {
 
@@ -25,8 +23,6 @@ export default function Plugin(properties) {
     pluginsUseLocalCompose = theme.pluginsUseLocalCompose;
     pluginLocalComposePrefix = theme.pluginLocalComposePrefix;
   }
-
-  const acceptedTags = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'a', 'img', 'ul', 'ol', 'li', 'table', 'tr', 'td', 'th', 'thead', 'tbody', 'tfoot', 'caption', 'div', 'span', 'br', 'hr', 'pre', 'code', 'blockquote', 'strong', 'em', 'i', 'b', 'u', 's', 'sub', 'sup', 'del', 'ins', 'mark', 'small', 'big', 'abbr', 'cite', 'dfn', 'kbd', 'q', 'samp', 'var', 'time', 'address', 'article', 'aside', 'footer', 'header', 'nav', 'section', 'main', 'figure', 'figcaption', 'details', 'summary', 'dialog', 'menu', 'menuitem', 'menuitem', 'meter', 'progress', 'output', 'canvas', 'audio', 'video', 'iframe', 'object', 'embed', 'param', 'source', 'track', 'map', 'area', 'form', 'label', 'input', 'button', 'select', 'datalist', 'optgroup', 'option', 'textarea', 'fieldset', 'legend', 'datalist', 'output', 'progress', 'meter', 'details', 'summary', 'command', 'menu', 'menuitem', 'menuitem', 'script', 'noscript', 'style', 'link', 'meta', 'title', 'base', 'head', 'body', 'html', 'br', 'hr', 'wbr', 'img', 'area', 'map', 'track', 'source', 'param', 'iframe', 'embed', 'object', 'canvas', 'script', 'noscript', 'style', 'link', 'meta', 'title', 'base', 'head', 'body', 'html', 'br', 'hr', 'wbr', 'img', 'area', 'map', 'track', 'source', 'param', 'iframe', 'embed', 'object', 'canvas', 'script', 'noscript', 'style', 'link', 'meta', 'title', 'base', 'head', 'body', 'html', 'br', 'hr', 'wbr', 'img', 'area', ]
 
   let uri = properties.uri;
 
@@ -107,42 +103,6 @@ export default function Plugin(properties) {
   }, [status]);
 
   if (status) {
-
-    const options = {
-      replace: domNode => {
-        if(!domNode.attribs) {
-          return;
-        }
-
-        if(domNode.name === '!doctype html') {
-          return <></>;
-        }
-
-        if(!acceptedTags.includes(domNode.name)) {
-          return (
-            <>{domToReact(domNode.children, options)}</>
-          );
-        }
-
-        if(domNode.name === 'html' || domNode.name === 'head' || domNode.name === 'body') {
-          return (
-            <>{domToReact(domNode.children, options)}</>
-          );
-        }
-
-        if(domNode.type === 'script') {
-          var script = document.createElement('script');
-          if(domNode.attribs.src) {
-            script.src = domNode.attribs.src;
-          }
-          script.type = 'text/javascript';
-          script.innerText = `${domToReact(domNode.children, options)}`;
-          document.getElementById(`${properties.plugin.name}`).appendChild(script);
-          return <></>;
-        }
-
-      }
-    }
 
     return (
       <Section title={properties.title} pluginID={properties.pluginID} >
@@ -239,3 +199,41 @@ async function runPlugin(plugin, pluginData, pluginsUseLocalCompose, pluginLocal
   })
   
 }
+
+const acceptedTags = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'a', 'img', 'ul', 'ol', 'li', 'table', 'tr', 'td', 'th', 'thead', 'tbody', 'tfoot', 'caption', 'div', 'span', 'br', 'hr', 'pre', 'code', 'blockquote', 'strong', 'em', 'i', 'b', 'u', 's', 'sub', 'sup', 'del', 'ins', 'mark', 'small', 'big', 'abbr', 'cite', 'dfn', 'kbd', 'q', 'samp', 'var', 'time', 'address', 'article', 'aside', 'footer', 'header', 'nav', 'section', 'main', 'figure', 'figcaption', 'details', 'summary', 'dialog', 'menu', 'menuitem', 'menuitem', 'meter', 'progress', 'output', 'canvas', 'audio', 'video', 'iframe', 'object', 'embed', 'param', 'source', 'track', 'map', 'area', 'form', 'label', 'input', 'button', 'select', 'datalist', 'optgroup', 'option', 'textarea', 'fieldset', 'legend', 'datalist', 'output', 'progress', 'meter', 'details', 'summary', 'command', 'menu', 'menuitem', 'menuitem', 'script', 'noscript', 'style', 'link', 'meta', 'title', 'base', 'head', 'body', 'html', 'br', 'hr', 'wbr', 'img', 'area', 'map', 'track', 'source', 'param', 'iframe', 'embed', 'object', 'canvas', 'script', 'noscript', 'style', 'link', 'meta', 'title', 'base', 'head', 'body', 'html', 'br', 'hr', 'wbr', 'img', 'area', 'map', 'track', 'source', 'param', 'iframe', 'embed', 'object', 'canvas', 'script', 'noscript', 'style', 'link', 'meta', 'title', 'base', 'head', 'body', 'html', 'br', 'hr', 'wbr', 'img', 'area', ]
+
+const options = {
+      replace: domNode => {
+        if(!domNode.attribs) {
+          return;
+        }
+
+        if(domNode.name === '!doctype html') {
+          return <></>;
+        }
+
+        if(!acceptedTags.includes(domNode.name)) {
+          return (
+            <>{domToReact(domNode.children, options)}</>
+          );
+        }
+
+        if(domNode.name === 'html' || domNode.name === 'head' || domNode.name === 'body') {
+          return (
+            <>{domToReact(domNode.children, options)}</>
+          );
+        }
+
+        if(domNode.type === 'script') {
+          var script = document.createElement('script');
+          if(domNode.attribs.src) {
+            script.src = domNode.attribs.src;
+          }
+          script.type = 'text/javascript';
+          script.innerText = `${domToReact(domNode.children, options)}`;
+          document.getElementById(`${properties.plugin.name}`).appendChild(script);
+          return <></>;
+        }
+
+      }
+    }
