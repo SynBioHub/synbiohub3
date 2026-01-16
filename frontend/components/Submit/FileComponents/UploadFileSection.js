@@ -9,7 +9,7 @@ export default function UploadFileSection(properties) {
     <div className={styles.uploadcontainer}>
       <MajorLabel
         text="Upload Design Files"
-        link="https://wiki.synbiohub.org/userdocumentation/managingsubmitting/"
+        link="https://wiki2.synbiohub.org/2_micro_guides/submitting%2C_managing_and_updating_submissions/"
       />
       <SubmitLabel
         text="SBOL &middot; GENBANK &middot; GFF3 &middot; FASTA &middot; ZIP"
