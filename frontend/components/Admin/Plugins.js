@@ -387,7 +387,6 @@ async function fetchStatus(plugin, type, pluginsUseLocalCompose, pluginLocalComp
       name: plugin.name,
       endpoint: 'status',
       category: type,
-      prefix: pluginsUseLocalCompose ? pluginLocalComposePrefix : ''
     },
     headers: {
       'X-authorization': token

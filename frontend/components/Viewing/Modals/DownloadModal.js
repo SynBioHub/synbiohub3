@@ -157,8 +157,7 @@ export default function DownloadModal(properties) {
           data: {
             name: plugin.name,
             endpoint: 'status',
-            category: 'download',
-            prefix: pluginsUseLocalCompose ? pluginLocalComposePrefix : null
+            category: 'download'
           }
         }).then(response => {
 
@@ -176,8 +175,7 @@ export default function DownloadModal(properties) {
                 category: 'download',
                 data: {
                   type: properties.type
-                },
-                prefix: pluginsUseLocalCompose ? pluginLocalComposePrefix : null
+                }
               }
               
             }).then(response => {
