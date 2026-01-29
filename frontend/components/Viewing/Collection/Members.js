@@ -556,7 +556,6 @@ const useMembers = (query, options, token, dispatch) => {
     }
   }, [data]);
   
-  console.log('processedData', processedData);
   return {
     members: processedData,
     mutate
@@ -635,13 +634,11 @@ const fetcher = (url, token, dispatch) =>
 
 const processResults = async (results) => {
   const registries = JSON.parse(localStorage.getItem("registries")) || {};
-  console.log('registries', registries);
   const localUriPrefix = (JSON.parse(localStorage.getItem('theme')) || {}).uriPrefix || '';
   const headers = results.head.vars;
   return Promise.all(results.results.bindings.map(async (result) => {
     const resultObject = {};
     const currentUri = result.uri ? result.uri.value : '';
-    console.log('currentUri', currentUri);
     const registriesArray = Array.isArray(registries) 
       ? registries 
       : Object.values(registries).filter(r => r && typeof r === 'object');
@@ -651,11 +648,9 @@ const processResults = async (results) => {
     if (currentUri && currentUri.startsWith(localUriPrefix)) {
       isExternalRegistry = false;
     }
-    console.log('isExternalRegistry', isExternalRegistry);
     let externalMetadata = null;
     if (isExternalRegistry) {
       externalMetadata = await fetchExternalMetadata(currentUri);
-      console.log('externalMetadata response.data:', externalMetadata);
     }
     for (const header of headers) {
       if (result[header]) resultObject[header] = result[header].value;
@@ -674,16 +669,12 @@ const processResults = async (results) => {
     if (!resultObject.name || resultObject.name.trim() === '') {
       resultObject.name = resultObject.displayId || '';
     }
-    console.log(resultObject);
     return resultObject;
   }));
 };
 
 const fetchExternalMetadata = async (uri) => {
-  // TODO: Fill in the URL for the GET request
-  console.log('uri', uri);
   const url = `${uri}/metadata`;
-  console.log('url', url);
   try {
     const response = await axios.get(url, {
       headers: {
