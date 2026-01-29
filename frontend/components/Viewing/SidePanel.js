@@ -203,8 +203,10 @@ export default function SidePanel({ metadata, type, json, uri, plugins, translat
 }
 
 function getPagesInfo(type, json, plugins) {
-  if (json === null) return { type: type, order: [] };
-  if (localStorage.getItem(type) === null) {
+  // If there is no metadata JSON or it doesn't define pages, return an empty order.
+  if (!json || !json.pages) return { type: type, order: [] };
+
+  if (json.pages && localStorage.getItem(type) === null) {
     const order = json.pages;
 
     if (plugins && plugins.rendering) {
