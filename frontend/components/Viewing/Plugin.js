@@ -194,8 +194,7 @@ async function evaluatePlugin(plugin, type, pluginsUseLocalCompose, pluginLocalC
       category: 'rendering',
       data: {
         type: type
-      },
-      prefix: pluginsUseLocalCompose ? pluginLocalComposePrefix : null
+      }
     }
   }).then(response => {
     return response.status === 200;
