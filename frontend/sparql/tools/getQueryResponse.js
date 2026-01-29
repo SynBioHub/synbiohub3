@@ -58,7 +58,6 @@ export default async function getQueryResponse(
   const graph = urlOverride ? '' : graphEx;
   const sharePath = shareHashcode || '';
   const url = `${urlOverride || publicRuntimeConfig.backend}${sharePath}${params}${encodeURIComponent(query)}${graph}`;
-  console.log('url', url);
   const headers = {
     'Content-Type': 'application/json',
     Accept: 'application/json',
