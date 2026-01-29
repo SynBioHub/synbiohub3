@@ -507,7 +507,18 @@ const useCount = (query, options, token, dispatch) => {
     ({ data, error } = useSWR([finalUrl, dispatch], fetcher));
   }
 
-  let processedData = data ? processResults(data)[0].count : undefined;
+  const [processedData, setProcessedData] = useState(undefined);
+  
+  useEffect(() => {
+    if (data) {
+      processResults(data).then(result => {
+        setProcessedData(result[0]?.count);
+      });
+    } else {
+      setProcessedData(undefined);
+    }
+  }, [data]);
+
   return {
     count: processedData
   };
@@ -532,8 +543,20 @@ const useMembers = (query, options, token, dispatch) => {
   } else {
     ({ data, error, mutate } = useSWR([finalUrl, dispatch], fetcher));
   }
-
-  let processedData = data ? processResults(data) : undefined;
+  
+  const [processedData, setProcessedData] = useState(undefined);
+  
+  useEffect(() => {
+    if (data) {
+      processResults(data).then(result => {
+        setProcessedData(result);
+      });
+    } else {
+      setProcessedData(undefined);
+    }
+  }, [data]);
+  
+  console.log('processedData', processedData);
   return {
     members: processedData,
     mutate
@@ -562,7 +585,17 @@ const useFilters = (query, options, token, dispatch, privateGraph=null) => {
     ({ data, error, mutate } = useSWR([finalUrl, dispatch], fetcher));
   }
 
-  let processedData = data ? processResults(data) : undefined;
+  const [processedData, setProcessedData] = useState(undefined);
+  
+  useEffect(() => {
+    if (data) {
+      processResults(data).then(result => {
+        setProcessedData(result);
+      });
+    } else {
+      setProcessedData(undefined);
+    }
+  }, [data]);
 
   return {
     filters: processedData,
@@ -600,16 +633,69 @@ const fetcher = (url, token, dispatch) =>
       }
     });
 
-const processResults = results => {
+const processResults = async (results) => {
+  const registries = JSON.parse(localStorage.getItem("registries")) || {};
+  console.log('registries', registries);
+  const localUriPrefix = (JSON.parse(localStorage.getItem('theme')) || {}).uriPrefix || '';
   const headers = results.head.vars;
-  return results.results.bindings.map(result => {
+  return Promise.all(results.results.bindings.map(async (result) => {
     const resultObject = {};
+    const currentUri = result.uri ? result.uri.value : '';
+    console.log('currentUri', currentUri);
+    const registriesArray = Array.isArray(registries) 
+      ? registries 
+      : Object.values(registries).filter(r => r && typeof r === 'object');
+    let isExternalRegistry = currentUri && registriesArray.some(registry => 
+      registry.uri && currentUri.startsWith(registry.uri)
+    );
+    if (currentUri && currentUri.startsWith(localUriPrefix)) {
+      isExternalRegistry = false;
+    }
+    console.log('isExternalRegistry', isExternalRegistry);
+    let externalMetadata = null;
+    if (isExternalRegistry) {
+      externalMetadata = await fetchExternalMetadata(currentUri);
+      console.log('externalMetadata response.data:', externalMetadata);
+    }
     for (const header of headers) {
       if (result[header]) resultObject[header] = result[header].value;
       else resultObject[header] = '';
     }
+    // Merge external metadata if it exists
+    if (externalMetadata && Array.isArray(externalMetadata) && externalMetadata.length > 0) {
+      const metadataObj = externalMetadata[0];
+      for (const header of headers) {
+        if (metadataObj[header] !== null && metadataObj[header] !== undefined) {
+          resultObject[header] = metadataObj[header];
+        }
+      }
+    }
+    // Replace name with displayId if name is blank, empty, or just whitespace
+    if (!resultObject.name || resultObject.name.trim() === '') {
+      resultObject.name = resultObject.displayId || '';
+    }
+    console.log(resultObject);
     return resultObject;
-  });
+  }));
+};
+
+const fetchExternalMetadata = async (uri) => {
+  // TODO: Fill in the URL for the GET request
+  console.log('uri', uri);
+  const url = `${uri}/metadata`;
+  console.log('url', url);
+  try {
+    const response = await axios.get(url, {
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json'
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching metadata for ${uri}:`, error);
+    return null;
+  }
 };
 
 const getNewBounds = (offset, memberCount) => {

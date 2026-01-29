@@ -342,16 +342,19 @@ export default function ViewHeader(properties) {
         )}
       </div>
       <div>
-        
-        {/* {properties.search.similar && typeof checkSBOLExplorer?.data === 'string' && ( //TODO: Add check for SBOLExplorer
+        {/* Safely handle cases where properties.search may be undefined */}
+        {(() => {
+          const search = properties.search || {};
+
+        {/* {search.similar && typeof checkSBOLExplorer?.data === 'string' && ( //TODO: Add check for SBOLExplorer
           <button className={styles.button} onClick={similar}> Similar
           </button>
         )} */}
 
-        {(properties.search.twins || properties.search.uses || properties.search.similar) && (
+        {(search.twins || search.uses || search.similar) && (
           <span>Search For:</span>
         )}
-        {properties.search.twins && (
+        {search.twins && (
           <button
             className={styles.button}
             onClick={twins}
@@ -363,7 +366,7 @@ export default function ViewHeader(properties) {
             Twins
           </button>
         )}
-        {properties.search.uses && (
+        {search.uses && (
           <button className={styles.button} onClick={uses}
             style={{
               backgroundColor: theme?.themeParameters?.[0]?.value || '#333', // Use theme color or default to #333
@@ -371,7 +374,7 @@ export default function ViewHeader(properties) {
             }}
           > Uses </button>
         )}
-        {properties.search.similar && (
+        {search.similar && (
           <button className={styles.button} onClick={similar}
             style={{
               backgroundColor: theme?.themeParameters?.[0]?.value || '#333', // Use theme color or default to #333
@@ -379,6 +382,7 @@ export default function ViewHeader(properties) {
             }}
           > Similar </button>
         )}
+        })()}
       </div>
     </div>
   );
