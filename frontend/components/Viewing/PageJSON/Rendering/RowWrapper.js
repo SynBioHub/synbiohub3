@@ -25,10 +25,10 @@ function handleExternalFetch(
 ) {
   if (!error && !loading) {
     setLoading(true);
-    // const queryUrl = registries.find(registry => {
-    //   return stackTrace.uri.startsWith(registry.uri);
-    // })?.url;
-    const queryUrl = publicRuntimeConfig.backend;
+    const queryUrl = registries.find(registry => {
+      return stackTrace.uri.startsWith(registry.uri);
+    })?.url;
+    // const queryUrl = publicRuntimeConfig.backend;
     if (queryUrl) {
       executeQueryFromTableJSON(
         dispatch,
