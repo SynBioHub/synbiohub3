@@ -104,7 +104,7 @@ export default function Theme() {
       });
 
       if (response.ok) {
-        // Create updated theme object
+        // Create updated theme object (without logoUrl to force fresh fetch)
         const updatedTheme = {
           ...theme,
           instanceName,
@@ -115,34 +115,23 @@ export default function Theme() {
           removePublicEnabled,
           requireLogin
         };
+        // Remove logoUrl if it exists to force Navbar to fetch fresh logo from server
+        delete updatedTheme.logoUrl;
 
-        // Update localStorage
-        localStorage.setItem('theme', JSON.stringify(updatedTheme));
+        // Clear cached logo from localStorage so Navbar will fetch fresh logo from server
+        // This ensures the new logo is displayed after reload
+        try {
+          localStorage.removeItem('sbh_logo');
+          localStorage.setItem('theme', JSON.stringify(updatedTheme));
+        } catch (e) {
+          // ignore storage errors
+        }
 
         // Update component state
         updateThemeState(updatedTheme);
-
-        // additionally persist uploaded logo to localStorage (if provided),
-        // then continue with the existing success flow (alert + reload).
-        if (logoFile) {
-          const reader = new FileReader();
-          reader.onloadend = () => {
-            const dataUrl = reader.result;
-            try {
-              localStorage.setItem('sbh_logo', dataUrl);
-              const updatedThemeWithLogo = { ...updatedTheme, logoUrl: dataUrl };
-              localStorage.setItem('theme', JSON.stringify(updatedThemeWithLogo));
-            } catch (e) {
-              // ignore storage errors
-            }
-            alert('Theme saved successfully!');
-            window.location.reload();
-          };
-          reader.readAsDataURL(logoFile);
-        } else {
-          alert('Theme saved successfully!');
-          window.location.reload();
-        }
+        
+        alert('Theme saved successfully!');
+        window.location.reload();
       } else {
         throw new Error('Failed to save theme');
       }

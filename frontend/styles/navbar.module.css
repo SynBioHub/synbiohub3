@@ -127,6 +127,7 @@
 
 .searchexpand {
    width: calc(50% - 2rem);
+   max-width: min(calc(50% - 2rem), calc(100vw - 20rem));
 }
 
 
@@ -141,6 +142,8 @@
    align-items: center;
    justify-content: center;
    pointer-events: none;
+   padding: 0 1rem;
+   box-sizing: border-box;
 }
 
 .searchbar, .cancelsearch, .searchicon {
@@ -238,9 +241,27 @@
    }
 }
 
+@media only screen and (max-width: 1200px) {
+   .searchexpand {
+      width: min(calc(40% - 2rem), calc(100vw - 18rem));
+   }
+}
+
+@media only screen and (max-width: 900px) {
+   .searchexpand {
+      width: min(calc(35% - 2rem), calc(100vw - 16rem));
+   }
+}
+
 @media only screen and (max-width: 760px) {
    .searchexpand {
-      width: calc(80% - 2rem);
+      width: min(calc(30% - 2rem), calc(100vw - 14rem));
+   }
+}
+
+@media only screen and (max-width: 600px) {
+   .searchexpand {
+      width: min(calc(25% - 2rem), calc(100vw - 12rem));
    }
 }
 
