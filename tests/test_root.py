@@ -17,9 +17,9 @@ def test_root():
     firstTimeSetup.test_post()
 
     # no commented tests
-    # from test_before_login import TestBeforeLogin
-    # testBeforeLogin = TestBeforeLogin()
-    # testBeforeLogin.test_before_login()
+    from test_before_login import TestBeforeLogin
+    testBeforeLogin = TestBeforeLogin()
+    testBeforeLogin.test_before_login()
 
     # no commented tests
     from test_user import TestUser
