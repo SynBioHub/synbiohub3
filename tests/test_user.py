@@ -19,8 +19,9 @@ class TestUser(TestCase):
         }
 
         compare_post_request("register", data, test_name = "register1", headers = headers, route_parameters = [], files = None, test_type = test_type) #error - account already in use? - FAIL CASE for 1
+        test_print("test_post_register completed")
 
-        test_print("test_post_login starting")
+        test_print("test_login starting")
         #not registered user
         logininfo = {'email' : 'test7@user.synbiohub',
                       'password' : 'test'}
@@ -35,11 +36,14 @@ class TestUser(TestCase):
         logininfo = {'email' : 'test1@user.synbiohub',
                       'password' : 'test'}
         login_with(logininfo, 1)
-        test_print("test_post_login completed")
+        login_with(logininfo, 3)
+        test_print("test_login completed")
         
-        test_print("test_post_register starting")
+        test_print("test_get_profile starting")
         compare_get_request("/profile", headers = headers, route_parameters = [], test_type = test_type, comparison_type="json", fields=["name", "username", "email", "affiliation", "graphUri"])
-
+        test_print("test_get_profile completed")
+       
+        test_print("test_post_profile starting")
         data={
              'name': 'ronnie',
              'affiliation' : 'notcovid',
@@ -49,24 +53,19 @@ class TestUser(TestCase):
         }
 
         compare_post_request("profile", data, test_name = "profile2", headers = headers, route_parameters = [], files = None, test_type = test_type)
+        test_print("test_post_profile completed")
 
-        #compare_get_request("/logout")
-        # test_print("logout started")
-        # data={
-        # }
-        
-        #post_request("logout", 1, data, headers = {"Accept": "text/plain"}, route_parameters = [], files = None)
-        #post_request("logout", 3, data, headers = {"Accept": "text/plain"}, route_parameters = [], files = None)
+        test_print("logout started")
+        data={
+        }
 
-        #compare_post_request("logout", data, headers = {"Accept": "text/plain"}, route_parameters = [], files = None, test_type="User")
-        #test_print("logout completed")
+        compare_post_request("logout", data, headers = {"Accept": "text/plain"}, route_parameters = [], files = None, test_type="User")
+        test_print("logout completed")
 
-        #test_print("test_post_register completed")
-
-        # test_print("test_post_login_token starting")
-        # logininfo = {'email' : 'test1@user.synbiohub',
-        #               'password' : 'test'}
-        # login_with(logininfo, 1)
-        # login_with(logininfo, 3)
-        # test_print("test_post_login_token completed")
+        test_print("test_post_login_token starting")
+        logininfo = {'email' : 'test1@user.synbiohub',
+                      'password' : 'test'}
+        login_with(logininfo, 1)
+        login_with(logininfo, 3)
+        test_print("test_post_login_token completed")
 
