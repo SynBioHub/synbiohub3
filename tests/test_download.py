@@ -10,7 +10,7 @@ class TestDownload(TestCase):
         headers = {"Accept": "text/plain"} #{"Accept": "text/html"}
         test_type = "Download"
 
-        #compare_get_request_download("/public/:collectionId/:displayId/:version/sbol", route_parameters = ["igem","BBa_B0034", "1"], headers = headers, test_type = test_type)
+        compare_get_request_download("/public/:collectionId/:displayId/:version/sbol", route_parameters = ["igem","BBa_B0034", "1"], headers = headers, test_type = test_type)
         #compare_get_request_download("/public/:collectionId/:displayId/:version/sbol", route_parameters = ["testid1","part_pIKE_Toggle_1","1"], test_name = "sbol1", headers = headers, test_type = test_type)
         #compare_get_request_download("/public/:collectionId/:displayId/sbol", route_parameters = ["igem","BBa_B0034"], headers = headers, test_type = test_type)
         #compare_get_request_download("/public/:collectionId/:displayId/sbol", test_name = "sbol1", route_parameters = ["testid1","part_pIKE_Toggle_1"], headers = headers, test_type = test_type) 
