@@ -138,7 +138,7 @@ export default function Setup({ setInSetupMode }) {
                     labelText="Require Login: Require login for all operations"
                     value={requireLogin}
                     onChange={event => setRequireLogin(event.target.checked)}
-                    inputName="Alternate Home Page"
+                    inputName="Require Login"
                     containerStyling={styles.checkboxinput}
                     style={secondaryTitleStyle}
                     inputStyle={{ accentColor: color }}
