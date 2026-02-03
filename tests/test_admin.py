@@ -211,19 +211,19 @@ class TestAdmin(TestCase):
         compare_get_request("/admin/theme", headers = {"Accept":"text/plain"}, test_type = test_type, comparison_type="json", fields=["instanceName", "frontPageText"])
         test_print("test_admin_theme completed")
 
-        # test_print("test_admin_updateTheme starting")
-        # logo = os.path.basename('./logo.jpg');
-        # data={
-        #     'instanceName': 'test_instance',
-        #     'frontPageText' : 'test_instance',
-        #     'baseColor' : 'A32423',
-        #     'showModuleInteractions' : 'ok',
-        # }
-        # files={
-        #     'logo' : (logo, open('./logo.jpg', 'rb')),
-        # }
-        # compare_post_request("/admin/theme", data, headers = {"Accept": "text/plain"}, files = files, test_name = "admin_setAdministratorEmail", test_type = test_type)
-        # test_print("test_admin_updateTheme completed")
+        test_print("test_admin_updateTheme starting")
+        logo = os.path.basename('./logo.jpg');
+        data={
+            'instanceName': 'test_instance',
+            'frontPageText' : 'test_instance',
+            'baseColor' : 'A32423',
+            'showModuleInteractions' : 'ok',
+        }
+        files={
+            'logo' : (logo, open('./logo.jpg', 'rb')),
+        }
+        compare_post_request("/admin/theme", data, headers = {"Accept": "text/plain"}, files = files, test_name = "admin_setAdministratorEmail", test_type = test_type)
+        test_print("test_admin_updateTheme completed")
 
         # test_print("test_get_admin_users starting")
         # compare_get_request("/admin/users", headers = {"Accept":"text/plain"}, test_type = test_type, comparison_type="json", fields=["users", "graphUri", "isAdmin"])
