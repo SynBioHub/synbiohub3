@@ -31,9 +31,9 @@ class TestAdmin(TestCase):
         # compare_get_request("/admin/graphs", headers = {"Accept":"text/plain"}, test_type = test_type, comparison_type="jsonlist", fields=["graphUri", "numTriples"], key='graphUri')
         # test_print("test_admin_graphs completed")
 
-        # test_print("test_admin_log starting")
-        # compare_get_request("admin/log", headers = {"Accept":"text/plain"}, test_type = test_type, comparison_type="jsonlist", fields=["level", "line"], key='line')
-        # test_print("test_admin_log completed")
+        test_print("test_admin_log starting")
+        compare_get_request("admin/log", headers = {"Accept":"text/plain"}, test_type = test_type, comparison_type="jsonlist", fields=["level", "line"], key='line')
+        test_print("test_admin_log completed")
 
         # test_print("test_admin_mail starting")
         # compare_get_request("/admin/mail", headers = {"Accept":"text/plain"}, test_type = test_type, comparison_type="json", fields=["sendGridApiKey", "sendGridFromEmail"])
