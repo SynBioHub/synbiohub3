@@ -69,23 +69,24 @@ export default async function getQueryResponse(
     // const response = urlOverride
     //   ? await axios.post('/api/wor-proxy', { url, headers })
     //   : await axios.get(url, { headers });
-    let response;
-    if (options.uri) {
-      response = await axios.get(url, { headers });
-    }
-    if (response.status === 200) {
+    const response = await axios.get(url, { headers });
+
+    if (response && response.status === 200) {
       return processResults(response.data);
-    } else return;
+    }
+    // Non-200 responses will be handled by the catch block via axios throwing
+    return;
   } catch (error) {
-    // Check if error is related to undefined user
+    // Check if error is specifically related to an undefined user identifier.
+    // Do NOT treat generic SPARQL errors (e.g. \"cannot resolve relative IRI <>\")
+    // as an undefined user, or we will incorrectly log the user out.
     const errorMessage = error.response?.data?.toString() || '';
     const queryString = query || '';
     const urlString = url || '';
-    const hasUndefinedUser = 
+    const hasUndefinedUser =
       errorMessage.toLowerCase().includes('undefineduser') ||
       queryString.toLowerCase().includes('undefineduser') ||
-      urlString.toLowerCase().includes('undefineduser') ||
-      (error.response?.status === 400 && errorMessage.toLowerCase().includes('cannot resolve'));
+      urlString.toLowerCase().includes('undefineduser');
 
     if (hasUndefinedUser) {
       // User information is undefined, logout and redirect to login

@@ -1,5 +1,4 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
@@ -33,7 +32,6 @@ export default function NavbarSearch(properties) {
       <Selector icon={faSignInAlt} name="Log in or Register" href="/login" />
     );
 
-  const [navbarWidth, setNavbarWidth] = useState('100%');
   const navbarRef = useRef(null);
 
   let linkHref = "/";
@@ -41,50 +39,37 @@ export default function NavbarSearch(properties) {
     linkHref = theme.altHome;
   }
 
-  const [logoUrl, setLogoUrl] = useState(defaultLogo);
+  // initialize logo like Navbar.js: prefer theme.logoUrl, then localStorage 'sbh_logo', else null/default
+  const [logoUrl, setLogoUrl] = useState(theme.logoUrl || localStorage.getItem('sbh_logo') || null);
 
+  // fetch logo from backend/logo if we don't already have one (same approach as Navbar.js)
   useEffect(() => {
-    const calculateWidth = () => {
-      // Get the full scrollable width of the page (including any horizontal scroll area)
-      const scrollWidth = Math.max(
-        document.documentElement.scrollWidth,
-        document.documentElement.offsetWidth,
-        document.body.scrollWidth
-      );
-      setNavbarWidth(`${scrollWidth}px`);
-    };
-
-    // Calculate width on mount
-    calculateWidth();
-
-    // Recalculate on window resize and load
-    window.addEventListener('resize', calculateWidth);
-    window.addEventListener('load', calculateWidth);
-
-    // Also recalculate when content changes (debounced)
-    const observer = new MutationObserver(calculateWidth);
-    observer.observe(document.body, {
-      childList: true,
-      subtree: true,
-      attributes: true,
-      attributeFilter: ['style']
-    });
-
-    return () => {
-      window.removeEventListener('resize', calculateWidth);
-      window.removeEventListener('load', calculateWidth);
-      observer.disconnect();
-    };
-  }, []);
-
-  useEffect(() => {
-    if (localStorage.getItem('logo')) {
-      const urlLogo = `${publicRuntimeConfig.backend}/logo`;
-      setLogoUrl(urlLogo);
-    } else {
-      setLogoUrl(defaultLogo);
+    if (!logoUrl) {
+      fetch(`${publicRuntimeConfig.backend}/logo`, { method: 'GET', cache: 'no-store' })
+        .then(res => {
+          if (!res.ok) throw new Error('No logo');
+          return res.blob();
+        })
+        .then(blob => {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            const dataUrl = reader.result;
+            try {
+              localStorage.setItem('sbh_logo', dataUrl);
+              const updatedTheme = JSON.parse(localStorage.getItem('theme') || '{}');
+              updatedTheme.logoUrl = dataUrl;
+              localStorage.setItem('theme', JSON.stringify(updatedTheme));
+            } catch (e) { /* ignore storage errors */ }
+            setLogoUrl(dataUrl);
+          };
+          reader.readAsDataURL(blob);
+        })
+        .catch(() => {
+          // fallback to default
+          setLogoUrl(defaultLogo);
+        });
     }
-  }, [publicRuntimeConfig.backend]);
+  }, []); // run once on mount
 
   useEffect(() => {
       if (loggedIn) {
@@ -101,19 +86,15 @@ export default function NavbarSearch(properties) {
       ref={navbarRef}
       className={styles.container}
       style={{
-        backgroundColor: theme?.themeParameters?.[0]?.value || '#465775',
-        width: navbarWidth,
-        minWidth: navbarWidth
+        backgroundColor: theme?.themeParameters?.[0]?.value || '#465775'
       }}
     >
       <Link href={linkHref}>
         <a className={styles.logo}>
-          <Image
+          <img
             alt="logo"
-            src={logoUrl}
-            width={80}
-            height={80}
-            style={{ maxHeight: '50px', height: 'auto', width: '80px' }}
+            src={logoUrl || defaultLogo}
+            style={{ height: '50px', width: 'auto', maxWidth: '200px', objectFit: 'contain', marginTop: '0.5rem', marginBottom: '0.5rem', marginLeft: '0.5rem', marginRight: '0.5rem' }}
           />
         </a>
       </Link>

@@ -99,8 +99,15 @@ export default function View({ data, error }) {
       .then(response => {
         if (!metadata && uri) {
           const parts = uri.split('/');
-          const lastIndex = parts.lastIndexOf("1");
-          const firstHalf = parts.slice(0, lastIndex+1).join('/');
+          // Find the last index that looks like a version number (contains digits)
+          let lastIndex = -1;
+          for (let i = parts.length - 1; i >= 0; i--) {
+            if (parts[i] && /^\d/.test(parts[i])) { // Starts with a digit
+              lastIndex = i;
+              break;
+            }
+          }
+          const firstHalf = lastIndex >= 0 ? parts.slice(0, lastIndex + 1).join('/') : uri;
           getQueryResponse(dispatch, getMetadata, { uri: firstHalf }, token).then(
             metadata => setMetadata(metadata)
           );

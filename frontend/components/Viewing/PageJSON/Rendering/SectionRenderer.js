@@ -128,7 +128,7 @@ export default function SectionRenderer({ section, metadata }) {
 
 
     if (section.grouped) {
-      const items = section.text.split(', ');
+      const items = section.text.split(', ').filter(item => item.trim() !== '');
       const content = items.map((item, index) => {
         if (section.link && item) {
           return (
@@ -146,7 +146,7 @@ export default function SectionRenderer({ section, metadata }) {
         }
         return (
           <span key={index}>
-            "{item}"
+            {item || ''}
             {index === items.length - 1 ? '' : ', '}
           </span>
         );
