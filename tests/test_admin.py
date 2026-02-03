@@ -116,64 +116,64 @@ class TestAdmin(TestCase):
         # compare_post_request("/admin/federate", data, headers = {"Accept": "text/plain"}, test_name = "admin_federate_problem")
         # test_print("test_admin_federate completed")
 
-        # test_print("test_admin_remotes starting")
-        # compare_get_request("/admin/remotes", headers = {"Accept":"text/plain"}, test_type = test_type, comparison_type="json", fields=["remotes", "remoteTypes"])
-        # test_print("test_admin_remotes completed")
+        test_print("test_admin_remotes starting")
+        compare_get_request("/admin/remotes", headers = {"Accept":"text/plain"}, test_type = test_type, comparison_type="json", fields=["remotes", "remoteTypes"])
+        test_print("test_admin_remotes completed")
 
-        # test_print("test_saveRemoteICE starting")
-        # data={
-        #     'type': 'ice',
-        #     'id' : 'test',
-        #     'url' : 'test.com',
-        #     'iceApiTokenClient' : 'test',
-        #     'iceApiToken' : 'test',
-        #     'iceApiTokenOwner' : 'test',
-        #     'iceCollection' : 'test',
-        #     'rejectUnauthorized' : 'True',
-        #     'folderPrefix' : 'test',
-        #     'sequenceSuffix' : 'test',
-        #     'defaultFolderId' : 'test',
-        #     'groupId' : 'test',
-        #     'pi' : 'test',
-        #     'piEmail' : 'test',
-        #     'isPublic' : 'True',
-        #     'partNumberPrefix' : 'test',
-        #     'rootCollectionDisplayId' : 'test',
-        #     'rootCollectionName' : 'test',
-        #     'rootCollectionDescription' : 'test'
-        # }
-        # compare_post_request("/admin/saveRemote", data, headers = {"Accept": "text/plain"}, test_name = "admin_saveRemoteICE", test_type = test_type)
-        # test_print("test_saveRemoteICE completed")
+        test_print("test_saveRemoteICE starting")
+        data={
+            'type': 'ice',
+            'id' : 'test',
+            'url' : 'test.com',
+            'iceApiTokenClient' : 'test',
+            'iceApiToken' : 'test',
+            'iceApiTokenOwner' : 'test',
+            'iceCollection' : 'test',
+            'rejectUnauthorized' : 'True',
+            'folderPrefix' : 'test',
+            'sequenceSuffix' : 'test',
+            'defaultFolderId' : 'test',
+            'groupId' : 'test',
+            'pi' : 'test',
+            'piEmail' : 'test',
+            'isPublic' : 'True',
+            'partNumberPrefix' : 'test',
+            'rootCollectionDisplayId' : 'test',
+            'rootCollectionName' : 'test',
+            'rootCollectionDescription' : 'test'
+        }
+        compare_post_request("/admin/saveRemote", data, headers = {"Accept": "text/plain"}, test_name = "admin_saveRemoteICE", test_type = test_type)
+        test_print("test_saveRemoteICE completed")
 
-        # test_print("test_saveRemoteBenchling starting")
-        # data={
-        #     'type': 'benchling',
-        #     'id': '1',
-        #     'benchlingApiToken': 'test',
-        #     'rejectUnauthorized': 'test',
-        #     'folderprefix': 'test',
-        #     'defaultFolderId': 'test',
-        #     'isPublic': 'True',
-        #     'rootCollectionsDisplayId': 'test',
-        #     'rootCollectionName': 'test',
-        #     'rootCollectionDescription': 'test'
-        # }
-        # compare_post_request("/admin/saveRemote", data, headers = {"Accept": "text/plain"}, test_name = "admin_saveRemoteBenchling", test_type = test_type)
-        # test_print("test_saveRemoteBenchling completed")
+        test_print("test_saveRemoteBenchling starting")
+        data={
+            'type': 'benchling',
+            'id': '1',
+            'benchlingApiToken': 'test',
+            'rejectUnauthorized': 'test',
+            'folderprefix': 'test',
+            'defaultFolderId': 'test',
+            'isPublic': 'True',
+            'rootCollectionsDisplayId': 'test',
+            'rootCollectionName': 'test',
+            'rootCollectionDescription': 'test'
+        }
+        compare_post_request("/admin/saveRemote", data, headers = {"Accept": "text/plain"}, test_name = "admin_saveRemoteBenchling", test_type = test_type)
+        test_print("test_saveRemoteBenchling completed")
 
-        # test_print("test_admin_deleteRemoteBenchling starting")
-        # data={
-        #     'id': '1',
-        # }
-        # compare_post_request("/admin/deleteRemote", data, headers = {"Accept": "text/plain"}, test_name = "admin_deleteRemoteBenchling", test_type = test_type)
-        # test_print("test_admin_deleteRemoteBenchling completed")
+        test_print("test_admin_deleteRemoteBenchling starting")
+        data={
+            'id': '1',
+        }
+        compare_post_request("/admin/deleteRemote", data, headers = {"Accept": "text/plain"}, test_name = "admin_deleteRemoteBenchling", test_type = test_type)
+        test_print("test_admin_deleteRemoteBenchling completed")
 
-        # test_print("test_admin_deleteRemoteICE starting")
-        # data={
-        #     'id': 'test',
-        # }
-        # compare_post_request("/admin/deleteRemote", data, headers = {"Accept": "text/plain"}, test_name = "admin_deleteRemoteICE", test_type = test_type)
-        # test_print("test_admin_deleteRemoteICE completed")
+        test_print("test_admin_deleteRemoteICE starting")
+        data={
+            'id': 'test',
+        }
+        compare_post_request("/admin/deleteRemote", data, headers = {"Accept": "text/plain"}, test_name = "admin_deleteRemoteICE", test_type = test_type)
+        test_print("test_admin_deleteRemoteICE completed")
 
         # #TODO: hangs up the code, Need SBOL Explorer ON to test?
         # # test_print("test_admin_explorerlog starting")
