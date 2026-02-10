@@ -345,6 +345,7 @@ public class SearchService {
     }
 
     public String SPARQLQuery(String query) throws IOException {
+        // BEFORE 1/27:
         RestTemplate restTemplate = new RestTemplate();
         String url;
         HashMap<String, String> params = new HashMap<>();
