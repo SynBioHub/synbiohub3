@@ -203,5 +203,6 @@ const getType = type => {
   if (type) {
     return type.replace('http://sbols.org/v2#', '');
   }
+  
   return type;
 };
