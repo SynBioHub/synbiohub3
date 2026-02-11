@@ -140,7 +140,7 @@ public class AdminController {
         }
     }
 
-    @GetMapping(value = "/admin/ries")
+    @GetMapping(value = "/admin/registries")
     @ResponseBody
     public JsonNode getRegistries() throws IOException {
         try {

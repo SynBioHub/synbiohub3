@@ -45,7 +45,9 @@ public class SearchController {
         String requestURL = request.getRequestURL().toString();
         String[] uriArr = requestURL.split("/");
         String keyword = uriArr[uriArr.length - 1].split("\\?")[0];
-        allParams.put(keyword, "");
+        if (!(uriArr.length == 4 && (keyword.equals("search")))) {
+            allParams.put(keyword, "");
+        }
         String sparqlQuery = searchService.getMetadataQuerySPARQL(allParams);
         return searchService.rawJSONToOutput(searchService.SPARQLOrExplorerQuery(sparqlQuery));
     }
@@ -75,7 +77,9 @@ public class SearchController {
         String requestURL = request.getRequestURL().toString();
         String[] uriArr = requestURL.split("/");
         String keyword = uriArr[uriArr.length - 1].split("\\?")[0];
-        allParams.put(keyword, "");
+        if (!(uriArr.length == 4 && (keyword.equals("searchCount")))) {
+            allParams.put(keyword, "");
+        }
         String sparqlQuery = searchService.getSearchCountSPARQL(allParams);
         return searchService.JSONToCount(searchService.SPARQLOrExplorerQuery(sparqlQuery));
     }

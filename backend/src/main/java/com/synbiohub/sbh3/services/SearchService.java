@@ -419,7 +419,7 @@ public class SearchService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication instanceof AnonymousAuthenticationToken) return "";
         //var user = authentication.getPrincipal();
-        return ConfigUtil.get("graphPrefix").asText() + "/user/" + authentication.getName();
+        return ConfigUtil.get("graphPrefix").asText() + "user/" + authentication.getName();
     }
 
     // Method to encode a string value using `UTF-8` encoding scheme
