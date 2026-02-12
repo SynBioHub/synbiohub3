@@ -37,8 +37,6 @@ export default function Registries() {
   const [registries, setRegistries] = useState([]);
   const [loading, setLoading] = useState(false);
 
-
-
   useEffect(() => {
     setLoading(true);
     try {
