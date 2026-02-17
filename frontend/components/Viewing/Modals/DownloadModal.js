@@ -82,7 +82,7 @@ export default function DownloadModal(properties) {
     
     const pluginData = {
       uriSuffix: uriSuffix,
-      instanceUrl: `${publicRuntimeConfig.backend}/`,
+      instanceUrl: pluginsUseLocalCompose ? pluginLocalComposePrefix : `${publicRuntimeConfig.backend}/`,
       size: 1,
       type: properties.type,
       top: properties.uri,
