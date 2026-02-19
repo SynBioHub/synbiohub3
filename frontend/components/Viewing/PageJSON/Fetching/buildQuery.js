@@ -56,9 +56,24 @@ function getTableQuery(
   const subqueries = [];
   subqueries.push(`{\n<${uri}> ${rootPredicate} ${rootId}`);
   columns.forEach(column => {
-    if (!column.predicates) {
+    if (!column.predicates && !column.bindTo) {
       return;
-    } else if (column.predicates.length === 0) {
+    } else if (column.bindTo != null && column.bindToPredicateIndex != null) {
+      // Section references another section's variable - reuse it without new OPTIONAL
+      const refSection = columns.find(
+        c =>
+          c.title === column.bindTo ||
+          c.title.startsWith(column.bindTo + '__')
+      );
+      if (refSection && refSection.predicates && refSection.predicates.length > column.bindToPredicateIndex) {
+        const predicateIndex = column.bindToPredicateIndex;
+        const isLastPredicate = predicateIndex === refSection.predicates.length - 1;
+        const boundVariable = isLastPredicate
+          ? getId(refSection)
+          : getId({ title: refSection.predicates[predicateIndex] });
+        items.push(`(${boundVariable} AS ${getId(column)})`);
+      }
+    } else if (!column.predicates || column.predicates.length === 0) {
       items.push(`(${rootId} AS ${getId(column)})`);
     } else {
       let topLevelId = rootId;

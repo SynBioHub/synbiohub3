@@ -219,7 +219,7 @@ export default function RowWrapper({ sections, metadata, setSectionIcon }) {
       );
     }
   }, [sectionsToParse, registries, registriesLoading, error]);
-
+  
   for (let section of sectionsToRender) {
     if (section.key === 'LocationRangeStart' && sections.locationrangestart[0].value != "") {
       const startValue = sections.locationrangestart[0].value;

@@ -109,6 +109,7 @@
           "title": "Definition",
           "infoLink": "https://sbols.org/v2#definition",
           "predicates": [
+            "sbol:definition",
             "sbol:displayId"
           ],
           "link": "$<DefinitionLink>"
