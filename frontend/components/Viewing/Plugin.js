@@ -79,7 +79,7 @@ export default function Plugin(properties) {
 
             const pluginData = {
               uriSuffix: uriSuffix,
-              instanceUrl: `${publicRuntimeConfig.backend}/`,
+              instanceUrl: pluginsUseLocalCompose ? pluginLocalComposePrefix : `${publicRuntimeConfig.backend}/`,
               size: 1,
               type: type,
               top: properties.uri,
