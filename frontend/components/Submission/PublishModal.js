@@ -225,7 +225,7 @@ const sortMethods = {
 
 const useRootCollections = (dispatch, token) => {
   const { data, error } = useSWR(
-    [`${publicRuntimeConfig.backend}/rootCollections`, token, dispatch],
+    [`${publicRuntimeConfig.backend}/browse`, token, dispatch],
     fetcher
   );
   const theme = JSON.parse(localStorage.getItem('theme')) || {};

@@ -145,8 +145,9 @@ const removeCollections = (
   setProcessUnderway,
   dispatch
 ) => {
+  const theme = JSON.parse(localStorage.getItem('theme'));
   const removeCollectionPromises = collections.map(collection => {
-    if (collection.privacy === 'public') {
+    if (collection.privacy === 'public' && !theme.removePublicEnabled) {
       alert(
         `${collection.name} cannot be removed because it has been published`
       );

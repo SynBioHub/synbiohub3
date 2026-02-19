@@ -9,7 +9,12 @@ import sequenceOntology from '../../namespace/sequence-ontology';
 import systemsBiologyOntology from '../../namespace/systems-biology-ontology';
 import edamOntology from '../../namespace/edam-ontology';
 
+import { useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBars } from '@fortawesome/free-solid-svg-icons';
+
 export default function Shell(properties) {
+  const [translation, setTranslation] = useState(0);
   const plugins = properties.plugins;
   const metadata = properties.metadata;
 
@@ -23,13 +28,25 @@ export default function Shell(properties) {
 
   if (!json) {
     return (
-      <div className={styles.container}>
-        <SidePanel
-          metadata={metadata}
-          type={properties.type}
-          uri={properties.uri}
-        />
-        <div className={styles.content}>
+      <>
+        <div
+          className={styles.panelbutton}
+          role="button"
+          onClick={() => {
+            translation == 18 ? setTranslation(0) : setTranslation(18);
+          }}
+        >
+          <FontAwesomeIcon icon={faBars} size="1x" />
+        </div>
+        <div className={styles.container}>
+          <SidePanel
+            metadata={metadata}
+            type={properties.type}
+            uri={properties.uri}
+            translation={translation}
+            setTranslation={setTranslation}
+          />
+          <div className={styles.content}>
           <ViewHeader
             name={metadata.name}
             displayId={metadata.displayId}
@@ -45,19 +62,32 @@ export default function Shell(properties) {
         </div>
         <div></div>
       </div>
+      </>
     );
   }
 
   return (
-    <div className={styles.container}>
-      <SidePanel
-        metadata={metadata}
-        type={properties.type}
-        uri={properties.uri}
-        json={json}
-        plugins={plugins}
-      />
-      <div className={styles.content}>
+    <>
+      <div
+        className={styles.panelbutton}
+        role="button"
+        onClick={() => {
+          translation == 18 ? setTranslation(0) : setTranslation(18);
+        }}
+      >
+        <FontAwesomeIcon icon={faBars} size="1x" />
+      </div>
+      <div className={styles.container}>
+        <SidePanel
+          metadata={metadata}
+          type={properties.type}
+          uri={properties.uri}
+          json={json}
+          plugins={plugins}
+          translation={translation}
+          setTranslation={setTranslation}
+        />
+        <div className={styles.content}>
         <ViewHeader
           name={metadata.name}
           displayId={metadata.displayId}
@@ -67,11 +97,12 @@ export default function Shell(properties) {
           search={metadata.search}
         />
         <div className={styles.sections}>
-          <GenericContent json={json} uri={properties.uri} metadata={false} plugins={plugins} type={properties.type} />
+          <GenericContent json={json} uri={properties.uri} metadata={false} plugins={plugins} type={properties.type} translation={translation} />
         </div>
       </div>
       <div></div>
     </div>
+    </>
   );
 }
 
@@ -181,6 +212,7 @@ function getSearch(type) {
 }
 
 export function isValidURI(uri) {
-  const pattern = /^(https?|ftp|file):\/\/([A-Z0-9.-]+)(:[0-9]+)?(\/[A-Z0-9.-_]*)*$/i;
+  console.log(uri);
+  const pattern = /^(https?|ftp|file):\/\/([A-Za-z0-9.-]+)(:[0-9]+)?(\/[A-Za-z0-9._:-]+)*(\/)?(\?[^\s#]*)?(#[^\s]*)?$/i;
   return pattern.test(uri);
 }

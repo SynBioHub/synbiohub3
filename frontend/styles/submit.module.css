@@ -160,6 +160,16 @@
    font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 }
+
+.submitinputerror {
+   border: 2px solid #D25627;
+}
+
+.submitwarning {
+   margin: 0.3rem 0 0 0;
+   color: #D25627;
+   font-size: 0.85rem;
+}
 .submitinput:disabled {
    background-color: #6b4245;
    color: #d3d3d3;

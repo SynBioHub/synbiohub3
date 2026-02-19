@@ -2,8 +2,9 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import Loader from 'react-loader-spinner';
 import { useDispatch, useSelector } from 'react-redux';
+import { setOffset } from '../../../redux/actions'
 import useSWR from 'swr';
-import { faHatWizard, faBars} from '@fortawesome/free-solid-svg-icons';
+import { faHatWizard, faSearch, faBars } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRouter } from 'next/router';
 import Options from '../AdvancedSearch/Options';
@@ -11,6 +12,9 @@ import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
 import SearchHeader from '../SearchHeader/SearchHeader';
 import { processUrl } from '../../Admin/Registries';
+import { isValidURI } from '../../Viewing/Shell';
+import lookupRole from '../../../namespace/lookupRole';
+
 
 import {
   countloader,
@@ -65,12 +69,13 @@ export default function StandardSearch() {
   const [url, setUrl] = useState('');
   const [translation, setTranslation] = useState(0);
   const router = useRouter();
+
   useEffect(() => {
     if (theme.requireLogin && !loggedIn) {
       router.push('/login'); // Redirect to the login page
     }
   }, [theme.requireLogin, router]);
-  
+
 
   const constructSearch = () => {
     let collectionUrls = '';
@@ -96,15 +101,16 @@ export default function StandardSearch() {
       'modifedBefore',
       true
     )}${constructExtraFilters()}`;
+    console.log(url);
     setUrl(url);
   };
-  
-  const handleDelete = (delFilterIndex) => { 
-    setExtraFilters(prevFilters => { 
-      return prevFilters.filter((_, index) => index !== delFilterIndex); 
-    }); 
-  }; 
-  
+
+  const handleDelete = (delFilterIndex) => {
+    setExtraFilters(prevFilters => {
+      return prevFilters.filter((_, index) => index !== delFilterIndex);
+    });
+  };
+
 
   const addFilter = filters => {
     return [
@@ -119,16 +125,20 @@ export default function StandardSearch() {
   const constructExtraFilters = () => {
     let url = '';
     for (const filter of extraFilters) {
-      if (filter.filter && filter.value)
-        url += getUrl(filter.value, filter.filter);
+      if (filter.filter && filter.value){
+        url += getUrl(filter.value, filter.filter);        
+      }
     }
     return url;
   };
 
   const getUrl = (value, term, isDate = false) => {
     if (value) {
-      if (!isDate) return `${term}=<${encodeURIComponent(value)}>&`;
-      return `${term}=${encodeURIComponent(value.toISOString().slice(0, 10))}&`;
+      if (isDate) return `${term}=${encodeURIComponent(value.toISOString().slice(0, 10))}&`;
+      if (isValidURI(value)) {
+        return `${term}=<${encodeURIComponent(value)}>&`;
+      } 
+      return `${term}='${encodeURIComponent(value)}'&`;
     }
     return '';
   };
@@ -173,7 +183,7 @@ export default function StandardSearch() {
     dispatch
   );
 
-if (isError) {
+  if (isError) {
     return (
       <div className={standarderror}>
         Errors were encountered while fetching the data
@@ -182,9 +192,9 @@ if (isError) {
   }
   if (isLoading) {
     return (
-        <div className={standardresultsloading}>
-          <Loader color="#D25627" type="ThreeDots" />
-        </div>
+      <div className={standardresultsloading}>
+        <Loader color="#D25627" type="ThreeDots" />
+      </div>
     );
   }
   for (const result of results) {
@@ -192,6 +202,15 @@ if (isError) {
   }
   return (
   <div className={viewStyles.container}>
+    <div
+      className={viewStyles.panelbutton}
+      role="button"
+      onClick={() => {
+        translation == 14 ? setTranslation(0) : setTranslation(14);
+      }}
+    >
+      <FontAwesomeIcon icon={faBars} size="1x" />
+    </div>
     <div
       className={
         translation === 0
@@ -208,45 +227,36 @@ if (isError) {
         <div className={viewStyles.headercontainer}>
           <div className={viewStyles.emptySpace}>
           </div>
-          <div
-              className={viewStyles.panelbutton}
-              role="button"
-              onClick={() => {
-                translation == 14 ? setTranslation(0) : setTranslation(14);
-              }}
-            >
-            <FontAwesomeIcon icon={faBars} size="1x" />
-          </div>
         </div>
 
-        <div className={viewStyles.searchBoundedheightforsidepanel}
-          style={{
-            transform: `translateX(-${translation === 14 ? 2.5 : 0}rem)`,
-            transition: 'transform 0.3s'
-          }}
-        >
-          <div>
-            <Options
-              creator={creator}
-              setCreator={setCreator}
+          <div className={viewStyles.searchBoundedheightforsidepanel}
+            style={{
+              transform: `translateX(-${translation === 14 ? 2.5 : 0}rem)`,
+              transition: 'transform 0.3s'
+            }}
+          >
+            <div>
+              <Options
+                creator={creator}
+                setCreator={setCreator}
 
-              objectType={objectType}
-              setObjectType={setObjectType}
+                objectType={objectType}
+                setObjectType={setObjectType}
 
-              sbolType={sbolType}
-              setSbolType={setSbolType}
+                sbolType={sbolType}
+                setSbolType={setSbolType}
 
-              role={role}
-              setRole={setRole}
+                role={role}
+                setRole={setRole}
 
-              collections={collections}
-              setCollections={setCollections}
+                collections={collections}
+                setCollections={setCollections}
 
-              modified={modifed}
-              setModified={setModified}
+                modified={modifed}
+                setModified={setModified}
 
-              extraFilters={extraFilters}
-              setExtraFilters={setExtraFilters}
+                extraFilters={extraFilters}
+                setExtraFilters={setExtraFilters}
 
               addFilter={addFilter}
               handleDelete={handleDelete}
@@ -254,30 +264,33 @@ if (isError) {
             <div
               className={advStyles.searchbutton}
               role="button"
-              onClick={constructSearch}
+              onClick={() => {
+                dispatch(setOffset(0));
+                constructSearch();
+              }}
               style={{
-                backgroundColor: theme?.themeParameters?.[0]?.value || '#333', // Use theme color or default to #333
-                color: theme?.themeParameters?.[1]?.value || '#fff', // Use text color from theme or default to #fff
+                backgroundColor: theme?.themeParameters?.[0]?.value || '#D25627',
+                color: theme?.themeParameters?.[1]?.value || '#fff',
               }}
             >
             <FontAwesomeIcon
-              icon={faHatWizard}
+              icon={faSearch}
               size="1x"
-              className={advStyles.dnaicon}
-              color="#F2E86D"
+              color="#fff"
+              className={advStyles.searchicon}
             />
             <div>Search</div>
           </div>
         </div>
 
+          </div>
         </div>
       </div>
-    </div>
-    <div className={viewStyles.searchContent}>
+      <div className={viewStyles.searchContent}>
         <SearchHeader selected="Standard Search" />
         <ResultTable count={count} data={results} />
+      </div>
     </div>
-  </div>
   );
 }
 const useSearchResults = (query, url, offset, limit, token, dispatch) => {
@@ -310,6 +323,20 @@ const useSearchCount = (query, url, token, dispatch) => {
   };
 };
 
+function getType(member) {
+  var memberType = member.type
+    ? member.type.slice(member.type.lastIndexOf('#') + 1)
+    : 'Unknown';
+  if (member.sbolType) {
+    memberType = member.sbolType.slice(member.sbolType.lastIndexOf('#') + 1);
+  }
+  if (member.role) {
+    memberType = lookupRole(member.role).description.name;
+  }
+  return memberType;
+}
+
+
 const getTypeAndUrl = async (result, registries) => {
   let type = '';
   const potentialType = result.type.toLowerCase();
@@ -329,6 +356,7 @@ const getTypeAndUrl = async (result, registries) => {
   }
 
   result.type = type;
+  result.derivedType = getType(result);
 
   const processed = await processUrl(result.uri, registries);
   result.url = processed.urlRemovedForLink || processed.original;

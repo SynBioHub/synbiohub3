@@ -197,9 +197,8 @@ export const registerUser =
         const response = await axios.post(url, parameters, { headers });
 
         const message = response.data;
+        console.log("Token:", message);
         if (response.status === 200) {
-          localStorage.setItem('userToken', message); // save the token of the user locally
-          localStorage.setItem('username', username); // save the username of the user locally
           dispatch(login(username, password));
         } else {
           dispatch({
@@ -404,6 +403,9 @@ async function uploadFiles(
         },
         method: 'POST',
         url: `${publicRuntimeConfig.backend}/callPlugin`,
+        headers: {
+          'X-authorization': token
+        },
         data: {
           name: pluginName,
           endpoint: 'evaluate',
@@ -792,7 +794,11 @@ export const getCanSubmitTo = () => async (dispatch, getState) => {
   } catch (error) {
     error.customMessage = "Couldn't get and/or process submissions";
     error.fullUrl = url;
-    dispatch(addError(error));
+    // Log out user and redirect to login when backend is unavailable
+    dispatch(logoutUser());
+    if (typeof window !== 'undefined') {
+      window.location.href = '/login';
+    }
   }
 };
 
@@ -891,12 +897,7 @@ export const downloadFiles =
         for (const result of results) {
           if (result.status === 'fulfilled') {
             let filename;
-            if (plugin) {
-              filename = `${result.value.file.pluginName}`;
-            }
-            else {
-              filename = `${result.value.file.displayId}.${result.value.file.type}`;
-            }
+            filename = result.value.file.name;
 
             zip.file(filename, result.value.response.data);
           }
@@ -925,7 +926,8 @@ const zippedFilePromise = (
       plugin
         ? {
           headers: {
-            'Accept': 'application/octet-stream'
+            'Accept': 'application/octet-stream',
+            'X-authorization': token
           },
           url: `${publicRuntimeConfig.backend}/callPlugin`,
           method: 'POST',
@@ -952,15 +954,23 @@ const zippedFilePromise = (
       .then(response => {
         if (response.status === 200) {
           files[index].status = 'downloaded';
-          if (plugin) {
-            const filename = response.headers['content-disposition'].split('=')[1];
-            const extension = filename.split('.').pop().replace('"', '');
-            file.type = extension
-            file.pluginName = filename.replaceAll('"', '');
-          }
-          resolve({ file, response });
 
+          // simple extraction from Content-Disposition header (original behavior)
+          const cd = (response.headers['content-disposition'] || response.headers['Content-Disposition'] || '') + '';
+          const m = cd.match(/filename\*?=(?:UTF-8''\s*)?(?:"([^"]+)"|([^;,\n\r]+))/i);
+          let filename = m ? (m[1] || m[2] || '').trim() : '';
+
+          // Fallback: if header not present, construct filename from file.name and file.type
+          if (!filename) {
+            filename = `${file.name}.${file.type || 'xml'}`;
+          }
+
+          file.name = filename;
+          response.fileName = filename;
+
+          resolve({ file, response });
         } else {
+          console.error('Failed to download file:', file.url);
           files[index].status = 'failed';
           files[index].errors = 'Sorry, this file could not be downloaded';
           reject();
