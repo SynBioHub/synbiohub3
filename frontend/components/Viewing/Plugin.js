@@ -18,12 +18,17 @@ export default function Plugin(properties) {
   const hiddenSections = useSelector(state => state.pageSections.hiddenSections);
   const dispatch = useDispatch();
   const theme = JSON.parse(localStorage.getItem('theme')) || {};
-  const pluginsUseLocalCompose = useSelector(state => state.pluginsUseLocalCompose);
-  const pluginLocalComposePrefix = useSelector(state => state.pluginLocalComposePrefix);
-  if (theme && theme.pluginsUseLocalCompose && theme.pluginLocalComposePrefix) {
-    pluginsUseLocalCompose = theme.pluginsUseLocalCompose;
-    pluginLocalComposePrefix = theme.pluginLocalComposePrefix;
-  }
+  const pluginsUseLocalComposeFromState = useSelector(state => state.pluginsUseLocalCompose);
+  const pluginLocalComposePrefixFromState = useSelector(state => state.pluginLocalComposePrefix);
+  const token = useSelector(state => state.user.token);
+  
+  const pluginsUseLocalCompose = (theme && theme.pluginsUseLocalCompose) 
+    ? theme.pluginsUseLocalCompose 
+    : pluginsUseLocalComposeFromState;
+    
+  const pluginLocalComposePrefix = (theme && theme.pluginLocalComposePrefix) 
+    ? theme.pluginLocalComposePrefix 
+    : pluginLocalComposePrefixFromState;
 
   const acceptedTags = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'a', 'img', 'ul', 'ol', 'li', 'table', 'tr', 'td', 'th', 'thead', 'tbody', 'tfoot', 'caption', 'div', 'span', 'br', 'hr', 'pre', 'code', 'blockquote', 'strong', 'em', 'i', 'b', 'u', 's', 'sub', 'sup', 'del', 'ins', 'mark', 'small', 'big', 'abbr', 'cite', 'dfn', 'kbd', 'q', 'samp', 'var', 'time', 'address', 'article', 'aside', 'footer', 'header', 'nav', 'section', 'main', 'figure', 'figcaption', 'details', 'summary', 'dialog', 'menu', 'menuitem', 'menuitem', 'meter', 'progress', 'output', 'canvas', 'audio', 'video', 'iframe', 'object', 'embed', 'param', 'source', 'track', 'map', 'area', 'form', 'label', 'input', 'button', 'select', 'datalist', 'optgroup', 'option', 'textarea', 'fieldset', 'legend', 'datalist', 'output', 'progress', 'meter', 'details', 'summary', 'command', 'menu', 'menuitem', 'menuitem', 'script', 'noscript', 'style', 'link', 'meta', 'title', 'base', 'head', 'body', 'html', 'br', 'hr', 'wbr', 'img', 'area', 'map', 'track', 'source', 'param', 'iframe', 'embed', 'object', 'canvas', 'script', 'noscript', 'style', 'link', 'meta', 'title', 'base', 'head', 'body', 'html', 'br', 'hr', 'wbr', 'img', 'area', 'map', 'track', 'source', 'param', 'iframe', 'embed', 'object', 'canvas', 'script', 'noscript', 'style', 'link', 'meta', 'title', 'base', 'head', 'body', 'html', 'br', 'hr', 'wbr', 'img', 'area', ]
 
@@ -52,7 +57,7 @@ export default function Plugin(properties) {
 
   useEffect(() => {
     
-      evaluatePlugin(properties.plugin, properties.type, pluginsUseLocalCompose, pluginLocalComposePrefix).then(responseStatus => {
+      evaluatePlugin(properties.plugin, properties.type, pluginsUseLocalCompose, pluginLocalComposePrefix, token).then(responseStatus => {
         setStatus(responseStatus)
 
         if(responseStatus) {
@@ -74,14 +79,14 @@ export default function Plugin(properties) {
 
             const pluginData = {
               uriSuffix: uriSuffix,
-              instanceUrl: `${publicRuntimeConfig.backend}/`,
+              instanceUrl: pluginsUseLocalCompose ? pluginLocalComposePrefix : `${publicRuntimeConfig.backend}/`,
               size: 1,
               type: type,
               top: properties.uri,
-              apiToken: localStorage.getItem('userToken')
+              token: localStorage.getItem('userToken')
             };
 
-            const renderResponse = await runPlugin(properties.plugin, pluginData, pluginsUseLocalCompose, pluginLocalComposePrefix);
+            const renderResponse = await runPlugin(properties.plugin, pluginData, pluginsUseLocalCompose, pluginLocalComposePrefix, token);
             setContent(renderResponse.data);
             setStatus(renderResponse.status === 200);
             };
@@ -161,7 +166,7 @@ export default function Plugin(properties) {
 }
 
 
-async function evaluatePlugin(plugin, type, pluginsUseLocalCompose, pluginLocalComposePrefix) {
+async function evaluatePlugin(plugin, type, pluginsUseLocalCompose, pluginLocalComposePrefix, token) {
 
   switch(type) {
     case 'Component':
@@ -180,14 +185,16 @@ async function evaluatePlugin(plugin, type, pluginsUseLocalCompose, pluginLocalC
   return await axios({
     method: 'POST',
     url: `${publicRuntimeConfig.backend}/callPlugin`,
+    headers: {
+      'X-authorization': token
+    },
     data: {
       name: plugin.name,
       endpoint: 'evaluate',
       category: 'rendering',
       data: {
         type: type
-      },
-      prefix: pluginsUseLocalCompose ? pluginLocalComposePrefix : null
+      }
     }
   }).then(response => {
     return response.status === 200;
@@ -214,7 +221,7 @@ async function getShareLink(uriSuffix) {
   });
 }
 
-async function runPlugin(plugin, pluginData, pluginsUseLocalCompose, pluginLocalComposePrefix) {
+async function runPlugin(plugin, pluginData, pluginsUseLocalCompose, pluginLocalComposePrefix, token) {
   return await axios({
     method: 'POST',
     url: `${publicRuntimeConfig.backend}/callPlugin`,
@@ -224,6 +231,9 @@ async function runPlugin(plugin, pluginData, pluginsUseLocalCompose, pluginLocal
       data: pluginData,
       category: 'rendering',
       prefix: pluginsUseLocalCompose ? pluginLocalComposePrefix : null
+    },
+    headers: {
+      'X-authorization': token
     }
   }).then(response => {
     return response;

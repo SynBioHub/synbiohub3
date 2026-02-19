@@ -10,6 +10,7 @@ import styles from '../../../styles/choosecollection.module.css';
 
 export default function NewCollectionButtons(properties) {
   const dispatch = useDispatch();
+  const canCreate = !properties.needsVerification && properties.isUniqueName;
   return (
     <div className={styles.createcollectionbuttons}>
       <div
@@ -29,13 +30,17 @@ export default function NewCollectionButtons(properties) {
       </div>
       <div
         className={`${styles.createcollectionbutton} ${styles.createbutton} ${
-          properties.needsVerification ? '' : styles.createbuttonenabled
+          canCreate ? styles.createbuttonenabled : ''
         }`}
         role="button"
         onClick={() => {
           if (properties.needsVerification)
             alert(
               'You must fill out all required input fields (marked by orange labels) before you can create the collection.'
+            );
+          else if (!properties.isUniqueName)
+            alert(
+              'This collection name is already in use. Please choose a different name.'
             );
           else properties.postCollection();
         }}

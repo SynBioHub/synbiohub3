@@ -393,6 +393,7 @@ export default function Setup({ setInSetupMode }) {
               router.push(altHome);
             } else {
               router.push('/');
+              window.location.reload();
             }
           }}
         >

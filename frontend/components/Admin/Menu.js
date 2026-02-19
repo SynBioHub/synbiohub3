@@ -60,13 +60,13 @@ export default function Menu(properties) {
         route="registries"
         icon={faPagelines}
       />
-      <MenuSelector
+      {/* <MenuSelector
         themeColor={theme?.themeParameters?.[0]?.value}
         name="Remotes"
         selected={properties.selected}
         route="remotes"
         icon={faGamepad}
-      />
+      /> */}
       <MenuSelector
         themeColor={theme?.themeParameters?.[0]?.value}
         name="SBOLExplorer"
