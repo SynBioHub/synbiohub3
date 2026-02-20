@@ -3,6 +3,7 @@ package com.synbiohub.sbh3.controllers;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.synbiohub.sbh3.dto.LogEntry;
 import com.synbiohub.sbh3.security.model.User;
 import com.synbiohub.sbh3.services.AdminService;
 import com.synbiohub.sbh3.services.SearchService;
@@ -13,10 +14,14 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -50,25 +55,39 @@ public class AdminController {
      */
     @GetMapping(value = "/admin/virtuoso")
     @ResponseBody
-    public String getVirtuosoStatus() {
+    // to mimic sbh api docs: "return 500 when it is not [alive]"
+    public ResponseEntity<String> getVirtuosoStatus() {
         boolean vStatus = adminService.getDatabaseStatus();
-        return vStatus ? "Alive" : "Dead";
+        if (vStatus) {
+            return ResponseEntity.ok("Alive");
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Dead");
+        }
     }
 
     @GetMapping(value = "/admin/graphs")
     @ResponseBody
-    public String getGraph(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
+    public ResponseEntity<String> getGraph(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
         // Returns graphUri and Count of Triples in the graph
-        return null;
+        try {
+            // Optional: Implement security check here (check if user is Admin)
+            JsonNode graphs = adminService.getGraphStatus();
+            return ResponseEntity.ok(graphs.toString());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @GetMapping(value = "/admin/log")
     @ResponseBody
-    public String getLog(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
+    public ResponseEntity<JsonNode> getLog(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
         try {
-            return adminService.getLogs();
+            List<LogEntry> logEntries = adminService.getLogs();
+            ObjectMapper mapper = new ObjectMapper();
+            ArrayNode jsonArray = mapper.valueToTree(logEntries);
+            return ResponseEntity.ok(jsonArray);
         } catch (Exception e) {
-            return "Error reading spring.log file " + e.getMessage();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
@@ -131,8 +150,23 @@ public class AdminController {
     @ResponseBody
     public JsonNode getRegistries() throws IOException {
         try {
-            JsonNode result = ConfigUtil.get("webOfRegistries");
-            return result;
+            JsonNode webOfRegistries = ConfigUtil.get("webOfRegistries");
+            ObjectMapper mapper = new ObjectMapper();
+            
+            // Convert the object format {uri: url} to array format [{uri: "...", url: "..."}]
+            List<Map<String, String>> registriesList = new ArrayList<>();
+            if (webOfRegistries.isObject()) {
+                webOfRegistries.fields().forEachRemaining(entry -> {
+                    Map<String, String> registryEntry = new HashMap<>();
+                    registryEntry.put("uri", entry.getKey());
+                    registryEntry.put("url", entry.getValue().asText());
+                    registriesList.add(registryEntry);
+                });
+            }
+            
+            Map<String, Object> result = new HashMap<>();
+            result.put("registries", registriesList);
+            return mapper.valueToTree(result);
         } catch (IOException e) {
             e.printStackTrace();
             // Optionally, handle the exception or log more details here.
