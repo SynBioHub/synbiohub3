@@ -64,12 +64,12 @@ public class AdminController {
 
     @GetMapping(value = "/admin/graphs")
     @ResponseBody
-    public ResponseEntity<JsonNode> getGraph(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
+    public ResponseEntity<String> getGraph(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
         // Returns graphUri and Count of Triples in the graph
         try {
             // Optional: Implement security check here (check if user is Admin)
             JsonNode graphs = adminService.getGraphStatus();
-            return ResponseEntity.ok(graphs);
+            return ResponseEntity.ok(graphs.toString());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
