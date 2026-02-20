@@ -201,7 +201,7 @@
                     "predicates": [
                         "sbol:component",
                         "sbol:definition",
-                        "dcterms:title"
+                        "sbol:displayId"
                     ],
                     "link": "$<Component/Role Link>"
                 },

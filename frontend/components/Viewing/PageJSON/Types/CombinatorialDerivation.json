@@ -112,16 +112,17 @@
                     "title": "Variant",
                     "infoLink": "https://sbols.org/v2#variant",
                     "predicates": [
-                        "sbol:variant", "sbol:displayId"
+                        "sbol:variant",
+                        "sbol:displayId"
                     ],
                     "link": "$<VariantLink>"
                 },
                 {
                     "title": "VariantLink",
-                    "predicates": [
-                        "sbol:variant"
-                    ],
-                    "hide": true
+                    "predicates": [],
+                    "hide": true,
+                    "bindTo": "Variant",
+                    "bindToPredicateIndex": 0
                 }
             ]
         }

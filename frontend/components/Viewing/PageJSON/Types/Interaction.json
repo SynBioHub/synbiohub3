@@ -55,16 +55,16 @@
                     "hide": true
                 },
                 {
-                    "title": "Participant Definition",
+                    "title": "Participant Component",
                     "infoLink": "https://sbols.org/v2#definition",
                     "predicates": [
                         "sbol:participant",
                         "sbol:displayId"
                     ],
-                    "link": "$<ParticipationDefinitionLink>"
+                    "link": "$<ParticipationComponentLink>"
                 },
                 {
-                    "title": "ParticipationDefinitionLink",
+                    "title": "ParticipationComponentLink",
                     "predicates": [
                         "sbol:participant"
                     ],
