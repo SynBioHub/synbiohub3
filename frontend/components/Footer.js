@@ -49,7 +49,7 @@ export default function Footer() {
         </div>
       </div>
       <div className={styles.sbhinfo}>
-        <a href="https://wiki.synbiohub.org/" target="_blank" rel="noreferrer">
+        <a href="https://wiki2.synbiohub.org/" target="_blank" rel="noreferrer">
           Docs
         </a>
         <a
@@ -67,13 +67,15 @@ export default function Footer() {
           >
             Github Repo
           </a>
-          <a
-            href={`https://github.com/SynBioHub/synbiohub3/commit/${commitHash}`}
-            target="_blank"
-            rel="noreferrer"
-          >
-            &nbsp;({commitHash})
-          </a>
+          {commitHash && (
+            <a
+              href={`https://github.com/SynBioHub/synbiohub3/commit/${commitHash}`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              &nbsp;({commitHash})
+            </a>
+          )}
         </div>
         <a
           href="https://github.com/SynBioHub/synbiohub3/issues"

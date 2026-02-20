@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "git rev-parse HEAD > ./public/commitHash.txt; next dev -p 3333",
+    "dev": "node customDev.js",
     "devNextGen": "git rev-parse HEAD > ./public/commitHash.txt; NODE_OPTIONS=--openssl-legacy-provider next dev -p 3333",
     "build": "git rev-parse HEAD > ./public/commitHash.txt; next build",
     "buildNextGen": "git rev-parse HEAD > ./public/commitHash.txt; NODE_OPTIONS=--openssl-legacy-provider next build",
@@ -95,6 +95,7 @@
     "eslint-plugin-simple-import-sort": "^7.0.0",
     "eslint-plugin-sonarjs": "^0.7.0",
     "eslint-plugin-unicorn": "^32.0.1",
+    "eslint-plugin-unused-imports": "^1.1.5",
     "jest": "^27.0.1",
     "lint-staged": "^11.0.0",
     "prettier": "^2.3.0"

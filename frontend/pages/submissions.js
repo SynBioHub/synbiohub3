@@ -13,6 +13,7 @@ import TableButtons from '../components/Submission/TableButtons';
 import TopLevel from '../components/TopLevel';
 import styles from '../styles/submissions.module.css';
 import { addError } from '../redux/actions';
+import { logoutUser } from '../redux/actions';
 
 const searchable = ['name', 'displayId', 'type', 'description', 'privacy'];
 
@@ -226,7 +227,7 @@ const fetcher = (url, token, dispatch) =>
     .catch(error => {
       if (error.response && error.response.status === 401) {
         dispatch(logoutUser()); // Dispatch the logout action to sign out the user
-        // window.location.href = '/login'; // Redirect to the login page
+        window.location.reload(); // Redirect to the login page
       } else {
         // Handle other errors
         error.customMessage = 'Request(s) failed for submissions data. Check the URL to see which one failed';

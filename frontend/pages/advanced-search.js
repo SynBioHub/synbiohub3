@@ -1,4 +1,4 @@
-import { faHatWizard } from '@fortawesome/free-solid-svg-icons';
+import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
@@ -107,10 +107,10 @@ export default function AdvancedSearch() {
               }}
             >
               <FontAwesomeIcon
-                icon={faHatWizard}
+                icon={faSearch}
                 size="1x"
-                className={styles.dnaicon}
-                color="#F2E86D"
+                color="#fff"
+                className={styles.searchicon}
               />
               <div>Search</div>
             </div>
