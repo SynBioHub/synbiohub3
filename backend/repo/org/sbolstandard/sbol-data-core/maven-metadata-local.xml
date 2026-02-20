@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>org.sbolstandard</groupId>
+  <artifactId>sbol-data-core</artifactId>
+  <versioning>
+    <versions>
+      <version>0.2.0-SNAPSHOT</version>
+    </versions>
+    <lastUpdated>20251020161100</lastUpdated>
+  </versioning>
+</metadata>

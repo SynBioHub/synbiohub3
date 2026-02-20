@@ -60,7 +60,7 @@ export default function FailedFilesDisplay(properties) {
       <div className={styles.majorlabel}>
         <MajorLabel
           text="Failed submissons"
-          link="https://wiki.synbiohub.org/userdocumentation/managingsubmitting/"
+          link="https://wiki2.synbiohub.org/2_micro_guides/submitting%2C_managing_and_updating_submissions/"
         />
       </div>
       {!submitting && (

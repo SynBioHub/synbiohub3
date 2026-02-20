@@ -23,7 +23,7 @@ export default function SearchHeader(properties) {
         />
 
         <SearchTypeButton
-          name="Root Collections"
+          name="Browse Collections"
           route="root-collections"
           selected={properties.selected}
           icon={faBoxOpen}

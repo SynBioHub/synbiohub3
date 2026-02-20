@@ -73,12 +73,26 @@ export default function SectionRenderer({ section, metadata }) {
     };
   }, []);
   if (data) {
+    let usedProcessedLink = false;
+
     if (section.link) {
       data.forEach(registry => {
-        if (section.link.startsWith(registry.uri) && processedLink && processedLink.urlRemovedForLink) {
+        if (
+          section.link.startsWith(registry.uri) &&
+          processedLink &&
+          processedLink.urlRemovedForLink
+        ) {
           section.link = processedLink.urlRemovedForLink;
+          usedProcessedLink = true; // ✅ mark that replacement occurred
         }
-      })
+      });
+    }
+
+    const currentURL = window.location.href;
+    if (usedProcessedLink && currentURL.endsWith('/share')) {
+      const parts = currentURL.split('/');
+      const shareSuffix = parts.slice(-2).join('/'); // e.g., "abc123/share"
+      section.link = `${section.link}/${shareSuffix}`;
     }
     if (/SO:\s*(\d{7})/.test(section.text)) {
       for (let key in sequenceOntology) {
@@ -114,7 +128,7 @@ export default function SectionRenderer({ section, metadata }) {
 
 
     if (section.grouped) {
-      const items = section.text.split(', ');
+      const items = section.text.split(', ').filter(item => item.trim() !== '');
       const content = items.map((item, index) => {
         if (section.link && item) {
           return (
@@ -132,7 +146,7 @@ export default function SectionRenderer({ section, metadata }) {
         }
         return (
           <span key={index}>
-            "{item}"
+            {item || ''}
             {index === items.length - 1 ? '' : ', '}
           </span>
         );

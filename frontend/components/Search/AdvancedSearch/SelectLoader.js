@@ -81,6 +81,16 @@ const fetchOptions = async (
       newData.push(parseResult(result));
     }
   }
+
+  // Sort the data array by label
+  newData.sort((a, b) => {
+    const la = (a.label || '').toString().toLowerCase();
+    const lb = (b.label || '').toString().toLowerCase();
+    if (la < lb) return -1;
+    if (la > lb) return 1;
+    return 0;
+  });
+
   setData(newData);
   setLoading(false);
 };
@@ -116,6 +126,15 @@ const processResults = (result, setLoading, setData, setError, parseResult) => {
     for (const result of result.results.bindings) {
       newData.push(parseResult(result));
     }
+
+    // Sort the data array by label 
+    newData.sort((a, b) => {
+      const la = (a.label || '').toString().toLowerCase();
+      const lb = (b.label || '').toString().toLowerCase();
+      if (la < lb) return -1;
+      if (la > lb) return 1;
+      return 0;
+    });
     setData(newData);
     setLoading(false);
   }

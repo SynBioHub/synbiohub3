@@ -48,7 +48,23 @@
 }
 
 .newLogoFilePicker {
-   display: none;
+  display: block;
+  margin: 1rem 0 2rem 0;
+  padding: 0.7rem 1rem;
+  border: 2px solid #D25627;
+  border-radius: 8px;
+  background: #fff;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #333;
+  box-shadow: 0 2px 8px rgba(210,86,39,0.08);
+  transition: border-color 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+}
+
+.newLogoFilePicker:hover, .newLogoFilePicker:focus {
+  border-color: #00A1E4;
+  box-shadow: 0 2px 12px rgba(0,161,228,0.12);
 }
 
 .wfull {
@@ -272,6 +288,12 @@
    padding: 0.6rem;
    border-radius: 0.4rem 0.4rem 0 0;
    font-weight: 500;
+}
+
+.logdropdown {
+   justify-content: center;
+   align-items: center;
+   margin: 2rem 1rem;
 }
 
 .logselected {
@@ -506,3 +528,128 @@
 .checksave {
    display: inline-flex;
 }
+
+.registryActionsContainer {
+   display: flex;
+   flex-direction: row;
+   gap: 1.5rem;
+   margin: 1rem auto;
+   padding: 1rem;
+   align-items: flex-start;      /* Align items to the top/left */
+   justify-content: flex-start;  /* Align contents to the left */
+   font-size: 1.3rem;
+   background: #fff;
+}
+
+
+ .registryActionsContainer input{
+   outline: none;
+   padding: 0.5rem;
+   border-radius: 5px;
+   border: 1px solid #ddd;
+   font-size: 0.9rem;
+   font-weight: 500;
+   width: 20%;
+ }
+
+.registryActionsContainer button {
+   background-color: #f1f1f1;
+   border: 1px solid #ddd;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   padding: 0.3rem 0.5rem;
+   border-radius: 5px;
+   cursor: pointer;
+   margin-right: 0.5rem;
+   font-weight: 400;
+   width: 15%
+}
+
+.registryinfo {
+   font-size: 1.1rem;
+   font-weight: 500;
+   margin-bottom: 1rem;
+}
+
+.registryFlexContainer {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 2rem;
+  margin: 2rem 0;
+}
+
+.registryStatusBox,
+.registryUpdateBox {
+  background: #fff;
+  border-radius: 1rem;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  padding: 0.8rem 2.5rem;   /* Less vertical padding, same horizontal */
+  min-width: 320px;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 1rem;
+  border: 2px solid #34eb83ff;
+  transition: border-color 0.3s;
+  margin-bottom: 0.5rem;    /* Less space below the box */
+}
+
+.registryStatusContent,
+.registryUpdateContent {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  justify-content: flex-start;
+}
+
+.registryStatusBox {
+  background: #fff;
+  border-radius: 1rem;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  padding: 0.8rem 2.5rem;   /* Less vertical padding, same horizontal */
+  min-width: 320px;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 1rem;
+  border: 2px solid #34eb83ff; /* Default green */
+  transition: border-color 0.3s;
+}
+
+.registryStatusBoxApproved {
+  border-color: #34eb83ff; /* Green */
+}
+
+.registryStatusBoxPending {
+  border-color: #6db2f2ff; /* Blue */
+}
+
+.registryUpdateBox {
+  background: #fff;
+  border-radius: 1rem;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  padding: 0.8rem 2.5rem;   /* Less vertical padding, same horizontal */
+  min-width: 320px;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 1rem;
+  border: 2px solid #34eb83ff; /* Default green */
+  transition: border-color 0.3s;
+}
+
+.registryUpdateBoxCanUpdate {
+  border-color: #34eb83ff; /* Green */
+}
+
+.registryUpdateBoxCannotUpdate {
+  border-color: #ff4d4dff; /* Red */
+}
+
