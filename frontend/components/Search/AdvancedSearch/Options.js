@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { faPlus, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
+import getConfig from 'next/config';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { shortName } from '../../../namespace/namespace';
+import { addError } from '../../../redux/actions';
 import getCollections from '../../../sparql/getCollections';
 import getCreators from '../../../sparql/getCreators';
 import getPredicates from '../../../sparql/getPredicates';
@@ -14,25 +16,7 @@ import getTypes from '../../../sparql/getTypes';
 import styles from '../../../styles/advancedsearch.module.css';
 import AdditionalFilter from './AdditionalFilter';
 import SelectLoader from './SelectLoader';
-import { addError } from '../../../redux/actions';
-import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
-
-// tooltip component to show descriptions on hover
-const Tooltip = ({ text, children }) => {
-  const [isVisible, setIsVisible] = useState(false);
-
-  return (
-    <div
-      className={styles.tooltipContainer}
-      onMouseEnter={() => setIsVisible(true)}
-      onMouseLeave={() => setIsVisible(false)}
-    >
-      {children}
-      {isVisible && <div className={styles.tooltip}>{text}</div>}
-    </div>
-  );
-};
 
 // main options component
 export default function Options(properties) {
@@ -65,9 +49,6 @@ export default function Options(properties) {
       <div className={styles.inputsection}>
         <div className={styles.labelsection}>
           <span>Select Creator</span>
-          <Tooltip text="Select the Creator">
-            <FontAwesomeIcon icon={faInfoCircle} className={styles.infoIcon} />
-          </Tooltip>
         </div>
         <SelectLoader
           sparql={getCreators}
@@ -83,9 +64,6 @@ export default function Options(properties) {
       <div className={styles.inputsection}>
         <div className={styles.labelsection}>
           <span>Select Part Type</span>
-          <Tooltip text="Select the Part Type">
-            <FontAwesomeIcon icon={faInfoCircle} className={styles.infoIcon} />
-          </Tooltip>
         </div>
         <SelectLoader
           sparql={getSBOLTypes}
@@ -93,7 +71,7 @@ export default function Options(properties) {
           parseResult={result => {
             return {
               value: result.object.value,
-              label: shortName(result.object.value),
+              label: shortName(result.object.value)
             };
           }}
           onChange={option =>
@@ -106,9 +84,6 @@ export default function Options(properties) {
       <div className={styles.inputsection}>
         <div className={styles.labelsection}>
           <span>Select Part Role</span>
-          <Tooltip text="Select the Part Role">
-            <FontAwesomeIcon icon={faInfoCircle} className={styles.infoIcon} />
-          </Tooltip>
         </div>
         <SelectLoader
           sparql={getRoles}
@@ -117,7 +92,7 @@ export default function Options(properties) {
           parseResult={result => {
             return {
               value: result.object.value,
-              label: shortName(result.object.value),
+              label: shortName(result.object.value)
             };
           }}
           onChange={option => properties.setRole(option ? option.value : '')}
@@ -128,9 +103,6 @@ export default function Options(properties) {
       <div className={styles.inputsection}>
         <div className={styles.labelsection}>
           <span>Select Object Type</span>
-          <Tooltip text="Select the Object Type">
-            <FontAwesomeIcon icon={faInfoCircle} className={styles.infoIcon} />
-          </Tooltip>
         </div>
         <SelectLoader
           sparql={getTypes}
@@ -138,7 +110,7 @@ export default function Options(properties) {
           parseResult={result => {
             return {
               value: result.object.value,
-              label: shortName(result.object.value),
+              label: shortName(result.object.value)
             };
           }}
           onChange={option =>
@@ -151,14 +123,13 @@ export default function Options(properties) {
       <div className={styles.inputsection}>
         <div className={styles.labelsection}>
           <span>Select Collections</span>
-          <Tooltip text="Select the Collections">
-            <FontAwesomeIcon icon={faInfoCircle} className={styles.infoIcon} />
-          </Tooltip>
         </div>
         <SelectLoader
           className={styles.optionselectW}
           sparql={getCollections}
-          placeholder={properties.collections.map(collection => collection.label)}
+          placeholder={properties.collections.map(
+            collection => collection.label
+          )}
           isMulti={true}
           parseResult={result => {
             return !result.name
@@ -175,7 +146,9 @@ export default function Options(properties) {
         className={styles.newfilterbutton}
         role="button"
         onClick={() =>
-          properties.setExtraFilters(properties.addFilter(properties.extraFilters))
+          properties.setExtraFilters(
+            properties.addFilter(properties.extraFilters)
+          )
         }
       >
         <div className={styles.addfiltericon}>
@@ -202,11 +175,11 @@ const fetchPredicates = async (token, dispatch) => {
     const headers = {
       'Content-Type': 'application/json',
       Accept: 'application/json',
-      'X-authorization': token,
+      'X-authorization': token
     };
 
     const response = await axios.get(url, {
-      headers,
+      headers
     });
 
     return response.status === 200 ? response.data : 'error';

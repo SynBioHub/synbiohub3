@@ -1,10 +1,8 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
-import { useState } from 'react';
-import { useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
 import Profile from '../../Navbar/Profile';
@@ -34,21 +32,44 @@ export default function NavbarSearch(properties) {
       <Selector icon={faSignInAlt} name="Log in or Register" href="/login" />
     );
 
+  const navbarRef = useRef(null);
+
   let linkHref = "/";
   if (theme && theme.altHome && theme.altHome.length > 0) {
     linkHref = theme.altHome;
   }
 
-  const [logoUrl, setLogoUrl] = useState(defaultLogo);
+  // initialize logo like Navbar.js: prefer theme.logoUrl, then localStorage 'sbh_logo', else null/default
+  const [logoUrl, setLogoUrl] = useState(theme.logoUrl || localStorage.getItem('sbh_logo') || null);
 
+  // fetch logo from backend/logo if we don't already have one (same approach as Navbar.js)
   useEffect(() => {
-    if (localStorage.getItem('logo')) {
-      const urlLogo = `${publicRuntimeConfig.backend}/logo`;
-      setLogoUrl(urlLogo);
-    } else {
-      setLogoUrl(defaultLogo);
+    if (!logoUrl) {
+      fetch(`${publicRuntimeConfig.backend}/logo`, { method: 'GET', cache: 'no-store' })
+        .then(res => {
+          if (!res.ok) throw new Error('No logo');
+          return res.blob();
+        })
+        .then(blob => {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            const dataUrl = reader.result;
+            try {
+              localStorage.setItem('sbh_logo', dataUrl);
+              const updatedTheme = JSON.parse(localStorage.getItem('theme') || '{}');
+              updatedTheme.logoUrl = dataUrl;
+              localStorage.setItem('theme', JSON.stringify(updatedTheme));
+            } catch (e) { /* ignore storage errors */ }
+            setLogoUrl(dataUrl);
+          };
+          reader.readAsDataURL(blob);
+        })
+        .catch(() => {
+          // fallback to default
+          setLogoUrl(defaultLogo);
+        });
     }
-  }, [publicRuntimeConfig.backend]);
+  }, []); // run once on mount
 
   useEffect(() => {
       if (loggedIn) {
@@ -61,17 +82,19 @@ export default function NavbarSearch(properties) {
     }, [loggedIn]);
 
   return (
-    <header className={styles.container}
-      style={{ backgroundColor: theme?.themeParameters?.[0]?.value || '#465775' }}
+    <header
+      ref={navbarRef}
+      className={styles.container}
+      style={{
+        backgroundColor: theme?.themeParameters?.[0]?.value || '#465775'
+      }}
     >
       <Link href={linkHref}>
         <a className={styles.logo}>
-          <Image
+          <img
             alt="logo"
-            src={logoUrl}
-            width={80}
-            height={80}
-            style={{ maxHeight: '50px', height: 'auto', width: '80px' }}
+            src={logoUrl || defaultLogo}
+            style={{ height: '50px', width: 'auto', maxWidth: '200px', objectFit: 'contain', marginTop: '0.5rem', marginBottom: '0.5rem', marginLeft: '0.5rem', marginRight: '0.5rem' }}
           />
         </a>
       </Link>

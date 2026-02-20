@@ -8,6 +8,7 @@ import { useSelector } from 'react-redux';
 export default function SubmissionHandler(properties) {
   const pluginsUseLocalCompose = useSelector(state => state.pluginsUseLocalCompose);
   const pluginLocalComposePrefix = useSelector(state => state.pluginLocalComposePrefix);
+  const token = useSelector(state => state.user.token);
 
     const getSelectOptions = () => {
         let selectOptions;
@@ -34,11 +35,13 @@ export default function SubmissionHandler(properties) {
             axios({
               method: 'POST',
               url: `${publicRuntimeConfig.backend}/callPlugin`,
+              headers: {
+                'X-authorization': token
+              },
               data: {
                 name: plugin.name,
                 endpoint: 'status',
-                category: 'submit',
-                prefix: pluginsUseLocalCompose ? pluginLocalComposePrefix : null
+                category: 'submit'
               }
             }).then(response => {
               if(response.status === 200) selectOptions.push({value: plugin.index, label: plugin.name});
