@@ -89,6 +89,7 @@
                 {
                     "title": "VariableLink",
                     "predicates": [
+                        "sbol:variable"
                     ],
                     "hide": true
                 },
