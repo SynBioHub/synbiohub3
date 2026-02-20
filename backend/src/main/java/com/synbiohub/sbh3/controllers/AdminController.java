@@ -19,6 +19,7 @@ import org.springframework.http.HttpStatus;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -151,21 +152,21 @@ public class AdminController {
         try {
             JsonNode webOfRegistries = ConfigUtil.get("webOfRegistries");
             ObjectMapper mapper = new ObjectMapper();
-            ObjectNode result = mapper.createObjectNode();
-            ArrayNode registriesArray = mapper.createArrayNode();
             
             // Convert the object format {uri: url} to array format [{uri: "...", url: "..."}]
+            List<Map<String, String>> registriesList = new ArrayList<>();
             if (webOfRegistries.isObject()) {
                 webOfRegistries.fields().forEachRemaining(entry -> {
-                    ObjectNode registryEntry = mapper.createObjectNode();
+                    Map<String, String> registryEntry = new HashMap<>();
                     registryEntry.put("uri", entry.getKey());
                     registryEntry.put("url", entry.getValue().asText());
-                    registriesArray.add(registryEntry);
+                    registriesList.add(registryEntry);
                 });
             }
             
-            result.set("registries", registriesArray);
-            return result;
+            Map<String, Object> result = new HashMap<>();
+            result.put("registries", registriesList);
+            return mapper.valueToTree(result);
         } catch (IOException e) {
             e.printStackTrace();
             // Optionally, handle the exception or log more details here.
