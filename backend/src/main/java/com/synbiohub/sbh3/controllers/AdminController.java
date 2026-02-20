@@ -3,7 +3,6 @@ package com.synbiohub.sbh3.controllers;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.synbiohub.sbh3.dto.LogEntry;
 import com.synbiohub.sbh3.security.model.User;
 import com.synbiohub.sbh3.services.AdminService;
