@@ -3,6 +3,7 @@ package com.synbiohub.sbh3.controllers;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.synbiohub.sbh3.dto.LogEntry;
 import com.synbiohub.sbh3.security.model.User;
 import com.synbiohub.sbh3.services.AdminService;
 import com.synbiohub.sbh3.services.SearchService;
@@ -19,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -77,11 +79,14 @@ public class AdminController {
 
     @GetMapping(value = "/admin/log")
     @ResponseBody
-    public String getLog(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
+    public ResponseEntity<JsonNode> getLog(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
         try {
-            return adminService.getLogs();
+            List<LogEntry> logEntries = adminService.getLogs();
+            ObjectMapper mapper = new ObjectMapper();
+            ArrayNode jsonArray = mapper.valueToTree(logEntries);
+            return ResponseEntity.ok(jsonArray);
         } catch (Exception e) {
-            return "Error reading spring.log file " + e.getMessage();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 

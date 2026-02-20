@@ -13,10 +13,15 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import com.synbiohub.sbh3.dto.LogEntry;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
@@ -103,9 +108,50 @@ public class AdminService {
         }
     }
 
-    public String getLogs() throws IOException {
+    public List<LogEntry> getLogs() throws IOException {
         String logPath = System.getProperty("user.dir") + "/data/spring.log";
-        return new String(Files.readAllBytes(Paths.get(logPath)));
+        String logContent = new String(Files.readAllBytes(Paths.get(logPath)));
+        
+        List<LogEntry> logEntries = new ArrayList<>();
+        String[] lines = logContent.split("\\r?\\n");
+        
+        // Pattern to match log levels: INFO, WARN, ERROR, DEBUG, TRACE (case-insensitive)
+        Pattern levelPattern = Pattern.compile("\\b(INFO|WARN|ERROR|DEBUG|TRACE)\\b", Pattern.CASE_INSENSITIVE);
+        
+        for (String line : lines) {
+            if (line.trim().isEmpty()) {
+                continue; // Skip empty lines
+            }
+            
+            String level = "info"; // Default level
+            Matcher matcher = levelPattern.matcher(line);
+            
+            if (matcher.find()) {
+                String matchedLevel = matcher.group(1).toUpperCase();
+                // Map to lowercase versions
+                switch (matchedLevel) {
+                    case "INFO":
+                        level = "info";
+                        break;
+                    case "WARN":
+                        level = "warn";
+                        break;
+                    case "ERROR":
+                        level = "error";
+                        break;
+                    case "DEBUG":
+                        level = "debug";
+                        break;
+                    case "TRACE":
+                        level = "debug"; // Map TRACE to debug
+                        break;
+                }
+            }
+            
+            logEntries.add(new LogEntry(level, line));
+        }
+        
+        return logEntries;
     }
 
     public Boolean getSBOLExplorerStatus() throws IOException {
