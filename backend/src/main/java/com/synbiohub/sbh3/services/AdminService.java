@@ -46,6 +46,36 @@ public class AdminService {
         return (JsonNode) status;
     }
 
+    public JsonNode getGraphStatus() throws Exception {
+        // Single query to get graph URIs and their respective triple counts
+        String sparql = """
+            SELECT ?graph (COUNT(*) AS ?count) 
+            WHERE { 
+                GRAPH ?graph { ?s ?p ?o } 
+            } 
+            GROUP BY ?graph
+            """;
+
+        // Get raw JSON string from Virtuoso via SearchService
+        String rawJson = searchService.SPARQLQuery(sparql);
+        JsonNode root = mapper.readTree(rawJson);
+
+        // We want to mimic the SBH1 return structure: [{graphUri: "...", numTriples: 123}, ...]
+        ArrayNode responseArray = mapper.createArrayNode();
+
+        JsonNode bindings = root.path("results").path("bindings");
+        if (bindings.isArray()) {
+            for (JsonNode binding : bindings) {
+                ObjectNode graphInfo = mapper.createObjectNode();
+                graphInfo.put("graphUri", binding.path("graph").path("value").asText());
+                graphInfo.put("numTriples", binding.path("count").path("value").asInt());
+                responseArray.add(graphInfo);
+            }
+        }
+
+        return responseArray;
+    }
+
     public String getTheme() throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode json = mapper.createObjectNode();
@@ -59,6 +89,7 @@ public class AdminService {
     }
 
     public Boolean getDatabaseStatus() {
+        // BEFORE 1/27:
         SPARQLQuery statusQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/GetDatabaseStatus.sparql");
         try {
             var result = searchService.SPARQLQuery(statusQuery.getQuery());

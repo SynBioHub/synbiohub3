@@ -16,5 +16,6 @@ public interface AuthRepository extends JpaRepository<AuthCodes, Integer> {
 
     Optional<List<AuthCodes>> findAuthCodesByName(String name);
 
+    Optional<AuthCodes> findByAuth(String auth);
 
 }

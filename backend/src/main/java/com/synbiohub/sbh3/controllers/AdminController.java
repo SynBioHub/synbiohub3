@@ -13,6 +13,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 
 import java.io.File;
 import java.io.IOException;
@@ -50,16 +52,27 @@ public class AdminController {
      */
     @GetMapping(value = "/admin/virtuoso")
     @ResponseBody
-    public String getVirtuosoStatus() {
+    // to mimic sbh api docs: "return 500 when it is not [alive]"
+    public ResponseEntity<String> getVirtuosoStatus() {
         boolean vStatus = adminService.getDatabaseStatus();
-        return vStatus ? "Alive" : "Dead";
+        if (vStatus) {
+            return ResponseEntity.ok("Alive");
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Dead");
+        }
     }
 
     @GetMapping(value = "/admin/graphs")
     @ResponseBody
-    public String getGraph(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
+    public ResponseEntity<JsonNode> getGraph(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
         // Returns graphUri and Count of Triples in the graph
-        return null;
+        try {
+            // Optional: Implement security check here (check if user is Admin)
+            JsonNode graphs = adminService.getGraphStatus();
+            return ResponseEntity.ok(graphs);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @GetMapping(value = "/admin/log")
