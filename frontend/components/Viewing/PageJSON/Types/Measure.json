@@ -1,5 +1,5 @@
 {
-    "type": "http://www.w3.org/ns/prov#Usage",
+    "type": "http://www.ontology-of-units-of-measure.org/resource/om-2/Measure",
     "prefixes": [
         "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>",
         "PREFIX dcterms: <http://purl.org/dc/terms/>",
@@ -13,55 +13,44 @@
         "PREFIX biopax: <http://www.biopax.org/release/biopax-level3.owl#>",
         "PREFIX so: <http://identifiers.org/so/>",
         "PREFIX bench: <http://wiki.synbiohub.org/wiki/Terms/benchling#>",
-        "PREFIX genbank: <http://www.ncbi.nlm.nih.gov/genbank#>"
+        "PREFIX genbank: <http://www.ncbi.nlm.nih.gov/genbank#>",
+        "PREFIX om: <http://www.ontology-of-units-of-measure.org/resource/om-2/>"
     ],
     "metadata": [
         {
-            "title": "Roles",
-            "icon": "faUserTag",
-            "infoLink": "https://sbols.org/v2#role",
-            "rootPredicate": "prov:hadRole",
+            "title": "Value",
+            "rootPredicate": "om:hasNumericalValue",
+            "icon": "faNumber",
             "sections": [
                 {
-                    "title": "name",
-                    "predicates": [
-                        
-                    ],
-                    "stripAfter":"#",
-                    "link": "$<roleLink>"
-                },
-                {
-                    "title": "roleLink",
-                    "predicates": [],
-                    "hide": true
+                    "title": "Extra Work",
+                    "stripAfter": "#",
+                    "predicates": []
                 }
             ]
         },
         {
-            "title": "Entity",
-            "icon": "faUser",
-            "infoLink": "https://www.w3.org/ns/prov#entity",
-            "rootPredicate": "prov:entity",
+            "title": "Unit",
+            "rootPredicate": "om:hasUnit",
+            "icon": "faUnit",
             "sections": [
                 {
-                    "title": "name",
-                    "predicates": [
-                        "sbol:displayId"
-                    ],
-                    "link": "$<entityLink>"
+                    "title": "Extra Work",
+                    "stripAfter": "#",
+                    "predicates": [],
+                    "link": "$<unitLink>"
                 },
                 {
-                    "title": "entityLink",
+                    "title": "unitLink",
                     "predicates": [],
                     "hide": true
                 }
             ]
         }
     ],
-    "tables": [],
+    "tables": [
+    ],
     "pages": [
-        "Details",
-        "Other Properties",
-        "Attachments"
+        "Other Properties"
     ]
 }

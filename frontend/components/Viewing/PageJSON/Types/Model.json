@@ -25,7 +25,13 @@
             "title": "lang",
             "predicates": [
             ],
-            "link": "$<This>"
+            "link": "$<LanguageLink>",
+            "stripAfter": "/"
+          },
+          {
+            "title": "LanguageLink",
+            "predicates": [],
+            "hide": true
           }
         ]
       },
@@ -37,8 +43,13 @@
           {
             "title": "framework",
             "predicates": [],
-            "link": "$<This>",
+            "link": "$<FrameworkLink>",
             "stripAfter": "/"
+          },
+          {
+            "title": "FrameworkLink",
+            "predicates": [],
+            "hide": true
           }
         ]
       },
@@ -50,8 +61,13 @@
            {
              "title": "mfile",
              "predicates": [],
-             "link": "$<This>"
-           }
+             "link": "$<ModelFileLink>"
+           },
+           {
+            "title": "ModelFileLink",
+            "predicates": [],
+            "hide": true
+          }
          ]
        }
    ],

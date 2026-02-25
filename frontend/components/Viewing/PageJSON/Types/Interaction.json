@@ -13,7 +13,8 @@
         "PREFIX biopax: <http://www.biopax.org/release/biopax-level3.owl#>",
         "PREFIX so: <http://identifiers.org/so/>",
         "PREFIX bench: <http://wiki.synbiohub.org/wiki/Terms/benchling#>",
-        "PREFIX genbank: <http://www.ncbi.nlm.nih.gov/genbank#>"
+        "PREFIX genbank: <http://www.ncbi.nlm.nih.gov/genbank#>",
+        "PREFIX om: <http://www.ontology-of-units-of-measure.org/resource/om-2/>"
     ],
     "metadata": [
         {
@@ -55,8 +56,8 @@
                     "hide": true
                 },
                 {
-                    "title": "Participant Component",
-                    "infoLink": "https://sbols.org/v2#definition",
+                    "title": "Participant",
+                    "infoLink": "https://sbols.org/v2#participant",
                     "predicates": [
                         "sbol:participant",
                         "sbol:displayId"
@@ -92,7 +93,60 @@
             "title": "Measures",
             "rootPredicate": "sbol:measure",
             "icon": "faRuler",
-            "sections": []
+            "sections": [
+                {
+                    "title": "Measure",
+                    "infoLink": "https://sbols.org/v2#participant",
+                    "predicates": [
+                        "sbol:displayId"
+                    ],
+                    "link": "$<measureLink>"
+                },
+                {
+                    "title": "measureLink",
+                    "predicates": [],
+                    "hide": true
+                },
+                {
+                    "title": "Value",
+                    "infoLink": "https://sbols.org/v2#participant",
+                    "predicates": [
+                        "om:hasNumericalValue"
+                    ]
+                },
+                {
+                    "title": "Unit",
+                    "infoLink": "https://sbols.org/v2#participant",
+                    "predicates": [
+                        "om:hasUnit"
+                    ],
+                    "stripAfter": "#",
+                    "link": "$<unitLink>"
+                },
+                {
+                    "title": "unitLink",
+                    "predicates": [
+                        "om:hasUnit"
+                    ],
+                    "hide": true
+                },
+                {
+                    "title": "Type",
+                    "infoLink": "https://sbols.org/v2#type",
+                    "predicates": [
+                        "sbol:type"
+                    ],
+                    "stripAfter": "#",
+                    "link": "$<typeLink>"
+                },
+                {
+                    "title": "typeLink",
+                    "predicates": [],
+                    "hide": true,
+                    "bindTo": "Type",
+                    "bindToPredicateIndex": 0
+                }
+            ]
         }
     ],
     "pages": [
