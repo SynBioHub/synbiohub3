@@ -108,33 +108,35 @@ export default function Members(properties) {
     query = getCollectionMembersSearch;
   }
 
-  const { members, mutate } = isOwner
-    ? useMembers(query, parameters, token, dispatch)
+  const { members, mutate } = token
+    ? useMembers(query, parameters, dispatch, token)
     : useMembers(query, parameters, dispatch);
 
   const { count: totalMemberCount } = isOwner
     ? useCount(
       CountMembersTotal,
       { ...parameters, search: '' },
-      privateGraph ? token : undefined, // Pass token only if privateGraph is true
-      dispatch
+      dispatch,
+      token ? token : undefined
     )
     : useCount(
       CountMembersTotal,
       { ...parameters, search: '' },
-      dispatch);
+      dispatch,
+      token ? token : undefined);
 
   const { count: currentMemberCount } = isOwner
     ? useCount(
       searchQuery ? CountMembersTotal : CountMembers,
       parameters,
-      privateGraph ? token : undefined, // Pass token only if privateGraph is true
-      dispatch
+      dispatch,
+      token ? token : undefined
     )
     : useCount(
       searchQuery ? CountMembersTotal : CountMembers,
       parameters,
-      dispatch
+      dispatch,
+      token ? token : undefined
     );
 
   useEffect(() => {
@@ -146,20 +148,14 @@ export default function Members(properties) {
 
   const publicPrefix =  theme.uriPrefix + 'public/';
 
-  const { filters } = !properties.uri.includes(publicPrefix)
-    ? useFilters(
-      getTypesRoles,
-      { uri: properties.uri },
-      token,
-      dispatch,
-      privateGraph
-    )
-    : useFilters(
-      getTypesRoles,
-      { uri: properties.uri },
-      token,
-      dispatch
-    );
+
+  const { filters } = useFilters(
+    getTypesRoles,
+    { uri: properties.uri },
+    dispatch,
+    token ? token : undefined,
+    !properties.uri.includes(publicPrefix) ? privateGraph : undefined
+  );
 
   const outOfBoundsHandle = offset => {
     const newBounds = getNewBounds(offset, currentMemberCount);
@@ -487,7 +483,7 @@ const createUrl = (query, options) => {
   )}`;
 };
 
-const useCount = (query, options, token, dispatch) => {
+const useCount = (query, options, dispatch, token=null) => {
   const url = createUrl(query, options, token);
   const currentURL = window.location.href;
   let finalUrl = url;
@@ -501,11 +497,7 @@ const useCount = (query, options, token, dispatch) => {
   }
   let data, error;
 
-  if (typeof token === 'string') {
     ({ data, error } = useSWR([finalUrl, token, dispatch], fetcher));
-  } else {
-    ({ data, error } = useSWR([finalUrl, dispatch], fetcher));
-  }
 
   const [processedData, setProcessedData] = useState(undefined);
   
@@ -524,7 +516,7 @@ const useCount = (query, options, token, dispatch) => {
   };
 };
 
-const useMembers = (query, options, token, dispatch) => {
+const useMembers = (query, options, dispatch, token=null) => {
   const url = createUrl(query, options);
   const currentURL = window.location.href;
   let finalUrl = url;
@@ -538,11 +530,7 @@ const useMembers = (query, options, token, dispatch) => {
   }
   let data, error, mutate;
 
-  if (typeof token === 'string') {
     ({ data, error, mutate } = useSWR([finalUrl, token, dispatch], fetcher));
-  } else {
-    ({ data, error, mutate } = useSWR([finalUrl, dispatch], fetcher));
-  }
   
   const [processedData, setProcessedData] = useState(undefined);
   
@@ -562,7 +550,7 @@ const useMembers = (query, options, token, dispatch) => {
   };
 };
 
-const useFilters = (query, options, token, dispatch, privateGraph=null) => {
+const useFilters = (query, options, dispatch, token=null, privateGraph=null) => {
   let url = createUrl(query, options);
   if (privateGraph) {
     url += `&default-graph-uri=${privateGraph}`;
@@ -578,11 +566,7 @@ const useFilters = (query, options, token, dispatch, privateGraph=null) => {
   }
   let data, error, mutate;
 
-  if (typeof token === 'string') {
     ({ data, error, mutate } = useSWR([finalUrl, token, dispatch], fetcher));
-  } else {
-    ({ data, error, mutate } = useSWR([finalUrl, dispatch], fetcher));
-  }
 
   const [processedData, setProcessedData] = useState(undefined);
   
