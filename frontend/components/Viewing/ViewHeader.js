@@ -16,6 +16,27 @@ import { isUriOwner } from './Shell';
 import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
 
+function renderSplitTitle(title) {
+  const maxLen = 30; // maximum length before splitting
+  if (!title || title.length <= maxLen) return title;
+
+  // Prefer to break at an underscore before maxLen, otherwise hard break
+  const underscoreIndex = title.lastIndexOf('_', maxLen);
+  const breakIndex = underscoreIndex > -1 ? underscoreIndex : maxLen;
+
+  const firstPart = title.slice(0, breakIndex);
+  const secondPart =
+    underscoreIndex > -1 ? title.slice(breakIndex + 1) : title.slice(breakIndex);
+
+  return (
+    <>
+      {firstPart}
+      <br />
+      {secondPart}
+    </>
+  );
+}
+
 export default function ViewHeader(properties) {
   const [displayedTitle, setDisplayedTitle] = useState(properties.name);  // New state for the displayed title
   const [isEditingTitle, setIsEditingTitle] = useState(false);
@@ -244,7 +265,7 @@ export default function ViewHeader(properties) {
           </div>
         ) : (
           <div className={styles.titleContainer}>
-            <h1 className={styles.maintitle}>{displayedTitle}</h1>
+            <h1 className={styles.maintitle}>{renderSplitTitle(displayedTitle)}</h1>
             {isOwner && (
               <>
                 <FontAwesomeIcon

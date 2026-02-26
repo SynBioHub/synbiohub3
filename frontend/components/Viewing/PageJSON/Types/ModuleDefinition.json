@@ -16,6 +16,44 @@
     "PREFIX genbank: <http://www.ncbi.nlm.nih.gov/genbank#>"
   ],
   "metadata": [
+    {
+      "title": "Roles",
+      "icon": "faUserTag",
+      "rootPredicate": "sbol:role",
+      "sections": [
+        {
+          "title": "role",
+          "predicates": [
+          ],
+          "link": "$<roleLink>",
+          "stripAfter": "/"
+        },
+        {
+          "title": "roleLink",
+          "predicates": [],
+          "hide": true
+        }
+      ]
+    },
+    {
+      "title": "Model",
+      "icon": "faFile",
+      "rootPredicate": "sbol:model",
+      "sections": [
+        {
+          "title": "model",
+          "predicates": [
+            "sbol:displayId"
+          ],
+          "link": "$<modelLink>"
+        },
+        {
+          "title": "modelLink",
+          "predicates": [],
+          "hide": true
+        }
+      ]
+    }
   ],
   "tables": [
     {
@@ -49,6 +87,21 @@
           "title": "DefinitionLink",
           "predicates": [
             "sbol:definition"
+          ],
+          "hide": true
+        },
+        {
+          "title": "mapsTo",
+          "predicates": [
+            "sbol:mapsTo",
+            "sbol:displayId"
+          ],
+          "link": "$<mapsToLink>"
+        },
+        {
+          "title": "mapsToLink",
+          "predicates": [
+            "sbol:mapsTo"
           ],
           "hide": true
         }
@@ -101,8 +154,7 @@
         },
         {
           "title": "InstanceLink",
-          "predicates": [
-          ],
+          "predicates": [],
           "hide": true
         },
         {
@@ -118,6 +170,21 @@
           "title": "DefinitionLink",
           "predicates": [
             "sbol:definition"
+          ],
+          "hide": true
+        },
+        {
+          "title": "mapsTo",
+          "predicates": [
+            "sbol:mapsTo",
+            "sbol:displayId"
+          ],
+          "link": "$<mapsToLink>"
+        },
+        {
+          "title": "mapsToLink",
+          "predicates": [
+            "sbol:mapsTo"
           ],
           "hide": true
         }
@@ -139,9 +206,7 @@
         },
         {
           "title": "interactionLink",
-          "predicates": [
-
-          ],
+          "predicates": [],
           "hide": true
         },
         {
