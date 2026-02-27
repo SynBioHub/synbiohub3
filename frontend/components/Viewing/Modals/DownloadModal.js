@@ -173,6 +173,7 @@ export default function DownloadModal(properties) {
                 name: plugin.name,
                 endpoint: 'evaluate',
                 category: 'download',
+                prefix: pluginsUseLocalCompose ? pluginLocalComposePrefix : null,
                 data: {
                   type: properties.type
                 }
