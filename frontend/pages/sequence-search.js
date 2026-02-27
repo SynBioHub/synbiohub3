@@ -93,7 +93,10 @@ export default function SequenceSearch() {
               customInput="textarea"
             />
 
-            <UploadFile files={files} setFiles={setFiles} />
+            {sbolExplorerEnabled && (
+              <UploadFile files={files} setFiles={setFiles} />
+            )}
+
             {/* only show options if SBOL Explorer is enabled */}
             {sbolExplorerEnabled && (<Options
               setSearchMethod={setSearchMethod}

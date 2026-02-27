@@ -16,13 +16,17 @@ export default function Plugin(properties) {
   const hiddenSections = useSelector(state => state.pageSections.hiddenSections);
   const dispatch = useDispatch();
   const theme = JSON.parse(localStorage.getItem('theme')) || {};
-  const pluginsUseLocalCompose = useSelector(state => state.pluginsUseLocalCompose);
-  const pluginLocalComposePrefix = useSelector(state => state.pluginLocalComposePrefix);
+  const pluginsUseLocalComposeFromState = useSelector(state => state.pluginsUseLocalCompose);
+  const pluginLocalComposePrefixFromState = useSelector(state => state.pluginLocalComposePrefix);
   const token = useSelector(state => state.user.token);
-  if (theme && theme.pluginsUseLocalCompose && theme.pluginLocalComposePrefix) {
-    pluginsUseLocalCompose = theme.pluginsUseLocalCompose;
-    pluginLocalComposePrefix = theme.pluginLocalComposePrefix;
-  }
+  
+  const pluginsUseLocalCompose = (theme && theme.pluginsUseLocalCompose) 
+    ? theme.pluginsUseLocalCompose 
+    : pluginsUseLocalComposeFromState;
+    
+  const pluginLocalComposePrefix = (theme && theme.pluginLocalComposePrefix) 
+    ? theme.pluginLocalComposePrefix 
+    : pluginLocalComposePrefixFromState;
 
   let uri = properties.uri;
 
@@ -71,7 +75,7 @@ export default function Plugin(properties) {
 
             const pluginData = {
               uriSuffix: uriSuffix,
-              instanceUrl: `${publicRuntimeConfig.backend}/`,
+              instanceUrl: pluginsUseLocalCompose ? pluginLocalComposePrefix : `${publicRuntimeConfig.backend}/`,
               size: 1,
               type: type,
               top: properties.uri,
@@ -150,8 +154,7 @@ async function evaluatePlugin(plugin, type, pluginsUseLocalCompose, pluginLocalC
       category: 'rendering',
       data: {
         type: type
-      },
-      prefix: pluginsUseLocalCompose ? pluginLocalComposePrefix : null
+      }
     }
   }).then(response => {
     return response.status === 200;

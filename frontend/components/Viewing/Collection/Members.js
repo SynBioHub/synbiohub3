@@ -108,33 +108,35 @@ export default function Members(properties) {
     query = getCollectionMembersSearch;
   }
 
-  const { members, mutate } = isOwner
-    ? useMembers(query, parameters, token, dispatch)
+  const { members, mutate } = token
+    ? useMembers(query, parameters, dispatch, token)
     : useMembers(query, parameters, dispatch);
 
   const { count: totalMemberCount } = isOwner
     ? useCount(
       CountMembersTotal,
       { ...parameters, search: '' },
-      privateGraph ? token : undefined, // Pass token only if privateGraph is true
-      dispatch
+      dispatch,
+      token ? token : undefined
     )
     : useCount(
       CountMembersTotal,
       { ...parameters, search: '' },
-      dispatch);
+      dispatch,
+      token ? token : undefined);
 
   const { count: currentMemberCount } = isOwner
     ? useCount(
       searchQuery ? CountMembersTotal : CountMembers,
       parameters,
-      privateGraph ? token : undefined, // Pass token only if privateGraph is true
-      dispatch
+      dispatch,
+      token ? token : undefined
     )
     : useCount(
       searchQuery ? CountMembersTotal : CountMembers,
       parameters,
-      dispatch
+      dispatch,
+      token ? token : undefined
     );
 
   useEffect(() => {
@@ -146,20 +148,14 @@ export default function Members(properties) {
 
   const publicPrefix =  theme.uriPrefix + 'public/';
 
-  const { filters } = !properties.uri.includes(publicPrefix)
-    ? useFilters(
-      getTypesRoles,
-      { uri: properties.uri },
-      token,
-      dispatch,
-      privateGraph
-    )
-    : useFilters(
-      getTypesRoles,
-      { uri: properties.uri },
-      token,
-      dispatch
-    );
+
+  const { filters } = useFilters(
+    getTypesRoles,
+    { uri: properties.uri },
+    dispatch,
+    token ? token : undefined,
+    !properties.uri.includes(publicPrefix) ? privateGraph : undefined
+  );
 
   const outOfBoundsHandle = offset => {
     const newBounds = getNewBounds(offset, currentMemberCount);
@@ -487,7 +483,7 @@ const createUrl = (query, options) => {
   )}`;
 };
 
-const useCount = (query, options, token, dispatch) => {
+const useCount = (query, options, dispatch, token=null) => {
   const url = createUrl(query, options, token);
   const currentURL = window.location.href;
   let finalUrl = url;
@@ -501,19 +497,26 @@ const useCount = (query, options, token, dispatch) => {
   }
   let data, error;
 
-  if (typeof token === 'string') {
     ({ data, error } = useSWR([finalUrl, token, dispatch], fetcher));
-  } else {
-    ({ data, error } = useSWR([finalUrl, dispatch], fetcher));
-  }
 
-  let processedData = data ? processResults(data)[0].count : undefined;
+  const [processedData, setProcessedData] = useState(undefined);
+  
+  useEffect(() => {
+    if (data) {
+      processResults(data).then(result => {
+        setProcessedData(result[0]?.count);
+      });
+    } else {
+      setProcessedData(undefined);
+    }
+  }, [data]);
+
   return {
     count: processedData
   };
 };
 
-const useMembers = (query, options, token, dispatch) => {
+const useMembers = (query, options, dispatch, token=null) => {
   const url = createUrl(query, options);
   const currentURL = window.location.href;
   let finalUrl = url;
@@ -527,20 +530,27 @@ const useMembers = (query, options, token, dispatch) => {
   }
   let data, error, mutate;
 
-  if (typeof token === 'string') {
     ({ data, error, mutate } = useSWR([finalUrl, token, dispatch], fetcher));
-  } else {
-    ({ data, error, mutate } = useSWR([finalUrl, dispatch], fetcher));
-  }
-
-  let processedData = data ? processResults(data) : undefined;
+  
+  const [processedData, setProcessedData] = useState(undefined);
+  
+  useEffect(() => {
+    if (data) {
+      processResults(data).then(result => {
+        setProcessedData(result);
+      });
+    } else {
+      setProcessedData(undefined);
+    }
+  }, [data]);
+  
   return {
     members: processedData,
     mutate
   };
 };
 
-const useFilters = (query, options, token, dispatch, privateGraph=null) => {
+const useFilters = (query, options, dispatch, token=null, privateGraph=null) => {
   let url = createUrl(query, options);
   if (privateGraph) {
     url += `&default-graph-uri=${privateGraph}`;
@@ -556,13 +566,19 @@ const useFilters = (query, options, token, dispatch, privateGraph=null) => {
   }
   let data, error, mutate;
 
-  if (typeof token === 'string') {
     ({ data, error, mutate } = useSWR([finalUrl, token, dispatch], fetcher));
-  } else {
-    ({ data, error, mutate } = useSWR([finalUrl, dispatch], fetcher));
-  }
 
-  let processedData = data ? processResults(data) : undefined;
+  const [processedData, setProcessedData] = useState(undefined);
+  
+  useEffect(() => {
+    if (data) {
+      processResults(data).then(result => {
+        setProcessedData(result);
+      });
+    } else {
+      setProcessedData(undefined);
+    }
+  }, [data]);
 
   return {
     filters: processedData,
@@ -600,16 +616,61 @@ const fetcher = (url, token, dispatch) =>
       }
     });
 
-const processResults = results => {
+const processResults = async (results) => {
+  const registries = JSON.parse(localStorage.getItem("registries")) || {};
+  const localUriPrefix = (JSON.parse(localStorage.getItem('theme')) || {}).uriPrefix || '';
   const headers = results.head.vars;
-  return results.results.bindings.map(result => {
+  return Promise.all(results.results.bindings.map(async (result) => {
     const resultObject = {};
+    const currentUri = result.uri ? result.uri.value : '';
+    const registriesArray = Array.isArray(registries) 
+      ? registries 
+      : Object.values(registries).filter(r => r && typeof r === 'object');
+    let isExternalRegistry = currentUri && registriesArray.some(registry => 
+      registry.uri && currentUri.startsWith(registry.uri)
+    );
+    if (currentUri && currentUri.startsWith(localUriPrefix)) {
+      isExternalRegistry = false;
+    }
+    let externalMetadata = null;
+    if (isExternalRegistry) {
+      externalMetadata = await fetchExternalMetadata(currentUri);
+    }
     for (const header of headers) {
       if (result[header]) resultObject[header] = result[header].value;
       else resultObject[header] = '';
     }
+    // Merge external metadata if it exists
+    if (externalMetadata && Array.isArray(externalMetadata) && externalMetadata.length > 0) {
+      const metadataObj = externalMetadata[0];
+      for (const header of headers) {
+        if (metadataObj[header] !== null && metadataObj[header] !== undefined) {
+          resultObject[header] = metadataObj[header];
+        }
+      }
+    }
+    // Replace name with displayId if name is blank, empty, or just whitespace
+    if (!resultObject.name || resultObject.name.trim() === '') {
+      resultObject.name = resultObject.displayId || '';
+    }
     return resultObject;
-  });
+  }));
+};
+
+const fetchExternalMetadata = async (uri) => {
+  const url = `${uri}/metadata`;
+  try {
+    const response = await axios.get(url, {
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json'
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching metadata for ${uri}:`, error);
+    return null;
+  }
 };
 
 const getNewBounds = (offset, memberCount) => {

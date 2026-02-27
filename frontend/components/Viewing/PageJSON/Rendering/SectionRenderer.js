@@ -110,12 +110,14 @@ export default function SectionRenderer({ section, metadata }) {
         }
       }
     }
-    if (/^(http:\/\/edamontology\.org\/format_\d{4}|edam:format_\d{4}|https:\/\/identifiers\.org\/edam:format_\d{4})$/.test(section.text)) {
+    if (/^(http:\/\/edamontology\.org\/format_\d{4}|edam:format_\d{4}|https:\/\/identifiers\.org\/edam:format_\d{4}|format_\d{4})$/.test(section.text)) {
       // Normalize the section.text to the full URL format
       if (/^edam:format_\d{4}$/.test(section.text)) {
         section.text = section.text.replace(/^edam:format_(\d{4})$/, 'http://edamontology.org/format_$1');
       } else if (/^https:\/\/identifiers\.org\/edam:format_\d{4}$/.test(section.text)) {
         section.text = section.text.replace(/^https:\/\/identifiers\.org\/edam:format_(\d{4})$/, 'http://edamontology.org/format_$1');
+      } else if (/^format_\d{4}$/.test(section.text)) {
+        section.text = section.text.replace(/^format_(\d{4})$/, 'http://edamontology.org/format_$1');
       }
 
       // Now proceed with checking against the keys in edamOntology
@@ -128,7 +130,7 @@ export default function SectionRenderer({ section, metadata }) {
 
 
     if (section.grouped) {
-      const items = section.text.split(', ');
+      const items = section.text.split(', ').filter(item => item.trim() !== '');
       const content = items.map((item, index) => {
         if (section.link && item) {
           return (
@@ -146,7 +148,7 @@ export default function SectionRenderer({ section, metadata }) {
         }
         return (
           <span key={index}>
-            "{item}"
+            {item || ''}
             {index === items.length - 1 ? '' : ', '}
           </span>
         );

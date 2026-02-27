@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.synbiohub.sbh3.Synbiohub3Application;
 import com.synbiohub.sbh3.dto.LoginDTO;
 import com.synbiohub.sbh3.dto.UserRegistrationDTO;
 import com.synbiohub.sbh3.security.customsecurity.AuthenticationResponse;
@@ -20,6 +21,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.ILoggerFactory;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,6 +31,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -36,6 +40,8 @@ import java.io.IOException;
 import java.sql.*;
 import java.util.*;
 import java.util.regex.Pattern;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 @RequiredArgsConstructor
@@ -48,6 +54,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final AuthRepository authRepository;
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     public String loginUser(String username, String password) {
         LoginDTO loginRequest = LoginDTO
@@ -55,12 +62,12 @@ public class UserService {
                 .username(username)
                 .password(password)
                 .build();
-        AuthenticationResponse response = authenticate(loginRequest);
+        AuthenticationResponse response = authenticate(loginRequest); // generate JWT
         if (authRepository.findByName(username).isPresent()) {
             AuthCodes authCode = authRepository.findByName(username).get();
             authCode.setAuth(response.getToken());
             authRepository.save(authCode);
-        } else {
+        } else { // save the jwt in the authcode db
             AuthCodes authCode = AuthCodes.builder()
                     .name(username)
                     .auth(response.getToken())
@@ -71,16 +78,20 @@ public class UserService {
     }
 
     public String logoutUser(HttpServletRequest request) throws Exception {
+        // from 1/20/26
         String token = request.getHeader("X-authorization");
-//        Authentication auth = checkAuthentication(token);
-        // TODO: to get the authentication, we need the inputToken, which means that logout requires the token as a parameter
-        // Check with Chris if this is the way to go
-        HttpSession session = request.getSession();
-        if (session != null && session.getId() != null) {
-            session.invalidate();
-            authRepository.delete(authRepository.findByName(token).orElseThrow());
+        if (token != null && !token.isBlank()) {
+            // remove JWT from the whitelist
+            authRepository.findByAuth(token).ifPresent(authRepository::delete);
+
+            // clear the current request's session memory
+            SecurityContextHolder.clearContext();
+
+            log.info("Token invalidated and removed from DB.");
+            return "User logged out successfully";
         }
-        return "User logged out successfully";
+
+        return "No active session found to log out";
     }
 
     /**
@@ -177,27 +188,34 @@ public class UserService {
         return pat.matcher(email).matches();
     }
 
-    public User getUserProfile() throws Exception {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null) {
-            return null;
+// from (1/20/26)
+public User getUserProfile() {
+    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    if (auth != null && auth.isAuthenticated() && !(auth instanceof AnonymousAuthenticationToken)) {
+        if (auth.getPrincipal() instanceof User) {
+            User user = (User) auth.getPrincipal();
+            // reload from DB to ensure it's fresh
+            return userRepository.findByUsername(user.getUsername()).orElse(null);
         }
-        User user = userRepository.findByUsername(auth.getName()).orElseThrow();
-        User copyUser = (User) user.clone();
-        copyUser.setPassword("");
-        return copyUser;
+    }
+    return null;
+}
+
+
+
+
+// from (1/20/26)
+public User updateUserProfile(Map<String, String> allParams) throws Exception {
+    User existingUser = getUserProfile();
+    if (existingUser == null) {
+        throw new Exception("User not found");
     }
 
-    public User updateUserProfile(Map<String, String> allParams) throws Exception {
-//        Authentication auth = checkAuthentication(inputToken);
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        User existingUser = getUserProfile();
-        if (existingUser == null || auth == null) {
-            return null;
-        }
-        updateUserFields(existingUser, allParams);
-        return existingUser;
-    }
+    updateUserFields(existingUser, allParams);
+
+    // Save the changes to the database. the GET will always pull from this DB
+    return userRepository.save(existingUser);
+}
 
     public String setupInstance(Map<String, Object> allParams) {
         String fileName = "config.local.json";

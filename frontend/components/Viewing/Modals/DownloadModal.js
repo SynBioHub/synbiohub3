@@ -82,7 +82,7 @@ export default function DownloadModal(properties) {
     
     const pluginData = {
       uriSuffix: uriSuffix,
-      instanceUrl: `${publicRuntimeConfig.backend}/`,
+      instanceUrl: pluginsUseLocalCompose ? pluginLocalComposePrefix : `${publicRuntimeConfig.backend}/`,
       size: 1,
       type: properties.type,
       top: properties.uri,
@@ -157,8 +157,7 @@ export default function DownloadModal(properties) {
           data: {
             name: plugin.name,
             endpoint: 'status',
-            category: 'download',
-            prefix: pluginsUseLocalCompose ? pluginLocalComposePrefix : null
+            category: 'download'
           }
         }).then(response => {
 
@@ -176,8 +175,7 @@ export default function DownloadModal(properties) {
                 category: 'download',
                 data: {
                   type: properties.type
-                },
-                prefix: pluginsUseLocalCompose ? pluginLocalComposePrefix : null
+                }
               }
               
             }).then(response => {
