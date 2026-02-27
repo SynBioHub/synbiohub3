@@ -88,6 +88,8 @@ export default function DownloadModal(properties) {
       top: properties.uri,
       token: localStorage.getItem('userToken')
     };
+
+    console.log(properties.uri);
     
 
     dispatch(downloadFiles([item], true, pluginName, pluginData));
@@ -173,6 +175,7 @@ export default function DownloadModal(properties) {
                 name: plugin.name,
                 endpoint: 'evaluate',
                 category: 'download',
+                prefix: pluginsUseLocalCompose ? pluginLocalComposePrefix : null,
                 data: {
                   type: properties.type
                 }
