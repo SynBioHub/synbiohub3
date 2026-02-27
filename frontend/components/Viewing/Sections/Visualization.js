@@ -11,7 +11,7 @@ import parse, { domToReact } from 'html-react-parser';
 export default function Visualization(properties) {
     const theme = JSON.parse(localStorage.getItem('theme')) || {};
     const registries = JSON.parse(localStorage.getItem("registries")) || {};
-    const [processedUrl, setProcessedUrl] = useState({ original: properties.uri });
+    const [processedUrl, setProcessedUrl] = useState(properties.uri);
     const [content, setContent] = useState('<div>Loading Visualization...</div>');
     const [status, setStatus] = useState(null);
 
@@ -20,17 +20,18 @@ export default function Visualization(properties) {
           const result = await processUrl(properties.uri, registries);
           if(result.urlRemovedForLink) {
             setProcessedUrl(`${publicRuntimeConfig.backend}${result.urlRemovedForLink}/visualization`)
+            console.log("processedUrl", processedUrl);
           }
           else {
             setProcessedUrl(`${publicRuntimeConfig.backend}${result.original}/visualization`)
           }
-          console.log(processedUrl)
+          console.log("processedUrl", processedUrl);
           setContent(`<div>${processedUrl}</div>`);
           setStatus(200);
         }
     
         fetchAndProcessUrl();
-      }, [properties.uri]);
+      }, [properties.uri, processedUrl]);
 
 
     if (status === 200) {
