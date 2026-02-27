@@ -88,8 +88,6 @@ export default function DownloadModal(properties) {
       top: properties.uri,
       token: localStorage.getItem('userToken')
     };
-
-    console.log(properties.uri);
     
 
     dispatch(downloadFiles([item], true, pluginName, pluginData));
