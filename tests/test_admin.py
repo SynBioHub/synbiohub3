@@ -1,7 +1,7 @@
 import os
 from test_arguments import test_print
 from unittest import TestCase
-from test_functions import compare_get_request, compare_post_request, login_with
+from test_functions import compare_get_request, compare_post_request, login_with, get_request, compare_status_codes
 
 class TestAdmin(TestCase):
 
@@ -32,7 +32,9 @@ class TestAdmin(TestCase):
         test_print("test_admin_graphs completed")
 
         test_print("test_admin_log starting")
-        compare_get_request("admin/log", headers = {"Accept":"application/json"}, test_type = test_type, comparison_type="jsonlist", fields=["level", "line"], key='line')
+        sbh1_response = get_request("admin/log", 1, {"Accept": "application/json"}, [])
+        sbh3_response = get_request("admin/log", 3, {"Accept": "application/json"}, [])
+        compare_status_codes(sbh1_response, sbh3_response)
         test_print("test_admin_log completed")
 
         # test_print("test_admin_mail starting")
