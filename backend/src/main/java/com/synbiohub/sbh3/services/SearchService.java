@@ -231,13 +231,44 @@ public class SearchService {
         return searchQuery.loadTemplate(sparqlArgs);
     }
 
-    public String getTwinsSPARQL(String collectionInfo) throws IOException {
-        SPARQLQuery searchQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/search.sparql");
+    /**
+     * Gets the count of components that have the same sequence as the given URI (twins), using the same criteria as the "twins" endpoint.
+     * @param collectionInfo Collection path portion of the URI
+     * @return SPARQL query string that returns a single ?count binding
+     */
+    public String getTwinsCountSPARQL(String collectionInfo) throws IOException {
+        SPARQLQuery searchQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/searchCount.sparql");
         HashMap<String, String> sparqlArgs = new HashMap<>
-                (Map.of("from", getPrivateGraph(), "criteria", "", "limit", "", "offset", ""));
+                (Map.of("from", "", "criteria", ""));
 
         String URI = ConfigUtil.get("databasePrefix").asText() + collectionInfo;
 
+        // Same criteria as the "twins" endpoint
+        sparqlArgs.replace("criteria", "   ?subject sbol2:sequence ?seq . ?seq sbol2:elements ?elements . <" + URI
+                + "> a sbol2:ComponentDefinition . <" + URI + "> sbol2:sequence ?seq2 . ?seq2 sbol2:elements ?elements2 . " +
+                "FILTER(?subject != <" + URI + "> && ?elements = ?elements2) # TWINS");
+
+        String userGraph = getPrivateGraph();
+        if (!userGraph.isEmpty()) {
+            sparqlArgs.replace("from", "FROM <" + userGraph + ">");
+        }
+
+        return searchQuery.loadTemplate(sparqlArgs);
+    }
+
+    /**
+     * Gets the count of objects that use the specified URI, using the same criteria as the "uses" endpoint.
+     * @param collectionInfo Collection path portion of the URI
+     * @return SPARQL query string that returns a single ?count binding
+     */
+    public String getUsesCountSPARQL(String collectionInfo) throws IOException {
+        SPARQLQuery searchQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/searchCount.sparql");
+        HashMap<String, String> sparqlArgs = new HashMap<>
+                (Map.of("from", "", "criteria", ""));
+
+        String URI = ConfigUtil.get("databasePrefix").asText() + collectionInfo;
+
+        // Same criteria as the "uses" endpoint
         sparqlArgs.replace("criteria", " { ?subject ?p <" + URI + "> } UNION { ?subject ?p ?use . ?use ?useP <" + URI + "> } ." +
                 " FILTER(?useP != <http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel>) " +
                 "# USES");
@@ -249,6 +280,50 @@ public class SearchService {
 
         return searchQuery.loadTemplate(sparqlArgs);
     }
+
+    /**
+     * Gets the count of objects that use the specified URI, using the same criteria as the "uses" endpoint.
+     * @param collectionInfo Collection path portion of the URI
+     * @return SPARQL query string that returns a single ?count binding
+     */
+    public String getSimilarCountSPARQL(String collectionInfo) throws IOException {
+        SPARQLQuery searchQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/searchCount.sparql");
+        HashMap<String, String> sparqlArgs = new HashMap<>
+                (Map.of("from", "", "criteria", ""));
+
+        String URI = ConfigUtil.get("databasePrefix").asText() + collectionInfo;
+
+        //TODO: when SBOLExplorer works, turn this on to make it work (current sent to /uses and not /similar)
+//        sparqlArgs.replace("criteria", " { ?subject ?p <" + URI + "> } UNION { ?subject ?p ?use . ?use ?useP <" + URI + "> } ." +
+//                " FILTER(?useP != <http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel>) " +
+//                "# USES");
+
+        String userGraph = getPrivateGraph();
+        if (!userGraph.isEmpty()) {
+            sparqlArgs.replace("from", "FROM <" + userGraph + ">");
+        }
+
+        return searchQuery.loadTemplate(sparqlArgs);
+    }
+
+//    public String getTwinsSPARQL(String collectionInfo) throws IOException {
+//        SPARQLQuery searchQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/search.sparql");
+//        HashMap<String, String> sparqlArgs = new HashMap<>
+//                (Map.of("from", getPrivateGraph(), "criteria", "", "limit", "", "offset", ""));
+//
+//        String URI = ConfigUtil.get("databasePrefix").asText() + collectionInfo;
+//
+//        sparqlArgs.replace("criteria", " { ?subject ?p <" + URI + "> } UNION { ?subject ?p ?use . ?use ?useP <" + URI + "> } ." +
+//                " FILTER(?useP != <http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel>) " +
+//                "# USES");
+//
+//        String userGraph = getPrivateGraph();
+//        if (!userGraph.isEmpty()) {
+//            sparqlArgs.replace("from", "FROM <" + userGraph + ">");
+//        }
+//
+//        return searchQuery.loadTemplate(sparqlArgs);
+//    }
 
     public String getRootCollectionsSPARQL() {
         SPARQLQuery searchQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/RootCollectionMetadata.sparql");
