@@ -26,9 +26,15 @@ export default function DownloadModal(properties) {
   const [submittable, setSubmittable] = useState(false);
   const dispatch = useDispatch();
   const theme = JSON.parse(localStorage.getItem('theme')) || {};
-  const pluginsUseLocalCompose = useSelector(state => state.pluginsUseLocalCompose);
-  const pluginLocalComposePrefix = useSelector(state => state.pluginLocalComposePrefix);
   const token = useSelector(state => state.user.token);
+
+  const pluginsUseLocalCompose = (theme && theme.pluginsUseLocalCompose) 
+    ? theme.pluginsUseLocalCompose 
+    : false;
+    
+  const pluginLocalComposePrefix = (theme && theme.pluginLocalComposePrefix) 
+    ? theme.pluginLocalComposePrefix 
+    : null;
 
   //Checks if the modal has been submitted and downloads in the format the user chose.
   useEffect(() => {
@@ -90,7 +96,7 @@ export default function DownloadModal(properties) {
     };
     
 
-    dispatch(downloadFiles([item], true, pluginName, pluginData));
+    dispatch(downloadFiles([item], pluginsUseLocalCompose, true, pluginName, pluginData, pluginLocalComposePrefix));
   }
   }
 
@@ -173,7 +179,6 @@ export default function DownloadModal(properties) {
                 name: plugin.name,
                 endpoint: 'evaluate',
                 category: 'download',
-                prefix: pluginsUseLocalCompose ? pluginLocalComposePrefix : null,
                 data: {
                   type: properties.type
                 }
