@@ -1,0 +1,129 @@
+openapi: 3.0.0
+info:
+  title: SynBioHub Plugin Template
+  description: >
+    Plugin contract derived from the current SynBioHub plugin dispatcher behavior.
+    Plugins must implement 'status', 'evaluate', and 'run'.
+    This spec reflects how SynBioHub currently invokes plugin endpoints.
+  version: 1.0.0
+servers:
+  - url: "http://localhost:5000"
+    description: Local development server
+
+paths:
+  /status:
+    get:
+      summary: Plugin Status
+      description: >
+        Checks if the plugin is operational.
+        SynBioHub polls this endpoint to verify the plugin is up.
+      responses:
+        "200":
+          description: Plugin is running
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "The plugin is up and running"
+
+  /evaluate:
+    post:
+      summary: Evaluate Request
+      description: >
+        Determines if the plugin can handle the incoming request.
+        SynBioHub sends JSON payload as-is from its internal 'data' object.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EvaluateRequest'
+      responses:
+        "200":
+          description: Plugin can handle the request
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        "500":
+          description: Internal Server Error
+
+  /run:
+    post:
+      summary: Run Plugin
+      description: >
+        Executes the plugin logic.
+        SynBioHub sends JSON payload to this endpoint.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RunRequest'
+      responses:
+        "200":
+          description: Plugin execution successful
+          content:
+            text/plain:
+              schema:
+                type: string
+                description: Text/HTML payload (e.g., rendering plugins)
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+                description: Binary payload (e.g., download or submit plugins)
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+
+components:
+  schemas:
+    EvaluateRequest:
+      type: object
+      description: >
+        Payload passed through from SynBioHub dispatcher for evaluate.
+        Shape varies by plugin category.
+      additionalProperties: true
+      properties:
+        type:
+          type: string
+          description: RDF type of the object.
+        url:
+          type: string
+          description: Object URL in SynBioHub.
+        filename:
+          type: string
+          description: File name for submission workflows.
+
+    RunRequest:
+      type: object
+      description: >
+        Payload passed through from SynBioHub dispatcher for run.
+        The dispatcher enriches URI-based inputs with generated links.
+      additionalProperties: true
+      properties:
+        url:
+          type: string
+          description: Object URL in SynBioHub.
+        complete_sbol:
+          type: string
+          description: URL to fetch complete SBOL.
+        shallow_sbol:
+          type: string
+          description: URL to fetch non-recursive SBOL.
+        genbank:
+          type: string
+          description: URL to fetch GenBank representation.
+        top_level:
+          type: string
+          description: Top-level object identifier.
+        params:
+          type: object
+          description: Additional plugin parameters.
+          additionalProperties: true
