@@ -48,6 +48,10 @@ class TestSearch(TestCase):
         compare_get_request(":type/count", route_parameters = ["ComponentDefinition"], headers = {"Accept":"text/plain"}, test_type = test_type)
         compare_get_request(":type/count", route_parameters = ["xxx"], test_name="count0",headers = {"Accept":"text/plain"}, test_type = test_type)
         test_print("test_count completed")
+        
+        test_print("test_search_twins starting")
+        compare_get_request("public/:collectionId/:displayId/:version/twins", test_name = "twins1", route_parameters = ["igem", "BBa_B0034", "1"],headers = {"Accept": "text/plain"}, test_type = test_type, comparison_type="jsonlist", fields=["uri", "displayId", "version", "name", "description", "type"], key='uri')
+        test_print("test_search_twins completed")
 
         # test_print("test_subcollections_private starting")
         # compare_get_request("/user/:userId/:collectionId/:displayId/:version/subCollections", route_parameters = ["testuser","testid2","testid2_collection", "1"],headers = {"Accept":"text/plain"}, test_name="privateSubCollection")
