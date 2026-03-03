@@ -32,7 +32,7 @@ class TestAdmin(TestCase):
         test_print("test_admin_graphs completed")
 
         test_print("test_admin_log starting")
-        compare_get_request("admin/log", headers = {"Accept":"text/plain"}, test_type = test_type, comparison_type="jsonlist", fields=["level", "line"], key='line')
+        compare_get_request("admin/log", headers = {"Accept":"application/json"}, test_type = test_type, comparison_type="jsonlist", fields=["level", "line"], key='line')
         test_print("test_admin_log completed")
 
         # test_print("test_admin_mail starting")

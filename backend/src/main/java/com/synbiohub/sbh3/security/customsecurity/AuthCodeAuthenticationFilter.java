@@ -64,7 +64,9 @@ public class AuthCodeAuthenticationFilter extends OncePerRequestFilter {
             // Downstream filters (e.g., JWT filter) and Spring Security's
             // authorization rules will decide whether the request is allowed.
             SecurityContextHolder.clearContext();
-            filterChain.doFilter(request, response);
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("text/plain");
+            response.getWriter().write("Invalid or expired session. Please log in again.");
         }
 
     }
