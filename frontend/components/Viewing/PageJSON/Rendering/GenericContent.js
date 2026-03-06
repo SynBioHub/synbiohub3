@@ -53,7 +53,7 @@ export default function GenericContent({ json, uri, metadata, plugins, type, tra
 
     if (page === 'Visualization') {
       return (
-        <Visualization uri={uri} />
+        <Visualization uri={uri} key={index} />
       )
     }
 
