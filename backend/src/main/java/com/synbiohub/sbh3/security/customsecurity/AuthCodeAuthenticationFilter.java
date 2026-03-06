@@ -59,6 +59,10 @@ public class AuthCodeAuthenticationFilter extends OncePerRequestFilter {
 
             filterChain.doFilter(request, response);
         } else {
+            // If the auth code is not found, fall back to the rest of the
+            // security chain instead of immediately returning 401 here.
+            // Downstream filters (e.g., JWT filter) and Spring Security's
+            // authorization rules will decide whether the request is allowed.
             SecurityContextHolder.clearContext();
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType("text/plain");

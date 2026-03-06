@@ -16,17 +16,15 @@ export default function Plugin(properties) {
   const hiddenSections = useSelector(state => state.pageSections.hiddenSections);
   const dispatch = useDispatch();
   const theme = JSON.parse(localStorage.getItem('theme')) || {};
-  const pluginsUseLocalComposeFromState = useSelector(state => state.pluginsUseLocalCompose);
-  const pluginLocalComposePrefixFromState = useSelector(state => state.pluginLocalComposePrefix);
   const token = useSelector(state => state.user.token);
   
   const pluginsUseLocalCompose = (theme && theme.pluginsUseLocalCompose) 
     ? theme.pluginsUseLocalCompose 
-    : pluginsUseLocalComposeFromState;
+    : false;
     
   const pluginLocalComposePrefix = (theme && theme.pluginLocalComposePrefix) 
     ? theme.pluginLocalComposePrefix 
-    : pluginLocalComposePrefixFromState;
+    : null;
 
   let uri = properties.uri;
 

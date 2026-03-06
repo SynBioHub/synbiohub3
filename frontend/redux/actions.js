@@ -861,11 +861,8 @@ export const makePublicCollection =
     };
 
 export const downloadFiles =
-  (files, plugin = false, pluginName = null, pluginData = null) =>
+  (files, pluginsUseLocalCompose = false, plugin = false, pluginName = null, pluginData = null, pluginLocalComposePrefix = null) =>
     (dispatch, getState) => {
-      const state = getState();
-      const pluginsUseLocalCompose = state.pluginsUseLocalCompose;
-      const pluginLocalComposePrefix = state.pluginLocalComposePrefix;
 
       dispatch({ type: types.DOWNLOADSTATUS, payload: 'Downloading' });
       dispatch({ type: types.DOWNLOADLIST, payload: files });
