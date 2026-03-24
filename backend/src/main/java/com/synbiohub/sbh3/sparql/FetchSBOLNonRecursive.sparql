@@ -1,8 +1,11 @@
+PREFIX sbol: <http://sbols.org/v2#>
 PREFIX sbh: <http://wiki.synbiohub.org/wiki/Terms/synbiohub#>
 CONSTRUCT {?s ?p ?o}  WHERE {
     {
-        SELECT ?s WHERE {
-             ?s sbh:topLevel <$uri>.
+        SELECT DISTINCT ?s WHERE {
+             { ?s sbh:topLevel <$uri> . }
+             UNION
+             { <$uri> sbol:sequence ?s . }
         }
         ORDER BY ?s
     }
