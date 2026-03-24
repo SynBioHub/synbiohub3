@@ -50,7 +50,9 @@ export default function Plugin(properties) {
   
 
   useEffect(() => {
-    
+
+
+      setContent('<div>Loading Data From Plugin...</div>');
       evaluatePlugin(properties.plugin, properties.type, pluginsUseLocalCompose, pluginLocalComposePrefix, token).then(responseStatus => {
         setStatus(responseStatus)
 
