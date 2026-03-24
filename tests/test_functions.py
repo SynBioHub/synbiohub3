@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 from operator import itemgetter
 from json.decoder import JSONDecodeError
 
-from test_arguments import args, test_print
+from test_arguments import args, test_print, SETUP_URI_PREFIX
 from TestState import TestState, clip_request
 
 IGNORE_CLASSES = ["testignore", "buorg"]
@@ -302,7 +302,7 @@ def file_diff_download(sbh1requestcontent, sbh3requestcontent, request, requestt
         'fail_on_first_error': False,
         'provide_detailed_stack_trace': False,
         'subset_uri': '',
-        'uri_prefix': '',
+        'uri_prefix': SETUP_URI_PREFIX,
         'version': '',
         'insert_type': False,
         'main_file_name': 'sbh3requestcontent',
