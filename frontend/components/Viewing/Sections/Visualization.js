@@ -149,21 +149,67 @@ function buildVisualizationDocument(html, currentUrl, frontendUrl) {
     ${baseTag}
     <script>
       (function() {
+        function safeOrigin(url) {
+          try {
+            return new URL(url).origin;
+          }
+          catch (error) {
+            return '';
+          }
+        }
+
+        function rewriteToFrontend(url) {
+          if (!url) {
+            return url;
+          }
+
+          var frontendBase = window.__visualizationFrontendUrl || '';
+          if (!frontendBase) {
+            return url;
+          }
+
+          try {
+            var frontend = new URL(frontendBase);
+            var resolved = new URL(url, frontendBase);
+            var backendOrigin = safeOrigin(window.__visualizationBackendUrl);
+
+            if (backendOrigin && resolved.origin === backendOrigin) {
+              return frontend.origin + resolved.pathname + resolved.search + resolved.hash;
+            }
+
+            if (/^https?:/i.test(url)) {
+              return resolved.toString();
+            }
+
+            if (url.startsWith('/')) {
+              return frontend.origin + url;
+            }
+
+            return new URL(url, frontendBase).toString();
+          }
+          catch (error) {
+            return url;
+          }
+        }
+
         function navigateTop(url) {
           if (!url) {
             return;
           }
 
+          var rewritten = rewriteToFrontend(url);
+
           try {
-            window.top.location.href = url;
+            window.top.location.href = rewritten;
           }
           catch (error) {
-            parent.postMessage({ type: 'visualization:navigate', href: url }, '*');
+            parent.postMessage({ type: 'visualization:navigate', href: rewritten }, '*');
           }
         }
 
         window.__visualizationNavigateTop = navigateTop;
         window.__visualizationFrontendUrl = ${JSON.stringify(frontendUrl || '')};
+        window.__visualizationBackendUrl = ${JSON.stringify(currentUrl || '')};
 
         function findAncestor(node, predicate) {
           while (node) {
@@ -172,21 +218,7 @@ function buildVisualizationDocument(html, currentUrl, frontendUrl) {
             }
             node = node.parentNode;
           }
-
           return null;
-        }
-
-        function resolveDataUri(url) {
-          if (!url) {
-            return null;
-          }
-
-          try {
-            return new URL(url, window.__visualizationFrontendUrl || document.baseURI).toString();
-          }
-          catch (error) {
-            return url;
-          }
         }
 
         function stopEvent(event) {
@@ -212,7 +244,7 @@ function buildVisualizationDocument(html, currentUrl, frontendUrl) {
 
           if (dataUriNode) {
             stopEvent(event);
-            navigateTop(resolveDataUri(dataUriNode.getAttribute('data-uri')));
+            navigateTop(dataUriNode.getAttribute('data-uri'));
             return;
           }
 
@@ -225,7 +257,8 @@ function buildVisualizationDocument(html, currentUrl, frontendUrl) {
           }
 
           stopEvent(event);
-          navigateTop(new URL(hrefNode.getAttribute('href') || hrefNode.getAttribute('xlink:href') || hrefNode.getAttribute('data-href'), document.baseURI).toString());
+          var rawHref = hrefNode.getAttribute('href') || hrefNode.getAttribute('xlink:href') || hrefNode.getAttribute('data-href');
+          navigateTop(rawHref);
         }
 
         function handleSubmit(event) {
@@ -235,7 +268,7 @@ function buildVisualizationDocument(html, currentUrl, frontendUrl) {
           }
 
           stopEvent(event);
-          navigateTop(new URL(form.action, document.baseURI).toString());
+          navigateTop(form.getAttribute('action') || form.action);
         }
 
         document.addEventListener('click', handleClick, true);
@@ -273,7 +306,7 @@ function buildVisualizationDocument(html, currentUrl, frontendUrl) {
         }
 
         window.addEventListener('load', postHeight);
-  window.addEventListener('load', prepareLinks);
+        window.addEventListener('load', prepareLinks);
         window.addEventListener('resize', postHeight);
 
         if (window.ResizeObserver) {
