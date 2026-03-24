@@ -13,7 +13,6 @@ export default function Plugin(properties) {
   const [status, setStatus] = useState(null);
   const [content, setContent] = useState('<div>Loading Data From Plugin...</div>');
   const pageSectionsOrder = useSelector(state => state.pageSections.order);
-  const hiddenSections = useSelector(state => state.pageSections.hiddenSections);
   const dispatch = useDispatch();
   const theme = JSON.parse(localStorage.getItem('theme')) || {};
   const token = useSelector(state => state.user.token);
@@ -50,8 +49,6 @@ export default function Plugin(properties) {
   
 
   useEffect(() => {
-
-
       setContent('<div>Loading Data From Plugin...</div>');
       evaluatePlugin(properties.plugin, properties.type, pluginsUseLocalCompose, pluginLocalComposePrefix, token).then(responseStatus => {
         setStatus(responseStatus)
