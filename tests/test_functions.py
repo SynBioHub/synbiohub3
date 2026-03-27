@@ -215,7 +215,12 @@ requesttype is the type of request performed- either 'get request' or 'post requ
             print("DOWNLOAD TEST FAILED")
             test_passed = 0
             raise Exception("DOWNLOAD TEST FAILED")
-   # if requesttype[0:3] == "get" or requesttype[0:4] == "post":
+        # Download endpoints: SBOL validator equivalence only (SBH1 vs SBH3 RDF/XML
+        # serialization often differs line-for-line while remaining valid/equivalent).
+        print("RESPONSE CONTENT TEST PASSED\n")
+        add_test_results(test_passed, test_type)
+        return
+
     if(file_diff(sbh1requestcontent.text, sbh3requestcontent.text, request, requesttype)):
         print("RESPONSE CONTENT TEST PASSED\n")
     else:
