@@ -10,9 +10,17 @@ import NewCollectionButtons from './NewCollectionButtons';
 
 export default function NewCollectionForm(properties) {
   const dispatch = useDispatch();
+  const canSubmitTo = useSelector(state => state.submit.canSubmitTo);
+  console.log(`Available collections: ${JSON.stringify(canSubmitTo)}`);
   const [name, setCollectionName] = useState(
     properties.filler ? properties.filler.name : ''
   );
+  const normalizedName = (name || '').trim();
+  const isUniqueName =
+    !normalizedName ||
+    !Array.isArray(canSubmitTo) ||
+    !canSubmitTo.some(item => (item?.name || '').trim() === normalizedName);
+  const showNameInUseWarning = normalizedName && !isUniqueName;
   const [description, setCollectionDescription] = useState(
     properties.filler ? properties.filler.description : ''
   );
@@ -47,11 +55,18 @@ export default function NewCollectionForm(properties) {
         value={name}
         needsVerification={needsVerification}
         setNeedsVerification={setNeedsVerification}
+        customStyling={showNameInUseWarning ? styles.submitinputerror : ''}
+        style={showNameInUseWarning ? { color: '#D25627' } : undefined}
         onChange={event => {
           setCollectionName(event.target.value);
           setCollectionID(convertToAlphanumeric(event.target.value));
         }}
       />
+      {showNameInUseWarning ? (
+        <p className={styles.submitwarning}>
+          This collection name is already in use. Please choose a different name.
+        </p>
+      ) : null}
       <InputField
         labelText="Description"
         inputName="collection description"
@@ -95,6 +110,7 @@ export default function NewCollectionForm(properties) {
       />
       <NewCollectionButtons
         needsVerification={needsVerification}
+        isUniqueName={isUniqueName}
         postCollection={postCollection}
         title="Create"
       />

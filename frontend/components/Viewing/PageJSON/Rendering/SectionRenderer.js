@@ -73,12 +73,26 @@ export default function SectionRenderer({ section, metadata }) {
     };
   }, []);
   if (data) {
+    let usedProcessedLink = false;
+
     if (section.link) {
       data.forEach(registry => {
-        if (section.link.startsWith(registry.uri) && processedLink && processedLink.urlRemovedForLink) {
+        if (
+          section.link.startsWith(registry.uri) &&
+          processedLink &&
+          processedLink.urlRemovedForLink
+        ) {
           section.link = processedLink.urlRemovedForLink;
+          usedProcessedLink = true; // ✅ mark that replacement occurred
         }
-      })
+      });
+    }
+
+    const currentURL = window.location.href;
+    if (usedProcessedLink && currentURL.endsWith('/share')) {
+      const parts = currentURL.split('/');
+      const shareSuffix = parts.slice(-2).join('/'); // e.g., "abc123/share"
+      section.link = `${section.link}/${shareSuffix}`;
     }
     if (/SO:\s*(\d{7})/.test(section.text)) {
       for (let key in sequenceOntology) {
@@ -96,12 +110,14 @@ export default function SectionRenderer({ section, metadata }) {
         }
       }
     }
-    if (/^(http:\/\/edamontology\.org\/format_\d{4}|edam:format_\d{4}|https:\/\/identifiers\.org\/edam:format_\d{4})$/.test(section.text)) {
+    if (/^(http:\/\/edamontology\.org\/format_\d{4}|edam:format_\d{4}|https:\/\/identifiers\.org\/edam:format_\d{4}|format_\d{4})$/.test(section.text)) {
       // Normalize the section.text to the full URL format
       if (/^edam:format_\d{4}$/.test(section.text)) {
         section.text = section.text.replace(/^edam:format_(\d{4})$/, 'http://edamontology.org/format_$1');
       } else if (/^https:\/\/identifiers\.org\/edam:format_\d{4}$/.test(section.text)) {
         section.text = section.text.replace(/^https:\/\/identifiers\.org\/edam:format_(\d{4})$/, 'http://edamontology.org/format_$1');
+      } else if (/^format_\d{4}$/.test(section.text)) {
+        section.text = section.text.replace(/^format_(\d{4})$/, 'http://edamontology.org/format_$1');
       }
 
       // Now proceed with checking against the keys in edamOntology
@@ -114,7 +130,7 @@ export default function SectionRenderer({ section, metadata }) {
 
 
     if (section.grouped) {
-      const items = section.text.split(', ');
+      const items = section.text.split(', ').filter(item => item.trim() !== '');
       const content = items.map((item, index) => {
         if (section.link && item) {
           return (
@@ -132,7 +148,7 @@ export default function SectionRenderer({ section, metadata }) {
         }
         return (
           <span key={index}>
-            "{item}"
+            {item || ''}
             {index === items.length - 1 ? '' : ', '}
           </span>
         );

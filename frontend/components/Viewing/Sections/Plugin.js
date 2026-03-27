@@ -1,32 +1,29 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import parse, { domToReact } from 'html-react-parser';
-import React from 'react';
 import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
 import { useSelector, useDispatch } from 'react-redux';
 
-import Section from './Sections/Section';
-import { showPluginSection, hidePluginSection } from '../../redux/actions';
-import { use } from 'react';
+import Section from './Section';
+import { showPluginSection, hidePluginSection } from '../../../redux/actions';
 
 export default function Plugin(properties) {
 
   const [status, setStatus] = useState(null);
   const [content, setContent] = useState('<div>Loading Data From Plugin...</div>');
   const pageSectionsOrder = useSelector(state => state.pageSections.order);
-  const hiddenSections = useSelector(state => state.pageSections.hiddenSections);
   const dispatch = useDispatch();
   const theme = JSON.parse(localStorage.getItem('theme')) || {};
-  const pluginsUseLocalCompose = useSelector(state => state.pluginsUseLocalCompose);
-  const pluginLocalComposePrefix = useSelector(state => state.pluginLocalComposePrefix);
   const token = useSelector(state => state.user.token);
-  if (theme && theme.pluginsUseLocalCompose && theme.pluginLocalComposePrefix) {
-    pluginsUseLocalCompose = theme.pluginsUseLocalCompose;
-    pluginLocalComposePrefix = theme.pluginLocalComposePrefix;
-  }
-
-  const acceptedTags = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'a', 'img', 'ul', 'ol', 'li', 'table', 'tr', 'td', 'th', 'thead', 'tbody', 'tfoot', 'caption', 'div', 'span', 'br', 'hr', 'pre', 'code', 'blockquote', 'strong', 'em', 'i', 'b', 'u', 's', 'sub', 'sup', 'del', 'ins', 'mark', 'small', 'big', 'abbr', 'cite', 'dfn', 'kbd', 'q', 'samp', 'var', 'time', 'address', 'article', 'aside', 'footer', 'header', 'nav', 'section', 'main', 'figure', 'figcaption', 'details', 'summary', 'dialog', 'menu', 'menuitem', 'menuitem', 'meter', 'progress', 'output', 'canvas', 'audio', 'video', 'iframe', 'object', 'embed', 'param', 'source', 'track', 'map', 'area', 'form', 'label', 'input', 'button', 'select', 'datalist', 'optgroup', 'option', 'textarea', 'fieldset', 'legend', 'datalist', 'output', 'progress', 'meter', 'details', 'summary', 'command', 'menu', 'menuitem', 'menuitem', 'script', 'noscript', 'style', 'link', 'meta', 'title', 'base', 'head', 'body', 'html', 'br', 'hr', 'wbr', 'img', 'area', 'map', 'track', 'source', 'param', 'iframe', 'embed', 'object', 'canvas', 'script', 'noscript', 'style', 'link', 'meta', 'title', 'base', 'head', 'body', 'html', 'br', 'hr', 'wbr', 'img', 'area', 'map', 'track', 'source', 'param', 'iframe', 'embed', 'object', 'canvas', 'script', 'noscript', 'style', 'link', 'meta', 'title', 'base', 'head', 'body', 'html', 'br', 'hr', 'wbr', 'img', 'area', ]
+  
+  const pluginsUseLocalCompose = (theme && theme.pluginsUseLocalCompose) 
+    ? theme.pluginsUseLocalCompose 
+    : false;
+    
+  const pluginLocalComposePrefix = (theme && theme.pluginLocalComposePrefix) 
+    ? theme.pluginLocalComposePrefix 
+    : null;
 
   let uri = properties.uri;
 
@@ -52,7 +49,7 @@ export default function Plugin(properties) {
   
 
   useEffect(() => {
-    
+      setContent('<div>Loading Data From Plugin...</div>');
       evaluatePlugin(properties.plugin, properties.type, pluginsUseLocalCompose, pluginLocalComposePrefix, token).then(responseStatus => {
         setStatus(responseStatus)
 
@@ -75,7 +72,7 @@ export default function Plugin(properties) {
 
             const pluginData = {
               uriSuffix: uriSuffix,
-              instanceUrl: `${publicRuntimeConfig.backend}/`,
+              instanceUrl: pluginsUseLocalCompose ? pluginLocalComposePrefix : `${publicRuntimeConfig.backend}/`,
               size: 1,
               type: type,
               top: properties.uri,
@@ -108,46 +105,10 @@ export default function Plugin(properties) {
 
   if (status) {
 
-    const options = {
-      replace: domNode => {
-        if(!domNode.attribs) {
-          return;
-        }
-
-        if(domNode.name === '!doctype html') {
-          return <></>;
-        }
-
-        if(!acceptedTags.includes(domNode.name)) {
-          return (
-            <>{domToReact(domNode.children, options)}</>
-          );
-        }
-
-        if(domNode.name === 'html' || domNode.name === 'head' || domNode.name === 'body') {
-          return (
-            <>{domToReact(domNode.children, options)}</>
-          );
-        }
-
-        if(domNode.type === 'script') {
-          var script = document.createElement('script');
-          if(domNode.attribs.src) {
-            script.src = domNode.attribs.src;
-          }
-          script.type = 'text/javascript';
-          script.innerText = `${domToReact(domNode.children, options)}`;
-          document.getElementById(`${properties.plugin.name}`).appendChild(script);
-          return <></>;
-        }
-
-      }
-    }
-
     return (
       <Section title={properties.title} pluginID={properties.pluginID} >
         <div id={properties.plugin.name}>
-          {parse(`${content}`, options)}
+          {parse(`${content}`, getOptions(properties.plugin.name))}
         </div>
       </Section>
       
@@ -190,8 +151,7 @@ async function evaluatePlugin(plugin, type, pluginsUseLocalCompose, pluginLocalC
       category: 'rendering',
       data: {
         type: type
-      },
-      prefix: pluginsUseLocalCompose ? pluginLocalComposePrefix : null
+      }
     }
   }).then(response => {
     return response.status === 200;
@@ -239,3 +199,42 @@ async function runPlugin(plugin, pluginData, pluginsUseLocalCompose, pluginLocal
   })
   
 }
+const acceptedTags = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'a', 'img', 'ul', 'ol', 'li', 'table', 'tr', 'td', 'th', 'thead', 'tbody', 'tfoot', 'caption', 'div', 'span', 'br', 'hr', 'pre', 'code', 'blockquote', 'strong', 'em', 'i', 'b', 'u', 's', 'sub', 'sup', 'del', 'ins', 'mark', 'small', 'big', 'abbr', 'cite', 'dfn', 'kbd', 'q', 'samp', 'var', 'time', 'address', 'article', 'aside', 'footer', 'header', 'nav', 'section', 'main', 'figure', 'figcaption', 'details', 'summary', 'dialog', 'menu', 'menuitem', 'menuitem', 'meter', 'progress', 'output', 'canvas', 'audio', 'video', 'iframe', 'object', 'embed', 'param', 'source', 'track', 'map', 'area', 'form', 'label', 'input', 'button', 'select', 'datalist', 'optgroup', 'option', 'textarea', 'fieldset', 'legend', 'datalist', 'output', 'progress', 'meter', 'details', 'summary', 'command', 'menu', 'menuitem', 'menuitem', 'script', 'noscript', 'style', 'link', 'meta', 'title', 'base', 'head', 'body', 'html', 'br', 'hr', 'wbr', 'img', 'area', 'map', 'track', 'source', 'param', 'iframe', 'embed', 'object', 'canvas', 'script', 'noscript', 'style', 'link', 'meta', 'title', 'base', 'head', 'body', 'html', 'br', 'hr', 'wbr', 'img', 'area', 'map', 'track', 'source', 'param', 'iframe', 'embed', 'object', 'canvas', 'script', 'noscript', 'style', 'link', 'meta', 'title', 'base', 'head', 'body', 'html', 'br', 'hr', 'wbr', 'img', 'area', ];
+
+const getOptions = pluginName => {
+  const options = {
+    replace: domNode => {
+      if (!domNode.attribs) {
+        return;
+      }
+
+      if (domNode.name === '!doctype html') {
+        return <></>;
+      }
+
+      if (!acceptedTags.includes(domNode.name)) {
+        return <>{domToReact(domNode.children, options)}</>;
+      }
+
+      if (domNode.name === 'html' || domNode.name === 'head' || domNode.name === 'body') {
+        return <>{domToReact(domNode.children, options)}</>;
+      }
+
+      if (domNode.type === 'script' && pluginName) {
+        const script = document.createElement('script');
+        if (domNode.attribs.src) {
+          script.src = domNode.attribs.src;
+        }
+        script.type = 'text/javascript';
+        script.innerText = `${domToReact(domNode.children, options)}`;
+        const container = document.getElementById(pluginName);
+        if (container) {
+          container.appendChild(script);
+        }
+        return <></>;
+      }
+    }
+  };
+
+  return options;
+};

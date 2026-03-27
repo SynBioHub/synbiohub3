@@ -19,7 +19,6 @@ export default function executeQueryFromTableJSON(
     { uri },
     token,
     false,
-    urlOverride, 
-    uri
+    urlOverride
   );
 }

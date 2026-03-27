@@ -22,6 +22,7 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import com.synbiohub.sbh3.security.customsecurity.AuthCodeAuthenticationFilter;
 
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
@@ -44,6 +45,7 @@ public class SecurityConfig {
 //    private DataSource dataSource;
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final AuthCodeAuthenticationFilter authCodeAuthenticationFilter;
     private final AuthenticationProvider authenticationProvider;
 
     //TODO: ADD isOwnedBy method
@@ -53,7 +55,18 @@ public class SecurityConfig {
                 .cors()
                 .and()
                 .authorizeHttpRequests()
-                .requestMatchers("/setup", "/login", "/register", "/search", "/search/**", "/searchCount", "/searchCount/**", "/twins", "/uses", "/similar", "/sbol", "/sbolnr", "/metadata", "/gb", "/fasta", "/gff", "/download", "/public/**", "/sparql", "/ComponentDefinition/**", "/**/count", "/count", "/admin/theme", "/admin/registries", "admin/plugins").permitAll()
+                .requestMatchers(
+                        "/setup", "/login", "/register",
+                        "/search", "/search/**", "/searchCount", "/searchCount/**",
+                        "/twins", "/twinsCount", "/uses", "/usesCount", "/similar", "/similarCount",
+                        "/sbol", "/sbolnr", "/metadata", "/gb", "/fasta", "/gff", "/download",
+                        "/public/**",
+                        "/public/**/sbolnr", "/public/**/gb", "/public/**/gff",
+                        "/user/**",
+                        "/user/**/sbolnr", "/user/**/gb", "/user/**/gff",
+                        "/sparql", "/ComponentDefinition/**", "/**/count", "/count",
+                        "/admin/theme", "/admin/registries", "/admin/plugins", "/admin/graphs", "/admin/log", "/manage", "/shared"
+                ).permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .csrf().disable()
@@ -62,6 +75,7 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authenticationProvider(authenticationProvider)
+                .addFilterBefore(authCodeAuthenticationFilter, UsernamePasswordAuthenticationFilter.class) // everything goes through the authcode filter first
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }

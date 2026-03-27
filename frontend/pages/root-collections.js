@@ -39,7 +39,7 @@ export default function RootCollections() {
     }
     const fetchData = async () => {
       try {
-        const url = `${publicRuntimeConfig.backend}/rootCollections`;
+        const url = `${publicRuntimeConfig.backend}/browse`;
         const headers = {
           Accept: 'text/plain; charset=UTF-8',
           'X-authorization': token
@@ -112,7 +112,7 @@ export default function RootCollections() {
       publicPage={true}
     >
       <div className={styles.container}>
-        <SearchHeader selected="Root Collections" data={data} />
+        <SearchHeader selected="Browse Collections" data={data} />
         <div className={styles.standardcontainer}>
           <ResultTable
             count={filteredData.length}

@@ -16,6 +16,27 @@ import { isUriOwner } from './Shell';
 import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
 
+function renderSplitTitle(title) {
+  const maxLen = 30; // maximum length before splitting
+  if (!title || title.length <= maxLen) return title;
+
+  // Prefer to break at an underscore before maxLen, otherwise hard break
+  const underscoreIndex = title.lastIndexOf('_', maxLen);
+  const breakIndex = underscoreIndex > -1 ? underscoreIndex : maxLen;
+
+  const firstPart = title.slice(0, breakIndex);
+  const secondPart =
+    underscoreIndex > -1 ? title.slice(breakIndex + 1) : title.slice(breakIndex);
+
+  return (
+    <>
+      {firstPart}
+      <br />
+      {secondPart}
+    </>
+  );
+}
+
 export default function ViewHeader(properties) {
   const [displayedTitle, setDisplayedTitle] = useState(properties.name);  // New state for the displayed title
   const [isEditingTitle, setIsEditingTitle] = useState(false);
@@ -244,7 +265,7 @@ export default function ViewHeader(properties) {
           </div>
         ) : (
           <div className={styles.titleContainer}>
-            <h1 className={styles.maintitle}>{displayedTitle}</h1>
+            <h1 className={styles.maintitle}>{renderSplitTitle(displayedTitle)}</h1>
             {isOwner && (
               <>
                 <FontAwesomeIcon
@@ -342,16 +363,19 @@ export default function ViewHeader(properties) {
         )}
       </div>
       <div>
-        
-        {/* {properties.search.similar && typeof checkSBOLExplorer?.data === 'string' && ( //TODO: Add check for SBOLExplorer
+        {/* Safely handle cases where properties.search may be undefined */}
+        {(() => {
+          const search = properties.search || {};
+
+        {/* {search.similar && typeof checkSBOLExplorer?.data === 'string' && ( //TODO: Add check for SBOLExplorer
           <button className={styles.button} onClick={similar}> Similar
           </button>
         )} */}
 
-        {(properties.search.twins || properties.search.uses || properties.search.similar) && (
+        {(search.twins || search.uses || search.similar) && (
           <span>Search For:</span>
         )}
-        {properties.search.twins && (
+        {search.twins && (
           <button
             className={styles.button}
             onClick={twins}
@@ -363,7 +387,7 @@ export default function ViewHeader(properties) {
             Twins
           </button>
         )}
-        {properties.search.uses && (
+        {search.uses && (
           <button className={styles.button} onClick={uses}
             style={{
               backgroundColor: theme?.themeParameters?.[0]?.value || '#333', // Use theme color or default to #333
@@ -371,7 +395,7 @@ export default function ViewHeader(properties) {
             }}
           > Uses </button>
         )}
-        {properties.search.similar && (
+        {search.similar && (
           <button className={styles.button} onClick={similar}
             style={{
               backgroundColor: theme?.themeParameters?.[0]?.value || '#333', // Use theme color or default to #333
@@ -379,6 +403,7 @@ export default function ViewHeader(properties) {
             }}
           > Similar </button>
         )}
+        })()}
       </div>
     </div>
   );

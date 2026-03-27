@@ -28,6 +28,22 @@ export default function View({ data, error }) {
   const theme = JSON.parse(localStorage.getItem('theme')) || {};
   const [urlExists, setUrlExists] = useState(true); // New state for URL existence
   const backenduri = `${publicRuntimeConfig.backend}/${url}`;
+  const currentURL = window.location.href;
+  const parts = currentURL.split('/');
+  const [isOwner, setIsOwner] = useState(false);
+  const isPublic = typeof window !== 'undefined' && window.location.href.includes('/public/');
+
+  useEffect(() => {
+    const currentURL = window.location.href;
+    const urlUsername = parts[4]; // adjust as needed
+    const persistRoot = JSON.parse(localStorage.getItem("persist:root") || '{}');
+    const rootUser = JSON.parse(persistRoot.username || '""');
+
+    if (currentURL.endsWith('/share') || currentURL.includes('/public/') || urlUsername === rootUser) {
+      setIsOwner(true);
+    }
+  }, []);
+
 
   if (url.endsWith('/twins')) {
     const searchUrl = `${publicRuntimeConfig.backend}/${url}`;
@@ -82,7 +98,17 @@ export default function View({ data, error }) {
       })
       .then(response => {
         if (!metadata && uri) {
-          getQueryResponse(dispatch, getMetadata, { uri: uri }, token).then(
+          const parts = uri.split('/');
+          // Find the last index that looks like a version number (contains digits)
+          let lastIndex = -1;
+          for (let i = parts.length - 1; i >= 0; i--) {
+            if (parts[i] && /^\d/.test(parts[i])) { // Starts with a digit
+              lastIndex = i;
+              break;
+            }
+          }
+          const firstHalf = lastIndex >= 0 ? parts.slice(0, lastIndex + 1).join('/') : uri;
+          getQueryResponse(dispatch, getMetadata, { uri: firstHalf }, token).then(
             metadata => setMetadata(metadata)
           );
         }
@@ -95,7 +121,7 @@ export default function View({ data, error }) {
   }, [uri, metadata, token]);
 
   // Render based on URL existence
-  if (!url || !urlExists) {
+  if (!url || !urlExists || !isOwner) {
     return (
       <TopLevel publicPage={true}>
         <div style={centerStyle}>
@@ -177,5 +203,6 @@ const getType = type => {
   if (type) {
     return type.replace('http://sbols.org/v2#', '');
   }
+  
   return type;
 };
