@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.RDFNode;
+import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.datatypes.RDFDatatype;
 import org.apache.jena.datatypes.TypeMapper;
@@ -18,12 +19,9 @@ import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RDFFormat;
 import org.apache.jena.riot.RiotException;
 import org.sbolstandard.core2.ComponentDefinition;
-import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLReader;
 import org.sbolstandard.core2.Sequence;
-import org.sbolstandard.core2.SBOLValidationException;
-import org.sbolstandard.core2.SBOLWriter;
 
 import org.springframework.stereotype.Service;
 
@@ -38,6 +36,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 @Service
@@ -98,21 +97,117 @@ public class DownloadService {
     }
 
     /**
-     * Recursive SBOL2 closure as RDF/XML (libSBOLj), or null if nothing to serialize.
+     * Recursive SBOL2 closure as RDF/XML with legacy SynBioHub1 namespace layout ({@code sbh}, {@code igem},
+     * {@code dcterms}, etc.). The merged Jena model is written with {@link RDFFormat#RDFXML} and stable prefixes;
+     * {@link SBOLWriter} is not used because it emits generic {@code ns*} prefixes and splits iGEM IRIs into
+     * fragment namespaces that fail download regression tests.
      */
     public byte[] getSbol2RdfXmlBytes(String topLevelUri) throws IOException {
-        SBOLDocument doc = getSBOLRecursive(topLevelUri);
-        if (doc == null || doc.getTopLevels().isEmpty()) {
+        Model model = getRecursiveModel(topLevelUri);
+        if (model.isEmpty()) {
             return null;
         }
+        applyLegacySynbiohubRdfXmlPrefixes(model);
         var out = new ByteArrayOutputStream();
-        try {
-            doc.write(out);
-        } catch (SBOLConversionException e) {
-            log.error("Failed to serialize SBOL to RDF/XML", e);
-            return null;
+        RDFDataMgr.write(out, model, RDFFormat.RDFXML);
+        return postProcessLegacySbolRdfXml(out.toByteArray());
+    }
+
+    /**
+     * Prefix map aligned with SynBioHub1 RDF/XML root for {@code /sbol} (see legacy public igem downloads).
+     */
+    private static void applyLegacySynbiohubRdfXmlPrefixes(Model model) {
+        List<String> toClear = new ArrayList<>();
+        for (Map.Entry<String, String> e : model.getNsPrefixMap().entrySet()) {
+            if (!e.getKey().isEmpty()) {
+                toClear.add(e.getKey());
+            }
         }
-        return out.toByteArray();
+        for (String p : toClear) {
+            model.removeNsPrefix(p);
+        }
+        model.setNsPrefix("rdf", RDF.uri);
+        model.setNsPrefix("dcterms", "http://purl.org/dc/terms/");
+        model.setNsPrefix("prov", "http://www.w3.org/ns/prov#");
+        model.setNsPrefix("sbol", "http://sbols.org/v2#");
+        model.setNsPrefix("xsd", "http://www.w3.org/2001/XMLSchema#dateTime/");
+        model.setNsPrefix("om", "http://www.ontology-of-units-of-measure.org/resource/om-2/");
+        model.setNsPrefix("synbiohub", "http://synbiohub.org#");
+        model.setNsPrefix("sbh", "http://wiki.synbiohub.org/wiki/Terms/synbiohub#");
+        model.setNsPrefix("sybio", "http://www.sybio.ncl.ac.uk#");
+        model.setNsPrefix("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
+        model.setNsPrefix("ncbi", "http://www.ncbi.nlm.nih.gov#");
+        model.setNsPrefix("igem", "http://wiki.synbiohub.org/wiki/Terms/igem#");
+        model.setNsPrefix("genbank", "http://www.ncbi.nlm.nih.gov/genbank#");
+        model.setNsPrefix("gbconv", "http://sbols.org/genBankConversion#");
+        model.setNsPrefix("dc", "http://purl.org/dc/elements/1.1/");
+        model.setNsPrefix("obo", "http://purl.obolibrary.org/obo/");
+    }
+
+    /** Extra xmlns SynBioHub1 declares on {@code rdf:RDF}; inject if absent so comparators see the same root. */
+    private static final String[] LEGACY_RDF_ROOT_XMLNS_DECLS = {
+            "xmlns:om=\"http://www.ontology-of-units-of-measure.org/resource/om-2/\"",
+            "xmlns:synbiohub=\"http://synbiohub.org#\"",
+            "xmlns:sybio=\"http://www.sybio.ncl.ac.uk#\"",
+            "xmlns:rdfs=\"http://www.w3.org/2000/01/rdf-schema#\"",
+            "xmlns:ncbi=\"http://www.ncbi.nlm.nih.gov#\"",
+            "xmlns:genbank=\"http://www.ncbi.nlm.nih.gov/genbank#\"",
+            "xmlns:gbconv=\"http://sbols.org/genBankConversion#\"",
+            "xmlns:obo=\"http://purl.obolibrary.org/obo/\"",
+    };
+
+    private static byte[] postProcessLegacySbolRdfXml(byte[] bytes) {
+        if (bytes == null || bytes.length == 0) {
+            return bytes;
+        }
+        String s = new String(bytes, StandardCharsets.UTF_8);
+        s = normalizeRdfXmlDeclaration(s);
+        s = injectMissingLegacyRdfRootXmlns(s);
+        return s.getBytes(StandardCharsets.UTF_8);
+    }
+
+    private static String normalizeRdfXmlDeclaration(String s) {
+        if (s.startsWith("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")) {
+            return s;
+        }
+        if (s.startsWith("<?xml version=\"1.0\"?>")) {
+            return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + s.substring("<?xml version=\"1.0\"?>".length());
+        }
+        if (s.startsWith("<?xml version='1.0'?>")) {
+            return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + s.substring("<?xml version='1.0'?>".length());
+        }
+        if (s.startsWith("<?xml version=\"1.0\" ?>")) {
+            return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + s.substring("<?xml version=\"1.0\" ?>".length());
+        }
+        return s;
+    }
+
+    private static String injectMissingLegacyRdfRootXmlns(String s) {
+        int rdfStart = s.indexOf("<rdf:RDF");
+        if (rdfStart < 0) {
+            return s;
+        }
+        int rdfEnd = s.indexOf('>', rdfStart);
+        if (rdfEnd <= rdfStart) {
+            return s;
+        }
+        String openTagRegion = s.substring(rdfStart, rdfEnd);
+        StringBuilder add = new StringBuilder();
+        for (String decl : LEGACY_RDF_ROOT_XMLNS_DECLS) {
+            int eq = decl.indexOf('=');
+            if (eq <= 0) {
+                continue;
+            }
+            String attrName = decl.substring(0, eq).trim();
+            if (openTagRegion.contains(attrName + "=")) {
+                continue;
+            }
+            add.append(' ').append(decl);
+        }
+        if (add.length() == 0) {
+            return s;
+        }
+        return s.substring(0, rdfEnd) + add + s.substring(rdfEnd);
     }
 
     public String getMetadata(String uri) throws IOException {
@@ -138,14 +233,13 @@ public class DownloadService {
     }
 
     /**
-     * Non-recursive SBOL RDF/XML for /sbolnr.
+     * Non-recursive SBOL RDF/XML for /sbolnr, using the same legacy namespace layout as {@link #getSbol2RdfXmlBytes}.
      * <p>
-     * When Virtuoso returns RDF/XML ({@code format=application/rdf+xml}), pass the bytes through unchanged so the
-     * response matches legacy SynBioHub (typed elements like {@code sbol:ComponentDefinition}, familiar prefixes).
-     * Jena {@link RDFFormat#RDFXML_PLAIN} re-serializes as generic {@code rdf:Description} + {@code ns1} prefixes.
-     * <p>
-     * For Turtle / JSON bindings, parse into a model and try relaxed {@link SBOLReader}/{@link SBOLWriter}; fall back
-     * to Jena {@link RDFFormat#RDFXML}.
+     * Virtuoso RDF/XML (and Turtle / N-Triples / SPARQL-JSON fallback from
+     * {@link #readConstructResponseIntoModel}) is parsed into a Jena model, then written with
+     * {@link RDFFormat#RDFXML} and {@link #applyLegacySynbiohubRdfXmlPrefixes} so output matches SynBioHub1-style
+     * {@code sbh}/{@code igem} prefixes instead of auto-generated {@code ns*} names. If RDF/XML from Virtuoso cannot
+     * be parsed, the raw body is returned after {@link #postProcessLegacySbolRdfXml} only.
      */
     public byte[] getSBOLNonRecursiveRdfXmlBytes(String uri) throws IOException {
         URI uriClass;
@@ -162,48 +256,28 @@ public class DownloadService {
         byte[] raw = searchService.SPARQLRDFXMLQuery(query);
 
         if (isLikelyXmlRdfResponse(raw)) {
-            return raw;
+            try {
+                Model model = ModelFactory.createDefaultModel();
+                readConstructResponseIntoModel(model, raw);
+                if (!model.isEmpty()) {
+                    applyLegacySynbiohubRdfXmlPrefixes(model);
+                    var out = new ByteArrayOutputStream();
+                    RDFDataMgr.write(out, model, RDFFormat.RDFXML);
+                    return postProcessLegacySbolRdfXml(out.toByteArray());
+                }
+            } catch (Exception e) {
+                log.warn("/sbolnr: could not re-serialize Virtuoso RDF/XML for legacy prefixes ({}), using raw body",
+                        e.getMessage());
+            }
+            return postProcessLegacySbolRdfXml(raw);
         }
 
         Model model = ModelFactory.createDefaultModel();
-        registerSbolNrPrefixes(model);
         readConstructResponseIntoModel(model, raw);
-
-        synchronized (DownloadService.class) {
-            boolean prevCompliant = SBOLReader.isCompliant();
-            boolean prevReadKeep = SBOLReader.isKeepGoing();
-            boolean prevWriteKeep = SBOLWriter.isKeepGoing();
-            try {
-                SBOLReader.setCompliant(false);
-                SBOLReader.setKeepGoing(true);
-                SBOLWriter.setKeepGoing(true);
-                var rdfXml = new ByteArrayOutputStream();
-                RDFDataMgr.write(rdfXml, model, RDFFormat.RDFXML);
-                SBOLDocument doc = SBOLReader.read(new ByteArrayInputStream(rdfXml.toByteArray()));
-                var out = new ByteArrayOutputStream();
-                SBOLWriter.write(doc, out);
-                return out.toByteArray();
-            } catch (SBOLValidationException | SBOLConversionException | IOException e) {
-                log.warn("/sbolnr: libSBOLj serialize skipped ({}), using Jena RDF/XML", e.getMessage());
-                var out = new ByteArrayOutputStream();
-                RDFDataMgr.write(out, model, RDFFormat.RDFXML);
-                return out.toByteArray();
-            } finally {
-                SBOLReader.setCompliant(prevCompliant);
-                SBOLReader.setKeepGoing(prevReadKeep);
-                SBOLWriter.setKeepGoing(prevWriteKeep);
-            }
-        }
-    }
-
-    private static void registerSbolNrPrefixes(Model model) {
-        model.setNsPrefix("sbol", "http://sbols.org/v2#");
-        model.setNsPrefix("sbol2", "http://sbols.org/v2#");
-        model.setNsPrefix("dcterms", "http://purl.org/dc/terms/");
-        model.setNsPrefix("prov", "http://www.w3.org/ns/prov#");
-        model.setNsPrefix("sbh", "http://wiki.synbiohub.org/wiki/Terms/synbiohub#");
-        model.setNsPrefix("igem", "http://wiki.synbiohub.org/wiki/Terms/igem#");
-        model.setNsPrefix("dc", "http://purl.org/dc/elements/1.1/");
+        applyLegacySynbiohubRdfXmlPrefixes(model);
+        var out = new ByteArrayOutputStream();
+        RDFDataMgr.write(out, model, RDFFormat.RDFXML);
+        return postProcessLegacySbolRdfXml(out.toByteArray());
     }
 
     private static boolean isLikelyXmlRdfResponse(byte[] raw) {
