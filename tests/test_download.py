@@ -12,10 +12,10 @@ class TestDownload(TestCase):
 
         compare_get_request_download("/public/:collectionId/:displayId/:version/sbol", route_parameters = ["igem","BBa_B0034", "1"], headers = headers, test_type = test_type)
         # compare_get_request_download("/public/:collectionId/:displayId/:version/sbol", route_parameters = ["testid1","part_pIKE_Toggle_1","1"], test_name = "sbol1", headers = headers, test_type = test_type)
-        compare_get_request_download("/public/:collectionId/:displayId/sbol", route_parameters = ["igem","BBa_B0034"], headers = headers, test_type = test_type)
+        # compare_get_request_download("/public/:collectionId/:displayId/sbol", route_parameters = ["igem","BBa_B0034"], headers = headers, test_type = test_type)
         # compare_get_request_download("/public/:collectionId/:displayId/sbol", test_name = "sbol1", route_parameters = ["testid1","part_pIKE_Toggle_1"], headers = headers, test_type = test_type) 
 
-        # compare_get_request_download("/public/:collectionId/:displayId/:version/sbolnr", route_parameters = ["igem","BBa_B0034", "1"], headers = headers, test_type = test_type)
+        compare_get_request_download("/public/:collectionId/:displayId/:version/sbolnr", route_parameters = ["igem","BBa_B0034", "1"], headers = headers, test_type = test_type)
         # compare_get_request_download("/public/:collectionId/:displayId/:version/sbolnr", test_name = "sbolnr1", route_parameters = ["testid1","part_pIKE_Toggle_1","1"], headers = headers, test_type = test_type)
         # compare_get_request_download("/public/:collectionId/:displayId/sbolnr", route_parameters = ["igem","BBa_B0034"], headers = headers, test_type = test_type)
         # compare_get_request_download("/public/:collectionId/:displayId/sbolnr", test_name = "sbolnr1", route_parameters = ["testid1","part_pIKE_Toggle_1"], headers = headers, test_type = test_type)
@@ -30,6 +30,7 @@ class TestDownload(TestCase):
 
         compare_get_request_download("/public/:collectionId/:displayId/:version/gff", route_parameters = ["igem","BBa_B0034", "1"], headers = headers, test_type = test_type)
         compare_get_request_download("/public/:collectionId/:displayId/:version/fasta", route_parameters = ["igem","BBa_B0034", "1"], headers = headers, test_type = test_type)
+        compare_get_request_download("/public/:collectionId/:displayId/:version/gb", route_parameters = ["igem","BBa_B0034", "1"], headers = headers, test_type = test_type)
 
         # compare_get_request_download("/public/:collectionId/:displayId/:version/gff", test_name = "gff1", route_parameters = ["testid1","part_pIKE_Toggle_1","1"], headers = headers, test_type = test_type)
         # compare_get_request_download("/public/:collectionId/:displayId/:version/fasta", test_name = "fasta1", route_parameters = ["testid1","part_pIKE_Toggle_1","1"], headers = headers, test_type = test_type)
