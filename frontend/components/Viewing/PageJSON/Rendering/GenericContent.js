@@ -14,13 +14,14 @@ export default function GenericContent({ json, uri, metadata, plugins, type, tra
     if (!json || !json.metadata) return null;
     compileFile(json);
     const content = json.metadata.map((metadata, index) => {
+      const metadataKey = metadata.title || metadata.id || index;
       return (
         <TableBuilder
           uri={uri}
           prefixes={json.prefixes}
           table={metadata}
           metadata={true}
-          key={index}
+          key={metadataKey}
         />
       );
     });
@@ -37,7 +38,7 @@ export default function GenericContent({ json, uri, metadata, plugins, type, tra
         return null;
       }
       return (
-        <Section id={page} title={table.title} key={index} translation={translation}>
+        <Section id={page} title={table.title} key={page} translation={translation}>
           <TableBuilder uri={uri} prefixes={json.prefixes} table={table} />
         </Section>
       );
@@ -46,21 +47,21 @@ export default function GenericContent({ json, uri, metadata, plugins, type, tra
       const title = page.substring(8, page.length)
       const plugin = plugins.rendering.filter(plugin => plugin.name === title)[0]
       return (
-        <Plugin plugin={plugin} type={type} uri={uri} title={title} key={index} pluginKey={index} pluginID={page} />
+        <Plugin plugin={plugin} type={type} uri={uri} title={title} key={page} pluginKey={page} pluginID={page} />
       );
         
     }
 
     if (page === 'Visualization') {
       return (
-        <Visualization uri={uri} key={index} />
+        <Visualization uri={uri} key={page} />
       )
     }
 
     const ComponentToRender = CustomComponents[page];
     if (ComponentToRender) {
       return (
-        <Section title={page} key={index} translation={translation}>
+        <Section title={page} key={page} translation={translation}>
           <ComponentToRender uri={uri} />
         </Section>
       );
