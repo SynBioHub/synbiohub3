@@ -15,7 +15,6 @@ import Explorer from './Explorer';
 
 export default function Content(properties) {
   const [content, setContent] = useState(properties.selected);
-  console.log("test: ", properties.selected)
   useEffect(() => {
     switch (properties.selected) {
       case 'graphs':

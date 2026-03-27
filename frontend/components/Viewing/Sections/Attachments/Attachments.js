@@ -25,6 +25,16 @@ export default function Attachments(properties) {
   const attachments = useSelector(state => state.attachments.attachments);
   const token = useSelector(state => state.user.token);
 
+  // console.log(properties);
+  // let uri;
+  // if (properties.uri && properties.uri.endsWith('/share')) {
+  //   const parts = properties.uri.split('/');
+  //   if (parts.length >= 9) {
+  //     // Keep everything before the 8th slash (index 8 is 'share', index 7 is hash)
+  //     uri = parts.slice(0, 8).join('/');
+  //   }
+  // }
+  // console.log(uri);
   const [refreshMembers, setRefreshMembers] = useState(false);
 
   const handleSetRefreshMembers = (value) => {
@@ -32,31 +42,33 @@ export default function Attachments(properties) {
   };
 
   useEffect(() => {
-    if (owner == undefined) {
-      //The attachments in the store should be reset, a new page has been loaded.
-      dispatch(setAttachments([]));
-
-      //Gets the owner of the collection.
-      getQueryResponse(dispatch, getOwner, { uri: properties.uri }, token).then(
-        owner => {
-          if (owner.length > 0) setOwner(owner);
-          //Handles multiple owners.
-          owner.map(res => {
-            if (res.ownedBy === graphUri) setIsOwner(true);
-          });
+    // Always reset attachments on new URI
+    dispatch(setAttachments([]));
+  
+    // Fetch owner
+    getQueryResponse(dispatch, getOwner, { uri: properties.uri }, token).then(owner => {
+      if (owner.length > 0) setOwner(owner);
+  
+      const owned = owner.some(res => res.ownedBy === graphUri);
+      const isShare = properties.uri && properties.uri.endsWith('/share');
+  
+      if (owned || isShare) {
+        setIsOwner(true);
+      } else {
+        setIsOwner(false); // Optional: explicitly reset
+      }
+    });
+  
+    // Fetch attachments
+    getQueryResponse(dispatch, getAttachments, { uri: properties.uri }, token).then(
+      attachments => {
+        if (attachments.length > 0) {
+          dispatch(setAttachments(attachments));
         }
-      );
-
-      //Gets the initial attachments and passes them down to the children components.
-      getQueryResponse(dispatch, getAttachments, { uri: properties.uri }, token).then(
-        attachments => {
-          if (attachments.length > 0) {
-            dispatch(setAttachments(attachments));
-          }
-        }
-      );
-    }
-  }, [owner]);
+      }
+    );
+  }, [dispatch, properties.uri, token, graphUri]);
+  
 
   useEffect(() => {
     if (refreshMembers) {

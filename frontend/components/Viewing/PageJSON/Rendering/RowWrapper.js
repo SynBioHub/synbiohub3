@@ -25,10 +25,10 @@ function handleExternalFetch(
 ) {
   if (!error && !loading) {
     setLoading(true);
-    // const queryUrl = registries.find(registry => {
-    //   return stackTrace.uri.startsWith(registry.uri);
-    // })?.url;
-    const queryUrl = publicRuntimeConfig.backend;
+    const queryUrl = registries.find(registry => {
+      return stackTrace.uri.startsWith(registry.uri);
+    })?.url;
+    // const queryUrl = publicRuntimeConfig.backend;
     if (queryUrl) {
       executeQueryFromTableJSON(
         dispatch,
@@ -219,7 +219,7 @@ export default function RowWrapper({ sections, metadata, setSectionIcon }) {
       );
     }
   }, [sectionsToParse, registries, registriesLoading, error]);
-
+  
   for (let section of sectionsToRender) {
     if (section.key === 'LocationRangeStart' && sections.locationrangestart[0].value != "") {
       const startValue = sections.locationrangestart[0].value;

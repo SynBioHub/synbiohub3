@@ -25,6 +25,7 @@ sections will be minimizable and some won't be.
  * @returns A minimized/expanded section.
  */
 export default function Section(properties) {
+  const { translation = 0 } = properties;
   const dispatch = useDispatch();
 
   const id = properties.pluginID || (properties.id || properties.title);
@@ -64,7 +65,7 @@ export default function Section(properties) {
   }, [isMinimized]);
 
   return (
-    <div className={styles.section} id={properties.title}>
+    <div className={translation === 0 ? styles.sectionexpanded : styles.sectioncollapsed} id={properties.title}>
       <div className={styles.sectiontitle}>{properties.title}</div>
       <FontAwesomeIcon
         icon={minimizedSections[sectionIndex] ? faPlusSquare : faMinusSquare}

@@ -45,7 +45,9 @@ public class SearchController {
         String requestURL = request.getRequestURL().toString();
         String[] uriArr = requestURL.split("/");
         String keyword = uriArr[uriArr.length - 1].split("\\?")[0];
-        allParams.put(keyword, "");
+        if (!(uriArr.length == 4 && (keyword.equals("search")))) {
+            allParams.put(keyword, "");
+        }
         String sparqlQuery = searchService.getMetadataQuerySPARQL(allParams);
         return searchService.rawJSONToOutput(searchService.SPARQLOrExplorerQuery(sparqlQuery));
     }
@@ -75,7 +77,9 @@ public class SearchController {
         String requestURL = request.getRequestURL().toString();
         String[] uriArr = requestURL.split("/");
         String keyword = uriArr[uriArr.length - 1].split("\\?")[0];
-        allParams.put(keyword, "");
+        if (!(uriArr.length == 4 && (keyword.equals("searchCount")))) {
+            allParams.put(keyword, "");
+        }
         String sparqlQuery = searchService.getSearchCountSPARQL(allParams);
         return searchService.JSONToCount(searchService.SPARQLOrExplorerQuery(sparqlQuery));
     }
@@ -142,6 +146,22 @@ public class SearchController {
     }
 
     /**
+     * Returns count of other components that have the same sequence.
+     * @param
+     * @return Plaintext count of all twins
+     */
+    @GetMapping("/{visibility:.+}/{collectionID:.+}/{displayID:.+}/{version:.+}/twinsCount")
+    public String getTwinsCount(@PathVariable("visibility") String visibility, @PathVariable("collectionID") String collectionID,
+                           @PathVariable("displayID") String displayID, @PathVariable("version") String version,
+                           HttpServletRequest request) throws IOException {
+
+        String collectionInfo = String.format("%s/%s/%s/%s", visibility, collectionID, displayID, version);
+
+        String sparqlQuery = searchService.getTwinsCountSPARQL(collectionInfo);
+        return searchService.JSONToCount(searchService.SPARQLQuery(sparqlQuery));
+    }
+
+    /**
      * Returns other components that have similar sequences.
      * Note that this endpoint only works if SBOLExplorer is activated.
      * @param
@@ -160,6 +180,23 @@ public class SearchController {
     }
 
     /**
+     * Returns other components that have similar sequences.
+     * Note that this endpoint only works if SBOLExplorer is activated.
+     * @param
+     * @return JSON containing all components with similar sequences.
+     */
+    @GetMapping("/{visibility:.+}/{collectionID:.+}/{displayID:.+}/{version:.+}/similarCount")
+    public String getSimilarCount(@PathVariable("visibility") String visibility, @PathVariable("collectionID") String collectionID,
+                             @PathVariable("displayID") String displayID, @PathVariable("version") String version,
+                             HttpServletRequest request) throws IOException {
+
+        String collectionInfo = String.format("%s/%s/%s/%s", visibility, collectionID, displayID, version);
+
+        String sparqlQuery = searchService.getSimilarCountSPARQL(collectionInfo);
+        return searchService.JSONToCount(searchService.SPARQLQuery(sparqlQuery));
+    }
+
+    /**
      * Returns any other object that refers to this object.
      * For example, if the object is a component, it will return all other components that use this as a sub-component.
      * @param
@@ -175,6 +212,24 @@ public class SearchController {
 
         String sparqlQuery = searchService.getURISPARQL(collectionInfo, "uses");
         return searchService.rawJSONToOutput(searchService.SPARQLQuery(sparqlQuery));
+    }
+
+    /**
+     * Returns any other object that refers to this object.
+     * For example, if the object is a component, it will return all other components that use this as a sub-component.
+     * @param
+     * @return Plaintext count of all parts that use that part
+     */
+    @GetMapping("/{visibility:.+}/{collectionID:.+}/{displayID:.+}/{version:.+}/usesCount")
+    public String getUsesCount(@PathVariable("visibility") String visibility, @PathVariable("collectionID") String collectionID,
+                          @PathVariable("displayID") String displayID, @PathVariable("version") String version,
+                          HttpServletRequest request) throws IOException {
+
+        String collectionInfo = String.format("%s/%s/%s/%s", visibility, collectionID, displayID, version);
+
+
+        String sparqlQuery = searchService.getUsesCountSPARQL(collectionInfo);
+        return searchService.JSONToCount(searchService.SPARQLQuery(sparqlQuery));
     }
 
     /**

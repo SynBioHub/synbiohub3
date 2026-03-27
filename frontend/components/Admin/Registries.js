@@ -517,8 +517,14 @@ const sortMethods = {
 
 export async function processUrl(inputUrl, registries) {
   for (const registry of registries) {
-    if (inputUrl.startsWith(registry.uri)) {
-      const urlRemovedForLink = inputUrl.replace(registry.uri, "");
+    if (inputUrl && inputUrl.startsWith(registry.uri)) {
+      // Check if it's an external registry (not local)
+      const isLocalRegistry = registry.url === publicRuntimeConfig.backend;
+      // For external registries, keep the original URL for the link
+      // For local registries, remove the URI prefix
+      const urlRemovedForLink = isLocalRegistry 
+        ? inputUrl.replace(registry.uri, "")
+        : inputUrl;
       const urlReplacedForBackend = inputUrl.replace(registry.uri, registry.url);
       return { urlRemovedForLink, urlReplacedForBackend };
     }

@@ -47,7 +47,9 @@
                 },
                 {
                     "title": "entityLink",
-                    "predicates": [],
+                    "predicates": [
+                        "prov:entity"
+                    ],
                     "hide": true
                 },
                 {
@@ -61,7 +63,9 @@
                 },
                 {
                     "title": "roleLink",
-                    "predicates": [],
+                    "predicates": [
+                        "prov:hadRole"
+                    ],
                     "hide": true
                 }
             ]
@@ -89,14 +93,16 @@
                     "title": "Agent",
                     "infoLink": "https://www.w3.org/ns/prov#Agent",
                     "predicates": [
-                        "prov:agent"
+                        "prov:agent",
+                        "sbol:displayId"
                     ],
-                    "link": "$<agentLink>",
-                    "stripAfter": "/"
+                    "link": "$<agentLink>"
                 },
                 {
                     "title": "agentLink",
-                    "predicates": [],
+                    "predicates": [
+                        "prov:agent"
+                    ],
                     "hide": true
                 },
                 {
@@ -109,7 +115,9 @@
                 },
                 {
                     "title": "planLink",
-                    "predicates": [],
+                    "predicates": [
+                        "prov:hadPlan"
+                    ],
                     "hide": true
                 },
                 {

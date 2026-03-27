@@ -11,6 +11,8 @@ import com.synbiohub.sbh3.utils.RestClient;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +27,8 @@ public class UserController {
     private final RestClient restClient;
     private final ObjectMapper mapper;
     private final AuthRepository authRepository;
+    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+
 
     @PostMapping(value = "/login", produces = "text/plain")
     public ResponseEntity<String> login(@RequestParam String email, @RequestParam String password) {
@@ -99,10 +103,13 @@ public class UserController {
 
     @GetMapping(value = "/profile", produces = "text/plain")
     public ResponseEntity<String> getProfile(HttpServletRequest request) throws Exception {
-        String inputToken = request.getHeader("X-authorization");
-        var user = userService.getUserProfile();
-        if (user == null)
+    // from testing 1/20
+        User user = userService.getUserProfile();
+        if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Error retrieving user profile.");
+        }
+        // Remove password before sending
+        user.setPassword("");
         return ResponseEntity.ok(mapper.writeValueAsString(user));
     }
 

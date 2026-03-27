@@ -231,13 +231,44 @@ public class SearchService {
         return searchQuery.loadTemplate(sparqlArgs);
     }
 
-    public String getTwinsSPARQL(String collectionInfo) throws IOException {
-        SPARQLQuery searchQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/search.sparql");
+    /**
+     * Gets the count of components that have the same sequence as the given URI (twins), using the same criteria as the "twins" endpoint.
+     * @param collectionInfo Collection path portion of the URI
+     * @return SPARQL query string that returns a single ?count binding
+     */
+    public String getTwinsCountSPARQL(String collectionInfo) throws IOException {
+        SPARQLQuery searchQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/searchCount.sparql");
         HashMap<String, String> sparqlArgs = new HashMap<>
-                (Map.of("from", getPrivateGraph(), "criteria", "", "limit", "", "offset", ""));
+                (Map.of("from", "", "criteria", ""));
 
         String URI = ConfigUtil.get("databasePrefix").asText() + collectionInfo;
 
+        // Same criteria as the "twins" endpoint
+        sparqlArgs.replace("criteria", "   ?subject sbol2:sequence ?seq . ?seq sbol2:elements ?elements . <" + URI
+                + "> a sbol2:ComponentDefinition . <" + URI + "> sbol2:sequence ?seq2 . ?seq2 sbol2:elements ?elements2 . " +
+                "FILTER(?subject != <" + URI + "> && ?elements = ?elements2) # TWINS");
+
+        String userGraph = getPrivateGraph();
+        if (!userGraph.isEmpty()) {
+            sparqlArgs.replace("from", "FROM <" + userGraph + ">");
+        }
+
+        return searchQuery.loadTemplate(sparqlArgs);
+    }
+
+    /**
+     * Gets the count of objects that use the specified URI, using the same criteria as the "uses" endpoint.
+     * @param collectionInfo Collection path portion of the URI
+     * @return SPARQL query string that returns a single ?count binding
+     */
+    public String getUsesCountSPARQL(String collectionInfo) throws IOException {
+        SPARQLQuery searchQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/searchCount.sparql");
+        HashMap<String, String> sparqlArgs = new HashMap<>
+                (Map.of("from", "", "criteria", ""));
+
+        String URI = ConfigUtil.get("databasePrefix").asText() + collectionInfo;
+
+        // Same criteria as the "uses" endpoint
         sparqlArgs.replace("criteria", " { ?subject ?p <" + URI + "> } UNION { ?subject ?p ?use . ?use ?useP <" + URI + "> } ." +
                 " FILTER(?useP != <http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel>) " +
                 "# USES");
@@ -249,6 +280,50 @@ public class SearchService {
 
         return searchQuery.loadTemplate(sparqlArgs);
     }
+
+    /**
+     * Gets the count of objects that use the specified URI, using the same criteria as the "uses" endpoint.
+     * @param collectionInfo Collection path portion of the URI
+     * @return SPARQL query string that returns a single ?count binding
+     */
+    public String getSimilarCountSPARQL(String collectionInfo) throws IOException {
+        SPARQLQuery searchQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/searchCount.sparql");
+        HashMap<String, String> sparqlArgs = new HashMap<>
+                (Map.of("from", "", "criteria", ""));
+
+        String URI = ConfigUtil.get("databasePrefix").asText() + collectionInfo;
+
+        //TODO: when SBOLExplorer works, turn this on to make it work (current sent to /uses and not /similar)
+//        sparqlArgs.replace("criteria", " { ?subject ?p <" + URI + "> } UNION { ?subject ?p ?use . ?use ?useP <" + URI + "> } ." +
+//                " FILTER(?useP != <http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel>) " +
+//                "# USES");
+
+        String userGraph = getPrivateGraph();
+        if (!userGraph.isEmpty()) {
+            sparqlArgs.replace("from", "FROM <" + userGraph + ">");
+        }
+
+        return searchQuery.loadTemplate(sparqlArgs);
+    }
+
+//    public String getTwinsSPARQL(String collectionInfo) throws IOException {
+//        SPARQLQuery searchQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/search.sparql");
+//        HashMap<String, String> sparqlArgs = new HashMap<>
+//                (Map.of("from", getPrivateGraph(), "criteria", "", "limit", "", "offset", ""));
+//
+//        String URI = ConfigUtil.get("databasePrefix").asText() + collectionInfo;
+//
+//        sparqlArgs.replace("criteria", " { ?subject ?p <" + URI + "> } UNION { ?subject ?p ?use . ?use ?useP <" + URI + "> } ." +
+//                " FILTER(?useP != <http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel>) " +
+//                "# USES");
+//
+//        String userGraph = getPrivateGraph();
+//        if (!userGraph.isEmpty()) {
+//            sparqlArgs.replace("from", "FROM <" + userGraph + ">");
+//        }
+//
+//        return searchQuery.loadTemplate(sparqlArgs);
+//    }
 
     public String getRootCollectionsSPARQL() {
         SPARQLQuery searchQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/RootCollectionMetadata.sparql");
@@ -345,6 +420,7 @@ public class SearchService {
     }
 
     public String SPARQLQuery(String query) throws IOException {
+        // BEFORE 1/27:
         RestTemplate restTemplate = new RestTemplate();
         String url;
         HashMap<String, String> params = new HashMap<>();
@@ -360,54 +436,58 @@ public class SearchService {
 
     public byte[] SPARQLRDFXMLQuery(String query) throws IOException {
         RestTemplate restTemplate = new RestTemplate();
-        String url;
+        // URL must contain placeholders — RestTemplate expands `params` into the query string (same as SPARQLQuery).
         HashMap<String, String> params = new HashMap<>();
         params.put("default-graph-uri", ConfigUtil.get("defaultGraph").asText());
         params.put("query", query);
         params.put("format", "application/rdf+xml");
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add("Accept", "application/rdf+xml");
-        HttpEntity entity = new HttpEntity(httpHeaders);
 
-        url = ConfigUtil.get("sparqlEndpoint").asText();
+        String url = ConfigUtil.get("sparqlEndpoint").asText()
+                + "?default-graph-uri={default-graph-uri}&query={query}&format={format}";
 
-        var rest = restTemplate.exchange(url, HttpMethod.GET, entity, byte[].class, params);
-        return rest.getBody();
+        HttpHeaders headers = new HttpHeaders();
+        // Virtuoso often negotiates Turtle only; */* lets format= control CONSTRUCT serialization.
+        headers.add("Accept", "*/*");
+        HttpEntity<?> entity = new HttpEntity<>(headers);
+
+        ResponseEntity<byte[]> response = restTemplate.exchange(url, HttpMethod.GET, entity, byte[].class, params);
+        return response.getBody() != null ? response.getBody() : new byte[0];
     }
 
     /**
-     * Hit the /sparql endpoint on other SBH instances
-     * @param query SPARQL Query to send
-     * @return JSON representation of results
+     * Hit the /sparql endpoint on other SBH instances (Web of Registries).
+     * Aligns with {@link #SPARQLRDFXMLQuery}: CONSTRUCT needs {@code format} + default graph + permissive Accept;
+     * {@code String} responses often end up null for RDF MIME types.
      */
     public byte[] queryOldSBHSparqlEndpoint(String WOREndpoint, String query) throws IOException {
         RestTemplate restTemplate = new RestTemplate();
-        String url;
-        HashMap<String, String> params = new HashMap<>();
-//        params.put("default-graph-uri", ConfigUtil.get("defaultGraph").asText());
-//        params.put("query", query);
-//        params.put("format", "application/rdf+xml");
-        HttpHeaders httpHeaders = new HttpHeaders();
-//        httpHeaders.add("Accept", "application/json");
-        httpHeaders.add("Accept", "text/plain");
-        HttpEntity entity = new HttpEntity<>(httpHeaders);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Accept", "*/*");
 
-//        url = WOREndpoint + "/sparql?query="+query;
-//        var result = restTemplate.getForObject(url, String.class);
-//        url = WOREndpoint + "/sparql?default-graph-uri={default-graph-uri}&query={query}";
-        url = WOREndpoint + "/sparql?query={query}";
-        ResponseEntity<String> rest;
+        String base = WOREndpoint.endsWith("/") ? WOREndpoint.substring(0, WOREndpoint.length() - 1) : WOREndpoint;
+        String remoteDefaultGraph = base + "/public";
+
+        HashMap<String, String> params = new HashMap<>();
+        params.put("default-graph-uri", remoteDefaultGraph);
+        params.put("query", query);
+        params.put("format", "application/rdf+xml");
+
+        String url = base + "/sparql?default-graph-uri={default-graph-uri}&query={query}&format={format}";
+        HttpEntity<?> entity = new HttpEntity<>(headers);
+
+        ResponseEntity<byte[]> rest;
         try {
-            rest = restTemplate.getForEntity(url, String.class, entity);
+            rest = restTemplate.exchange(url, HttpMethod.GET, entity, byte[].class, params);
         } catch (HttpClientErrorException e) {
-            if (e.getStatusCode() == HttpStatus.NOT_ACCEPTABLE) {
-                byte[] emptyByteArray = new byte[0];
-                return emptyByteArray;
-            } else {
-                throw e;
+            int status = e.getStatusCode().value();
+            // Remote registry may reject unauthenticated SPARQL (401) or content negotiation (406); treat as no data.
+            if (status == HttpStatus.NOT_ACCEPTABLE.value() || status == HttpStatus.UNAUTHORIZED.value()) {
+                return new byte[0];
             }
+            throw e;
         }
-        return rest.getBody().getBytes(StandardCharsets.UTF_8);
+        byte[] body = rest.getBody();
+        return body != null && body.length > 0 ? body : new byte[0];
     }
 
     /**
@@ -418,7 +498,7 @@ public class SearchService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication instanceof AnonymousAuthenticationToken) return "";
         //var user = authentication.getPrincipal();
-        return ConfigUtil.get("graphPrefix").asText() + "/user/" + authentication.getName();
+        return ConfigUtil.get("graphPrefix").asText() + "user/" + authentication.getName();
     }
 
     // Method to encode a string value using `UTF-8` encoding scheme

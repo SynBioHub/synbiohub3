@@ -39,19 +39,24 @@ export default function ResultTable(properties) {
     }
   }, [selected]);
 
-  const rows = properties.data.map(row => (
-    <ResultRow
-      selected={selected}
-      setSelected={setSelected}
-      name={row.name}
-      displayId={row.displayId}
-      description={row.description}
-      type={properties.overrideType ? properties.overrideType : row.type}
-      version={row.version}
-      uri={row.uri}
-      key={row.uri}
-    />
-  ));
+  const rows = properties.data.map(row => {
+    return (
+      <ResultRow
+        selected={selected}
+        setSelected={setSelected}
+        name={row.name}
+        displayId={row.displayId}
+        description={row.description}
+        type={ row.derivedType || row.type }
+        version={row.version}
+        uri={row.uri}
+        key={row.uri}
+        sbolType={row.sbolType}
+        role={row.role}
+      />
+    );
+  });
+
   if (properties.data.length === 0) {
     return <div className={styles.tablecontainer2}>No results found</div>;
   }
