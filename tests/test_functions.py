@@ -155,6 +155,7 @@ def post_json_request(request, version, data, headers, route_parameters, files):
 # data is the data field for a request
 def post_request(request, version, data, headers, route_parameters, files):
     # get the current token
+    test_print("post_request: " + request)
     if(version == 1):
         user_token = test_state.get_authentication(1)
     else:
@@ -164,11 +165,14 @@ def post_request(request, version, data, headers, route_parameters, files):
         headers["X-authorization"] = user_token
 
     address = get_address(request, route_parameters, version)
+    test_print("address: " + address)
     print(address)
 
     session = requests_html.HTMLSession()
 
     response = session.post(address, data = data, headers = headers, files = files)
+    
+    test_print("response: " + response.text)
         
     try:
         response.raise_for_status()
