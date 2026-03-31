@@ -1,5 +1,4 @@
 # this file specifies the tests to be run.
-import requests
 from test_arguments import test_print
 from test_functions import compare_get_request, compare_post_request
 
@@ -27,14 +26,14 @@ def test_root():
     testUser.test_post_register()
 
     # no commented tests
-    from test_submit import TestSubmit
-    testSubmit = TestSubmit()
-    testSubmit.test_submit()
-
-    # no commented tests
     from test_search import TestSearch
     testSearch = TestSearch()
     testSearch.test_search()
+
+    # no commented tests
+    from test_submit import TestSubmit
+    testSubmit = TestSubmit()
+    testSubmit.test_submit()
 
     #TODO: TEST TEST_DOWNLOAD
     from test_download import TestDownload
