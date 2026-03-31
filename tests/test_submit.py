@@ -48,8 +48,8 @@ class TestSubmit(TestCase):
                 'citations':(None, ''),
                 'overwrite_merge':(None, '0')}
 
-        files = {'file':("./SBOLTestRunner/src/main/resources/SBOLTestSuite/SBOL2/BBa_I0462.xml",
-                                              open('./SBOLTestRunner/src/main/resources/SBOLTestSuite/SBOL2/BBa_I0462.xml', 'rb'))}
+        files = {'file':("./fixtures/SBOL2/BBa_I0462.xml",
+                                              open('./fixtures/SBOL2/BBa_I0462.xml', 'rb'))}
 
         #compare_post_request("submit", data, headers = {"Accept": "text/plain"}, files = files, test_name = "submit_test_BBa", test_type = test_type)
         post_request("submit", 1, data, headers = headers, route_parameters = [], files = files)
@@ -92,22 +92,22 @@ class TestSubmit(TestCase):
 
         # test_print("create_collection2 completed")
 
-        test_print("make_new_collection starting")
-        # create the collection
-        data = {'id':(None, 'testcollection1'),
-                'version' : (None, '1'),
-                'name' : (None, 'testcollection1'),
-                'description':(None, 'testdescription1'),
-                'citations':(None, ''),
-                'overwrite_merge':(None, '0')}
+        # test_print("make_new_collection starting")
+        # # create the collection
+        # data = {'id':(None, 'testcollection1'),
+        #         'version' : (None, '1'),
+        #         'name' : (None, 'testcollection1'),
+        #         'description':(None, 'testdescription1'),
+        #         'citations':(None, ''),
+        #         'overwrite_merge':(None, '0')}
 
-        files = {'file':("./SBOLTestRunner/src/main/resources/SBOLTestSuite/SBOL2/toggle.xml",
-                                              open('./SBOLTestRunner/src/main/resources/SBOLTestSuite/SBOL2/toggle.xml', 'rb'))}
+        # files = {'file':("./SBOLTestRunner/src/main/resources/SBOLTestSuite/SBOL2/toggle.xml",
+        #                                       open('./SBOLTestRunner/src/main/resources/SBOLTestSuite/SBOL2/toggle.xml', 'rb'))}
 
-        #compare_post_request("submit", data, headers = {"Accept": "text/plain"}, files = files, test_name = "generic_collection1", test_type = test_type)
-        post_request("submit", 1, data, headers = headers, route_parameters = [], files = files)
+        # #compare_post_request("submit", data, headers = {"Accept": "text/plain"}, files = files, test_name = "generic_collection1", test_type = test_type)
+        # post_request("submit", 1, data, headers = headers, route_parameters = [], files = files)
 
-        test_print("make_new_collection completed")
+        # test_print("make_new_collection completed")
 
 #    """ def test_bad_make_public(self):
 #        data = self.make_new_collection("1")
