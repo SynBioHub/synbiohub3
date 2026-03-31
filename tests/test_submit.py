@@ -1,7 +1,7 @@
 import re
 from unittest import TestCase
 from test_arguments import test_print
-from test_functions import compare_get_request, compare_post_request, get_request, post_request
+from test_functions import compare_get_request, compare_post_request, get_request, post_request, test_state
 
 class TestSubmit(TestCase):
     def _increment_submit_id(self, submit_id):
@@ -79,6 +79,8 @@ class TestSubmit(TestCase):
         #compare_post_request("submit", data, headers = {"Accept": "text/plain"}, files = files, test_name = "submit_test_BBa", test_type = test_type)
         used_submit_id = self._submit_with_incrementing_id(data, headers, files)
         test_print("submit created with id " + used_submit_id)
+        test_state.set_submit_collection_id(used_submit_id)
+        test_print("submit collection id for download tests: " + test_state.get_submit_collection_id())
 
 #        self.create_collection2()
 
