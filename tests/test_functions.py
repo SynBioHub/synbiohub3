@@ -282,7 +282,7 @@ def compare_json_list(sbh1requestcontent, sbh3requestcontent, test_type, fields,
     sorted_sbh3_list = sorted(sbh3resultlist, key=itemgetter(key))
     if(len(sorted_sbh1_list) != len(sorted_sbh3_list)):
         test_passed = 0
-        raise Exception("RESPONSE CONTENT TEST FAILED: Content does not match\n")
+        raise Exception("RESPONSE CONTENT TEST FAILED: Length of content does not match\n")
     for i in range(len(sorted_sbh1_list)):
         for f in fields:
             if(sorted_sbh1_list[i][f] != sorted_sbh3_list[i][f]):
