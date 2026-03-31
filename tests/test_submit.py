@@ -94,7 +94,7 @@ class TestSubmit(TestCase):
 
         test_print("make_new_collection starting")
         # create the collection
-        data = {'id':(None, 'testid1'),
+        data = {'id':(None, 'testcollection1'),
                 'version' : (None, '1'),
                 'name' : (None, 'testcollection1'),
                 'description':(None, 'testdescription1'),
