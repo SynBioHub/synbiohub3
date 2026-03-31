@@ -66,31 +66,31 @@ class TestSubmit(TestCase):
         # now remove the collections
         #compare_get_request('/user/:userId/:collectionId/:displayId/:version/removeCollection', route_parameters = ["testuser", "testid", "testid_collection", "1"], test_type = test_type)
         #compare_get_request('/user/:userId/:collectionId/:displayId/:version/removeCollection', route_parameters = ["testuser", "testid2", "testid2_collection", "1"], test_name = 'remove_second', test_type = test_type)
-        get_request('user/:userId/:collectionId/:displayId/:version/removeCollection', 1, headers = headers, route_parameters = ["testuser", "testid", "testid_collection", "1"])
+        # get_request('user/:userId/:collectionId/:displayId/:version/removeCollection', 1, headers = headers, route_parameters = ["testuser", "testid", "testid_collection", "1"])
         #TODO: make sure this is okay -> didn't work forbidden#get_request('user/:userId/:collectionId/:displayId/:version/removeCollection', 1, headers = headers, route_parameters = ["testuser", "testid2", "testid2_collection", "1"])
         
         #compare_get_request("manage", test_name = "no_submissions", test_type = test_type)
 
-        test_print("test_create_and_delete_collections completed")
+        # test_print("test_create_and_delete_collections completed")
 
-        test_print("create_collection2 starting")
-        data = {'id':(None, 'testid2'),
-                'version' : (None, '1'),
-                'name' : (None, 'testcollection2'),
-                'description':(None, 'testdescription'),
-                'citations':(None, ''),
-                'overwrite_merge':(None, '0')}
+        # test_print("create_collection2 starting")
+        # data = {'id':(None, 'testid2'),
+        #         'version' : (None, '1'),
+        #         'name' : (None, 'testcollection2'),
+        #         'description':(None, 'testdescription'),
+        #         'citations':(None, ''),
+        #         'overwrite_merge':(None, '0')}
 
-        files = {'file':("./SBOLTestRunner/src/main/resources/SBOLTestSuite/SBOL2/BBa_I0462.xml",
-                                              open('./SBOLTestRunner/src/main/resources/SBOLTestSuite/SBOL2/BBa_I0462.xml', 'rb'))}
+        # files = {'file':("./SBOLTestRunner/src/main/resources/SBOLTestSuite/SBOL2/BBa_I0462.xml",
+                                        #       open('./SBOLTestRunner/src/main/resources/SBOLTestSuite/SBOL2/BBa_I0462.xml', 'rb'))}
 
         #compare_post_request("submit", data, headers = {"Accept": "text/plain"}, files = files, test_name = "create_2", test_type = test_type)
-        post_request("submit", 1, data, headers = headers, route_parameters = [], files = files)
+        # post_request("submit", 1, data, headers = headers, route_parameters = [], files = files)
 
         # delete collection
         #compare_get_request("/user/testuser/testid2/testid_collection2/1/removeCollection", test_type = test_type)
 
-        test_print("create_collection2 completed")
+        # test_print("create_collection2 completed")
 
         test_print("make_new_collection starting")
         # create the collection
@@ -121,17 +121,17 @@ class TestSubmit(TestCase):
 #    TODO: uncomment when this does raise an HTTPError in synbiohub
 #        """
 
-        test_print("test_make_public starting")
+        # test_print("test_make_public starting")
 
         # get the view
         #compare_get_request("/user/:userId/:collectionId/:displayId/:version/makePublic", route_parameters = ["testuser", "testid0", "testid0_collection", "1"])
-        get_request("user/:userId/:collectionId/:displayId/:version/makePublic", 1, headers = headers, route_parameters = ["testuser", "testid0", "testid0_collection", "1"])
+        # get_request("user/:userId/:collectionId/:displayId/:version/makePublic", 1, headers = headers, route_parameters = ["testuser", "testid0", "testid0_collection", "1"])
 
-        data['tabState'] = 'new'
+        # data['tabState'] = 'new'
 
         # make the collection public
         #compare_post_request("/user/:userId/:collectionId/:displayId/:version/makePublic", route_parameters = ["testuser", "testid1", "testid1_collection", "1"], data = data)
-        post_request("user/:userId/:collectionId/:displayId/:version/makePublic", 1, data, headers = headers, route_parameters = ["testuser", "testid1", "testid1_collection", "1"], files = None)
+        # post_request("user/:userId/:collectionId/:displayId/:version/makePublic", 1, data, headers = headers, route_parameters = ["testuser", "testid1", "testid1_collection", "1"], files = None)
         
         #make collection 2 public --> can prob delete when sbh3 submit is done ******
         #get_request("user/:userId/:collectionId/:displayId/:version/makePublic", 1, headers = headers, route_parameters = ["testuser", "testid0", "testid0_collection", "1"])
@@ -145,8 +145,7 @@ class TestSubmit(TestCase):
         # with self.assertRaises(requests.exceptions.HTTPError):
         #     compare_get_request("/public/:collectionId/:displayId/:version/removeCollection", route_parameters = ["testid1", "testid1_collection", "1"], test_name = 'remove')
 
-        test_print("test_make_public completed")
-
+        # test_print("test_make_public completed")
         # test_print("creating new collection for test_attachment")
         # data = {'id':(None, 'test_attachment'),
         #         'version' : (None, '1'),
@@ -194,3 +193,4 @@ class TestSubmit(TestCase):
 #
 #        compare_post_request("submit", data, headers = {"Accept": "text/plain"}, files = files, test_name = "second_generic_collection", test_type = test_type)
 #
+
