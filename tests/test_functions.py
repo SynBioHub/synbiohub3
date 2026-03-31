@@ -113,7 +113,10 @@ def get_request_download(request, headers, route_parameters, version):
     try:
         response.raise_for_status()
     except HTTPError as err:
-        #print(err)
+        test_print(f"get_request_download failed (SBH{version}) status={response.status_code} url={address}")
+        # Print a short body snippet to help distinguish 401 vs 404 vs 500.
+        body = (response.text or "")
+        test_print("response body (first 500 chars): " + body[:500])
         raise HTTPError("Internal server error. Content of response was \n" + response.text)
 
     print("SBH" + str(version) + "\n")
