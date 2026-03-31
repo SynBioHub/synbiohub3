@@ -160,7 +160,7 @@ class TestState:
 
     def set_submit_collection_id(self, submit_id):
         """SBH uses {submit_id}_collection as the collectionId in user URLs."""
-        self.submit_collection_id = submit_id + "_collection"
+        self.submit_collection_id = submit_id
 
     def get_submit_collection_id(self):
         return self.submit_collection_id
