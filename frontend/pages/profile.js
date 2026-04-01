@@ -120,12 +120,15 @@ function Profile() {
         <div
           role="button"
           className={styles.submitbutton}
-          onClick={() => {
-            dispatch(
+          onClick={async () => {
+            const ok = await dispatch(
               updateUser(name, affiliation, email, password, confirmPassword)
             );
-            setPassword('');
-            setConfirmPassword('');
+            if (ok) {
+              alert('Your profile was updated successfully.');
+              setPassword('');
+              setConfirmPassword('');
+            }
           }}
         >
           <FontAwesomeIcon
