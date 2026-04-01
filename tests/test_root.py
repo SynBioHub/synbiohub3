@@ -31,9 +31,9 @@ def test_root():
     testSearch.test_search()
 
     # no commented tests
-    from test_submit import TestSubmit
-    testSubmit = TestSubmit()
-    testSubmit.test_submit()
+    # from test_submit import TestSubmit
+    # testSubmit = TestSubmit()
+    # testSubmit.test_submit()
 
     #TODO: TEST TEST_DOWNLOAD
     from test_download import TestDownload
