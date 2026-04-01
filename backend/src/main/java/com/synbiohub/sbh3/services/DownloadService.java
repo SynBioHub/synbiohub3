@@ -252,8 +252,9 @@ public class DownloadService {
         var args = new HashMap<String, String>();
         args.put("uri", uriClass.toString());
         args.put("offset", "0");
+        args.put("fromClause", searchService.fromClauseForPrivateFetch(uriClass.toString()));
         String query = metadataQuery.loadTemplate(args);
-        byte[] raw = searchService.SPARQLRDFXMLQuery(query);
+        byte[] raw = searchService.SPARQLRDFXMLQuery(query, uriClass.toString());
 
         if (isLikelyXmlRdfResponse(raw)) {
             try {
@@ -315,8 +316,9 @@ public class DownloadService {
         var args = new HashMap<String, String>();
         args.put("uri", uriClass.toString());
         args.put("offset", "0");
+        args.put("fromClause", searchService.fromClauseForPrivateFetch(uriClass.toString()));
         String query = metadataQuery.loadTemplate(args);
-        byte[] results = searchService.SPARQLRDFXMLQuery(query);
+        byte[] results = searchService.SPARQLRDFXMLQuery(query, uriClass.toString());
         Model model = ModelFactory.createDefaultModel();
         model.setNsPrefix("sbol2", "http://sbols.org/v2#");
         readConstructResponseIntoModel(model, results);
@@ -327,7 +329,7 @@ public class DownloadService {
             while (model.size() / 10000 >= counter) {    // Limit at 10k; we may need to fetch more than that
                 args.replace("offset", Integer.toString((int) offset));
                 query = metadataQuery.loadTemplate(args);
-                readConstructResponseIntoModel(model, searchService.SPARQLRDFXMLQuery(query));
+                readConstructResponseIntoModel(model, searchService.SPARQLRDFXMLQuery(query, uriClass.toString()));
                 offset = model.size();
                 counter++;
             }
@@ -370,12 +372,13 @@ public class DownloadService {
                 HashMap<String, String> subjectArgs = new HashMap<>();
                 subjectArgs.put("uri", subject);
                 subjectArgs.put("offset", "0");
+                subjectArgs.put("fromClause", searchService.fromClauseForPrivateFetch(subject));
                 String subjectQuery = metadataQuery.loadTemplate(subjectArgs);
                 byte[] subjectResults;
                 if (!worUrl.isEmpty()) {
                     subjectResults = searchService.queryOldSBHSparqlEndpoint(worUrl, subjectQuery);
                 } else {
-                    subjectResults = searchService.SPARQLRDFXMLQuery(subjectQuery);
+                    subjectResults = searchService.SPARQLRDFXMLQuery(subjectQuery, subject);
                 }
                 Model tempModel = ModelFactory.createDefaultModel();
                 readConstructResponseIntoModel(tempModel, subjectResults);
@@ -390,7 +393,7 @@ public class DownloadService {
                         if (!worUrl.isEmpty()) {
                             readConstructResponseIntoModel(model, searchService.queryOldSBHSparqlEndpoint(worUrl, query));
                         } else {
-                            readConstructResponseIntoModel(model, searchService.SPARQLRDFXMLQuery(query));
+                            readConstructResponseIntoModel(model, searchService.SPARQLRDFXMLQuery(query, uriClass.toString()));
                         }
                         offset = model.size();
                         counter++;
