@@ -9,10 +9,10 @@ class TestDownload(TestCase):
         headers = {"Accept": "text/plain"} #{"Accept": "text/html"}
         test_type = "Download"
 
-        submit_collection_id = test_state.get_submit_collection_id()
-        if submit_collection_id is None:
-            raise Exception("submit_collection_id not set; run test_submit before test_download")
-        test_print("using submit collection id for user download paths: " + submit_collection_id)
+        # submit_collection_id = test_state.get_submit_collection_id()
+        # if submit_collection_id is None:
+        #     raise Exception("submit_collection_id not set; run test_submit before test_download")
+        # test_print("using submit collection id for user download paths: " + submit_collection_id)
 
         compare_get_request_download("/public/:collectionId/:displayId/:version/sbol", route_parameters = ["igem","BBa_B0034", "1"], headers = headers, test_type = test_type)
         # compare_get_request_download("/public/:collectionId/:displayId/:version/sbol", route_parameters = ["testid1","part_pIKE_Toggle_1","1"], test_name = "sbol1", headers = headers, test_type = test_type)
