@@ -2,26 +2,38 @@ package com.synbiohub.sbh3.services;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.synbiohub.sbh3.sparql.SPARQLQuery;
 import com.synbiohub.sbh3.utils.ConfigUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import com.synbiohub.sbh3.dto.LogEntry;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AdminService {
 
     private final UserService userService;
+    private final SearchService searchService;
     private ObjectMapper mapper = new ObjectMapper();
 
     public JsonNode getStatus(HttpServletRequest request) throws Exception {
         String inputToken = request.getHeader("X-authorization");
-//        Authentication authentication = userService.checkAuthentication(inputToken);
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth == null) {
             return null;
@@ -39,6 +51,36 @@ public class AdminService {
         return (JsonNode) status;
     }
 
+    public JsonNode getGraphStatus() throws Exception {
+        // Single query to get graph URIs and their respective triple counts
+        String sparql = """
+            SELECT ?graph (COUNT(*) AS ?count) 
+            WHERE { 
+                GRAPH ?graph { ?s ?p ?o } 
+            } 
+            GROUP BY ?graph
+            """;
+
+        // Get raw JSON string from Virtuoso via SearchService
+        String rawJson = searchService.SPARQLQuery(sparql);
+        JsonNode root = mapper.readTree(rawJson);
+
+        // We want to mimic the SBH1 return structure: [{graphUri: "...", numTriples: 123}, ...]
+        ArrayNode responseArray = mapper.createArrayNode();
+
+        JsonNode bindings = root.path("results").path("bindings");
+        if (bindings.isArray()) {
+            for (JsonNode binding : bindings) {
+                ObjectNode graphInfo = mapper.createObjectNode();
+                graphInfo.put("graphUri", binding.path("graph").path("value").asText());
+                graphInfo.put("numTriples", binding.path("count").path("value").asInt());
+                responseArray.add(graphInfo);
+            }
+        }
+
+        return responseArray;
+    }
+
     public String getTheme() throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode json = mapper.createObjectNode();
@@ -49,5 +91,122 @@ public class AdminService {
         json.set("firstLaunch", ConfigUtil.get("firstLaunch"));
         String result = mapper.writeValueAsString(json);
         return result;
+    }
+
+    public Boolean getDatabaseStatus() {
+        // BEFORE 1/27:
+        SPARQLQuery statusQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/GetDatabaseStatus.sparql");
+        try {
+            var result = searchService.SPARQLQuery(statusQuery.getQuery());
+            if (result.getBytes().length > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public List<LogEntry> getLogs() throws IOException {
+        String logPath = System.getProperty("user.dir") + "/data/spring.log";
+        String logContent = new String(Files.readAllBytes(Paths.get(logPath)));
+        
+        List<LogEntry> logEntries = new ArrayList<>();
+        String[] lines = logContent.split("\\r?\\n");
+        
+        // Pattern to match log levels: INFO, WARN, ERROR, DEBUG, TRACE (case-insensitive)
+        Pattern levelPattern = Pattern.compile("\\b(INFO|WARN|ERROR|DEBUG|TRACE)\\b", Pattern.CASE_INSENSITIVE);
+        
+        for (String line : lines) {
+            if (line.trim().isEmpty()) {
+                continue; // Skip empty lines
+            }
+            
+            String level = "info"; // Default level
+            Matcher matcher = levelPattern.matcher(line);
+            
+            if (matcher.find()) {
+                String matchedLevel = matcher.group(1).toUpperCase();
+                // Map to lowercase versions
+                switch (matchedLevel) {
+                    case "INFO":
+                        level = "info";
+                        break;
+                    case "WARN":
+                        level = "warn";
+                        break;
+                    case "ERROR":
+                        level = "error";
+                        break;
+                    case "DEBUG":
+                        level = "debug";
+                        break;
+                    case "TRACE":
+                        level = "debug"; // Map TRACE to debug
+                        break;
+                }
+            }
+            
+            logEntries.add(new LogEntry(level, line));
+        }
+        
+        return logEntries;
+    }
+
+    public Boolean getSBOLExplorerStatus() throws IOException {
+        return ConfigUtil.get("useSBOLExplorer").asBoolean();
+    }
+
+    public ArrayNode saveNewPlugin(Map<String, String> allParams) throws IOException {
+        ArrayNode pluginArray = (ArrayNode) ConfigUtil.get("plugins").get(allParams.get("category"));
+        if (!checkPluginName(pluginArray, allParams.get("name"))) {
+            JsonNode pluginMap = castParamsToPlugin(allParams, pluginArray.size());
+            pluginArray.add(pluginMap);
+            log.info("Plugin: " + allParams.get("name") + " saved");
+            return pluginArray;
+        }
+        log.error("Error saving new plugin: " + allParams.get("name"));
+        return pluginArray;
+    }
+
+    public ArrayNode deletePlugin(String category, String id) throws IOException {
+        JsonNode plugins = ConfigUtil.get("plugins").get(category);
+
+        ArrayNode pluginArray = mapper.createArrayNode();
+        if (plugins.isArray()) {
+            pluginArray = (ArrayNode) plugins;
+            for (int i = 0; i < pluginArray.size(); i++) {
+                JsonNode innerNode = pluginArray.get(i);
+                var temp1 = innerNode.get("index");
+                if (innerNode.get("index").asInt() == (Integer.parseInt(id))) {
+                    pluginArray.remove(i);
+                    break;
+                }
+            }
+        }
+        return pluginArray;
+    }
+
+    public String updatePlugin(Map<String, String> allParams) throws IOException {
+        return "Plugin updated";
+    }
+
+    private ObjectNode castParamsToPlugin(Map<String, String> allParams, int arraySize) {
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectNode pluginMap = mapper.createObjectNode();
+        pluginMap.put("name", allParams.get("name"));
+        pluginMap.put("url", allParams.get("url")+"/");
+        pluginMap.put("index", arraySize);
+        return pluginMap;
+    }
+
+    private Boolean checkPluginName(ArrayNode pluginArray, String name) {
+        for (String n : pluginArray.findValuesAsText("name")) {
+            if (n.equals(name)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

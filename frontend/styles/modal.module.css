@@ -21,7 +21,7 @@
    margin: 2rem 0;
    height: fit-content;
    max-height: calc(100% - 2.5rem);
-   overflow: scroll;
+   overflow: auto;
 }
 
 .modalheader {
@@ -83,7 +83,7 @@
 
 .tablecontainer {
    max-height: calc(100vh - 15rem);
-   overflow: scroll;
+   overflow: auto;
 }
 
 
@@ -135,7 +135,7 @@
 .downloadmsg {
    height: 100%;
    width: 100%;
-   overflow: scroll;
+   overflow: auto;
    padding: 0 0 0.25rem 0;
 }
 

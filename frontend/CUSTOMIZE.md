@@ -86,7 +86,7 @@ Defining additional metadata is very similar to defining custom tables (by desig
 
 #### Defining Metadata Sections
 
-A section is defined by a JSON object with various properties. These properties are essentially identical to the properties listed in "Defining Table Sections" above. The only thing to be away of is these sections will be rendered differently. Rather than being rendered as a table, these sections will be rendered as individual sections (rows) of displayed metadata in the viewing interface's side panel.
+A section is defined by a JSON object with various properties. These properties are essentially identical to the properties listed in "Defining Table Sections" above. The only thing to be wary of is these sections will be rendered differently. Rather than being rendered as a table, these sections will be rendered as individual sections (rows) of displayed metadata in the viewing interface's side panel.
 
 **Important Note: For metadata, some of the properties in a table's section object aren't necessary/do nothing. These properties include icon and infoLink.**
 

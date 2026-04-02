@@ -23,33 +23,68 @@ export default function Attachments(properties) {
   const dispatch = useDispatch();
   const graphUri = useSelector(state => state.user.graphUri);
   const attachments = useSelector(state => state.attachments.attachments);
+  const token = useSelector(state => state.user.token);
+
+  // console.log(properties);
+  // let uri;
+  // if (properties.uri && properties.uri.endsWith('/share')) {
+  //   const parts = properties.uri.split('/');
+  //   if (parts.length >= 9) {
+  //     // Keep everything before the 8th slash (index 8 is 'share', index 7 is hash)
+  //     uri = parts.slice(0, 8).join('/');
+  //   }
+  // }
+  // console.log(uri);
+  const [refreshMembers, setRefreshMembers] = useState(false);
+
+  const handleSetRefreshMembers = (value) => {
+    setRefreshMembers(value);
+  };
 
   useEffect(() => {
-    if (owner == undefined) {
-      //The attachments in the store should be reset, a new page has been loaded.
-      dispatch(setAttachments([]));
-
-      //Gets the owner of the collection.
-      getQueryResponse(dispatch, getOwner, { uri: properties.uri }).then(
-        owner => {
-          if (owner.length > 0) setOwner(owner);
-          //Handles multiple owners.
-          owner.map(res => {
-            if (res.ownedBy === graphUri) setIsOwner(true);
-          });
+    // Always reset attachments on new URI
+    dispatch(setAttachments([]));
+  
+    // Fetch owner
+    getQueryResponse(dispatch, getOwner, { uri: properties.uri }, token).then(owner => {
+      if (owner.length > 0) setOwner(owner);
+  
+      const owned = owner.some(res => res.ownedBy === graphUri);
+      const isShare = properties.uri && properties.uri.endsWith('/share');
+  
+      if (owned || isShare) {
+        setIsOwner(true);
+      } else {
+        setIsOwner(false); // Optional: explicitly reset
+      }
+    });
+  
+    // Fetch attachments
+    getQueryResponse(dispatch, getAttachments, { uri: properties.uri }, token).then(
+      attachments => {
+        if (attachments.length > 0) {
+          dispatch(setAttachments(attachments));
         }
-      );
+      }
+    );
+  }, [dispatch, properties.uri, token, graphUri]);
+  
 
-      //Gets the initial attachments and passes them down to the children components.
-      getQueryResponse(dispatch, getAttachments, { uri: properties.uri }).then(
+  useEffect(() => {
+    if (refreshMembers) {
+      // Fetch attachments again and update the state
+      getQueryResponse(dispatch, getAttachments, { uri: properties.uri }, token).then(
         attachments => {
           if (attachments.length > 0) {
             dispatch(setAttachments(attachments));
           }
+          // Reset refreshMembers to false after refreshing
+          setRefreshMembers(false);
         }
       );
+      window.location.reload();
     }
-  }, [owner]);
+  }, [refreshMembers, dispatch, properties.uri]);
 
   if (!owner) return <Loading />;
 
@@ -57,9 +92,9 @@ export default function Attachments(properties) {
     <AttachmentsTable
       owner={isOwner}
       uri={properties.uri}
+      setRefreshMembers={handleSetRefreshMembers}
       headers={['Type', 'Name', 'Size']}
       attachments={attachments}
-      setRefreshMembers={properties.setRefreshMembers}
     />
   );
 }

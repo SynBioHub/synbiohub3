@@ -144,14 +144,18 @@ const updateEmail = async (
   parameters.append('key', apiKey);
   parameters.append('fromEmail', address);
 
-  const response = await fetch(url, {
-    method: 'POST',
-    headers,
-    body: parameters
-  });
+  let response;
+
+  try {
+    response = await axios.post(url, parameters, { headers });
+  } catch (error) {
+    if (error.response) {
+      console.error('Error:', error.message);
+    }
+  }
 
   if (response.status !== 200) {
-    const message = await response.text();
+    const message = await response.data;
     setError(message);
     setApiKey(actualApiKey);
     setSendGridEmail(actualSendGridEmail);

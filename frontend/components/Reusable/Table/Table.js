@@ -25,11 +25,14 @@ export default function Table(properties) {
     if (filteredData) {
       if (properties.customSortBehavior) {
         properties.customSortBehavior(properties.sortMethods[sortOption.value], sortOption);
-      }
-      else if (sortOption)
+      } else if (sortOption && properties.sortMethods[sortOption.value]) {
         filteredData.sort((data1, data2) =>
           properties.sortMethods[sortOption.value](data1, data2)
         );
+      } else {
+        console.error('Invalid sort option or sort method:', sortOption, properties.sortMethods);
+      }
+
       if (properties.customBounds) {
         if (offset < properties.customBounds[0] || offset > properties.customBounds[1]) {
           properties.outOfBoundsHandle(offset);
@@ -47,6 +50,7 @@ export default function Table(properties) {
       );
     }
   }, [filteredData, sortOption, numberEntries, filter, offset, properties.customBounds, properties.outOfBoundsHandle]);
+
 
   useEffect(() => {
     if (properties.updateRowsWhen) {
@@ -78,9 +82,8 @@ export default function Table(properties) {
   else if (properties.data) {
     return (
       <div
-        className={`${styles.container} ${
-          properties.scrollX ? styles.scrollX : ''
-        }`}
+        className={`${styles.container} ${properties.scrollX ? styles.scrollX : ''
+          }`}
       >
         <TableHeader
           title={properties.title}
@@ -98,11 +101,10 @@ export default function Table(properties) {
           {properties.headers && (
             <thead
               style={{
-                top: `${
-                  properties.topStickyIncrement
-                    ? 2.5 + properties.topStickyIncrement
-                    : 2.5
-                }rem`
+                top: `${properties.topStickyIncrement
+                  ? 2.5 + properties.topStickyIncrement
+                  : 2.5
+                  }rem`
               }}
             >
               <tr>{header}</tr>

@@ -19,7 +19,6 @@ import BasketItem from './BasketItem';
 import CreateCollection from './CreateCollection';
 
 const searchable = ['name', 'displayId', 'type', 'description'];
-
 import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
 
@@ -30,6 +29,7 @@ const { publicRuntimeConfig } = getConfig();
  */
 export default function Basket() {
   const [showBasket, setShowBasket] = useState(false);
+  const token = useSelector(state => state.user.token);
   const basketItems = useSelector(state => state.basket.basket);
   const dispatch = useDispatch();
   const [selected, setSelected] = useState(new Map());
@@ -37,10 +37,12 @@ export default function Basket() {
   const [buttonEnabled, setButtonEnabled] = useState(false);
   const [itemsToAddToCollection, setItemsToAddToCollection] = useState([]);
   const [createCollectionMode, setCreateCollectionMode] = useState(false);
+  const theme = JSON.parse(localStorage.getItem('theme')) || {};
+  const loggedIn = useSelector(state => state.user.loggedIn);
 
   useEffect(() => {
-    dispatch(restoreBasket());
-  }, []);
+    dispatch(restoreBasket(token));
+  }, [showBasket]);
 
   useEffect(() => {
     if (basketItems) {
@@ -68,13 +70,15 @@ export default function Basket() {
 
   if (!showBasket) {
     return (
+      <div className={styles.basketiconcontainer}>
       <FontAwesomeIcon
         icon={faShoppingBasket}
         size="2x"
-        color="#D25627"
+        color={theme?.themeParameters?.[0]?.value || '#D25627'} // Use theme color or default to #D25627
         className={styles.basketicon}
         onClick={() => setShowBasket(true)}
       />
+      </div>
     );
   }
 
@@ -92,6 +96,7 @@ export default function Basket() {
     <div>
       <div className={styles.basketcontent}>
         <div className={styles.heading}>
+          {loggedIn && (
           <TableButton
             title="Add to Collection"
             icon={faPlus}
@@ -105,7 +110,7 @@ export default function Basket() {
                 setCreateCollectionMode
               );
             }}
-          />
+          /> )}
           <TableButton
             title="Download"
             icon={faCloudDownloadAlt}
@@ -160,20 +165,22 @@ export default function Basket() {
                 item={item}
                 selected={selected}
                 setSelected={setSelected}
+                theme={theme}
               />
             )}
           />
         </div>
       </div>
-
-      <FontAwesomeIcon
-        icon={faTimesCircle}
-        size="2x"
-        color="#D25627"
-        spin
-        className={styles.basketicon}
-        onClick={() => setShowBasket(false)}
-      />
+      <div className={styles.basketiconcontainer}>
+        <FontAwesomeIcon
+          icon={faTimesCircle}
+          size="2x"
+          color="#D25627"
+          spin
+          className={styles.basketicon}
+          onClick={() => setShowBasket(false)}
+        />
+      </div>
     </div>
   );
 }
@@ -262,7 +269,14 @@ const options = [
 ];
 
 const compareStrings = (string1, string2) => {
-  return (string1.toLowerCase() > string2.toLowerCase() && 1) || -1;
+  if (!string1 && !string2) return 0; // Both strings are undefined or null, they are equal
+  if (!string1) return -1; // Only string1 is undefined or null, string1 is less
+  if (!string2) return 1;  // Only string2 is undefined or null, string1 is greater
+
+  const lowerString1 = string1.toLowerCase();
+  const lowerString2 = string2.toLowerCase();
+
+  return (lowerString1 > lowerString2 && 1) || (lowerString1 < lowerString2 && -1) || 0;
 };
 
 const sortMethods = {

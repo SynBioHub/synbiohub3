@@ -28,7 +28,7 @@ export default function ChooseCollection(properties) {
     <div>
       <MajorLabel
         text={properties.label}
-        link="https://wiki.synbiohub.org/userdocumentation/managingsubmitting/"
+        link="https://wiki2.synbiohub.org/2_micro_guides/submitting%2C_managing_and_updating_submissions/"
       />
       <div className={styles.inputandcreatecontainer}>
         <input

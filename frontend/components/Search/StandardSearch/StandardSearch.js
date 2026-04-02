@@ -1,35 +1,152 @@
 import axios from 'axios';
-import getConfig from 'next/config';
 import { useEffect, useState } from 'react';
 import Loader from 'react-loader-spinner';
 import { useDispatch, useSelector } from 'react-redux';
+import { setOffset } from '../../../redux/actions'
 import useSWR from 'swr';
+import { faHatWizard, faSearch, faBars } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useRouter } from 'next/router';
+import Options from '../AdvancedSearch/Options';
+import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
+import SearchHeader from '../SearchHeader/SearchHeader';
+import { processUrl } from '../../Admin/Registries';
+import { isValidURI } from '../../Viewing/Shell';
+import lookupRole from '../../../namespace/lookupRole';
+
 
 import {
   countloader,
   countloadercontainer,
-  standardcontainer,
   standarderror,
-  standardresultsloading
+  standardresultsloading,
+  standardcontainer
 } from '../../../styles/standardsearch.module.css';
+
+import viewStyles from '../../../styles/view.module.css';
+import advStyles from '../../../styles/advancedsearch.module.css';
 import ResultTable from './ResultTable/ResultTable';
+import { filter } from 'jszip';
 
 /**
  * This component handles a basic 'string search' from users on sbh,
  * otherwise known as a standard search
  */
+
+
 export default function StandardSearch() {
+  const theme = JSON.parse(localStorage.getItem('theme')) || {};
   const query = useSelector(state => state.search.query);
   const offset = useSelector(state => state.search.offset);
   const limit = useSelector(state => state.search.limit);
   const token = useSelector(state => state.user.token);
+  const loggedIn = useSelector(state => state.user.loggedIn);
+  const registries = JSON.parse(localStorage.getItem("registries")) || {};
   const [count, setCount] = useState();
   const dispatch = useDispatch();
+  const [creator, setCreator] = useState('');
+  const [created, setCreated] = useState([
+    {
+      startDate: null,
+      endDate: null,
+      key: 'selection'
+    }
+  ]);
+  const [modifed, setModified] = useState([
+    {
+      startDate: null,
+      endDate: null,
+      key: 'selection'
+    }
+  ]);
+  const [objectType, setObjectType] = useState('');
+  const [role, setRole] = useState('');
+  const [sbolType, setSbolType] = useState('');
+  const [collections, setCollections] = useState([]);
+  const [extraFilters, setExtraFilters] = useState([]);
+
+  const [url, setUrl] = useState('');
+  const [translation, setTranslation] = useState(0);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (theme.requireLogin && !loggedIn) {
+      router.push('/login'); // Redirect to the login page
+    }
+  }, [theme.requireLogin, router]);
+
+
+  const constructSearch = () => {
+    let collectionUrls = '';
+    for (const collection of collections) {
+      collectionUrls += getUrl(collection.value, 'collection');
+    }
+    const url = `${getUrl(objectType, 'objectType')}${getUrl(
+      creator,
+      'dc:creator'
+    )}${getUrl(role, 'sbol2:role')}${getUrl(
+      sbolType,
+      'sbol2:type'
+    )}${collectionUrls}${getUrl(
+      created[0].startDate,
+      'createdAfter',
+      true
+    )}${getUrl(created[0].endDate, 'createdBefore', true)}${getUrl(
+      modifed[0].startDate,
+      'modifedAfter',
+      true
+    )}${getUrl(
+      modifed[0].endDate,
+      'modifedBefore',
+      true
+    )}${constructExtraFilters()}`;
+    console.log(url);
+    setUrl(url);
+  };
+
+  const handleDelete = (delFilterIndex) => {
+    setExtraFilters(prevFilters => {
+      return prevFilters.filter((_, index) => index !== delFilterIndex);
+    });
+  };
+
+
+  const addFilter = filters => {
+    return [
+      ...filters,
+      {
+        filter: '',
+        value: ''
+      }
+    ];
+  };
+
+  const constructExtraFilters = () => {
+    let url = '';
+    for (const filter of extraFilters) {
+      if (filter.filter && filter.value){
+        url += getUrl(filter.value, filter.filter);        
+      }
+    }
+    return url;
+  };
+
+  const getUrl = (value, term, isDate = false) => {
+    if (value) {
+      if (isDate) return `${term}=${encodeURIComponent(value.toISOString().slice(0, 10))}&`;
+      if (isValidURI(value)) {
+        return `${term}=<${encodeURIComponent(value)}>&`;
+      } 
+      return `${term}='${encodeURIComponent(value)}'&`;
+    }
+    return '';
+  };
 
   // get search count
   const { newCount, isCountLoading, isCountError } = useSearchCount(
     encodeURIComponent(query),
+    url,
     token,
     dispatch
   );
@@ -54,11 +171,12 @@ export default function StandardSearch() {
     } else {
       setCount(newCount);
     }
-  }, [isCountLoading, isCountError, query]);
+  }, [isCountLoading, isCountError, query, extraFilters]);
 
   // get search results
   const { results, isLoading, isError } = useSearchResults(
     encodeURIComponent(query),
+    url,
     offset,
     limit,
     token,
@@ -74,27 +192,109 @@ export default function StandardSearch() {
   }
   if (isLoading) {
     return (
-      <div className={standardcontainer}>
-        <div className={standardresultsloading}>
-          <Loader color="#D25627" type="ThreeDots" />
-        </div>
+      <div className={standardresultsloading}>
+        <Loader color="#D25627" type="ThreeDots" />
       </div>
     );
   }
-  if (results.length === 0) {
-    return <div className={standarderror}>No results found</div>;
-  }
   for (const result of results) {
-    getTypeAndUrl(result);
+    getTypeAndUrl(result, registries);
   }
   return (
-    <div className={standardcontainer}>
-      <ResultTable count={count} data={results} />
+  <div className={viewStyles.container}>
+    <div
+      className={viewStyles.panelbutton}
+      role="button"
+      onClick={() => {
+        translation == 14 ? setTranslation(0) : setTranslation(14);
+      }}
+    >
+      <FontAwesomeIcon icon={faBars} size="1x" />
+    </div>
+    <div
+      className={
+        translation === 0
+          ? viewStyles.searchSidepanelcontaineropen
+          : viewStyles.searchSidepanelcontainercollapse
+      }
+    >
+      <div className={viewStyles.sidepanel}
+        style={{
+          transform: `translateX(-${translation}rem)`,
+          transition: 'transform 0.3s'
+        }}
+      >
+        <div className={viewStyles.headercontainer}>
+          <div className={viewStyles.emptySpace}>
+          </div>
+        </div>
+
+          <div className={viewStyles.searchBoundedheightforsidepanel}
+            style={{
+              transform: `translateX(-${translation === 14 ? 2.5 : 0}rem)`,
+              transition: 'transform 0.3s'
+            }}
+          >
+            <div>
+              <Options
+                creator={creator}
+                setCreator={setCreator}
+
+                objectType={objectType}
+                setObjectType={setObjectType}
+
+                sbolType={sbolType}
+                setSbolType={setSbolType}
+
+                role={role}
+                setRole={setRole}
+
+                collections={collections}
+                setCollections={setCollections}
+
+                modified={modifed}
+                setModified={setModified}
+
+                extraFilters={extraFilters}
+                setExtraFilters={setExtraFilters}
+
+              addFilter={addFilter}
+              handleDelete={handleDelete}
+            />
+            <div
+              className={advStyles.searchbutton}
+              role="button"
+              onClick={() => {
+                dispatch(setOffset(0));
+                constructSearch();
+              }}
+              style={{
+                backgroundColor: theme?.themeParameters?.[0]?.value || '#D25627',
+                color: theme?.themeParameters?.[1]?.value || '#fff',
+              }}
+            >
+            <FontAwesomeIcon
+              icon={faSearch}
+              size="1x"
+              color="#fff"
+              className={advStyles.searchicon}
+            />
+            <div>Search</div>
+          </div>
+        </div>
+
+          </div>
+        </div>
+      </div>
+      <div className={viewStyles.searchContent}>
+        <SearchHeader selected="Standard Search" />
+        <ResultTable count={count} data={results} />
+      </div>
     </div>
   );
 }
-
-const useSearchResults = (query, offset, limit, token, dispatch) => {
+const useSearchResults = (query, url, offset, limit, token, dispatch) => {
+  query = url + query;
   const { data, error } = useSWR(
     [
       `${publicRuntimeConfig.backend}/search/${query}?offset=${offset}&limit=${limit}`,
@@ -103,7 +303,6 @@ const useSearchResults = (query, offset, limit, token, dispatch) => {
     ],
     fetcher
   );
-
   return {
     results: data,
     isLoading: !error && !data,
@@ -111,12 +310,12 @@ const useSearchResults = (query, offset, limit, token, dispatch) => {
   };
 };
 
-const useSearchCount = (query, token, dispatch) => {
+const useSearchCount = (query, url, token, dispatch) => {
+  query = url + query;
   const { data, error } = useSWR(
     [`${publicRuntimeConfig.backend}/searchCount/${query}`, token, dispatch],
     fetcher
   );
-
   return {
     newCount: data,
     isCountLoading: !error && !data,
@@ -124,7 +323,21 @@ const useSearchCount = (query, token, dispatch) => {
   };
 };
 
-const getTypeAndUrl = result => {
+function getType(member) {
+  var memberType = member.type
+    ? member.type.slice(member.type.lastIndexOf('#') + 1)
+    : 'Unknown';
+  if (member.sbolType) {
+    memberType = member.sbolType.slice(member.sbolType.lastIndexOf('#') + 1);
+  }
+  if (member.role) {
+    memberType = lookupRole(member.role).description.name;
+  }
+  return memberType;
+}
+
+
+const getTypeAndUrl = async (result, registries) => {
   let type = '';
   const potentialType = result.type.toLowerCase();
 
@@ -143,11 +356,16 @@ const getTypeAndUrl = result => {
   }
 
   result.type = type;
+  result.derivedType = getType(result);
 
-  let newUrl = result.uri.replace('https://synbiohub.org', '');
-  newUrl = newUrl.replace('https://dev.synbiohub.org', '');
-  result.url = newUrl;
+  const processed = await processUrl(result.uri, registries);
+  result.url = processed.urlRemovedForLink || processed.original;
+
+  // let newUrl = result.uri.replace('https://synbiohub.org', '');
+  // newUrl = newUrl.replace('https://dev.synbiohub.org', '');
+  // result.url = newUrl;
 };
+
 
 const fetcher = (url, token, dispatch) =>
   axios

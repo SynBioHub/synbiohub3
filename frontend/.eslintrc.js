@@ -12,7 +12,7 @@ module.exports = {
     es6: true,
     jest: true
   },
-  plugins: ['simple-import-sort'],
+  plugins: ['simple-import-sort', 'unused-imports'],
   settings: {
     react: {
       version: 'detect'
@@ -29,6 +29,11 @@ module.exports = {
     'plugin:react-hooks/recommended'
   ],
   rules: {
+    'unused-imports/no-unused-imports': 'error',
+    'unused-imports/no-unused-vars': [
+      'warn',
+      { 'vars': 'all', 'varsIgnorePattern': '^_', 'args': 'after-used', 'argsIgnorePattern': '^_' }
+    ],
     'no-console': 'error',
     'react/react-in-jsx-scope': 'off',
     'react/prop-types': 'off',
