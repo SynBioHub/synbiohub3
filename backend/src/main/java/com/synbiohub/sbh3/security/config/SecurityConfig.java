@@ -61,9 +61,9 @@ public class SecurityConfig {
                         "/twins", "/twinsCount", "/uses", "/usesCount", "/similar", "/similarCount",
                         "/sbol", "/sbolnr", "/metadata", "/gb", "/fasta", "/gff", "/download",
                         "/public/**",
-                        "/public/**/sbolnr", "/public/**/gb", "/public/**/gff",
+                        "/public/**/sbol", "/public/**/sbolnr", "/public/**/gb", "/public/**/gff",
                         "/user/**",
-                        "/user/**/sbolnr", "/user/**/gb", "/user/**/gff",
+                        "/user/**/sbol", "/user/**/sbolnr", "/user/**/gb", "/user/**/gff",
                         "/sparql", "/ComponentDefinition/**", "/**/count", "/count",
                         "/admin/theme", "/admin/registries", "/admin/plugins", "/admin/graphs", "/admin/log", "/manage", "/shared"
                 ).permitAll()
