@@ -123,21 +123,21 @@ export const updateUser =
           parameters.append('password2', confirmPassword);
         }
 
-        let response;
+        const response = await axios.post(url, parameters, { headers });
 
-        try {
-          response = await axios.post(url, parameters, { headers });
-        } catch (error) {
-          if (error.response) {
-            console.error('Error:', error.message);
-          }
+        if (response.status === 200) {
+          await dispatch(fetchUserInfo());
+          return true;
         }
-
-        if (response.status === 200) dispatch(fetchUserInfo());
+        return false;
       } catch (error) {
+        if (error.response) {
+          console.error('Error:', error.message);
+        }
         error.customMessage = 'There was an error updating your profile.';
         error.url = `${publicRuntimeConfig.backend}/profile`;
         dispatch(addError(error));
+        return false;
       }
     };
 
