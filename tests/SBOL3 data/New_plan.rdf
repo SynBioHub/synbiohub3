@@ -1,0 +1,20 @@
+<rdf:RDF
+    xmlns:SO="https://identifiers.org/SO:"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:EDAM="https://identifiers.org/edam:"
+    xmlns:sbol="http://sbols.org/v3#"
+    xmlns:CHEBI="https://identifiers.org/CHEBI:"
+    xmlns:prov="http://www.w3.org/ns/prov#"
+    xmlns:SBO="https://identifiers.org/SBO:"
+    xmlns:GO="https://identifiers.org/GO:"
+    xmlns="https://sbolstandard.org/examples/"
+    xmlns:om="http://www.ontology-of-units-of-measure.org/resource/om-2/"
+   xml:base="https://sbolstandard.org/examples/">
+   <sbol:TopLevel rdf:about="https://sbolstandard.org/examples/CodonOptimisationProtocol">
+      <sbol:description>Optimisation protocol to improve the translation of mRNAs.</sbol:description>
+      <sbol:name>Codon Optimisation Protocol</sbol:name>
+      <sbol:hasNamespace rdf:resource="https://sbolstandard.org/examples"/>
+      <sbol:displayId>CodonOptimisationProtocol</sbol:displayId>
+      <rdf:type rdf:resource="http://www.w3.org/ns/prov#Plan"/>
+   </sbol:TopLevel>
+</rdf:RDF>

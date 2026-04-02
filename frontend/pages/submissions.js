@@ -1,8 +1,9 @@
 import axios from 'axios';
-import getConfig from 'next/config';
+
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import useSWR from 'swr';
+import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
 
 import Basket from '../components/Basket/Basket';
@@ -12,6 +13,7 @@ import TableButtons from '../components/Submission/TableButtons';
 import TopLevel from '../components/TopLevel';
 import styles from '../styles/submissions.module.css';
 import { addError } from '../redux/actions';
+import { logoutUser } from '../redux/actions';
 
 const searchable = ['name', 'displayId', 'type', 'description', 'privacy'];
 
@@ -130,7 +132,14 @@ const options = [
 ];
 
 const compareStrings = (string1, string2) => {
-  return (string1.toLowerCase() > string2.toLowerCase() && 1) || -1;
+  if (!string1 && !string2) return 0; // Both strings are undefined or null, they are equal
+  if (!string1) return -1; // Only string1 is undefined or null, string1 is less
+  if (!string2) return 1;  // Only string2 is undefined or null, string1 is greater
+
+  const lowerString1 = string1.toLowerCase();
+  const lowerString2 = string2.toLowerCase();
+
+  return (lowerString1 > lowerString2 && 1) || (lowerString1 < lowerString2 && -1) || 0;
 };
 
 const sortMethods = {
@@ -216,8 +225,13 @@ const fetcher = (url, token, dispatch) =>
     })
     .then(response => response.data)
     .catch(error => {
-      error.customMessage =
-        'Request(s) failed for submissions data. Check the URL to see which one failed';
-      error.fullUrl = url;
-      dispatch(addError(error));
+      if (error.response && error.response.status === 401) {
+        dispatch(logoutUser()); // Dispatch the logout action to sign out the user
+        window.location.reload(); // Redirect to the login page
+      } else {
+        // Handle other errors
+        error.customMessage = 'Request(s) failed for submissions data. Check the URL to see which one failed';
+        error.fullUrl = url;
+        dispatch(addError(error));
+      }
     });

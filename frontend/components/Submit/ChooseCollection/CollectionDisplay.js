@@ -31,6 +31,7 @@ export default function CollectionDisplay(properties) {
         <thead>
           <tr>
             <th>Name</th>
+            <th>Display ID</th>
             <th>Description</th>
             <th>Version</th>
           </tr>
@@ -44,17 +45,16 @@ export default function CollectionDisplay(properties) {
 function CollectionSelector(properties) {
   const dispatch = useDispatch();
 
-  const selectedCollection = useSelector(
-    state => state.submit.selectedCollection
-  );
+  const selectedCollection = useSelector(state => state.submit.selectedCollection);
 
   const [isSelected, setIsSelected] = useState(false);
 
   useEffect(() => {
-    if (selectedCollection)
+    if (selectedCollection && properties.collection) {
       setIsSelected(
         shallowEqualCollection(selectedCollection, properties.collection)
       );
+    }
   }, [selectedCollection, properties.collection]);
 
   if (
@@ -66,29 +66,39 @@ function CollectionSelector(properties) {
   return (
     <tr
       className={`${isSelected ? styles.selectedcollection : ''}`}
-      key={properties.collection.displayId}
+      key={properties.collection.displayId ?? 'defaultKey'}
       onClick={() => {
         dispatch(setSelectedCollection(properties.collection));
         properties.setFilter('');
       }}
     >
       <td className={styles.name}>
-        <code>{properties.collection.name}</code>
+        <code>{properties.collection.name ?? 'Unnamed Collection'}</code>
       </td>
-      <td>{properties.collection.description}</td>
-      <td>{properties.collection.version}</td>
+      <td>{properties.collection.displayId ?? 'No Id'}</td>
+      <td>{properties.collection.description ?? 'No Description'}</td>
+      <td>{properties.collection.version ?? 'No Version'}</td>
     </tr>
   );
 }
 
+
 const checkCollectionPassesFilter = (filter, collection) => {
+  if (!collection) return false;
+
+  const name = collection.name ?? '';
+  const displayId = collection.displayId ?? '';
+  const description = collection.description ?? '';
+  const version = collection.version ?? '';
+
   return (
-    collection.name.includes(filter) ||
-    collection.displayId.includes(filter) ||
-    collection.description.includes(filter) ||
-    collection.version.includes(filter)
+    name.includes(filter) ||
+    displayId.includes(filter) ||
+    description.includes(filter) ||
+    version.includes(filter)
   );
 };
+
 
 const shallowEqualCollection = (collection1, collection2) => {
   return (

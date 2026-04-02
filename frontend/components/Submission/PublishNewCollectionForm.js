@@ -27,6 +27,8 @@ export default function NewCollectionForm(properties) {
 
   const dispatch = useDispatch();
 
+  const theme = JSON.parse(localStorage.getItem('theme')) || {};
+
   const publishNewCollection = (
     displayId,
     version,
@@ -53,6 +55,13 @@ export default function NewCollectionForm(properties) {
         collection => collection.displayId !== properties.filler.displayId
       )
     );
+    if (properties.inCollectionPage) {
+      const redirect = `${theme.uriPrefix}public/${displayId}/${displayId}_collection/${version}`
+      window.location.href = redirect;
+    }
+    else {
+      window.location.reload();
+    }
   };
 
   return (

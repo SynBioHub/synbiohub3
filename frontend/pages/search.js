@@ -1,7 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux';
 
 import NavbarSearch from '../components/Search/NavbarSearch/NavbarSearch';
-import SearchHeader from '../components/Search/SearchHeader/SearchHeader';
 import StandardSearch from '../components/Search/StandardSearch/StandardSearch';
 import TopLevel from '../components/TopLevel';
 import { setOffset, setSearchQuery } from '../redux/actions';
@@ -30,8 +29,7 @@ export default function SearchDefault() {
       publicPage={true}
     >
       <div className={styles.container}>
-        <SearchHeader selected="Standard Search" />
-        <StandardSearch />
+          <StandardSearch />
       </div>
     </TopLevel>
   );

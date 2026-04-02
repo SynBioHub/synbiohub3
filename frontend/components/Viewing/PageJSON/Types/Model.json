@@ -9,44 +9,65 @@
       "PREFIX sbol: <http://sbols.org/v2#>",
       "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>",
       "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>",
-      "PREFIX purl: <http://purl.obolibrary.org/obo/>"
+      "PREFIX purl: <http://purl.obolibrary.org/obo/>",
+      "PREFIX biopax: <http://www.biopax.org/release/biopax-level3.owl#>",
+      "PREFIX so: <http://identifiers.org/so/>",
+      "PREFIX bench: <http://wiki.synbiohub.org/wiki/Terms/benchling#>",
+      "PREFIX genbank: <http://www.ncbi.nlm.nih.gov/genbank#>"
    ],
    "metadata": [
       {
         "title": "Language",
-        "icon": "faVials",
+        "icon": "faLanguage",
         "rootPredicate": "sbol:language",
         "sections": [
           {
             "title": "lang",
+            "predicates": [
+            ],
+            "link": "$<LanguageLink>",
+            "stripAfter": "/"
+          },
+          {
+            "title": "LanguageLink",
             "predicates": [],
-            "link": "$<This>"
+            "hide": true
           }
         ]
       },
       {
         "title": "Framework",
         "rootPredicate": "sbol:framework",
-        "icon": "faVials",
+        "icon": "faBuilding",
         "sections": [
           {
             "title": "framework",
             "predicates": [],
-            "link": "$<This>",
+            "link": "$<FrameworkLink>",
             "stripAfter": "/"
+          },
+          {
+            "title": "FrameworkLink",
+            "predicates": [],
+            "hide": true
           }
         ]
       },
       {
          "title": "Model File",
          "rootPredicate": "sbol:source",
-         "icon": "faVials",
+         "icon": "faFile",
          "sections": [
            {
              "title": "mfile",
              "predicates": [],
-             "link": "$<This>"
-           }
+             "link": "$<ModelFileLink>"
+           },
+           {
+            "title": "ModelFileLink",
+            "predicates": [],
+            "hide": true
+          }
          ]
        }
    ],

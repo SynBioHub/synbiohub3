@@ -1,4 +1,5 @@
 import Section from '../../Sections/Section';
+import Plugin from '../../Sections/Plugin.js';
 
 import { useSelector } from 'react-redux';
 import { Fragment } from 'react';
@@ -6,111 +7,68 @@ import TableBuilder from './TableBuilder';
 
 import CustomComponents from '../CustomComponents.js';
 import { compileFile } from '../Parsing/compileFile';
+import Visualization from '../../Sections/Visualization.js';
 
-export default function GenericContent({ json, uri, metadata }) {
+export default function GenericContent({ json, uri, metadata, plugins, type, translation }) {
   if (metadata) {
     if (!json || !json.metadata) return null;
     compileFile(json);
     const content = json.metadata.map((metadata, index) => {
+      const metadataKey = metadata.title || metadata.id || index;
       return (
         <TableBuilder
           uri={uri}
           prefixes={json.prefixes}
           table={metadata}
           metadata={true}
-          key={index}
+          key={metadataKey}
         />
       );
     });
-
     return <Fragment>{content}</Fragment>;
   }
 
   const pages = useSelector(state => state.pageSections.order);
 
   const content = pages.map((page, index) => {
-    if (page.startsWith('$TABLES[')) {
+    if (page.startsWith('$TABLES[') && json && json.tables) {
       const title = page.substring(8, page.length - 1);
-      const table = json.tables.find(table => table.title === title);
+      const table = json.tables.find(table => table.title.toLowerCase() === title.toLowerCase());
+      if (!table) {
+        return null;
+      }
       return (
-        <Section id={page} title={table.title} key={index}>
+        <Section id={page} title={table.title} key={page} translation={translation}>
           <TableBuilder uri={uri} prefixes={json.prefixes} table={table} />
         </Section>
       );
     }
+    if (page.startsWith('PLUGIN: ')) {
+      const title = page.substring(8, page.length)
+      const plugin = plugins.rendering.filter(plugin => plugin.name === title)[0]
+      return (
+        <Plugin plugin={plugin} type={type} uri={uri} title={title} key={page} pluginKey={page} pluginID={page} />
+      );
+        
+    }
+
+    if (page === 'Visualization') {
+      return (
+        <Visualization uri={uri} key={page} />
+      )
+    }
+
     const ComponentToRender = CustomComponents[page];
-    return (
-      <Section title={page} key={index}>
-        <ComponentToRender uri={uri} />
-      </Section>
-    );
+    if (ComponentToRender) {
+      return (
+        <Section title={page} key={page} translation={translation}>
+          <ComponentToRender uri={uri} />
+        </Section>
+      );
+    }
+
   });
 
   return <Fragment>{content}</Fragment>;
 }
 
-// This is Alex's code for the previous table renderer. I'm keeping it
-// for now to keep track of custom components, but this is dead code/not valid
-// and if you delete it it's totally fine (zombie code sucks)
-
-// /**
-//  * Returns the corresponding section component.
-//  *
-//  * @param {String} sectionName The name of the section.
-//  * @param {Any} properties The properties that can be accessed by the section.
-//  */
-// function getSection(sectionName, properties) {
-//   switch (sectionName) {
-//     case 'Details':
-//       return (
-//         <Section title={sectionName}>
-//           <Details uri={properties.uri} />
-//         </Section>
-//       );
-//     case 'Components':
-//       return (
-//         <Section title={sectionName}>
-//           <TableBuilder uri={properties.uri} type={properties.type} index={1} />
-//         </Section>
-//       );
-//     case 'Sequence Annotations':
-//       return (
-//         <Section title={sectionName}>
-//           <TableBuilder uri={properties.uri} type={properties.type} index={0} />
-//         </Section>
-//       );
-//     case 'Other Properties':
-//       return (
-//         <Section title={sectionName}>
-//           <OtherProperties uri={properties.uri} />
-//         </Section>
-//       );
-//     case 'Member of these Collections':
-//       return (
-//         <Section title={sectionName}>
-//           <MemberOfCollections uri={properties.uri} />
-//         </Section>
-//       );
-//     case 'Attachments':
-//       return (
-//         <Section title={sectionName}>
-//           <Attachments
-//             uri={properties.uri}
-//             setRefreshMembers={properties.setRefreshMembers}
-//           />
-//         </Section>
-//       );
-//     case 'Members':
-//       return (
-//         <Section title={sectionName}>
-//           <Members
-//             uri={properties.uri}
-//             refreshMembers={properties.refreshMembers}
-//             setRefreshMembers={properties.setRefreshMembers}
-//           />
-//         </Section>
-//       );
-//     default:
-//       return <Section title={sectionName}></Section>;
-//   }
-// }

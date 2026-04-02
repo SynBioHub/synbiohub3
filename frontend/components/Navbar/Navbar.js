@@ -2,18 +2,19 @@ import {
   faAlignLeft,
   faCloudUploadAlt,
   faSearch,
-  faSignInAlt
+  faSignInAlt,
+  faHome
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Loader from 'react-loader-spinner';
 import { useSelector } from 'react-redux';
-
 import styles from '../../styles/navbar.module.css';
 import Profile from './Profile';
 import Selector from './Selector';
+import getConfig from 'next/config';
+const { publicRuntimeConfig } = getConfig();
 
 /**
  * This component renders the navigation bar at the top of sbh. Users use this to access
@@ -22,25 +23,75 @@ import Selector from './Selector';
 export default function Navbar() {
   const loggedIn = useSelector(state => state.user.loggedIn);
   const submitting = useSelector(state => state.submit.submitting);
+  const theme = JSON.parse(localStorage.getItem('theme')) || {};
+  const defaultLogo = '/images/logo.svg'
+
   const [profileControl, setProfileControl] = useState(
     <Selector icon={faSignInAlt} name="Log in or Register" href="/login" />
   );
 
+  // initialize logo like index.js: prefer theme.logoUrl, then localStorage 'sbh_logo', else null/default
+  const [logoUrl, setLogoUrl] = useState(theme.logoUrl || localStorage.getItem('sbh_logo') || null);
+
   useEffect(() => {
-    if (loggedIn) setProfileControl(<Profile />);
-    else
+    if (loggedIn) {
+      setProfileControl(<Profile />);
+    } else {
       setProfileControl(
         <Selector icon={faSignInAlt} name="Sign In" href="/login" />
       );
+    }
   }, [loggedIn]);
 
+  let linkHref = "/";
+  if (theme && theme.altHome && theme.altHome.length > 0) {
+    linkHref = theme.altHome;
+  }
+
+  // fetch logo from backend/logo if we don't already have one (same approach as index.js)
+  useEffect(() => {
+    if (!logoUrl) {
+      fetch(`${publicRuntimeConfig.backend}/logo`, { method: 'GET', cache: 'no-store' })
+        .then(res => {
+          if (!res.ok) throw new Error('No logo');
+          return res.blob();
+        })
+        .then(blob => {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            const dataUrl = reader.result;
+            try {
+              localStorage.setItem('sbh_logo', dataUrl);
+              const updatedTheme = JSON.parse(localStorage.getItem('theme') || '{}');
+              updatedTheme.logoUrl = dataUrl;
+              localStorage.setItem('theme', JSON.stringify(updatedTheme));
+            } catch (e) { /* ignore storage errors */ }
+            setLogoUrl(dataUrl);
+          };
+          reader.readAsDataURL(blob);
+        })
+        .catch(() => {
+          // fallback to default
+          setLogoUrl(defaultLogo);
+        });
+    }
+  }, []); // run once on mount
+
   return (
-    <header className={styles.container}>
-      <Link href="/">
-        <a className={styles.logo}>
-          <Image alt="logo" width={80} height={80} src="/images/logo.svg" />
-        </a>
-      </Link>
+    <header
+      className={styles.container}
+      style={{ backgroundColor: theme?.themeParameters?.[0]?.value || '#465775' }}
+    >
+      <div className={styles.logoAndInstanceContainer}>
+          <Selector
+            icon={faHome}
+            href={linkHref}
+            logoUrl={logoUrl}
+            name={theme.instanceName || 'SynBioHub'}
+            defaultLogo={defaultLogo}
+            isInstanceName={true}
+          />
+      </div>
 
       <div className={styles.navcontainer}>
         {loggedIn && (

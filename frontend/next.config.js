@@ -3,6 +3,9 @@ module.exports = {
   env: {
     test: process.env.test
   },
+  images: {
+    domains: ['localhost'],
+  },
   publicRuntimeConfig: {
     backend: process.env.backend,
     backendSS: process.env.backendSS

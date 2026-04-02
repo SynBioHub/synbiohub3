@@ -38,7 +38,7 @@ public class User implements UserDetails, Cloneable{
     private String email;
 
     @Column(name = "affiliation")
-    private String affiliation;
+    private String affiliation = "";
 
     @Enumerated(EnumType.STRING)
     @Column(name = "user_role")

@@ -1,0 +1,274 @@
+{
+    "type": "http://sbols.org/v3#Component",
+    "prefixes": [
+        "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>",
+        "PREFIX dcterms: <http://purl.org/dc/terms/>",
+        "PREFIX dc: <http://purl.org/dc/elements/1.1/>",
+        "PREFIX sbh: <http://wiki.synbiohub.org/wiki/Terms/synbiohub#>",
+        "PREFIX prov: <http://www.w3.org/ns/prov#>",
+        "PREFIX sbol: <http://sbols.org/v3#>",
+        "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>",
+        "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>",
+        "PREFIX purl: <http://purl.obolibrary.org/obo/>",
+        "PREFIX biopax: <http://www.biopax.org/release/biopax-level3.owl#>",
+        "PREFIX so: <http://identifiers.org/so/>",
+        "PREFIX bench: <http://wiki.synbiohub.org/wiki/Terms/benchling#>",
+        "PREFIX genbank: <http://www.ncbi.nlm.nih.gov/genbank#>"
+    ],
+    "metadata": [
+        {
+            "title": "Type",
+            "rootPredicate": "sbol:type",
+            "icon": "faPalette",
+            "sections": [
+                {
+                    "title": "Extra Work",
+                    "stripAfter": "#",
+                    "predicates": [],
+                    "link": "$<typeLink>"
+                },
+                {
+                    "title": "typeLink",
+                    "predicates": [],
+                    "hide": true
+                }
+            ]
+        },
+        {
+            "title": "Role",
+            "rootPredicate": "sbol:role",
+            "icon": "faUserTag",
+            "sections": [
+                {
+                    "title": "Extra Work",
+                    "stripAfter": "#",
+                    "predicates": [],
+                    "link": "$<roleLink>"
+                },
+                {
+                    "title": "roleLink",
+                    "predicates": [],
+                    "hide": true
+                }
+            ]
+        }
+    ],
+    "tables": [
+        {
+            "title": "Sequences",
+            "rootPredicate": "sbol:hasSequence",
+            "icon": "faDna",
+            "sections": [
+                {
+                    "title": "Sequence",
+                    "stripAfter": "#",
+                    "predicates": [
+                        "sbol:Sequence"
+                    ],
+                    "link": "$<SequenceLink>"
+                },
+                {
+                    "title": "SequenceLink",
+                    "predicates": [],
+                    "hide": true
+                }
+            ]
+        },
+        {
+            "icon": "faThLarge",
+            "title": "Features",
+            "rootPredicate": "sbol:hasFeature",
+            "sections": [
+                {
+                    "title": "SubComponents",
+                    "infoLink": "https://sbols.org/v3#SubComponent",
+                    "predicates": [
+                    ],
+                    "stripAfter": "#",
+                    "link": "$<subcomponentLink>"
+                },
+                {
+                    "title": "subcomponentLink",
+                    "predicates": [
+                    ],
+                    "hide": true
+                }
+            ]
+        },
+        {
+            "icon": "faHandshake",
+            "title": "Interactions",
+            "rootPredicate": "sbol:hasInteraction",
+            "sections": [
+                {
+                    "title": "Type",
+                    "infoLink": "https://sbols.org/v3#Interaction",
+                    "predicates": [
+                    ],
+                    "link": "$<interactionLink>"
+                },
+                {
+                    "title": "interactionLink",
+                    "predicates": [],
+                    "hide": true
+                }
+            ]
+        },
+        {
+            "title": "Constraints",
+            "rootPredicate": "sbol:hasConstraint",
+            "icon": "faVirusSlash",
+            "sections": [
+                {
+                    "title": "Constraint",
+                    "infoLink": "https://sbols.org/v3#Constraint",
+                    "predicates": [
+                    ],
+                    "stripAfter": "#",
+                    "link": "$<constraintLink>"
+                },
+                {
+                    "title": "constraintLink",
+                    "hide": true,
+                    "predicates": []
+                },
+                {
+                    "title": "Subject",
+                    "infoLink": "https://sbols.org/v3#Subject",
+                    "predicates": [
+                        "sbol:subject"
+                    ],
+                    "stripAfter": "#",
+                    "link": "$<subjectLink>"
+                },
+                {
+                    "title": "subjectLink",
+                    "hide": true,
+                    "predicates": []
+                }
+            ]
+        },
+        {
+            "title": "Interfaces",
+            "rootPredicate": "sbol:hasInterface",
+            "icon": "faStickyNote",
+            "sections": [
+                {
+                    "title": "Interface",
+                    "infoLink": "https://sbols.org/v3#Interface",
+                    "predicates": [
+                    ],
+                    "link": "$<interfaceLink>"
+                },
+                {
+                    "title": "interfaceLink",
+                    "hide": true,
+                    "predicates": []
+                },
+                {
+                    "title": "Output",
+                    "infoLink": "https://sbols.org/v3#Output",
+                    "predicates": [
+                        "sbol:output"
+                    ],
+                    "link": "$<outputLink>"
+                },
+                {
+                    "title": "outputLink",
+                    "hide": true,
+                    "predicates": []
+                },
+                {
+                    "title": "Input",
+                    "infoLink": "https://sbols.org/v3#Input",
+                    "predicates": [
+                        "sbol:input"
+                    ],
+                    "link": "$<inputLink>"
+                },
+                {
+                    "title": "inputLink",
+                    "hide": true,
+                    "predicates": []
+                }
+            ]
+        },
+        {
+            "title": "Models",
+            "rootPredicate": "sbol:hasModel",
+            "icon": "faBuilding",
+            "sections": [
+                {
+                    "title": "Model",
+                    "infoLink": "https://sbols.org/v3#Model",
+                    "predicates": [
+                        "sbol:displayId"
+                    ],
+                    "link": "$<modelLink>"
+                },
+                {
+                    "title": "modelLink",
+                    "hide": true,
+                    "predicates": []
+                },
+                {
+                    "title": "Framework",
+                    "infoLink": "https://sbols.org/v3#Framework",
+                    "predicates": [
+                        "sbol:framework"
+                    ],
+                    "link": "$<frameworkLink>"
+                },
+                {
+                    "title": "frameworkLink",
+                    "hide": true,
+                    "predicates": [
+                        "sbol:framework"
+                    ]
+                },
+                {
+                    "title": "Source",
+                    "infoLink": "https://sbols.org/v3#Source",
+                    "predicates": [
+                        "sbol:source"
+                    ],
+                    "link": "$<sourceLink>"
+                },
+                {
+                    "title": "sourceLink",
+                    "hide": true,
+                    "predicates": [
+                        "sbol:source"
+                    ]
+                },
+                {
+                    "title": "Language",
+                    "infoLink": "https://sbols.org/v3#Language",
+                    "predicates": [
+                        "sbol:language"
+                    ],
+                    "link": "$<languageLink>"
+                },
+                {
+                    "title": "languageLink",
+                    "hide": true,
+                    "predicates": [
+                        "sbol:language"
+                    ]
+                }
+            ]
+        }
+    ],
+    "pages": [
+        "Details",
+        "$TABLES[Sequences]",
+        "$TABLES[Features]",
+        "$TABLES[Interactions]",
+        "$TABLES[Constraints]",
+        "$TABLES[Interfaces]",
+        "$TABLES[Models]",
+        "Other Properties",
+        "Member of these Collections",
+        "Attachments"
+    ]
+}

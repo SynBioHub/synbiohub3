@@ -5,7 +5,6 @@ import {
   faTrashAlt
 } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
-import getConfig from 'next/config';
 import React from 'react';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -15,6 +14,7 @@ import { addError, addToBasket, downloadFiles } from '../../redux/actions';
 import styles from '../../styles/submissions.module.css';
 import TableButton from '../Reusable/TableButton';
 import PublishModal from './PublishModal';
+import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
 
 export default function TableButtons(properties) {
@@ -145,8 +145,9 @@ const removeCollections = (
   setProcessUnderway,
   dispatch
 ) => {
+  const theme = JSON.parse(localStorage.getItem('theme'));
   const removeCollectionPromises = collections.map(collection => {
-    if (collection.privacy === 'public') {
+    if (collection.privacy === 'public' && !theme.removePublicEnabled) {
       alert(
         `${collection.name} cannot be removed because it has been published`
       );
