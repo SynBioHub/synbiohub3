@@ -3,8 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 3333",
-    "build": "next build",
+    "dev": "node customDev.js",
+    "devNextGen": "git rev-parse HEAD > ./public/commitHash.txt; NODE_OPTIONS=--openssl-legacy-provider next dev -p 3333",
+    "build": "git rev-parse HEAD > ./public/commitHash.txt; next build",
+    "buildNextGen": "git rev-parse HEAD > ./public/commitHash.txt; NODE_OPTIONS=--openssl-legacy-provider next build",
+    "testbuild": "NODE_OPTIONS=--openssl-legacy-provider next build",
     "start": "next start -p 3333",
     "lint": "eslint '*/**/*.{js,jsx}'",
     "lint.fix": "eslint '*/**/*.{js,jsx}' --fix",
@@ -30,9 +33,6 @@
       "<rootDir>/.next/",
       "<rootDir>/node_modules/"
     ],
-    "transform": {
-      "^.+\\.(js|jsx|ts|tsx)$": "<rootDir>/node_modules/babel-jest"
-    },
     "moduleNameMapper": {
       "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/__mocks__/fileMock.js",
       "\\.(css|less)$": "<rootDir>/__mocks__/styleMock.js"
@@ -43,7 +43,6 @@
     "testEnvironment": "jsdom"
   },
   "dependencies": {
-    "@date-io/date-fns": "^2.11.0",
     "@fortawesome/fontawesome-svg-core": "^1.2.35",
     "@fortawesome/free-brands-svg-icons": "^5.15.3",
     "@fortawesome/free-regular-svg-icons": "^5.15.3",
@@ -52,7 +51,6 @@
     "@leifandersen/react-codemirror2": "^7.2.1",
     "axios": "^0.21.0",
     "codemirror": "^5.63.3",
-    "date-fns": "^2.0.0-beta.5",
     "file-saver": "^2.0.5",
     "he": "^1.2.0",
     "html-react-parser": "^2.0.0",
@@ -60,12 +58,10 @@
     "jszip": "^3.6.0",
     "mime-types": "^2.1.35",
     "next": "10.0.1",
-    "qs": "^6.10.1",
-    "react": "17.0.1",
+    "react": "^17.0.2",
     "react-beautiful-dnd": "^13.1.0",
     "react-color": "^2.19.3",
-    "react-date-range": "^1.4.0",
-    "react-dom": "17.0.1",
+    "react-dom": "^17.0.2",
     "react-dropzone": "^11.3.2",
     "react-loader-spinner": "^4.0.0",
     "react-redux": "^7.2.4",
@@ -76,15 +72,18 @@
     "redux-devtools-extension": "^2.13.9",
     "redux-persist": "^6.0.0",
     "redux-thunk": "^2.3.0",
+    "showdown": "^2.1.0",
     "swr": "^0.3.9"
+  },
+  "resolutions": {
+    "pretty-format": "27.5.1",
+    "expect": "27.5.1"
   },
   "proxy": "http://localhost:7777/",
   "devDependencies": {
-    "@babel/plugin-proposal-numeric-separator": "^7.16.7",
     "@testing-library/dom": "^7.31.0",
     "@testing-library/jest-dom": "^5.12.0",
     "@testing-library/react": "^11.2.7",
-    "babel-jest": "^27.0.1",
     "eslint": "^7.26.0",
     "eslint-config-airbnb": "^18.2.1",
     "eslint-config-prettier": "^8.3.0",
@@ -96,6 +95,7 @@
     "eslint-plugin-simple-import-sort": "^7.0.0",
     "eslint-plugin-sonarjs": "^0.7.0",
     "eslint-plugin-unicorn": "^32.0.1",
+    "eslint-plugin-unused-imports": "^1.1.5",
     "jest": "^27.0.1",
     "lint-staged": "^11.0.0",
     "prettier": "^2.3.0"

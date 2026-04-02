@@ -2,6 +2,18 @@ import styles from '../../../../styles/view.module.css';
 import Link from 'next/link';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
+import { useDispatch, useSelector } from 'react-redux';
+import axios from 'axios';
+import { useEffect } from 'react';
+import { useState } from 'react';
+import { addError } from '../../../../redux/actions';
+import sequenceOntology from '../../../../namespace/sequence-ontology';
+import systemsBiologyOntology from '../../../../namespace/systems-biology-ontology';
+import edamOntology from '../../../../namespace/edam-ontology';
+import getConfig from 'next/config';
+const { publicRuntimeConfig } = getConfig();
+
+import { processUrl } from '../../../Admin/Registries';
 
 function loadText(template, args) {
   for (const key of Object.keys(args)) {
@@ -11,54 +23,179 @@ function loadText(template, args) {
 }
 
 export default function SectionRenderer({ section, metadata }) {
-  if (section.grouped) {
-    const items = section.text.split(', ');
-    const content = items.map((item, index) => {
-      if (section.link && item) {
-        return (
-          <ColumnLink
-            link={loadText(section.link, { This: item })}
-            text={`${item}${
-              index === items.length - 1 ||
-              (section.linkType !== 'default' && section.linkType !== undefined)
+  const dispatch = useDispatch();
+  const url = `${publicRuntimeConfig.backend}/admin/registries`;
+  const registries = JSON.parse(localStorage.getItem("registries")) || {};
+  const [data, setData] = useState(null);
+  const [processedLink, setProcessedLink] = useState(null);
+  const token = useSelector(state => state.user.token);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function fetchDataAndProcessLink() {
+      //... your existing code fetching the data
+
+      // After you set the data, process the link
+      if (isMounted && section.link) {
+        const processed = await processUrl(section.link, registries); // Assuming you have token available
+        setProcessedLink(processed);
+      }
+    }
+
+    fetchDataAndProcessLink();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+
+  useEffect(() => {
+    let isMounted = true; // <-- add this line
+
+    axios
+      .get(url, { headers: { accept: 'text/plain' } })
+      .then(res => res.data.registries)
+      .then((registries) => {
+        if (isMounted) {  // <-- check this condition before setting state
+          setData(registries);
+        }
+      })
+      .catch(error => {
+        error.customMessage = 'Request failed for GET /admin/registries';
+        error.fullUrl = url;
+        dispatch(addError(error))
+      });
+
+    return () => {  // <-- cleanup function
+      isMounted = false;  // <-- set the flag to false when the component unmounts
+    };
+  }, []);
+  if (data) {
+    let usedProcessedLink = false;
+
+    if (section.link) {
+      data.forEach(registry => {
+        if (
+          section.link.startsWith(registry.uri) &&
+          processedLink &&
+          processedLink.urlRemovedForLink
+        ) {
+          section.link = processedLink.urlRemovedForLink;
+          usedProcessedLink = true; // ✅ mark that replacement occurred
+        }
+      });
+    }
+
+    const currentURL = window.location.href;
+    if (usedProcessedLink && currentURL.endsWith('/share')) {
+      const parts = currentURL.split('/');
+      const shareSuffix = parts.slice(-2).join('/'); // e.g., "abc123/share"
+      section.link = `${section.link}/${shareSuffix}`;
+    }
+    if (/SO:\s*(\d{7})/.test(section.text)) {
+      for (let key in sequenceOntology) {
+        if (section.text === key) {
+          section.text = sequenceOntology[key].name;
+          break;
+        }
+      }
+    }
+    if (/SBO:\s*(\d{7})/.test(section.text)) {
+      for (let key in systemsBiologyOntology) {
+        if (section.text === key) {
+          section.text = systemsBiologyOntology[key].name;
+          break;
+        }
+      }
+    }
+    if (/^(http:\/\/edamontology\.org\/format_\d{4}|edam:format_\d{4}|https:\/\/identifiers\.org\/edam:format_\d{4}|format_\d{4})$/.test(section.text)) {
+      // Normalize the section.text to the full URL format
+      if (/^edam:format_\d{4}$/.test(section.text)) {
+        section.text = section.text.replace(/^edam:format_(\d{4})$/, 'http://edamontology.org/format_$1');
+      } else if (/^https:\/\/identifiers\.org\/edam:format_\d{4}$/.test(section.text)) {
+        section.text = section.text.replace(/^https:\/\/identifiers\.org\/edam:format_(\d{4})$/, 'http://edamontology.org/format_$1');
+      } else if (/^format_\d{4}$/.test(section.text)) {
+        section.text = section.text.replace(/^format_(\d{4})$/, 'http://edamontology.org/format_$1');
+      }
+
+      // Now proceed with checking against the keys in edamOntology
+      for (let key in edamOntology) {
+        if (section.text === key) {
+          section.text = edamOntology[key];
+        }
+      }
+    }
+
+
+    if (section.grouped) {
+      const items = section.text.split(', ').filter(item => item.trim() !== '');
+      const content = items.map((item, index) => {
+        if (section.link && item) {
+          return (
+            <ColumnLink
+              link={loadText(section.link, { This: item })}
+              text={`${item}${index === items.length - 1 ||
+                (section.linkType !== 'default' && section.linkType !== undefined)
                 ? ''
                 : ', '
-            }`}
-            linkType={section.linkType}
-            key={index}
-          />
+                }`}
+              linkType={section.linkType}
+              key={index}
+            />
+          );
+        }
+        return (
+          <span key={index}>
+            {item || ''}
+            {index === items.length - 1 ? '' : ', '}
+          </span>
         );
+      });
+      if (metadata) {
+        return <td className={`${styles.preventoverflowmetadata}`}>{content}</td>;
       }
-      return (
-        <span key={index}>
-          {item}
-          {index === items.length - 1 ? '' : ', '}
-        </span>
-      );
-    });
-    if (metadata) {
-      return <div className={styles.preventoverflowmetadata}>{content}</div>;
+      return <td >{content}</td>;
     }
-    return <td>{content}</td>;
-  }
-  return (
-    <td>
-      {section.link ? (
-        <ColumnLink
-          link={loadText(section.link, { This: section.text })}
-          text={section.text}
-          linkType={section.linkType}
-        />
-      ) : (
-        <div className={metadata && styles.preventoverflowmetadata}>
-          {section.text}
-        </div>
-      )}
+    return (
+      <td>
+        {section.id === "Sequence" && !section.link ? (
+          section.text.map((line, index) => (
+            <div
+              key={index}
+              className={metadata ? styles.preventoverflowmetadata : undefined}
+              style={{ fontFamily: 'Courier', fontSize: '1.0rem' }}
+            >
+              {line}
+            </div>
+          ))
+        ) : typeof section.link === 'string' ? (
+          <ColumnLink
+            link={section.link}
+            text={section.text}
+            linkType={section.linkType}
+          />
+        ) : (
+          <div className={metadata ? styles.preventoverflowmetadata : undefined}>
+            {section.text}
+          </div>
+        )}
+      </td>
+    );
+
+
+  } else {
+    return <td>
+      Loading...
     </td>
-  );
+  }
 }
 
 function ColumnLink({ text, link, linkType }) {
+  if (!link) {
+    return <span>{text}</span>;
+  }
   if (linkType === 'search') {
     const searchStart = link.indexOf('=');
     link =
@@ -72,7 +209,7 @@ function ColumnLink({ text, link, linkType }) {
             <a target="_blank">
               <FontAwesomeIcon
                 icon={faSearch}
-                size="small"
+                size="sm"
                 className={styles.searchicon}
               />
             </a>

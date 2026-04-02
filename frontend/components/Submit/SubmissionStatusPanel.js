@@ -9,6 +9,7 @@ import { useEffect, useState } from 'react';
 import Loader from 'react-loader-spinner';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
+import { processUrl } from '../Admin/Registries';
 
 import { resetSubmit } from '../../redux/actions';
 import styles from '../../styles/submit.module.css';
@@ -19,8 +20,10 @@ export default function SubmissionStatusPanel() {
   const fileFailed = useSelector(state => state.submit.fileFailed);
   const submitting = useSelector(state => state.submit.submitting);
   const submissionUri = useSelector(state => state.submit.selectedCollection.uri);
-
+  const registries = JSON.parse(localStorage.getItem("registries")) || {};
   const [header, setHeader] = useState(null);
+  const [processedUri, setProcessedUri] = useState(submissionUri);
+  const token = useSelector(state => state.user.token);
   const dispatch = useDispatch();
   const router = useRouter();
 
@@ -64,6 +67,15 @@ export default function SubmissionStatusPanel() {
     }
   }, [submitting, fileFailed]);
 
+  useEffect(() => {
+    async function processAndSetUri() {
+      const result = await processUrl(submissionUri, registries);
+      setProcessedUri(result.urlRemovedForLink || result.original);
+    }
+    
+    processAndSetUri();
+  }, [submissionUri]);
+
   return (
     <div className={styles.container}>
       <div className={styles.submitpanel}>
@@ -86,7 +98,7 @@ export default function SubmissionStatusPanel() {
               className={styles.aftersubmitbutton}
               role="button"
               onClick={() => {
-                router.push(submissionUri).then(() => {
+                router.push(processedUri).then(() => {
                   dispatch(resetSubmit());
                 });
               }}

@@ -1,13 +1,12 @@
-import 'react-date-range/dist/styles.css';
-import 'react-date-range/dist/theme/default.css';
-
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import axios from 'axios';
 import getConfig from 'next/config';
-import { useEffect, useState } from 'react';
-import { DateRangePicker } from 'react-date-range';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { shortName } from '../../../namespace/namespace';
+import { addError } from '../../../redux/actions';
 import getCollections from '../../../sparql/getCollections';
 import getCreators from '../../../sparql/getCreators';
 import getPredicates from '../../../sparql/getPredicates';
@@ -17,87 +16,58 @@ import getTypes from '../../../sparql/getTypes';
 import styles from '../../../styles/advancedsearch.module.css';
 import AdditionalFilter from './AdditionalFilter';
 import SelectLoader from './SelectLoader';
-import axios from 'axios';
-import { addError } from '../../../redux/actions';
-import { useDispatch } from 'react-redux';
 const { publicRuntimeConfig } = getConfig();
 
-/* eslint sonarjs/no-identical-functions: "off" */
-
+// main options component
 export default function Options(properties) {
   const [predicates, setPredicates] = useState('loading');
   const dispatch = useDispatch();
+  const token = useSelector(state => state.user.token);
 
+  // load predicates on component mount
   useEffect(() => {
-    loadPredicates(setPredicates, dispatch);
+    loadPredicates(setPredicates, token, dispatch);
   }, []);
 
+  // map through extra filters to display them
   const filterDisplay = properties.extraFilters.map((element, index) => {
     return (
       <AdditionalFilter
         predicates={predicates}
-        key={index}
+        key={element.filter + element.value}
         index={index}
         extraFilters={properties.extraFilters}
         setExtraFilters={properties.setExtraFilters}
+        handleDelete={properties.handleDelete}
       />
     );
   });
 
   return (
     <div>
+      {/* select creator section */}
       <div className={styles.inputsection}>
-        <label>Keyword</label>
-        <input
-          type="text"
-          placeholder="ID/Name/Description"
-          className={styles.filterinput}
-          value={properties.keyword}
-          onChange={event => properties.setKeyword(event.target.value)}
-        />
-      </div>
-      <div className={styles.inputsection}>
-        <label>Object Type</label>
-        <SelectLoader
-          sparql={getTypes}
-          parseResult={result => {
-            return {
-              value: result.object.value,
-              label: shortName(result.object.value)
-            };
-          }}
-          onChange={option =>
-            properties.setObjectType(option ? option.value : '')
-          }
-        />
-      </div>
-      <div className={styles.inputsection}>
-        <label>Creator</label>
+        <div className={styles.labelsection}>
+          <span>Select Creator</span>
+        </div>
         <SelectLoader
           sparql={getCreators}
+          placeholder={shortName(properties.creator)}
           parseResult={result => {
             return { value: result.object.value, label: result.object.value };
           }}
           onChange={option => properties.setCreator(option ? option.value : '')}
         />
       </div>
+
+      {/* select part type section */}
       <div className={styles.inputsection}>
-        <label>Role</label>
-        <SelectLoader
-          sparql={getRoles}
-          parseResult={result => {
-            return {
-              value: result.object.value,
-              label: shortName(result.object.value)
-            };
-          }}
-          onChange={option => properties.setRole(option ? option.value : '')}
-        />
-      </div>
-      <div className={styles.inputsection}>
-        <label>SBOL Type</label>
+        <div className={styles.labelsection}>
+          <span>Select Part Type</span>
+        </div>
         <SelectLoader
           sparql={getSBOLTypes}
+          placeholder={shortName(properties.sbolType)}
           parseResult={result => {
             return {
               value: result.object.value,
@@ -109,10 +79,57 @@ export default function Options(properties) {
           }
         />
       </div>
+
+      {/* select part role section */}
       <div className={styles.inputsection}>
-        <label>Collections</label>
+        <div className={styles.labelsection}>
+          <span>Select Part Role</span>
+        </div>
         <SelectLoader
+          sparql={getRoles}
+          placeholder={shortName(properties.role)}
+          value={properties.role}
+          parseResult={result => {
+            return {
+              value: result.object.value,
+              label: shortName(result.object.value)
+            };
+          }}
+          onChange={option => properties.setRole(option ? option.value : '')}
+        />
+      </div>
+
+      {/* select object type section */}
+      <div className={styles.inputsection}>
+        <div className={styles.labelsection}>
+          <span>Select Object Type</span>
+        </div>
+        <SelectLoader
+          sparql={getTypes}
+          placeholder={shortName(properties.objectType)}
+          parseResult={result => {
+            return {
+              value: result.object.value,
+              label: shortName(result.object.value)
+            };
+          }}
+          onChange={option =>
+            properties.setObjectType(option ? option.value : '')
+          }
+        />
+      </div>
+
+      {/* select collections section */}
+      <div className={styles.inputsection}>
+        <div className={styles.labelsection}>
+          <span>Select Collections</span>
+        </div>
+        <SelectLoader
+          className={styles.optionselectW}
           sparql={getCollections}
+          placeholder={properties.collections.map(
+            collection => collection.label
+          )}
           isMulti={true}
           parseResult={result => {
             return !result.name
@@ -122,32 +139,16 @@ export default function Options(properties) {
           onChange={collections => properties.setCollections(collections)}
         />
       </div>
-      <div className={styles.calendarinputsection}>
-        <label>Created Between</label>
-        <DateRangePicker
-          editableDateInputs={true}
-          onChange={item => properties.setCreated([item.selection])}
-          inputRanges={[]}
-          ranges={properties.created}
-          moveRangeOnFirstSelection={false}
-        />
-      </div>
-      <div className={styles.calendarinputsection}>
-        <label>Modfied Between</label>
-        <DateRangePicker
-          editableDateInputs={true}
-          onChange={item => properties.setModified([item.selection])}
-          inputRanges={[]}
-          ranges={properties.modified}
-          moveRangeOnFirstSelection={false}
-        />
-      </div>
+
+      {/* display additional filters */}
       {filterDisplay}
       <div
         className={styles.newfilterbutton}
         role="button"
         onClick={() =>
-          properties.setExtraFilters(addFilter(properties.extraFilters))
+          properties.setExtraFilters(
+            properties.addFilter(properties.extraFilters)
+          )
         }
       >
         <div className={styles.addfiltericon}>
@@ -159,29 +160,22 @@ export default function Options(properties) {
   );
 }
 
-const addFilter = filters => {
-  return [
-    ...filters,
-    {
-      filter: undefined,
-      value: undefined
-    }
-  ];
-};
-
-const loadPredicates = async (setPredicates, dispatch) => {
-  const results = await fetchPredicates(dispatch);
+// function to load predicates
+const loadPredicates = async (setPredicates, token, dispatch) => {
+  const results = await fetchPredicates(token, dispatch);
   setPredicates(results);
 };
 
-const fetchPredicates = async dispatch => {
+// function to fetch predicates
+const fetchPredicates = async (token, dispatch) => {
   const url = `${publicRuntimeConfig.backend}/sparql?query=${encodeURIComponent(
     getPredicates
   )}`;
   try {
     const headers = {
       'Content-Type': 'application/json',
-      Accept: 'application/json'
+      Accept: 'application/json',
+      'X-authorization': token
     };
 
     const response = await axios.get(url, {
@@ -190,8 +184,8 @@ const fetchPredicates = async dispatch => {
 
     return response.status === 200 ? response.data : 'error';
   } catch (error) {
-    error.customMessage = 'Error fetching predicates';
-    error.fullUrl = `Query: ${getPredicates} \n\n\n URL: ${url}`;
+    error.customMessage = 'error fetching predicates';
+    error.fullUrl = `query: ${getPredicates} \n\n\n url: ${url}`;
     dispatch(addError(error));
   }
 };

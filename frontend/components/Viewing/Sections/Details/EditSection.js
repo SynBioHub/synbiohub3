@@ -2,8 +2,9 @@ import styles from "../../../../styles/view.module.css";
 import { faBold, faGlobeAmericas, faImage, faItalic, faUnderline } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
+import axios from "axios";
+import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
-import getConfig from "next/config";
 
 /**
  * Rendered when the user is adding an attribute or they are editing a current attribute.
@@ -44,13 +45,17 @@ export default function EditSection(properties) {
     parameters.append("uri", properties.uri);
     parameters.append("value", content);
 
-    const response = await fetch(url, {
-      method: "POST",
-      headers,
-      body: parameters
-    });
+    let response;
 
-    if (response.status !== 200) console.error(response.status);
+    try {
+      response = await axios.post(url, parameters, { headers });
+    } catch (error) {
+      if (error.response) {
+        console.error('Error:', error.message);
+      }
+    }
+
+    // if (response.status !== 200) console.error(response.status);
   }
 
   /**
@@ -290,7 +295,7 @@ const parseCitationInfo = (info) => {
  * @returns The parsed xml for the id's.
  */
 const getCitationInfo = async (ids) => {
-  const url = "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi";
+  const url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi";
 
   const parameters = new URLSearchParams();
   parameters.append("db", "pubmed");
@@ -298,12 +303,9 @@ const getCitationInfo = async (ids) => {
   parameters.append("retmode", "xml");
 
   try {
-    const response = await fetch(url, {
-      method: "POST",
-      body: parameters
-    });
+    const response = await axios.post(url, parameters);
 
-    const citationXML = await response.text();
+    const citationXML = await response.data;
     if (response.status === 200) return parseCitationInfo(citationXML);
     else return undefined;
   } catch(e) {

@@ -9,14 +9,14 @@ on:
 
 jobs:
   build-and-push:
-    name: Build frontent image and push to Docker Hub
+    name: Build frontend image and push to Docker Hub
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
       name: Checkout source code
     - name: Build the Docker image for the frontend
       run: |
-        docker build --build-arg TEST_VAR=production ./frontend --tag synbiohub/sbh3frontend:snapshot
+        docker build ./frontend --tag synbiohub/sbh3frontend:snapshot
     - uses: azure/docker-login@v1
       with:
           username: ${{ secrets.DOCKER_USERNAME }}

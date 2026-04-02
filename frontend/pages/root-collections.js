@@ -1,4 +1,3 @@
-import getConfig from 'next/config';
 import { useEffect, useState } from 'react';
 
 import NavbarSearch from '../components/Search/NavbarSearch/NavbarSearch';
@@ -7,29 +6,95 @@ import ResultTable from '../components/Search/StandardSearch/ResultTable/ResultT
 import TopLevel from '../components/TopLevel';
 import styles from '../styles/standardsearch.module.css';
 import { addError } from '../redux/actions';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { useRouter } from 'next/router';
+import axios from 'axios';
+import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
 
 /**
  * This page renders the default search for the /search url
  */
-export default function RootCollections({ data, error }) {
+export default function RootCollections() {
   const dispatch = useDispatch();
-  if (error) {
-    dispatch(addError(error));
-  }
+  const theme = JSON.parse(localStorage.getItem('theme')) || {};
+  const [data, setData] = useState(null);
+  const [error, setError] = useState(null);
   const [query, setQuery] = useState('');
-  const [filteredData, setFilteredData] = useState(data);
+  const [filteredData, setFilteredData] = useState([]);
+  const token = useSelector(state => state.user.token);
+
+  const loggedIn = useSelector(state => state.user.loggedIn);
+
+  const router = useRouter();
+  useEffect(() => {
+    if (theme.requireLogin && !loggedIn) {
+      router.push('/login'); // Redirect to the login page
+    }
+  }, [theme.requireLogin, router]);
 
   useEffect(() => {
-    const newFilteredData = data.filter(result => {
-      for (const key of Object.keys(result))
-        if (result[key].toString().toLowerCase().includes(query.toLowerCase()))
-          return true;
-      return false;
-    });
-    setFilteredData(newFilteredData);
+    if (theme.requireLogin && !loggedIn) {
+      return; // Skip fetching data if login is required and the user is not logged in
+    }
+    const fetchData = async () => {
+      try {
+        const url = `${publicRuntimeConfig.backend}/browse`;
+        const headers = {
+          Accept: 'text/plain; charset=UTF-8',
+          'X-authorization': token
+        };
+
+        const response = await axios.get(url, { headers });
+
+        if (!response || !response.data) {
+          throw new Error("Failed to retrieve data from server");
+        }
+
+        setData(response.data);
+        setFilteredData(response.data); // Set initial filtered data
+      } catch (err) {
+        console.error('Error:', err.message);
+        setError({
+          customMessage: 'Request and/or processing failed for GET /rootCollections',
+          fullUrl: `${publicRuntimeConfig.backend}/rootCollections`,
+          message: err.message,
+          name: 'Client side error',
+          stack: err.stack
+        });
+        dispatch(addError(err)); // Dispatch the error
+      }
+    };
+
+    fetchData();
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (Array.isArray(data) && data.length > 0) {
+      const newFilteredData = data.filter(result => {
+        for (const key of Object.keys(result)) {
+          if (result[key] !== null && result[key] !== undefined && query !== undefined && result[key].toString().toLowerCase().includes(query.toLowerCase()))
+            return true;
+        }
+        return false;
+      });
+      setFilteredData(newFilteredData);
+    } else {
+      setFilteredData([]); // Ensure filteredData is always an array
+    }
   }, [data, query]);
+
+
+
+  if (error) {
+    // Render error message or handle error as needed
+    return <div>Error: {error.message}</div>;
+  }
+
+  if (!data) {
+    // Render loading state
+    return <div>Loading...</div>;
+  }
 
   return (
     <TopLevel
@@ -47,7 +112,7 @@ export default function RootCollections({ data, error }) {
       publicPage={true}
     >
       <div className={styles.container}>
-        <SearchHeader selected="Root Collections" data={data} />
+        <SearchHeader selected="Browse Collections" data={data} />
         <div className={styles.standardcontainer}>
           <ResultTable
             count={filteredData.length}
@@ -60,36 +125,3 @@ export default function RootCollections({ data, error }) {
   );
 }
 
-// eslint-disable-next-line unicorn/prevent-abbreviations
-export async function getServerSideProps() {
-  // Fetch rootCollections from sbh
-  try {
-    const url = `${publicRuntimeConfig.backendSS}/rootCollections`;
-    const headers = {
-      Accept: 'text/plain; charset=UTF-8'
-    };
-
-    const response = await fetch(url, {
-      method: 'GET',
-      headers
-    });
-
-    const data = await response.json();
-
-    return { props: { data } };
-  } catch (error) {
-    return {
-      props: {
-        error: {
-          customMessage:
-            'Request and/or processing failed for GET /rootCollections',
-          fullUrl: `${publicRuntimeConfig.backendSS}/rootCollections`,
-          message: error.message,
-          name: 'Server side error',
-          stack: error.stack
-        },
-        data: []
-      }
-    };
-  }
-}

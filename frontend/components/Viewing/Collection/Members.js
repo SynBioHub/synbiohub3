@@ -19,7 +19,11 @@ import loadTemplate from '../../../sparql/tools/loadTemplate';
 import { shortName } from '../../../namespace/namespace';
 import lookupRole from '../../../namespace/lookupRole';
 import Link from 'next/link';
-import { addError } from '../../../redux/actions';
+import { addError, logoutUser } from '../../../redux/actions';
+import { processUrl } from '../../Admin/Registries';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrash, faUnlink } from '@fortawesome/free-solid-svg-icons';
+import { getAfterThirdSlash } from '../ViewHeader';
 
 /* eslint sonarjs/cognitive-complexity: "off" */
 
@@ -37,6 +41,7 @@ const sortOptions = [
 
 export default function Members(properties) {
   const token = useSelector(state => state.user.token);
+  const privateGraph = useSelector(state => state.user.graphUri);
   const [search, setSearch] = useState('');
   const [offset, setOffset] = useState(0);
   const [sort, setSort] = useState(sortMethods.displayId);
@@ -44,6 +49,16 @@ export default function Members(properties) {
   const [customBounds, setCustomBounds] = useState([0, 10000]);
   const [typeFilter, setTypeFilter] = useState('Show Only Root Objects');
   const dispatch = useDispatch();
+  const [processedUri, setProcessedUri] = useState(publicRuntimeConfig.backend);
+  const theme = JSON.parse(localStorage.getItem('theme')) || {};
+  const registries = JSON.parse(localStorage.getItem("registries")) || {};
+  const persistRoot = JSON.parse(localStorage.getItem("persist:root"));
+  const rootUser = JSON.parse(persistRoot.username);
+  const parts = properties.uri.split('/');
+  const urlUsername = parts[4];
+  const isOwner = urlUsername === rootUser;
+  const currentURL = window.location.href;
+  const isPublic = currentURL.includes('/public/');
 
   let preparedSearch =
     search !== ''
@@ -66,8 +81,8 @@ export default function Members(properties) {
   }
 
   const parameters = {
-    graphs: '',
-    graphPrefix: 'https://synbiohub.org/',
+    from: '',
+    graphPrefix: `${theme.uriPrefix}`, // TODO: Maybe get this from somewhere? 
     collection: properties.uri,
     sort: sort,
     search: preparedSearch,
@@ -75,23 +90,54 @@ export default function Members(properties) {
     limit: ' LIMIT 10000 '
   };
 
-  const searchQuery = preparedSearch || typeFilter !== 'Show Only Root Objects';
+  if (token && !isPublic && !properties.uri.endsWith("/share")) {
+    parameters.from = "FROM <" + privateGraph + ">";
+  } else if (properties.uri.endsWith("/share")) {
+    const parts = properties.uri.split('/');
+    const fromPart = parts.slice(0, 5).join('/');
+    parameters.from = "FROM <" + fromPart + ">";
+    const collectionPart = parts.slice(0, 8).join('/');
+    parameters.collection = collectionPart;
+  }
 
-  let query = searchQuery ? getCollectionMembersSearch : getCollectionMembers;
+  const searchQuery = typeFilter !== 'Show Only Root Objects';
 
-  const { members, mutate } = useMembers(query, parameters, token, dispatch);
-  const { count: totalMemberCount } = useCount(
-    CountMembersTotal,
-    { ...parameters, search: '' },
-    token,
-    dispatch
-  );
-  const { count: currentMemberCount } = useCount(
-    searchQuery ? CountMembersTotal : CountMembers,
-    parameters,
-    token,
-    dispatch
-  );
+  let query = getCollectionMembers;
+
+  if (typeFilter === 'Show All Objects') {
+    query = getCollectionMembersSearch;
+  }
+
+  const { members, mutate } = token
+    ? useMembers(query, parameters, dispatch, token)
+    : useMembers(query, parameters, dispatch);
+
+  const { count: totalMemberCount } = isOwner
+    ? useCount(
+      CountMembersTotal,
+      { ...parameters, search: '' },
+      dispatch,
+      token ? token : undefined
+    )
+    : useCount(
+      CountMembersTotal,
+      { ...parameters, search: '' },
+      dispatch,
+      token ? token : undefined);
+
+  const { count: currentMemberCount } = isOwner
+    ? useCount(
+      searchQuery ? CountMembersTotal : CountMembers,
+      parameters,
+      dispatch,
+      token ? token : undefined
+    )
+    : useCount(
+      searchQuery ? CountMembersTotal : CountMembers,
+      parameters,
+      dispatch,
+      token ? token : undefined
+    );
 
   useEffect(() => {
     if (properties.refreshMembers) {
@@ -100,11 +146,15 @@ export default function Members(properties) {
     }
   }, [properties.refreshMembers, mutate]);
 
+  const publicPrefix =  theme.uriPrefix + 'public/';
+
+
   const { filters } = useFilters(
     getTypesRoles,
     { uri: properties.uri },
-    token,
-    dispatch
+    dispatch,
+    token ? token : undefined,
+    !properties.uri.includes(publicPrefix) ? privateGraph : undefined
   );
 
   const outOfBoundsHandle = offset => {
@@ -113,6 +163,16 @@ export default function Members(properties) {
     setOffset(newBounds[0]);
   };
 
+  useEffect(() => {
+    let isMounted = true;
+    async function processUri() {
+      if (isMounted) {
+        setProcessedUri(theme.uriPrefix);
+      }
+    }
+    processUri();
+    return () => { isMounted = false };
+  }, [dispatch]);
   return (
     <React.Fragment>
       <FilterHeader filters={filters} setTypeFilter={setTypeFilter} />
@@ -131,6 +191,10 @@ export default function Members(properties) {
         setSort={setSort}
         defaultSortOption={defaultSortOption}
         setDefaultSortOption={setDefaultSortOption}
+        uri={properties.uri}
+        processedUri={processedUri}
+        mutate={mutate}
+        registries={registries}
       />
     </React.Fragment>
   );
@@ -212,6 +276,28 @@ function FilterHeader(properties) {
 }
 
 function MemberTable(properties) {
+  const [processedMembers, setProcessedMembers] = useState([]);
+  const isPublicCollection = properties.uri.includes("/public/");
+  const token = useSelector(state => state.user.token);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    async function processMembers() {
+      if (properties.members) {
+        const updatedMembers = await Promise.all(properties.members.map(async member => {
+          const processed = await processUrl(member.uri, properties.registries);
+          return {
+            ...member,
+            uri: processed.urlRemovedForLink
+          };
+        }));
+        setProcessedMembers(updatedMembers);
+      }
+    }
+
+    processMembers();
+  }, [properties.members]);
+
   let count = (
     <div className={styles.loadinginline}>
       <MiniLoading height={10} />
@@ -225,9 +311,15 @@ function MemberTable(properties) {
       Number(properties.totalMembers).toLocaleString() +
       ')';
   }
+
+  const headers = ['Name', 'Identifier', 'Type', 'Description'];
+  if (!isPublicCollection) {
+    headers.push('Remove');
+  }
+
   return (
     <Table
-      data={properties.members}
+      data={processedMembers}
       loading={!properties.members}
       title="Members"
       count={count}
@@ -237,7 +329,8 @@ function MemberTable(properties) {
       customSearch={properties.customSearch}
       hideFilter={true}
       searchable={[]}
-      headers={['Name', 'Identifier', 'Type', 'Description']}
+      headers={headers}
+      customIcon={properties.customIcon}
       sortOptions={sortOptions}
       sortMethods={sortMethods}
       defaultSortOption={properties.defaultSortOption}
@@ -247,27 +340,102 @@ function MemberTable(properties) {
       }}
       dataRowDisplay={member => {
         var textArea = document.createElement('textarea');
-        textArea.innerHTML = member.name;
+        if (member.name.length > 0) {
+          textArea.innerHTML = member.name;
+        } else {
+          textArea.innerHTML = member.displayId;
+        }
+
+        const objectUriParts = getAfterThirdSlash(properties.uri);
+        const objectUri = `${publicRuntimeConfig.backend}/${objectUriParts}`;
+        const parts = properties.uri.split('/');
+
+        const icon = compareUri(member.uri, `/${objectUriParts}`);
+
+        const removeTrailingSlash = (url) => {
+          return url.endsWith('/') ? url.slice(0, -1) : url;
+        };
+
+        const handleIconClick = (member) => {
+          if (icon && icon === faTrash) {
+            handleDelete(member);
+          } else if (icon && icon === faUnlink) {
+            const processedUriPrefix = removeTrailingSlash(properties.processedUri);
+            handleUnlink(member, processedUriPrefix);  // Use processedUri from props
+          }
+        };
+
+        const handleDelete = async (member) => {
+          if (member.uri && window.confirm("Would you like to remove this item from the collection?")) {
+            try {
+              await axios.get(`${publicRuntimeConfig.backend}${member.uri}/remove`, {
+                headers: {
+                  "Accept": "text/plain; charset=UTF-8",
+                  "X-authorization": token
+                }
+              });
+              // After successful deletion, update the state
+              properties.mutate(); // This will re-fetch the members
+            } catch (error) {
+              console.error('Error removing item:', error);
+              // Handle error appropriately
+            }
+          }
+        };
+
+        const handleUnlink = async (member, processedUri) => {
+          if (member.uri && window.confirm("Would you like to unlink this item from the collection?")) {
+            try {
+              await axios.post(`${objectUri}/removeMembership`, {
+                "member": `${processedUri}${member.uri}`
+              }, {
+                headers: {
+                  "Accept": "text/plain; charset=UTF-8",
+                  "X-authorization": token
+                }
+              });
+              // After successful unlinking, update the state
+              properties.mutate(); // This will re-fetch the members
+            } catch (error) {
+              console.error('Error unlinking item:', error);
+              // Handle error appropriately
+            }
+          }
+        };
+
+        const isShareLink = properties.uri.endsWith('/share');
+        const customSuffix = isShareLink ? `/${parts.slice(-2).join('/')}` : '';
 
         return (
           <tr key={member.displayId + member.description}>
             <td>
-              <Link href={member.uri.replace('https://synbiohub.org', '')}>
+              <Link href={`${member.uri}${customSuffix}`}>
                 <a className={styles.membername}>
                   <code>{textArea.value}</code>
                 </a>
               </Link>
             </td>
             <td>
-              <Link href={member.uri.replace('https://synbiohub.org', '')}>
+              <Link href={`${member.uri}${customSuffix}`}>
                 <a className={styles.memberid}>{member.displayId}</a>
               </Link>
             </td>
             <td>{getType(member)}</td>
             <td>{member.description}</td>
+            {!isPublicCollection && icon === faTrash && (
+              <td onClick={() => handleIconClick(member)} className={styles.modalicon} title="Delete Member">
+                <FontAwesomeIcon icon={faTrash} />
+              </td>
+            )}
+            {!isPublicCollection && icon === faUnlink && (
+              <td onClick={() => handleIconClick(member)} className={styles.modalicon} title="Remove member from collection">
+                <FontAwesomeIcon icon={faUnlink} />
+              </td>
+            )}
           </tr>
         );
       }}
+
     />
   );
 }
@@ -282,10 +450,30 @@ function getType(member) {
   if (member.role) {
     memberType = lookupRole(member.role).description.name;
   }
-  if (memberType === 'ComponentDefinition') memberType = 'Component';
-  else if (memberType === 'ModuleDefinition') memberType = 'Module';
+  // if (memberType === 'ComponentDefinition') memberType = 'Component';
+  // else if (memberType === 'ModuleDefinition') memberType = 'Module';
 
   return memberType;
+}
+
+function compareUri(memberUri, baseUri) {
+  const userUriPrefix = '/user/';
+  const publicUriPrefix = '/public/';
+
+  if (memberUri && memberUri.startsWith(userUriPrefix)) {
+    // Check if member.uri matches properties.uri for the first 3 slashes
+    const matchUri = baseUri.split('/').slice(0, 4).join('/');
+    if (memberUri.startsWith(matchUri)) {
+      return faTrash;
+    }
+  } else if (memberUri && memberUri.startsWith(publicUriPrefix)) {
+    // Check if member.uri matches properties.uri for the first 2 slashes
+    const matchUri = baseUri.split('/').slice(0, 3).join('/');
+    if (memberUri.startsWith(matchUri)) {
+      return faTrash;
+    }
+  }
+  return faUnlink;
 }
 
 const createUrl = (query, options) => {
@@ -295,36 +483,106 @@ const createUrl = (query, options) => {
   )}`;
 };
 
-const useCount = (query, options, token, dispatch) => {
+const useCount = (query, options, dispatch, token=null) => {
   const url = createUrl(query, options, token);
-  const { data, error } = useSWR([url, token, dispatch], fetcher);
+  const currentURL = window.location.href;
+  let finalUrl = url;
 
-  let processedData = data ? processResults(data)[0].count : undefined;
+  if (currentURL.endsWith('/share')) {
+    const currentURLObj = new URL(currentURL);
+    const urlObj = new URL(url);
+
+    // Replace base (protocol + host + port) of `url` with that of current page
+    finalUrl = `${publicRuntimeConfig.backend}${currentURLObj.pathname}${urlObj.pathname}${urlObj.search}`;
+  }
+  let data, error;
+
+    ({ data, error } = useSWR([finalUrl, token, dispatch], fetcher));
+
+  const [processedData, setProcessedData] = useState(undefined);
+  
+  useEffect(() => {
+    if (data) {
+      processResults(data).then(result => {
+        setProcessedData(result[0]?.count);
+      });
+    } else {
+      setProcessedData(undefined);
+    }
+  }, [data]);
+
   return {
     count: processedData
   };
 };
 
-const useMembers = (query, options, token, dispatch) => {
+const useMembers = (query, options, dispatch, token=null) => {
   const url = createUrl(query, options);
-  const { data, error, mutate } = useSWR([url, token, dispatch], fetcher);
+  const currentURL = window.location.href;
+  let finalUrl = url;
 
-  let processedData = data ? processResults(data) : undefined;
+  if (currentURL.endsWith('/share')) {
+    const currentURLObj = new URL(currentURL);
+    const urlObj = new URL(url);
 
+    // Replace base (protocol + host + port) of `url` with that of current page
+    finalUrl = `${publicRuntimeConfig.backend}${currentURLObj.pathname}${urlObj.pathname}${urlObj.search}`;
+  }
+  let data, error, mutate;
+
+    ({ data, error, mutate } = useSWR([finalUrl, token, dispatch], fetcher));
+  
+  const [processedData, setProcessedData] = useState(undefined);
+  
+  useEffect(() => {
+    if (data) {
+      processResults(data).then(result => {
+        setProcessedData(result);
+      });
+    } else {
+      setProcessedData(undefined);
+    }
+  }, [data]);
+  
   return {
     members: processedData,
     mutate
   };
 };
 
-const useFilters = (query, options, token, dispatch) => {
-  const url = createUrl(query, options);
-  const { data, error } = useSWR([url, token, dispatch], fetcher);
+const useFilters = (query, options, dispatch, token=null, privateGraph=null) => {
+  let url = createUrl(query, options);
+  if (privateGraph) {
+    url += `&default-graph-uri=${privateGraph}`;
+  }
+  const currentURL = window.location.href;
+  let finalUrl = url;
+  if (currentURL.endsWith('/share')) {
+    const currentURLObj = new URL(currentURL);
+    const urlObj = new URL(url);
 
-  let processedData = data ? processResults(data) : undefined;
+    // Replace base (protocol + host + port) of `url` with that of current page
+    finalUrl = `${publicRuntimeConfig.backend}${currentURLObj.pathname}${urlObj.pathname}${urlObj.search}`;
+  }
+  let data, error, mutate;
+
+    ({ data, error, mutate } = useSWR([finalUrl, token, dispatch], fetcher));
+
+  const [processedData, setProcessedData] = useState(undefined);
+  
+  useEffect(() => {
+    if (data) {
+      processResults(data).then(result => {
+        setProcessedData(result);
+      });
+    } else {
+      setProcessedData(undefined);
+    }
+  }, [data]);
 
   return {
-    filters: processedData
+    filters: processedData,
+    mutate
   };
 };
 
@@ -337,24 +595,82 @@ const fetcher = (url, token, dispatch) =>
         'X-authorization': token
       }
     })
-    .then(response => response.data)
+    .then(response => {
+      return response.data;
+    })
     .catch(error => {
       error.customMessage =
         'Request failed while getting collection members info';
       error.fullUrl = url;
-      dispatch(addError(error));
+      console.log(error.response.status);
+      // Check if the error is 401 Unauthorized or 400 Bad Request
+      if (error.response && (error.response.status === 401 || error.response.status === 400)) {
+        // Token is invalid (either missing or expired/invalidated by backend restart)
+        // Always clear the token and log out the user
+        console.log('Token invalid or expired, logging out user');
+        dispatch(logoutUser());
+        window.location.href = '/login';
+      } else {
+        // For other errors, just dispatch the error
+        dispatch(addError(error));
+      }
     });
 
-const processResults = results => {
+const processResults = async (results) => {
+  const registries = JSON.parse(localStorage.getItem("registries")) || {};
+  const localUriPrefix = (JSON.parse(localStorage.getItem('theme')) || {}).uriPrefix || '';
   const headers = results.head.vars;
-  return results.results.bindings.map(result => {
+  return Promise.all(results.results.bindings.map(async (result) => {
     const resultObject = {};
+    const currentUri = result.uri ? result.uri.value : '';
+    const registriesArray = Array.isArray(registries) 
+      ? registries 
+      : Object.values(registries).filter(r => r && typeof r === 'object');
+    let isExternalRegistry = currentUri && registriesArray.some(registry => 
+      registry.uri && currentUri.startsWith(registry.uri)
+    );
+    if (currentUri && currentUri.startsWith(localUriPrefix)) {
+      isExternalRegistry = false;
+    }
+    let externalMetadata = null;
+    if (isExternalRegistry) {
+      externalMetadata = await fetchExternalMetadata(currentUri);
+    }
     for (const header of headers) {
       if (result[header]) resultObject[header] = result[header].value;
       else resultObject[header] = '';
     }
+    // Merge external metadata if it exists
+    if (externalMetadata && Array.isArray(externalMetadata) && externalMetadata.length > 0) {
+      const metadataObj = externalMetadata[0];
+      for (const header of headers) {
+        if (metadataObj[header] !== null && metadataObj[header] !== undefined) {
+          resultObject[header] = metadataObj[header];
+        }
+      }
+    }
+    // Replace name with displayId if name is blank, empty, or just whitespace
+    if (!resultObject.name || resultObject.name.trim() === '') {
+      resultObject.name = resultObject.displayId || '';
+    }
     return resultObject;
-  });
+  }));
+};
+
+const fetchExternalMetadata = async (uri) => {
+  const url = `${uri}/metadata`;
+  try {
+    const response = await axios.get(url, {
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json'
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching metadata for ${uri}:`, error);
+    return null;
+  }
 };
 
 const getNewBounds = (offset, memberCount) => {

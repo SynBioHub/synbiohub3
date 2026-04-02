@@ -1,15 +1,17 @@
 import { faDatabase } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import getConfig from 'next/config';
+
 import dynamic from 'next/dynamic';
 import { useState } from 'react';
 import Select from 'react-select';
-const { publicRuntimeConfig } = getConfig();
+import feConfig from "../config.json"
 
 import Table from '../components/Reusable/Table/Table';
 import SearchHeader from '../components/Search/SearchHeader/SearchHeader';
 import TopLevel from '../components/TopLevel';
 import styles from '../styles/sparql.module.css';
+
+import axios from 'axios';
 
 const CodeMirror = dynamic(
   () => {
@@ -114,35 +116,43 @@ const submitQuery = async (
 ) => {
   setError();
   setLoading(true);
-  const url = `${publicRuntimeConfig.backend}/sparql?query=${encodeURIComponent(
+  const url = `${feConfig.backend}/sparql?query=${encodeURIComponent(
     query
   )}`;
 
   const headers = {
-    'Content-Type': 'application/json',
+    // 'Content-Type': 'application/json',
     Accept: 'application/json'
   };
 
-  const response = await fetch(url, {
-    method: 'GET',
-    headers
-  });
+  let response;
 
-  if (response.status === 200) {
+  try {
+    response = await axios.get(url, { headers });
+  } catch (error) {
+    if (error.response) {
+      console.error('Error:', error.message);
+    }
+  }
+
+  if (response && response.status === 200) {
     setError();
-    const results = await response.json();
+    const results = response.data;
     setResults(processResults(results));
     setHeaders(results.head.vars);
-  } else {
-    const message = await response.text();
+} else {
+    const message = response ? response.data : 'Unknown error';
     setError(message);
     setResults();
-  }
+}
 
   setLoading(false);
 };
 
 const processResults = results => {
+  // if (!results.results || !results.results.bindings) {
+  //   return [];
+  // }
   const headers = results.head.vars;
   return results.results.bindings.map(result => {
     const resultObject = {};
@@ -168,5 +178,9 @@ PREFIX sbol: <http://sbols.org/v2#>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX purl: <http://purl.obolibrary.org/obo/>
+PREFIX biopax: <http://www.biopax.org/release/biopax-level3.owl#>
+PREFIX so: <http://identifiers.org/so/>
+PREFIX bench: <http://wiki.synbiohub.org/wiki/Terms/benchling#>
+PREFIX genbank: <http://www.ncbi.nlm.nih.gov/genbank#>
 
 `;

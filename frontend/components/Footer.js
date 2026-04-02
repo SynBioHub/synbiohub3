@@ -2,10 +2,20 @@ import Image from 'next/image';
 
 import styles from '../styles/footer.module.css';
 
+import { useState, useEffect } from 'react';
+
 /**
  * This component renders the footer in sbh
  */
 export default function Footer() {
+  const [commitHash, setCommitHash] = useState('');
+
+  useEffect(() => {
+    fetch('/commitHash.txt')
+      .then(response => response.text())
+      .then(hash => setCommitHash(hash.slice(0, 8)));
+  }, []);
+
   return (
     <footer className={styles.footer}>
       <div className={styles.copyrightcontainer}>
@@ -39,7 +49,7 @@ export default function Footer() {
         </div>
       </div>
       <div className={styles.sbhinfo}>
-        <a href="https://wiki.synbiohub.org/" target="_blank" rel="noreferrer">
+        <a href="https://wiki2.synbiohub.org/" target="_blank" rel="noreferrer">
           Docs
         </a>
         <a
@@ -49,13 +59,24 @@ export default function Footer() {
         >
           API
         </a>
-        <a
-          href="https://github.com/SynBioHub/synbiohub3"
-          target="_blank"
-          rel="noreferrer"
-        >
-          Github Repo
-        </a>
+        <div className={styles.inlineLinks}>
+          <a
+            href={`https://github.com/SynBioHub/synbiohub3`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            Github Repo
+          </a>
+          {commitHash && (
+            <a
+              href={`https://github.com/SynBioHub/synbiohub3/commit/${commitHash}`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              &nbsp;({commitHash})
+            </a>
+          )}
+        </div>
         <a
           href="https://github.com/SynBioHub/synbiohub3/issues"
           target="_blank"

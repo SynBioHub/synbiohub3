@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import getConfig from 'next/config';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
+import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
 
 import styles from '../../styles/searchheader.module.css';

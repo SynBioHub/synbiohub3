@@ -1,8 +1,9 @@
 import axios from 'axios';
-import getConfig from 'next/config';
+
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
 
 import Loading from '../components/Reusable/Loading';
@@ -11,6 +12,8 @@ import Shell from '../components/Viewing/Shell';
 import getMetadata from '../sparql/getMetadata';
 import getQueryResponse from '../sparql/tools/getQueryResponse';
 import { addError } from '../redux/actions';
+import LinkedSearch from '../components/Search/StandardSearch/LinkedSearch';
+
 
 export default function View({ data, error }) {
   const dispatch = useDispatch();
@@ -22,36 +25,140 @@ export default function View({ data, error }) {
   const token = useSelector(state => state.user.token);
   const url = view ? view.join('/') : '';
   const [metadata, setMetadata] = useState();
-
-  const uri = `https://synbiohub.org/${url}`;
+  const theme = JSON.parse(localStorage.getItem('theme')) || {};
+  const [urlExists, setUrlExists] = useState(true); // New state for URL existence
+  const backenduri = `${publicRuntimeConfig.backend}/${url}`;
+  const currentURL = window.location.href;
+  const parts = currentURL.split('/');
+  const [isOwner, setIsOwner] = useState(false);
+  const isPublic = typeof window !== 'undefined' && window.location.href.includes('/public/');
 
   useEffect(() => {
-    if (!metadata)
-      getQueryResponse(dispatch, getMetadata, { uri: uri }, token).then(
-        metadata => setMetadata(metadata)
-      );
-  }, [metadata, token]);
+    const currentURL = window.location.href;
+    const urlUsername = parts[4]; // adjust as needed
+    const persistRoot = JSON.parse(localStorage.getItem("persist:root") || '{}');
+    const rootUser = JSON.parse(persistRoot.username || '""');
 
-  // validate part
-  if (!url || !metadata)
+    if (currentURL.endsWith('/share') || currentURL.includes('/public/') || urlUsername === rootUser) {
+      setIsOwner(true);
+    }
+  }, []);
+
+
+  if (url.endsWith('/twins')) {
+    const searchUrl = `${publicRuntimeConfig.backend}/${url}`;
+    return (
+      <LinkedSearch
+        url={searchUrl}
+        uri={url}
+      />
+    )
+  }
+  if (url.endsWith('/uses')) {
+    const searchUrl = `${publicRuntimeConfig.backend}/${url}`;
+    return (
+      <LinkedSearch
+        url={searchUrl}
+        uri={url}
+      />
+    )
+  }
+  if (url.endsWith('/similar')) {
+    const searchUrl = `${publicRuntimeConfig.backend}/${url}`;
+    return (
+      <LinkedSearch
+        url={searchUrl}
+        uri={url}
+      />
+    )
+  }
+
+  const centerStyle = {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: '100vh', // This makes sure it takes the full viewport height
+    marginTop: '-10vh',
+  };
+
+  let uri;
+  // let uri = `https://dan.org/${url}`;
+  if (theme) {
+    uri = `${theme.uriPrefix}${url}`;
+  }
+
+
+  useEffect(() => {
+    // Check if URL exists
+    axios.get(backenduri)
+      .then(response => {
+        // URL exists
+        setUrlExists(true);
+      })
+      .then(response => {
+        if (!metadata && uri) {
+          const parts = uri.split('/');
+          // Find the last index that looks like a version number (contains digits)
+          let lastIndex = -1;
+          for (let i = parts.length - 1; i >= 0; i--) {
+            if (parts[i] && /^\d/.test(parts[i])) { // Starts with a digit
+              lastIndex = i;
+              break;
+            }
+          }
+          const firstHalf = lastIndex >= 0 ? parts.slice(0, lastIndex + 1).join('/') : uri;
+          getQueryResponse(dispatch, getMetadata, { uri: firstHalf }, token).then(
+            metadata => setMetadata(metadata)
+          );
+        }
+      })
+      .catch(error => {
+        console.error("Caught Error", error);
+        // URL does not exist
+        setUrlExists(false);
+      });
+  }, [uri, metadata, token]);
+
+  // Render based on URL existence
+  if (!url || !urlExists || !isOwner) {
+    return (
+      <TopLevel publicPage={true}>
+        <div style={centerStyle}>
+          { /* Logo Here */}
+          <img src="images/widevibe.gif" alt="Logo" style={{ marginBottom: '20px' }} />
+
+          { /* Page Not Found Message */}
+          <div>
+            <h1>Page Not Found</h1>
+            <p>The requested URL {url && <code>{`/${url}`}</code>} was not found on this server.</p>
+          </div>
+        </div>
+      </TopLevel>
+    );
+  } else if (!metadata) {
     return (
       <TopLevel publicPage={true}>
         <Loading />
       </TopLevel>
     );
-  else if (metadata.length === 0)
+  } else if (metadata.length === 0) {
     return (
       <TopLevel publicPage={true}>
-        <div>Page not found</div>
+        <div style={centerStyle}>
+          <h1>Page Not Found</h1>
+          <p>The requested URL {url && <code>{`/${url}`}</code>} was not found on this server.</p>
+        </div>
       </TopLevel>
     );
+  }
 
   return (
     <TopLevel publicPage={true}>
       <Shell
         plugins={data}
         metadata={metadata[0]}
-        type={getType(metadata[0].type)}
+        type={getType(metadata[0].types)}
         uri={uri}
       />
     </TopLevel>
@@ -67,7 +174,7 @@ export async function getServerSideProps() {
       {
         headers: {
           'Content-Type': 'application/json',
-          Accept: 'text/plain'
+          Accept: 'application/json'
         }
       }
     );
@@ -93,5 +200,9 @@ export async function getServerSideProps() {
 }
 
 const getType = type => {
-  return type.replace('http://sbols.org/v2#', '');
+  if (type) {
+    return type.replace('http://sbols.org/v2#', '');
+  }
+  
+  return type;
 };
