@@ -1,5 +1,9 @@
 import argparse, sys
 
+# URI prefix sent in POST /setup (first_time_setup.py). Also passed to the SBOL
+# validator for GFF/FASTA download equality checks.
+SETUP_URI_PREFIX = "https://synbiohub.org/"
+
 def test_print(string):
     sys.stdout.write("[synbiohub test] ")
     sys.stdout.write(string)

@@ -434,24 +434,104 @@ public class SearchService {
         return restTemplate.getForObject(url, String.class, params);
     }
 
+    /**
+     * CONSTRUCT against the configured public {@code defaultGraph} only.
+     *
+     * @see #SPARQLRDFXMLQuery(String, String)
+     */
     public byte[] SPARQLRDFXMLQuery(String query) throws IOException {
+        return SPARQLRDFXMLQuery(query, null);
+    }
+
+    /**
+     * CONSTRUCT against Virtuoso.
+     * <ul>
+     *   <li><b>Public</b> resource URI: {@code default-graph-uri} is the configured public {@code defaultGraph}
+     *       (unchanged from legacy behavior).</li>
+     *   <li><b>User/private</b> resource URI: {@code default-graph-uri} is <em>omitted</em> from the HTTP URL; the
+     *       query must include {@code FROM} for both public and user graphs (see {@link #fromClauseForPrivateFetch}).</li>
+     * </ul>
+     *
+     * @param resourceUriForDefaultGraph object identity URI in the SPARQL template; null is treated as public
+     */
+    public byte[] SPARQLRDFXMLQuery(String query, String resourceUriForDefaultGraph) throws IOException {
         RestTemplate restTemplate = new RestTemplate();
-        // URL must contain placeholders — RestTemplate expands `params` into the query string (same as SPARQLQuery).
         HashMap<String, String> params = new HashMap<>();
-        params.put("default-graph-uri", ConfigUtil.get("defaultGraph").asText());
         params.put("query", query);
         params.put("format", "application/rdf+xml");
 
-        String url = ConfigUtil.get("sparqlEndpoint").asText()
-                + "?default-graph-uri={default-graph-uri}&query={query}&format={format}";
+        String user = usernameFromUserResourceUri(resourceUriForDefaultGraph);
+        boolean privateResource = user != null && !user.isBlank();
+
+        String url;
+        if (privateResource) {
+            url = ConfigUtil.get("sparqlEndpoint").asText() + "?query={query}&format={format}";
+        } else {
+            params.put("default-graph-uri", ConfigUtil.get("defaultGraph").asText());
+            url = ConfigUtil.get("sparqlEndpoint").asText()
+                    + "?default-graph-uri={default-graph-uri}&query={query}&format={format}";
+        }
 
         HttpHeaders headers = new HttpHeaders();
-        // Virtuoso often negotiates Turtle only; */* lets format= control CONSTRUCT serialization.
         headers.add("Accept", "*/*");
         HttpEntity<?> entity = new HttpEntity<>(headers);
 
         ResponseEntity<byte[]> response = restTemplate.exchange(url, HttpMethod.GET, entity, byte[].class, params);
         return response.getBody() != null ? response.getBody() : new byte[0];
+    }
+
+    /**
+     * SPARQL {@code FROM} clause fragment for {@code FetchSBOLNonRecursive.sparql}:
+     * empty for public URIs (use {@code default-graph-uri} on the request); for user-scoped URIs returns
+     * {@code FROM <publicDefaultGraph> FROM <userNamedGraph>} so CONSTRUCT reads both graphs without
+     * {@code default-graph-uri}.
+     */
+    public String fromClauseForPrivateFetch(String resourceUri) throws IOException {
+        String user = usernameFromUserResourceUri(resourceUri);
+        if (user == null || user.isBlank()) {
+            return "";
+        }
+        String pub = ConfigUtil.get("defaultGraph").asText();
+        String priv = instanceUriPrefixForGraphs() + "user/" + user;
+        return "FROM <" + pub + "> FROM <" + priv + ">";
+    }
+
+    /** Base URL for RDF URIs; prefers {@code uriPrefix} when set, else {@code graphPrefix}. */
+    private String instanceUriPrefixForGraphs() throws IOException {
+        JsonNode n = ConfigUtil.get("uriPrefix");
+        if (n != null && !n.isNull()) {
+            String t = n.asText().trim();
+            if (!t.isEmpty()) {
+                return t.endsWith("/") ? t : t + "/";
+            }
+        }
+        return ConfigUtil.get("graphPrefix").asText();
+    }
+
+    /**
+     * Returns the username segment for URIs of the form {@code (graphPrefix|uriPrefix) + "user/" + username + "/..."}.
+     */
+    private String usernameFromUserResourceUri(String resourceUri) throws IOException {
+        if (resourceUri == null || resourceUri.isBlank()) {
+            return null;
+        }
+        String gpHead = ConfigUtil.get("graphPrefix").asText() + "user/";
+        String uriPrefixHead = instanceUriPrefixForGraphs() + "user/";
+        if (resourceUri.startsWith(gpHead)) {
+            String rest = resourceUri.substring(gpHead.length());
+            int slash = rest.indexOf('/');
+            if (slash > 0) {
+                return rest.substring(0, slash);
+            }
+        }
+        if (!gpHead.equals(uriPrefixHead) && resourceUri.startsWith(uriPrefixHead)) {
+            String rest = resourceUri.substring(uriPrefixHead.length());
+            int slash = rest.indexOf('/');
+            if (slash > 0) {
+                return rest.substring(0, slash);
+            }
+        }
+        return null;
     }
 
     /**
