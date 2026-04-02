@@ -23,7 +23,7 @@ export default function SearchHeader(properties) {
         />
 
         <SearchTypeButton
-          name="Root Collections"
+          name="Browse Collections"
           route="root-collections"
           selected={properties.selected}
           icon={faBoxOpen}
@@ -34,13 +34,6 @@ export default function SearchHeader(properties) {
           route="sequence-search"
           selected={properties.selected}
           icon={faDna}
-        />
-
-        <SearchTypeButton
-          name="Advanced Search"
-          route="advanced-search"
-          selected={properties.selected}
-          icon={faHatWizard}
         />
 
         <SearchTypeButton

@@ -1,7 +1,7 @@
 import os
 from test_arguments import test_print
 from unittest import TestCase
-from test_functions import compare_get_request, compare_post_request, login_with
+from test_functions import compare_get_request, compare_post_request, login_with, get_request, compare_status_codes
 
 class TestAdmin(TestCase):
 
@@ -23,17 +23,19 @@ class TestAdmin(TestCase):
         compare_get_request("/admin", headers = {"Accept":"text/plain"}, test_type = test_type, comparison_type="json", fields=["instanceName", "defaultGraph", "graphPrefix"])
         test_print("test_admin_status completed")
 
-        # test_print("test_admin_virtuoso starting")
-        # compare_get_request("/admin/virtuoso", headers = {"Accept":"text/plain"}, test_type = test_type)
-        # test_print("test_admin_virtuoso completed")
+        test_print("test_admin_virtuoso starting")
+        compare_get_request("/admin/virtuoso", headers = {"Accept":"text/plain"}, test_type = test_type)
+        test_print("test_admin_virtuoso completed")
 
-        # test_print("test_admin_graphs starting")
-        # compare_get_request("/admin/graphs", headers = {"Accept":"text/plain"}, test_type = test_type, comparison_type="jsonlist", fields=["graphUri", "numTriples"], key='graphUri')
-        # test_print("test_admin_graphs completed")
+        test_print("test_admin_graphs starting")
+        compare_get_request("/admin/graphs", headers = {"Accept":"text/plain"}, test_type = test_type, comparison_type="jsonlist", fields=["graphUri", "numTriples"], key='graphUri')
+        test_print("test_admin_graphs completed")
 
-        # test_print("test_admin_log starting")
-        # compare_get_request("admin/log", headers = {"Accept":"text/plain"}, test_type = test_type, comparison_type="jsonlist", fields=["level", "line"], key='line')
-        # test_print("test_admin_log completed")
+        test_print("test_admin_log starting")
+        sbh1_response = get_request("admin/log", 1, {"Accept": "application/json"}, [])
+        sbh3_response = get_request("admin/log", 3, {"Accept": "application/json"}, [])
+        compare_status_codes(sbh1_response, sbh3_response)
+        test_print("test_admin_log completed")
 
         # test_print("test_admin_mail starting")
         # compare_get_request("/admin/mail", headers = {"Accept":"text/plain"}, test_type = test_type, comparison_type="json", fields=["sendGridApiKey", "sendGridFromEmail"])
@@ -51,27 +53,27 @@ class TestAdmin(TestCase):
         compare_get_request("/admin/plugins", headers = {"Accept":"text/plain"}, test_type = test_type, comparison_type="json", fields=["rendering", "download", "submit"])
         test_print("test_admin_plgins completed")
 
-        # test_print("test_admin_savePlugin starting")
-        # data={
-        #     'id': 'New',
-        #     'category' : 'download',
-        #     'name' : 'test_plugin',
-        #     'url' : 'jimmy',
-        # }
-        # compare_post_request("/admin/savePlugin", data, headers = {"Accept": "text/plain"}, test_name = "admin_savePlugin", test_type = test_type)
-        # test_print("test_admin_savePlugin completed")
+        test_print("test_admin_savePlugin starting")
+        data={
+            'id': 'New',
+            'category' : 'download',
+            'name' : 'test_plugin',
+            'url' : 'jimmy',
+        }
+        compare_post_request("/admin/savePlugin", data, headers = {"Accept": "text/plain"}, test_name = "admin_savePlugin", test_type = test_type)
+        test_print("test_admin_savePlugin completed")
 
-        # test_print("test_admin_plugins starting")
-        # compare_get_request("/admin/plugins", headers = {"Accept":"text/plain"}, test_name="testPluginAfterSave", test_type = test_type, comparison_type="json", fields=["rendering", "download", "submit"])
-        # test_print("test_admin_plgins completed")
+        test_print("test_admin_plugins starting")
+        compare_get_request("/admin/plugins", headers = {"Accept":"text/plain"}, test_name="testPluginAfterSave", test_type = test_type, comparison_type="json", fields=["rendering", "download", "submit"])
+        test_print("test_admin_plgins completed")
 
-        # test_print("test_admin_deletePlugin starting")
-        # data={
-        #     'id': '1',
-        #     'category' : 'download',
-        # }
-        # compare_post_request("/admin/deletePlugin", data, headers = {"Accept": "text/plain"}, test_name = "admin_deletePlugin", test_type = test_type)
-        # test_print("test_admin_deletePlugin completed")
+        test_print("test_admin_deletePlugin starting")
+        data={
+            'id': '1',
+            'category' : 'download',
+        }
+        compare_post_request("/admin/deletePlugin", data, headers = {"Accept": "text/plain"}, test_name = "admin_deletePlugin", test_type = test_type)
+        test_print("test_admin_deletePlugin completed")
 
         # test_print("test_admin_registries starting")
         # #SBH3 throws error
@@ -93,12 +95,12 @@ class TestAdmin(TestCase):
         # compare_post_request("/admin/deleteRegistry", data, headers = {"Accept": "text/plain"}, test_name = "admin_deleteRegistry", test_type = test_type)
         # test_print("test_admin_deleteRegistry completed")
 
-        # test_print("test_admin_setAdministratorEmail starting")
-        # data={
-        #     'administratorEmail': 'test@synbiohub.org',
-        # }
-        # compare_post_request("/admin/setAdministratorEmail", data, headers = {"Accept": "text/plain"}, test_name = "admin_setAdministratorEmail", test_type = test_type)
-        # test_print("test_admin_setAdministratorEmail completed")
+        test_print("test_admin_setAdministratorEmail starting")
+        data={
+            'administratorEmail': 'test@synbiohub.org',
+        }
+        compare_post_request("/admin/setAdministratorEmail", data, headers = {"Accept": "text/plain"}, test_name = "admin_setAdministratorEmail", test_type = test_type)
+        test_print("test_admin_setAdministratorEmail completed")
 
         # test_print("test_admin_retrieveFromWebOfRegistries starting")
         # data={

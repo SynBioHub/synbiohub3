@@ -9,6 +9,28 @@
   
 }
 
+.inputsection2 {
+   display: flex;
+   flex-direction: row;
+   justify-content: space-between;
+   align-items: left;
+   padding: 0.4rem 0.5rem;
+   box-shadow: 0px 0px 5px #c5c5c5;
+   border-radius: 0.4rem;
+   margin: 0.4rem 0;
+   font-size: 0.9rem;
+   min-height: 45px;
+   min-width: 250px;
+}
+
+.containerLeft {
+   width: 90%;
+}
+
+.containerRight {
+   width: 10%;
+}
+
 .calendarinputsection {
    display: flex;
    flex-direction: column;
@@ -34,19 +56,19 @@
 }
 
 .newfilterbutton {
-   width: 100%;
+   /* width: 100%; */
    display: flex;
    justify-content: center;
    padding: 0.7rem;
-   box-shadow: 0px 0px 5px #5350255d;
    border-radius: 0.4rem;
    background-color: #F2E86D;
    cursor: pointer;
-   margin: 0.6rem 0;
+   margin: 0.6rem;
+   transition: background-color 0.3s;
 }
 
 .newfilterbutton:hover {
-   box-shadow: 0px 0px 10px #5350255d;
+   background-color: #e6d963;
 }
 
 .addfiltericon {
@@ -55,18 +77,35 @@
 
 .inputsection {
    display: flex;
+   flex-direction: column;
    justify-content: space-between;
-   align-items: center;
+   align-items: left;
    padding: 0.4rem 0.5rem;
    box-shadow: 0px 0px 5px #c5c5c5;
    border-radius: 0.4rem;
    margin: 0.4rem 0;
    font-size: 0.9rem;
    min-height: 45px;
+   min-width: 250px;
+}
+
+.labelsection {
+   display: flex;
+   align-items: left;
+   flex-shrink: 0;
+   padding: 0.3rem 0.3rem;
+   font-size: 0.9rem;
+   font-weight: 500;
 }
 
 .optionselect {
    width: 100%;
+   font-size: 0.8rem;
+}
+
+.optionselectW {
+   width: 100%;
+   flex-direction: row;
    font-size: 0.8rem;
 }
 
@@ -77,17 +116,18 @@
    flex-direction: column;
    align-items: center;
    max-height: calc(100vh - 8rem);
-   overflow: scroll;
+   overflow: auto;
 }
 
 .body {
    width: 35rem;
    margin-bottom: 9rem;
+   overflow: hidden;
 }
 
 .searchbutton {
    background-color: #D25627;
-   padding: 1rem;
+   padding: 0.7rem;
    border-radius: 0.4rem;
    font-weight: 500;
    justify-content: center;
@@ -95,25 +135,14 @@
    display: flex;
    color: #fff;
    cursor: pointer;
-   margin: 1rem 0;
+   margin: 0.6rem;
+   transition: background-color 0.3s;
 }
 
 .searchbutton:hover {
    background-color: #00A1E4;
 }
 
-.searchbutton:hover .dnaicon {
-   animation: shake 1s infinite;
-}
-
-@keyframes shake {
-   0% { transform: rotate(0deg); }
-   10% { transform: rotate(0deg); }
-   45% { transform: rotate(25deg); }
-   75% { transform: rotate(-25deg); }
-  100% { transform: rotate(0deg); }
- }
-
-.dnaicon {
+.searchicon {
    margin-right: 1rem;
 }

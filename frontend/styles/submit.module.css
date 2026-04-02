@@ -131,15 +131,11 @@
    align-items: center;
    margin-top: 0.8rem;
    font-size: 0.9rem;
-   color: #D25627;
+   /* color: #D25627; */
 }
 
 .submitlabelverified {
    color: #549F93;
-}
-
-.submitlabeloptional {
-   color: #888;
 }
 
 .inputstatus {
@@ -163,6 +159,20 @@
    border-radius: 0.4rem;
    font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+}
+
+.submitinputerror {
+   border: 2px solid #D25627;
+}
+
+.submitwarning {
+   margin: 0.3rem 0 0 0;
+   color: #D25627;
+   font-size: 0.85rem;
+}
+.submitinput:disabled {
+   background-color: #6b4245;
+   color: #d3d3d3;
 }
 
 .submitinput::placeholder {
@@ -324,7 +334,7 @@
 
 .concatenatefiles {
    max-height: 15rem;
-   overflow: scroll;
+   overflow: auto;
 }
 
 .clearfilesbuttoncontainer {
@@ -350,7 +360,7 @@
 .clearfilesbuttonlabel {
    font-size: 0.7rem;
    margin-top: 0.1rem;
-   color: #888;
+   color: #f52828;
 }
 
 .fileuploadingcontainer {
@@ -407,4 +417,37 @@
   text-align: left;
   margin: 0 auto;
   padding: 1rem 0 1rem 0;
+}
+
+.configuremodalcontainer {
+   width: 70%;
+  text-align: left;
+  margin: 0 auto;
+  padding: 0rem 0 4rem 0;
+  max-height: 20rem;
+   overflow: auto;
+}
+
+.modalicon {
+   display: block;
+   margin-left: auto;
+   margin-right: auto;
+   font-size: 3rem;
+   margin-bottom: 1rem;
+   color: #2C3E50;
+ }
+
+ .configurefile {
+   display: inline;
+ }
+
+ .configurefilename {
+   margin: 0.5rem 0 0 0;
+   padding: 0;
+   font-size: 1rem;
+   color: #575757
+}
+
+.modaltoast {
+  text-align: left;
 }

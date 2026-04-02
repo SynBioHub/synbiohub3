@@ -15,7 +15,6 @@
    width: 100%;
    align-items: center;
    max-height: calc(100vh - 10rem);
-   overflow-y: scroll;
    display: flex;
    flex-direction: column;
    margin-bottom: 2rem;
@@ -32,7 +31,7 @@
 
 .standardresult {
    background: rgb(250, 250, 250);
-   width: 60%;
+   width: 100%;
    min-height: 5rem;
    margin: 0.5rem;
    padding: 0.5rem;

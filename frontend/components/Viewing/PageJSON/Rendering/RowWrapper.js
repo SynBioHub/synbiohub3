@@ -7,6 +7,9 @@ import useRegistries from '../Fetching/useRegistries';
 import createRenderingObject from './createRenderingObject';
 import SectionRenderer from './SectionRenderer';
 import { useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
+import getConfig from 'next/config';
+const { publicRuntimeConfig } = getConfig();
 
 function handleExternalFetch(
   dispatch,
@@ -16,6 +19,7 @@ function handleExternalFetch(
   updateSectionsToParse,
   setLoading,
   registries,
+  token,
   loading,
   error
 ) {
@@ -24,11 +28,13 @@ function handleExternalFetch(
     const queryUrl = registries.find(registry => {
       return stackTrace.uri.startsWith(registry.uri);
     })?.url;
+    // const queryUrl = publicRuntimeConfig.backend;
     if (queryUrl) {
       executeQueryFromTableJSON(
         dispatch,
         stackTrace.uri,
         stackTrace.prefixes,
+        token,
         stackTrace.table,
         queryUrl
       ).then(result => {
@@ -64,6 +70,7 @@ function createKeyToValueMap(
   setTitleToValueMap,
   setSectionsToRender,
   setLoading,
+  token,
   registries,
   registriesLoading,
   error
@@ -105,6 +112,7 @@ function createKeyToValueMap(
             updateSectionsToParse,
             setLoading,
             registries,
+            token,
             registriesLoading,
             error
           );
@@ -156,8 +164,6 @@ function createKeyToValueMap(
     }
   });
   setSectionsToRender(sectionsToRender);
-  console.log([...sectionsToRender]);
-  console.log({ ...map });
   Object.keys(map).forEach(key => {
     map[key].value = loadText(map[key].value, map);
   });
@@ -182,6 +188,7 @@ export default function RowWrapper({ sections, metadata, setSectionIcon }) {
   const [titleToValueMap, setTitleToValueMap] = useState({});
   const [sectionsToRender, setSectionsToRender] = useState([]);
   const [content, setContent] = useState(null);
+  const token = useSelector(state => state.user.token);
   const dispatch = useDispatch();
 
   const {
@@ -205,12 +212,25 @@ export default function RowWrapper({ sections, metadata, setSectionIcon }) {
         setTitleToValueMap,
         setSectionsToRender,
         setLoading,
+        token,
         registries,
         registriesLoading,
         error
       );
     }
   }, [sectionsToParse, registries, registriesLoading, error]);
+  
+  for (let section of sectionsToRender) {
+    if (section.key === 'LocationRangeStart' && sections.locationrangestart[0].value != "") {
+      const startValue = sections.locationrangestart[0].value;
+      const endValue = sections.locationrangeend[0].value;
+      titleToValueMap.Location.value = "" + startValue + ", " + endValue;
+    } else if (section.key === 'LocationCut' && sections.locationcut[0].value != "") {
+      titleToValueMap.Location.value = sections.locationcut[0].value;
+    } else if (section.key === 'LocationGeneric' && sections.locationrangestart[0].value === "") {
+      titleToValueMap.Location.value = "GenericLocation";
+    }
+  }
 
   useEffect(() => {
     let sectionIcon = null;
@@ -239,8 +259,16 @@ export default function RowWrapper({ sections, metadata, setSectionIcon }) {
     if (metadata) setSectionIcon(sectionIcon);
   }, [titleToValueMap, sectionsToRender]);
 
+
   if (loading) {
-    return <MiniLoading height={10} width={50} />;
+    return (
+      <tr>
+        <td colSpan="100%">  {/* colSpan="100%" makes sure it spans the entire width of the table */}
+          <MiniLoading height={10} width={50} />
+        </td>
+      </tr>
+
+    );
   }
   return <tr>{content}</tr>;
 }

@@ -5,9 +5,9 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import axios from 'axios';
-import getConfig from 'next/config';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import useSWR from 'swr';
 
 import { addError, makePublicCollection } from '../../redux/actions';
@@ -16,6 +16,7 @@ import SelectorButton from '../Reusable/SelectorButton';
 import Table from '../Reusable/Table/Table';
 import PublishCollectionButton from './PublishCollectionButton';
 import NewCollectionForm from './PublishNewCollectionForm';
+import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
 
 const EXISTING = 'to Existing';
@@ -23,11 +24,13 @@ const NEW = 'as New';
 
 export default function PublishModal(properties) {
   const dispatch = useDispatch();
-  const { collections, loading } = useRootCollections(dispatch);
+  const token = useSelector(state => state.user.token);
+  const { collections, loading } = useRootCollections(dispatch, token);
   const [selected, setSelected] = useState(EXISTING);
   const [selectedCollection, setSelectedCollection] = useState();
   const [collectionIndex, setCollectionIndex] = useState(0);
   const [toPublish, setToPublish] = useState(properties.toPublish);
+  
 
   useEffect(() => {
     setToPublish(properties.toPublish);
@@ -61,6 +64,14 @@ export default function PublishModal(properties) {
         collection => collection.displayId !== collectionToPublish.displayId
       )
     );
+
+    if (properties.inCollectionPage) {
+      const redirect = `${selectedCollection.uri}`;
+      window.location.href = redirect;
+    } else {
+      window.location.reload();
+    }
+    
   };
 
   const collectionSelectors = toPublish.map((collection, index) => {
@@ -164,6 +175,7 @@ export default function PublishModal(properties) {
             setToPublish={setToPublish}
             toPublish={toPublish}
             setCollectionIndex={setCollectionIndex}
+            inCollectionPage={properties.inCollectionPage}
           />
         )}
       </div>
@@ -211,24 +223,32 @@ const sortMethods = {
   }
 };
 
-const useRootCollections = dispatch => {
+const useRootCollections = (dispatch, token) => {
   const { data, error } = useSWR(
-    [`${publicRuntimeConfig.backend}/rootCollections`, dispatch],
+    [`${publicRuntimeConfig.backend}/browse`, token, dispatch],
     fetcher
   );
+  const theme = JSON.parse(localStorage.getItem('theme')) || {};
+
+  const publicPrefix = theme.uriPrefix + 'public/';
+  let publicCollections = [];
+  if (data) {
+    publicCollections = data.filter(collection => collection.uri.includes(publicPrefix));
+  }
   return {
-    collections: data,
+    collections: publicCollections,
     loading: !error && !data,
     error: error
   };
 };
 
-const fetcher = (url, dispatch) =>
+const fetcher = (url, token, dispatch) =>
   axios
     .get(url, {
       headers: {
         'Content-Type': 'application/json',
-        Accept: 'text/plain'
+        Accept: 'text/plain',
+        'X-authorization': token
       }
     })
     .then(response => response.data)

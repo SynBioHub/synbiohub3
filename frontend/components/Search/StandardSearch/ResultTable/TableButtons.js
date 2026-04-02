@@ -5,13 +5,13 @@ import {
   faTrashAlt
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import getConfig from 'next/config';
 import React from 'react';
 import { useDispatch } from 'react-redux';
 
 import { addToBasket, downloadFiles } from '../../../../redux/actions';
 import styles from '../../../../styles/resulttable.module.css';
 import Navigation from './Navigation';
+import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
 
 export default function TableButtons(properties) {
@@ -36,7 +36,8 @@ export default function TableButtons(properties) {
             dispatch(addToBasket(itemsChecked));
           }}
         >
-          <span className={styles.buttonicon}>
+          <span className={styles.buttonicon} 
+          >
             <FontAwesomeIcon icon={faPlus} color="#00000" size="1x" />
           </span>
           Add to Basket

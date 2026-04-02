@@ -10,11 +10,13 @@ import Select from "react-select";
 import { getCanSubmitTo } from '../../../redux/actions';
 import { useSelector, useDispatch } from "react-redux";
 
-import getConfig from "next/config";
+import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
 
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+
+import axios from "axios";
 
 /**
  * A modal that allows the current collection to be added a private collection.
@@ -94,11 +96,15 @@ export default function AddToCollectionModal(properties) {
     const parameters = new URLSearchParams();
     parameters.append("collections", collection);
 
-    const response = await fetch(url, {
-      method: "POST",
-      headers,
-      body: parameters
-    });
+    let response;
+
+    try {
+      response = await axios.post(url, parameters, { headers });
+    } catch (error) {
+      if (error.response) {
+        console.error('Error:', error.message);
+      }
+    }
 
     if (response.status !== 200) errorToast("Something went wrong with adding to the collection.");
     else successToast("Successfully added to the collection!")
