@@ -1,155 +1,308 @@
 {
-  "type": "http://sbols.org/v2#ComponentDefintion",
-  "prefixes": [
-    "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>",
-    "PREFIX dcterms: <http://purl.org/dc/terms/>",
-    "PREFIX dc: <http://purl.org/dc/elements/1.1/>",
-    "PREFIX sbh: <http://wiki.synbiohub.org/wiki/Terms/synbiohub#>",
-    "PREFIX prov: <http://www.w3.org/ns/prov#>",
-    "PREFIX sbol: <http://sbols.org/v2#>",
-    "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>",
-    "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>",
-    "PREFIX purl: <http://purl.obolibrary.org/obo/>"
-  ],
-  "metadata": [
-    {
-      "title": "Type",
-      "rootPredicate": "sbol:type",
-      "icon": "faVials",
-      "sections": [
+    "type": "http://sbols.org/v2#ComponentDefinition",
+    "prefixes": [
+        "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>",
+        "PREFIX dcterms: <http://purl.org/dc/terms/>",
+        "PREFIX dc: <http://purl.org/dc/elements/1.1/>",
+        "PREFIX sbh: <http://wiki.synbiohub.org/wiki/Terms/synbiohub#>",
+        "PREFIX prov: <http://www.w3.org/ns/prov#>",
+        "PREFIX sbol: <http://sbols.org/v2#>",
+        "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>",
+        "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>",
+        "PREFIX purl: <http://purl.obolibrary.org/obo/>",
+        "PREFIX biopax: <http://www.biopax.org/release/biopax-level3.owl#>",
+        "PREFIX so: <http://identifiers.org/so/>",
+        "PREFIX bench: <http://wiki.synbiohub.org/wiki/Terms/benchling#>",
+        "PREFIX genbank: <http://www.ncbi.nlm.nih.gov/genbank#>"
+    ],
+    
+    "metadata": [
         {
-          "title": "Extra Work",
-          "stripAfter": "#",
-          "predicates": []
+            "title": "Type",
+            "rootPredicate": "sbol:type",
+            "icon": "faPalette",
+            "editable": true,
+            "sections": [
+                {
+                    "title": "Extra Work",
+                    "stripAfter": "#",
+                    "predicates": [],
+                    "link": "$<typeLink>"
+                },
+                {
+                    "title": "typeLink",
+                    "predicates": [],
+                    "hide": true
+                }
+            ]
+        },
+        {
+            "title": "Role",
+            "rootPredicate": "sbol:role",
+            "icon": "faUserTag",
+            "editable": true,
+            "sections": [
+                {
+                    "title": "Extra Work",
+                    "stripAfter": "#",
+                    "predicates": [],
+                    "link": "$<roleLink>"
+                },
+                {
+                    "title": "roleLink",
+                    "predicates": [],
+                    "hide": true
+                }
+            ]
+        },
+        {
+            "title": "Sequence(s)",
+            "rootPredicate": "sbol:sequence",
+            "icon": "faDna",
+            "sections": [
+                {
+                    "title": "Sequence",
+                    "stripAfter": "#",
+                    "predicates": [
+                        "sbol:displayId"
+                    ],
+                    "link": "$<SequenceLink>"
+                },
+                {
+                    "title": "SequenceLink",
+                    "predicates": [],
+                    "hide": true
+                }
+            ]
         }
-      ]
-    },
-    {
-      "title": "Role(s)",
-      "rootPredicate": "sbol:role",
-      "icon": "faVials",
-      "sections": [
+    ],
+    "tables": [
         {
-          "title": "Extra Work",
-          "stripAfter": "#",
-          "predicates": []
+            "icon": "faPlug",
+            "title": "Components",
+            "rootPredicate": "sbol:component",
+            "sections": [
+                {
+                    "title": "Access",
+                    "infoLink": "https://sbols.org/v2#access",
+                    "predicates": [
+                        "sbol:access"
+                    ],
+                    "stripAfter": "#",
+                    "link": "$<accessLink>"
+                },
+                {
+                    "title": "accessLink",
+                    "predicates": [
+                        "sbol:access"
+                    ],
+                    "hide": true
+                },
+                {
+                    "title": "Instance",
+                    "infoLink": "https://sbols.org/v2#Component",
+                    "predicates": [
+                        "sbol:displayId"
+                    ],
+                    "link": "$<InstanceLink>"
+                },
+                {
+                    "title": "Definition",
+                    "infoLink": "https://sbols.org/v2#definition",
+                    "predicates": [
+                        "sbol:definition",
+                        "sbol:displayId"
+                    ],
+                    "link": "$<DefinitionLink>"
+                },
+                {
+                    "title": "DefinitionLink",
+                    "predicates": [
+                        "sbol:definition"
+                    ],
+                    "hide": true
+                },
+                {
+                    "title": "InstanceLink",
+                    "predicates": [],
+                    "hide": true
+                }
+            ]
+        },
+        {
+            "icon": "faEdit",
+            "title": "Sequence Annotations",
+            "rootPredicate": "sbol:sequenceAnnotation",
+            "sections": [
+                {
+                    "title": "Sequence Annotation",
+                    "infoLink": "https://sbols.org/v2#SequenceAnnotation",
+                    "predicates": [
+                        "sbol:displayId"
+                    ],
+                    "link": "$<SequenceAnnotationLink>"
+                },
+                {
+                    "title": "SequenceAnnotationLink",
+                    "predicates": [],
+                    "hide": true
+                },
+                {
+                    "title": "Location",
+                    "predicates": [
+                        "sbol:location"
+                    ],
+                    "infoLink": "https://sbols.org/v2#Location",
+                    "icon": "faMapMarkerAlt",
+                    "link": "$<LocationLink>"
+                },
+                {
+                    "title": "LocationRangeStart",
+                    "predicates": [
+                        "sbol:location",
+                        "sbol:start"
+                    ],
+                    "hide": true
+                },
+                {
+                    "title": "LocationRangeEnd",
+                    "predicates": [
+                        "sbol:location",
+                        "sbol:end"
+                    ],
+                    "hide": true
+                },
+                {
+                    "title": "LocationGeneric",
+                    "predicates": [
+                        "sbol:location",
+                        "sbol:GenericLocation"
+                    ],
+                    "hide": true
+                },
+                {
+                    "title": "LocationCut",
+                    "predicates": [
+                        "sbol:location",
+                        "sbol:at"
+                    ],
+                    "hide": true
+                },
+                {
+                    "title": "LocationLink",
+                    "predicates": [
+                        "sbol:location"
+                    ],
+                    "hide": true
+                },
+                {
+                    "title": "Component",
+                    "infoLink": "https://sbols.org/v2#component",
+                    "predicates": [
+                        "sbol:component",
+                        "sbol:definition",
+                        "sbol:displayId"
+                    ],
+                    "link": "$<Component/Role Link>"
+                },
+                {
+                    "title": "Component/Role Link",
+                    "predicates": [
+                        "sbol:component",
+                        "sbol:definition"
+                    ],
+                    "hide": true
+                },
+                {
+                    "title": "Role",
+                    "group": true,
+                    "predicates": [
+                        "sbol:role"
+                    ],
+                    "link": "search/role=<$<This>>&",
+                    "linkType": "search",
+                    "infoLink": "http://sbols.org/v2#role",
+                    "info": "Learn more about roles",
+                    "stripAfter": "#"
+                }
+            ]
+        },
+        {
+            "title": "Sequence Constraints",
+            "rootPredicate": "sbol:sequenceConstraint",
+            "icon": "faVirusSlash",
+            "sections": [
+                {
+                    "title": "Sequence Constraint",
+                    "infoLink": "https://sbols.org/v2#SequenceConstraint",
+                    "predicates": [
+                        "sbol:displayId"
+                    ],
+                    "link": "$<SequenceLink>"
+                },
+                {
+                    "title": "SequenceLink",
+                    "hide": true,
+                    "predicates": []
+                },
+                {
+                    "title": "Subject",
+                    "infoLink": "https://sbols.org/v2#subject",
+                    "predicates": [
+                        "sbol:subject",
+                        "sbol:displayId"
+                    ],
+                    "link": "$<SubjectLink>"
+                },
+                {
+                    "title": "SubjectLink",
+                    "hide": true,
+                    "predicates": [
+                        "sbol:subject"
+                    ]
+                },
+                {
+                    "title": "Predicate",
+                    "infoLink": "https://sbols.org/v2#restriction",
+                    "predicates": [
+                        "sbol:restriction"
+                    ],
+                    "stripAfter": "#",
+                    "link": "$<predicateLink>"
+                },
+                {
+                    "title": "predicateLink",
+                    "predicates": [
+                        "sbol:displayId"
+                    ],
+                    "hide": true
+                },
+                {
+                    "title": "Object",
+                    "infoLink": "https://sbols.org/v2#object",
+                    "predicates": [
+                        "sbol:object",
+                        "sbol:displayId"
+                    ],
+                    "link": "$<ObjectLink>"
+                },
+                {
+                    "title": "ObjectLink",
+                    "predicates": [
+                        "sbol:object"
+                    ],
+                    "hide": true
+                }
+            ]
         }
-      ]
-    }
-  ],
-  "tables": [
-    {
-      "icon": "faPuzzlePiece",
-      "title": "Components",
-      "rootPredicate": "sbol:component",
-      "sections": [
-        {
-          "title": "ComponentLink",
-          "hide": true,
-          "predicates": ["sbol:definition"]
-        },
-        {
-          "title": "InstanceLink",
-          "hide": true,
-          "predicates": []
-        },
-        {
-          "title": "Access",
-          "infoLink": "https://dissys.github.io/sbol-owl/sbol-owl.html#access",
-          "predicates": ["sbol:access"],
-          "stripAfter": "#"
-        },
-        {
-          "title": "Instance",
-          "link": "$<InstanceLink>",
-          "infoLink": "http://sbols.org/v2#component",
-          "predicates": ["dcterms:title"]
-        },
-        {
-          "title": "Definition",
-          "infoLink": "https://dissys.github.io/sbol-owl/sbol-owl.html#definition",
-          "link": "$<ComponentLink>",
-          "predicates": ["sbol:definition", "dcterms:title"]
-        }
-      ]
-    },
-    {
-      "icon": "faDna",
-      "title": "Sequence Annotations",
-      "rootPredicate": "sbol:sequenceAnnotation",
-      "orderBy": "xsd:integer(?start)",
-      "sections": [
-        {
-          "title": "Sequence Annotation Link",
-          "predicates": [],
-          "hide": true
-        },
-        {
-          "title": "Sequence Annotation",
-          "predicates": ["dcterms:title"],
-          "icon": "faInfoCircle",
-          "link": "$<Sequence Annotation Link>",
-          "infoLink": "http://sbols.org/v2#SequenceAnnotation",
-          "info": "Learn more about Sequence Annotations"
-        },
-        {
-          "title": "Location",
-          "text": "$<Start>, $<End>",
-          "link": "$<Annotation Link>",
-          "infoLink": "http://sbols.org/v2#Location"
-        },
-        {
-          "title": "Start",
-          "icon": "faInfoCircle",
-          "predicates": ["sbol:location", "sbol:start"],
-          "infoLink": "http://sbols.org/v2#Location",
-          "info": "Learn more about Locations",
-          "hide": true
-        },
-        {
-          "title": "End",
-          "icon": "faInfoCircle",
-          "predicates": ["sbol:location", "sbol:end"],
-          "infoLink": "http://sbols.org/v2#Location",
-          "info": "Learn more about Locations",
-          "hide": true
-        },
-        {
-          "title": "Annotation Link",
-          "predicates": ["sbol:location", "sbol:persistentIdentity"],
-          "hide": true
-        },
-        {
-          "title": "ComponentLink",
-          "hide": true,
-          "predicates": ["sbol:component", "sbol:definition"]
-        },
-        {
-          "title": "Component",
-          "infoLink": "http://sbols.org/v2#component",
-          "link": "$<ComponentLink>",
-          "predicates": ["sbol:component", "sbol:definition", "dcterms:title"]
-        },
-        {
-          "title": "Role(s)",
-          "group": true,
-          "predicates": ["sbol:role"],
-          "icon": "faInfoCircle",
-          "link": "search/role=<$<This>>&",
-          "linkType": "search",
-          "infoLink": "http://sbols.org/v2#role",
-          "info": "Learn more about roles",
-          "stripAfter": "#"
-        }
-      ]
-    }
-  ],
-  "pages": [
-    "Details",
-    "$TABLES[Components]",
-    "$TABLES[Sequence Annotations]",
-    "Other Properties",
-    "Member of these Collections",
-    "Attachments"
-  ]
+    ],
+    "pages": [
+        "Details",
+        "$TABLES[Components]",
+        "$TABLES[Sequence Annotations]",
+        "$TABLES[Sequence Constraints]",
+        "Other Properties",
+        "Member of these Collections",
+        "Attachments"
+    ]
 }

@@ -11,6 +11,9 @@ function constructObjectForRendering(table, section, value, result, prefixes) {
 }
 
 export default function parseQueryResult(table, results, prefixes) {
+  if (!results){
+    return null;
+  }
   const rows = results.map(result => {
     const processedSection = {};
     let currentSectionId = '';

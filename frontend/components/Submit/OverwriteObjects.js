@@ -40,12 +40,12 @@ export default function OverwriteObjects(properties) {
           }}
         />
         <div className={styles.overwritemessage}>
-          Overwrite Existing Collection
+          Overwrite Objects In Existing Collection
         </div>
       </div>
       <div>
         <a
-          href="https://wiki.synbiohub.org/userdocumentation/managingsubmitting#411-creating-a-new-collection"
+          href="https://wiki2.synbiohub.org/2_micro_guides/submitting%2C_managing_and_updating_submissions/"
           target="_blank"
           rel="noreferrer"
         >

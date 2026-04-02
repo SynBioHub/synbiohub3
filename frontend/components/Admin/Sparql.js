@@ -1,10 +1,10 @@
 import { faDatabase } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import getConfig from 'next/config';
 import dynamic from 'next/dynamic';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import Select from 'react-select';
+import getConfig from 'next/config';
 
 import styles from '../../styles/sparql.module.css';
 import Table from '../Reusable/Table/Table';
@@ -130,26 +130,33 @@ const submitQuery = async (
     'X-authorization': token
   };
 
-  const response = await fetch(url, {
-    method: 'GET',
-    headers
-  });
+  let response;
 
-  if (response.status === 200) {
+  try {
+    response = await axios.get(url, { headers });
+  } catch (error) {
+    if (error.response) {
+      console.error('Error:', error.message);
+    }
+  }
+  if (response && response.status === 200) {
     setError();
-    const results = await response.json();
+    const results = response.data; 
     setResults(processResults(results));
     setHeaders(results.head.vars);
-  } else {
-    const message = await response.text();
+} else {
+    const message = response ? response.data : 'Unknown error';
     setError(message);
     setResults();
-  }
+}
 
   setLoading(false);
 };
 
 const processResults = results => {
+  if (!results.results || !results.results.bindings) {
+    return [];
+  }
   const headers = results.head.vars;
   return results.results.bindings.map(result => {
     const resultObject = {};
@@ -175,5 +182,9 @@ PREFIX sbol: <http://sbols.org/v2#>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX purl: <http://purl.obolibrary.org/obo/>
+PREFIX biopax: <http://www.biopax.org/release/biopax-level3.owl#>
+PREFIX so: <http://identifiers.org/so/>
+PREFIX bench: <http://wiki.synbiohub.org/wiki/Terms/benchling#>
+PREFIX genbank: <http://www.ncbi.nlm.nih.gov/genbank#>
 
 `;

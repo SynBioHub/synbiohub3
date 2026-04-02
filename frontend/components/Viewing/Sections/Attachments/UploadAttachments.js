@@ -12,8 +12,9 @@ import edam from './edam.json';
 import Select from 'react-select';
 import options from './SelectOptions';
 
-const { publicRuntimeConfig } = getConfig();
-import getConfig from 'next/config';
+import { processUrl } from '../../../Admin/Registries';
+
+import axios from 'axios';
 
 /**
  * @param {Any} properties Information passed in from parent component.
@@ -26,6 +27,7 @@ export default function UploadAttachments(properties) {
   const dispatch = useDispatch();
   const token = useSelector(state => state.user.token);
   const uploadStatus = useSelector(state => state.attachments.uploadStatus);
+  const registries = JSON.parse(localStorage.getItem("registries")) || {};
 
   /**
    * Handles a input value change and updates the filled inputs array.
@@ -71,11 +73,15 @@ export default function UploadAttachments(properties) {
     parameters.append('name', attachment.name);
     parameters.append('type', attachment.type);
 
-    const response = await fetch(url, {
-      method: 'POST',
-      headers,
-      body: parameters
-    });
+    let response;
+
+    try {
+      response = await axios.post(url, parameters, { headers });
+    } catch (error) {
+      if (error.response) {
+        console.error('Error:', error.message);
+      }
+    }
 
     if (response.status !== 200) console.error(response.status);
     else properties.setRefreshMembers(true);
@@ -99,11 +105,15 @@ export default function UploadAttachments(properties) {
       const form = new FormData();
       form.append('file', files[fileIndex].file);
 
-      const response = await fetch(url, {
-        method: 'POST',
-        headers,
-        body: form
-      });
+      let response;
+
+      try {
+        response = await axios.post(url, form, { headers });
+      } catch (error) {
+        if (error.response) {
+          console.error('Error:', error.message);
+        }
+      }
 
       if (response.status !== 200) console.error(response.status);
       else properties.setRefreshMembers(true);
@@ -173,19 +183,17 @@ export default function UploadAttachments(properties) {
                 document.getElementById('attached-file-input').value = '';
                 setSelectedFiles([]);
 
-                attachFromFile(
-                  selectedFiles,
-                  properties.uri.replace(
-                    'https://synbiohub.org',
-                    publicRuntimeConfig.backend
-                  )
-                ).then(() => {
-                  dispatch(setUploadStatus(''));
+                processUrl(properties.uri, registries).then(processedUriData => {
+                  const uriToUse = processedUriData.urlReplacedForBackend || processedUriData.original;
+                  attachFromFile(selectedFiles, uriToUse).then(() => {
+                    dispatch(setUploadStatus(''));
+                    properties.setRefreshMembers(true);
+                  });
 
                   //Query all the attachments so the store can be updated.
                   getQueryResponse(dispatch, getAttachments, {
                     uri: properties.uri
-                  }).then(allAttachments => {
+                  }, token).then(allAttachments => {
                     dispatch(setAttachments(allAttachments));
                   });
                 });
@@ -270,17 +278,20 @@ export default function UploadAttachments(properties) {
                 } else if (!urlInput.includes('http')) {
                   alert('The URL has to be a link');
                 } else {
-                  const attachment = {
-                    name: nameInput,
-                    url: urlInput,
-                    type: typeInput,
-                    uri: uri.replace(
-                      'https://synbiohub.org',
-                      publicRuntimeConfig.backend
-                    )
-                  };
-
-                  attachFromURL(attachment);
+                  processUrl(uri, registries).then(processedUriData => {
+                      const uriToUse = processedUriData.urlReplacedForBackend || processedUriData.original;
+                      
+                      const attachment = {
+                          name: nameInput,
+                          url: urlInput,
+                          type: typeInput,
+                          uri: uriToUse
+                      };
+              
+                      attachFromURL(attachment).then(() => {
+                        properties.setRefreshMembers(true); // Ensure refresh after URL attachment
+                      });
+                  });
 
                   const convertedUrl = uri.slice(
                     0,
@@ -298,6 +309,7 @@ export default function UploadAttachments(properties) {
                   dispatch(
                     setAttachments([...properties.attachments, newAttachment])
                   );
+                  properties.setRefreshMembers(true);
 
                   //Resets all the values to their default.
                   setSelectedOption('Attachment type...');

@@ -1,0 +1,4 @@
+{
+    "backend": "http://localhost:7777",
+    "backendSS": "http://synbiohub:7777"
+}

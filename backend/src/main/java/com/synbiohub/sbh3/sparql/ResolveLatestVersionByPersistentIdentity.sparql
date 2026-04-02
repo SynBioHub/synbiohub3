@@ -1,0 +1,8 @@
+# Latest versioned URI for a given sbol2:persistentIdentity (SynBioHub persistent-identity URLs)
+PREFIX sbol2: <http://sbols.org/v2#>
+SELECT ?uri WHERE {
+  ?uri sbol2:persistentIdentity <$persistentIdentity> .
+  ?uri sbol2:version ?version .
+}
+ORDER BY DESC(?version)
+LIMIT 1

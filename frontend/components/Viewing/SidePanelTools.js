@@ -4,29 +4,33 @@ import {
   faQuoteRight,
   faTrashAlt,
   faCopy,
-  faLink,
-  faShareAlt,
-  faFunnelDollar
+  faShare,
+  faPlus,
+  faSearch,
+  faGlobeAmericas,
+  faCamera
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from 'next/link';
 
 import DeleteModal from "./Modals/DeleteModal";
 import ShareModal from "./Modals/ShareModal";
 import DownloadModal from "./Modals/DownloadModal";
 import AddToCollectionModal from "./Modals/AddToCollectionModal";
+import CollectionIconModal from "./Modals/CollectionIconModal";
+import ReactDOM from 'react-dom';
+import PublishModal from '../Submission/PublishModal';
+import { isUriOwner } from './Shell';
+import { useSelector, useDispatch } from 'react-redux';
 
 import styles from '../../styles/view.module.css';
-
-import getConfig from "next/config";
+import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
 
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import CurationModal from './Modals/CurationModal';
-import axios from 'axios';
 
 /**
  * The side panel buttons and their interactions.
@@ -35,30 +39,32 @@ import axios from 'axios';
  */
 export default function SidePanelTools(properties) {
   const [modal, setModal] = useState();
-  const [curationAvailable, setCurationAvailable] = useState(false);
+  const [processUnderway, setProcessUnderway] = useState(false);
+  const theme = JSON.parse(localStorage.getItem('theme')) || {};
+  const dispatch = useDispatch();
 
-  useEffect(() => {
-    /*
-    const checkCurateAvailability = async () => {
-      const available = await checkCuration(pluginData);
-      setCurationAvailable(available);
-    }
-    checkCurateAvailability();
-    */
-  })
+  const username = useSelector(state => state.user.username);
+  const loggedIn = useSelector(state => state.user.loggedIn);
 
-  /*
-  const pluginData = {
-    complete_sbol: '',
-    shallow_sbol: '',
-    genbank: '',
-    top_level: '',
-    instanceUrl: '',
-    size: 0,
+  const handleDeletionComplete = () => {
+    dispatch(restoreBasket());
+  };
+
+  const publicPrefix = theme.uriPrefix + 'public/';
+
+  const isPublic = properties.uri.includes(publicPrefix);
+  const isCollection = properties.type && properties.type.toLowerCase().includes('collection');
+
+  const publishInfo = {
+    displayId: properties.displayId,
+    name: properties.name,
+    uri: properties.uri,
     type: properties.type,
-    submit_link: ''
+    url: properties.url,
+    description: properties.description,
+    version: properties.version
   }
-  */
+
 
   //The styles for the toast saying the citation has been copied.
   const copyToast = (message) => toast(
@@ -82,6 +88,8 @@ export default function SidePanelTools(properties) {
     }
   );
 
+  var isOwner = isUriOwner(properties.uri, username);
+
   /**
    * Copies the link to the users clipboard.
    */
@@ -90,7 +98,18 @@ export default function SidePanelTools(properties) {
       `${properties.name} was a gift from ${properties.creator === "" ? "undefined" : properties.creator} ; ${publicRuntimeConfig.backend}${properties.url}`
     );
   }
-
+  var displayTitle = properties.type;
+  if (properties.type.includes('#')) {
+    displayTitle = properties.type.split('#')[1];
+  }
+  if (properties.type.includes('http://') || properties.type.includes('https://')) {
+    const parts = properties.type.split('/');
+    displayTitle = parts[parts.length - 1];
+  }
+  var displayLink = properties.type;
+  if (!properties.type.includes('http')) {
+    displayLink = `http://sbols.org/v2#${properties.type}`;
+  }
   return (
     <div className={styles.subheader}>
       {modal === "Delete" ?
@@ -98,6 +117,7 @@ export default function SidePanelTools(properties) {
           <DeleteModal
             url={properties.url}
             setModal={setModal}
+            onDeletionComplete={handleDeletionComplete}
           />
         ) :
         modal === "Share" ?
@@ -114,6 +134,7 @@ export default function SidePanelTools(properties) {
               displayId={properties.displayId}
               url={properties.url}
               setModal={setModal}
+              uri={properties.uri}
             />
             :
             modal === "AddToCollection" ?
@@ -121,36 +142,49 @@ export default function SidePanelTools(properties) {
                 url={properties.url}
                 setModal={setModal}
               />
-              : null
-              /*
-              modal === "Curation" ?
-                <CurationModal
+              :
+              modal === "MakePublic" ?
+              ReactDOM.createPortal(
+                <PublishModal
+                  toPublish={[publishInfo]}
+                  showPublishModal={true}
+                  setShowPublishModal={setModal}
+                  setProcessUnderway={setProcessUnderway}
+                  inCollectionPage={true}
+                />,
+                typeof window !== "undefined" ? document.body : null
+              )
+              :
+              modal === "CollectionIcon" ?
+                <CollectionIconModal
+                  url={properties.url}
+                  name={properties.name}
+                  uri={properties.uri}
                   setModal={setModal}
-                  type={properties.type}
                 />
                 : null
-                */
       }
       <div className={styles.id}>
-        <Link href={`http://sbols.org/v2#${properties.type}`}>
+        <Link href={displayLink}>
           <a title="Learn more about this RDF type" target="_blank">
             <FontAwesomeIcon
               icon={faDatabase}
               size="1x"
               className={styles.contentinfoicon}
             />
-            {properties.type}
+            {displayTitle}
           </a>
         </Link>
       </div>
       <div className={styles.actionicons}>
         <FontAwesomeIcon
-          icon={faShareAlt}
+          icon={faShare}
           size="1x"
           className={styles.actionicon}
           onClick={() => {
             setModal("Share");
           }}
+          title="Share Item" // Placeholder for share button description
         />
         <FontAwesomeIcon
           icon={faCloudDownloadAlt}
@@ -159,86 +193,61 @@ export default function SidePanelTools(properties) {
           onClick={() => {
             setModal("Download");
           }}
+          title="Download Item" // placeholder for download button description
         />
-        
-        {/*curationAvailable ?
-        <FontAwesomeIcon
-          icon={faFunnelDollar}
-          size="1x"
-          className={styles.actionicon}
-          onClick={() => {
-            setModal("Curation");
-          }}
-        /> : null */}
         <FontAwesomeIcon
           icon={faQuoteRight}
           size="1x"
           className={styles.actionicon}
           onClick={() => {
-            copyToast("Copied!");
+            copyToast("Citation Copied!");
             copyToClipboard();
           }}
+          title="Copy Citation" // placeholder for copy button description
         />
-        <FontAwesomeIcon
-          icon={faLink}
+        {!isPublic && ( <FontAwesomeIcon
+          icon={faGlobeAmericas}
           size="1x"
           className={styles.actionicon}
           onClick={() => {
-            setModal("AddToCollection");
+            setModal("MakePublic");
           }}
+          title="Make Public" // placeholder for unlock button description
         />
-        <FontAwesomeIcon
-          icon={faTrashAlt}
-          size="1x"
-          className={styles.actionicon}
-          onClick={() => {
-            setModal("Delete");
-          }}
-        />
+        )}
+        {isPublic && isCollection && loggedIn && (
+          <FontAwesomeIcon
+            icon={faCamera}
+            size="1x"
+            className={styles.actionicon}
+            onClick={() => {
+              setModal("CollectionIcon");
+            }}
+            title="Change Collection Icon"
+          />
+        )}
+        {loggedIn && (
+          <FontAwesomeIcon
+            icon={faPlus}
+            size="1x"
+            className={styles.actionicon}
+            onClick={() => {
+              setModal("AddToCollection");
+            }}
+            title="Add to Collection" // placeholder for add to collection button description
+          />
+        )}
+        {isOwner && (
+          <FontAwesomeIcon
+            icon={faTrashAlt}
+            size="1x"
+            className={styles.actionicon}
+            onClick={() => setModal("Delete")}
+            title="Delete Item" // placeholder for delete button description
+            uri={properties.url}
+          />
+        )}
       </div>
     </div>
   );
 }
-
-/*
-async function checkCuration(pluginData) {
-  return await axios({
-    method: 'GET',
-    url: `${publicRuntimeConfig.backend}/admin/plugins`,
-    responseType: 'application/json',
-    params: {
-      category: 'curation'
-    }
-  }).then(async function (response) {
-    const curatePlugins = response.data;
-    let pluginPromises = [];
-
-    const buildPromises = async () => {
-        for(let plugin of curatePlugins) {
-        pluginPromises.push(axios({
-          method: 'POST',
-          url: `${publicRuntimeConfig.backend}/call`,
-          params: {
-            name: plugin.name,
-            endpoint: 'evaluate',
-            data: pluginData
-          }
-        }).then(response => {
-          return response.status === 200;
-        }).catch(error => {return false;}))
-      }
-    }
-
-    await buildPromises();
-
-    return Promise.all(pluginPromises).then(values => {
-      for(let value of values) {
-        if(value) return true;
-      }
-      return false;
-    })
-    
-  }).catch(error => {return false;});
-
-}
-*/

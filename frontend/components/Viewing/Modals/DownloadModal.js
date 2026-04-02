@@ -1,5 +1,5 @@
 import styles from "../../../styles/view.module.css";
-import { faCloudDownloadAlt } from "@fortawesome/free-solid-svg-icons";
+import { faCloudDownloadAlt, prefix } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import React, { useEffect, useState } from "react";
@@ -7,12 +7,13 @@ import React, { useEffect, useState } from "react";
 import Select from "react-select";
 import CustomModal from "./CustomModal";
 
-import getConfig from "next/config";
+import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
 
 import { useDispatch } from "react-redux";
-import { downloadFiles, downloadFilesPlugin } from "../../../redux/actions";
+import { downloadFiles } from "../../../redux/actions";
 import axios from "axios";
+import { useSelector } from "react-redux";
 
 /**
  * A modal that lets the user choose what format they want to download the object in.
@@ -24,6 +25,16 @@ export default function DownloadModal(properties) {
   const [submitted, setSubmitted] = useState(false);
   const [submittable, setSubmittable] = useState(false);
   const dispatch = useDispatch();
+  const theme = JSON.parse(localStorage.getItem('theme')) || {};
+  const token = useSelector(state => state.user.token);
+
+  const pluginsUseLocalCompose = (theme && theme.pluginsUseLocalCompose) 
+    ? theme.pluginsUseLocalCompose 
+    : false;
+    
+  const pluginLocalComposePrefix = (theme && theme.pluginLocalComposePrefix) 
+    ? theme.pluginLocalComposePrefix 
+    : null;
 
   //Checks if the modal has been submitted and downloads in the format the user chose.
   useEffect(() => {
@@ -37,7 +48,7 @@ export default function DownloadModal(properties) {
    * 
    * @param {String} type The download endpoint the user has chosen.
    */
-  const download = (type, pluginName) => {
+  const download = async (type, pluginName) => {
     
     if (type != 'plugin') {
     const item = {
@@ -55,23 +66,37 @@ export default function DownloadModal(properties) {
     const item = {
       name: properties.name,
       displayId: properties.displayId,
-      type: "xml", //needs to be changed to the type specified by the plugin
+      type: "xml",
       status: "downloading"
     };
 
-    /*
-    const pluginData = {
-      complete_sbol: '',
-      shallow_sbol: '',
-      genbank: '',
-      top_level: '',
-      instanceUrl: '',
-      size: 0,
-      type: properties.type
-    };
-    */
+    let uri = properties.uri;
 
-    dispatch(downloadFiles([item], pluginName, pluginData));
+    if(!uri.includes('/public/')) {
+      const shareLink = await getShareLink(uri.split(theme.uriPrefix).join(''));
+      uri = shareLink;
+      //Replace backend with uriPrefix
+      uri = uri.replace(publicRuntimeConfig.backend, theme.uriPrefix);
+    }
+
+    let uriSuffix = uri.split(theme.uriPrefix).join('');
+    //Remove first slash if it exists
+    if (uriSuffix.startsWith('/')) {
+      uriSuffix = uriSuffix.slice(1);
+    }
+
+    
+    const pluginData = {
+      uriSuffix: uriSuffix,
+      instanceUrl: pluginsUseLocalCompose ? pluginLocalComposePrefix : `${publicRuntimeConfig.backend}/`,
+      size: 1,
+      type: properties.type,
+      top: properties.uri,
+      token: localStorage.getItem('userToken')
+    };
+    
+
+    dispatch(downloadFiles([item], pluginsUseLocalCompose, true, pluginName, pluginData, pluginLocalComposePrefix));
   }
   }
 
@@ -86,44 +111,92 @@ export default function DownloadModal(properties) {
       { value: "omex", label: "Download COMBINE Archive" }
     ];
 
-    if (properties.type === "Component") {
+    if (properties.type === "ComponentDefinition") {
       selectOptions.push({ value: "gb", label: "Download GenBank" });
       selectOptions.push({ value: "gff", label: "Download GFF3" });
     }
 
-    if (properties.type === "Sequence") selectOptions.push({ value: "fasta", label: "Download FASTA" });
-    if (properties.type === "Module") selectOptions.push({ value: "image", label: "Download Image" });
+    if (properties.type === "Sequence" || properties.type === "ComponentDefinition") selectOptions.push({ value: "fasta", label: "Download FASTA" });
+    if (properties.type === "Module" || properties.type === "ComponentDefinition") selectOptions.push({ value: "image", label: "Download Image" });
     if (properties.type === "Attachment") selectOptions.push({ value: "download", label: "Download Attachment" });
 
-    /*
+    
     axios({
       method: 'GET',
       url: `${publicRuntimeConfig.backend}/admin/plugins`,
-      responseType: 'application/json',
       params: {
         category: 'download'
+      },
+      headers: {
+        Accept: 'application/json'
       }
     }).then(response => {
-      const downloadPlugins = response.data;
+      const downloadPlugins = response.data.download;
+
+      let type;
+
+      switch(properties.type) {
+        case 'Component':
+          type = 'ComponentInstance'
+          break
+        case 'Module':
+          type = 'ModuleInstance'
+          break
+        case 'ComponentDefinition':
+          type = 'Component'
+          break
+        case 'ModuleDefinition':
+          type = 'Module'
+          break
+        default:
+          type = properties.type
+      }
 
       for(let plugin of downloadPlugins) {
+
         axios({
           method: 'POST',
-          url: `${publicRuntimeConfig.backend}/call`,
-          params: {
+          url: `${publicRuntimeConfig.backend}/callPlugin`,
+          headers: {
+            'X-authorization': token
+          },
+          data: {
             name: plugin.name,
-            endpoint: 'evaluate',
-            data: {
-              type: properties.type
-            }
+            endpoint: 'status',
+            category: 'download'
           }
-          
         }).then(response => {
-          if (response.status === 200) selectOptions.push({ value: "plugin", label: plugin.name});
-        }).catch(error => {return;});
+
+          if(response.status === 200) {
+
+            axios({
+              method: 'POST',
+              url: `${publicRuntimeConfig.backend}/callPlugin`,
+              headers: {
+                'X-authorization': token
+              },
+              data: {
+                name: plugin.name,
+                endpoint: 'evaluate',
+                category: 'download',
+                data: {
+                  type: properties.type
+                }
+              }
+              
+            }).then(response => {
+              if (response.status === 200) selectOptions.push({ value: "plugin", label: plugin.name});
+            }).catch(error => {return;});
+
+          }
+
+          return;
+
+        }).catch(error => {return;})
+        
       }
     }).catch(error => {return;});
-    */
+    
 
     return selectOptions;
   }
@@ -168,4 +241,23 @@ export default function DownloadModal(properties) {
       }
     />
   );
+}
+
+
+async function getShareLink(uriSuffix) {
+  const token = localStorage.getItem('userToken');
+  return await axios({
+    method: 'GET',
+    url: `${publicRuntimeConfig.backend}/${uriSuffix}/shareLink`,
+    user: token, // Assuming the API requires a user token for authentication
+    headers: {
+      'Accept': 'text/plain',
+      'X-authorization': token
+    }
+  }).then(response => {
+    return response.data;
+  }
+  ).catch(error => {
+    return error;
+  });
 }
