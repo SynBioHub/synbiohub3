@@ -61,6 +61,9 @@ class TestState:
         self.login_authentication_sbh1 = None
         self.login_authentication_sbh3 = None
 
+        # set by test_submit: collection path segment for /user/.../download URLs (e.g. testid1_collection)
+        self.submit_collection_id = None
+
     def cleanup_check(self):
         nottestedcounter = 0
         
@@ -154,6 +157,13 @@ class TestState:
             return self.login_authentication_sbh1
         else:
             return self.login_authentication_sbh3
+
+    def set_submit_collection_id(self, submit_id):
+        """SBH uses {submit_id}_collection as the collectionId in user URLs."""
+        self.submit_collection_id = submit_id
+
+    def get_submit_collection_id(self):
+        return self.submit_collection_id
 
     def add_test_result(self, endpoint, test_pass):
         #endpoint = "user"
