@@ -3,6 +3,7 @@ package com.synbiohub.sbh3.services;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.synbiohub.sbh3.controllers.SearchController;
 import com.synbiohub.sbh3.sparql.SPARQLQuery;
@@ -17,6 +18,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -369,21 +371,157 @@ public class SearchService {
         return listOfParts.toString();
     }
 
-    public String collectionToOutput(String rawJSON) throws JsonProcessingException{
-        var mapper = new ObjectMapper();
-        JsonNode rawTree = mapper.readTree(rawJSON);
-        ArrayList<ObjectNode> listOfParts = new ArrayList<>();
-        for(JsonNode node : rawTree.get("results").get("bindings")) {
-            ObjectNode part = mapper.createObjectNode();
+    /**
+     * Root collections from the default graph plus synthetic entries from {@code webOfRegistries} (uri prefix → instance URL).
+     */
+    public String getBrowseCollectionsJSON() throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        String raw = SPARQLQuery(getRootCollectionsSPARQL());
+        ArrayNode list = collectionBindingsToArrayNode(mapper, raw);
+        enrichLocalBrowseEntries(list);
+        appendWebOfRegistries(mapper, list);
+        return mapper.writeValueAsString(list);
+    }
 
-            part.put("uri", (node.has("Collection") ? node.get("Collection").get("value").asText() : ""));
-            part.put("name", (node.has("name") ? node.get("name").get("value").asText() : ""));
-            part.put("description", (node.has("description") ? node.get("description").get("value").asText() : ""));
-            part.put("displayId", (node.has("displayId") ? node.get("displayId").get("value").asText() : ""));
-            part.put("version", (node.has("version") ? node.get("version").get("value").asText() : ""));
+    /**
+     * Adds {@code url} (path after configured instance base) and {@code public} for local root collections only.
+     */
+    private void enrichLocalBrowseEntries(ArrayNode collections) throws IOException {
+        for (JsonNode n : collections) {
+            if (!n.isObject()) {
+                continue;
+            }
+            ObjectNode row = (ObjectNode) n;
+            String uri = row.path("uri").asText("");
+            row.put("url", relativePathAfterInstanceBase(uri));
+            row.put("public", isPublicCollectionUri(uri));
+        }
+    }
+
+    private String relativePathAfterInstanceBase(String uri) throws IOException {
+        if (uri == null || uri.isEmpty()) {
+            return "/";
+        }
+        String db = withTrailingSlash(ConfigUtil.get("databasePrefix").asText().trim());
+        if (!db.isEmpty() && uri.startsWith(db)) {
+            return withLeadingSlash(uri.substring(db.length()));
+        }
+        String inst = withTrailingSlash(instanceUriPrefixForGraphs().trim());
+        if (!inst.isEmpty() && uri.startsWith(inst)) {
+            return withLeadingSlash(uri.substring(inst.length()));
+        }
+        try {
+            String path = URI.create(uri).getPath();
+            if (path != null && !path.isEmpty()) {
+                return path.startsWith("/") ? path : "/" + path;
+            }
+        } catch (Exception ignored) {
+        }
+        return "/";
+    }
+
+    private static String withLeadingSlash(String relative) {
+        if (relative == null || relative.isEmpty()) {
+            return "/";
+        }
+        return relative.startsWith("/") ? relative : "/" + relative;
+    }
+
+    private static String withTrailingSlash(String base) {
+        if (base.isEmpty()) {
+            return base;
+        }
+        return base.endsWith("/") ? base : base + "/";
+    }
+
+    private static boolean isPublicCollectionUri(String uri) {
+        if (uri == null || uri.isEmpty()) {
+            return false;
+        }
+        if (uri.contains("/public/")) {
+            return true;
+        }
+        if (uri.contains("/user/")) {
+            return false;
+        }
+        return false;
+    }
+
+    private static ArrayNode collectionBindingsToArrayNode(ObjectMapper mapper, String rawJSON) throws JsonProcessingException {
+        JsonNode rawTree = mapper.readTree(rawJSON);
+        ArrayNode listOfParts = mapper.createArrayNode();
+        for (JsonNode node : rawTree.get("results").get("bindings")) {
+            ObjectNode part = mapper.createObjectNode();
+            part.put("uri", node.has("Collection") ? node.get("Collection").get("value").asText() : "");
+            part.put("name", node.has("name") ? node.get("name").get("value").asText() : "");
+            part.put("description", node.has("description") ? node.get("description").get("value").asText() : "");
+            part.put("displayId", node.has("displayId") ? node.get("displayId").get("value").asText() : "");
+            part.put("version", node.has("version") ? node.get("version").get("value").asText() : "");
             listOfParts.add(part);
         }
-        return listOfParts.toString();
+        return listOfParts;
+    }
+
+    private void appendWebOfRegistries(ObjectMapper mapper, ArrayNode collections) throws IOException {
+        JsonNode wor = ConfigUtil.get("webOfRegistries");
+        if (wor == null || !wor.isObject() || wor.isEmpty()) {
+            return;
+        }
+        Set<String> existingUris = new HashSet<>();
+        for (JsonNode n : collections) {
+            if (n.has("uri") && !n.get("uri").isNull()) {
+                existingUris.add(n.get("uri").asText());
+            }
+        }
+        wor.fields().forEachRemaining(entry -> {
+            String uriPrefix = entry.getKey();
+            if (existingUris.contains(uriPrefix)) {
+                return;
+            }
+            String instanceUrl = entry.getValue().asText("");
+            String name = displayNameForRegistry(uriPrefix, instanceUrl);
+            ObjectNode row = mapper.createObjectNode();
+            row.put("uri", uriPrefix);
+            row.put("name", name);
+            row.put("description", "");
+            row.put("displayId", name);
+            row.put("version", "");
+            row.put("url", instanceUrl);
+            row.put("public", true);
+            row.put("remote", true);
+            collections.add(row);
+        });
+    }
+
+    private static String displayNameForRegistry(String uriPrefix, String instanceUrl) {
+        try {
+            String trimmed = uriPrefix.replaceAll("/+$", "");
+            URI parsed = URI.create(trimmed);
+            String path = parsed.getPath();
+            if (path != null && path.length() > 1) {
+                String[] segs = path.split("/");
+                String last = segs[segs.length - 1];
+                if (!last.isEmpty()) {
+                    return last;
+                }
+            }
+            if (parsed.getHost() != null) {
+                return parsed.getHost();
+            }
+            if (instanceUrl != null && !instanceUrl.isEmpty()) {
+                URI iu = URI.create(instanceUrl.replaceAll("/+$", ""));
+                if (iu.getHost() != null) {
+                    return iu.getHost();
+                }
+            }
+        } catch (Exception ignored) {
+        }
+        return uriPrefix;
+    }
+
+    public String collectionToOutput(String rawJSON) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.writeValueAsString(collectionBindingsToArrayNode(mapper, rawJSON));
     }
 
     /**
