@@ -7,7 +7,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,11 +16,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import javax.print.DocFlavor;
 import java.io.IOException;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Component
 @RequiredArgsConstructor
@@ -36,21 +32,46 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String authHeader = request.getHeader("Authorization");
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            authHeader = authHeader.split(" ")[1].trim();
-        }
-        String xauthHeader = request.getHeader("X-authorization");
-        final String jwt;
-        final String username;
-        if (authHeader == null && xauthHeader == null) {
+        if (PublicBrowsePath.isBrowse(request)) {
             filterChain.doFilter(request, response);
             return;
         }
-        jwt = authHeader == null ? xauthHeader : authHeader;
-        username = jwtService.extractUsername(jwt);
-        var claim = jwtService.extractAllClaims(jwt);
-        List<String> userRoles = convertAuthoritiesToRoles(claim);
+        String bearerToken = null;
+        String rawAuthorization = request.getHeader("Authorization");
+        if (rawAuthorization != null && rawAuthorization.regionMatches(true, 0, "Bearer ", 0, 7)) {
+            String token = rawAuthorization.substring(7).trim();
+            if (!token.isEmpty()) {
+                bearerToken = token;
+            }
+        }
+        String xauthHeader = request.getHeader("X-authorization");
+        if (xauthHeader != null && xauthHeader.isBlank()) {
+            xauthHeader = null;
+        }
+        if (bearerToken == null && xauthHeader == null) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+        final String jwt = bearerToken != null ? bearerToken : xauthHeader;
+        if (jwt == null || jwt.isBlank()) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        final String username;
+        final List<String> userRoles;
+        try {
+            username = jwtService.extractUsername(jwt);
+            var claim = jwtService.extractAllClaims(jwt);
+            userRoles = convertAuthoritiesToRoles(claim);
+        } catch (RuntimeException e) {
+            // Not a JWT or bad signature — continue anonymously; Spring Security still enforces auth on protected routes.
+            if (SecurityContextHolder.getContext().getAuthentication() == null) {
+                SecurityContextHolder.clearContext();
+            }
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
@@ -64,7 +85,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         Set<String> allowedEndpoints = new HashSet<>(endpointProperties.getRoleToEndpointPermissions("USER"));
-        String requestedEndpoint = request.getRequestURI();
+        String requestedEndpoint = ServletPathUtil.getPathWithinApplication(request);
         for (String role : userRoles) {
             allowedEndpoints.addAll(endpointProperties.getRoleToEndpointPermissions(role));
         }

@@ -58,14 +58,12 @@ public class SecurityConfig {
                 .requestMatchers(
                         "/setup", "/login", "/register",
                         "/search", "/search/**", "/searchCount", "/searchCount/**",
-                        "/twins", "/twinsCount", "/uses", "/usesCount", "/similar", "/similarCount",
-                        "/sbol", "/sbolnr", "/metadata", "/gb", "/fasta", "/gff", "/download",
+                        "/download",
                         "/public/**",
-                        "/public/**/sbol", "/public/**/sbolnr", "/public/**/gb", "/public/**/gff",
-                        "/user/**",
-                        "/user/**/sbol", "/user/**/sbolnr", "/user/**/gb", "/user/**/gff",
-                        "/sparql", "/ComponentDefinition/**", "/**/count", "/count",
-                        "/admin/theme", "/admin/registries", "/admin/plugins", "/admin/graphs", "/admin/log", "/manage", "/shared"
+                        "/public/**/sbol", "/public/**/sbolnr", "/public/**/gb", "/public/**/gff", "/public/**/fasta", "/public/**/metadata",
+                        "/sparql", "/**/count", "/count",
+                        "/admin/theme", "/admin/registries",
+                        "/browse", "/rootCollections", "/root-collections"
                 ).permitAll()
                 .anyRequest().authenticated()
                 .and()
