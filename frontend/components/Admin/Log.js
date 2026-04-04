@@ -1,6 +1,5 @@
 import axios from 'axios';
 import getConfig from 'next/config';
-import he from 'he';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import useSWR from 'swr';
@@ -112,7 +111,10 @@ function LogHeader(properties) {
 }
 
 const decodeHtml = (line, index) => {
-  const lines = he.decode(line).split('<br>');
+  const BR_PLACEHOLDER = '\u0000BR\u0000';
+  const escaped = line.replace(/<br>/gi, BR_PLACEHOLDER);
+  const doc = new DOMParser().parseFromString(escaped, 'text/html');
+  const lines = doc.documentElement.textContent.split(BR_PLACEHOLDER);
   return lines.map(element => {
     index++;
     return <p key={index}>{element}</p>;
