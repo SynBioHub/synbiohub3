@@ -85,6 +85,16 @@ public class SearchController {
     }
 
     /**
+     * Returns all root collections as well as web of registries collections.
+     * @return All root collections as well as web of registries collections
+     */
+    @GetMapping(value = "/browse")
+    public String getBrowse() throws IOException {
+        log.info("Getting browse collections (root + web of registries)");
+        return searchService.getBrowseCollectionsJSON();
+    }
+
+    /**
      * Returns all root collections.
      * @return All root collections
      */
