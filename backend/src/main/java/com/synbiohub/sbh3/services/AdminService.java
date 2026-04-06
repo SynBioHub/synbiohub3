@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.synbiohub.sbh3.security.model.User;
 import com.synbiohub.sbh3.sparql.SPARQLQuery;
 import com.synbiohub.sbh3.utils.ConfigUtil;
 import jakarta.servlet.http.HttpServletRequest;
@@ -190,6 +191,27 @@ public class AdminService {
 
     public String updatePlugin(Map<String, String> allParams) throws IOException {
         return "Plugin updated";
+    }
+
+    public String getUsers() {
+        ArrayNode usersArray = mapper.createArrayNode();
+
+        for (User user : userService.getAllUsers()) {
+            usersArray.add(
+                    mapper.createObjectNode()
+                            .put("id", user.getId())
+                            .put("name", user.getName())
+                            .put("username", user.getUsername())
+                            .put("email", user.getEmail())
+                            .put("affiliation", user.getAffiliation())
+                            .put("graphUri", user.getGraphUri())
+                            .put("isAdmin", Boolean.TRUE.equals(user.getIsAdmin()))
+                            .put("isCurator", Boolean.TRUE.equals(user.getIsCurator()))
+                            .put("isMember", Boolean.TRUE.equals(user.getIsMember()))
+            );
+        }
+
+        return mapper.createObjectNode().set("users", usersArray).toString();
     }
 
     private ObjectNode castParamsToPlugin(Map<String, String> allParams, int arraySize) {
