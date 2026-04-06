@@ -51,6 +51,12 @@
    color: #171D26;
 }
 
+.readonlyInput {
+   background-color: #f2f4f7;
+   border-color: #b8c2cc;
+   color: #6b7280;
+}
+
 .infocontainer {
    margin-top: 0.5rem;
    text-align: center;

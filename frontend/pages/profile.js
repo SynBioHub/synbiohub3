@@ -4,7 +4,8 @@ import {
   faLock,
   faSave,
   faSuitcase,
-  faUser
+  faUser,
+  faIdBadge
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
@@ -66,7 +67,7 @@ function Profile() {
           className={styles.registericon}
         />
         <h1 className={styles.header}>
-          {profileUsername}
+          {name}
           {"'s"} Account
         </h1>
         <div className={styles.intro}>
@@ -80,6 +81,15 @@ function Profile() {
           type="text"
           icon={faUser}
           highlight={unsavedName}
+        />
+        <InputField
+          value={profileUsername}
+          onChange={() => {}}
+          onKeyPress={() => {}}
+          placeholder="Username"
+          type="text"
+          icon={faIdBadge}
+          readOnly
         />
         <InputField
           value={affiliation}

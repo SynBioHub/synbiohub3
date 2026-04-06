@@ -280,7 +280,7 @@ public class AdminController {
     @GetMapping(value = "/admin/users")
     @ResponseBody
     public String getUsers(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
-        return null;
+        return adminService.getUsers();
     }
 
     @PostMapping(value = "/admin/users")
