@@ -286,25 +286,33 @@ public class AdminController {
     @PostMapping(value = "/admin/users")
     @ResponseBody
     public String updateUsers(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
-        return null;
+        try {
+            return adminService.updateUsers(allParams);
+        } catch (IOException e) {
+            return "Unable to update users configuration";
+        }
     }
 
     @PostMapping(value = "/admin/newUser")
     @ResponseBody
     public String createNewUser(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
-        return null;
+        try {
+            return adminService.createNewUser(allParams);
+        } catch (IOException e) {
+            return "Error creating new user.";
+        }
     }
 
     @PostMapping(value = "/admin/updateUser")
     @ResponseBody
     public String updateUser(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
-        return null;
+        return adminService.updateUser(allParams);
     }
 
     @PostMapping(value = "/admin/deleteUser")
     @ResponseBody
     public String deleteUser(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
-        return null;
+        return adminService.deleteUser(allParams);
     }
 
 

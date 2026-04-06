@@ -358,6 +358,10 @@ public User updateUserProfile(Map<String, String> allParams) throws Exception {
         return userRepository.findAll();
     }
 
+    public void deleteUser(User user) {
+        userRepository.delete(user);
+    }
+
     public Set<User> connect(String dbName) {
         Connection conn = null;
         ResultSet resultSet = null;

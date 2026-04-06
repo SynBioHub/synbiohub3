@@ -42,7 +42,9 @@ export default function Users() {
   const dispatch = useDispatch();
   const { users, loading } = useUsers(token, dispatch);
 
-  const [allowPublicSignup, setAllowPublicSignup] = useState(theme.allowPublicSignup);
+  const [allowPublicSignup, setAllowPublicSignup] = useState(
+    theme.allowPublicSignup === 'true' || theme.allowPublicSignup === true
+  );
 
   useEffect(() => {
     const storedTheme = JSON.parse(localStorage.getItem('theme')) || {};
@@ -50,6 +52,14 @@ export default function Users() {
       setAllowPublicSignup(storedTheme.allowPublicSignup);
     }
   }, []);
+
+  useEffect(() => {
+    if (users && users.allowPublicSignup !== undefined) {
+      setAllowPublicSignup(
+        users.allowPublicSignup === 'true' || users.allowPublicSignup === true
+      );
+    }
+  }, [users]);
 
   const handleAllowPublicSignup = async () => {
     try {
@@ -219,7 +229,11 @@ function UserDisplay(properties) {
   useEffect(() => {
     setName(properties.user.name);
     setEmail(properties.user.email);
-  }, [properties.user.name, properties.user.url]);
+    setAffiliation(properties.user.affiliation);
+    setIsMember(properties.user.isMember ? true : false);
+    setIsCurator(properties.user.isCurator ? true : false);
+    setIsAdmin(properties.user.isAdmin ? true : false);
+  }, [properties.user]);
 
   return !editMode ? (
     <tr key={properties.user.id}>
@@ -255,14 +269,27 @@ function UserDisplay(properties) {
               action="Edit"
               icon={faPencilAlt}
               color="#00A1E4"
-              onClick={() => setEditMode(true)}
+              onClick={() => {
+                setName(properties.user.name);
+                setEmail(properties.user.email);
+                setAffiliation(properties.user.affiliation);
+                setIsMember(properties.user.isMember ? true : false);
+                setIsCurator(properties.user.isCurator ? true : false);
+                setIsAdmin(properties.user.isAdmin ? true : false);
+                setEditMode(true);
+              }}
             />
             <ActionButton
               action="Delete"
               icon={faTrashAlt}
               color="#FF3C38"
               onClick={() =>
-                deleteUser(properties.user.id, properties.token, dispatch)
+                deleteUser(
+                  properties.user.id,
+                  properties.user.username,
+                  properties.token,
+                  dispatch
+                )
               }
             />
           </div>
@@ -313,8 +340,8 @@ function UserDisplay(properties) {
               action="Save"
               icon={faSave}
               color="#1C7C54"
-              onClick={() => {
-                saveUser(
+              onClick={async () => {
+                const saved = await saveUser(
                   properties.user.id,
                   name,
                   email,
@@ -325,7 +352,9 @@ function UserDisplay(properties) {
                   properties.token,
                   dispatch
                 );
-                setEditMode(false);
+                if (saved) {
+                  setEditMode(false);
+                }
               }}
             />
             <ActionButton
@@ -349,7 +378,14 @@ function UserDisplay(properties) {
   );
 }
 
-const deleteUser = async (id, token, dispatch) => {
+const deleteUser = async (id, username, token, dispatch) => {
+  const confirmed = window.confirm(
+    `Delete user "${username}"? This action cannot be undone.`
+  );
+  if (!confirmed) {
+    return;
+  }
+
   const url = `${publicRuntimeConfig.backend}/admin/deleteUser`;
   const headers = {
     Accept: 'text/plain',
@@ -408,11 +444,15 @@ const saveUser = async (
     if (error.response) {
       console.error('Error:', error.message);
     }
+    return false;
   }
 
   if (response.status === 200) {
     mutate([`${publicRuntimeConfig.backend}/admin/users`, token, dispatch]);
+    return true;
   }
+
+  return false;
 };
 
 const createUser = async (
@@ -447,14 +487,25 @@ const createUser = async (
     response = await axios.post(url, parameters, { headers });
   } catch (error) {
     if (error.response) {
+      const msg = (error.response.data || '').toString();
+      alert(msg || 'Unable to create user. Please try again.');
       console.error('Error:', error.message);
+    } else {
+      alert('Unable to create user. Please try again.');
     }
+    return;
   }
 
-  // const responseText = await response.data;
-
   if (response && response.status === 200) {
-    mutate([`${publicRuntimeConfig.backend}/admin/users`, token, dispatch]);
+    const responseMessage = (response.data || '').toString();
+    if (responseMessage.toLowerCase().includes('created successfully')) {
+      alert(
+        `User created successfully. An email has been sent to ${email} so they can set their password.`
+      );
+      mutate([`${publicRuntimeConfig.backend}/admin/users`, token, dispatch]);
+    } else {
+      alert(responseMessage || 'Unable to create user. Please try again.');
+    }
   }
 };
 
