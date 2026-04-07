@@ -12,6 +12,9 @@ const { publicRuntimeConfig } = getConfig();
 import showdown from "showdown"
 const sdconverter = new showdown.Converter()
 
+/** Must match Spring multipart max-file-size (default 1 MB in many setups). */
+const MAX_LOGO_BYTES = 1048576
+
 export default function Theme() {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
@@ -21,6 +24,7 @@ export default function Theme() {
   const [altHome, setAltHome] = useState('');
   const [baseColor, setBaseColor] = useState('');
   const [logoFile, setLogoFile] = useState(null);
+  const [logoFileError, setLogoFileError] = useState('');
   const [showModuleInteractions, setShowModuleInteractions] = useState(true);
   const [removePublicEnabled, setRemovePublicEnabled] = useState(true);
   const [requireLogin, setRequireLogin] = useState(false);
@@ -57,11 +61,17 @@ export default function Theme() {
   };
 
   const updateThemeState = (themeData) => {
+    const parsedThemeParameters = Array.isArray(themeData.themeParameters)
+      ? themeData.themeParameters
+      : (themeData.themeParameters && typeof themeData.themeParameters === 'object')
+        ? [{ value: themeData.themeParameters.default || '' }]
+        : [];
+
     setTheme(themeData);
     setInstanceName(themeData.instanceName || '');
     setFrontPageText(themeData.frontPageText || '');
     setAltHome(themeData.altHome || '');
-    setBaseColor(themeData.themeParameters?.[0]?.value || '');
+    setBaseColor(parsedThemeParameters?.[0]?.value || '');
     setShowModuleInteractions(themeData.showModuleInteractions === 'true' || themeData.showModuleInteractions === true);
     setRemovePublicEnabled(themeData.removePublicEnabled === 'true' || themeData.removePublicEnabled === true);
     setRequireLogin(themeData.requireLogin === 'true' || themeData.requireLogin === true);
@@ -73,34 +83,84 @@ export default function Theme() {
     setLogoFile(themeData.logo || null);
   };
 
+  const handleLogoFileChange = event => {
+    const file = event.target.files?.[0];
+    if (!file) {
+      setLogoFile(null);
+      setLogoFileError('');
+      return;
+    }
+    if (file.size > MAX_LOGO_BYTES) {
+      setLogoFile(null);
+      setLogoFileError(
+        `This file is too large (${Math.ceil(file.size / 1024)} KB). Logos must be ${MAX_LOGO_BYTES / 1024} KB or smaller.`
+      );
+      event.target.value = '';
+      return;
+    }
+    setLogoFile(file);
+    setLogoFileError('');
+  };
 
   const handleSave = async () => {
 
     setLoading(true);
-    const formData = new FormData();
-    formData.append('instanceName', instanceName);
-    formData.append('frontPageText', frontPageText);
-    formData.append('altHome', altHome);
-    formData.append('baseColor', baseColor);
-    formData.append('removePublicEnabled', String(removePublicEnabled));
-    formData.append('showModuleInteractions', String(showModuleInteractions));
-    formData.append('requireLogin', String(requireLogin));
-    formData.append('suppressDebugLogs', String(suppressDebugLogs));
-    formData.append('suppressInfoLogs', String(suppressInfoLogs));
-    formData.append('suppressWarningLogs', String(suppressWarningLogs));
-    formData.append('suppressErrorLogs', String(suppressErrorLogs));
-    if (logoFile) {
-      formData.append('logo', logoFile);
-    }
+    const themeData = new URLSearchParams();
+    themeData.append('instanceName', instanceName);
+    themeData.append('frontPageText', frontPageText);
+    themeData.append('altHome', altHome);
+    themeData.append('themeParameters', JSON.stringify([{ value: baseColor }]));
+    themeData.append('removePublicEnabled', String(removePublicEnabled));
+    themeData.append('showModuleInteractions', String(showModuleInteractions));
+    themeData.append('requireLogin', String(requireLogin));
+    themeData.append('suppressDebugLogs', String(suppressDebugLogs));
+    themeData.append('suppressInfoLogs', String(suppressInfoLogs));
+    themeData.append('suppressWarningLogs', String(suppressWarningLogs));
+    themeData.append('suppressErrorLogs', String(suppressErrorLogs));
 
     try {
+      if (logoFile instanceof File) {
+        if (logoFile.size > MAX_LOGO_BYTES) {
+          alert(
+            `The logo file is too large. Maximum size is ${MAX_LOGO_BYTES / 1024} KB (1 MB). Choose a smaller image or compress it.`
+          );
+          setLoading(false);
+          return;
+        }
+        const logoData = new FormData();
+        logoData.append('logo', logoFile);
+        const logoResponse = await fetch(`${publicRuntimeConfig.backend}/admin/logo`, {
+          method: 'POST',
+          headers: {
+            Accept: 'text/plain',
+            'X-authorization': token
+          },
+          body: logoData
+        });
+        if (!logoResponse.ok) {
+          const errText = await logoResponse.text().catch(() => '');
+          const isTooLarge =
+            logoResponse.status === 413 ||
+            /FileSizeLimitExceededException|maximum permitted size|1048576/i.test(errText);
+          if (isTooLarge) {
+            alert(
+              `The logo file is too large for the server (maximum ${MAX_LOGO_BYTES / 1024} KB). Choose a smaller image or compress it.`
+            );
+          } else {
+            alert(errText || 'Failed to upload logo.');
+          }
+          setLoading(false);
+          return;
+        }
+      }
+
       const response = await fetch(`${publicRuntimeConfig.backend}/admin/theme`, {
         method: 'POST',
         headers: {
           Accept: 'text/plain',
           'X-authorization': token
         },
-        body: formData
+        body: themeData
       });
 
       if (response.ok) {
@@ -151,10 +211,18 @@ export default function Theme() {
         <div className={styles.themeContainer}>
           <div className={styles.title}>Theme</div>
           <div className={styles.themeFont}>Logo</div>
+          <p className={styles.logoHint}>
+            Image files only. Maximum size: {MAX_LOGO_BYTES / 1024} KB (1 MB).
+          </p>
+          {logoFileError ? (
+            <p className={styles.logoFileError} role="alert">
+              {logoFileError}
+            </p>
+          ) : null}
           <input
             className={styles.newLogoFilePicker}
             type="file"
-            onChange={(e) => setLogoFile(e.target.files[0])}
+            onChange={handleLogoFileChange}
             accept="image/*"
           />
           <h2 className={styles.themeFont}>Instance Name</h2>

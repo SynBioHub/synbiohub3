@@ -67,6 +67,20 @@
   box-shadow: 0 2px 12px rgba(0,161,228,0.12);
 }
 
+.logoHint {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.9rem;
+  color: #575757;
+  max-width: 36rem;
+}
+
+.logoFileError {
+  margin: 0 0 0.75rem 0;
+  font-size: 0.9rem;
+  color: #b42318;
+  max-width: 36rem;
+}
+
 .wfull {
    width: 100%;
    resize: vertical;

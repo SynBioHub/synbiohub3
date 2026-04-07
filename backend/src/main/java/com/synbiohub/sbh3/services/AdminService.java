@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.synbiohub.sbh3.dto.LogEntry;
 import com.synbiohub.sbh3.security.model.Role;
 import com.synbiohub.sbh3.security.model.User;
 import com.synbiohub.sbh3.sparql.SPARQLQuery;
@@ -15,24 +16,20 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
-import com.synbiohub.sbh3.dto.LogEntry;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.BufferedReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.GZIPInputStream;
-import java.util.UUID;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
@@ -98,11 +95,73 @@ public class AdminService {
         ObjectNode json = mapper.createObjectNode();
         json.set("instanceName", ConfigUtil.get("instanceName"));
         json.set("frontPageText", ConfigUtil.get("frontPageText"));
+        json.set("altHome", ConfigUtil.get("altHome"));
+        json.set("instanceLogo", ConfigUtil.get("instanceLogo"));
         json.set("theme", ConfigUtil.get("theme"));
         json.set("themeParameters", ConfigUtil.get("themeParameters"));
+        json.set("showModuleInteractions", ConfigUtil.get("showModuleInteractions"));
+        json.set("removePublicEnabled", ConfigUtil.get("removePublicEnabled"));
+        json.set("requireLogin", ConfigUtil.get("requireLogin"));
+        json.set("allowPublicSignup", ConfigUtil.get("allowPublicSignup"));
+        json.set("suppressDebugLogs", ConfigUtil.get("suppressDebugLogs"));
+        json.set("suppressInfoLogs", ConfigUtil.get("suppressInfoLogs"));
+        json.set("suppressWarningLogs", ConfigUtil.get("suppressWarningLogs"));
+        json.set("suppressErrorLogs", ConfigUtil.get("suppressErrorLogs"));
         json.set("firstLaunch", ConfigUtil.get("firstLaunch"));
         String result = mapper.writeValueAsString(json);
         return result;
+    }
+
+    public String updateTheme(Map<String, String> allParams) throws IOException {
+        JsonNode currentThemeNode = mapper.readTree(getTheme());
+        if (!currentThemeNode.isObject()) {
+            return "Unable to update theme";
+        }
+
+        ObjectNode currentTheme = (ObjectNode) currentThemeNode;
+        for (Map.Entry<String, String> entry : allParams.entrySet()) {
+            String key = entry.getKey();
+            if (!currentTheme.has(key)) {
+                continue;
+            }
+
+            JsonNode currentValue = currentTheme.get(key);
+            JsonNode updatedValue = mapper.valueToTree(entry.getValue());
+            if (currentValue != null && currentValue.isBoolean()) {
+                updatedValue = mapper.valueToTree(Boolean.parseBoolean(entry.getValue()));
+            } else if (currentValue != null && (currentValue.isObject() || currentValue.isArray())) {
+                try {
+                    updatedValue = mapper.readTree(entry.getValue());
+                } catch (IOException ignored) {
+                    // Keep string value when request parameter is not valid JSON.
+                }
+            }
+
+            if (!updatedValue.equals(currentValue)) {
+                ConfigUtil.set(ConfigUtil.getLocaljson(), key, updatedValue);
+                currentTheme.set(key, updatedValue);
+            }
+        }
+
+        ConfigUtil.refreshLocalJson();
+        return currentTheme.toString();
+    }
+
+    public void updateLogo(MultipartFile logo) throws IOException {
+        if (logo == null || logo.isEmpty()) {
+            throw new IllegalArgumentException("Logo file is required.");
+        }
+
+        String contentType = logo.getContentType();
+        if (contentType == null || !contentType.startsWith("image/")) {
+            throw new IllegalArgumentException("Logo must be an image file.");
+        }
+
+        String encodedLogo = Base64.getEncoder().encodeToString(logo.getBytes());
+        String dataUri = "data:" + contentType + ";base64," + encodedLogo;
+
+        ConfigUtil.set(ConfigUtil.getLocaljson(), "instanceLogo", dataUri);
+        ConfigUtil.refreshLocalJson();
     }
 
     public Boolean getDatabaseStatus() {
