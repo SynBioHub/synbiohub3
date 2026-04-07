@@ -12,6 +12,7 @@ from test_functions import (
     compare_status_codes,
     get_request,
     login_with,
+    post_request,
     request_file_path,
     test_state,
 )
@@ -292,7 +293,13 @@ class TestAdmin(TestCase):
         data={
             'allowPublicSignup': 'False',
         }
-        compare_post_request("/admin/users", data, headers = {"Accept": "text/plain"}, test_name = "admin_updateUsersConfig")
+        request = clip_request("admin/users")
+        testpath = request_file_path(request, "post request", "admin_updateUsersConfig")
+        test_state.add_post_request(request, testpath, "admin_updateUsersConfig")
+        sbh1_response = post_request("admin/users", 1, data, {"Accept": "text/plain"}, [], files = None)
+        sbh3_response = post_request("admin/users", 3, data, {"Accept": "text/plain"}, [], files = None)
+        compare_status_codes(sbh1_response, sbh3_response)
+        add_test_results(1, test_type)
         test_print("test_post_admin_users completed")
 
         test_print("test_newUser POST starting")
