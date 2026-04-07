@@ -75,10 +75,10 @@ class TestAdmin(TestCase):
         compare_post_request("/admin/deletePlugin", data, headers = {"Accept": "text/plain"}, test_name = "admin_deletePlugin", test_type = test_type)
         test_print("test_admin_deletePlugin completed")
 
-        # test_print("test_admin_registries starting")
-        # #SBH3 throws error
-        # compare_get_request("admin/registries", headers = {"Accept": "text/plain"}, test_type = test_type, comparison_type="json", fields=["registries", "errors"])
-        # test_print("test_admin_registries completed")
+        test_print("test_admin_registries starting")
+        #SBH3 throws error
+        compare_get_request("admin/registries", headers = {"Accept": "text/plain"}, test_type = test_type, comparison_type="json", fields=["registries", "errors"])
+        test_print("test_admin_registries completed")
 
         # test_print("test_admin_saveRegistry starting")
         # data={
