@@ -228,6 +228,10 @@ requesttype is the type of request performed- either 'get request' or 'post requ
         add_test_results(test_passed, test_type)
         return
 
+    # Print raw bodies before diffing so CI logs show exactly what was compared.
+    test_print("compare_request SBH1 body for " + requesttype + " " + request + ": " + sbh1requestcontent.text)
+    test_print("compare_request SBH3 body for " + requesttype + " " + request + ": " + sbh3requestcontent.text)
+
     if(file_diff(sbh1requestcontent.text, sbh3requestcontent.text, request, requesttype)):
         print("RESPONSE CONTENT TEST PASSED\n")
     else:
