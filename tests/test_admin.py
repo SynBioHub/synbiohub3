@@ -12,6 +12,7 @@ from test_functions import (
     compare_status_codes,
     get_request,
     login_with,
+    post_request,
     request_file_path,
     test_state,
 )
@@ -245,30 +246,61 @@ class TestAdmin(TestCase):
         compare_get_request("/admin/theme", headers = {"Accept":"text/plain"}, test_type = test_type, comparison_type="json", fields=["instanceName", "frontPageText"])
         test_print("test_admin_theme completed")
 
-        # test_print("test_admin_updateTheme starting")
-        # logo = os.path.basename('./logo.jpg');
-        # data={
-        #     'instanceName': 'test_instance',
-        #     'frontPageText' : 'test_instance',
-        #     'baseColor' : 'A32423',
-        #     'showModuleInteractions' : 'ok',
-        # }
-        # files={
-        #     'logo' : (logo, open('./logo.jpg', 'rb')),
-        # }
-        # compare_post_request("/admin/theme", data, headers = {"Accept": "text/plain"}, files = files, test_name = "admin_setAdministratorEmail", test_type = test_type)
-        # test_print("test_admin_updateTheme completed")
+        test_print("test_admin_updateTheme starting")
+        logo = os.path.basename('./logo.jpg');
+        data={
+            'instanceName': 'test_instance',
+            'frontPageText' : 'test_instance',
+            'baseColor' : 'A32423',
+            'showModuleInteractions' : 'ok',
+        }
+        files={
+            'logo' : (logo, open('./logo.jpg', 'rb')),
+        }
+        compare_post_request("/admin/theme", data, headers = {"Accept": "text/plain"}, files = files, test_name = "admin_setAdministratorEmail", test_type = test_type)
+        test_print("test_admin_updateTheme completed")
 
-        # test_print("test_get_admin_users starting")
-        # compare_get_request("/admin/users", headers = {"Accept":"text/plain"}, test_type = test_type, comparison_type="json", fields=["users", "graphUri", "isAdmin"])
-        # test_print("test_get_admin_users completed")
+        test_print("test_get_admin_users starting")
+        request = clip_request("admin/users")
+        testpath = request_file_path(request, "get request", "")
+        test_state.add_get_request(request, testpath, "")
+        headers_users = {"Accept": "application/json"}
+        sbh1_response = get_request("admin/users", 1, headers_users, [])
+        sbh3_response = get_request("admin/users", 3, headers_users, [])
+        compare_status_codes(sbh1_response, sbh3_response)
+        required_user_fields = ["id", "username", "email", "graphUri", "isAdmin", "isCurator", "isMember"]
+        for resp, name in ((sbh1_response, "SBH1"), (sbh3_response, "SBH3")):
+            try:
+                data = json.loads(resp.text)
+            except JSONDecodeError as e:
+                raise AssertionError("admin/users %s: invalid JSON: %s" % (name, e)) from e
+            if "users" not in data or not isinstance(data["users"], list):
+                raise AssertionError("admin/users %s: expected top-level users array" % name)
+            for user in data["users"]:
+                if not isinstance(user, dict):
+                    raise AssertionError("admin/users %s: each user entry must be an object" % name)
+                for field in required_user_fields:
+                    if field not in user:
+                        raise AssertionError("admin/users %s: user missing required field %s" % (name, field))
+                for bool_field in ("isAdmin", "isCurator", "isMember"):
+                    if not isinstance(user[bool_field], bool):
+                        raise AssertionError("admin/users %s: %s must be boolean" % (name, bool_field))
+        print("RESPONSE CONTENT TEST PASSED: users shape valid on both instances\n")
+        add_test_results(1, test_type)
+        test_print("test_get_admin_users completed")
 
-        # test_print("test_post_admin_users starting")
-        # data={
-        #     'allowPublicSignup': 'False',
-        # }
-        # compare_post_request("/admin/users", data, headers = {"Accept": "text/plain"}, test_name = "admin_updateUsersConfig")
-        # test_print("test_post_admin_users completed")
+        test_print("test_post_admin_users starting")
+        data={
+            'allowPublicSignup': 'False',
+        }
+        request = clip_request("admin/users")
+        testpath = request_file_path(request, "post request", "admin_updateUsersConfig")
+        test_state.add_post_request(request, testpath, "admin_updateUsersConfig")
+        sbh1_response = post_request("admin/users", 1, data, {"Accept": "text/plain"}, [], files = None)
+        sbh3_response = post_request("admin/users", 3, data, {"Accept": "text/plain"}, [], files = None)
+        compare_status_codes(sbh1_response, sbh3_response)
+        add_test_results(1, test_type)
+        test_print("test_post_admin_users completed")
 
         # test_print("test_newUser POST starting")
         # data = {

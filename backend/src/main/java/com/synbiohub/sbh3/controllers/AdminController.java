@@ -16,9 +16,17 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Base64;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -284,7 +292,90 @@ public class AdminController {
     @PostMapping(value = "/admin/theme")
     @ResponseBody
     public String updateTheme(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
-        return null;
+        try {
+            return adminService.updateTheme(allParams);
+        } catch (IOException e) {
+            return "Unable to update theme";
+        }
+    }
+
+    @PostMapping(value = "/admin/logo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @ResponseBody
+    public ResponseEntity<String> updateLogo(@RequestPart("logo") MultipartFile logo) {
+        try {
+            adminService.updateLogo(logo);
+            return ResponseEntity.ok("Logo updated successfully.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unable to update logo");
+        }
+    }
+
+    @GetMapping(value = "/logo")
+    @ResponseBody
+    public ResponseEntity<byte[]> getLogo() {
+        try {
+            JsonNode logoNode = ConfigUtil.get("instanceLogo");
+            String logoValue = logoNode == null ? "" : logoNode.asText("");
+            Path defaultLogoPath = Path.of(System.getProperty("user.dir"), "../frontend/public/images/logo.svg").normalize();
+
+            String contentType = "application/octet-stream";
+            byte[] bytes;
+            if (logoValue.isBlank()) {
+                if (!Files.exists(defaultLogoPath) || !Files.isRegularFile(defaultLogoPath)) {
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+                }
+                bytes = Files.readAllBytes(defaultLogoPath);
+                String detectedType = Files.probeContentType(defaultLogoPath);
+                if (detectedType != null && !detectedType.isBlank()) {
+                    contentType = detectedType;
+                }
+            } else if (logoValue.startsWith("data:")) {
+                int commaIndex = logoValue.indexOf(',');
+                if (commaIndex < 0) {
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+                }
+                String metadata = logoValue.substring(5, commaIndex);
+                String dataPart = logoValue.substring(commaIndex + 1);
+                boolean isBase64 = metadata.endsWith(";base64");
+                String mediaType = isBase64 ? metadata.substring(0, metadata.length() - 7) : metadata;
+                if (!mediaType.isBlank()) {
+                    contentType = mediaType;
+                }
+                bytes = isBase64
+                        ? Base64.getDecoder().decode(dataPart)
+                        : URLDecoder.decode(dataPart, StandardCharsets.UTF_8).getBytes(StandardCharsets.UTF_8);
+            } else if (logoValue.startsWith("http://") || logoValue.startsWith("https://")) {
+                URL url = new URL(logoValue);
+                bytes = url.openStream().readAllBytes();
+            } else {
+                Path logoPath = Path.of(logoValue);
+                if (!logoPath.isAbsolute()) {
+                    logoPath = Path.of(System.getProperty("user.dir")).resolve(logoPath).normalize();
+                }
+                if (!Files.exists(logoPath) || !Files.isRegularFile(logoPath)) {
+                    logoPath = defaultLogoPath;
+                }
+                if (!Files.exists(logoPath) || !Files.isRegularFile(logoPath)) {
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+                }
+                bytes = Files.readAllBytes(logoPath);
+                String detectedType = Files.probeContentType(logoPath);
+                if (detectedType != null && !detectedType.isBlank()) {
+                    contentType = detectedType;
+                }
+            }
+
+            MediaType mediaType = MediaType.APPLICATION_OCTET_STREAM;
+            try {
+                mediaType = MediaType.parseMediaType(contentType);
+            } catch (IllegalArgumentException ignored) {
+            }
+            return ResponseEntity.ok().contentType(mediaType).body(bytes);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 
     @GetMapping(value = "/admin/users")
