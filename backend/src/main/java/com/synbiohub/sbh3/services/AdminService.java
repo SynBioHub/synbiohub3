@@ -144,7 +144,7 @@ public class AdminService {
         }
 
         ConfigUtil.refreshLocalJson();
-        return currentTheme.toString();
+        return "Theme updated successfully";
     }
 
     public void updateLogo(MultipartFile logo) throws IOException {
