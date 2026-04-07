@@ -78,11 +78,21 @@ public class AdminController {
         }
     }
 
+    @GetMapping(value = "/admin/listLogs")
+    @ResponseBody
+    public ResponseEntity<JsonNode> listLogs() {
+        try {
+            return ResponseEntity.ok(adminService.listLogFiles());
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
     @GetMapping(value = "/admin/log")
     @ResponseBody
     public ResponseEntity<JsonNode> getLog(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
         try {
-            List<LogEntry> logEntries = adminService.getLogs();
+            List<LogEntry> logEntries = adminService.getLogs(allParams.get("filename"));
             ObjectMapper mapper = new ObjectMapper();
             ArrayNode jsonArray = mapper.valueToTree(logEntries);
             return ResponseEntity.ok(jsonArray);

@@ -18,11 +18,18 @@ import org.springframework.stereotype.Service;
 
 import com.synbiohub.sbh3.dto.LogEntry;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.BufferedReader;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.zip.GZIPInputStream;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -114,23 +121,34 @@ public class AdminService {
     }
 
     public List<LogEntry> getLogs() throws IOException {
-        String logPath = System.getProperty("user.dir") + "/data/spring.log";
-        String logContent = new String(Files.readAllBytes(Paths.get(logPath)));
-        
+        return getLogs("spring.log");
+    }
+
+    public List<LogEntry> getLogs(String filename) throws IOException {
+        String safeFilename = (filename == null || filename.isBlank()) ? "spring.log" : filename;
+        Path dataDir = Paths.get(System.getProperty("user.dir"), "data").toAbsolutePath().normalize();
+        Path requested = dataDir.resolve(safeFilename).normalize();
+
+        // Prevent path traversal and constrain reads to data directory files only.
+        if (!requested.startsWith(dataDir) || !Files.exists(requested) || !Files.isRegularFile(requested)) {
+            throw new IOException("Requested log file is not available.");
+        }
+
+        String logContent = readLogContent(requested);
         List<LogEntry> logEntries = new ArrayList<>();
         String[] lines = logContent.split("\\r?\\n");
-        
+
         // Pattern to match log levels: INFO, WARN, ERROR, DEBUG, TRACE (case-insensitive)
         Pattern levelPattern = Pattern.compile("\\b(INFO|WARN|ERROR|DEBUG|TRACE)\\b", Pattern.CASE_INSENSITIVE);
-        
+
         for (String line : lines) {
             if (line.trim().isEmpty()) {
                 continue; // Skip empty lines
             }
-            
+
             String level = "info"; // Default level
             Matcher matcher = levelPattern.matcher(line);
-            
+
             if (matcher.find()) {
                 String matchedLevel = matcher.group(1).toUpperCase();
                 // Map to lowercase versions
@@ -152,11 +170,80 @@ public class AdminService {
                         break;
                 }
             }
-            
+
             logEntries.add(new LogEntry(level, line));
         }
-        
+
         return logEntries;
+    }
+
+    private String readLogContent(Path requested) throws IOException {
+        if (requested.getFileName().toString().endsWith(".gz")) {
+            StringBuilder sb = new StringBuilder();
+            try (GZIPInputStream gzipInputStream = new GZIPInputStream(Files.newInputStream(requested));
+                 InputStreamReader inputStreamReader = new InputStreamReader(gzipInputStream);
+                 BufferedReader bufferedReader = new BufferedReader(inputStreamReader)) {
+                String line;
+                while ((line = bufferedReader.readLine()) != null) {
+                    sb.append(line).append(System.lineSeparator());
+                }
+            }
+            return sb.toString();
+        }
+        return Files.readString(requested);
+    }
+
+    /**
+     * Lists log files under {@code data/} for the admin log viewer dropdown.
+     * Response shape: {@code { "logs": [ { "filename", "title" }, ... ] }}.
+     */
+    public JsonNode listLogFiles() throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        ArrayNode logsArray = mapper.createArrayNode();
+        Path dataDir = Paths.get(System.getProperty("user.dir"), "data");
+        if (!Files.isDirectory(dataDir)) {
+            ObjectNode root = mapper.createObjectNode();
+            root.set("logs", logsArray);
+            return root;
+        }
+        Pattern synbiohubDebug = Pattern.compile("^synbiohub-\\d{4}-\\d{2}-\\d{2}\\.debug(?:\\.\\d+)?$");
+        List<Path> paths;
+        try (Stream<Path> stream = Files.list(dataDir)) {
+            paths = stream.filter(Files::isRegularFile)
+                    .filter(p -> isListableLogFile(p.getFileName().toString(), synbiohubDebug))
+                    .sorted(Comparator.comparing(p -> p.getFileName().toString()))
+                    .collect(Collectors.toList());
+        }
+        for (Path p : paths) {
+            String filename = p.getFileName().toString();
+            ObjectNode entry = mapper.createObjectNode();
+            entry.put("filename", filename);
+            entry.put("title", logFileTitle(filename));
+            logsArray.add(entry);
+        }
+        ObjectNode root = mapper.createObjectNode();
+        root.set("logs", logsArray);
+        return root;
+    }
+
+    private boolean isListableLogFile(String name, Pattern synbiohubDebug) {
+        if ("spring.log".equals(name)) {
+            return true;
+        }
+        if (name.startsWith("spring.log.")) {
+            return true;
+        }
+        if (name.endsWith(".log")) {
+            return true;
+        }
+        return synbiohubDebug.matcher(name).matches();
+    }
+
+    private String logFileTitle(String filename) {
+        if ("spring.log".equals(filename)) {
+            return "Current (spring.log)";
+        }
+        return filename;
     }
 
     public Boolean getSBOLExplorerStatus() throws IOException {
