@@ -77,7 +77,7 @@ class TestAdmin(TestCase):
 
         test_print("test_admin_registries starting")
         #SBH3 throws error
-        compare_get_request("admin/registries", headers = {"Accept": "text/plain"}, test_type = test_type, comparison_type="json", fields=["registries", "errors"])
+        compare_get_request("admin/registries", headers = {"Accept": "application/json"}, test_type = test_type, comparison_type="json", fields=["registries", "errors"])
         test_print("test_admin_registries completed")
 
         # test_print("test_admin_saveRegistry starting")
