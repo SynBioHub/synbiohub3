@@ -78,11 +78,21 @@ public class AdminController {
         }
     }
 
+    @GetMapping(value = "/admin/listLogs")
+    @ResponseBody
+    public ResponseEntity<JsonNode> listLogs() {
+        try {
+            return ResponseEntity.ok(adminService.listLogFiles());
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
     @GetMapping(value = "/admin/log")
     @ResponseBody
     public ResponseEntity<JsonNode> getLog(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
         try {
-            List<LogEntry> logEntries = adminService.getLogs();
+            List<LogEntry> logEntries = adminService.getLogs(allParams.get("filename"));
             ObjectMapper mapper = new ObjectMapper();
             ArrayNode jsonArray = mapper.valueToTree(logEntries);
             return ResponseEntity.ok(jsonArray);
@@ -286,25 +296,33 @@ public class AdminController {
     @PostMapping(value = "/admin/users")
     @ResponseBody
     public String updateUsers(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
-        return null;
+        try {
+            return adminService.updateUsers(allParams);
+        } catch (IOException e) {
+            return "Unable to update users configuration";
+        }
     }
 
     @PostMapping(value = "/admin/newUser")
     @ResponseBody
     public String createNewUser(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
-        return null;
+        try {
+            return adminService.createNewUser(allParams);
+        } catch (IOException e) {
+            return "Error creating new user.";
+        }
     }
 
     @PostMapping(value = "/admin/updateUser")
     @ResponseBody
     public String updateUser(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
-        return null;
+        return adminService.updateUser(allParams);
     }
 
     @PostMapping(value = "/admin/deleteUser")
     @ResponseBody
     public String deleteUser(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
-        return null;
+        return adminService.deleteUser(allParams);
     }
 
 

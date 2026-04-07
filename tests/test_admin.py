@@ -1,7 +1,20 @@
+import json
 import os
+from json.decoder import JSONDecodeError
+
 from test_arguments import test_print
 from unittest import TestCase
-from test_functions import compare_get_request, compare_post_request, login_with, get_request, compare_status_codes
+from test_functions import (
+    add_test_results,
+    clip_request,
+    compare_get_request,
+    compare_post_request,
+    compare_status_codes,
+    get_request,
+    login_with,
+    request_file_path,
+    test_state,
+)
 
 class TestAdmin(TestCase):
 
@@ -75,10 +88,29 @@ class TestAdmin(TestCase):
         compare_post_request("/admin/deletePlugin", data, headers = {"Accept": "text/plain"}, test_name = "admin_deletePlugin", test_type = test_type)
         test_print("test_admin_deletePlugin completed")
 
-        # test_print("test_admin_registries starting")
-        # #SBH3 throws error
-        # compare_get_request("admin/registries", headers = {"Accept": "text/plain"}, test_type = test_type, comparison_type="json", fields=["registries", "errors"])
-        # test_print("test_admin_registries completed")
+        test_print("test_admin_registries starting")
+        # SBH1 returns WOR-related fields (registered, wor, errors); SBH3 returns a slimmer payload.
+        # Registry entry URLs also differ per instance (e.g. :7777 vs :6789), so we do not require JSON equality.
+        request = clip_request("admin/registries")
+        testpath = request_file_path(request, "get request", "")
+        test_state.add_get_request(request, testpath, "")
+        headers_reg = {"Accept": "application/json"}
+        sbh1_response = get_request("admin/registries", 1, headers_reg, [])
+        sbh3_response = get_request("admin/registries", 3, headers_reg, [])
+        compare_status_codes(sbh1_response, sbh3_response)
+        for resp, name in ((sbh1_response, "SBH1"), (sbh3_response, "SBH3")):
+            try:
+                data = json.loads(resp.text)
+            except JSONDecodeError as e:
+                raise AssertionError("admin/registries %s: invalid JSON: %s" % (name, e)) from e
+            if "registries" not in data or not isinstance(data["registries"], list):
+                raise AssertionError("admin/registries %s: expected top-level registries array" % name)
+            for entry in data["registries"]:
+                if not isinstance(entry, dict) or "uri" not in entry or "url" not in entry:
+                    raise AssertionError("admin/registries %s: each registry must be an object with uri and url" % name)
+        print("RESPONSE CONTENT TEST PASSED: registries shape valid on both instances\n")
+        add_test_results(1, test_type)
+        test_print("test_admin_registries completed")
 
         # test_print("test_admin_saveRegistry starting")
         # data={
