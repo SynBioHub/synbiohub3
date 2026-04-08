@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { saveAs } from 'file-saver';
 import JSZip from 'jszip';
 
 import { mutate } from 'swr';
@@ -901,7 +900,14 @@ export const downloadFiles =
         }
         zip.generateAsync({ type: 'blob' }).then(function (content) {
           dispatch({ type: types.SHOWDOWNLOAD, payload: false });
-          saveAs(content, zipFilename);
+          const url = URL.createObjectURL(content);
+          const link = document.createElement('a');
+          link.href = url;
+          link.setAttribute('download', zipFilename);
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          URL.revokeObjectURL(url);
         });
       });
     };
