@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
@@ -192,16 +193,89 @@ public class AdminController {
         }
     }
 
-    @PostMapping(value = "/admin/saveRegistry")
-    @ResponseBody
-    public void saveRegistry(@RequestBody Map<String, String> newWebOfRegistry) {
-        // TODO: need to check format of web of registries
+    /**
+     * SynBioHub-compatible Web of Registries save. Admin only.
+     * <p>Supports {@code application/x-www-form-urlencoded} ({@code uri}, {@code url} fields) and
+     * {@code application/json} with the same keys.</p>
+     * <p>Browser form submits ({@code Accept} includes {@code text/html}): 302 to {@code /admin/registries}.
+     * API clients (e.g. {@code Accept: text/plain}): 200 plain text success body.</p>
+     */
+    @PostMapping(value = "/admin/saveRegistry", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> saveRegistryJson(
+            @RequestBody Map<String, String> body,
+            HttpServletRequest request) throws IOException {
+        if (body == null) {
+            body = Map.of();
+        }
+        return saveRegistryResponse(body.get("uri"), body.get("url"), request);
     }
 
-    @PostMapping(value = "/admin/deleteRegistry")
-    @ResponseBody
-    public void deleteRegistry(@RequestBody String webOfRegistryName) {
-        // TODO: need to check format of web of registries
+    @PostMapping(value = "/admin/saveRegistry",
+            consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<String> saveRegistryForm(
+            @RequestParam(value = "uri", required = false) String uri,
+            @RequestParam(value = "url", required = false) String url,
+            HttpServletRequest request) throws IOException {
+        return saveRegistryResponse(uri, url, request);
+    }
+
+    private ResponseEntity<String> saveRegistryResponse(String uri, String url, HttpServletRequest request)
+            throws IOException {
+        User user = userService.getUserProfile();
+        String accept = request.getHeader("Accept");
+        boolean htmlAccept = accept != null && accept.contains("text/html");
+        AdminService.SaveRegistryOutcome outcome = adminService.saveRegistry(user, uri, url, htmlAccept);
+        if (outcome.isRedirect()) {
+            return ResponseEntity.status(outcome.status())
+                    .location(URI.create(outcome.redirectLocation()))
+                    .build();
+        }
+        ResponseEntity.BodyBuilder builder = ResponseEntity.status(outcome.status());
+        if (outcome.contentType() != null) {
+            builder.contentType(outcome.contentType());
+        }
+        return builder.body(outcome.body());
+    }
+
+    /**
+     * SynBioHub-compatible Web of Registries delete. Admin only.
+     * <p>Frontend sends {@code application/x-www-form-urlencoded} with {@code uri}. JSON body {@code {"uri":"..."}}
+     * is also supported.</p>
+     */
+    @PostMapping(value = "/admin/deleteRegistry", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> deleteRegistryJson(
+            @RequestBody Map<String, String> body,
+            HttpServletRequest request) throws IOException {
+        if (body == null) {
+            body = Map.of();
+        }
+        return deleteRegistryResponse(body.get("uri"), request);
+    }
+
+    @PostMapping(value = "/admin/deleteRegistry",
+            consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<String> deleteRegistryForm(
+            @RequestParam(value = "uri", required = false) String uri,
+            HttpServletRequest request) throws IOException {
+        return deleteRegistryResponse(uri, request);
+    }
+
+    private ResponseEntity<String> deleteRegistryResponse(String uri, HttpServletRequest request)
+            throws IOException {
+        User user = userService.getUserProfile();
+        String accept = request.getHeader("Accept");
+        boolean htmlAccept = accept != null && accept.contains("text/html");
+        AdminService.SaveRegistryOutcome outcome = adminService.deleteRegistry(user, uri, htmlAccept);
+        if (outcome.isRedirect()) {
+            return ResponseEntity.status(outcome.status())
+                    .location(URI.create(outcome.redirectLocation()))
+                    .build();
+        }
+        ResponseEntity.BodyBuilder builder = ResponseEntity.status(outcome.status());
+        if (outcome.contentType() != null) {
+            builder.contentType(outcome.contentType());
+        }
+        return builder.body(outcome.body());
     }
 
     @PostMapping(value = "/admin/setAdministratorEmail")

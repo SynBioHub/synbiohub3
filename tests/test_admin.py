@@ -113,20 +113,20 @@ class TestAdmin(TestCase):
         add_test_results(1, test_type)
         test_print("test_admin_registries completed")
 
-        # test_print("test_admin_saveRegistry starting")
-        # data={
-        #     'uri': 'testurl.com',
-        #     'url' : 'testurl.com',
-        # }
-        # compare_post_request("/admin/saveRegistry", data, headers = {"Accept": "text/plain"}, test_name = "admin_saveRegistry", test_type = test_type)
-        # test_print("test_admin_saveRegistry completed")
+        test_print("test_admin_saveRegistry starting")
+        data={
+            'uri': 'testurl.com',
+            'url' : 'testurl.com',
+        }
+        compare_post_request("/admin/saveRegistry", data, headers = {"Accept": "text/plain"}, test_name = "admin_saveRegistry", test_type = test_type)
+        test_print("test_admin_saveRegistry completed")
 
-        # test_print("test_admin_deleteRegistry starting")
-        # data={
-        #     'uri': 'testurl.com',
-        # }
-        # compare_post_request("/admin/deleteRegistry", data, headers = {"Accept": "text/plain"}, test_name = "admin_deleteRegistry", test_type = test_type)
-        # test_print("test_admin_deleteRegistry completed")
+        test_print("test_admin_deleteRegistry starting")
+        data={
+            'uri': 'testurl.com',
+        }
+        compare_post_request("/admin/deleteRegistry", data, headers = {"Accept": "text/plain"}, test_name = "admin_deleteRegistry", test_type = test_type)
+        test_print("test_admin_deleteRegistry completed")
 
         test_print("test_admin_setAdministratorEmail starting")
         data={

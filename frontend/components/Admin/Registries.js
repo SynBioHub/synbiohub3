@@ -22,6 +22,13 @@ import TableInput from './Reusable/TableInput';
 import { addError } from '../../redux/actions';
 const { publicRuntimeConfig } = getConfig();
 
+/**
+ * Absolute http(s) URI: scheme, host (or IPv6), optional port, optional path/query/fragment.
+ * Used for Web-of-Registries URI prefix and SynBioHub base URL.
+ */
+const REGISTRY_HTTP_URI_RE =
+  /^https?:\/\/(?:[\w.-]+|\[[0-9a-f:]+\])(?::\d+)?(?:\/[\w\-./~%:?#[\]@!$&'()*+,;=]*)?$/i;
+
 /* eslint sonarjs/cognitive-complexity: "off" */
 
 const searchable = ['uri', 'url'];
@@ -124,10 +131,12 @@ function NewRegistryRow(properties) {
               action="Create"
               icon={faPlusCircle}
               color="#1C7C54"
-              onClick={() => {
-                saveRegistry(uri, url, properties.token, dispatch);
-                setUri('');
-                setUrl('');
+              onClick={async () => {
+                const ok = await saveRegistry(uri, url, properties.token, dispatch);
+                if (ok) {
+                  setUri('');
+                  setUrl('');
+                }
               }}
             />
           </div>
@@ -165,13 +174,16 @@ function RegistryDisplay(properties) {
               action="Delete"
               icon={faTrashAlt}
               color="#FF3C38"
-              onClick={() =>
-                deleteRegistry(
-                  properties.registry.uri,
-                  properties.token,
-                  dispatch
-                )
-              }
+              onClick={() => {
+                const registryUri = properties.registry.uri;
+                const confirmed = window.confirm(
+                  `Remove this registry from the Web of Registries?\n\n${registryUri}`
+                );
+                if (!confirmed) {
+                  return;
+                }
+                deleteRegistry(registryUri, properties.token, dispatch);
+              }}
             />
           </div>
         </div>
@@ -195,14 +207,14 @@ function RegistryDisplay(properties) {
               action="Save"
               icon={faSave}
               color="#1C7C54"
-              onClick={() => {
-                saveRegistry(
+              onClick={async () => {
+                const ok = await saveRegistry(
                   properties.registry.uri,
                   url,
                   properties.token,
                   dispatch
                 );
-                setEditMode(false);
+                if (ok) setEditMode(false);
               }}
             />
             <ActionButton
@@ -469,28 +481,65 @@ const deleteRegistry = async (uri, token, dispatch) => {
 };
 
 const saveRegistry = async (uri, sbhUrl, token, dispatch) => {
-  const url = `${publicRuntimeConfig.backend}/admin/saveRegistry`;
+  const registryUri = uri != null ? uri.trim() : '';
+  const registryUrl = sbhUrl != null ? sbhUrl.trim() : '';
+
+  if (!registryUri) {
+    dispatch(addError({ message: 'URI prefix is required.' }));
+    return false;
+  }
+  if (!REGISTRY_HTTP_URI_RE.test(registryUri)) {
+    dispatch(
+      addError({
+        message:
+          'URI prefix must be a valid http(s) URI (for example https://example.org/public/).'
+      })
+    );
+    return false;
+  }
+  if (!registryUrl) {
+    dispatch(addError({ message: 'SynBioHub URL is required.' }));
+    return false;
+  }
+  if (!REGISTRY_HTTP_URI_RE.test(registryUrl)) {
+    dispatch(
+      addError({
+        message:
+          'SynBioHub URL must be a valid http(s) URL (for example https://synbiohub.example.org/).'
+      })
+    );
+    return false;
+  }
+
+  const endpoint = `${publicRuntimeConfig.backend}/admin/saveRegistry`;
   const headers = {
     Accept: 'text/plain',
     'X-authorization': token
   };
 
   const parameters = new URLSearchParams();
-  parameters.append('uri', uri);
-  parameters.append('url', sbhUrl);
-
-  let response;
+  parameters.append('uri', registryUri);
+  parameters.append('url', registryUrl);
 
   try {
-    response = await axios.post(url, parameters, { headers });
+    const response = await axios.post(endpoint, parameters, { headers });
+    if (response.status === 200) {
+      window.location.reload();
+      return true;
+    }
+    dispatch(
+      addError({
+        message: `Could not save registry (HTTP ${response.status}).`
+      })
+    );
+    return false;
   } catch (error) {
     if (error.response) {
-      console.error('Error:', error.message);
+      dispatch(addError(error));
+    } else {
+      dispatch(addError({ message: error.message || 'Failed to save registry.' }));
     }
-  }
-
-  if (response.status === 200) {
-    window.location.reload();
+    return false;
   }
 };
 

@@ -14,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -88,6 +90,145 @@ public class AdminService {
         }
 
         return responseArray;
+    }
+
+    /**
+     * Merges one entry into {@code webOfRegistries} (URI → base URL) and persists to {@code config.local.json}.
+     */
+    public void saveWebOfRegistry(String registryUri, String registryUrl) throws IOException {
+        if (!ConfigUtil.checkLocalJson("webOfRegistries")) {
+            JsonNode seed = ConfigUtil.get("webOfRegistries");
+            if (seed == null || !seed.isObject()) {
+                seed = mapper.createObjectNode();
+            }
+            ConfigUtil.set(ConfigUtil.getLocaljson(), "webOfRegistries", seed);
+            ConfigUtil.refreshLocalJson();
+        }
+        JsonNode current = ConfigUtil.get("webOfRegistries");
+        ObjectNode map = (current != null && current.isObject())
+                ? (ObjectNode) current.deepCopy()
+                : mapper.createObjectNode();
+        map.put(registryUri, registryUrl);
+        ConfigUtil.set(ConfigUtil.getLocaljson(), "webOfRegistries", map);
+        ConfigUtil.refreshLocalJson();
+    }
+
+    /**
+     * Removes {@code registryUri} from {@code webOfRegistries} and persists to {@code config.local.json}.
+     * No-op if the key is absent.
+     */
+    public void deleteWebOfRegistry(String registryUri) throws IOException {
+        if (!ConfigUtil.checkLocalJson("webOfRegistries")) {
+            JsonNode seed = ConfigUtil.get("webOfRegistries");
+            if (seed == null || !seed.isObject()) {
+                seed = mapper.createObjectNode();
+            }
+            ConfigUtil.set(ConfigUtil.getLocaljson(), "webOfRegistries", seed);
+            ConfigUtil.refreshLocalJson();
+        }
+        JsonNode current = ConfigUtil.get("webOfRegistries");
+        ObjectNode map = (current != null && current.isObject())
+                ? (ObjectNode) current.deepCopy()
+                : mapper.createObjectNode();
+        map.remove(registryUri);
+        ConfigUtil.set(ConfigUtil.getLocaljson(), "webOfRegistries", map);
+        ConfigUtil.refreshLocalJson();
+    }
+
+    /**
+     * Outcome of SynBioHub-compatible registry admin routes ({@code saveRegistry}, {@code deleteRegistry}).
+     * Map to HTTP in the controller via {@link #isRedirect()} and the status / body fields.
+     */
+    public record SaveRegistryOutcome(
+            HttpStatus status,
+            MediaType contentType,
+            String body,
+            String redirectLocation
+    ) {
+        public boolean isRedirect() {
+            return redirectLocation != null && !redirectLocation.isEmpty();
+        }
+    }
+
+    /**
+     * Validates admin, uri/url, persists webOfRegistries, and selects plain-text vs redirect response semantics.
+     */
+    public SaveRegistryOutcome saveRegistry(User user, String uri, String url, boolean clientAcceptsHtml)
+            throws IOException {
+        if (user == null) {
+            return new SaveRegistryOutcome(
+                    HttpStatus.UNAUTHORIZED,
+                    MediaType.TEXT_PLAIN,
+                    "Authentication required",
+                    null);
+        }
+        if (!Boolean.TRUE.equals(user.getIsAdmin())) {
+            return new SaveRegistryOutcome(
+                    HttpStatus.FORBIDDEN,
+                    MediaType.TEXT_PLAIN,
+                    "Admin access required",
+                    null);
+        }
+
+        String registryUri = uri != null ? uri.trim() : "";
+        String registryUrl = url != null ? url.trim() : "";
+        if (registryUri.isEmpty()) {
+            return new SaveRegistryOutcome(
+                    HttpStatus.BAD_REQUEST,
+                    MediaType.TEXT_PLAIN,
+                    "Must provide a valid registry URI",
+                    null);
+        }
+        if (registryUrl.isEmpty()) {
+            return new SaveRegistryOutcome(
+                    HttpStatus.BAD_REQUEST,
+                    MediaType.TEXT_PLAIN,
+                    "Must provide a valid registry URL",
+                    null);
+        }
+
+        saveWebOfRegistry(registryUri, registryUrl);
+        String successBody = String.format("Registry (%s, %s) saved successfully", registryUri, registryUrl);
+        if (clientAcceptsHtml) {
+            return new SaveRegistryOutcome(HttpStatus.FOUND, null, null, "/admin/registries");
+        }
+        return new SaveRegistryOutcome(HttpStatus.OK, MediaType.TEXT_PLAIN, successBody, null);
+    }
+
+    /**
+     * Validates admin and registry URI, removes the entry from {@code webOfRegistries}, optional HTML redirect.
+     */
+    public SaveRegistryOutcome deleteRegistry(User user, String uri, boolean clientAcceptsHtml) throws IOException {
+        if (user == null) {
+            return new SaveRegistryOutcome(
+                    HttpStatus.UNAUTHORIZED,
+                    MediaType.TEXT_PLAIN,
+                    "Authentication required",
+                    null);
+        }
+        if (!Boolean.TRUE.equals(user.getIsAdmin())) {
+            return new SaveRegistryOutcome(
+                    HttpStatus.FORBIDDEN,
+                    MediaType.TEXT_PLAIN,
+                    "Admin access required",
+                    null);
+        }
+
+        String registryUri = uri != null ? uri.trim() : "";
+        if (registryUri.isEmpty()) {
+            return new SaveRegistryOutcome(
+                    HttpStatus.BAD_REQUEST,
+                    MediaType.TEXT_PLAIN,
+                    "Must provide a valid registry URI",
+                    null);
+        }
+
+        deleteWebOfRegistry(registryUri);
+        String successBody = String.format("Registry (%s) deleted successfully", registryUri);
+        if (clientAcceptsHtml) {
+            return new SaveRegistryOutcome(HttpStatus.FOUND, null, null, "/admin/registries");
+        }
+        return new SaveRegistryOutcome(HttpStatus.OK, MediaType.TEXT_PLAIN, successBody, null);
     }
 
     public String getTheme() throws IOException {
