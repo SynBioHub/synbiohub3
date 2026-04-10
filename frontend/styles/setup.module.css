@@ -45,6 +45,32 @@
    margin-bottom: 1rem;
 }
 
+.advancedbutton {
+   background-color: #9c9c9c;
+   color: white;
+   padding: 0.5rem 1rem;
+   font-size: 1rem;
+   border-radius: 0.4rem;
+   cursor: pointer;
+   transition: transform 0.3s;
+}
+
+.growWrapDropdown {
+   /* button */
+   background-color: #9c9c9c;
+   color: white;
+   padding: 0.5rem 1rem;
+   font-size: 1rem;
+   border-radius: 0.4rem;
+   cursor: pointer;
+   transition: transform 0.3s;
+}
+
+.wrapAdvanced {
+   overflow: hidden;
+   transition: max-height 0.3s;
+}
+
 .colorpicker {
    margin: 0.3rem 0 1.4rem 0;
 }
@@ -69,6 +95,8 @@
    width: fit-content !important;
    margin-top: 1.1rem;
    margin-left: 1rem;
+   transform: scale(1.5);
+   /* accent-color: #D25627; */
 }
 
 .createbutton {

@@ -3,6 +3,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styles from '../../styles/login.module.css';
 
 export default function InputField(properties) {
+  const inputClassName = properties.readOnly
+    ? `${styles.input} ${styles.readonlyInput}`
+    : styles.input;
+
   return (
     <div className={styles.inputcontainer}>
       <div className={styles.inputiconcontainer}>
@@ -16,10 +20,12 @@ export default function InputField(properties) {
         value={properties.value}
         onChange={event => properties.onChange(event)}
         onKeyPress={event => properties.onKeyPress(event)}
-        className={styles.input}
+        className={inputClassName}
         placeholder={properties.placeholder}
         type={properties.type}
         ref={properties.inputRef}
+        readOnly={properties.readOnly}
+        disabled={properties.disabled}
       />
     </div>
   );

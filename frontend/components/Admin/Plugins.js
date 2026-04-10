@@ -8,6 +8,7 @@ import {
   faRedo
 } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
+import getConfig from 'next/config';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import useSWR, { mutate } from 'swr';
@@ -17,19 +18,16 @@ import styles from '../../styles/admin.module.css';
 import Table from '../Reusable/Table/Table';
 import ActionButton from './Reusable/ActionButton';
 import TableInput from './Reusable/TableInput';
+const { publicRuntimeConfig } = getConfig();
 
 const renderingType = 'rendering';
 const submittingType = 'submit';
 const downloadingType = 'download';
-const curatingType = 'curation';
-const authorizationType = 'authorization';
 
 const searchable = ['index', 'name', 'url'];
 const headers = ['ID', 'Name', 'URL', ''];
 
-import getConfig from 'next/config';
 import { addError } from '../../redux/actions';
-const { publicRuntimeConfig } = getConfig();
 
 /* eslint sonarjs/no-duplicate-string: "off" */
 
@@ -37,6 +35,8 @@ export default function Plugins() {
   const token = useSelector(state => state.user.token);
   const dispatch = useDispatch();
   const { plugins, loading } = usePlugins(token, dispatch);
+  const theme = JSON.parse(localStorage.getItem('theme')) || {};
+
   return (
     <div>
       <PluginTable
@@ -55,7 +55,7 @@ export default function Plugins() {
       />
       <PluginTable
         token={token}
-        title="Download"
+        title="Downloading"
         type={downloadingType}
         loading={loading}
         data={plugins ? plugins.download : undefined}
@@ -64,28 +64,6 @@ export default function Plugins() {
   );
 }
 
-/*
-
-      <PluginTable
-        token={token}
-        title="Curation"
-        type={curatingType}
-        loading={loading}
-        data={plugins ? plugins.curation : undefined}
-      />
-      <PluginTable
-        token={token}
-        title="Authorization"
-        type={authorizationType}
-        loading={loading}
-        data={plugins ? plugins.authorization : undefined}
-        
-      />
-
-
-//Insert the above code into the table when curation and authorization plugins will be implemented. Other frontend code should then become functional once these plugins can be added
-
-*/
 function PluginTable(properties) {
   return (
     <div className={styles.plugintable}>
@@ -168,6 +146,7 @@ function PluginDisplay(properties) {
   const [name, setName] = useState(properties.plugin.name);
   const [url, setUrl] = useState(properties.plugin.url);
   const [status, setStatus] = useState(true);
+  const token = useSelector(state => state.user.token);
 
   const dispatch = useDispatch();
 
@@ -175,13 +154,12 @@ function PluginDisplay(properties) {
     setName(properties.plugin.name);
     setUrl(properties.plugin.url);
 
-    /*
-    const checkStatus = async () => {
-      const hidden = await fetchStatus(properties.plugin);
-      setStatus(hidden);
-    };
-    checkStatus();
-    */
+      const checkStatus = async () => {
+        const hidden = await fetchStatus(properties.plugin, properties.type, token);
+        setStatus(hidden);
+      };
+      checkStatus();
+
   }, [properties.plugin.name, properties.plugin.url]);
 
   return !editMode ? (
@@ -200,21 +178,21 @@ function PluginDisplay(properties) {
           </span>
         ) : null}
       </td>
-      {/*
+      {
       <td>
-        <ActionButton
-          action="Refresh Plugin Status"
-          icon={faRedo}
-          onClick={() => {
-            const checkStatus = async () => {
-              const hidden = await fetchStatus(properties.plugin);
-              setStatus(hidden);
-            };
-            checkStatus();
-          }}
+        <ActionButton 
+        action="Refresh Plugin Status"
+        icon={faRedo}
+        onClick={() => {
+          const checkStatus = async () => {
+            const hidden = await fetchStatus(properties.plugin, properties.type, token);
+            setStatus(hidden);
+          };
+          checkStatus();
+        }}
         />
       </td>
-        */}
+        }
       <td>
         <div className={styles.actionbuttonscontainer}>
           <div className={styles.actionbuttonslayout}>
@@ -307,11 +285,15 @@ const deletePlugin = async (id, type, token, dispatch) => {
   parameters.append('id', id);
   parameters.append('category', type);
 
-  const response = await fetch(url, {
-    method: 'POST',
-    headers,
-    body: parameters
-  });
+  let response;
+
+  try {
+    response = await axios.post(url, parameters, { headers });
+  } catch (error) {
+    if (error.response) {
+      console.error('Error:', error.message);
+    }
+  }
 
   if (response.status === 200) {
     mutate([`${publicRuntimeConfig.backend}/admin/plugins`, token, dispatch]);
@@ -331,13 +313,17 @@ const savePlugin = async (id, type, name, pluginUrl, token, dispatch) => {
   parameters.append('name', name);
   parameters.append('url', pluginUrl);
 
-  const response = await fetch(url, {
-    method: 'POST',
-    headers,
-    body: parameters
-  });
+  let response;
 
-  if (response.status === 200) {
+  try {
+    response = await axios.post(url, parameters, { headers });
+  } catch (error) {
+    if (error.response) {
+      console.error('Error:', error.message);
+    }
+  }
+
+  if (response && response.status === 200) {
     mutate([`${publicRuntimeConfig.backend}/admin/plugins`, token, dispatch]);
   }
 };
@@ -349,7 +335,14 @@ const options = [
 ];
 
 const compareStrings = (string1, string2) => {
-  return (string1.toLowerCase() > string2.toLowerCase() && 1) || -1;
+  if (!string1 && !string2) return 0; // Both strings are undefined or null, they are equal
+  if (!string1) return -1; // Only string1 is undefined or null, string1 is less
+  if (!string2) return 1;  // Only string2 is undefined or null, string1 is greater
+
+  const lowerString1 = string1.toLowerCase();
+  const lowerString2 = string2.toLowerCase();
+
+  return (lowerString1 > lowerString2 && 1) || (lowerString1 < lowerString2 && -1) || 0;
 };
 
 const sortMethods = {
@@ -372,14 +365,18 @@ const usePlugins = (token, dispatch) => {
   };
 };
 
-/*
-async function fetchStatus(plugin) {
+
+async function fetchStatus(plugin, type, token) {
   return await axios({
     method: 'POST',
-    url: `${publicRuntimeConfig.backend}/call`,
-    params: {
+    url: `${publicRuntimeConfig.backend}/callPlugin`,
+    data: {
       name: plugin.name,
-      endpoint: 'status'
+      endpoint: 'status',
+      category: type,
+    },
+    headers: {
+      'X-authorization': token
     }
   })
     .then(response => {
@@ -390,7 +387,6 @@ async function fetchStatus(plugin) {
     });
 }
 
-*/
 
 const fetcher = (url, token, dispatch) =>
   axios

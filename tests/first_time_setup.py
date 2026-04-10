@@ -1,6 +1,6 @@
 from unittest import TestCase
 from test_functions import compare_get_request, compare_post_request, post_request, post_json_request
-from test_arguments import test_print
+from test_arguments import test_print, SETUP_URI_PREFIX
 
 
 class TestSetup(TestCase):
@@ -26,8 +26,9 @@ class TestSetup(TestCase):
             'userPassword': 'test',
             'userPasswordConfirm': 'test',
             'instanceName': 'Test Synbiohub',
-            'instanceURL': 'http://localhost:7777/',
-            'uriPrefix': 'https://synbiohub.org/',
+            'frontendURL': 'http://localhost:3333',
+            'instanceUrl': 'http://localhost:7777/',
+            'uriPrefix': SETUP_URI_PREFIX,
             'color': '#D25627',
             'frontPageText': 'text',
             'virtuosoINI': '/etc/virtuoso-opensource-7/virtuoso.ini',

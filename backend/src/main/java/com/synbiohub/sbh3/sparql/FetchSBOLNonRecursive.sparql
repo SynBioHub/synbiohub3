@@ -1,8 +1,8 @@
 PREFIX sbh: <http://wiki.synbiohub.org/wiki/Terms/synbiohub#>
-CONSTRUCT {?s ?p ?o}  WHERE {
+CONSTRUCT {?s ?p ?o} $fromClause WHERE {
     {
-        SELECT ?s WHERE {
-             ?s sbh:topLevel <$uri>.
+        SELECT DISTINCT ?s WHERE {
+             ?s sbh:topLevel <$uri> .
         }
         ORDER BY ?s
     }

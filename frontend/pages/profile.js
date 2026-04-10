@@ -4,7 +4,8 @@ import {
   faLock,
   faSave,
   faSuitcase,
-  faUser
+  faUser,
+  faIdBadge
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
@@ -56,8 +57,6 @@ function Profile() {
     password,
     confirmPassword
   ]);
-  const token = useSelector(state => state.user.token);
-  // const { plugins, loading } = loadPluginData(token);
   return (
     <div className={styles.container}>
       <div className={styles.frame}>
@@ -68,7 +67,7 @@ function Profile() {
           className={styles.registericon}
         />
         <h1 className={styles.header}>
-          {profileUsername}
+          {name}
           {"'s"} Account
         </h1>
         <div className={styles.intro}>
@@ -82,6 +81,15 @@ function Profile() {
           type="text"
           icon={faUser}
           highlight={unsavedName}
+        />
+        <InputField
+          value={profileUsername}
+          onChange={() => {}}
+          onKeyPress={() => {}}
+          placeholder="Username"
+          type="text"
+          icon={faIdBadge}
+          readOnly
         />
         <InputField
           value={affiliation}
@@ -122,12 +130,15 @@ function Profile() {
         <div
           role="button"
           className={styles.submitbutton}
-          onClick={() => {
-            dispatch(
+          onClick={async () => {
+            const ok = await dispatch(
               updateUser(name, affiliation, email, password, confirmPassword)
             );
-            setPassword('');
-            setConfirmPassword('');
+            if (ok) {
+              alert('Your profile was updated successfully.');
+              setPassword('');
+              setConfirmPassword('');
+            }
           }}
         >
           <FontAwesomeIcon
@@ -142,146 +153,9 @@ function Profile() {
           <div className={styles.info}></div>
         </div>
       </div>
-      <div>
-        <PluginTable
-          token={token}
-          title="Authorization"
-          type=""
-          loading=""
-          data={[]}
-        />
-      </div>
     </div>
   );
 }
-
-function PluginTable(properties) {
-  const [fetchedData, setFetchedData] = useState([]);
-  const dispatch = useDispatch();
-  useEffect(() => {
-    const getData = async () => {
-      const url = 'http://localhost:6789/plugin/servers';
-      try {
-        const data = await axios.get(url);
-        setFetchedData(data);
-      } catch (error) {
-        error.customMessage =
-          'Request and/or processing failed for GET /plugin/servers';
-        error.fullUrl = url;
-        dispatch(addError(error));
-      }
-    };
-    getData();
-  }, []);
-  return (
-    <div className={styles.plugintable}>
-      <SimpleTable
-        data={fetchedData}
-        loading={properties.loading}
-        title={properties.title}
-        hideFooter={true}
-        dataRowDisplay={plugin => (
-          <PluginDisplay
-            key={plugin.index}
-            plugin={plugin}
-            type={properties.type}
-            token={properties.token}
-          />
-        )}
-      />
-    </div>
-  );
-}
-
-function PluginDisplay(properties) {
-  const [name, setName] = useState(properties.plugin.name);
-  const [url, setUrl] = useState(properties.plugin.url);
-
-  useEffect(() => {
-    setName(properties.plugin.name);
-    setUrl(properties.plugin.url);
-  }, [properties.plugin.name, properties.plugin.url]);
-
-  return (
-    <tr key={properties.plugin.index}>
-      <td>{properties.plugin.index}</td>
-      <td>{properties.plugin.name}</td>
-      <td>
-        <code>{properties.plugin.url}</code>
-      </td>
-      <td>
-        <div className={styles.actionbuttonscontainer}>
-          <div className={styles.actionbuttonslayout}>
-            <ActionButton
-              action="Login"
-              icon={faPencilAlt}
-              color="#00A1E4"
-              onClick={() => login()}
-            />
-            <ActionButton
-              action="Logout"
-              icon={faTrashAlt}
-              color="#FF3C38"
-              onClick={() => logoutUser()}
-            />
-          </div>
-        </div>
-      </td>
-    </tr>
-  );
-}
-
-// this.state = {
-//   username: "",
-//   loggedin: false,
-//   message: "",
-//   gameStarted: false,
-// };
-
-var state = {
-  data: ''
-};
-
-const loadPluginData = token => {
-  var axiosresult;
-  axios.get(temp).then(res => {
-    axiosresult = res.data;
-  });
-
-  // const axiostemp = await axios({
-  //   method: 'get',
-  //   url: temp,
-
-  // }).then(response => {
-  //     axiosresult = response.data;
-  // });
-  // var result = fetcher(temp, token);
-  // const { data, error } = useSWR(
-  //   [`${publicRuntimeConfig.backend}/plugin/servers`, token],
-  //   fetcher
-  // );
-  // return {
-  //   plugins: result,
-  //   loading: !error && !data,
-  //   error: error
-  // };
-  return {
-    plugins: axiosresult,
-    loading: false
-  };
-};
-
-const fetcher = (url, token) => {
-  axios
-    .get(url, {
-      // headers: {
-      //   'Content-Type': 'application/json',
-      //   Accept: 'text/plain',
-      //   'X-authorization': token
-      // }
-    })
-    .then(response => response.data);
-};
 
 export default function ProfileWrapped() {
   return (

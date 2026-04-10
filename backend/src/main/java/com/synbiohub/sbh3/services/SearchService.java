@@ -3,6 +3,7 @@ package com.synbiohub.sbh3.services;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.synbiohub.sbh3.controllers.SearchController;
 import com.synbiohub.sbh3.sparql.SPARQLQuery;
@@ -17,6 +18,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -231,13 +233,44 @@ public class SearchService {
         return searchQuery.loadTemplate(sparqlArgs);
     }
 
-    public String getTwinsSPARQL(String collectionInfo) throws IOException {
-        SPARQLQuery searchQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/search.sparql");
+    /**
+     * Gets the count of components that have the same sequence as the given URI (twins), using the same criteria as the "twins" endpoint.
+     * @param collectionInfo Collection path portion of the URI
+     * @return SPARQL query string that returns a single ?count binding
+     */
+    public String getTwinsCountSPARQL(String collectionInfo) throws IOException {
+        SPARQLQuery searchQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/searchCount.sparql");
         HashMap<String, String> sparqlArgs = new HashMap<>
-                (Map.of("from", getPrivateGraph(), "criteria", "", "limit", "", "offset", ""));
+                (Map.of("from", "", "criteria", ""));
 
         String URI = ConfigUtil.get("databasePrefix").asText() + collectionInfo;
 
+        // Same criteria as the "twins" endpoint
+        sparqlArgs.replace("criteria", "   ?subject sbol2:sequence ?seq . ?seq sbol2:elements ?elements . <" + URI
+                + "> a sbol2:ComponentDefinition . <" + URI + "> sbol2:sequence ?seq2 . ?seq2 sbol2:elements ?elements2 . " +
+                "FILTER(?subject != <" + URI + "> && ?elements = ?elements2) # TWINS");
+
+        String userGraph = getPrivateGraph();
+        if (!userGraph.isEmpty()) {
+            sparqlArgs.replace("from", "FROM <" + userGraph + ">");
+        }
+
+        return searchQuery.loadTemplate(sparqlArgs);
+    }
+
+    /**
+     * Gets the count of objects that use the specified URI, using the same criteria as the "uses" endpoint.
+     * @param collectionInfo Collection path portion of the URI
+     * @return SPARQL query string that returns a single ?count binding
+     */
+    public String getUsesCountSPARQL(String collectionInfo) throws IOException {
+        SPARQLQuery searchQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/searchCount.sparql");
+        HashMap<String, String> sparqlArgs = new HashMap<>
+                (Map.of("from", "", "criteria", ""));
+
+        String URI = ConfigUtil.get("databasePrefix").asText() + collectionInfo;
+
+        // Same criteria as the "uses" endpoint
         sparqlArgs.replace("criteria", " { ?subject ?p <" + URI + "> } UNION { ?subject ?p ?use . ?use ?useP <" + URI + "> } ." +
                 " FILTER(?useP != <http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel>) " +
                 "# USES");
@@ -249,6 +282,50 @@ public class SearchService {
 
         return searchQuery.loadTemplate(sparqlArgs);
     }
+
+    /**
+     * Gets the count of objects that use the specified URI, using the same criteria as the "uses" endpoint.
+     * @param collectionInfo Collection path portion of the URI
+     * @return SPARQL query string that returns a single ?count binding
+     */
+    public String getSimilarCountSPARQL(String collectionInfo) throws IOException {
+        SPARQLQuery searchQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/searchCount.sparql");
+        HashMap<String, String> sparqlArgs = new HashMap<>
+                (Map.of("from", "", "criteria", ""));
+
+        String URI = ConfigUtil.get("databasePrefix").asText() + collectionInfo;
+
+        //TODO: when SBOLExplorer works, turn this on to make it work (current sent to /uses and not /similar)
+//        sparqlArgs.replace("criteria", " { ?subject ?p <" + URI + "> } UNION { ?subject ?p ?use . ?use ?useP <" + URI + "> } ." +
+//                " FILTER(?useP != <http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel>) " +
+//                "# USES");
+
+        String userGraph = getPrivateGraph();
+        if (!userGraph.isEmpty()) {
+            sparqlArgs.replace("from", "FROM <" + userGraph + ">");
+        }
+
+        return searchQuery.loadTemplate(sparqlArgs);
+    }
+
+//    public String getTwinsSPARQL(String collectionInfo) throws IOException {
+//        SPARQLQuery searchQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/search.sparql");
+//        HashMap<String, String> sparqlArgs = new HashMap<>
+//                (Map.of("from", getPrivateGraph(), "criteria", "", "limit", "", "offset", ""));
+//
+//        String URI = ConfigUtil.get("databasePrefix").asText() + collectionInfo;
+//
+//        sparqlArgs.replace("criteria", " { ?subject ?p <" + URI + "> } UNION { ?subject ?p ?use . ?use ?useP <" + URI + "> } ." +
+//                " FILTER(?useP != <http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel>) " +
+//                "# USES");
+//
+//        String userGraph = getPrivateGraph();
+//        if (!userGraph.isEmpty()) {
+//            sparqlArgs.replace("from", "FROM <" + userGraph + ">");
+//        }
+//
+//        return searchQuery.loadTemplate(sparqlArgs);
+//    }
 
     public String getRootCollectionsSPARQL() {
         SPARQLQuery searchQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/RootCollectionMetadata.sparql");
@@ -294,21 +371,157 @@ public class SearchService {
         return listOfParts.toString();
     }
 
-    public String collectionToOutput(String rawJSON) throws JsonProcessingException{
-        var mapper = new ObjectMapper();
-        JsonNode rawTree = mapper.readTree(rawJSON);
-        ArrayList<ObjectNode> listOfParts = new ArrayList<>();
-        for(JsonNode node : rawTree.get("results").get("bindings")) {
-            ObjectNode part = mapper.createObjectNode();
+    /**
+     * Root collections from the default graph plus synthetic entries from {@code webOfRegistries} (uri prefix → instance URL).
+     */
+    public String getBrowseCollectionsJSON() throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        String raw = SPARQLQuery(getRootCollectionsSPARQL());
+        ArrayNode list = collectionBindingsToArrayNode(mapper, raw);
+        enrichLocalBrowseEntries(list);
+        appendWebOfRegistries(mapper, list);
+        return mapper.writeValueAsString(list);
+    }
 
-            part.put("uri", (node.has("Collection") ? node.get("Collection").get("value").asText() : ""));
-            part.put("name", (node.has("name") ? node.get("name").get("value").asText() : ""));
-            part.put("description", (node.has("description") ? node.get("description").get("value").asText() : ""));
-            part.put("displayId", (node.has("displayId") ? node.get("displayId").get("value").asText() : ""));
-            part.put("version", (node.has("version") ? node.get("version").get("value").asText() : ""));
+    /**
+     * Adds {@code url} (path after configured instance base) and {@code public} for local root collections only.
+     */
+    private void enrichLocalBrowseEntries(ArrayNode collections) throws IOException {
+        for (JsonNode n : collections) {
+            if (!n.isObject()) {
+                continue;
+            }
+            ObjectNode row = (ObjectNode) n;
+            String uri = row.path("uri").asText("");
+            row.put("url", relativePathAfterInstanceBase(uri));
+            row.put("public", isPublicCollectionUri(uri));
+        }
+    }
+
+    private String relativePathAfterInstanceBase(String uri) throws IOException {
+        if (uri == null || uri.isEmpty()) {
+            return "/";
+        }
+        String db = withTrailingSlash(ConfigUtil.get("databasePrefix").asText().trim());
+        if (!db.isEmpty() && uri.startsWith(db)) {
+            return withLeadingSlash(uri.substring(db.length()));
+        }
+        String inst = withTrailingSlash(instanceUriPrefixForGraphs().trim());
+        if (!inst.isEmpty() && uri.startsWith(inst)) {
+            return withLeadingSlash(uri.substring(inst.length()));
+        }
+        try {
+            String path = URI.create(uri).getPath();
+            if (path != null && !path.isEmpty()) {
+                return path.startsWith("/") ? path : "/" + path;
+            }
+        } catch (Exception ignored) {
+        }
+        return "/";
+    }
+
+    private static String withLeadingSlash(String relative) {
+        if (relative == null || relative.isEmpty()) {
+            return "/";
+        }
+        return relative.startsWith("/") ? relative : "/" + relative;
+    }
+
+    private static String withTrailingSlash(String base) {
+        if (base.isEmpty()) {
+            return base;
+        }
+        return base.endsWith("/") ? base : base + "/";
+    }
+
+    private static boolean isPublicCollectionUri(String uri) {
+        if (uri == null || uri.isEmpty()) {
+            return false;
+        }
+        if (uri.contains("/public/")) {
+            return true;
+        }
+        if (uri.contains("/user/")) {
+            return false;
+        }
+        return false;
+    }
+
+    private static ArrayNode collectionBindingsToArrayNode(ObjectMapper mapper, String rawJSON) throws JsonProcessingException {
+        JsonNode rawTree = mapper.readTree(rawJSON);
+        ArrayNode listOfParts = mapper.createArrayNode();
+        for (JsonNode node : rawTree.get("results").get("bindings")) {
+            ObjectNode part = mapper.createObjectNode();
+            part.put("uri", node.has("Collection") ? node.get("Collection").get("value").asText() : "");
+            part.put("name", node.has("name") ? node.get("name").get("value").asText() : "");
+            part.put("description", node.has("description") ? node.get("description").get("value").asText() : "");
+            part.put("displayId", node.has("displayId") ? node.get("displayId").get("value").asText() : "");
+            part.put("version", node.has("version") ? node.get("version").get("value").asText() : "");
             listOfParts.add(part);
         }
-        return listOfParts.toString();
+        return listOfParts;
+    }
+
+    private void appendWebOfRegistries(ObjectMapper mapper, ArrayNode collections) throws IOException {
+        JsonNode wor = ConfigUtil.get("webOfRegistries");
+        if (wor == null || !wor.isObject() || wor.isEmpty()) {
+            return;
+        }
+        Set<String> existingUris = new HashSet<>();
+        for (JsonNode n : collections) {
+            if (n.has("uri") && !n.get("uri").isNull()) {
+                existingUris.add(n.get("uri").asText());
+            }
+        }
+        wor.fields().forEachRemaining(entry -> {
+            String uriPrefix = entry.getKey();
+            if (existingUris.contains(uriPrefix)) {
+                return;
+            }
+            String instanceUrl = entry.getValue().asText("");
+            String name = displayNameForRegistry(uriPrefix, instanceUrl);
+            ObjectNode row = mapper.createObjectNode();
+            row.put("uri", uriPrefix);
+            row.put("name", name);
+            row.put("description", "");
+            row.put("displayId", name);
+            row.put("version", "");
+            row.put("url", instanceUrl);
+            row.put("public", true);
+            row.put("remote", true);
+            collections.add(row);
+        });
+    }
+
+    private static String displayNameForRegistry(String uriPrefix, String instanceUrl) {
+        try {
+            String trimmed = uriPrefix.replaceAll("/+$", "");
+            URI parsed = URI.create(trimmed);
+            String path = parsed.getPath();
+            if (path != null && path.length() > 1) {
+                String[] segs = path.split("/");
+                String last = segs[segs.length - 1];
+                if (!last.isEmpty()) {
+                    return last;
+                }
+            }
+            if (parsed.getHost() != null) {
+                return parsed.getHost();
+            }
+            if (instanceUrl != null && !instanceUrl.isEmpty()) {
+                URI iu = URI.create(instanceUrl.replaceAll("/+$", ""));
+                if (iu.getHost() != null) {
+                    return iu.getHost();
+                }
+            }
+        } catch (Exception ignored) {
+        }
+        return uriPrefix;
+    }
+
+    public String collectionToOutput(String rawJSON) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.writeValueAsString(collectionBindingsToArrayNode(mapper, rawJSON));
     }
 
     /**
@@ -345,12 +558,13 @@ public class SearchService {
     }
 
     public String SPARQLQuery(String query) throws IOException {
+        // BEFORE 1/27:
         RestTemplate restTemplate = new RestTemplate();
         String url;
         HashMap<String, String> params = new HashMap<>();
         params.put("default-graph-uri", ConfigUtil.get("defaultGraph").asText());
         params.put("query", query);
-
+        System.out.println(query.getClass().getName());
         url = ConfigUtil.get("sparqlEndpoint").asText() + "?default-graph-uri={default-graph-uri}&query={query}&format=json&";
 //        url = ConfigUtil.get("sparqlEndpoint").asText() + "?default-graph-uri={default-graph-uri}&query={query}";
         // has to be the first one. without format json, getting root collections fails
@@ -358,56 +572,140 @@ public class SearchService {
         return restTemplate.getForObject(url, String.class, params);
     }
 
+    /**
+     * CONSTRUCT against the configured public {@code defaultGraph} only.
+     *
+     * @see #SPARQLRDFXMLQuery(String, String)
+     */
     public byte[] SPARQLRDFXMLQuery(String query) throws IOException {
-        RestTemplate restTemplate = new RestTemplate();
-        String url;
-        HashMap<String, String> params = new HashMap<>();
-        params.put("default-graph-uri", ConfigUtil.get("defaultGraph").asText());
-        params.put("query", query);
-        params.put("format", "application/rdf+xml");
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add("Accept", "application/rdf+xml");
-        HttpEntity entity = new HttpEntity(httpHeaders);
-
-        url = ConfigUtil.get("sparqlEndpoint").asText() + "?default-graph-uri={default-graph-uri}&query={query}";
-
-        var rest = restTemplate.exchange(url, HttpMethod.GET, entity, byte[].class, params);
-        return rest.getBody();
+        return SPARQLRDFXMLQuery(query, null);
     }
 
     /**
-     * Hit the /sparql endpoint on other SBH instances
-     * @param query SPARQL Query to send
-     * @return JSON representation of results
+     * CONSTRUCT against Virtuoso.
+     * <ul>
+     *   <li><b>Public</b> resource URI: {@code default-graph-uri} is the configured public {@code defaultGraph}
+     *       (unchanged from legacy behavior).</li>
+     *   <li><b>User/private</b> resource URI: {@code default-graph-uri} is <em>omitted</em> from the HTTP URL; the
+     *       query must include {@code FROM} for both public and user graphs (see {@link #fromClauseForPrivateFetch}).</li>
+     * </ul>
+     *
+     * @param resourceUriForDefaultGraph object identity URI in the SPARQL template; null is treated as public
+     */
+    public byte[] SPARQLRDFXMLQuery(String query, String resourceUriForDefaultGraph) throws IOException {
+        RestTemplate restTemplate = new RestTemplate();
+        HashMap<String, String> params = new HashMap<>();
+        params.put("query", query);
+        params.put("format", "application/rdf+xml");
+
+        String user = usernameFromUserResourceUri(resourceUriForDefaultGraph);
+        boolean privateResource = user != null && !user.isBlank();
+
+        String url;
+        if (privateResource) {
+            url = ConfigUtil.get("sparqlEndpoint").asText() + "?query={query}&format={format}";
+        } else {
+            params.put("default-graph-uri", ConfigUtil.get("defaultGraph").asText());
+            url = ConfigUtil.get("sparqlEndpoint").asText()
+                    + "?default-graph-uri={default-graph-uri}&query={query}&format={format}";
+        }
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Accept", "*/*");
+        HttpEntity<?> entity = new HttpEntity<>(headers);
+
+        ResponseEntity<byte[]> response = restTemplate.exchange(url, HttpMethod.GET, entity, byte[].class, params);
+        return response.getBody() != null ? response.getBody() : new byte[0];
+    }
+
+    /**
+     * SPARQL {@code FROM} clause fragment for {@code FetchSBOLNonRecursive.sparql}:
+     * empty for public URIs (use {@code default-graph-uri} on the request); for user-scoped URIs returns
+     * {@code FROM <publicDefaultGraph> FROM <userNamedGraph>} so CONSTRUCT reads both graphs without
+     * {@code default-graph-uri}.
+     */
+    public String fromClauseForPrivateFetch(String resourceUri) throws IOException {
+        String user = usernameFromUserResourceUri(resourceUri);
+        if (user == null || user.isBlank()) {
+            return "";
+        }
+        String pub = ConfigUtil.get("defaultGraph").asText();
+        String priv = instanceUriPrefixForGraphs() + "user/" + user;
+        return "FROM <" + pub + "> FROM <" + priv + ">";
+    }
+
+    /** Base URL for RDF URIs; prefers {@code uriPrefix} when set, else {@code graphPrefix}. */
+    private String instanceUriPrefixForGraphs() throws IOException {
+        JsonNode n = ConfigUtil.get("uriPrefix");
+        if (n != null && !n.isNull()) {
+            String t = n.asText().trim();
+            if (!t.isEmpty()) {
+                return t.endsWith("/") ? t : t + "/";
+            }
+        }
+        return ConfigUtil.get("graphPrefix").asText();
+    }
+
+    /**
+     * Returns the username segment for URIs of the form {@code (graphPrefix|uriPrefix) + "user/" + username + "/..."}.
+     */
+    private String usernameFromUserResourceUri(String resourceUri) throws IOException {
+        if (resourceUri == null || resourceUri.isBlank()) {
+            return null;
+        }
+        String gpHead = ConfigUtil.get("graphPrefix").asText() + "user/";
+        String uriPrefixHead = instanceUriPrefixForGraphs() + "user/";
+        if (resourceUri.startsWith(gpHead)) {
+            String rest = resourceUri.substring(gpHead.length());
+            int slash = rest.indexOf('/');
+            if (slash > 0) {
+                return rest.substring(0, slash);
+            }
+        }
+        if (!gpHead.equals(uriPrefixHead) && resourceUri.startsWith(uriPrefixHead)) {
+            String rest = resourceUri.substring(uriPrefixHead.length());
+            int slash = rest.indexOf('/');
+            if (slash > 0) {
+                return rest.substring(0, slash);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Hit the /sparql endpoint on other SBH instances (Web of Registries).
+     * Aligns with {@link #SPARQLRDFXMLQuery}: CONSTRUCT needs {@code format} + default graph + permissive Accept;
+     * {@code String} responses often end up null for RDF MIME types.
      */
     public byte[] queryOldSBHSparqlEndpoint(String WOREndpoint, String query) throws IOException {
         RestTemplate restTemplate = new RestTemplate();
-        String url;
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Accept", "*/*");
+
+        String base = WOREndpoint.endsWith("/") ? WOREndpoint.substring(0, WOREndpoint.length() - 1) : WOREndpoint;
+        String remoteDefaultGraph = base + "/public";
+
         HashMap<String, String> params = new HashMap<>();
-//        params.put("default-graph-uri", ConfigUtil.get("defaultGraph").asText());
+        params.put("default-graph-uri", remoteDefaultGraph);
         params.put("query", query);
         params.put("format", "application/rdf+xml");
-        HttpHeaders httpHeaders = new HttpHeaders();
-//        httpHeaders.add("Accept", "application/json");
-        httpHeaders.add("Accept", "application/rdf+xml");
-        HttpEntity entity = new HttpEntity<>("body", httpHeaders);
 
-//        url = WOREndpoint + "/sparql?query="+query;
-//        var result = restTemplate.getForObject(url, String.class);
-//        url = WOREndpoint + "/sparql?default-graph-uri={default-graph-uri}&query={query}";
-        url = WOREndpoint + "/sparql?query={query}";
-        ResponseEntity<String> rest;
+        String url = base + "/sparql?default-graph-uri={default-graph-uri}&query={query}&format={format}";
+        HttpEntity<?> entity = new HttpEntity<>(headers);
+
+        ResponseEntity<byte[]> rest;
         try {
-            rest = restTemplate.getForEntity(url, String.class, entity);
+            rest = restTemplate.exchange(url, HttpMethod.GET, entity, byte[].class, params);
         } catch (HttpClientErrorException e) {
-            if (e.getStatusCode() == HttpStatus.NOT_ACCEPTABLE) {
-                byte[] emptyByteArray = new byte[0];
-                return emptyByteArray;
-            } else {
-                throw e;
+            int status = e.getStatusCode().value();
+            // Remote registry may reject unauthenticated SPARQL (401) or content negotiation (406); treat as no data.
+            if (status == HttpStatus.NOT_ACCEPTABLE.value() || status == HttpStatus.UNAUTHORIZED.value()) {
+                return new byte[0];
             }
+            throw e;
         }
-        return rest.getBody().getBytes(StandardCharsets.UTF_8);
+        byte[] body = rest.getBody();
+        return body != null && body.length > 0 ? body : new byte[0];
     }
 
     /**
@@ -418,7 +716,7 @@ public class SearchService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication instanceof AnonymousAuthenticationToken) return "";
         //var user = authentication.getPrincipal();
-        return ConfigUtil.get("graphPrefix").asText() + "/user/" + authentication.getName();
+        return ConfigUtil.get("graphPrefix").asText() + "user/" + authentication.getName();
     }
 
     // Method to encode a string value using `UTF-8` encoding scheme

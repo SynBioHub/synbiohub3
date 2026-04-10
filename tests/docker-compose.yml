@@ -1,4 +1,4 @@
-version: '3.2'
+version: '3.8'
 
 services:
     autoheal: 
@@ -19,6 +19,12 @@ services:
         restart: always  
         labels:
             - "autoheal=true"
+        healthcheck:
+            test: ["CMD-SHELL", "timeout 4 bash -c 'cat < /dev/null > /dev/tcp/127.0.0.1/8890'"]
+            interval: 10s
+            timeout: 8s
+            retries: 8
+            start_period: 90s
     virtuoso3:
         image: tenforce/virtuoso:virtuoso7.2.5
         volumes:
@@ -30,11 +36,17 @@ services:
         restart: always
         labels:
             - "autoheal=true"
+        healthcheck:
+            test: ["CMD-SHELL", "timeout 4 bash -c 'cat < /dev/null > /dev/tcp/127.0.0.1/8890'"]
+            interval: 10s
+            timeout: 8s
+            retries: 8
+            start_period: 90s
     synbiohubbackend:
         image: synbiohub/sbh3backend:snapshot
         depends_on: 
             virtuoso3:
-                condition: service_started
+                condition: service_healthy
         ports:
             - "6789:6789"
         volumes:
@@ -57,7 +69,8 @@ services:
     synbiohub:
         image: synbiohub/synbiohub:snapshot-standalone
         depends_on: 
-            - virtuoso
+            virtuoso:
+                condition: service_healthy
         ports:
             - "7777:7777"
         volumes:

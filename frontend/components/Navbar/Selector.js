@@ -22,22 +22,31 @@ export default function Selector(properties) {
     if (properties.href === router.pathname) setStyle(navoptionactive);
   }, [router.pathname, properties.href]);
 
+  const textClassName = properties.isInstanceName ? 'instanceName' : navoptionname;
+
+  // keep navoptionname import for other uses
   return (
     <Link href={properties.href}>
       <a className={`${navoption}  ${style}`}>
-        {!properties.customIcon ? (
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+          {/* Render the home icon */}
           <FontAwesomeIcon
             className={navoptionicon}
             icon={properties.icon}
-            alt={properties.name}
+            alt="home"
             size="2x"
             color="#F2E86D"
           />
-        ) : (
-          properties.customIcon
-        )}
-
-        <span className={navoptionname}>{properties.name}</span>
+          {properties.logoUrl ? (
+            <img
+              src={properties.logoUrl}
+              alt="instance logo"
+              style={{ height: '2rem', width: 'auto' }}
+            />
+          ) : (
+            <span className={textClassName}>{properties.name}</span>
+          )}
+        </span>
       </a>
     </Link>
   );

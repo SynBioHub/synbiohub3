@@ -28,7 +28,10 @@ export default function ResultTable(properties) {
         oneSelected = true;
       }
     }
-    setSelectAll(allSelected);
+    if (selected.size > 0) {
+      setSelectAll(allSelected);
+    }
+
     if (oneSelected) {
       setButtonClass(styles.enabled);
     } else {
@@ -36,20 +39,27 @@ export default function ResultTable(properties) {
     }
   }, [selected]);
 
-  const rows = properties.data.map(row => (
-    <ResultRow
-      selected={selected}
-      setSelected={setSelected}
-      name={row.name}
-      displayId={row.displayId}
-      description={row.description}
-      type={properties.overrideType ? properties.overrideType : row.type}
-      version={row.version}
-      uri={row.uri}
-      key={row.uri}
-    />
-  ));
+  const rows = properties.data.map(row => {
+    return (
+      <ResultRow
+        selected={selected}
+        setSelected={setSelected}
+        name={row.name}
+        displayId={row.displayId}
+        description={row.description}
+        type={ row.derivedType || row.type }
+        version={row.version}
+        uri={row.uri}
+        key={row.uri}
+        sbolType={row.sbolType}
+        role={row.role}
+      />
+    );
+  });
 
+  if (properties.data.length === 0) {
+    return <div className={styles.tablecontainer2}>No results found</div>;
+  }
   return (
     <div className={styles.resultcontainer}>
       <TableButtons
@@ -60,8 +70,6 @@ export default function ResultTable(properties) {
         count={properties.count}
         submissionsPage={properties.submissionsPage}
       />
-
-      <div className={styles.tablecontainer}>
         <table className={styles.table} id={styles.results}>
           <thead>
             <tr>
@@ -94,6 +102,5 @@ export default function ResultTable(properties) {
           <tbody>{rows}</tbody>
         </table>
       </div>
-    </div>
   );
 }

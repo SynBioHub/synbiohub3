@@ -2,6 +2,8 @@
 
 source ./testutil.sh
 
+bash ./wait_for_virtuoso.sh
+
 message "Uploading igem data"
 
 cd add-igem-data

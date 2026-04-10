@@ -23,6 +23,9 @@ function Login() {
   const dispatch = useDispatch();
   const router = useRouter();
 
+  const theme = JSON.parse(localStorage.getItem('theme')) || {};
+  const allowPublicSignup = theme.allowPublicSignup;
+
   const next = router.query.next;
 
   const passwordInput = useRef(null);
@@ -78,6 +81,10 @@ function Login() {
         <div
           role="button"
           className={styles.submitbutton}
+          style={{
+            backgroundColor: theme?.themeParameters?.[0]?.value || '#333', // Use theme color or default to #333
+            color: theme?.themeParameters?.[1]?.value || '#fff', // Use text color from theme or default to #fff
+          }}
           onClick={() => {
             dispatch(login(username, password));
             setUsername('');
@@ -95,12 +102,14 @@ function Login() {
           <div className={styles.info}>
             <span className={styles.blue}>Forgot password?</span>
           </div>
-          <div className={styles.info}>
-            New to SynBioHub?{' '}
-            <Link href="/register">
-              <a className={styles.blue}>Join now</a>
-            </Link>
-          </div>
+          {allowPublicSignup && (
+            <div className={styles.info}>
+              New to SynBioHub?{' '}
+              <Link href="/register">
+                <a className={styles.blue}>Join now</a>
+              </Link>
+            </div>
+          )}
         </div>
       </div>
     </div>

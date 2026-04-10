@@ -38,26 +38,90 @@ const headers = [
 
 export default function Users() {
   const token = useSelector(state => state.user.token);
+  const theme = JSON.parse(localStorage.getItem('theme')) || {};
   const dispatch = useDispatch();
   const { users, loading } = useUsers(token, dispatch);
 
+  const [allowPublicSignup, setAllowPublicSignup] = useState(
+    theme.allowPublicSignup === 'true' || theme.allowPublicSignup === true
+  );
+
+  useEffect(() => {
+    const storedTheme = JSON.parse(localStorage.getItem('theme')) || {};
+    if (storedTheme.allowPublicSignup !== undefined) {
+      setAllowPublicSignup(storedTheme.allowPublicSignup);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (users && users.allowPublicSignup !== undefined) {
+      setAllowPublicSignup(
+        users.allowPublicSignup === 'true' || users.allowPublicSignup === true
+      );
+    }
+  }, [users]);
+
+  const handleAllowPublicSignup = async () => {
+    try {
+      const url = `${publicRuntimeConfig.backend}/admin/users`;
+      const headers = {
+        Accept: 'text/plain',
+        'X-authorization': token,
+      };
+
+      const parameters = new URLSearchParams();
+      if (allowPublicSignup) {
+        parameters.append('allowPublicSignup', allowPublicSignup);
+      }
+
+      const response = await axios.post(url, parameters, { headers });
+
+      if (response.status === 200) {
+        alert("Allow Public Account Creation updated successfully!");
+        const updatedTheme = {
+          ...JSON.parse(localStorage.getItem('theme')),
+          allowPublicSignup: allowPublicSignup,
+        };
+        localStorage.setItem('theme', JSON.stringify(updatedTheme));
+      }
+    } catch (error) {
+      console.error("Error saving:", error);
+    }
+  };
+
   return (
-    <div className={styles.plugintable}>
-      <Table
-        data={users ? users.users : undefined}
-        loading={loading}
-        title="Users"
-        searchable={searchable}
-        headers={headers}
-        sortOptions={options}
-        defaultSortOption={options[0]}
-        sortMethods={sortMethods}
-        finalRow={<NewUserRow token={token} />}
-        dataRowDisplay={user => (
-          <UserDisplay key={user.id} user={user} token={token} />
-        )}
-      />
+    <div>
+      <div className={styles.plugintable}>
+        <Table
+          data={users ? users.users : undefined}
+          loading={loading}
+          title="Users"
+          searchable={searchable}
+          headers={headers}
+          sortOptions={options}
+          defaultSortOption={options[0]}
+          sortMethods={sortMethods}
+          finalRow={<NewUserRow token={token} />}
+          dataRowDisplay={user => (
+            <UserDisplay key={user.id} user={user} token={token} />
+          )}
+        />
+      </div>
+      <div className={styles.checkbox}>
+        <Checkbox
+          value={allowPublicSignup}
+          onChange={() => setAllowPublicSignup(prevState => !prevState)}
+        />
+        <span className={styles.checktext}>Allow Public Account Creation</span>
+        <ActionButton className={styles.checksave}
+          action="Save"
+          icon={faSave}
+          color="#1C7C54"
+          onClick={handleAllowPublicSignup}
+        />
+      </div>
     </div>
+
   );
 }
 
@@ -165,7 +229,11 @@ function UserDisplay(properties) {
   useEffect(() => {
     setName(properties.user.name);
     setEmail(properties.user.email);
-  }, [properties.user.name, properties.user.url]);
+    setAffiliation(properties.user.affiliation);
+    setIsMember(properties.user.isMember ? true : false);
+    setIsCurator(properties.user.isCurator ? true : false);
+    setIsAdmin(properties.user.isAdmin ? true : false);
+  }, [properties.user]);
 
   return !editMode ? (
     <tr key={properties.user.id}>
@@ -201,14 +269,27 @@ function UserDisplay(properties) {
               action="Edit"
               icon={faPencilAlt}
               color="#00A1E4"
-              onClick={() => setEditMode(true)}
+              onClick={() => {
+                setName(properties.user.name);
+                setEmail(properties.user.email);
+                setAffiliation(properties.user.affiliation);
+                setIsMember(properties.user.isMember ? true : false);
+                setIsCurator(properties.user.isCurator ? true : false);
+                setIsAdmin(properties.user.isAdmin ? true : false);
+                setEditMode(true);
+              }}
             />
             <ActionButton
               action="Delete"
               icon={faTrashAlt}
               color="#FF3C38"
               onClick={() =>
-                deleteUser(properties.user.id, properties.token, dispatch)
+                deleteUser(
+                  properties.user.id,
+                  properties.user.username,
+                  properties.token,
+                  dispatch
+                )
               }
             />
           </div>
@@ -259,8 +340,8 @@ function UserDisplay(properties) {
               action="Save"
               icon={faSave}
               color="#1C7C54"
-              onClick={() => {
-                saveUser(
+              onClick={async () => {
+                const saved = await saveUser(
                   properties.user.id,
                   name,
                   email,
@@ -271,7 +352,9 @@ function UserDisplay(properties) {
                   properties.token,
                   dispatch
                 );
-                setEditMode(false);
+                if (saved) {
+                  setEditMode(false);
+                }
               }}
             />
             <ActionButton
@@ -295,7 +378,14 @@ function UserDisplay(properties) {
   );
 }
 
-const deleteUser = async (id, token, dispatch) => {
+const deleteUser = async (id, username, token, dispatch) => {
+  const confirmed = window.confirm(
+    `Delete user "${username}"? This action cannot be undone.`
+  );
+  if (!confirmed) {
+    return;
+  }
+
   const url = `${publicRuntimeConfig.backend}/admin/deleteUser`;
   const headers = {
     Accept: 'text/plain',
@@ -305,13 +395,17 @@ const deleteUser = async (id, token, dispatch) => {
   const parameters = new URLSearchParams();
   parameters.append('id', id);
 
-  const response = await fetch(url, {
-    method: 'POST',
-    headers,
-    body: parameters
-  });
+  let response;
 
-  if (response.status === 200) {
+  try {
+    response = await axios.post(url, parameters, { headers });
+  } catch (error) {
+    if (error.response) {
+      console.error('Error:', error.message);
+    }
+  }
+
+  if (response && response.status === 200) {
     mutate([`${publicRuntimeConfig.backend}/admin/users`, token, dispatch]);
   }
 };
@@ -342,15 +436,23 @@ const saveUser = async (
   parameters.append('isCurator', isCurator);
   parameters.append('isAdmin', isAdmin);
 
-  const response = await fetch(url, {
-    method: 'POST',
-    headers,
-    body: parameters
-  });
+  let response;
+
+  try {
+    response = await axios.post(url, parameters, { headers });
+  } catch (error) {
+    if (error.response) {
+      console.error('Error:', error.message);
+    }
+    return false;
+  }
 
   if (response.status === 200) {
     mutate([`${publicRuntimeConfig.backend}/admin/users`, token, dispatch]);
+    return true;
   }
+
+  return false;
 };
 
 const createUser = async (
@@ -379,17 +481,31 @@ const createUser = async (
   isCurator && parameters.append('isCurator', '1');
   isAdmin && parameters.append('isAdmin', '1');
 
-  const response = await fetch(url, {
-    method: 'POST',
-    headers,
-    body: parameters
-  });
+  let response;
 
-  const responseText = await response.text();
-  console.log(responseText);
+  try {
+    response = await axios.post(url, parameters, { headers });
+  } catch (error) {
+    if (error.response) {
+      const msg = (error.response.data || '').toString();
+      alert(msg || 'Unable to create user. Please try again.');
+      console.error('Error:', error.message);
+    } else {
+      alert('Unable to create user. Please try again.');
+    }
+    return;
+  }
 
-  if (response.status === 200) {
-    mutate([`${publicRuntimeConfig.backend}/admin/users`, token, dispatch]);
+  if (response && response.status === 200) {
+    const responseMessage = (response.data || '').toString();
+    if (responseMessage.toLowerCase().includes('created successfully')) {
+      alert(
+        `User created successfully. An email has been sent to ${email} so they can set their password.`
+      );
+      mutate([`${publicRuntimeConfig.backend}/admin/users`, token, dispatch]);
+    } else {
+      alert(responseMessage || 'Unable to create user. Please try again.');
+    }
   }
 };
 
@@ -405,7 +521,14 @@ const options = [
 ];
 
 const compareStrings = (string1, string2) => {
-  return (string1.toLowerCase() > string2.toLowerCase() && 1) || -1;
+  if (!string1 && !string2) return 0; // Both strings are undefined or null, they are equal
+  if (!string1) return -1; // Only string1 is undefined or null, string1 is less
+  if (!string2) return 1;  // Only string2 is undefined or null, string1 is greater
+
+  const lowerString1 = string1.toLowerCase();
+  const lowerString2 = string2.toLowerCase();
+
+  return (lowerString1 > lowerString2 && 1) || (lowerString1 < lowerString2 && -1) || 0;
 };
 
 const compareBools = (bool1, bool2) => {

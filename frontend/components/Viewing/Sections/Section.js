@@ -7,6 +7,8 @@ import { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateMinimizedSections } from '../../../redux/actions.js';
 
+// import { checkContentExist } from '../PageJSON/Rendering/TableBuilder';
+
 /*
 TODO
 Make sure that the sections don't flicker when checkbox is clicked to unrender/render
@@ -23,9 +25,10 @@ sections will be minimizable and some won't be.
  * @returns A minimized/expanded section.
  */
 export default function Section(properties) {
+  const { translation = 0 } = properties;
   const dispatch = useDispatch();
 
-  const id = properties.id || properties.title;
+  const id = properties.pluginID || (properties.id || properties.title);
 
   //The index that the section is at in the section order.
   const sectionIndex = useSelector(state => state.pageSections.order).indexOf(
@@ -62,7 +65,7 @@ export default function Section(properties) {
   }, [isMinimized]);
 
   return (
-    <div className={styles.section} id={properties.title}>
+    <div className={translation === 0 ? styles.sectionexpanded : styles.sectioncollapsed} id={properties.title}>
       <div className={styles.sectiontitle}>{properties.title}</div>
       <FontAwesomeIcon
         icon={minimizedSections[sectionIndex] ? faPlusSquare : faMinusSquare}

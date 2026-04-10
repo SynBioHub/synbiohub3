@@ -1,23 +1,31 @@
-import getConfig from 'next/config';
 import { useRouter } from 'next/router';
 
 import styles from '../../styles/submissions.module.css';
-const { publicRuntimeConfig } = getConfig();
+import { processUrl } from '../Admin/Registries';
+
+import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 export default function BasketItem(properties) {
   const router = useRouter();
+  const registries = JSON.parse(localStorage.getItem("registries")) || {};
+
+  // Process the URI using processUrl function
+  const handleClick = async () => {
+    const processedUrlData = await processUrl(properties.item.uri, registries);
+    if (processedUrlData.urlReplacedForBackend) {
+      router.push(processedUrlData.urlRemovedForLink || processedUrlData.urlReplacedForBackend);
+    } else if (processedUrlData.original) {
+      router.push(processedUrlData.original);
+    }
+  };
 
   return (
     <tr
       key={properties.item.displayId}
       className={styles.submission}
       onClick={() => {
-        router.push(
-          properties.item.uri.replace(
-            'https://synbiohub.org',
-            publicRuntimeConfig.backend
-          )
-        );
+        router.push(properties.item.uri);
       }}
     >
       <td>
