@@ -55,7 +55,7 @@ export default function SectionRenderer({ section, metadata }) {
     let isMounted = true; // <-- add this line
 
     axios
-      .get(url, { headers: { accept: 'text/plain' } })
+      .get(url, { headers: { accept: 'application/json' } })
       .then(res => res.data.registries)
       .then((registries) => {
         if (isMounted) {  // <-- check this condition before setting state

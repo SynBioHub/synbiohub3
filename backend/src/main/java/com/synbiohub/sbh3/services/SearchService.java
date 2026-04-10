@@ -70,6 +70,28 @@ public class SearchService {
     }
 
     /**
+     * Escapes a value for use inside a SPARQL double-quoted string literal.
+     */
+    private static String escapeSparqlStringLiteral(String raw) {
+        if (raw == null) {
+            return "";
+        }
+        StringBuilder sb = new StringBuilder(raw.length() + 16);
+        for (int i = 0; i < raw.length(); i++) {
+            char c = raw.charAt(i);
+            switch (c) {
+                case '\\' -> sb.append("\\\\");
+                case '"' -> sb.append("\\\"");
+                case '\n' -> sb.append("\\n");
+                case '\r' -> sb.append("\\r");
+                case '\t' -> sb.append("\\t");
+                default -> sb.append(c);
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
      * Gets the criteria string for a SPARQL query
      * @param allParams Key/value pairs from GET request
      * @return SPARQL-compatible criteria string
@@ -119,6 +141,12 @@ public class SearchService {
                 criteriaString.append("?subject a <http://sbols.org/v2#ComponentDefinition> .");
             } else if (param.getKey().equalsIgnoreCase("sequence")) {
                 criteriaString.append("?subject a <http://sbols.org/v2#Sequence> .");
+                if (param.getValue() != null && !param.getValue().isEmpty()) {
+                    criteriaString.append(" ?subject sbol2:elements \"").append(escapeSparqlStringLiteral(param.getValue())).append("\" .");
+                }
+            } else if (param.getKey().equalsIgnoreCase("globalsequence")
+                    && param.getValue() != null && !param.getValue().isEmpty()) {
+                criteriaString.append("?subject sbol2:globalsequence \"").append(escapeSparqlStringLiteral(param.getValue())).append("\" .");
             }
 
             else if (param.getKey().equals("createdBefore")) {
@@ -564,7 +592,7 @@ public class SearchService {
         HashMap<String, String> params = new HashMap<>();
         params.put("default-graph-uri", ConfigUtil.get("defaultGraph").asText());
         params.put("query", query);
-        System.out.println(query.getClass().getName());
+        // System.out.println(query.getClass().getName());
         url = ConfigUtil.get("sparqlEndpoint").asText() + "?default-graph-uri={default-graph-uri}&query={query}&format=json&";
 //        url = ConfigUtil.get("sparqlEndpoint").asText() + "?default-graph-uri={default-graph-uri}&query={query}";
         // has to be the first one. without format json, getting root collections fails
