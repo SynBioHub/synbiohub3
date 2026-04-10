@@ -26,12 +26,9 @@ export default function View({ data, error }) {
   const url = view ? view.join('/') : '';
   const [metadata, setMetadata] = useState();
   const theme = JSON.parse(localStorage.getItem('theme')) || {};
-  const [urlExists, setUrlExists] = useState(true); // New state for URL existence
-  const backenduri = `${publicRuntimeConfig.backend}/${url}`;
   const currentURL = window.location.href;
   const parts = currentURL.split('/');
   const [isOwner, setIsOwner] = useState(false);
-  const isPublic = typeof window !== 'undefined' && window.location.href.includes('/public/');
 
   useEffect(() => {
     const currentURL = window.location.href;
@@ -90,38 +87,25 @@ export default function View({ data, error }) {
 
 
   useEffect(() => {
-    // Check if URL exists
-    axios.get(backenduri)
-      .then(response => {
-        // URL exists
-        setUrlExists(true);
-      })
-      .then(response => {
-        if (!metadata && uri) {
-          const parts = uri.split('/');
-          // Find the last index that looks like a version number (contains digits)
-          let lastIndex = -1;
-          for (let i = parts.length - 1; i >= 0; i--) {
-            if (parts[i] && /^\d/.test(parts[i])) { // Starts with a digit
-              lastIndex = i;
-              break;
-            }
-          }
-          const firstHalf = lastIndex >= 0 ? parts.slice(0, lastIndex + 1).join('/') : uri;
-          getQueryResponse(dispatch, getMetadata, { uri: firstHalf }, token).then(
-            metadata => setMetadata(metadata)
-          );
+    if (!metadata && uri) {
+      const uriParts = uri.split('/');
+      // Find the last index that looks like a version number (contains digits)
+      let lastIndex = -1;
+      for (let i = uriParts.length - 1; i >= 0; i--) {
+        if (uriParts[i] && /^\d/.test(uriParts[i])) {
+          lastIndex = i;
+          break;
         }
-      })
-      .catch(error => {
-        console.error("Caught Error", error);
-        // URL does not exist
-        setUrlExists(false);
-      });
-  }, [uri, metadata, token]);
+      }
+      const firstHalf =
+        lastIndex >= 0 ? uriParts.slice(0, lastIndex + 1).join('/') : uri;
+      getQueryResponse(dispatch, getMetadata, { uri: firstHalf }, token).then(
+        result => setMetadata(result)
+      );
+    }
+  }, [uri, metadata, token, dispatch]);
 
-  // Render based on URL existence
-  if (!url || !urlExists || !isOwner) {
+  if (!url || !isOwner) {
     return (
       <TopLevel publicPage={true}>
         <div style={centerStyle}>

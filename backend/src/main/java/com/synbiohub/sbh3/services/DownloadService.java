@@ -57,6 +57,44 @@ public class DownloadService {
     }
 
     /**
+     * Public object URI from the servlet path after {@code /public/} (e.g. {@code igem/BBa/1} or {@code igem/BBa/sub/1}).
+     */
+    public String publicObjectUriFromServletPath(String pathWithinApplication) throws IOException {
+        String prefix = "/public/";
+        if (!pathWithinApplication.startsWith(prefix)) {
+            throw new IllegalArgumentException("Expected path starting with /public/, got: " + pathWithinApplication);
+        }
+        return ConfigUtil.get("databasePrefix").asText() + "public/" + pathWithinApplication.substring(prefix.length());
+    }
+
+    /**
+     * User object URI from the servlet path after {@code /user/} (e.g. {@code alice/igem/BBa/1}).
+     */
+    public String userObjectUriFromServletPath(String pathWithinApplication) throws IOException {
+        String prefix = "/user/";
+        if (!pathWithinApplication.startsWith(prefix)) {
+            throw new IllegalArgumentException("Expected path starting with /user/, got: " + pathWithinApplication);
+        }
+        return ConfigUtil.get("graphPrefix").asText() + "user/" + pathWithinApplication.substring(prefix.length());
+    }
+
+    /**
+     * Metadata lookup key for {@code GET /public/…/metadata}: {@code defaultGraph + "/" + pathAfterPublic} without the {@code /metadata} suffix.
+     */
+    public String publicMetadataSplitUriFromServletPath(String pathWithinApplication) throws IOException {
+        if (!pathWithinApplication.startsWith("/public/") || !pathWithinApplication.endsWith("/metadata")) {
+            throw new IllegalArgumentException("Expected /public/…/metadata, got: " + pathWithinApplication);
+        }
+        String core = pathWithinApplication.substring(
+                "/public/".length(),
+                pathWithinApplication.length() - "/metadata".length());
+        if (core.endsWith("/")) {
+            core = core.substring(0, core.length() - 1);
+        }
+        return ConfigUtil.get("defaultGraph").asText() + "/" + core;
+    }
+
+    /**
      * User-namespace object URI: {@code graphPrefix + "user/" + username + "/" + db + "/" + id + "/" + ver}.
      */
     public String userVersionedObjectUri(String username, String db, String id, String ver) throws IOException {

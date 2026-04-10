@@ -8,7 +8,7 @@ import { addError } from '../../../../redux/actions';
 
 export const fetcher = (url, dispatch) =>
   axios
-    .get(url, { headers: { accept: 'text/plain' } })
+    .get(url, { headers: { accept: 'application/json' } })
     .then(res => res.data)
     .catch(error => {
       error.customMessage = 'Request failed for GET /admin/registries';
