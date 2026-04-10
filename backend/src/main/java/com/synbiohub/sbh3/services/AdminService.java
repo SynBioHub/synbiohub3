@@ -249,6 +249,7 @@ public class AdminService {
         json.set("suppressWarningLogs", ConfigUtil.get("suppressWarningLogs"));
         json.set("suppressErrorLogs", ConfigUtil.get("suppressErrorLogs"));
         json.set("firstLaunch", ConfigUtil.get("firstLaunch"));
+        json.set("uriPrefix", ConfigUtil.get("uriPrefix"));
         String result = mapper.writeValueAsString(json);
         return result;
     }

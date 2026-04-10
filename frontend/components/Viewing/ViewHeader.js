@@ -49,7 +49,6 @@ export default function ViewHeader(properties) {
 
   useEffect(() => {
     const base = `${publicRuntimeConfig.backend}/${getAfterThirdSlash(properties.uri)}`;
-    console.log('base', base);
     Promise.all([
       axios.get(`${base}/twinsCount`),
       axios.get(`${base}/usesCount`),

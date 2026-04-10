@@ -85,7 +85,6 @@ export default function View({ data, error }) {
     uri = `${theme.uriPrefix}${url}`;
   }
 
-
   useEffect(() => {
     if (!metadata && uri) {
       const uriParts = uri.split('/');
