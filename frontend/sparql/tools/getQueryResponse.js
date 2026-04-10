@@ -64,7 +64,6 @@ export default async function getQueryResponse(
     'X-authorization': token
   };
 
-  
   try {
     // if the uri lives in an external sbh, use proxy to
     // circumvent cors errors
