@@ -63,7 +63,7 @@ export default async function getQueryResponse(
     Accept: 'application/json',
     'X-authorization': token
   };
-  console.log(url);
+
   
   try {
     // if the uri lives in an external sbh, use proxy to

@@ -49,6 +49,7 @@ export default function ViewHeader(properties) {
 
   useEffect(() => {
     const base = `${publicRuntimeConfig.backend}/${getAfterThirdSlash(properties.uri)}`;
+    console.log('base', base);
     Promise.all([
       axios.get(`${base}/twinsCount`),
       axios.get(`${base}/usesCount`),
@@ -366,43 +367,54 @@ export default function ViewHeader(properties) {
         {/* Safely handle cases where properties.search may be undefined */}
         {(() => {
           const search = properties.search || {};
+          return (
+            <>
+              {/* {search.similar && typeof checkSBOLExplorer?.data === 'string' && ( //TODO: Add check for SBOLExplorer
+                <button className={styles.button} onClick={similar}> Similar
+                </button>
+              )} */}
 
-        {/* {search.similar && typeof checkSBOLExplorer?.data === 'string' && ( //TODO: Add check for SBOLExplorer
-          <button className={styles.button} onClick={similar}> Similar
-          </button>
-        )} */}
-
-        {(search.twins || search.uses || search.similar) && (
-          <span>Search For:</span>
-        )}
-        {search.twins && (
-          <button
-            className={styles.button}
-            onClick={twins}
-            style={{
-              backgroundColor: theme?.themeParameters?.[0]?.value || '#333', // Use theme color or default to #333
-              color: theme?.themeParameters?.[1]?.value || '#fff' // Use text color from theme or default to #fff
-            }}
-          >
-            Twins
-          </button>
-        )}
-        {search.uses && (
-          <button className={styles.button} onClick={uses}
-            style={{
-              backgroundColor: theme?.themeParameters?.[0]?.value || '#333', // Use theme color or default to #333
-              color: theme?.themeParameters?.[1]?.value || '#fff', // Use text color from theme or default to #fff
-            }}
-          > Uses </button>
-        )}
-        {search.similar && (
-          <button className={styles.button} onClick={similar}
-            style={{
-              backgroundColor: theme?.themeParameters?.[0]?.value || '#333', // Use theme color or default to #333
-              color: theme?.themeParameters?.[1]?.value || '#fff', // Use text color from theme or default to #fff
-            }}
-          > Similar </button>
-        )}
+              {(search.twins || search.uses || search.similar) && (
+                <span>Search For:</span>
+              )}
+              {search.twins && (
+                <button
+                  className={styles.button}
+                  onClick={twins}
+                  style={{
+                    backgroundColor: theme?.themeParameters?.[0]?.value || '#333',
+                    color: theme?.themeParameters?.[1]?.value || '#fff'
+                  }}
+                >
+                  Twins
+                </button>
+              )}
+              {search.uses && (
+                <button
+                  className={styles.button}
+                  onClick={uses}
+                  style={{
+                    backgroundColor: theme?.themeParameters?.[0]?.value || '#333',
+                    color: theme?.themeParameters?.[1]?.value || '#fff'
+                  }}
+                >
+                  Uses
+                </button>
+              )}
+              {search.similar && (
+                <button
+                  className={styles.button}
+                  onClick={similar}
+                  style={{
+                    backgroundColor: theme?.themeParameters?.[0]?.value || '#333',
+                    color: theme?.themeParameters?.[1]?.value || '#fff'
+                  }}
+                >
+                  Similar
+                </button>
+              )}
+            </>
+          );
         })()}
       </div>
     </div>

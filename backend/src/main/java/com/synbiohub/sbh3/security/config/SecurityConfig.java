@@ -63,7 +63,7 @@ public class SecurityConfig {
                         "/public/**/sbol", "/public/**/sbolnr", "/public/**/gb", "/public/**/gff", "/public/**/fasta", "/public/**/metadata",
                         "/sparql", "/**/count", "/count",
                         "/logo",
-                        "/admin/theme", "/admin/registries", "/admin/logo",
+                        "/admin/theme", "/admin/registries", "/admin/logo", "/admin/plugins",
                         "/browse", "/rootCollections", "/root-collections"
                 ).permitAll()
                 .anyRequest().authenticated()

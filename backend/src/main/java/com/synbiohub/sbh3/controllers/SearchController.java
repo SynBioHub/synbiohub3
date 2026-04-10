@@ -128,7 +128,7 @@ public class SearchController {
      * @param
      * @return JSON containing all sub collections
      */
-    @GetMapping("/{visibility:.+}/{collectionID:.+}/{displayID:.+}/{version:.+}/subCollections")
+    @GetMapping("/{visibility:.+}/{collectionID:.+}/{displayID:.+}/{version:.+}/**/subCollections")
     public String getSubCollections(@PathVariable("visibility") String visibility, @PathVariable("collectionID") String collectionID,
                            @PathVariable("displayID") String displayID, @PathVariable("version") String version,
                            HttpServletRequest request) throws IOException {
@@ -143,7 +143,7 @@ public class SearchController {
      * @param
      * @return JSON containing all twins
      */
-    @GetMapping("/{visibility:.+}/{collectionID:.+}/{displayID:.+}/{version:.+}/twins")
+    @GetMapping("/{visibility:.+}/{collectionID:.+}/{displayID:.+}/{version:.+}/**/twins")
     public String getTwins(@PathVariable("visibility") String visibility, @PathVariable("collectionID") String collectionID,
                            @PathVariable("displayID") String displayID, @PathVariable("version") String version,
                            HttpServletRequest request) throws IOException {
@@ -160,7 +160,7 @@ public class SearchController {
      * @param
      * @return Plaintext count of all twins
      */
-    @GetMapping("/{visibility:.+}/{collectionID:.+}/{displayID:.+}/{version:.+}/twinsCount")
+    @GetMapping("/{visibility:.+}/{collectionID:.+}/{displayID:.+}/{version:.+}/**/twinsCount")
     public String getTwinsCount(@PathVariable("visibility") String visibility, @PathVariable("collectionID") String collectionID,
                            @PathVariable("displayID") String displayID, @PathVariable("version") String version,
                            HttpServletRequest request) throws IOException {
@@ -177,7 +177,7 @@ public class SearchController {
      * @param
      * @return JSON containing all components with similar sequences.
      */
-    @GetMapping("/{visibility:.+}/{collectionID:.+}/{displayID:.+}/{version:.+}/similar")
+    @GetMapping("/{visibility:.+}/{collectionID:.+}/{displayID:.+}/{version:.+}/**/similar")
     public String getSimilar(@PathVariable("visibility") String visibility, @PathVariable("collectionID") String collectionID,
                            @PathVariable("displayID") String displayID, @PathVariable("version") String version,
                            HttpServletRequest request) throws IOException {
@@ -195,7 +195,7 @@ public class SearchController {
      * @param
      * @return JSON containing all components with similar sequences.
      */
-    @GetMapping("/{visibility:.+}/{collectionID:.+}/{displayID:.+}/{version:.+}/similarCount")
+    @GetMapping("/{visibility:.+}/{collectionID:.+}/{displayID:.+}/{version:.+}/**/similarCount")
     public String getSimilarCount(@PathVariable("visibility") String visibility, @PathVariable("collectionID") String collectionID,
                              @PathVariable("displayID") String displayID, @PathVariable("version") String version,
                              HttpServletRequest request) throws IOException {
@@ -212,7 +212,7 @@ public class SearchController {
      * @param
      * @return JSON containing all parts that use that part
      */
-    @GetMapping("/{visibility:.+}/{collectionID:.+}/{displayID:.+}/{version:.+}/uses")
+    @GetMapping("/{visibility:.+}/{collectionID:.+}/{displayID:.+}/{version:.+}/**/uses")
     public String getUses(@PathVariable("visibility") String visibility, @PathVariable("collectionID") String collectionID,
                           @PathVariable("displayID") String displayID, @PathVariable("version") String version,
                           HttpServletRequest request) throws IOException {
@@ -230,7 +230,7 @@ public class SearchController {
      * @param
      * @return Plaintext count of all parts that use that part
      */
-    @GetMapping("/{visibility:.+}/{collectionID:.+}/{displayID:.+}/{version:.+}/usesCount")
+    @GetMapping("/{visibility:.+}/{collectionID:.+}/{displayID:.+}/{version:.+}/**/usesCount")
     public String getUsesCount(@PathVariable("visibility") String visibility, @PathVariable("collectionID") String collectionID,
                           @PathVariable("displayID") String displayID, @PathVariable("version") String version,
                           HttpServletRequest request) throws IOException {
