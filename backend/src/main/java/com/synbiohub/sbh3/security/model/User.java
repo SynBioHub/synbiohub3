@@ -40,6 +40,15 @@ public class User implements UserDetails, Cloneable{
     @Column(name = "affiliation")
     private String affiliation = "";
 
+    /** Match SBH1 JSON: empty affiliation is always {@code ""}, never JSON {@code null} (DB may store NULL). */
+    public String getAffiliation() {
+        return affiliation == null ? "" : affiliation;
+    }
+
+    public void setAffiliation(String affiliation) {
+        this.affiliation = affiliation == null ? "" : affiliation;
+    }
+
     @Enumerated(EnumType.STRING)
     @Column(name = "user_role")
     private Role role;
