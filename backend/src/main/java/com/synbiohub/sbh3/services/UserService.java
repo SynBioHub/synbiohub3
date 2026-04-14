@@ -170,6 +170,40 @@ public class UserService {
     }
 
     /**
+     * Sets a new password using a JWT issued for password reset (see {@link JwtService#generatePasswordResetToken}).
+     * Invalidates stored session auth for that user.
+     */
+    public void setNewPasswordWithToken(String token, String password1, String password2) {
+        if (token == null || token.isBlank()) {
+            throw new IllegalArgumentException("Token is required.");
+        }
+        if (password1 == null || password2 == null || password1.isBlank()) {
+            throw new IllegalArgumentException("Password is required.");
+        }
+        if (!verifyPasswords(password1, password2)) {
+            throw new IllegalArgumentException("Passwords do not match.");
+        }
+        String username = jwtService.validatePasswordResetTokenAndGetUsername(token.trim());
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid or expired reset link."));
+        user.setPassword(passwordEncoder.encode(password1));
+        userRepository.save(user);
+        authRepository.findByName(username).ifPresent(authRepository::delete);
+    }
+
+    /**
+     * Issues a password-reset JWT for {@code username}, or {@code null} if no such user (for forgot-password flows).
+     */
+    public String generatePasswordResetTokenForUsername(String username) {
+        if (username == null || username.isBlank()) {
+            return null;
+        }
+        return userRepository.findByUsername(username.trim())
+                .map(jwtService::generatePasswordResetToken)
+                .orElse(null);
+    }
+
+    /**
      * This function checks if the inputted string is a valid email address.
      *
      * @param email

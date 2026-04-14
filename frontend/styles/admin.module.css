@@ -205,6 +205,63 @@
    transform: translateX(0.2rem);
 }
 
+.mailcontainer {
+   max-width: 56rem;
+}
+
+.mailLayout {
+   display: flex;
+   flex-wrap: wrap;
+   gap: 2rem;
+   align-items: flex-start;
+}
+
+.mailCurrentPanel {
+   flex: 1 1 16rem;
+   min-width: 14rem;
+   padding: 1rem 1.25rem;
+   background: #f8f9fb;
+   border: 1px solid #e2e6ec;
+   border-radius: 0.4rem;
+}
+
+.mailCurrentPanel h3 {
+   margin: 0 0 0.5rem 0;
+   font-size: 1.05rem;
+   font-weight: 600;
+   color: #171D26;
+}
+
+.mailCurrentIntro {
+   margin: 0 0 1rem 0;
+   font-size: 0.85rem;
+   color: #575757;
+   line-height: 1.4;
+}
+
+.mailCurrentLabel {
+   font-size: 0.8rem;
+   font-weight: 600;
+   color: #575757;
+   margin: 0.75rem 0 0.25rem 0;
+}
+
+.mailCurrentLabel:first-of-type {
+   margin-top: 0;
+}
+
+.mailCurrentValue {
+   font-size: 0.95rem;
+   margin: 0;
+   word-break: break-word;
+   color: #171D26;
+}
+
+.mailFormPanel {
+   flex: 2 1 22rem;
+   min-width: 14rem;
+}
+
 .mailcontainer p {
    margin: 1rem 0 0 0.5rem;
    font-size: 0.95rem;

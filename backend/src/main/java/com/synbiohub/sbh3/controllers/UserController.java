@@ -14,9 +14,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -90,16 +97,105 @@ public class UserController {
         }
     }
 
-//
-//    @PostMapping(value = "/resetPassword")
-//    public ResponseEntity<String> resetPassword(@RequestParam Map<String, String> allParams) {
-//        return new ResponseEntity<>(HttpStatus.OK);
-//    }
-//
-//    @PostMapping(value = "/setNewPassword")
-//    public ResponseEntity<String> setNewPassword(@RequestParam Map<String, String> allParams) {
-//        return new ResponseEntity<>(HttpStatus.OK);
-//    }
+    @PostMapping(value = "/resetPassword")
+    public ResponseEntity<String> resetPassword(@RequestParam Map<String, String> allParams) {
+        String email = allParams.getOrDefault("email", "").trim();
+        if (email.isEmpty() || !userService.isValidEmail(email)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please enter a valid email address.");
+        }
+
+        String genericMessage = "If an account exists for that email, a password reset link has been sent.";
+        try {
+            User user = userService.getUserByEmail(email);
+            if (user == null) {
+                return ResponseEntity.ok(genericMessage);
+            }
+
+            String token = userService.generatePasswordResetTokenForUsername(user.getUsername());
+            if (token == null || token.isBlank()) {
+                return ResponseEntity.ok(genericMessage);
+            }
+
+            var mailConfig = ConfigUtil.get("mail");
+            String configuredApiKey = mailConfig != null ? mailConfig.path("sendgridApiKey").asText("").trim() : "";
+            String resendConfigApiKey = mailConfig != null ? mailConfig.path("resendApiKey").asText("").trim() : "";
+            String mailApiKey = System.getenv("RESEND_API_KEY");
+            if (mailApiKey == null || mailApiKey.isBlank()) {
+                mailApiKey = System.getenv("SENDGRID_API_KEY");
+            }
+            if (mailApiKey == null || mailApiKey.isBlank()) {
+                mailApiKey = !resendConfigApiKey.isEmpty() ? resendConfigApiKey : configuredApiKey;
+            }
+            String fromAddress = mailConfig != null ? mailConfig.path("fromAddress").asText("").trim() : "";
+            if (mailApiKey.isEmpty() || fromAddress.isEmpty()) {
+                logger.error("Cannot send password reset email: mail config is missing API key or fromAddress.");
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body("Mail settings are not configured.");
+            }
+
+            sendPasswordResetEmail(mailApiKey, fromAddress, email, token);
+            return ResponseEntity.ok(genericMessage);
+        } catch (Exception e) {
+            logger.error("Failed to send password reset email for {}: {}", email, e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Unable to send reset email at this time.");
+        }
+    }
+
+    private void sendPasswordResetEmail(String apiKey, String fromAddress, String toAddress, String token)
+            throws IOException {
+        String resetLink = buildResetPasswordLink(token);
+        String body = "A request was made to reset your SynBioHub password.\n\n"
+                + "Use the following link to set a new password:\n"
+                + resetLink + "\n\n"
+                + "If you did not request this change, you can ignore this email.";
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setBearerAuth(apiKey);
+
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("from", fromAddress);
+        payload.put("to", List.of(toAddress));
+        payload.put("subject", "SynBioHub password reset");
+        payload.put("text", body);
+
+        ResponseEntity<?> response = restClient.post("https://api.resend.com/emails", payload, String.class, headers);
+        if (!response.getStatusCode().is2xxSuccessful()) {
+            throw new IOException("Resend rejected password reset email with status " + response.getStatusCode().value());
+        }
+    }
+
+    private String buildResetPasswordLink(String token) throws IOException {
+        String instanceUrl = ConfigUtil.get("instanceUrl").asText("").trim();
+        if (instanceUrl.endsWith("/")) {
+            instanceUrl = instanceUrl.substring(0, instanceUrl.length() - 1);
+        }
+        if (instanceUrl.isEmpty()) {
+            instanceUrl = "http://localhost:3000";
+        }
+        return instanceUrl + "/change-password?token="
+                + URLEncoder.encode(token, StandardCharsets.UTF_8);
+    }
+    /**
+     * @param token      JWT from password-reset email (claim {@code purpose=PASSWORD_RESET})
+     * @param password1  new password
+     * @param password2  confirmation; must match {@code password1}
+     */
+    @PostMapping(value = "/setNewPassword")
+    public ResponseEntity<String> setNewPassword(
+            @RequestParam String token,
+            @RequestParam String password1,
+            @RequestParam String password2) {
+        try {
+            userService.setNewPasswordWithToken(token, password1, password2);
+            return ResponseEntity.ok("Password updated successfully.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            logger.warn("setNewPassword failed: {}", e.toString());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid or expired reset link.");
+        }
+    }
 
     @GetMapping(value = "/profile", produces = "text/plain")
     public ResponseEntity<String> getProfile(HttpServletRequest request) throws Exception {
