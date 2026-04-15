@@ -17,12 +17,16 @@ import com.synbiohub.sbh3.security.repo.AuthRepository;
 import com.synbiohub.sbh3.security.repo.UserRepository;
 import com.synbiohub.sbh3.sparql.SPARQLQuery;
 import com.synbiohub.sbh3.utils.ConfigUtil;
+import com.synbiohub.sbh3.utils.RestClient;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -37,6 +41,8 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.sql.*;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -54,6 +60,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final AuthRepository authRepository;
+    private final RestClient restClient;
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     public String loginUser(String username, String password) {
@@ -201,6 +208,81 @@ public class UserService {
         return userRepository.findByUsername(username.trim())
                 .map(jwtService::generatePasswordResetToken)
                 .orElse(null);
+    }
+
+    /**
+     * Sends a password-reset email (generic success message whether user exists or not).
+     */
+    public String requestPasswordReset(String email) throws IOException {
+        if (email == null || email.isBlank() || !isValidEmail(email.trim())) {
+            throw new IllegalArgumentException("Please enter a valid email address.");
+        }
+        String normalizedEmail = email.trim();
+        String genericMessage = "If an account exists for that email, a password reset link has been sent.";
+
+        User user = getUserByEmail(normalizedEmail);
+        if (user == null) {
+            return genericMessage;
+        }
+
+        String token = generatePasswordResetTokenForUsername(user.getUsername());
+        if (token == null || token.isBlank()) {
+            return genericMessage;
+        }
+
+        JsonNode mailConfig = ConfigUtil.get("mail");
+        String configuredApiKey = mailConfig != null ? mailConfig.path("sendgridApiKey").asText("").trim() : "";
+        String resendConfigApiKey = mailConfig != null ? mailConfig.path("resendApiKey").asText("").trim() : "";
+        String mailApiKey = System.getenv("RESEND_API_KEY");
+        if (mailApiKey == null || mailApiKey.isBlank()) {
+            mailApiKey = System.getenv("SENDGRID_API_KEY");
+        }
+        if (mailApiKey == null || mailApiKey.isBlank()) {
+            mailApiKey = !resendConfigApiKey.isEmpty() ? resendConfigApiKey : configuredApiKey;
+        }
+        String fromAddress = mailConfig != null ? mailConfig.path("fromAddress").asText("").trim() : "";
+        if (mailApiKey.isEmpty() || fromAddress.isEmpty()) {
+            throw new IOException("Mail settings are not configured.");
+        }
+
+        sendPasswordResetEmail(mailApiKey, fromAddress, normalizedEmail, token);
+        return genericMessage;
+    }
+
+    private void sendPasswordResetEmail(String apiKey, String fromAddress, String toAddress, String token)
+            throws IOException {
+        String resetLink = buildResetPasswordLink(token);
+        String body = "A request was made to reset your SynBioHub password.\n\n"
+                + "Use the following link to set a new password:\n"
+                + resetLink + "\n\n"
+                + "If you did not request this change, you can ignore this email.";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setBearerAuth(apiKey);
+
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("from", fromAddress);
+        payload.put("to", List.of(toAddress));
+        payload.put("subject", "SynBioHub password reset");
+        payload.put("text", body);
+
+        ResponseEntity<?> response = restClient.post("https://api.resend.com/emails", payload, String.class, headers);
+        if (!response.getStatusCode().is2xxSuccessful()) {
+            throw new IOException("Resend rejected password reset email with status " + response.getStatusCode().value());
+        }
+    }
+
+    private String buildResetPasswordLink(String token) throws IOException {
+        String instanceUrl = ConfigUtil.get("instanceUrl").asText("").trim();
+        if (instanceUrl.endsWith("/")) {
+            instanceUrl = instanceUrl.substring(0, instanceUrl.length() - 1);
+        }
+        if (instanceUrl.isEmpty()) {
+            instanceUrl = "http://localhost:3000";
+        }
+        return instanceUrl + "/change-password?token="
+                + URLEncoder.encode(token, StandardCharsets.UTF_8);
     }
 
     /**
