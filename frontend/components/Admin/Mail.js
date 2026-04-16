@@ -13,6 +13,31 @@ import ErrorMessage from './Reusable/ErrorMessage';
 import SaveButton from './Reusable/SaveButton';
 import { addError } from '../../redux/actions';
 
+function normalizeMailResponse(data) {
+  let raw = data;
+  if (typeof raw === 'string') {
+    try {
+      raw = JSON.parse(raw);
+    } catch {
+      return { sendgridApiKey: '', fromAddress: '' };
+    }
+  }
+  if (!raw || typeof raw !== 'object') {
+    return { sendgridApiKey: '', fromAddress: '' };
+  }
+  return {
+    sendgridApiKey: raw.sendgridApiKey ?? raw.sendGridApiKey ?? '',
+    fromAddress: raw.fromAddress ?? raw.sendGridFromEmail ?? ''
+  };
+}
+
+function maskSendGridKey(key) {
+  if (!key) return 'Not configured';
+  const s = String(key);
+  if (s.length <= 4) return '••••';
+  return `${'•'.repeat(Math.min(12, s.length - 4))}…${s.slice(-4)}`;
+}
+
 export default function Mail() {
   const token = useSelector(state => state.user.token);
   const dispatch = useDispatch();
@@ -29,20 +54,16 @@ export default function Mail() {
 
   useEffect(() => {
     if (email) {
-      setActualApiKey(email.sendGridApiKey);
-      setActualSendGridEmail(email.sendGridFromEmail);
+      const { sendgridApiKey, fromAddress } = normalizeMailResponse(email);
+      setActualApiKey(sendgridApiKey);
+      setActualSendGridEmail(fromAddress);
     }
   }, [email]);
 
   useEffect(() => {
-    setApiKey(actualApiKey);
-    setSendGridEmail(actualSendGridEmail);
-  }, [actualApiKey, actualSendGridEmail]);
-
-  useEffect(() => {
-    setUnsavedApiKey(apiKey !== actualApiKey);
-    setUnsavedSendGridEmail(sendGridEmail !== actualSendGridEmail);
-  }, [apiKey, actualApiKey, sendGridEmail, actualSendGridEmail]);
+    setUnsavedApiKey(apiKey.trim().length > 0);
+    setUnsavedSendGridEmail(sendGridEmail.trim().length > 0);
+  }, [apiKey, sendGridEmail]);
 
   if (loading) {
     return <Loading />;
@@ -51,42 +72,57 @@ export default function Mail() {
       <div className={styles.mailcontainer}>
         <h2 className={styles.mailheader}>SendGrid Configuration</h2>
         {error && <ErrorMessage message={error} />}
-        <p>API Key</p>
-        <InputField
-          value={apiKey}
-          onChange={event => setApiKey(event.target.value)}
-          placeholder="Key"
-          type="text"
-          onKeyPress={() => {}}
-          highlight={unsavedApiKey}
-          icon={faKey}
-        />
-        <p>Email Address</p>
-        <InputField
-          value={sendGridEmail}
-          onChange={event => setSendGridEmail(event.target.value)}
-          placeholder="Email"
-          type="text"
-          onKeyPress={() => {}}
-          highlight={unsavedSendGridEmail}
-          icon={faEnvelope}
-        />
-        <div className={styles.savebuttoncontainer}>
-          <SaveButton
-            onClick={() =>
-              updateEmail(
-                apiKey,
-                sendGridEmail,
-                token,
-                setError,
-                setApiKey,
-                setSendGridEmail,
-                actualApiKey,
-                actualSendGridEmail,
-                dispatch
-              )
-            }
-          />
+        <div className={styles.mailLayout}>
+          <aside className={styles.mailCurrentPanel} aria-label="Current mail settings">
+            <h3>Current settings</h3>
+            <p className={styles.mailCurrentIntro}>
+              Values saved on the server. The API key is masked; the form on the right is for
+              updates.
+            </p>
+            <div className={styles.mailCurrentLabel}>From address</div>
+            <p className={styles.mailCurrentValue}>
+              {actualSendGridEmail ? actualSendGridEmail : 'Not configured'}
+            </p>
+            <div className={styles.mailCurrentLabel}>SendGrid API key</div>
+            <p className={styles.mailCurrentValue}>{maskSendGridKey(actualApiKey)}</p>
+          </aside>
+          <div className={styles.mailFormPanel}>
+            <p>SendGrid Email Address</p>
+            <InputField
+              value={sendGridEmail}
+              onChange={event => setSendGridEmail(event.target.value)}
+              placeholder="noreply@example.org"
+              type="text"
+              onKeyPress={() => {}}
+              highlight={unsavedSendGridEmail}
+              icon={faEnvelope}
+            />
+            <p>SendGrid API Key</p>
+            <InputField
+              value={apiKey}
+              onChange={event => setApiKey(event.target.value)}
+              placeholder="SG.xxxxxxxx"
+              type="text"
+              onKeyPress={() => {}}
+              highlight={unsavedApiKey}
+              icon={faKey}
+            />
+            <div className={styles.savebuttoncontainer}>
+              <SaveButton
+                onClick={() =>
+                  updateEmail(
+                    apiKey,
+                    sendGridEmail,
+                    token,
+                    setError,
+                    setApiKey,
+                    setSendGridEmail,
+                    dispatch
+                  )
+                }
+              />
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -116,7 +152,7 @@ const fetcher = (url, token, dispatch) =>
         'X-authorization': token
       }
     })
-    .then(response => response.data)
+    .then(response => normalizeMailResponse(response.data))
     .catch(error => {
       error.customMessage = 'Error fetching email';
       error.fullUrl = url;
@@ -130,8 +166,6 @@ const updateEmail = async (
   setError,
   setApiKey,
   setSendGridEmail,
-  actualApiKey,
-  actualSendGridEmail,
   dispatch
 ) => {
   const url = `${publicRuntimeConfig.backend}/admin/mail`;
@@ -152,15 +186,31 @@ const updateEmail = async (
     if (error.response) {
       console.error('Error:', error.message);
     }
+    const data = error.response?.data;
+    const message =
+      typeof data === 'string' ? data : error.message || 'Update failed';
+    setError(message);
+    setApiKey('');
+    setSendGridEmail('');
+    alert(`Could not save mail settings: ${message}`);
+    return;
   }
 
-  if (response.status !== 200) {
-    const message = await response.data;
+  if (!response || response.status !== 200) {
+    const message =
+      typeof response?.data === 'string' ? response.data : 'Update failed';
     setError(message);
-    setApiKey(actualApiKey);
-    setSendGridEmail(actualSendGridEmail);
-  } else {
-    setError('');
-    mutate([`${publicRuntimeConfig.backend}/admin/mail`, token, dispatch]);
+    setApiKey('');
+    setSendGridEmail('');
+    alert(`Could not save mail settings: ${message}`);
+    return;
   }
+
+  setError('');
+  const successMessage =
+    typeof response.data === 'string' ? response.data : 'Mail settings updated.';
+  alert(successMessage);
+  setApiKey('');
+  setSendGridEmail('');
+  mutate([`${publicRuntimeConfig.backend}/admin/mail`, token, dispatch]);
 };

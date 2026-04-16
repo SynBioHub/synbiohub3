@@ -61,8 +61,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String username;
         final List<String> userRoles;
         try {
+            Claims claim = jwtService.extractAllClaims(jwt);
+            if (JwtService.PURPOSE_PASSWORD_RESET.equals(claim.get(JwtService.CLAIM_PURPOSE))) {
+                filterChain.doFilter(request, response);
+                return;
+            }
             username = jwtService.extractUsername(jwt);
-            var claim = jwtService.extractAllClaims(jwt);
             userRoles = convertAuthoritiesToRoles(claim);
         } catch (RuntimeException e) {
             // Not a JWT or bad signature — continue anonymously; Spring Security still enforces auth on protected routes.
