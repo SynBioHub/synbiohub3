@@ -94,17 +94,6 @@ function Profile() {
           icon={faEnvelope}
           highlight={unsavedEmail}
         />
-        <Link href="/change-password">
-          <a className={styles.submitbutton} style={{ textDecoration: 'none' }}>
-            <FontAwesomeIcon
-              icon={faLock}
-              size="1x"
-              className={styles.submiticon}
-              color="#D25627"
-            />{' '}
-            Change password
-          </a>
-        </Link>
         <div
           role="button"
           className={styles.submitbutton}
@@ -123,6 +112,15 @@ function Profile() {
           />{' '}
           Save Information
         </div>
+        <Link href="/change-password">
+          <a className={styles.profileSecondaryLink}>
+            <FontAwesomeIcon
+              icon={faLock}
+              className={styles.profileSecondaryIcon}
+            />
+            Change password
+          </a>
+        </Link>
         <div className={styles.infocontainer}>
           <div className={styles.info}></div>
         </div>

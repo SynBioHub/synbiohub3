@@ -101,6 +101,38 @@
    color: #84DCCF;
 }
 
+/* Profile: secondary action — visible but still below primary save */
+.profileSecondaryLink {
+   display: inline-flex;
+   align-items: center;
+   justify-content: center;
+   margin-top: 0.65rem;
+   padding: 0.5rem 1rem;
+   font-size: 0.95rem;
+   font-weight: 600;
+   color: #0284c7;
+   background: rgba(0, 161, 228, 0.08);
+   border: 1px solid rgba(0, 161, 228, 0.45);
+   border-radius: 0.4rem;
+   width: auto;
+   max-width: 22rem;
+   text-decoration: none;
+   cursor: pointer;
+   transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+}
+
+.profileSecondaryLink:hover {
+   border-color: #00A1E4;
+   color: #0369a1;
+   background: rgba(0, 161, 228, 0.14);
+}
+
+.profileSecondaryIcon {
+   margin-right: 0.5rem;
+   font-size: 0.9rem;
+   color: #00A1E4;
+}
+
 .warning {
    color: rgb(255, 55, 55);
    width: 22rem;
