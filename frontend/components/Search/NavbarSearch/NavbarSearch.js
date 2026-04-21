@@ -7,11 +7,11 @@ import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
 import Profile from '../../Navbar/Profile';
 import Selector from '../../Navbar/Selector';
+import { loggedOutNav } from '../../Navbar/Navbar';
 import {
   faAlignLeft,
   faCloudUploadAlt,
   faSearch,
-  faSignInAlt,
   faBackward
 } from '@fortawesome/free-solid-svg-icons';
 import Loader from 'react-loader-spinner';
@@ -27,10 +27,6 @@ export default function NavbarSearch(properties) {
   const defaultLogo = '/images/logo.svg';
   const loggedIn = useSelector(state => state.user.loggedIn);
   const submitting = useSelector(state => state.submit.submitting);
-
-  const [profileControl, setProfileControl] = useState(
-      <Selector icon={faSignInAlt} name="Log in or Register" href="/login" />
-    );
 
   const navbarRef = useRef(null);
 
@@ -70,16 +66,6 @@ export default function NavbarSearch(properties) {
         });
     }
   }, []); // run once on mount
-
-  useEffect(() => {
-      if (loggedIn) {
-        setProfileControl(<Profile />);
-      } else {
-        setProfileControl(
-          <Selector icon={faSignInAlt} name="Sign In" href="/login" />
-        );
-      }
-    }, [loggedIn]);
 
   return (
     <header
@@ -152,7 +138,11 @@ export default function NavbarSearch(properties) {
                 </nav>
               )}
       
-              {profileControl}
+              {loggedIn ? (
+                <Profile />
+              ) : (
+                loggedOutNav(JSON.parse(localStorage.getItem('theme')) || {})
+              )}
             </div>
     </header>
   );

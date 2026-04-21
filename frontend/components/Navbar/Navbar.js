@@ -3,6 +3,7 @@ import {
   faCloudUploadAlt,
   faSearch,
   faSignInAlt,
+  faUserPlus,
   faHome
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -20,28 +21,26 @@ const { publicRuntimeConfig } = getConfig();
  * This component renders the navigation bar at the top of sbh. Users use this to access
  * submissions, shared submissions, search, profile, admin page, and possibly more
  */
+export function loggedOutNav(theme) {
+  const allowPublicSignup = theme.allowPublicSignup;
+  return (
+    <div className={styles.authNav}>
+      <Selector compact icon={faSignInAlt} name="Sign In" href="/login" />
+      {allowPublicSignup ? (
+        <Selector compact cta icon={faUserPlus} name="Register" href="/register" />
+      ) : null}
+    </div>
+  );
+}
+
 export default function Navbar() {
   const loggedIn = useSelector(state => state.user.loggedIn);
   const submitting = useSelector(state => state.submit.submitting);
   const theme = JSON.parse(localStorage.getItem('theme')) || {};
   const defaultLogo = '/images/logo.svg'
 
-  const [profileControl, setProfileControl] = useState(
-    <Selector icon={faSignInAlt} name="Log in or Register" href="/login" />
-  );
-
   // initialize logo like index.js: prefer theme.logoUrl, then localStorage 'sbh_logo', else null/default
   const [logoUrl, setLogoUrl] = useState(theme.logoUrl || localStorage.getItem('sbh_logo') || null);
-
-  useEffect(() => {
-    if (loggedIn) {
-      setProfileControl(<Profile />);
-    } else {
-      setProfileControl(
-        <Selector icon={faSignInAlt} name="Sign In" href="/login" />
-      );
-    }
-  }, [loggedIn]);
 
   let linkHref = "/";
   if (theme && theme.altHome && theme.altHome.length > 0) {
@@ -131,7 +130,11 @@ export default function Navbar() {
           </a>
         </Link>
 
-        {profileControl}
+        {loggedIn ? (
+          <Profile />
+        ) : (
+          loggedOutNav(JSON.parse(localStorage.getItem('theme')) || {})
+        )}
       </div>
     </header>
   );
