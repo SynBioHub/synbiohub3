@@ -14,6 +14,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import InputField from '../components/Login/InputField';
 import TopLevel from '../components/TopLevel';
+import { isValidEmail } from '../lib/emailValidation';
 import { updateUser } from '../redux/actions';
 import styles from '../styles/login.module.css';
 
@@ -98,7 +99,14 @@ function Profile() {
           role="button"
           className={styles.submitbutton}
           onClick={async () => {
-            const ok = await dispatch(updateUser(name, affiliation, email, '', ''));
+            const trimmedEmail = email.trim();
+            if (!isValidEmail(trimmedEmail)) {
+              alert('Please enter a valid email address.');
+              return;
+            }
+            const ok = await dispatch(
+              updateUser(name, affiliation, trimmedEmail, '', '')
+            );
             if (ok) {
               alert('Your profile was updated successfully.');
             }
