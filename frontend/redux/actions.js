@@ -93,31 +93,14 @@ export const restoreLogin = (username, token) => dispatch => {
 
 /**
  * This action adjusts app state to sign the user out of
- * the session they are in. Theme is cleared then refetched so public
- * settings (e.g. allowPublicSignup) stay available on the login page.
+ * the session they are in. Theme is left in localStorage so public
+ * settings (e.g. allowPublicSignup) remain available after logout.
  * @returns
  */
-export const logoutUser = () => async dispatch => {
+export const logoutUser = () => dispatch => {
   localStorage.removeItem('userToken');
   localStorage.removeItem('username');
-  localStorage.removeItem('theme');
   dispatch({ type: types.LOGOUT });
-
-  try {
-    const response = await axios.get(`${publicRuntimeConfig.backend}/admin/theme`, {
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json'
-      }
-    });
-    const themeData = response.data ?? {};
-    localStorage.setItem(
-      'theme',
-      typeof themeData === 'string' ? themeData : JSON.stringify(themeData)
-    );
-  } catch (error) {
-    console.error('Error refreshing theme after logout', error);
-  }
 };
 
 export const updateUser =
