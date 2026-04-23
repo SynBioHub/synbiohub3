@@ -6,8 +6,13 @@ import { useEffect, useState } from 'react';
 import {
   navoption,
   navoptionactive,
+  navoptionCta,
   navoptionicon,
-  navoptionname
+  navoptioniconCompact,
+  navoptionname,
+  navoptionnameCompact,
+  navoptionRow,
+  navoptionRowCompact
 } from '../../styles/navbar.module.css';
 
 /**
@@ -22,16 +27,27 @@ export default function Selector(properties) {
     if (properties.href === router.pathname) setStyle(navoptionactive);
   }, [router.pathname, properties.href]);
 
-  const textClassName = properties.isInstanceName ? 'instanceName' : navoptionname;
+  const textClassName = properties.isInstanceName
+    ? 'instanceName'
+    : `${navoptionname}${properties.compact ? ` ${navoptionnameCompact}` : ''}`;
 
-  // keep navoptionname import for other uses
+  const rowClass = properties.compact ? navoptionRowCompact : navoptionRow;
+  const iconClass = `${navoptionicon}${properties.compact ? ` ${navoptioniconCompact}` : ''}`;
+
+  const anchorClass = [
+    navoption,
+    style,
+    properties.cta ? navoptionCta : ''
+  ]
+    .filter(Boolean)
+    .join(' ');
+
   return (
     <Link href={properties.href}>
-      <a className={`${navoption}  ${style}`}>
-        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
-          {/* Render the home icon */}
+      <a className={anchorClass}>
+        <span className={rowClass}>
           <FontAwesomeIcon
-            className={navoptionicon}
+            className={iconClass}
             icon={properties.icon}
             alt="home"
             size="2x"
