@@ -5,10 +5,12 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,7 +25,8 @@ public class JwtService {
     /** Password-reset links remain valid for 24 hours (login JWTs stay at 1 hour). */
     private static final long PASSWORD_RESET_EXPIRY_MS = 1000L * 60 * 60 * 24;
 
-    private static final String SECRET_KEY = "28472B4B6250655368566D5971337436773979244226452948404D635166546A576E5A7234753778214125432A462D4A614E645267556B58703273357638792F423F4528472B4B6250655368566D597133743677397A24432646294A404D635166546A576E5A7234753778214125442A472D4B6150645267556B587032733576";
+    @Value("${jwt.secret}")
+    private String secretKey;
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -105,7 +108,21 @@ public class JwtService {
     }
 
     private Key getSigningKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
+        if (secretKey == null || secretKey.isBlank()) {
+            throw new IllegalStateException("JWT secret is missing. Set jwt.secret (for example via JWT_SECRET).");
+        }
+
+        byte[] keyBytes;
+        try {
+            // Prefer base64-encoded secrets; fall back to raw UTF-8 for local/dev compatibility.
+            keyBytes = Decoders.BASE64.decode(secretKey);
+        } catch (IllegalArgumentException ignored) {
+            keyBytes = secretKey.getBytes(StandardCharsets.UTF_8);
+        }
+
+        if (keyBytes.length < 32) {
+            throw new IllegalStateException("JWT secret must be at least 32 bytes.");
+        }
         return Keys.hmacShaKeyFor(keyBytes);
     }
 

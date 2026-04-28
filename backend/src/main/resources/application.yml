@@ -37,6 +37,7 @@ plugin:
 jwt:
   private.key: classpath:app.priv
   public.key: classpath:app.pub
+  secret: ${JWT_SECRET}
 
 roleToEndpointPermissions:
   USER: ["/profile", "/do_logout", "/submit", "/rootCollections", "/root-collections", "/browse", "/manage", "/shared", "/setup", "/login", "/register", "/resetPassword", "/setNewPassword", "/search", "/search/**", "/searchCount", "/searchCount/**", "/twins", "/twinsCount", "/uses", "/usesCount", "/similar", "/similarCount", "/sbol", "/sbolnr", "/metadata", "/gb", "/fasta", "/gff", "/download", "/public/**", "/sparql", "/ComponentDefinition/**", "/**/count", "/count", "/logo", "/user/**"]

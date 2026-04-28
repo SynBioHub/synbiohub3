@@ -586,16 +586,19 @@ public class SearchService {
     }
 
     public String SPARQLQuery(String query) throws IOException {
-        // BEFORE 1/27:
+        return SPARQLQuery(query, null);
+    }
+
+    public String SPARQLQuery(String query, String defaultGraphUri) throws IOException {
         RestTemplate restTemplate = new RestTemplate();
-        String url;
         HashMap<String, String> params = new HashMap<>();
-        params.put("default-graph-uri", ConfigUtil.get("defaultGraph").asText());
         params.put("query", query);
-        // System.out.println(query.getClass().getName());
-        url = ConfigUtil.get("sparqlEndpoint").asText() + "?default-graph-uri={default-graph-uri}&query={query}&format=json&";
-//        url = ConfigUtil.get("sparqlEndpoint").asText() + "?default-graph-uri={default-graph-uri}&query={query}";
-        // has to be the first one. without format json, getting root collections fails
+        String graphUri = (defaultGraphUri == null || defaultGraphUri.isBlank())
+                ? ConfigUtil.get("defaultGraph").asText()
+                : defaultGraphUri;
+        params.put("default-graph-uri", graphUri);
+        String url = ConfigUtil.get("sparqlEndpoint").asText()
+                + "?default-graph-uri={default-graph-uri}&query={query}&format=json&";
 
         return restTemplate.getForObject(url, String.class, params);
     }

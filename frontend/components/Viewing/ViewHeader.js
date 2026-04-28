@@ -47,12 +47,19 @@ export default function ViewHeader(properties) {
   const [editedDescription, setEditedDescription] = useState(properties.description);
   const [counts, setCounts] = useState({ twins: 0, uses: 0, similar: 0 });
 
+  const token = useSelector(state => state.user.token);
+
   useEffect(() => {
     const base = `${publicRuntimeConfig.backend}/${getAfterThirdSlash(properties.uri)}`;
+    const headers = {};
+    if (token) {
+      headers["X-authorization"] = token;
+    }
+
     Promise.all([
-      axios.get(`${base}/twinsCount`),
-      axios.get(`${base}/usesCount`),
-      axios.get(`${base}/similarCount`)
+      axios.get(`${base}/twinsCount`, { headers }),
+      axios.get(`${base}/usesCount`, { headers }),
+      axios.get(`${base}/similarCount`, { headers })
     ])
     .then(([twinsRes, usesRes, similarRes]) => {
       setCounts({
@@ -62,7 +69,7 @@ export default function ViewHeader(properties) {
       });
     })
     .catch(err => console.error("Error fetching linked counts:", err));
-  }, [properties.uri]);
+  }, [properties.uri, token]);
 
   const theme = JSON.parse(localStorage.getItem('theme')) || {};
 
@@ -88,7 +95,6 @@ export default function ViewHeader(properties) {
 
   const objectUriParts = getAfterThirdSlash(properties.uri);
 
-  const token = useSelector(state => state.user.token);
   const username = useSelector(state => state.user.username);
   const objectUri = `${publicRuntimeConfig.backend}/${objectUriParts}`;
   var isOwner = isUriOwner(objectUri, username);
