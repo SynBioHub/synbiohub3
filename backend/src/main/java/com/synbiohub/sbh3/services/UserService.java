@@ -172,7 +172,6 @@ public class UserService {
         user.setGraphUri("https://synbiohub.org/user/" + user.getUsername());
         user.setIsAdmin(user.getRole().equals(Role.ADMIN));
         userRepository.save(user);
-        var jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse
                 .builder()
                 .token("User registered successfully")
@@ -344,7 +343,9 @@ public User updateUserProfile(Map<String, String> allParams) throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         mapper.enable(SerializationFeature.INDENT_OUTPUT);
 
-        Map<String, String> userParams = new HashMap<>();
+        // Ensure jwtSecret is available before registration, which may trigger JWT usage.
+        allParams.put("jwtSecret", generateJwtSecret());
+
         UserRegistrationDTO userRegistrationDTO = UserRegistrationDTO
                 .builder()
                 .username((String) allParams.get("userName"))
@@ -369,7 +370,6 @@ public User updateUserProfile(Map<String, String> allParams) throws Exception {
                 allParams.put("graphStoreEndpoint", "http://virtuoso3:8890/sparql-graph-crud-auth/");
                 allParams.put("firstLaunch", false);
                 allParams.put("version", 1);
-                allParams.put("jwtSecret", generateJwtSecret());
                 Map<String, String> wor = new HashMap<>();
                 wor.put("https://synbiohub.org", "http://localhost:6789");
                 allParams.put("webOfRegistries", wor);// TODO: Make sure web of registries is correct
