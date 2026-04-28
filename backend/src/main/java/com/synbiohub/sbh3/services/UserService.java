@@ -43,7 +43,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
 import java.sql.*;
+import java.util.Base64;
 import java.util.*;
 import java.util.regex.Pattern;
 import org.slf4j.Logger;
@@ -53,6 +55,7 @@ import org.slf4j.LoggerFactory;
 @RequiredArgsConstructor
 @Slf4j
 public class UserService {
+    private static final int JWT_SECRET_BYTES = 48;
 
     private final UserRepository userRepository;
     private final SearchService searchService;
@@ -366,6 +369,7 @@ public User updateUserProfile(Map<String, String> allParams) throws Exception {
                 allParams.put("graphStoreEndpoint", "http://virtuoso3:8890/sparql-graph-crud-auth/");
                 allParams.put("firstLaunch", false);
                 allParams.put("version", 1);
+                allParams.put("jwtSecret", generateJwtSecret());
                 Map<String, String> wor = new HashMap<>();
                 wor.put("https://synbiohub.org", "http://localhost:6789");
                 allParams.put("webOfRegistries", wor);// TODO: Make sure web of registries is correct
@@ -392,6 +396,12 @@ public User updateUserProfile(Map<String, String> allParams) throws Exception {
             log.error("Setup failed.");
             return "Failed to create file!";
         }
+    }
+
+    private String generateJwtSecret() {
+        byte[] bytes = new byte[JWT_SECRET_BYTES];
+        new SecureRandom().nextBytes(bytes);
+        return Base64.getEncoder().encodeToString(bytes);
     }
 
     /**

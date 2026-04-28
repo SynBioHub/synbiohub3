@@ -158,4 +158,6 @@ yarn-error.log*
 synbiohub-docker/
 **/commitHash.txt
 frontend/yarn.lock
+backend/data/config.local.json
+data/config.local.json
 
