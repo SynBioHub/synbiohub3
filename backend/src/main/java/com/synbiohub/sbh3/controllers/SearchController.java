@@ -263,8 +263,7 @@ public class SearchController {
     @RequestMapping(value = "/sparql", headers = "Accept=application/json")
     @ResponseBody
     public String getSPARQL(@RequestParam Map<String, String> params) throws IOException {
-        // System.out.println(params);
-        return searchService.SPARQLQuery(params.get("query"));
+        return searchService.SPARQLQuery(params.get("query"), params.get("default-graph-uri"));
     }
 
 //    @GetMapping(value = "/search/**")
