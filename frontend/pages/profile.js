@@ -8,16 +8,15 @@ import {
   faIdBadge
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import axios from 'axios';
 
 import InputField from '../components/Login/InputField';
 import TopLevel from '../components/TopLevel';
-import { addError, login, logoutUser, updateUser } from '../redux/actions';
+import { isValidEmail } from '../lib/emailValidation';
+import { updateUser } from '../redux/actions';
 import styles from '../styles/login.module.css';
-import ActionButton from '../components/Admin/Reusable/ActionButton';
-import SimpleTable from '../components/Reusable/Table/SimpleTable';
 
 function Profile() {
   const [name, setName] = useState('');
@@ -26,9 +25,6 @@ function Profile() {
   const [unsavedAffiliation, setUnsavedAffilation] = useState(false);
   const [email, setEmail] = useState('');
   const [unsavedEmail, setUnsavedEmail] = useState(false);
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [unsavedPassword, setUnsavedPassword] = useState(false);
   const dispatch = useDispatch();
 
   const profileName = useSelector(state => state.user.name);
@@ -46,17 +42,7 @@ function Profile() {
     setUnsavedName(name !== profileName);
     setUnsavedAffilation(affiliation !== profileAffilation);
     setUnsavedEmail(email !== profileEmail);
-    setUnsavedPassword(password || confirmPassword ? true : false);
-  }, [
-    name,
-    profileName,
-    affiliation,
-    profileAffilation,
-    email,
-    profileEmail,
-    password,
-    confirmPassword
-  ]);
+  }, [name, profileName, affiliation, profileAffilation, email, profileEmail]);
   return (
     <div className={styles.container}>
       <div className={styles.frame}>
@@ -109,35 +95,20 @@ function Profile() {
           icon={faEnvelope}
           highlight={unsavedEmail}
         />
-        <InputField
-          value={password}
-          onChange={event => setPassword(event.target.value)}
-          onKeyPress={() => {}}
-          placeholder="New password (optional)"
-          type="password"
-          icon={faLock}
-          highlight={unsavedPassword}
-        />
-        <InputField
-          value={confirmPassword}
-          onChange={event => setConfirmPassword(event.target.value)}
-          onKeyPress={() => {}}
-          placeholder="Confirm new password"
-          type="password"
-          icon={faLock}
-          highlight={unsavedPassword}
-        />
         <div
           role="button"
           className={styles.submitbutton}
           onClick={async () => {
+            const trimmedEmail = email.trim();
+            if (!isValidEmail(trimmedEmail)) {
+              alert('Please enter a valid email address.');
+              return;
+            }
             const ok = await dispatch(
-              updateUser(name, affiliation, email, password, confirmPassword)
+              updateUser(name, affiliation, trimmedEmail, '', '')
             );
             if (ok) {
               alert('Your profile was updated successfully.');
-              setPassword('');
-              setConfirmPassword('');
             }
           }}
         >
@@ -149,6 +120,15 @@ function Profile() {
           />{' '}
           Save Information
         </div>
+        <Link href="/change-password">
+          <a className={styles.profileSecondaryLink}>
+            <FontAwesomeIcon
+              icon={faLock}
+              className={styles.profileSecondaryIcon}
+            />
+            Change password
+          </a>
+        </Link>
         <div className={styles.infocontainer}>
           <div className={styles.info}></div>
         </div>

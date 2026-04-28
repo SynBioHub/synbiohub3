@@ -61,9 +61,16 @@ export const login = (username, password) => async dispatch => {
       });
     }
   } catch (error) {
-    // Handle error case
-    if (error.response.data == 'Your e-mail address was not recognized.') {
-      error.response.data = 'Your e-mail address or password was not recognized.'
+    // Use a generic message so we do not reveal whether the email or password failed
+    if (error.response) {
+      const data = error.response.data;
+      if (
+        data === 'Your e-mail address was not recognized.' ||
+        data === 'Your password was not recognized.'
+      ) {
+        error.response.data =
+          'Your e-mail address or password was not recognized.';
+      }
     }
     console.error('Error:', error.message);
     dispatch({
@@ -93,13 +100,13 @@ export const restoreLogin = (username, token) => dispatch => {
 
 /**
  * This action adjusts app state to sign the user out of
- * the session they are in
+ * the session they are in. Theme is left in localStorage so public
+ * settings (e.g. allowPublicSignup) remain available after logout.
  * @returns
  */
 export const logoutUser = () => dispatch => {
   localStorage.removeItem('userToken');
   localStorage.removeItem('username');
-  localStorage.removeItem('theme');
   dispatch({ type: types.LOGOUT });
 };
 

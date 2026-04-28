@@ -7,7 +7,6 @@ import com.synbiohub.sbh3.security.model.User;
 import com.synbiohub.sbh3.security.repo.AuthRepository;
 import com.synbiohub.sbh3.services.UserService;
 import com.synbiohub.sbh3.utils.ConfigUtil;
-import com.synbiohub.sbh3.utils.RestClient;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +23,6 @@ import java.util.Map;
 @Slf4j
 public class UserController {
     private final UserService userService;
-    private final RestClient restClient;
     private final ObjectMapper mapper;
     private final AuthRepository authRepository;
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
@@ -90,16 +88,39 @@ public class UserController {
         }
     }
 
-//
-//    @PostMapping(value = "/resetPassword")
-//    public ResponseEntity<String> resetPassword(@RequestParam Map<String, String> allParams) {
-//        return new ResponseEntity<>(HttpStatus.OK);
-//    }
-//
-//    @PostMapping(value = "/setNewPassword")
-//    public ResponseEntity<String> setNewPassword(@RequestParam Map<String, String> allParams) {
-//        return new ResponseEntity<>(HttpStatus.OK);
-//    }
+    @PostMapping(value = "/resetPassword")
+    public ResponseEntity<String> resetPassword(@RequestParam Map<String, String> allParams) {
+        try {
+            String email = allParams.getOrDefault("email", "").trim();
+            return ResponseEntity.ok(userService.requestPasswordReset(email));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            logger.error("resetPassword failed: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Unable to send reset email at this time.");
+        }
+    }
+    /**
+     * @param token      JWT from password-reset email (claim {@code purpose=PASSWORD_RESET})
+     * @param password1  new password
+     * @param password2  confirmation; must match {@code password1}
+     */
+    @PostMapping(value = "/setNewPassword")
+    public ResponseEntity<String> setNewPassword(
+            @RequestParam String token,
+            @RequestParam String password1,
+            @RequestParam String password2) {
+        try {
+            userService.setNewPasswordWithToken(token, password1, password2);
+            return ResponseEntity.ok("Password updated successfully.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            logger.warn("setNewPassword failed: {}", e.toString());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid or expired reset link.");
+        }
+    }
 
     @GetMapping(value = "/profile", produces = "text/plain")
     public ResponseEntity<String> getProfile(HttpServletRequest request) throws Exception {
