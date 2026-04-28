@@ -14,6 +14,7 @@ export default function LinkedSearch(properties) {
   const [error, setError] = useState(null);
   const router = useRouter();
   const dispatch = useDispatch();
+  const token = useSelector(state => state.user.token);
   const offset = useSelector(state => state.search.offset);
   const limit = useSelector(state => state.search.limit);
 
@@ -25,21 +26,41 @@ export default function LinkedSearch(properties) {
   }, [properties.url]);
 
   useEffect(() => {
-    const paginatedUrl = `${properties.url}?offset=${offset}&limit=${limit}`;
-    axios.get(paginatedUrl, {
-      headers: {
-        "Content-Type": "application/json; charset=UTF-8",
-        "Accept": "application/json"
+    // Legacy SynBioHub only attaches twins/uses/similar SPARQL when the URL path ends with
+    // `/twins`, `/uses`, or `/similar`. Query strings such as `?offset=0&limit=50` break that
+    // detection (`endsWith('/twins')` fails), so we request the bare URL and paginate below.
+    let cancelled = false;
+    setError(null);
+    setData(null);
+
+    const headers = {
+      "Content-Type": "application/json; charset=UTF-8",
+      "Accept": "application/json"
+    };
+    if (token) {
+      headers["X-authorization"] = token;
+    }
+
+    axios.get(properties.url, { headers })
+    .then(response => {
+      if (!cancelled) {
+        const raw = response.data;
+        setData(Array.isArray(raw) ? raw : []);
       }
     })
-    .then(response => {
-      setData(response.data);
-    })
     .catch(err => {
-      console.error("Error fetching linked search:", err);
-      setError(err);
+      if (!cancelled) {
+        console.error("Error fetching linked search:", err);
+        setError(err);
+      }
     });
-  }, [properties.url, offset, limit]);
+    return () => {
+      cancelled = true;
+    };
+  }, [properties.url, token]);
+
+  const fullResults = Array.isArray(Data) ? Data : [];
+  const pageRows = fullResults.slice(offset, offset + limit);
 
   if (error) return <div>Error loading linked data.</div>;
   if (!Data) return <div>Loading...</div>;
@@ -56,7 +77,7 @@ export default function LinkedSearch(properties) {
     >
       <div className={styles.searchContent}>
         <SearchHeader selected="Standard Search" />
-        <ResultTable count={totalCount || Data.length} data={Data} />
+        <ResultTable count={totalCount || fullResults.length} data={pageRows} />
       </div>
     </TopLevel>
   );
