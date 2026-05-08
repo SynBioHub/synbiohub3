@@ -5,10 +5,13 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.synbiohub.sbh3.utils.ConfigUtil;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
+import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,8 +25,6 @@ public class JwtService {
 
     /** Password-reset links remain valid for 24 hours (login JWTs stay at 1 hour). */
     private static final long PASSWORD_RESET_EXPIRY_MS = 1000L * 60 * 60 * 24;
-
-    private static final String SECRET_KEY = "28472B4B6250655368566D5971337436773979244226452948404D635166546A576E5A7234753778214125432A462D4A614E645267556B58703273357638792F423F4528472B4B6250655368566D597133743677397A24432646294A404D635166546A576E5A7234753778214125442A472D4B6150645267556B587032733576";
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -105,7 +106,31 @@ public class JwtService {
     }
 
     private Key getSigningKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
+        String jwtSecret = null;
+        try {
+            JsonNode secretNode = ConfigUtil.get("jwtSecret");
+            if (secretNode != null && !secretNode.isNull()) {
+                jwtSecret = secretNode.asText();
+            }
+        } catch (IOException ignored) {
+            // Error handling below reports a clear startup/runtime message.
+        }
+
+        if (jwtSecret == null || jwtSecret.isBlank()) {
+            throw new IllegalStateException("JWT secret missing. Run setup to create data/config.local.json with jwtSecret.");
+        }
+
+        byte[] keyBytes;
+        try {
+            keyBytes = Decoders.BASE64.decode(jwtSecret);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalStateException("Invalid jwtSecret format in config.local.json. Expected Base64.", e);
+        }
+
+        if (keyBytes.length < 32) {
+            throw new IllegalStateException("Invalid jwtSecret length in config.local.json. Must decode to at least 32 bytes.");
+        }
+
         return Keys.hmacShaKeyFor(keyBytes);
     }
 

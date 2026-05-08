@@ -350,7 +350,7 @@ public class DownloadService {
         }
 
 //        String modifiedUri = graphPrefix + uriClass.getPath().substring(1);     // The path contains a / at the beginning, so does our graph prefix
-        var metadataQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/FetchSBOLNonRecursive.sparql");
+        var metadataQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/FetchSBOLRecursive.sparql");
         var args = new HashMap<String, String>();
         args.put("uri", uriClass.toString());
         args.put("offset", "0");

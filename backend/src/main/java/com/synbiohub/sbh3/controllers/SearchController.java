@@ -1,6 +1,7 @@
 package com.synbiohub.sbh3.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.synbiohub.sbh3.security.customsecurity.ServletPathUtil;
 import com.synbiohub.sbh3.services.SearchService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +10,8 @@ import org.json.JSONObject;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -133,7 +136,7 @@ public class SearchController {
                            @PathVariable("displayID") String displayID, @PathVariable("version") String version,
                            HttpServletRequest request) throws IOException {
 
-        String collectionInfo = String.format("%s/%s/%s/%s", visibility, collectionID, displayID, version);
+        String collectionInfo = collectionInfoFromRequestPath(request, "subCollections");
         String sparqlQuery = searchService.getSubCollectionsSPARQL(collectionInfo);
         return searchService.collectionToOutput(searchService.SPARQLQuery(sparqlQuery));
     }
@@ -148,7 +151,7 @@ public class SearchController {
                            @PathVariable("displayID") String displayID, @PathVariable("version") String version,
                            HttpServletRequest request) throws IOException {
 
-        String collectionInfo = String.format("%s/%s/%s/%s", visibility, collectionID, displayID, version);
+        String collectionInfo = collectionInfoFromRequestPath(request, "twins");
 
 
         String sparqlQuery = searchService.getURISPARQL(collectionInfo, "twins");
@@ -165,7 +168,7 @@ public class SearchController {
                            @PathVariable("displayID") String displayID, @PathVariable("version") String version,
                            HttpServletRequest request) throws IOException {
 
-        String collectionInfo = String.format("%s/%s/%s/%s", visibility, collectionID, displayID, version);
+        String collectionInfo = collectionInfoFromRequestPath(request, "twinsCount");
 
         String sparqlQuery = searchService.getTwinsCountSPARQL(collectionInfo);
         return searchService.JSONToCount(searchService.SPARQLQuery(sparqlQuery));
@@ -182,7 +185,7 @@ public class SearchController {
                            @PathVariable("displayID") String displayID, @PathVariable("version") String version,
                            HttpServletRequest request) throws IOException {
 
-        String collectionInfo = String.format("%s/%s/%s/%s", visibility, collectionID, displayID, version);
+        String collectionInfo = collectionInfoFromRequestPath(request, "similar");
 
 
         String sparqlQuery = searchService.getURISPARQL(collectionInfo, "similar");
@@ -200,7 +203,7 @@ public class SearchController {
                              @PathVariable("displayID") String displayID, @PathVariable("version") String version,
                              HttpServletRequest request) throws IOException {
 
-        String collectionInfo = String.format("%s/%s/%s/%s", visibility, collectionID, displayID, version);
+        String collectionInfo = collectionInfoFromRequestPath(request, "similarCount");
 
         String sparqlQuery = searchService.getSimilarCountSPARQL(collectionInfo);
         return searchService.JSONToCount(searchService.SPARQLQuery(sparqlQuery));
@@ -217,7 +220,7 @@ public class SearchController {
                           @PathVariable("displayID") String displayID, @PathVariable("version") String version,
                           HttpServletRequest request) throws IOException {
 
-        String collectionInfo = String.format("%s/%s/%s/%s", visibility, collectionID, displayID, version);
+        String collectionInfo = collectionInfoFromRequestPath(request, "uses");
 
 
         String sparqlQuery = searchService.getURISPARQL(collectionInfo, "uses");
@@ -235,11 +238,44 @@ public class SearchController {
                           @PathVariable("displayID") String displayID, @PathVariable("version") String version,
                           HttpServletRequest request) throws IOException {
 
-        String collectionInfo = String.format("%s/%s/%s/%s", visibility, collectionID, displayID, version);
+        String collectionInfo = collectionInfoFromRequestPath(request, "usesCount");
 
 
         String sparqlQuery = searchService.getUsesCountSPARQL(collectionInfo);
         return searchService.JSONToCount(searchService.SPARQLQuery(sparqlQuery));
+    }
+
+    /**
+     * Builds collectionInfo for search endpoints from servlet path.
+     * Public path shape: /public/{db}/{id}/{ver}/{suffix}
+     * Private path shape: /user/{username}/{db}/{id}/{ver}/{suffix}
+     */
+    private static String collectionInfoFromRequestPath(HttpServletRequest request, String suffix) {
+        String path = ServletPathUtil.getPathWithinApplication(request);
+        String trailer = "/" + suffix;
+        if (path.endsWith(trailer)) {
+            path = path.substring(0, path.length() - trailer.length());
+        }
+        List<String> segments = pathSegments(path);
+        if (segments.size() >= 5 && "user".equals(segments.get(0))) {
+            return String.join("/",
+                    segments.get(0), segments.get(1), segments.get(2), segments.get(3), segments.get(4));
+        }
+        if (segments.size() >= 4) {
+            return String.join("/",
+                    segments.get(0), segments.get(1), segments.get(2), segments.get(3));
+        }
+        throw new IllegalArgumentException("Invalid linked-search path: " + path);
+    }
+
+    private static List<String> pathSegments(String path) {
+        List<String> out = new ArrayList<>();
+        for (String s : path.split("/")) {
+            if (!s.isEmpty()) {
+                out.add(s);
+            }
+        }
+        return out;
     }
 
     /**
@@ -263,8 +299,7 @@ public class SearchController {
     @RequestMapping(value = "/sparql", headers = "Accept=application/json")
     @ResponseBody
     public String getSPARQL(@RequestParam Map<String, String> params) throws IOException {
-        // System.out.println(params);
-        return searchService.SPARQLQuery(params.get("query"));
+        return searchService.SPARQLQuery(params.get("query"), params.get("default-graph-uri"));
     }
 
 //    @GetMapping(value = "/search/**")

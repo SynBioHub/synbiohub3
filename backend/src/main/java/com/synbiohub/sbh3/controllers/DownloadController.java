@@ -116,11 +116,24 @@ public class DownloadController extends AntPathMatcher {
             if (segments.size() < 4) {
                 return null;
             }
-            String collectionInfo = String.join("/",
-                    segments.get(0), segments.get(1), segments.get(2), segments.get(3));
+            String collectionInfo = collectionInfoFromSegments(segments);
             return linkedSearchResponse(suffix, collectionInfo);
         }
         return null;
+    }
+
+    /**
+     * Maps request path segments to collectionInfo consumed by SearchService.
+     * Public uses 4 segments: public/{db}/{id}/{ver}
+     * Private uses 5 segments: user/{username}/{db}/{id}/{ver}
+     */
+    private static String collectionInfoFromSegments(List<String> segments) {
+        if (segments.size() >= 5 && "user".equals(segments.get(0))) {
+            return String.join("/",
+                    segments.get(0), segments.get(1), segments.get(2), segments.get(3), segments.get(4));
+        }
+        return String.join("/",
+                segments.get(0), segments.get(1), segments.get(2), segments.get(3));
     }
 
     private static List<String> pathSegments(String path) {

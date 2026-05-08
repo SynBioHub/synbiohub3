@@ -43,7 +43,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
 import java.sql.*;
+import java.util.Base64;
 import java.util.*;
 import java.util.regex.Pattern;
 import org.slf4j.Logger;
@@ -53,6 +55,7 @@ import org.slf4j.LoggerFactory;
 @RequiredArgsConstructor
 @Slf4j
 public class UserService {
+    private static final int JWT_SECRET_BYTES = 48;
 
     private final UserRepository userRepository;
     private final SearchService searchService;
@@ -169,7 +172,6 @@ public class UserService {
         user.setGraphUri("https://synbiohub.org/user/" + user.getUsername());
         user.setIsAdmin(user.getRole().equals(Role.ADMIN));
         userRepository.save(user);
-        var jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse
                 .builder()
                 .token("User registered successfully")
@@ -341,7 +343,9 @@ public User updateUserProfile(Map<String, String> allParams) throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         mapper.enable(SerializationFeature.INDENT_OUTPUT);
 
-        Map<String, String> userParams = new HashMap<>();
+        // Ensure jwtSecret is available before registration, which may trigger JWT usage.
+        allParams.put("jwtSecret", generateJwtSecret());
+
         UserRegistrationDTO userRegistrationDTO = UserRegistrationDTO
                 .builder()
                 .username((String) allParams.get("userName"))
@@ -392,6 +396,12 @@ public User updateUserProfile(Map<String, String> allParams) throws Exception {
             log.error("Setup failed.");
             return "Failed to create file!";
         }
+    }
+
+    private String generateJwtSecret() {
+        byte[] bytes = new byte[JWT_SECRET_BYTES];
+        new SecureRandom().nextBytes(bytes);
+        return Base64.getEncoder().encodeToString(bytes);
     }
 
     /**
