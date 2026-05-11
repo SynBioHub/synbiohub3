@@ -1,0 +1,49 @@
+# Top-level collections owned or uploaded by the current user (legacy /manage behavior).
+# Template keys: $from $email $ownedByIri $limit $offset
+# Substitute $email with a SPARQL-safe escaped string literal body (inside the quotes below).
+# Substitute $ownedByIri with the URI of <databasePrefix>user/<username> without angle brackets.
+
+PREFIX sbol2: <http://sbols.org/v2#>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX ncbi: <http://www.ncbi.nlm.nih.gov#>
+PREFIX synbiohub: <http://synbiohub.org#>
+PREFIX sbh: <http://wiki.synbiohub.org/wiki/Terms/synbiohub#>
+PREFIX igem: <http://wiki.synbiohub.org/wiki/Terms/igem#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX prov: <http://www.w3.org/ns/prov#>
+PREFIX dc: <http://purl.org/dc/elements/1.1/>
+PREFIX cello: <http://cellocad.org/Terms/cello#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX purl: <http://purl.obolibrary.org/obo/>
+PREFIX biopax: <http://www.biopax.org/release/biopax-level3.owl#>
+PREFIX so: <http://identifiers.org/so/>
+PREFIX bench: <http://wiki.synbiohub.org/wiki/Terms/benchling#>
+PREFIX genbank: <http://www.ncbi.nlm.nih.gov/genbank#>
+
+SELECT DISTINCT
+    ?subject
+    ?displayId
+    ?version
+    ?name
+    ?description
+    ?type
+$from
+WHERE {
+    ?subject a sbol2:Collection .
+    { ?subject synbiohub:uploadedBy "$email" }
+    UNION
+    { ?subject sbh:ownedBy <$ownedByIri> }
+    .
+    FILTER NOT EXISTS { ?otherCollection sbol2:member ?subject }
+
+    ?subject a ?type .
+    ?subject sbh:topLevel ?subject
+    OPTIONAL { ?subject sbol2:displayId ?displayId . }
+    OPTIONAL { ?subject sbol2:version ?version . }
+    OPTIONAL { ?subject dcterms:title ?name . }
+    OPTIONAL { ?subject dcterms:description ?description . }
+}
+
+$limit
+$offset
