@@ -43,7 +43,6 @@ export default function SubmissionHandler(properties) {
               }
             }).then(response => {
               if(response.status === 200) selectOptions.push({value: plugin.index, label: plugin.name});
-              pluginsAvailable = true;
             }).catch(error => {return;});
           }
     

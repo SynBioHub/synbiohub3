@@ -1,6 +1,5 @@
 import { faFolderOpen } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useCallback, useMemo } from 'react';
 import { useDropzone } from 'react-dropzone';
 
 import styles from '../../../styles/submit.module.css';
@@ -25,22 +24,19 @@ const acceptStyle = {
 };
 
 export default function FileDropzone(properties) {
-  const onDrop = useCallback(acceptedFiles => {
+  const onDrop = acceptedFiles => {
     properties.setFiles(acceptedFiles);
-  }, []);
+  };
 
   const { getRootProps, getInputProps, isDragAccept } = useDropzone({
     onDrop,
     multiple: properties.disableMultiple ? false : true
   });
 
-  const style = useMemo(
-    () => ({
-      ...baseStyle,
-      ...(isDragAccept ? acceptStyle : {})
-    }),
-    [isDragAccept]
-  );
+  const style = {
+    ...baseStyle,
+    ...(isDragAccept ? acceptStyle : {})
+  };
 
   return (
     <div className={styles.dropzonecontainer}>

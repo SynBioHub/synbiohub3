@@ -307,16 +307,24 @@ export const submit =
 
       const token = getState().user.token;
 
+      const filesToSubmit = await preprocessSubmitFilesWithPlugins(
+        files,
+        pluginMapping,
+        token,
+        dispatch,
+        getState
+      );
+
 
       await uploadFiles(
         dispatch,
         getState,
         token,
         uri,
-        files,
+        filesToSubmit,
         overwriteIncrement,
         addingToCollection,
-        pluginMapping
+        null
       );
 
       dispatch({
@@ -324,6 +332,347 @@ export const submit =
         payload: false
       });
     };
+
+async function preprocessSubmitFilesWithPlugins(
+  files,
+  pluginMapping,
+  token,
+  dispatch,
+  getState
+) {
+  const normalizedFiles = Array.isArray(files) ? files : files ? [files] : [];
+
+  if (!pluginMapping || typeof pluginMapping.get !== 'function') {
+    return normalizedFiles;
+  }
+
+  const filesToSubmit = [];
+  const failedFiles = [...getState().submit.failedFiles];
+  let hasPluginFailures = false;
+
+  let submitPlugins = [];
+  try {
+    const response = await axios({
+      method: 'GET',
+      url: `${publicRuntimeConfig.backend}/admin/plugins`,
+      params: { category: 'submit' },
+      headers: { Accept: 'application/json' }
+    });
+    submitPlugins = Array.isArray(response.data.submit)
+      ? response.data.submit
+      : [];
+  } catch (error) {
+    console.error('Error loading submit plugins:', error.message);
+    return normalizedFiles;
+  }
+
+  for (const file of normalizedFiles) {
+    const pluginId = pluginMapping.get(file.name);
+    const needsPlugin =
+      pluginId !== undefined &&
+      pluginId !== null &&
+      pluginId !== 'default';
+
+    if (!needsPlugin) {
+      filesToSubmit.push(file);
+      continue;
+    }
+
+    const plugin = submitPlugins.find(p => {
+      return `${p.index}` === `${pluginId}` || `${p.name}` === `${pluginId}`;
+    });
+
+    if (!plugin) {
+      hasPluginFailures = true;
+      failedFiles.push({
+        file,
+        name: file.name,
+        url: file.url,
+        status: 'failed',
+        errors: [`Submit plugin not found for ${file.name}.`]
+      });
+      continue;
+    }
+
+    const pluginResult = await runSubmitPluginPipeline(
+      file,
+      plugin.name,
+      token,
+      dispatch,
+      getState
+    );
+
+    if (pluginResult.success) {
+      filesToSubmit.push(...pluginResult.files);
+    } else {
+      hasPluginFailures = true;
+      failedFiles.push(...pluginResult.failedFiles);
+    }
+  }
+
+  if (hasPluginFailures) {
+    dispatch({ type: types.FILEFAILED, payload: true });
+    dispatch({
+      type: types.FAILEDFILES,
+      payload: failedFiles
+    });
+  }
+
+  return filesToSubmit;
+}
+
+async function unzipIfNeeded(file) {
+  const fileMime = mime.lookup(file.name) || '';
+  const isZip = fileMime === 'application/zip' || file.name.endsWith('.zip');
+
+  if (!isZip) {
+    return [file];
+  }
+
+  const zip = new JSZip();
+  const unzipped = [];
+  const loaded = await zip.loadAsync(file);
+
+  for (const [filename, zipFile] of Object.entries(loaded.files)) {
+    if (zipFile.dir || filename.startsWith('__MACOSX/')) {
+      continue;
+    }
+    const currFileBlob = await zipFile.async('blob');
+    const currFile = new File([currFileBlob], filename, {
+      type: mime.lookup(filename) || 'application/octet-stream'
+    });
+    unzipped.push(currFile);
+  }
+
+  return unzipped;
+}
+
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result || '';
+      const base64 = typeof result === 'string' ? result.split(',').pop() : '';
+      resolve(base64 || '');
+    };
+    reader.onerror = () => {
+      reject(new Error(`Failed to read file ${file.name} for plugin submission.`));
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function createFailedPluginFiles(files, pluginName, message) {
+  return files.map(file => ({
+    file,
+    name: file.name,
+    url: file.url,
+    status: 'failed',
+    errors: [`Error using ${pluginName}: ${message}`]
+  }));
+}
+
+function findFile(files, filename) {
+  for (const file of files) {
+    if (file.name === filename) {
+      return file;
+    }
+  }
+  return null;
+}
+
+async function runSubmitPluginPipeline(file, pluginName, token, dispatch, getState) {
+  let expandedFiles = [];
+  const urlsToRevoke = [];
+  const passthroughFiles = [];
+
+  try {
+    expandedFiles = await unzipIfNeeded(file);
+
+    const preparedFiles = [];
+    for (const expandedFile of expandedFiles) {
+      const objectUrl = URL.createObjectURL(expandedFile);
+      urlsToRevoke.push(objectUrl);
+      preparedFiles.push({
+        file: expandedFile,
+        filename: expandedFile.name,
+        type: mime.lookup(expandedFile.name) || 'application/octet-stream',
+        url: objectUrl,
+        contentBase64: await fileToBase64(expandedFile)
+      });
+    }
+
+    const evaluateFilesManifest = preparedFiles.map(preparedFile => ({
+      url: preparedFile.url,
+      filename: preparedFile.filename,
+      type: preparedFile.type
+    }));
+
+    const evaluateResponse = await axios({
+      method: 'POST',
+      url: `${publicRuntimeConfig.backend}/callPlugin`,
+      headers: {
+        'X-authorization': token
+      },
+      data: {
+        name: pluginName,
+        endpoint: 'evaluate',
+        category: 'submit',
+        data: JSON.stringify({
+          manifest: {
+            files: evaluateFilesManifest
+          }
+        })
+      }
+    });
+
+    const requirementManifest = Array.isArray(evaluateResponse.data.manifest)
+      ? evaluateResponse.data.manifest
+      : [];
+
+    const pluginInputFiles = [];
+    for (const requirement of requirementManifest) {
+      const source = findFile(expandedFiles, requirement.filename);
+      if (!source) {
+        continue;
+      }
+      if (requirement.requirement === 0) {
+        passthroughFiles.push(source);
+      } else {
+        pluginInputFiles.push(source);
+      }
+    }
+
+    if (pluginInputFiles.length === 0) {
+      return { success: true, files: passthroughFiles.length ? passthroughFiles : expandedFiles };
+    }
+
+    const runManifest = {
+      manifest: {
+        files: pluginInputFiles.map(pluginFile => ({
+          url: preparedFiles.find(f => f.filename === pluginFile.name)?.url,
+          filename: pluginFile.name,
+          type: mime.lookup(pluginFile.name) || 'application/octet-stream',
+          instanceUrl: publicRuntimeConfig.backend,
+          contentBase64:
+            preparedFiles.find(f => f.filename === pluginFile.name)?.contentBase64 || ''
+        }))
+      }
+    };
+
+    const runResponse = await axios({
+      method: 'POST',
+      url: `${publicRuntimeConfig.backend}/callPlugin`,
+      responseType: 'arraybuffer',
+      headers: {
+        'Accept': 'application/zip',
+        'X-authorization': token
+      },
+      data: {
+        name: pluginName,
+        endpoint: 'run',
+        category: 'submit',
+        data: JSON.stringify(runManifest)
+      }
+    });
+
+    let manifestResults = [];
+    const convertedFiles = [...passthroughFiles];
+
+    try {
+      const resultZip = await JSZip.loadAsync(runResponse.data);
+
+      if (resultZip.file('manifest.json')) {
+        const manifestText = await resultZip.file('manifest.json').async('string');
+        const fixedManifestText = manifestText.replaceAll("'", '"');
+        const parsedManifest = JSON.parse(fixedManifestText);
+        manifestResults = Array.isArray(parsedManifest.results)
+          ? parsedManifest.results
+          : [];
+        resultZip.remove('manifest.json');
+      }
+
+      for (const [filename, zipFile] of Object.entries(resultZip.files)) {
+        if (zipFile.dir) {
+          continue;
+        }
+        const currFileBlob = await zipFile.async('blob');
+        convertedFiles.push(
+          new File([currFileBlob], filename, {
+            type: mime.lookup(filename) || 'application/xml'
+          })
+        );
+      }
+    } catch (zipParseError) {
+      const headers = runResponse.headers || {};
+      const contentType =
+        (headers['content-type'] || headers['Content-Type'] || 'application/xml') + '';
+      const contentDisposition =
+        (headers['content-disposition'] || headers['Content-Disposition'] || '') + '';
+      const filenameMatch = contentDisposition.match(
+        /filename\*?=(?:UTF-8''\s*)?(?:"([^"]+)"|([^;,\n\r]+))/i
+      );
+      let fallbackFilename = filenameMatch
+        ? (filenameMatch[1] || filenameMatch[2] || '').trim()
+        : '';
+
+      if (!fallbackFilename) {
+        fallbackFilename = `${pluginName}-${file.name}.xml`;
+      }
+      if (!fallbackFilename.includes('.')) {
+        fallbackFilename += '.xml';
+      }
+
+      const fallbackBlob = new Blob([runResponse.data], {
+        type: contentType.includes('zip') ? 'application/xml' : contentType
+      });
+
+      convertedFiles.push(
+        new File([fallbackBlob], fallbackFilename, {
+          type: fallbackBlob.type || 'application/xml'
+        })
+      );
+    }
+
+    if (manifestResults.length > 0) {
+      const currentConvertedFiles = [...getState().submit.convertedFiles];
+      for (const fileResult of manifestResults) {
+        const fileSources = [];
+        if (Array.isArray(fileResult.sources)) {
+          for (const sourceName of fileResult.sources) {
+            const sourceFile = findFile(expandedFiles, sourceName);
+            if (sourceFile) {
+              fileSources.push(sourceFile);
+            }
+          }
+        }
+        if (fileResult.filename) {
+          currentConvertedFiles.push({
+            convertedFileName: fileResult.filename,
+            fileSources
+          });
+        }
+      }
+      dispatch({
+        type: types.CONVERTEDFILES,
+        payload: currentConvertedFiles
+      });
+    }
+
+    return { success: true, files: convertedFiles };
+  } catch (error) {
+    const message = error?.response?.data || error.message || 'Unknown plugin error';
+    return {
+      success: false,
+      files: [],
+      failedFiles: createFailedPluginFiles(expandedFiles.length ? expandedFiles : [file], pluginName, `${message}`)
+    };
+  } finally {
+    for (const url of urlsToRevoke) {
+      URL.revokeObjectURL(url);
+    }
+  }
+}
 
 /**
  * Helper function called by the submit action
@@ -371,78 +720,6 @@ async function uploadFiles(
 
   // upload all files
   for (var fileIndex = 0; fileIndex < filesUploading.length; fileIndex++) {
-
-    if (filesUploading[fileIndex].plugin != 'default' && filesUploading[fileIndex].plugin != null) {
-      let pluginName = null;
-      try {
-        const response = await axios({
-          method: 'GET',
-          url: `${publicRuntimeConfig.backend}/admin/plugins`,
-          params: { category: 'submit' },
-          headers: { Accept: 'application/json' }
-        });
-        const submitPlugins = response.data.submit;
-        pluginName = submitPlugins[filesUploading[fileIndex].plugin].name;
-        console.log('Plugin Name:', pluginName);
-      } catch (error) {
-        console.error('Error Finding Plugin:', error.response);
-        return;
-      }
-
-      let type = mime.lookup(filesUploading[fileIndex].name) || 'application/octet-stream';
-
-      let evaluateManifest = {
-        manifest: {
-          files: [
-            {
-              url: URL.createObjectURL(filesUploading[fileIndex].file),
-              filename: filesUploading[fileIndex].name,
-              type: type
-            }
-          ]
-        }
-      }
-
-      response = await axios({
-        headers: {
-          'Content-Type': 'application/json',
-          'Accepts': 'application/json'
-        },
-        method: 'POST',
-        url: `${publicRuntimeConfig.backend}/callPlugin`,
-        headers: {
-          'X-authorization': token
-        },
-        data: {
-          name: pluginName,
-          endpoint: 'evaluate',
-          category: 'submit',
-          data: JSON.stringify(evaluateManifest)
-        }
-      });
-
-      const requiredFiles = response.data.manifest;
-
-      if(requiredFiles[0].requirement !== 2) {
-        filesUploading[fileIndex].status = 'failed';
-        filesUploading[fileIndex].errors = `The plugin ${pluginName} requires a different file type.`;
-        failedFiles.push(filesUploading[fileIndex]);
-        filesUploading.splice(fileIndex, 1);
-        fileIndex -= 1;
-        dispatch({ type: types.FILEFAILED, payload: true });
-        dispatch({
-          type: types.FAILEDFILES,
-          payload: [...failedFiles]
-        });
-        dispatch({
-          type: types.FILESUPLOADING,
-          payload: [...filesUploading]
-        });
-        continue;
-      }
-    }
-
-
     if (addingToCollection) {
       url = `${publicRuntimeConfig.backend}${filesUploading[fileIndex].url}/addToCollection`;
     }
@@ -462,7 +739,7 @@ async function uploadFiles(
       form = new URLSearchParams();
       form.append('collections', uri);
     }
-    form.append('plugin', filesUploading[fileIndex].plugin)
+    form.append('plugin', filesUploading[fileIndex].plugin || 'default')
 
     let response;
 
