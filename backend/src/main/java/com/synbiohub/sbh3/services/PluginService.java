@@ -21,7 +21,11 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
+import java.util.Base64;
 
 @Service
 @RequiredArgsConstructor
@@ -109,6 +113,7 @@ public class PluginService {
     }
 
     private ResponseEntity<?> getRun(String pluginUrl, JsonNode data, String category, String name, String prefix) {
+        SubmitPreparation submitPreparation = null;
         try {
             JsonNode pluginData = data;
             String normalizedPrefix = (prefix == null || prefix.isBlank()) ? null : prefix;
@@ -119,6 +124,8 @@ public class PluginService {
                     pluginData = getPublicDataFromURI(data, normalizedPrefix);
                     break;
                 case "submit":
+                    submitPreparation = prepareSubmitPluginData(data);
+                    pluginData = submitPreparation.pluginData();
                     break;
                 default:
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Unsupported plugin category: " + category);
@@ -152,6 +159,114 @@ public class PluginService {
             HttpHeaders responseHeaders = new HttpHeaders();
             responseHeaders.set(HttpHeaders.CONTENT_TYPE, "text/plain");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).headers(responseHeaders).body(e.toString());
+        } finally {
+            if (submitPreparation != null) {
+                submitPreparation.cleanup();
+            }
+        }
+    }
+
+    private SubmitPreparation prepareSubmitPluginData(JsonNode data) throws IOException {
+        JsonNode parsedData = data;
+
+        if (parsedData == null || parsedData.isMissingNode() || parsedData.isNull()) {
+            return new SubmitPreparation(data, null);
+        }
+
+        if (parsedData.isTextual()) {
+            try {
+                parsedData = mapper.readTree(parsedData.asText());
+            } catch (JsonProcessingException e) {
+                return new SubmitPreparation(data, null);
+            }
+        }
+
+        if (!parsedData.isObject()) {
+            return new SubmitPreparation(parsedData, null);
+        }
+
+        JsonNode manifestFiles = parsedData.path("manifest").path("files");
+        if (!manifestFiles.isArray()) {
+            return new SubmitPreparation(parsedData, null);
+        }
+
+        boolean hasInlineContent = false;
+        for (JsonNode fileNode : manifestFiles) {
+            String contentBase64 = fileNode.path("contentBase64").asText("");
+            if (!contentBase64.isEmpty()) {
+                hasInlineContent = true;
+                break;
+            }
+        }
+
+        if (!hasInlineContent) {
+            return new SubmitPreparation(parsedData, null);
+        }
+
+        Path tempDir = Files.createTempDirectory("sbh-submit-plugin-");
+        ObjectNode preparedData = ((ObjectNode) parsedData).deepCopy();
+        ArrayNode preparedFiles = (ArrayNode) preparedData.path("manifest").path("files");
+
+        for (int i = 0; i < preparedFiles.size(); i++) {
+            JsonNode fileNode = preparedFiles.get(i);
+            if (!fileNode.isObject()) {
+                continue;
+            }
+
+            String contentBase64 = fileNode.path("contentBase64").asText("");
+            if (contentBase64.isEmpty()) {
+                continue;
+            }
+
+            String originalFilename = fileNode.path("filename").asText("plugin_input_" + i);
+            String safeFilename = toSafeFilename(originalFilename, i);
+            Path localPath = tempDir.resolve(safeFilename);
+            byte[] fileBytes = Base64.getDecoder().decode(contentBase64);
+            Files.write(localPath, fileBytes);
+
+            ((ObjectNode) fileNode).put("url", localPath.toString());
+        }
+
+        return new SubmitPreparation(preparedData, () -> deleteDirectoryQuietly(tempDir));
+    }
+
+    private String toSafeFilename(String candidate, int index) {
+        if (candidate == null || candidate.isBlank()) {
+            return "plugin_input_" + index;
+        }
+
+        Path candidatePath = Paths.get(candidate).getFileName();
+        if (candidatePath == null) {
+            return "plugin_input_" + index;
+        }
+
+        String safe = candidatePath.toString();
+        return safe.isBlank() ? "plugin_input_" + index : safe;
+    }
+
+    private void deleteDirectoryQuietly(Path dir) {
+        if (dir == null || !Files.exists(dir)) {
+            return;
+        }
+
+        try (var paths = Files.walk(dir)) {
+            paths.sorted((a, b) -> b.compareTo(a)).forEach(path -> {
+                try {
+                    Files.deleteIfExists(path);
+                } catch (IOException ignored) {
+                    // best effort cleanup
+                }
+            });
+        } catch (IOException ignored) {
+            // best effort cleanup
+        }
+    }
+
+    private record SubmitPreparation(JsonNode pluginData, Runnable cleanupAction) {
+        void cleanup() {
+            if (cleanupAction != null) {
+                cleanupAction.run();
+            }
         }
     }
 
