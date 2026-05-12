@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.synbiohub.sbh3.controllers.SearchController;
+import com.synbiohub.sbh3.security.model.User;
 import com.synbiohub.sbh3.sparql.SPARQLQuery;
 import com.synbiohub.sbh3.utils.ConfigUtil;
 import org.springframework.http.*;
@@ -18,6 +19,8 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.net.URI;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -381,22 +384,47 @@ public class SearchService {
         JsonNode rawTree = mapper.readTree(rawJSON);
         ArrayList<ObjectNode> listOfParts = new ArrayList<>();
         for(JsonNode node : rawTree.get("results").get("bindings")) {
-            ObjectNode part = mapper.createObjectNode();
-            Set<String> keySet = new HashSet<>();
-            for (Iterator<Map.Entry<String, JsonNode>> it = node.fields(); it.hasNext(); ) {
-                Map.Entry<String, JsonNode> subNode = it.next();
-                part.set((subNode.getKey().equals("subject")? "uri" : subNode.getKey()), subNode.getValue().get("value"));
-                keySet.add(subNode.getKey());
-            }
-            if (!keySet.contains("name")) {
-                part.set("name", part.get("displayId"));
-            }
-            if (!keySet.contains("description")) {
-                part.put("description", "");
-            }
-            listOfParts.add(part);
+            listOfParts.add(bindingToObjectNode(mapper, node));
         }
         return listOfParts.toString();
+    }
+
+    /**
+     * One SPARQL JSON binding row → same object shape as {@link #rawJSONToOutput} (uri, displayId, defaults, etc.).
+     */
+    private ObjectNode bindingToObjectNode(ObjectMapper mapper, JsonNode node) {
+        Set<String> keySet = new HashSet<>();
+        node.fieldNames().forEachRemaining(keySet::add);
+
+        ObjectNode part = sparqlBindingRowToObjectNodePreserveKeys(mapper, node);
+
+        JsonNode uriVal = part.remove("subject");
+        if (uriVal != null) {
+            part.set("uri", uriVal);
+        }
+        if (!keySet.contains("name")) {
+            part.set("name", part.get("displayId"));
+        }
+        if (!keySet.contains("description")) {
+            part.put("description", "");
+        }
+        return part;
+    }
+
+    /** One binding row {@code {"var":{"value":"…"}} …} → object with same keys holding literal nodes. */
+    private static ObjectNode sparqlBindingRowToObjectNodePreserveKeys(ObjectMapper mapper, JsonNode binding) {
+        ObjectNode row = mapper.createObjectNode();
+        binding.fields().forEachRemaining(entry -> {
+            JsonNode cell = entry.getValue();
+            if (cell.hasNonNull("value")) {
+                row.set(entry.getKey(), cell.get("value"));
+            }
+        });
+        return row;
+    }
+
+    private static JsonNode sparqlBindingsArray(ObjectMapper mapper, String rawSparqlJson) throws JsonProcessingException {
+        return mapper.readTree(rawSparqlJson).path("results").path("bindings");
     }
 
     /**
@@ -740,6 +768,26 @@ public class SearchService {
     }
 
     /**
+     * {@code databasePrefix + "user/" + username}: legacy subject for predicates like {@code sbh:ownedBy} / share roots.
+     */
+    public String userSynbiohubMemberUri(String username) throws IOException {
+        return ConfigUtil.get("databasePrefix").asText() + "user/" + username;
+    }
+
+    /**
+     * Virtuoso named graph for RDF stored under this user's account ({@link User#getGraphUri()} when set,
+     * otherwise derived from configured {@code graphPrefix} — same derivation as anonymous {@link #getPrivateGraph()}
+     * would use after login).
+     */
+    public String resolveUserNamedGraphUri(User user) throws IOException {
+        String g = user.getGraphUri();
+        if (g != null && !g.isBlank()) {
+            return g;
+        }
+        return ConfigUtil.get("graphPrefix").asText() + "user/" + user.getUsername();
+    }
+
+    /**
      * Gets the user's private graph.
      * @return Empty string if user is not logged in, otherwise returns their private graph.
      */
@@ -757,6 +805,183 @@ public class SearchService {
         } catch (UnsupportedEncodingException ex) {
             throw new RuntimeException(ex.getCause());
         }
+    }
+
+    public String getManageSubmissionsSPARQL(String email, String username) throws IOException {
+        SPARQLQuery searchQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/search.sparql");
+        HashMap<String, String> sparqlArgs = new HashMap<>(
+            Map.of("from", "", "criteria", "", "limit", "", "offset", ""));
+
+        String ownedByUri = userSynbiohubMemberUri(username);
+        String escapedEmail = escapeSparqlStringLiteral(email == null ? "" : email);
+
+        String criteria =
+            "?subject a sbol2:Collection . " +
+            "{ ?subject synbiohub:uploadedBy \"" + escapedEmail + "\" } " +
+            "UNION " +
+            "{ ?subject sbh:ownedBy <" + ownedByUri + "> } " +
+            "FILTER NOT EXISTS { ?otherCollection sbol2:member ?subject }";
+
+        sparqlArgs.replace("criteria", criteria);
+        return searchQuery.loadTemplate(sparqlArgs);
+    }
+
+    public String getSharedCanViewSPARQL(String userResourceUri) throws IOException {
+        SPARQLQuery query = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/GetSharedCanView.sparql");
+        return query.loadTemplate(Map.of("userUri", userResourceUri));
+    }
+
+    public String getTopLevelMetadataSPARQL(String topLevelUri) throws IOException {
+        SPARQLQuery query = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/GetTopLevelMetadata.sparql");
+        return query.loadTemplate(Map.of("uri", topLevelUri));
+    }
+
+    /**
+     * Objects shared via {@code sbh:canView} triples stored in the viewer's named graph (legacy {@code /shared} JSON).
+     */
+    public ArrayNode getSharedObjectsJSON(User user) throws IOException, JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        ArrayNode out = mapper.createArrayNode();
+
+        String databasePrefix = ConfigUtil.get("databasePrefix").asText();
+        String userResourceUri = userSynbiohubMemberUri(user.getUsername());
+        String userGraphUri = resolveUserNamedGraphUri(user);
+
+        JsonNode saltNode = ConfigUtil.get("shareLinkSalt");
+        String shareLinkSalt = (saltNode == null || saltNode.isNull()) ? "" : saltNode.asText();
+
+        String canViewRaw = SPARQLQuery(getSharedCanViewSPARQL(userResourceUri), userGraphUri);
+        JsonNode bindings = sparqlBindingsArray(mapper, canViewRaw);
+        if (!bindings.isArray()) {
+            return out;
+        }
+
+        for (JsonNode b : bindings) {
+            JsonNode objSlot = b.path("object");
+            if (!objSlot.hasNonNull("value")) {
+                continue;
+            }
+            String sharedUri = objSlot.path("value").asText("");
+            if (sharedUri.isEmpty()) {
+                continue;
+            }
+
+            String metaGraphUri = graphUriFromSharedTopLevelUri(sharedUri, user);
+            String metaRaw = SPARQLQuery(getTopLevelMetadataSPARQL(sharedUri), metaGraphUri);
+            JsonNode metaBindings = sparqlBindingsArray(mapper, metaRaw);
+            if (!metaBindings.isArray() || metaBindings.size() == 0) {
+                continue;
+            }
+
+            ObjectNode row = sparqlBindingRowToObjectNodePreserveKeys(mapper, metaBindings.get(0));
+
+            String pi = row.path("persistentIdentity").asText("");
+            String version = row.path("version").asText("");
+            String versionedUri = !pi.isEmpty() ? pi + "/" + version : sharedUri;
+
+            row.put("uri", versionedUri);
+            row.put("url", computeSharedListingBrowserPath(databasePrefix, versionedUri, shareLinkSalt));
+
+            out.add(row);
+        }
+
+        return out;
+    }
+
+    public ArrayNode mergeManageResults(String publicRawJSON, String privateRawJSON) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        ArrayNode results = mapper.createArrayNode();
+        Set<String> seenUris = new HashSet<>();
+
+        JsonNode publicBindings = sparqlBindingsArray(mapper, publicRawJSON);
+        if (publicBindings.isArray()) {
+            for (JsonNode node : publicBindings) {
+                ObjectNode part = bindingToObjectNode(mapper, node);
+                part.put("triplestore", "public");
+                seenUris.add(part.get("uri").asText());
+                results.add(part);
+            }
+        }
+
+        JsonNode privateBindings = sparqlBindingsArray(mapper, privateRawJSON);
+        if (privateBindings.isArray()) {
+            for (JsonNode node : privateBindings) {
+                ObjectNode part = bindingToObjectNode(mapper, node);
+                if (!seenUris.contains(part.get("uri").asText())) {
+                    part.put("triplestore", "private");
+                    results.add(part);
+                }
+            }
+        }
+
+        return results;
+    }
+
+    /**
+     * Legacy {@code getGraphUriFromTopLevelUri}: which Virtuoso graph holds metadata for a top-level RDF URI?
+     */
+    private String graphUriFromSharedTopLevelUri(String topLevelUri, User user) throws IOException {
+        String databasePrefix = ConfigUtil.get("databasePrefix").asText();
+        String defaultGraph = ConfigUtil.get("defaultGraph").asText();
+
+        String publicStem = databasePrefix + "public/";
+        if (topLevelUri.startsWith(publicStem)) {
+            return defaultGraph;
+        }
+
+        String viewerGraph = resolveUserNamedGraphUri(user);
+        if (topLevelUri.startsWith(viewerGraph)) {
+            return viewerGraph;
+        }
+
+        int userSeg = topLevelUri.indexOf("/user/");
+        if (userSeg >= 0) {
+            int afterUserKw = userSeg + "/user/".length();
+            int slashAfterName = topLevelUri.indexOf('/', afterUserKw);
+            if (slashAfterName >= 0) {
+                return topLevelUri.substring(0, slashAfterName);
+            }
+            return topLevelUri;
+        }
+
+        return defaultGraph;
+    }
+
+    /**
+     * {@code '/' + strippedUri + '/' + sha1(...) + '/share'} (legacy {@code shared.js}).
+     */
+    private static String computeSharedListingBrowserPath(String databasePrefix, String versionedUri,
+                                                           String shareLinkSalt) {
+        String rel = versionedUri;
+        if (!databasePrefix.isEmpty() && rel.startsWith(databasePrefix)) {
+            rel = rel.substring(databasePrefix.length());
+        }
+        while (rel.startsWith("/")) {
+            rel = rel.substring(1);
+        }
+        String token = shareLinkTokenSynbiohubHex(versionedUri, shareLinkSalt);
+        return "/" + rel + "/" + token + "/share";
+    }
+
+    /** {@code SHA1_HEX('synbiohub_' + SHA1_HEX(versioned_uri_utf8) + shareLinkSalt)} per legacy Node hashes. */
+    private static String shareLinkTokenSynbiohubHex(String versionedUri, String shareLinkSalt) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-1");
+            String innerHex = bytesToSha1HexLower(md.digest(versionedUri.getBytes(StandardCharsets.UTF_8)));
+            md.reset();
+            String outerPayload = "synbiohub_" + innerHex + (shareLinkSalt == null ? "" : shareLinkSalt);
+            return bytesToSha1HexLower(md.digest(outerPayload.getBytes(StandardCharsets.UTF_8)));
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException("SHA-1 not available", e);
+        }
+    }
+
+    private static String bytesToSha1HexLower(byte[] digest) {
+        StringBuilder sb = new StringBuilder(digest.length * 2);
+        for (byte b : digest) {
+            sb.append(String.format(Locale.US, "%02x", b & 0xff));
+        }
+        return sb.toString();
     }
 
 }
