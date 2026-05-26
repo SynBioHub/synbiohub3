@@ -1,0 +1,13 @@
+# Same metadata shape as RootCollectionMetadata.sparql, scoped to one collection IRI in the submitter's graph.
+# Placeholders: $from (e.g. "FROM <http://…/user/alice>" or empty), $collectionUri (full IRI string, no brackets).
+PREFIX sbol2: <http://sbols.org/v2#>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+
+SELECT ?name ?description ?displayId ?version WHERE {
+$from
+    <$collectionUri> a sbol2:Collection .
+    OPTIONAL { <$collectionUri> dcterms:title ?name . }
+    OPTIONAL { <$collectionUri> sbol2:displayId ?displayId . }
+    OPTIONAL { <$collectionUri> dcterms:description ?description . }
+    OPTIONAL { <$collectionUri> sbol2:version ?version }
+}
