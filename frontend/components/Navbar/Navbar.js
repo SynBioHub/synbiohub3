@@ -27,7 +27,7 @@ export function loggedOutNav(theme) {
     <div className={styles.authNav}>
       <Selector compact icon={faSignInAlt} name="Sign In" href="/login" />
       {allowPublicSignup ? (
-        <Selector compact cta icon={faUserPlus} name="Register" href="/register" />
+        <Selector compact icon={faUserPlus} name="Register" href="/register" />
       ) : null}
     </div>
   );
