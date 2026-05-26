@@ -130,7 +130,11 @@ public class SubmitParseService {
         if (!p.isEmpty()) {
             return p;
         }
-        return first(paramMap, "plugins");
+        p = first(paramMap, "plugins");
+        if (!p.isEmpty()) {
+            return p;
+        }
+        return "default";
     }
 
     private static String normalizeOverwriteMerge(String raw) {

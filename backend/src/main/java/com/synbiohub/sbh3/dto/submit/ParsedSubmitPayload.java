@@ -18,7 +18,7 @@ public class ParsedSubmitPayload {
     String citations;
     /** Legacy overwrite/merge mode: {@code "0"}–{@code "3"}. */
     String overwriteMerge;
-    /** Submit plugin id; UI may send {@code plugins} — step 1 normalizes to this single field. */
+    /** Submit plugin id; UI may send {@code plugins}. Empty/missing → {@code "default"}. */
     String plugin;
     /** Optional destination collection URI (merge / add-to-existing flows). */
     String collectionUri;

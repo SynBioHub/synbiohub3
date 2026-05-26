@@ -35,7 +35,7 @@ public class SubmitCollectionLookupService {
             return Optional.empty();
         }
         String namedGraph = searchService.resolveNamedGraphForSubmit(sanitized.getCreatedBy());
-        String fromClause = namedGraph.isBlank() ? "" : "FROM <" + namedGraph + ">\n";
+        String fromClause = namedGraph.isBlank() ? "" : "FROM <" + namedGraph + ">";
         SPARQLQuery q = new SPARQLQuery(ROOT_COLLECTION_METADATA_FOR_URI);
         String sparql = q.loadTemplate(Map.of(
                 "from", fromClause,

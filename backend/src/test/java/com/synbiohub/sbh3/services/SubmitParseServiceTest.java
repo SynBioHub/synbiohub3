@@ -88,6 +88,20 @@ class SubmitParseServiceTest {
     }
 
     @Test
+    void multipart_noPlugin_defaultsToDefault() throws Exception {
+        MockMultipartHttpServletRequest req = new MockMultipartHttpServletRequest();
+        req.addParameter("id", "a");
+        req.addParameter("name", "n");
+        req.addParameter("description", "d");
+        req.addParameter("version", "1");
+        req.addParameter("citations", "");
+        req.addParameter("overwriteMerge", "0");
+
+        ParsedSubmitPayload p = service.parseMultipart(req, user());
+        assertEquals("default", p.getPlugin());
+    }
+
+    @Test
     void multipart_collectionUri() throws Exception {
         MockMultipartHttpServletRequest req = new MockMultipartHttpServletRequest();
         req.addParameter("id", "a");

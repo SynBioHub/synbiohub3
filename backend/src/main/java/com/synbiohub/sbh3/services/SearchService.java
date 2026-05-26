@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.synbiohub.sbh3.controllers.SearchController;
+import com.synbiohub.sbh3.dto.submit.SubmitCreatedBy;
 import com.synbiohub.sbh3.security.model.User;
 import com.synbiohub.sbh3.sparql.SPARQLQuery;
 import com.synbiohub.sbh3.utils.ConfigUtil;
@@ -785,6 +786,24 @@ public class SearchService {
             return g;
         }
         return ConfigUtil.get("graphPrefix").asText() + "user/" + user.getUsername();
+    }
+
+    /**
+     * Named graph for submit pipeline SPARQL, mirroring {@link #resolveUserNamedGraphUri(User)} for {@link SubmitCreatedBy}.
+     */
+    public String resolveNamedGraphForSubmit(SubmitCreatedBy createdBy) throws IOException {
+        if (createdBy == null) {
+            return "";
+        }
+        String g = createdBy.getGraphUri();
+        if (g != null && !g.isBlank()) {
+            return g;
+        }
+        String u = createdBy.getUsername();
+        if (u == null || u.isBlank()) {
+            return "";
+        }
+        return ConfigUtil.get("graphPrefix").asText() + "user/" + u;
     }
 
     /**
