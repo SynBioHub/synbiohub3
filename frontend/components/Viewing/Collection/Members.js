@@ -100,13 +100,13 @@ export default function Members(properties) {
     parameters.collection = collectionPart;
   }
 
-  const searchQuery = typeFilter !== 'Show Only Root Objects';
-
   let query = getCollectionMembers;
 
   if (typeFilter === 'Show All Objects') {
     query = getCollectionMembersSearch;
   }
+
+  const countQuery = typeFilter === 'Show All Objects' ? CountMembersTotal : CountMembers;
 
   const { members, mutate } = token
     ? useMembers(query, parameters, dispatch, token)
@@ -127,13 +127,13 @@ export default function Members(properties) {
 
   const { count: currentMemberCount } = isOwner
     ? useCount(
-      searchQuery ? CountMembersTotal : CountMembers,
+      countQuery,
       parameters,
       dispatch,
       token ? token : undefined
     )
     : useCount(
-      searchQuery ? CountMembersTotal : CountMembers,
+      countQuery,
       parameters,
       dispatch,
       token ? token : undefined
