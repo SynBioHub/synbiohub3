@@ -100,13 +100,13 @@ export default function Members(properties) {
     parameters.collection = collectionPart;
   }
 
-  let query = getCollectionMembers;
+  const usesAllObjectsQuery =
+    typeFilter === 'Show All Objects' ||
+    typeFilter.startsWith('http://www.biopax.org/release/biopax-level3.owl#') ||
+    typeFilter.startsWith('http://identifiers.org/so/');
 
-  if (typeFilter === 'Show All Objects') {
-    query = getCollectionMembersSearch;
-  }
-
-  const countQuery = typeFilter === 'Show All Objects' ? CountMembersTotal : CountMembers;
+  const query = usesAllObjectsQuery ? getCollectionMembersSearch : getCollectionMembers;
+  const countQuery = usesAllObjectsQuery ? CountMembersTotal : CountMembers;
 
   const { members, mutate } = token
     ? useMembers(query, parameters, dispatch, token)
