@@ -1,64 +1,147 @@
 # Getting Started
-## Frontend
-Download or clone the repository on github. Then, make sure to install 
-all dependencies by running the following command in your terminal in the /frontend directory:
+
+SynBioHub3 runs as two separate processes:
+
+- **`frontend/`** — a Next.js app served on port **3333**
+- **`backend/`** — a Java (Spring Boot) app served on port **6789**
+
+The backend also needs a **Virtuoso** triplestore (a SPARQL endpoint) to be useful.
+
+For full, component-specific instructions see [`frontend/README.md`](./frontend/README.md)
+and [`backend/README.md`](./backend/README.md).
+
+## Quick start (one command)
+
+From the repository root you can start Virtuoso, the backend, and the frontend
+together:
+
 ```bash
-yarn install
-# or
-npm install
+npm install        # one time — installs the root dev tooling (concurrently)
+npm run dev        # or: yarn dev
 ```
 
-In order to connect the frontend to your backend, go to the next.config.js file.
-Then, change the env backendUrl variable to your backend's url.
+Requirements: **Docker** (for Virtuoso), **Java 17**, **Node 17+**, and **Yarn**.
 
-Finally, run the development server:
+`npm run dev` will:
+
+1. Start a Virtuoso triplestore in Docker — creating the `virtuoso` container the
+   first time and reusing it afterwards (see `db:up` / `db:down` below).
+2. Run the backend (`./mvnw spring-boot:run`) on **http://localhost:6789**.
+3. Run the frontend (`yarn devNextGen`, the OpenSSL-legacy mode required by Node
+   17+) on **http://localhost:3333**.
+
+Output from both services is shown together, prefixed with `backend`/`frontend`.
+Press `Ctrl+C` to stop the backend and frontend. The Virtuoso container is left
+running so the next start is fast; stop it explicitly with:
 
 ```bash
-npm run dev
-# or
-yarn dev
+npm run db:down    # docker stop virtuoso
 ```
 
-NOTE, we use the legacy openssl with security vulnerabilities. This makes the dev command only work on mac and linux and introduces security vulnerablilites, to read more see [here](https://stackoverflow.com/questions/69692842/error-message-error0308010cdigital-envelope-routinesunsupported).
+> The root `dev` script runs the frontend via `yarn devNextGen`, which requires
+> Node 17+. On Node 14–16 (matching the Docker image) that flag is rejected — run
+> the services separately as described below and use `yarn dev` in `frontend/`.
 
-Open [http://localhost:3333](http://localhost:3333) with your browser to see the result.
+To run each piece by hand (or on Node 14–16), follow the component sections below.
+Start the backend first.
 
-### Developer Notes
+## Backend (port 6789)
 
-Each component/page in SynBioHub should have a header which dicatates its purpose.
+Requirements: **Java 17** (the project targets 17 — newer JDKs are not guaranteed to
+work with Spring Boot 3.0.1) and **Docker** (for Virtuoso).
 
-This app utilizes Redux to handle global application state and simplify the passing of
-deeply nested props. To view how this application uses Redux, see the /redux directory.
+1. Start a Virtuoso triplestore on port 8890:
 
-This app uses eslint that is set up for React/Next.js code. To run the linter, navigate to
-the frontend directory in your terminal (the directory this README is in) and run the command:
+   ```bash
+   docker run --name virtuoso -d \
+     -p 8890:8890 -p 1111:1111 \
+     -e DBA_PASSWORD=dba -e SPARQL_UPDATE=true \
+     tenforce/virtuoso:virtuoso7.2.5
+   ```
+
+2. No extra configuration is needed — the bundled
+   `backend/src/main/resources/config.json` already points at `localhost:8890`,
+   matching the Virtuoso container above. If your Virtuoso runs elsewhere, override
+   the endpoints by creating `backend/data/config.local.json` (gitignored, takes
+   precedence per-key):
+
+   ```json
+   {
+     "sparqlEndpoint": "http://your-host:8890/sparql",
+     "graphStoreEndpoint": "http://your-host:8890/sparql-graph-crud-auth/"
+   }
+   ```
+
+3. Run the backend from the `backend/` directory (config is read relative to the
+   working directory). This uses the bundled Maven wrapper and the embedded H2
+   database — no external database required:
+
+   ```bash
+   cd backend
+   ./mvnw spring-boot:run
+   ```
+
+   The backend is now serving on http://localhost:6789.
+
+## Frontend (port 3333)
+
+Requirements: **Node 14–16** and **Yarn**. (The Docker image uses Node 14; newer
+Node versions need the OpenSSL workaround in step 3.)
+
+1. Install dependencies:
+
+   ```bash
+   cd frontend
+   yarn install
+   ```
+
+2. Tell the frontend where the backend is. It reads the backend URL from the
+   `backend` environment variable, loaded in dev from `frontend/.env.development`,
+   which ships pointing at this repo's backend (`http://localhost:6789`). Edit that
+   file if your backend runs elsewhere. (`next.config.js` exposes it via
+   `publicRuntimeConfig` — there is no `backendUrl` variable to edit.)
+
+3. Start the dev server:
+
+   ```bash
+   yarn dev
+   ```
+
+   On Node 17+ this fails with an OpenSSL error (`ERR_OSSL_EVP_UNSUPPORTED`) because
+   Next.js 10 / webpack 4 use a legacy algorithm. Use the legacy-OpenSSL script
+   instead:
+
+   ```bash
+   yarn devNextGen
+   ```
+
+   Open [http://localhost:3333](http://localhost:3333) in your browser.
+
+## Run everything with Docker (prebuilt images)
+
+`tests/docker-compose.yml` starts Virtuoso, the backend, and the frontend from
+published images (not your local code) — handy for a quick instance, not for
+development:
+
+```bash
+cd tests && docker compose up
 ```
-npm run lint
-```
-If you'd like to format all code and fix minor styling errors (recommened before pushing anything
-to the directory), run the command:
-```
-npm run lint.fix
+
+## Developer Notes
+
+Each component/page in SynBioHub should have a header which dictates its purpose.
+
+The frontend uses Redux for global application state and to simplify passing deeply
+nested props; see the `frontend/redux` directory.
+
+The frontend uses ESLint configured for React/Next.js. From the `frontend` directory:
+
+```bash
+npm run lint        # check for problems
+npm run lint.fix    # auto-fix styling errors (recommended before pushing)
 ```
 
 ### Next.js Resources
 
-To learn more about Next.js, take a look at the following resources:
-
 - [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
 - [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-
-## Backend
-### Enviroment Setup
-[IntelliJ IDEA](https://www.jetbrains.com/idea/download/) is highly recommended for backend development. The community edition is free to download.
-Make sure that a JDK is available on your machine. Java version 11 or greater is recommended. If you do not have a JDK, go [here](https://www.azul.com/downloads/?package=jdk#download-openjdk) and download one for your system. Java 17 LTS is recommended.
-
-## Project Setup
-Once you have finished installing the developer tools, clone the repository and open it as a project in IntelliJ. To setup your JDK, go to File->Project Structure->Project->ProjectSDK and click on your downloaded Java JDK.
-
-## Running
-You can run the application by right clicking the `Synbiohub3Application` class and clicking run. On later runs, simply clikc the run or debut icons at the top right of your screen.
-
-## Troubleshooting
-If IntelliJ is warning about packages not being found, right click on the `pom.xml` file and click Maven->Reload Project. This should download all required dependencies to run the application.

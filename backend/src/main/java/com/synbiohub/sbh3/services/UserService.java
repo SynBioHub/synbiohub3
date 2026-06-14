@@ -366,8 +366,8 @@ public User updateUserProfile(Map<String, String> allParams) throws Exception {
 
         try {
             if (file.createNewFile()) {
-                allParams.put("sparqlEndpoint", "http://virtuoso3:8890/sparql");
-                allParams.put("graphStoreEndpoint", "http://virtuoso3:8890/sparql-graph-crud-auth/");
+                allParams.put("sparqlEndpoint", "http://localhost:8890/sparql");
+                allParams.put("graphStoreEndpoint", "http://localhost:8890/sparql-graph-crud-auth/");
                 allParams.put("firstLaunch", false);
                 allParams.put("version", 1);
                 Map<String, String> wor = new HashMap<>();

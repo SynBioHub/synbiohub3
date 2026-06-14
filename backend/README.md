@@ -41,14 +41,27 @@ Open ``backend`` as a project in IntelliJ.
 To setup your JDK, go to ``File``->``Project Structure``->``Project``->``ProjectSDK``
 and click on your downloaded Java JDK.
 
-If you're not using IntelliJ:
-To build a JAR file using maven, navigate to the ``backend`` directory and run:
+If you're not using IntelliJ, use the bundled Maven wrapper (`./mvnw`) — a
+separate Maven install is not required. From the ``backend`` directory:
 
-``mvn package``
+Run directly (recommended for development):
 
-and run the JAR file with
+``./mvnw spring-boot:run``
 
-``java -jar target/{name of JAR}``
+Or build a JAR and run it:
+
+``./mvnw package``
+
+``java -jar target/sbh3-0.0.1-SNAPSHOT-exec.jar``
+
+The backend serves on **http://localhost:6789** and uses an embedded H2 database
+by default, so no external database is needed. (The `local` Spring profile in
+`application-local.yml` switches to PostgreSQL on `:5432`; activate it with
+`./mvnw spring-boot:run -Dspring-boot.run.profiles=local` only if you want that.)
+
+**Important:** the backend reads `src/main/resources/config.json` relative to its
+working directory, so it must be run from the ``backend`` directory (IntelliJ users
+already set this in the working-directory step above).
 
 #### _Running_
 
@@ -64,6 +77,21 @@ The main class is the ``Synbiohub3Application`` class.
 
 Note: If packages or dependencies aren't found, click on ``Maven`` in the top right corner
 and click ``Reload all Maven projects``.
+
+#### _Connecting to Virtuoso (local development)_
+
+The backend needs a Virtuoso triplestore for SPARQL queries (set up below). The
+bundled `src/main/resources/config.json` points at `localhost:8890`, so a Virtuoso
+running on the host needs no extra configuration. If your Virtuoso runs elsewhere,
+override the endpoints by creating `backend/data/config.local.json` (this path is
+gitignored and takes precedence over `config.json` on a per-key basis):
+
+```json
+{
+  "sparqlEndpoint": "http://your-host:8890/sparql",
+  "graphStoreEndpoint": "http://your-host:8890/sparql-graph-crud-auth/"
+}
+```
 
 ## **Installing the Backend from Docker**
 
