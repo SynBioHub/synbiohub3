@@ -59,18 +59,21 @@ work with Spring Boot 3.0.1) and **Docker** (for Virtuoso).
      tenforce/virtuoso:virtuoso7.2.5
    ```
 
-2. No extra configuration is needed — the bundled
-   `backend/src/main/resources/config.json` already points at `localhost:8890`,
-   matching the Virtuoso container above. If your Virtuoso runs elsewhere, override
-   the endpoints by creating `backend/data/config.local.json` (gitignored, takes
-   precedence per-key):
+2. Point the backend at that Virtuoso. The bundled
+   `backend/src/main/resources/config.json` defaults to the `virtuoso3` Docker host
+   (used when the backend itself runs as a container). Running on the host, reach the
+   container above at `localhost` by exporting two environment variables — they take
+   precedence over `config.json` without editing it:
 
-   ```json
-   {
-     "sparqlEndpoint": "http://your-host:8890/sparql",
-     "graphStoreEndpoint": "http://your-host:8890/sparql-graph-crud-auth/"
-   }
+   ```bash
+   export SBH_SPARQL_ENDPOINT="http://localhost:8890/sparql"
+   export SBH_GRAPH_STORE_ENDPOINT="http://localhost:8890/sparql-graph-crud-auth/"
    ```
+
+   (`npm run dev` already sets these for you — see above. To point at a Virtuoso
+   running elsewhere, change the host in the variables, or create
+   `backend/data/config.local.json`, which is gitignored and overrides `config.json`
+   per-key but is itself overridden by the environment variables above.)
 
 3. Run the backend from the `backend/` directory (config is read relative to the
    working directory). This uses the bundled Maven wrapper and the embedded H2

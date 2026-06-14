@@ -81,10 +81,33 @@ and click ``Reload all Maven projects``.
 #### _Connecting to Virtuoso (local development)_
 
 The backend needs a Virtuoso triplestore for SPARQL queries (set up below). The
-bundled `src/main/resources/config.json` points at `localhost:8890`, so a Virtuoso
-running on the host needs no extra configuration. If your Virtuoso runs elsewhere,
-override the endpoints by creating `backend/data/config.local.json` (this path is
-gitignored and takes precedence over `config.json` on a per-key basis):
+bundled `src/main/resources/config.json` defaults to the `virtuoso3` Docker host,
+because the backend is normally run as a container alongside Virtuoso on the same
+Docker network. When you run the backend directly via `java`/`./mvnw` on the host,
+Virtuoso is reached at `localhost` instead. To point the backend there at runtime
+set these environment variables before running the backend:
+
+```sh
+export SBH_SPARQL_ENDPOINT="http://localhost:8890/sparql"
+export SBH_GRAPH_STORE_ENDPOINT="http://localhost:8890/sparql-graph-crud-auth/"
+./mvnw spring-boot:run
+```
+
+These take precedence over both `config.json` and `config.local.json`, so the
+committed Docker defaults stay intact. (In IntelliJ, add them under
+`Edit Configuration` → `Environment variables`.)
+
+> **Any** key in `config.json` can be overridden this way: prefix the key with
+> `SBH_` in upper snake case (e.g. `sparqlEndpoint` → `SBH_SPARQL_ENDPOINT`,
+> `useSBOLExplorer` → `SBH_USE_SBOL_EXPLORER`, `instanceUrl` → `SBH_INSTANCE_URL`).
+> Values are parsed as JSON, so types are preserved — `SBH_USE_SBOL_EXPLORER=true`
+> is a boolean, `SBH_FETCH_LIMIT=1000` a number — while plain strings like a URL are
+> used as-is. This is the recommended way to supply secrets (`SBH_PASSWORD`,
+> `SBH_SESSION_SECRET`, …) and per-environment settings without editing committed files.
+
+Alternatively — or to override other settings — create
+`backend/data/config.local.json` (gitignored; takes precedence over `config.json`
+on a per-key basis, but is itself overridden by the environment variables above):
 
 ```json
 {
