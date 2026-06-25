@@ -100,13 +100,13 @@ export default function Members(properties) {
     parameters.collection = collectionPart;
   }
 
-  const searchQuery = typeFilter !== 'Show Only Root Objects';
+  const usesAllObjectsQuery =
+    typeFilter === 'Show All Objects' ||
+    typeFilter.startsWith('http://www.biopax.org/release/biopax-level3.owl#') ||
+    typeFilter.startsWith('http://identifiers.org/so/');
 
-  let query = getCollectionMembers;
-
-  if (typeFilter === 'Show All Objects') {
-    query = getCollectionMembersSearch;
-  }
+  const query = usesAllObjectsQuery ? getCollectionMembersSearch : getCollectionMembers;
+  const countQuery = usesAllObjectsQuery ? CountMembersTotal : CountMembers;
 
   const { members, mutate } = token
     ? useMembers(query, parameters, dispatch, token)
@@ -127,13 +127,13 @@ export default function Members(properties) {
 
   const { count: currentMemberCount } = isOwner
     ? useCount(
-      searchQuery ? CountMembersTotal : CountMembers,
+      countQuery,
       parameters,
       dispatch,
       token ? token : undefined
     )
     : useCount(
-      searchQuery ? CountMembersTotal : CountMembers,
+      countQuery,
       parameters,
       dispatch,
       token ? token : undefined

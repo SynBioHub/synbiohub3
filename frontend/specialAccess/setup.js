@@ -20,7 +20,7 @@ export default function Setup({ setInSetupMode }) {
   const [instanceName, setInstanceName] = useState('');
   const [color, setColor] = useState('#D25627');
   const [frontPageText, setFrontPageText] = useState(
-    `[SynBioHub](/About) is a *design repository* for people designing biological constructs. It enables DNA and protein designs to be uploaded, then provides a shareable link to allow others to view them. SynBioHub also facilitates searching for information about existing useful parts and designs by combining data from a variety of sources.`
+    `[SynBioHub](https://wiki2.synbiohub.org/) is a *design repository* for people designing biological constructs. It enables DNA and protein designs to be uploaded, then provides a shareable link to allow others to view them. SynBioHub also facilitates searching for information about existing useful parts and designs by combining data from a variety of sources.`
   );
   const [logo, setLogo] = useState('');
   const [allowPublicSignup, setAllowPublicSignup] = useState(true);
@@ -373,9 +373,35 @@ export default function Setup({ setInSetupMode }) {
                   headers
                 }
               );
+              localStorage.removeItem('theme');
+              localStorage.removeItem('registries');
+              localStorage.removeItem('sbh_logo');
+              localStorage.removeItem('reloadCount');
+              localStorage.removeItem('persist:root');
+              dispatch(logoutUser());
+
+              const themeResponse = await axios.get(
+                `${publicRuntimeConfig.backend}/admin/theme`,
+                { headers }
+              );
+              localStorage.setItem('theme', JSON.stringify(themeResponse.data));
+
+              const registriesResponse = await axios.get(
+                `${publicRuntimeConfig.backend}/admin/registries`,
+                {
+                  headers: {
+                    'Content-Type': 'application/json',
+                    Accept: 'application/json'
+                  }
+                }
+              );
+              const registriesData = Array.isArray(registriesResponse.data)
+                ? registriesResponse.data
+                : registriesResponse.data.registries || registriesResponse.data || [];
+              localStorage.setItem('registries', JSON.stringify(registriesData));
+
               setErrors([]);
               setInSetupMode(false);
-              dispatch(logoutUser());
             } catch (error) {
               if (error.response.status === 400) {
                 const errorMessages = error.response.data.details.map(
