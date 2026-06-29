@@ -52,7 +52,9 @@ class PrepareSubmissionPayloadServiceTest {
     void build_setsSbolFilenameForceSubmitAndDerivedUris() throws Exception {
         JsonNode j = service.buildPrepareSubmissionJson(sample(), null, "Bearer test-token");
         assertEquals("/tmp/upload.sbol", j.path("sbolFilename").asText());
-        assertTrue(j.path("forceSubmit").asBoolean());
+        assertTrue(j.path("submit").asBoolean());
+        assertEquals("mylib_collection", j.path("newRootCollectionDisplayId").asText());
+        assertEquals("1.0", j.path("newRootCollectionVersion").asText());
         assertEquals("Bearer test-token", j.path("user").asText());
         assertEquals("0", j.path("overwrite_merge").asText());
         assertTrue(j.path("collectionChoices").isArray());
@@ -62,7 +64,6 @@ class PrepareSubmissionPayloadServiceTest {
         assertEquals(
                 "https://synbiohub.org/user/alice%40lab/mylib/mylib_collection/1.0",
                 j.path("rootCollectionIdentity").asText());
-        assertEquals(j.path("collectionUri").asText(), j.path("rootCollectionIdentity").asText());
         assertEquals("https://synbiohub.org/user/alice@lab", j.path("ownedByURI").asText());
         assertEquals("Alice L", j.path("creatorName").asText());
         assertTrue(j.path("uriPrefix").asText().contains("/user/alice%40lab/mylib/"));
@@ -72,10 +73,10 @@ class PrepareSubmissionPayloadServiceTest {
     void build_callerOverridesWin() throws Exception {
         ObjectNode over = MAPPER.createObjectNode();
         over.put("overwrite_merge", "3");
-        over.put("forceSubmit", false);
+        over.put("submit", false);
         JsonNode j = service.buildPrepareSubmissionJson(sample(), over, null);
         assertEquals("3", j.path("overwrite_merge").asText());
-        assertTrue(!j.path("forceSubmit").asBoolean());
+        assertTrue(!j.path("submit").asBoolean());
     }
 
     @Test

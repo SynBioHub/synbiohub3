@@ -75,6 +75,19 @@ class SubmitParseServiceTest {
     }
 
     @Test
+    void multipart_missingOverwriteMerge_defaultsToZero() throws Exception {
+        MockMultipartHttpServletRequest req = new MockMultipartHttpServletRequest();
+        req.addParameter("id", "a");
+        req.addParameter("name", "n");
+        req.addParameter("description", "d");
+        req.addParameter("version", "1");
+        req.addParameter("citations", "");
+
+        ParsedSubmitPayload p = service.parseMultipart(req, user());
+        assertEquals("0", p.getOverwriteMerge());
+    }
+
+    @Test
     void multipart_invalidOverwriteMerge() {
         MockMultipartHttpServletRequest req = new MockMultipartHttpServletRequest();
         req.addParameter("id", "a");
@@ -99,6 +112,19 @@ class SubmitParseServiceTest {
 
         ParsedSubmitPayload p = service.parseMultipart(req, user());
         assertEquals("default", p.getPlugin());
+    }
+
+    @Test
+    void multipart_legacyRootCollectionsAndOverwriteMerge() throws Exception {
+        MockMultipartHttpServletRequest req = new MockMultipartHttpServletRequest();
+        req.addParameter("rootCollections", "https://x/user/u/c/c_collection/1");
+        req.addParameter("overwrite_merge", "2");
+        req.addFile(new MockMultipartFile("file", "design.xml", "application/xml", "<xml/>".getBytes()));
+
+        ParsedSubmitPayload p = service.parseMultipart(req, user());
+
+        assertEquals("https://x/user/u/c/c_collection/1", p.getCollectionUri());
+        assertEquals("2", p.getOverwriteMerge());
     }
 
     @Test

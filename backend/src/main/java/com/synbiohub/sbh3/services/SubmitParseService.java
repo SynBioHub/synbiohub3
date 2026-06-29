@@ -32,14 +32,9 @@ public class SubmitParseService {
         String description = first(paramMap, "description");
         String version = first(paramMap, "version");
         String citations = first(paramMap, "citations");
-        String overwriteMerge = normalizeOverwriteMerge(first(paramMap, "overwriteMerge"));
+        String overwriteMerge = resolveOverwriteMerge(paramMap);
         String plugin = resolvePlugin(paramMap);
-        String collectionUri = first(paramMap, "collectionUri");
-        if (collectionUri.isEmpty()) {
-            collectionUri = first(paramMap, "collectionURI");
-        }
-
-        validateOverwriteMerge(overwriteMerge);
+        String collectionUri = resolveCollectionUri(paramMap);
 
         String uploadedPath = null;
         MultipartFile file = resolveFilePart(request);
@@ -68,14 +63,9 @@ public class SubmitParseService {
         String description = first(paramMap, "description");
         String version = first(paramMap, "version");
         String citations = first(paramMap, "citations");
-        String overwriteMerge = normalizeOverwriteMerge(first(paramMap, "overwriteMerge"));
+        String overwriteMerge = resolveOverwriteMerge(paramMap);
         String plugin = resolvePlugin(paramMap);
-        String collectionUri = first(paramMap, "collectionUri");
-        if (collectionUri.isEmpty()) {
-            collectionUri = first(paramMap, "collectionURI");
-        }
-
-        validateOverwriteMerge(overwriteMerge);
+        String collectionUri = resolveCollectionUri(paramMap);
 
         return ParsedSubmitPayload.builder()
                 .id(id)
@@ -137,6 +127,25 @@ public class SubmitParseService {
         return "default";
     }
 
+    private static String resolveCollectionUri(Map<String, String[]> paramMap) {
+        String collectionUri = first(paramMap, "collectionUri");
+        if (collectionUri.isEmpty()) {
+            collectionUri = first(paramMap, "collectionURI");
+        }
+        if (collectionUri.isEmpty()) {
+            collectionUri = first(paramMap, "rootCollections");
+        }
+        return collectionUri;
+    }
+
+    private static String resolveOverwriteMerge(Map<String, String[]> paramMap) {
+        String overwriteMerge = first(paramMap, "overwriteMerge");
+        if (overwriteMerge.isEmpty()) {
+            overwriteMerge = first(paramMap, "overwrite_merge");
+        }
+        return validateOverwriteMerge(normalizeOverwriteMerge(overwriteMerge));
+    }
+
     private static String normalizeOverwriteMerge(String raw) {
         if (raw == null || raw.isEmpty()) {
             return "";
@@ -144,13 +153,14 @@ public class SubmitParseService {
         return raw.trim();
     }
 
-    private static void validateOverwriteMerge(String overwriteMerge) {
+    private static String validateOverwriteMerge(String overwriteMerge) {
         if (overwriteMerge.isEmpty()) {
-            throw new IllegalArgumentException("overwriteMerge is required");
+            overwriteMerge = "0";
         }
         if (!ALLOWED_OVERWRITE_MERGE.contains(overwriteMerge)) {
             throw new IllegalArgumentException(
                     "overwriteMerge must be one of 0, 1, 2, 3; got: " + overwriteMerge);
         }
+        return overwriteMerge;
     }
 }

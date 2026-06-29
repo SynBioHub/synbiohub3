@@ -5,19 +5,24 @@ import com.synbiohub.sbh3.dto.SubmissionDTO;
 import com.synbiohub.sbh3.dto.submit.ParsedSubmitPayload;
 import com.synbiohub.sbh3.dto.submit.SanitizedSubmitPayload;
 import com.synbiohub.sbh3.dto.submit.SubmitRootCollectionMetadata;
+import com.synbiohub.sbh3.dto.submit.PrepareSubmissionFailedException;
+import com.synbiohub.sbh3.dto.submit.PrepareSubmissionResult;
 import com.synbiohub.sbh3.dto.submit.SubmitConflictException;
-import com.synbiohub.sbh3.dto.submit.SubmitOkPayload;
 import com.synbiohub.sbh3.dto.submit.SubmitUnauthorizedException;
 import com.synbiohub.sbh3.security.model.User;
 import com.synbiohub.sbh3.services.PrepareSubmissionPayloadService;
+import com.synbiohub.sbh3.services.PrepareSubmissionService;
+import com.synbiohub.sbh3.services.SubmitCollectionEnrichmentService;
 import com.synbiohub.sbh3.services.SubmitCollectionLookupService;
 import com.synbiohub.sbh3.services.SubmitParseService;
-import com.synbiohub.sbh3.services.SubmitPostMetadataService;
 import com.synbiohub.sbh3.services.SubmitSanitizationService;
+import com.synbiohub.sbh3.services.SubmitPersistService;
+import com.synbiohub.sbh3.services.SubmitPostMetadataService;
 import com.synbiohub.sbh3.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.sbolstandard.core2.SBOLDocument;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,10 +39,13 @@ import java.util.Optional;
 public class SubmitController {
 
     private final SubmitParseService submitParseService;
+    private final SubmitCollectionEnrichmentService submitCollectionEnrichmentService;
     private final SubmitSanitizationService submitSanitizationService;
     private final SubmitCollectionLookupService submitCollectionLookupService;
     private final SubmitPostMetadataService submitPostMetadataService;
     private final PrepareSubmissionPayloadService prepareSubmissionPayloadService;
+    private final PrepareSubmissionService prepareSubmissionService;
+    private final SubmitPersistService submitPersistService;
     private final UserService userService;
 
     /** Parse, sanitize, SPARQL collection check, then legacy merge or overwrite rules. */
@@ -62,18 +70,37 @@ public class SubmitController {
     private ResponseEntity<?> handleSubmit(HttpServletRequest request, ParsedPayloadSupplier supplier) {
         try {
             ParsedSubmitPayload parsed = supplier.get();
+            parsed = submitCollectionEnrichmentService.enrichFromCollectionUri(parsed);
             SanitizedSubmitPayload sanitized = submitSanitizationService.sanitizeSubmission(parsed);
             Optional<SubmitRootCollectionMetadata> existing =
                     submitCollectionLookupService.getRootCollectionMetadata(sanitized);
             SanitizedSubmitPayload response =
                     submitPostMetadataService.applyLegacyMetadataRules(sanitized, existing);
-            JsonNode prepareSubmission = prepareSubmissionPayloadService.buildPrepareSubmissionJson(
+            JsonNode prepareJson = prepareSubmissionPayloadService.buildPrepareSubmissionJson(
                     response,
                     null,
                     request.getHeader("X-authorization"));
-            return ResponseEntity.ok(new SubmitOkPayload(response, prepareSubmission));
+            PrepareSubmissionResult prepareResult = prepareSubmissionService.run(prepareJson);
+            submitPersistService.persistAfterPrepare(response, prepareResult);
+
+            if (acceptsHtml(request)) {
+                HttpHeaders headers = new HttpHeaders();
+                headers.setLocation(java.net.URI.create(collectionRedirectPath(response)));
+                return new ResponseEntity<>(headers, HttpStatus.FOUND);
+            }
+            return ResponseEntity.ok()
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .body("Successfully uploaded");
         } catch (SubmitUnauthorizedException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("errors", List.of(e.getMessage())));
+        } catch (PrepareSubmissionFailedException e) {
+            if (prefersPlainTextErrors(request)) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .contentType(MediaType.TEXT_PLAIN)
+                        .body(e.getMessage());
+            }
+            return ResponseEntity.badRequest()
                     .body(Map.of("errors", List.of(e.getMessage())));
         } catch (SubmitConflictException e) {
             if (prefersPlainTextErrors(request)) {
@@ -86,14 +113,17 @@ public class SubmitController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest()
                     .body(Map.of("errors", List.of(e.getMessage())));
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("errors", List.of(
                             e.getMessage() != null ? e.getMessage() : "Could not store upload")));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("errors", List.of(
+                            e.getMessage() != null ? e.getMessage() : "Prepare submission failed")));
         }
     }
 
-    /** Legacy {@code req.forceNoHTML || !req.accepts('text/html')}: plain 400 body vs JSON {@code errors}. */
     private static boolean prefersPlainTextErrors(HttpServletRequest request) {
         if (Boolean.parseBoolean(request.getHeader("X-Force-No-HTML"))) {
             return true;
@@ -107,6 +137,18 @@ public class SubmitController {
             return true;
         }
         return !accept.contains("text/html");
+    }
+
+    private static boolean acceptsHtml(HttpServletRequest request) {
+        String accept = request.getHeader("Accept");
+        return accept != null && accept.contains("text/html");
+    }
+
+    private static String collectionRedirectPath(SanitizedSubmitPayload submission) {
+        String encUser = SubmitSanitizationService.encodeURIComponent(
+                submission.getCreatedBy().getUsername());
+        return "/user/" + encUser + "/" + submission.getId() + "/"
+                + submission.getCollectionId() + "/" + submission.getVersion();
     }
 
     @FunctionalInterface

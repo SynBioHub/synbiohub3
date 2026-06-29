@@ -38,11 +38,15 @@ public class PrepareSubmissionPayloadService {
         String version = sanitized.getVersion() != null ? sanitized.getVersion() : "";
 
         base.put("sbolFilename", sanitized.getUploadedFilePath() != null ? sanitized.getUploadedFilePath() : "");
-        base.put("forceSubmit", true);
+        base.put("submit", true);
+        base.put("copy", false);
         base.put("databasePrefix", dbPrefix);
-        base.put("requireComplete", configBoolean("requireComplete", true));
-        base.put("requireCompliant", configBoolean("requireCompliant", true));
+        base.put("requireComplete", configBoolean("requireComplete", false));
+        base.put("requireCompliant", configBoolean("requireCompliant", false));
         base.put("enforceBestPractices", resolveEnforceBestPractices());
+        base.put("typesInURI", false);
+        base.put("keepGoing", true);
+        base.put("topLevelURI", "");
         base.set("webOfRegistries", copyWebOfRegistries());
         base.put("shareLinkSalt", configText("shareLinkSalt", ""));
         base.put("useSBOLExplorer", configBoolean("useSBOLExplorer", false));
@@ -50,6 +54,8 @@ public class PrepareSubmissionPayloadService {
 
         base.put("uriPrefix", dbPrefix + "user/" + encUser + "/" + id + "/");
         base.put("rootCollectionIdentity", dbPrefix + "user/" + encUser + "/" + id + "/" + collectionId + "/" + version);
+        base.put("newRootCollectionDisplayId", collectionId);
+        base.put("newRootCollectionVersion", version);
         base.put("ownedByURI", dbPrefix + "user/" + username);
         String creator = sanitized.getCreatedBy() != null && sanitized.getCreatedBy().getFullName() != null
                 ? sanitized.getCreatedBy().getFullName()
@@ -71,12 +77,9 @@ public class PrepareSubmissionPayloadService {
         base.set("collectionChoices", MAPPER.createArrayNode());
         base.put("user", registryUserToken(authorizationHeader));
 
-        base.put("id", id);
         base.put("name", sanitized.getName() != null ? sanitized.getName() : "");
         base.put("description", sanitized.getDescription() != null ? sanitized.getDescription() : "");
         base.put("version", version);
-        base.put("collectionUri", sanitized.getCollectionUri() != null ? sanitized.getCollectionUri() : "");
-        base.put("collectionId", collectionId);
 
         if (callerOverrides != null && callerOverrides.isObject()) {
             deepMerge(base, (ObjectNode) callerOverrides);

@@ -752,7 +752,7 @@ export const getCanSubmitTo = () => async (dispatch, getState) => {
     dispatch({ type: types.GETTINGCANSUBMITTO, payload: true });
     const token = getState().user.token;
     var headers = {
-      Accept: 'text/plain; charset=UTF-8',
+      Accept: 'application/json; charset=UTF-8',
       'X-authorization': token
     };
 

@@ -3,6 +3,7 @@ package com.synbiohub.sbh3.services;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.synbiohub.sbh3.dto.submit.SanitizedSubmitPayload;
+import com.synbiohub.sbh3.dto.submit.SubmitCreatedBy;
 import com.synbiohub.sbh3.dto.submit.SubmitRootCollectionMetadata;
 import com.synbiohub.sbh3.sparql.SPARQLQuery;
 import lombok.RequiredArgsConstructor;
@@ -34,12 +35,24 @@ public class SubmitCollectionLookupService {
         if (sanitized == null || sanitized.getCollectionUri() == null || sanitized.getCollectionUri().isBlank()) {
             return Optional.empty();
         }
-        String namedGraph = searchService.resolveNamedGraphForSubmit(sanitized.getCreatedBy());
+        return getRootCollectionMetadataForUri(sanitized.getCollectionUri(), sanitized.getCreatedBy());
+    }
+
+    /**
+     * @return metadata for the collection at {@code collectionUri} when present; empty when absent or unknown
+     */
+    public Optional<SubmitRootCollectionMetadata> getRootCollectionMetadataForUri(
+            String collectionUri,
+            SubmitCreatedBy createdBy) throws IOException {
+        if (collectionUri == null || collectionUri.isBlank()) {
+            return Optional.empty();
+        }
+        String namedGraph = searchService.resolveNamedGraphForSubmit(createdBy);
         String fromClause = namedGraph.isBlank() ? "" : "FROM <" + namedGraph + ">";
         SPARQLQuery q = new SPARQLQuery(ROOT_COLLECTION_METADATA_FOR_URI);
         String sparql = q.loadTemplate(Map.of(
                 "from", fromClause,
-                "collectionUri", sanitized.getCollectionUri()));
+                "collectionUri", collectionUri.trim()));
         String raw = searchService.SPARQLQuery(sparql, namedGraph.isBlank() ? null : namedGraph);
         return parseFirstBinding(raw);
     }
