@@ -64,7 +64,7 @@ public class SecurityConfig {
                         "/sparql", "/**/count", "/count",
                         "/logo",
                         "/admin/theme", "/admin/registries", "/admin/logo", "/admin/plugins",
-                        "/browse", "/rootCollections", "/root-collections", "/callPlugin"
+                        "/browse", "/rootCollections", "/root-collections", "/callPlugin", "/expose/**"
                 ).permitAll()
                 .anyRequest().authenticated()
                 .and()

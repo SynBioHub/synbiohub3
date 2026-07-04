@@ -1,155 +1,54 @@
 package com.synbiohub.sbh3.services;
 
-import com.synbiohub.sbh3.dto.SubmissionDTO;
-import com.synbiohub.sbh3.requests.SubmitRequest;
-import com.synbiohub.sbh3.utils.ObjectMapperUtils;
-import lombok.RequiredArgsConstructor;
-import org.sbolstandard.core2.*;
-import org.springframework.stereotype.Service;
-import org.apache.commons.io.FilenameUtils;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.synbiohub.sbh3.submit.SubmitPayload;
+import org.sbolstandard.core2.SBOLValidationException;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.util.*;
-import java.util.Collection;
+import javax.xml.namespace.QName;
+import java.io.IOException;
+import java.util.Set;
+import java.util.regex.Pattern;
 
-@Service
-@RequiredArgsConstructor
+public interface SubmitService {
+    static final Pattern COLLECTION_ID_PATTERN = Pattern.compile("^[a-zA-Z0-9_]+$");
+    static final ObjectMapper JSON = new ObjectMapper();
 
-public class SubmitService {
+    /**
+     * Office uploads are passed through to SBOL validation (SynBioHub Excel plugin
+     * path).
+     */
+    static final Set<String> OFFICE_EXTENSIONS = Set.of(
+            "xlsx", "xls", "docx", "doc", "pptx", "ppt");
+    static final QName DC_CREATOR = new QName("http://purl.org/dc/elements/1.1/", "creator", "dc");
+    static final QName DCTERMS_CREATED = new QName("http://purl.org/dc/terms/", "created", "dcterms");
+    static final QName OBO_PUBMED = new QName("http://purl.obolibrary.org/obo/", "OBI_0001617", "obo");
+    // SynBioHub-specific annotation QNames used when annotating submitted objects.
+    static final QName SBH_OWNED_BY = new QName("http://wiki.synbiohub.org/wiki/Terms/synbiohub#", "ownedBy", "sbh");
+    static final QName SBH_TOP_LEVEL = new QName("http://wiki.synbiohub.org/wiki/Terms/synbiohub#", "topLevel", "sbh");
+    static final QName SBH_MUTABLE_DESCRIPTION = new QName("http://wiki.synbiohub.org/wiki/Terms/synbiohub#",
+            "mutableDescription", "sbh");
+    static final QName SBH_MUTABLE_NOTES = new QName("http://wiki.synbiohub.org/wiki/Terms/synbiohub#", "mutableNotes",
+            "sbh");
+    static final QName SBH_MUTABLE_PROVENANCE = new QName("http://wiki.synbiohub.org/wiki/Terms/synbiohub#",
+            "mutableProvenance", "sbh");
+    static final QName SBH_IS_MEMBER_OF = new QName("http://wiki.synbiohub.org/wiki/Terms/synbiohub#", "isMemberOf",
+            "sbh");
 
-    public SubmissionDTO createSubmissionDTO(SubmitRequest submitRequest) throws SBOLValidationException {
-        if (Integer.parseInt(submitRequest.getOverwriteMerge()) <= 1) {
-            return createSubmissionWithNewCollection(submitRequest);
-        } else {
-            return createSubmissionWithoutNewCollection(submitRequest);
-        }
-    }
+    // SPARQL templates used during prepare (overwrite) and upload (attachments).
+    static final String REMOVE_COLLECTION_SPARQL = "src/main/java/com/synbiohub/sbh3/sparql/removeCollection.sparql";
+    static final String REMOVE_SPARQL = "src/main/java/com/synbiohub/sbh3/sparql/remove.sparql";
+    static final String GET_ATTACHMENT_SOURCE_SPARQL = "src/main/java/com/synbiohub/sbh3/sparql/GetAttachmentSourceFromTopLevel.sparql";
+    static final String ATTACH_UPLOAD_SPARQL = "src/main/java/com/synbiohub/sbh3/sparql/AttachUpload.sparql";
+    static final String UPDATE_ATTACHMENT_SPARQL = "src/main/java/com/synbiohub/sbh3/sparql/UpdateAttachment.sparql";
+    static final String ATTACHMENT_UPDATE_SPARQL = "src/main/java/com/synbiohub/sbh3/sparql/AttachmentUpdate.sparql";
+    static final String UNKNOWN_ATTACHMENT_TYPE = "http://wiki.synbiohub.org/wiki/Terms/synbiohub#unknownAttachment";
+    /**
+     * Rewrites {@code img src="/user/.../"} paths in mutable HTML to the public
+     * collection path.
+     */
+    static final Pattern MUTABLE_IMG_USER_PATH = Pattern.compile("img src=\\\"/user/[^/]*/[^/]*/");
 
-    public SubmissionDTO createSubmissionWithNewCollection(SubmitRequest submitRequest) throws SBOLValidationException {
-        String id = parseID(submitRequest);
-        String name = parseName(submitRequest);
-        String description = parseDescription(submitRequest);
-        int version = parseVersion(submitRequest);
-        List<Integer> citations = parseCitations(submitRequest);
-        Collection<File> allFiles = new ArrayList<>();
-        Collection<File> attachmentFiles = new ArrayList<>();
-        String fileType = FilenameUtils.getExtension(submitRequest.getFiles().get(0).getAbsolutePath()); // currently, only one file can be submitted at a time, may change in the future
-        if (fileType.equalsIgnoreCase(".xlsx")) {
-            //send to excel2sbol plugin
-        }
-        if ((fileType.equalsIgnoreCase(".omex")) || fileType.equals(".zip")) {
-            // parse out files and keep sbol ones but send other ones to become attachment files
-        }
-
-        allFiles.forEach(file -> {
-            if (checkForSBOL(file)) {
-                verifyFile(file);
-            } else {
-                attachmentFiles.add(file);
-                allFiles.remove(file);
-            }
-        });
-        SBOLDocument doc = new SBOLDocument();
-        String URIPrefix = createURIPrefix(""); //TODO: get URI prefix from submitRequest
-        doc.setDefaultURIprefix(URIPrefix);
-        org.sbolstandard.core2.Collection rootCollection = null;
-        try {
-            rootCollection = doc.createCollection(URIPrefix, id, String.valueOf(version)); //not sure what to do with rootCollection here
-        } catch (Exception e) {
-            System.out.println("This exact collection already exists.");
-            return null;
-        }
-        updateAnnotations(doc);
-        updateSBOLExplorer(doc);
-
-        if (submitRequest.getOverwriteMerge().equalsIgnoreCase("1")) {
-            //TODO get existing collection and members to delete for overwrite for removal later
-        }
-        SubmissionDTO submissionDTO = ObjectMapperUtils.createNewSubmission(name, description, id, version, citations, allFiles, Integer.parseInt(submitRequest.getOverwriteMerge()), new ArrayList<>(), attachmentFiles, doc);
-        uploadToVirtuoso(submissionDTO);
-        uploadAttachmentFiles(submissionDTO);
-
-        // TODO remove existing collection and members for overwrite
-
-        return submissionDTO; // this will change,
-    }
-
-    public SubmissionDTO createSubmissionWithoutNewCollection(SubmitRequest submitRequest) {
-        return null;
-    }
-
-    public SubmitRequest createSubmitRequest(Map<String, String> allParams) { //maps the request params to the fields listed above
-        return null;
-    }
-
-    private String parseID(SubmitRequest submitRequest) {
-        return submitRequest.getId();
-    }
-
-    private String parseName(SubmitRequest submitRequest) {
-        return submitRequest.getName();
-    }
-
-    private String parseDescription(SubmitRequest submitRequest) {
-        return submitRequest.getDescription();
-    }
-
-    private int parseVersion(SubmitRequest submitRequest) {
-        return Integer.parseInt(submitRequest.getVersion());
-    }
-
-    private List<Integer> parseCitations(SubmitRequest submitRequest) {
-        return handleCitations(submitRequest.getCitations());
-    }
-
-
-    public List<Integer> handleCitations(String citations) { //change the inputted string of citations into a list of citations
-        return null;
-    }
-
-
-    public void verifyFile(File file) {
-
-    }
-
-    public Boolean checkForSBOL(File file) {
-        // if is in sbol, then return true
-        // else
-            // if file is not in sbol, check to see if it can be converted
-                // it can be converted, then go to convertToSBOL
-                // else, return false
-        return true;
-    }
-
-    public void convertToSBOL() {
-
-    }
-
-    public void SBOL2ToSBOL3() {
-        // to be implemented in the future
-    }
-
-    public String createURIPrefix(String str) {
-        return "";
-    }
-
-    public void updateAnnotations(SBOLDocument sbolDocument) {
-
-    }
-
-    public void updateSBOLExplorer(SBOLDocument sbolDocument) {
-
-    }
-
-    public void checkObject(SBOLDocument sbolDocument) { //check if the submission object already exists in the collection, only for OM = 2,3
-
-    }
-
-    public void uploadToVirtuoso(SubmissionDTO submissionDTO) {
-
-    }
-
-    public void uploadAttachmentFiles(SubmissionDTO submissionDTO) {
-
-    }
+    public ResponseEntity<String> submit(SubmitPayload allParams, MultipartFile file) throws IOException, SBOLValidationException;
 }
