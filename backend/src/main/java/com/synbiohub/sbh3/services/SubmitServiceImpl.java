@@ -8,7 +8,6 @@ import com.synbiohub.sbh3.security.repo.AuthRepository;
 import com.synbiohub.sbh3.sparql.SPARQLQuery;
 import com.synbiohub.sbh3.submit.SubmitPayload;
 import com.synbiohub.sbh3.submit.SubmitPluginService;
-import com.synbiohub.sbh3.submit.SubmitRootCollectionMetadata;
 import com.synbiohub.sbh3.utils.ConfigUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -70,13 +69,15 @@ public class SubmitServiceImpl implements SubmitService {
     private final SubmitPluginService submitPluginService;
     private final CitationService citationService;
 
+    private final CollectionService collectionService;
+
     /**
      * Main submit entry point. Each step mutates {@code payload} in place.
      */
     @Override
     public ResponseEntity<String> submit(SubmitPayload allParams, MultipartFile file) throws IOException, SBOLValidationException {
         SubmitPayload payload = parse(allParams, file);
-        sanitize(payload);
+        collectionService.sanitize(payload);
         submitPluginService.applySubmitPlugin(payload); // optional transform of uploaded file
         readSbol(payload);
         prepare(payload);  // only runs for overwrite_merge == 1
@@ -103,187 +104,8 @@ public class SubmitServiceImpl implements SubmitService {
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         payload.setCreatedBy(auth.getName());
-        return payload;
-    }
-
-    // -------------------------------------------------------------------------
-    // sanitize — resolve collection URI, check existence, enforce overwrite_merge
-    // -------------------------------------------------------------------------
-
-    /**
-     * Two submission modes:
-     * <ul>
-     *   <li><b>New collection</b> — form {@code id} (+ optional {@code version}); {@code collectionUri} is computed.</li>
-     *   <li><b>Existing collection</b> — form {@code rootCollections} is the target identity URI; defaults to merge mode 2.</li>
-     * </ul>
-     * {@code overwrite_merge} modes (legacy submit form):
-     * 0 = new version, 1 = overwrite in place, 2 = merge, 3 = merge and replace remote duplicates.
-     */
-    private void sanitize(SubmitPayload payload) throws IOException {
-        boolean submittingToExisting = payload.getCollectionUri() != null && payload.getId() == null;
-        boolean creatingNew = payload.getId() != null;
-
-        if (!submittingToExisting && !creatingNew) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "Provide either rootCollections (existing collection) or id (new collection).");
-        }
-
-        if (submittingToExisting) {
-            if (payload.getOverwriteMerge() == null) {
-                payload.setOverwriteMerge("2");
-            }
-            if (payload.getUploadedFilePath() == null) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                        "file is required when submitting into an existing collection.");
-            }
-        } else {
-            resolveNewCollectionUri(payload);
-        }
-
         payload.setCitationPubmedIds(citationService.parseCitationPubmedIds(payload.getCitations()));
-
-        String graphUri = graphUriForCollection(payload.getCollectionUri(), payload);
-        boolean metadataExists = collectionExists(payload.getCollectionUri(), graphUri);
-        payload.setExistingCollection(metadataExists
-                ? loadExistingCollection(payload.getCollectionUri(), graphUri)
-                : null);
-
-        applyCollectionExistenceRules(payload, metadataExists, creatingNew);
-    }
-
-    /**
-     * Resolves {@link SubmitPayload#getCollectionUri()} for a new collection from {@code id} and {@code version}.
-     */
-    private void resolveNewCollectionUri(SubmitPayload payload) {
-        if (!COLLECTION_ID_PATTERN.matcher(payload.getId()).matches()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "id must contain only alphanumeric characters and underscores.");
-        }
-        if (payload.getVersion() == null) {
-            payload.setVersion("1");
-        }
-        payload.setCollectionUri(
-                uriPrefix(payload) + payload.collectionDisplayId() + "/" + payload.getVersion());
-    }
-
-    /**
-     * Legacy submit rules after collection metadata presence is known.
-     * <p>
-     * If metadata is missing, merge modes 2/3 are rejected. If metadata exists and mode is 0,
-     * the submission is rejected (id+version already taken). Modes 2/3 copy name/description
-     * from the store into the payload.
-     */
-    private void applyCollectionExistenceRules(SubmitPayload payload, boolean metadataExists,
-                                               boolean creatingNew) {
-        if (!metadataExists) {
-            if (payload.getOverwriteMerge() != null) {
-                int mode = parseOverwriteMerge(payload.getOverwriteMerge());
-                if (mode == 2 || mode == 3) {
-                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                            "Submission id and version do not exist");
-                }
-            }
-            payload.setOverwriteMerge("0");
-            if (creatingNew) {
-                requireNonBlank(payload.getName(), "name");
-                requireNonBlank(payload.getDescription(), "description");
-            }
-            return;
-        }
-
-        int mode = parseOverwriteMerge(
-                payload.getOverwriteMerge() != null ? payload.getOverwriteMerge() : "0");
-
-        if (mode == 2 || mode == 3) {
-            fillPayloadFromExistingCollection(payload);
-            return;
-        }
-        if (mode == 1) {
-            return;
-        }
-        throw new ResponseStatusException(HttpStatus.CONFLICT,
-                "Submission id and version already in use");
-    }
-
-    /** Copies stored collection metadata into the payload when merging (modes 2/3). */
-    private void fillPayloadFromExistingCollection(SubmitPayload payload) {
-        SubmitRootCollectionMetadata existing = payload.getExistingCollection();
-        if (existing == null) {
-            return;
-        }
-        if (existing.getName() != null) {
-            payload.setName(existing.getName());
-        }
-        if (existing.getDescription() != null) {
-            payload.setDescription(existing.getDescription());
-        }
-        if (existing.getVersion() != null) {
-            payload.setVersion(existing.getVersion());
-        }
-        if (existing.getDisplayId() != null) {
-            String displayId = existing.getDisplayId();
-            if (displayId.endsWith("_collection")) {
-                payload.setId(displayId.substring(0, displayId.length() - "_collection".length()));
-            }
-        }
-    }
-
-    private boolean collectionExists(String collectionUri, String graphUri) throws IOException {
-        String query = "ASK { <" + collectionUri + "> a <http://sbols.org/v2#Collection> . }";
-        return sparqlAsk(query, graphUri);
-    }
-
-    private SubmitRootCollectionMetadata loadExistingCollection(String collectionUri, String graphUri)
-            throws IOException {
-        String sparql = searchService.getTopLevelMetadataSPARQL(collectionUri);
-        String raw = searchService.SPARQLQuery(sparql, graphUri);
-        JsonNode bindings = JSON.readTree(raw).path("results").path("bindings");
-        if (!bindings.isArray() || bindings.isEmpty()) {
-            return SubmitRootCollectionMetadata.builder().build();
-        }
-        JsonNode row = bindings.get(0);
-        return SubmitRootCollectionMetadata.builder()
-                .name(textValue(row, "name"))
-                .description(textValue(row, "description"))
-                .displayId(textValue(row, "displayId"))
-                .version(textValue(row, "version"))
-                .build();
-    }
-
-    private boolean sparqlAsk(String query, String graphUri) throws IOException {
-        String raw = searchService.SPARQLQuery(query, graphUri);
-        return JSON.readTree(raw).path("boolean").asBoolean(false);
-    }
-
-    /**
-     * Public collections live in {@code defaultGraph}; private user collections use the
-     * submitter's named graph URI.
-     */
-    private String graphUriForCollection(String collectionUri, SubmitPayload payload) throws IOException {
-        String publicGraph = ConfigUtil.get("defaultGraph").asText();
-        if (collectionUri.startsWith(publicGraph) || collectionUri.contains("/public/")) {
-            return publicGraph;
-        }
-        return userService.getUserByUsername(payload.getCreatedBy()).getGraphUri();
-    }
-
-    private static String textValue(JsonNode binding, String key) {
-        JsonNode node = binding.path(key);
-        return node.isMissingNode() || node.isNull() ? null : node.path("value").asText(null);
-    }
-
-    private static int parseOverwriteMerge(String raw) {
-        try {
-            return Integer.parseInt(raw.trim());
-        } catch (NumberFormatException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid overwrite_merge: " + raw);
-        }
-    }
-
-    private static void requireNonBlank(String value, String field) {
-        if (value == null || value.isBlank()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, field + " is required.");
-        }
+        return payload;
     }
 
     // -------------------------------------------------------------------------
@@ -364,7 +186,7 @@ public class SubmitServiceImpl implements SubmitService {
      */
     private void mergeValidatedSbolFiles(SubmitPayload payload) throws IOException {
         String databasePrefix = ConfigUtil.get("databasePrefix").asText();
-        String uriPrefix = uriPrefix(payload);
+        String uriPrefix = collectionService.uriPrefix(payload);
         String version = payload.getVersion() != null ? payload.getVersion() : "1";
 
         boolean requireComplete = ConfigUtil.get("requireComplete").asBoolean(false);
@@ -463,7 +285,6 @@ public class SubmitServiceImpl implements SubmitService {
                                            org.sbolstandard.core2.Collection root,
                                            String ownedByUri) {
         try {
-            //TODO: Check creator is correct as full name
             String creator = userService.getUserByUsername(payload.getCreatedBy()).getName();
             if (creator != null) {
                 root.createAnnotation(DC_CREATOR, creator);
@@ -969,7 +790,7 @@ public class SubmitServiceImpl implements SubmitService {
         payload.setUrisFoundInSynBioHub(new HashSet<>());
 
         SBOLDocument doc = new SBOLDocument();
-        String uriPrefix = uriPrefix(payload);
+        String uriPrefix = collectionService.uriPrefix(payload);
         if (uriPrefix != null) {
             doc.setDefaultURIprefix(uriPrefix);
         }
@@ -991,12 +812,12 @@ public class SubmitServiceImpl implements SubmitService {
             return;
         }
         String collectionUri = payload.getCollectionUri();
-        String uriPrefix = uriPrefixFromCollectionUri(payload, collectionUri);
+        String uriPrefix = collectionService.uriPrefixFromCollectionUri(payload, collectionUri);
         if (collectionUri == null || uriPrefix == null) {
             return;
         }
 
-        String graphUri = graphUriForCollection(collectionUri, payload);
+        String graphUri = collectionService.graphUriForCollection(collectionUri, payload);
         Map<String, String> templateParams = Map.of(
                 "collection", collectionUri,
                 "uriPrefix", uriPrefix);
@@ -1113,7 +934,7 @@ public class SubmitServiceImpl implements SubmitService {
      * sources in the graph, then deletes temp files.
      */
     private void upload(SubmitPayload payload) throws IOException {
-        String graphUri = graphUriForCollection(payload.getCollectionUri(), payload);
+        String graphUri = collectionService.graphUriForCollection(payload.getCollectionUri(), payload);
         String resultPath = payload.getResultFilePath();
         if (resultPath == null || resultPath.isBlank()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No prepared SBOL file to upload.");
@@ -1364,38 +1185,5 @@ public class SubmitServiceImpl implements SubmitService {
             return "upload";
         }
         return FilenameUtils.getName(name).replaceAll("[^a-zA-Z0-9._-]", "_");
-    }
-
-
-    /**
-     * URI prefix for new objects in this submission
-     * (e.g. {@code https://synbiohub.org/user/alice/myproject/}).
-     */
-    public String uriPrefix(SubmitPayload payload) {
-        String graphUri = userService.getUserByUsername(payload.getCreatedBy()).getGraphUri();
-        if (payload.getCreatedBy() == null || graphUri == null || payload.getId() == null) {
-            if (payload.getCollectionUri() == null) {
-                return null;
-            }
-            return uriPrefixFromCollectionUri(payload, payload.getCollectionUri());
-        }
-        String base = graphUri.endsWith("/") ? graphUri : graphUri + "/";
-        return base + payload.getId() + "/";
-    }
-
-    /**
-     * Derives the object URI prefix from a root collection identity URI by removing
-     * {@code {displayId}/{version}}.
-     */
-    public String uriPrefixFromCollectionUri(SubmitPayload payload, String collectionUri) {
-        int lastSlash = collectionUri.lastIndexOf('/');
-        if (lastSlash <= 0) {
-            return null;
-        }
-        int prevSlash = collectionUri.lastIndexOf('/', lastSlash - 1);
-        if (prevSlash <= 0) {
-            return null;
-        }
-        return collectionUri.substring(0, prevSlash + 1);
     }
 }

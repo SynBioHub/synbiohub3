@@ -1,6 +1,6 @@
 package com.synbiohub.sbh3.controllers;
 
-import com.synbiohub.sbh3.services.SubmitServiceImpl;
+import com.synbiohub.sbh3.services.SubmitService;
 import com.synbiohub.sbh3.submit.SubmitPayload;
 import lombok.RequiredArgsConstructor;
 import org.sbolstandard.core2.SBOLValidationException;
@@ -16,7 +16,7 @@ import java.io.IOException;
 @RestController
 @RequiredArgsConstructor
 public class SubmitController {
-    private final SubmitServiceImpl submitService;
+    private final SubmitService submitService;
 
     /**
      * Create a new collection or submit file contents into an existing collection.

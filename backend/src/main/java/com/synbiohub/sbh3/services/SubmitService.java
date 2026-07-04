@@ -12,7 +12,6 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 public interface SubmitService {
-    static final Pattern COLLECTION_ID_PATTERN = Pattern.compile("^[a-zA-Z0-9_]+$");
     static final ObjectMapper JSON = new ObjectMapper();
 
     /**
