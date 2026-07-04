@@ -31,7 +31,7 @@ public class SubmitPluginService {
 
     private final PluginService pluginService;
     private final SubmitExposeRegistry exposeRegistry;
-    private final ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper;
 
     public void applySubmitPlugin(SubmitPayload payload) throws IOException {
         if (payload.getUploadedFilePath() == null || isDefaultPlugin(payload.getPlugin())) {

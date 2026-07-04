@@ -12,7 +12,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 public interface SubmitService {
-    static final ObjectMapper JSON = new ObjectMapper();
+    static final ObjectMapper MAPPER = new ObjectMapper();
 
     /**
      * Office uploads are passed through to SBOL validation (SynBioHub Excel plugin
@@ -32,8 +32,6 @@ public interface SubmitService {
             "sbh");
     static final QName SBH_MUTABLE_PROVENANCE = new QName("http://wiki.synbiohub.org/wiki/Terms/synbiohub#",
             "mutableProvenance", "sbh");
-    static final QName SBH_IS_MEMBER_OF = new QName("http://wiki.synbiohub.org/wiki/Terms/synbiohub#", "isMemberOf",
-            "sbh");
 
     // SPARQL templates used during prepare (overwrite) and upload (attachments).
     static final String REMOVE_COLLECTION_SPARQL = "src/main/java/com/synbiohub/sbh3/sparql/removeCollection.sparql";

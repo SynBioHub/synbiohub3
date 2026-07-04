@@ -150,11 +150,11 @@ public class SubmitServiceImpl implements SubmitService {
     private void incrementallyUpdateSbolExplorer(SubmitPayload payload) throws IOException {
         String graph = resolveOwnedByPrefix(payload);
 
-        ObjectNode body = JSON.createObjectNode();
-        body.set("partsToRemove", JSON.createArrayNode());
-        ArrayNode partsToAdd = JSON.createArrayNode();
+        ObjectNode body = MAPPER.createObjectNode();
+        body.set("partsToRemove", MAPPER.createArrayNode());
+        ArrayNode partsToAdd = MAPPER.createArrayNode();
         for (TopLevel topLevel : payload.getSbolDocument().getTopLevels()) {
-            ObjectNode part = JSON.createObjectNode();
+            ObjectNode part = MAPPER.createObjectNode();
             part.put("subject", topLevel.getIdentity().toString());
             part.put("displayId", topLevel.getDisplayId());
             part.put("version", topLevel.getVersion());
@@ -463,8 +463,7 @@ public class SubmitServiceImpl implements SubmitService {
     }
 
     /**
-     * Adds all top-levels as collection members and applies optional {@code collectionChoices}
-     * ({@code sbh:isMemberOf} annotations). Re-adds registry objects stripped earlier.
+     * Adds all top-levels as collection members. Re-adds registry objects stripped earlier.
      */
     private void populateCollectionMembership(SubmitPayload payload) {
         String displayId = payload.collectionDisplayId();
@@ -485,11 +484,6 @@ public class SubmitServiceImpl implements SubmitService {
                     continue;
                 }
                 rootCollection.addMember(topLevel.getIdentity());
-                for (String collectionChoice : payload.getCollectionChoices()) {
-                    if (collectionChoice != null && collectionChoice.startsWith("http")) {
-                        topLevel.createAnnotation(SBH_IS_MEMBER_OF, URI.create(collectionChoice));
-                    }
-                }
             }
             for (String uri : payload.getUrisFoundInSynBioHub()) {
                 rootCollection.addMember(URI.create(uri));
@@ -498,16 +492,6 @@ public class SubmitServiceImpl implements SubmitService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "Failed to populate collection membership: " + e.getMessage());
         }
-    }
-
-    private static List<String> parseCollectionChoices(String raw) {
-        if (raw == null || raw.isBlank()) {
-            return new ArrayList<>();
-        }
-        return Arrays.stream(raw.split(","))
-                .map(String::trim)
-                .filter(s -> !s.isEmpty())
-                .collect(Collectors.toList());
     }
 
     /** Share token for fetching private user objects from remote registries during merge. */
@@ -838,7 +822,7 @@ public class SubmitServiceImpl implements SubmitService {
     private void deleteStaggered(String update, String graphUri) throws IOException {
         while (true) {
             String raw = sparqlAuthUpdate(update, graphUri, true);
-            JsonNode bindings = JSON.readTree(raw).path("results").path("bindings");
+            JsonNode bindings = MAPPER.readTree(raw).path("results").path("bindings");
             if (!bindings.isArray() || bindings.isEmpty()) {
                 break;
             }
@@ -1034,7 +1018,7 @@ public class SubmitServiceImpl implements SubmitService {
                 .loadTemplate(Map.of("uri", collectionUri));
         String raw = searchService.SPARQLQuery(query, graphUri);
         Map<String, String> sources = new HashMap<>();
-        JsonNode bindings = JSON.readTree(raw).path("results").path("bindings");
+        JsonNode bindings = MAPPER.readTree(raw).path("results").path("bindings");
         if (!bindings.isArray()) {
             return sources;
         }

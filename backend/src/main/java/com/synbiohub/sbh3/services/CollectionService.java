@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 public class CollectionService {
 
     static final Pattern COLLECTION_ID_PATTERN = Pattern.compile("^[a-zA-Z0-9_]+$");
-    static final ObjectMapper JSON = new ObjectMapper();
+    private final ObjectMapper mapper;
     private final UserService userService;
     private final SearchService searchService;
 
@@ -96,14 +96,14 @@ public class CollectionService {
     public boolean collectionExists(String collectionUri, String graphUri) throws IOException {
         String query = "ASK { <" + collectionUri + "> a <http://sbols.org/v2#Collection> . }";
         String raw = searchService.SPARQLQuery(query, graphUri);
-        return JSON.readTree(raw).path("boolean").asBoolean(false);
+        return mapper.readTree(raw).path("boolean").asBoolean(false);
     }
 
     public SubmitRootCollectionMetadata loadExistingCollection(String collectionUri, String graphUri)
             throws IOException {
         String sparql = searchService.getTopLevelMetadataSPARQL(collectionUri);
         String raw = searchService.SPARQLQuery(sparql, graphUri);
-        JsonNode bindings = JSON.readTree(raw).path("results").path("bindings");
+        JsonNode bindings = mapper.readTree(raw).path("results").path("bindings");
         if (!bindings.isArray() || bindings.isEmpty()) {
             return SubmitRootCollectionMetadata.builder().build();
         }

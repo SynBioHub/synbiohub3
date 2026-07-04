@@ -71,9 +71,6 @@ public class SubmitPayload {
     /** {@link System#currentTimeMillis()} when {@code readSbol} setup started. */
     private Long readSbolStartedAtMs;
 
-    /** Optional extra collection URIs for {@code sbh:isMemberOf} annotations. */
-    private List<String> collectionChoices = new ArrayList<>();
-
     /** Serialized SBOL XML from {@code readSbol} (legacy {@code resultFilename}). */
     private String resultFilePath;
 
