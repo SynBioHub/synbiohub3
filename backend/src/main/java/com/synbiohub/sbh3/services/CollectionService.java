@@ -6,12 +6,17 @@ import com.synbiohub.sbh3.submit.SubmitRootCollectionMetadata;
 import com.synbiohub.sbh3.utils.ConfigUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.sbolstandard.core2.Collection;
+import org.sbolstandard.core2.SBOLDocument;
+import org.sbolstandard.core2.SBOLValidationException;
+import org.sbolstandard.core2.TopLevel;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.regex.Pattern;
 
 @Service
@@ -227,5 +232,46 @@ public class CollectionService {
             return null;
         }
         return collectionUri.substring(0, prevSlash + 1);
+    }
+
+    public Collection getRootCollection(SBOLDocument doc, String displayId, String version) throws SBOLValidationException {
+        org.sbolstandard.core2.Collection root = doc.getCollection(displayId, version);
+        if (root == null) {
+            root = doc.createCollection(displayId, version);
+            log.debug("New root collection: {}", root.getIdentity());
+        }
+        return root;
+    }
+
+    /**
+     * Adds all top-levels as collection members. Re-adds registry objects stripped earlier.
+     */
+    public void populateCollectionMembership(SubmitPayload payload) {
+        String displayId = payload.collectionDisplayId();
+        if (displayId == null) {
+            return;
+        }
+        String version = payload.getVersion() != null ? payload.getVersion() : "1";
+        SBOLDocument doc = payload.getSbolDocument();
+        org.sbolstandard.core2.Collection rootCollection = doc.getCollection(displayId, version);
+        if (rootCollection == null) {
+            return;
+        }
+
+        URI rootIdentity = rootCollection.getIdentity();
+        try {
+            for (TopLevel topLevel : doc.getTopLevels()) {
+                if (rootIdentity.equals(topLevel.getIdentity())) {
+                    continue;
+                }
+                rootCollection.addMember(topLevel.getIdentity());
+            }
+            for (String uri : payload.getUrisFoundInSynBioHub()) {
+                rootCollection.addMember(URI.create(uri));
+            }
+        } catch (SBOLValidationException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Failed to populate collection membership: " + e.getMessage());
+        }
     }
 }
