@@ -15,9 +15,9 @@ import com.synbiohub.sbh3.security.model.Role;
 import com.synbiohub.sbh3.security.model.User;
 import com.synbiohub.sbh3.security.repo.AuthRepository;
 import com.synbiohub.sbh3.security.repo.UserRepository;
+import com.synbiohub.sbh3.repo.SparqlRepository;
 import com.synbiohub.sbh3.sparql.SPARQLQuery;
 import com.synbiohub.sbh3.utils.ConfigUtil;
-import com.synbiohub.sbh3.utils.RestClient;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -63,7 +63,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final AuthRepository authRepository;
-    private final RestClient restClient;
+    private final SparqlRepository sparqlRepository;
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     public String loginUser(String username, String password) {
@@ -269,7 +269,8 @@ public class UserService {
         payload.put("subject", "SynBioHub password reset");
         payload.put("text", body);
 
-        ResponseEntity<?> response = restClient.post("https://api.resend.com/emails", payload, String.class, headers);
+        ResponseEntity<String> response = sparqlRepository.postJson(
+                "https://api.resend.com/emails", payload, String.class, headers);
         if (!response.getStatusCode().is2xxSuccessful()) {
             throw new IOException("Resend rejected password reset email with status " + response.getStatusCode().value());
         }

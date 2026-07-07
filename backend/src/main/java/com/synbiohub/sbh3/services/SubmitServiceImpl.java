@@ -2,6 +2,8 @@ package com.synbiohub.sbh3.services;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.synbiohub.sbh3.dao.SparqlService;
+import com.synbiohub.sbh3.repo.SparqlRepository;
 import com.synbiohub.sbh3.security.model.AuthCodes;
 import com.synbiohub.sbh3.security.repo.AuthRepository;
 import com.synbiohub.sbh3.sparql.SPARQLQuery;
@@ -13,16 +15,7 @@ import com.synbiohub.sbh3.utils.StringUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.hc.client5.http.auth.AuthScope;
-import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
-import org.apache.hc.client5.http.classic.methods.HttpPost;
-import org.apache.hc.client5.http.impl.auth.BasicCredentialsProvider;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
-import org.apache.hc.client5.http.impl.classic.HttpClients;
-import org.apache.hc.core5.http.ContentType;
-import org.apache.hc.core5.http.io.entity.ByteArrayEntity;
 import org.sbolstandard.core2.SBOLValidationException;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -62,9 +55,9 @@ public class SubmitServiceImpl implements SubmitService {
     private final SearchService searchService;
     private final SubmitPluginService submitPluginService;
     private final CitationService citationService;
-
     private final CollectionService collectionService;
     private final SbolService sbolService;
+    private final SparqlService sparqlService;
     private final ObjectMapper objectMapper;
 
     /**
@@ -145,91 +138,12 @@ public class SubmitServiceImpl implements SubmitService {
                 "uriPrefix", uriPrefix);
 
         log.debug("prepare overwrite: removing {}", uriPrefix);
-        deleteStaggered(new SPARQLQuery(REMOVE_COLLECTION_SPARQL).loadTemplate(templateParams), graphUri);
-        deleteStaggered(new SPARQLQuery(REMOVE_SPARQL).loadTemplate(Map.of("uri", collectionUri)), graphUri);
+        sparqlService.deleteCollection(templateParams, graphUri);
+        sparqlService.delete(Map.of("uri", collectionUri), graphUri);
 
         if (ConfigUtil.get("useSBOLExplorer").asBoolean(false)) {
             notifyExplorerRemoveCollection(collectionUri, uriPrefix);
         }
-    }
-
-    /**
-     * Virtuoso DELETE templates return one row per batch; loop until nothing remains.
-     * Legacy {@code sparql.deleteStaggered}.
-     */
-    private void deleteStaggered(String update, String graphUri) throws IOException {
-        while (true) {
-            String raw = sparqlAuthUpdate(update, graphUri, true);
-            JsonNode bindings = objectMapper.readTree(raw).path("results").path("bindings");
-            if (!bindings.isArray() || bindings.isEmpty()) {
-                break;
-            }
-            String msg = bindings.get(0).path("callret-0").path("value").asText("");
-            if (msg.contains("nothing to do")) {
-                break;
-            }
-        }
-    }
-
-    /**
-     * POST a SPARQL update to sparql-auth with digest auth (not preemptive basic auth).
-     *
-     * @param jsonResults when {@code true}, requests {@code application/sparql-results+json}
-     */
-    private String sparqlAuthUpdate(String update, String graphUri, boolean jsonResults) throws IOException {
-        StringBuilder url = new StringBuilder(sparqlAuthEndpoint());
-        url.append("?query=").append(URLEncoder.encode(update, StandardCharsets.UTF_8));
-        url.append("&default-graph-uri=").append(URLEncoder.encode(graphUri, StandardCharsets.UTF_8));
-        if (jsonResults) {
-            url.append("&format=")
-                    .append(URLEncoder.encode("application/sparql-results+json", StandardCharsets.UTF_8));
-        }
-
-        try (CloseableHttpClient client = virtuosoDigestClient()) {
-            HttpPost post = new HttpPost(url.toString());
-            return client.execute(post, response -> {
-                int code = response.getCode();
-                if (code >= 300) {
-                    throw new ResponseStatusException(HttpStatus.BAD_GATEWAY,
-                            "SPARQL update failed (" + code + "): " + readResponseBody(response));
-                }
-                return readResponseBody(response);
-            });
-        }
-    }
-
-    /** HttpClient configured for Virtuoso digest auth (waits for 401 challenge). */
-    private static CloseableHttpClient virtuosoDigestClient() throws IOException {
-        BasicCredentialsProvider credsProvider = new BasicCredentialsProvider();
-        credsProvider.setCredentials(
-                new AuthScope(null, -1),
-                new UsernamePasswordCredentials(
-                        ConfigUtil.get("username").asText(),
-                        ConfigUtil.get("password").asText().toCharArray()));
-        return HttpClients.custom()
-                .setDefaultCredentialsProvider(credsProvider)
-                .build();
-    }
-
-    private static String readResponseBody(org.apache.hc.core5.http.ClassicHttpResponse response)
-            throws IOException {
-        if (response.getEntity() == null) {
-            return "";
-        }
-        return new String(response.getEntity().getContent().readAllBytes(), StandardCharsets.UTF_8);
-    }
-
-    /** Derives sparql-auth URL from config (explicit or inferred from sparqlEndpoint). */
-    private static String sparqlAuthEndpoint() throws IOException {
-        JsonNode configured = ConfigUtil.get("sparqlAuthEndpoint");
-        if (configured != null && !configured.isNull() && !configured.asText().isBlank()) {
-            return configured.asText();
-        }
-        String base = ConfigUtil.get("sparqlEndpoint").asText();
-        if (base.endsWith("-auth") || base.endsWith("-auth/")) {
-            return base;
-        }
-        return base.replaceAll("/sparql/?$", "/sparql-auth");
     }
 
     private void notifyExplorerRemoveCollection(String collectionUri, String uriPrefix) throws IOException {
@@ -263,39 +177,13 @@ public class SubmitServiceImpl implements SubmitService {
         }
 
         log.debug("upload: posting RDF to graph {}", graphUri);
-        uploadGraphStore(graphUri, Path.of(resultPath));
+        sparqlService.uploadGraphStore(graphUri, Path.of(resultPath));
 
         if (!payload.getAttachmentFiles().isEmpty()) {
             uploadAttachments(payload, graphUri);
         }
 
         cleanupSubmitTemp(payload);
-    }
-
-    /**
-     * POST RDF/XML to the Virtuoso graph store. Uses digest auth (not preemptive basic auth),
-     * matching legacy {@code sparql.uploadSmallFile}.
-     */
-    private void uploadGraphStore(String graphUri, Path file) throws IOException {
-        String endpoint = ConfigUtil.get("graphStoreEndpoint").asText();
-        String url = endpoint
-                + (endpoint.contains("?") ? "&" : "?")
-                + "graph-uri=" + URLEncoder.encode(graphUri, StandardCharsets.UTF_8);
-
-        byte[] body = Files.readAllBytes(file);
-        try (CloseableHttpClient client = virtuosoDigestClient()) {
-            HttpPost post = new HttpPost(url);
-            post.setHeader(HttpHeaders.CONTENT_TYPE, "application/rdf+xml");
-            post.setEntity(new ByteArrayEntity(body, ContentType.APPLICATION_XML));
-            client.execute(post, response -> {
-                int code = response.getCode();
-                if (code >= 300) {
-                    throw new ResponseStatusException(HttpStatus.BAD_GATEWAY,
-                            "Graph store upload failed (" + code + "): " + readResponseBody(response));
-                }
-                return null;
-            });
-        }
     }
 
     /**
@@ -332,10 +220,9 @@ public class SubmitServiceImpl implements SubmitService {
                     attachmentType,
                     payload.getCreatedBy());
 
-            String update = new SPARQLQuery(ATTACHMENT_UPDATE_SPARQL).loadTemplate(Map.of(
+            sparqlService.uploadAttachment(Map.of(
                     "oldUri", fileKey,
-                    "newUri", attachmentUri));
-            sparqlAuthUpdate(update, graphUri, false);
+                    "newUri", attachmentUri), graphUri);
         }
     }
 
@@ -352,7 +239,7 @@ public class SubmitServiceImpl implements SubmitService {
 
     /** Maps existing {@code sbol:source} values (e.g. {@code file:foo.png}) to attachment URIs. */
     private Map<String, String> loadAttachmentSources(String collectionUri, String graphUri) throws IOException {
-        String query = new SPARQLQuery(GET_ATTACHMENT_SOURCE_SPARQL)
+        String query = new SPARQLQuery(SparqlRepository.GET_ATTACHMENT_SOURCE_SPARQL)
                 .loadTemplate(Map.of("uri", collectionUri));
         String raw = searchService.SPARQLQuery(query, graphUri);
         Map<String, String> sources = new HashMap<>();
@@ -397,20 +284,20 @@ public class SubmitServiceImpl implements SubmitService {
         templateParams.put("size", StringUtil.sparqlStringLiteral(Long.toString(size)));
         templateParams.put("type", attachmentType);
         templateParams.put("ownedBy", ownedBy);
-        String update = new SPARQLQuery(ATTACH_UPLOAD_SPARQL).loadTemplate(templateParams);
-        sparqlAuthUpdate(update, graphUri, false);
+        String update = new SPARQLQuery(SparqlRepository.ATTACH_UPLOAD_SPARQL).loadTemplate(templateParams);
+        sparqlService.update(update, graphUri, false);
         return attachmentUri;
     }
 
     /** Replaces hash/size on an existing attachment when re-uploading the same {@code file:} source. */
     private void updateAttachment(String graphUri, String attachmentUri, String uploadHash, long size)
             throws IOException {
-        String update = new SPARQLQuery(UPDATE_ATTACHMENT_SPARQL).loadTemplate(Map.of(
+        String update = new SPARQLQuery(SparqlRepository.UPDATE_ATTACHMENT_SPARQL).loadTemplate(Map.of(
                 "attachmentURI", attachmentUri,
                 "attachmentSource", attachmentUri + "/download",
                 "hash", StringUtil.sparqlStringLiteral(uploadHash),
                 "size", StringUtil.sparqlStringLiteral(Long.toString(size))));
-        sparqlAuthUpdate(update, graphUri, false);
+        sparqlService.update(update, graphUri, false);
     }
 
     private String attachmentTypeFromExtension(Path file) throws IOException {
