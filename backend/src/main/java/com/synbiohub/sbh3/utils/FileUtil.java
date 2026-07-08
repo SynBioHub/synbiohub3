@@ -4,6 +4,8 @@ import com.synbiohub.sbh3.dto.SubmitFileFormat;
 import com.synbiohub.sbh3.submit.SubmitPayload;
 import org.apache.commons.io.FilenameUtils;
 import org.sbolstandard.core2.SBOLReader;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -113,5 +115,42 @@ public interface FileUtil {
             return "";
         }
         return new String(buf, 0, read, StandardCharsets.UTF_8);
+    }
+
+    public static String sanitizeFilename(String name) {
+        if (name == null || name.isBlank()) {
+            return "upload";
+        }
+        return FilenameUtils.getName(name).replaceAll("[^a-zA-Z0-9._-]", "_");
+    }
+
+    /** Removes unpack directory and prepared SBOL XML after successful upload. */
+    public static void cleanupSubmitTemp(SubmitPayload payload) throws IOException {
+        // TODO: move to FileUtil
+        String extractDir = payload.getExtractDirPath();
+        if (extractDir != null && !extractDir.isBlank()) {
+            deleteRecursive(Path.of(extractDir));
+        }
+        String resultPath = payload.getResultFilePath();
+        if (resultPath != null && !resultPath.isBlank()) {
+            Files.deleteIfExists(Path.of(resultPath));
+        }
+    }
+
+    private static void deleteRecursive(Path root) throws IOException {
+        if (!Files.exists(root)) {
+            return;
+        }
+        try (var walk = Files.walk(root)) {
+            walk.sorted((a, b) -> b.compareTo(a))
+                    .forEach(path -> {
+                        try {
+                            Files.deleteIfExists(path);
+                        } catch (IOException e) {
+                            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                                    "Failed to delete " + path, e);
+                        }
+                    });
+        }
     }
 }
