@@ -171,7 +171,7 @@ export default function StandardSearch() {
     } else {
       setCount(newCount);
     }
-  }, [isCountLoading, isCountError, query, extraFilters]);
+  }, [isCountLoading, isCountError, newCount, query, extraFilters]);
 
   // get search results
   const { results, isLoading, isError } = useSearchResults(

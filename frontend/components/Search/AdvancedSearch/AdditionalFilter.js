@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 
 import { shortName } from '../../../namespace/namespace';
+import buildFacetConstraints from '../../../sparql/buildFacetConstraints';
 import configureQuery from '../../../sparql/configureQuery';
 import searchObject from '../../../sparql/searchObject';
 import styles from '../../../styles/advancedsearch.module.css';
@@ -12,6 +14,7 @@ export default function AdditionalFilter(properties) {
   const [selectedPredicate, setSelectedPredicate] = useState("");
   const [selectedValue, setSelectedValue] = useState("");
   const wrapIRI = v => (v?.startsWith("http") ? `<${v}>` : v);
+  const searchQuery = useSelector(state => state.search.query);
 
   useEffect(() => {
     const newFilters = [...properties.extraFilters];
@@ -43,8 +46,8 @@ export default function AdditionalFilter(properties) {
       </div>}
       {<div className={styles.inputsection2}>
         <div className={styles.containerLeft}>
-        {!properties.extraFilters[properties.index].filter && 
-        (<SelectLoader 
+        {!properties.extraFilters[properties.index].filter &&
+        (<SelectLoader
           result={properties.predicates}
           placeholder="Select filter type..."
           parseResult={result => {
@@ -58,16 +61,18 @@ export default function AdditionalFilter(properties) {
           }}
           />
         )}
-      {properties.extraFilters[properties.index].filter && 
+      {properties.extraFilters[properties.index].filter &&
         (<SelectLoader
           placeholder={shortName(wrapIRI(properties.extraFilters[properties.index].value))}//{selectedValue}
           sparql={configureQuery(searchObject, {
-            predicate: wrapIRI(properties.extraFilters[properties.index].filter) //selectedPredicate
+            predicate: wrapIRI(properties.extraFilters[properties.index].filter), //selectedPredicate
+            constraints: buildFacetConstraints(properties, searchQuery, undefined, properties.index)
           })}
           parseResult={result => {
+            const count = result.count ? ` (${result.count.value})` : '';
             return {
               value: result.object.value,
-              label: shortName(result.object.value)
+              label: shortName(result.object.value) + count
             };
           }}
           onChange={option => {
@@ -82,8 +87,8 @@ export default function AdditionalFilter(properties) {
             padding: '0.6rem 0.5rem 0.1rem 0.5rem',
             cursor: 'pointer'
           }}
-          onClick={() => { 
-            properties.handleDelete(properties.index); 
+          onClick={() => {
+            properties.handleDelete(properties.index);
           }}
         >
           <FontAwesomeIcon icon={faTimesCircle} size="1x" color="red" />

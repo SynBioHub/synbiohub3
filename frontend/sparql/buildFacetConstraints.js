@@ -1,46 +1,63 @@
 const wrapValue = value =>
   value.startsWith('http') ? `<${value}>` : `'${value.replace(/'/g, "\\'")}'`;
 
+const FACET_PREDICATES = {
+  creator: 'dc:creator',
+  objectType: 'a',
+  role: 'sbol2:role',
+  sbolType: 'sbol2:type'
+};
+
+const singleValueFacetClauses = (properties, excludeFacet) =>
+  Object.entries(FACET_PREDICATES)
+    .filter(([facet]) => excludeFacet !== facet && properties[facet])
+    .map(
+      ([facet, predicate]) =>
+        `?tl ${predicate} ${wrapValue(properties[facet])} .`
+    );
+
+const collectionClauses = (properties, excludeFacet) => {
+  if (excludeFacet === 'collections' || !properties.collections?.length) {
+    return [];
+  }
+  return properties.collections.map(
+    collection => `${wrapValue(collection.value)} sbol2:member ?tl .`
+  );
+};
+
+const extraFilterClauses = (properties, excludeExtraFilterIndex) =>
+  (properties.extraFilters || [])
+    .filter(
+      (filter, index) =>
+        index !== excludeExtraFilterIndex && filter.filter && filter.value
+    )
+    .map(filter => `?tl ${filter.filter} ${wrapValue(filter.value)} .`);
+
+const textQueryClauses = query => {
+  if (!query) {
+    return [];
+  }
+  const words = query.toLowerCase().split(/\s+/).filter(Boolean);
+  return words.map(word => {
+    const escaped = word.replace(/'/g, "\\'");
+    return `FILTER(CONTAINS(LCASE(STR(?tlDisplayId)), '${escaped}') || CONTAINS(LCASE(STR(?tlName)), '${escaped}') || CONTAINS(LCASE(STR(?tlDescription)), '${escaped}'))`;
+  });
+};
+
 // builds the extra WHERE-clause constraints for a facet query, so that
 // selecting a value in one facet narrows the options shown in the others.
-export default function buildFacetConstraints(properties, query, excludeFacet) {
-  const clauses = [];
-
-  if (excludeFacet !== 'creator' && properties.creator) {
-    clauses.push(`?tl dc:creator ${wrapValue(properties.creator)} .`);
-  }
-  if (excludeFacet !== 'objectType' && properties.objectType) {
-    clauses.push(`?tl a ${wrapValue(properties.objectType)} .`);
-  }
-  if (excludeFacet !== 'role' && properties.role) {
-    clauses.push(`?tl sbol2:role ${wrapValue(properties.role)} .`);
-  }
-  if (excludeFacet !== 'sbolType' && properties.sbolType) {
-    clauses.push(`?tl sbol2:type ${wrapValue(properties.sbolType)} .`);
-  }
-  if (
-    excludeFacet !== 'collections' &&
-    properties.collections &&
-    properties.collections.length > 0
-  ) {
-    for (const collection of properties.collections) {
-      clauses.push(`${wrapValue(collection.value)} sbol2:member ?tl .`);
-    }
-  }
-  for (const filter of properties.extraFilters || []) {
-    if (filter.filter && filter.value) {
-      clauses.push(`?tl ${filter.filter} ${wrapValue(filter.value)} .`);
-    }
-  }
-  if (query) {
-    const words = query.toLowerCase().split(/\s+/).filter(Boolean);
-    for (const word of words) {
-      const escaped = word.replace(/'/g, "\\'");
-      clauses.push(
-        `FILTER(CONTAINS(LCASE(STR(?tlDisplayId)), '${escaped}') || CONTAINS(LCASE(STR(?tlName)), '${escaped}') || CONTAINS(LCASE(STR(?tlDescription)), '${escaped}'))`
-      );
-    }
-  }
+export default function buildFacetConstraints(
+  properties,
+  query,
+  excludeFacet,
+  excludeExtraFilterIndex
+) {
+  const clauses = [
+    ...singleValueFacetClauses(properties, excludeFacet),
+    ...collectionClauses(properties, excludeFacet),
+    ...extraFilterClauses(properties, excludeExtraFilterIndex),
+    ...textQueryClauses(query)
+  ];
 
   return clauses.join('\n      ');
 }
