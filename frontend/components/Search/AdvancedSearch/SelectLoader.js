@@ -39,7 +39,7 @@ export default function SelectLoader(properties) {
         properties.parseResult
       );
     }
-  }, [properties.result]);
+  }, [properties.result, properties.sparql]);
 
   if (error) {
     return <div>Error Occured</div>;
