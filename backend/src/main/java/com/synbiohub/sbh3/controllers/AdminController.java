@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.synbiohub.sbh3.dto.LogEntry;
 import com.synbiohub.sbh3.security.model.User;
+import com.synbiohub.sbh3.repo.SparqlRepository;
 import com.synbiohub.sbh3.services.AdminService;
 import com.synbiohub.sbh3.services.SearchService;
 import com.synbiohub.sbh3.services.UserService;
@@ -41,6 +42,7 @@ public class AdminController {
     private final AdminService adminService;
     private final UserService userService;
     private final SearchService searchService;
+    private final SparqlRepository sparqlRepository;
     @GetMapping(value = "/admin/sparql")
     @ResponseBody
     public String runAdminSparqlQuery(@RequestParam String query, HttpServletRequest request) throws Exception {
@@ -50,7 +52,7 @@ public class AdminController {
         if (auth == null) {
             return null;
         }
-        return searchService.SPARQLQuery(query);
+        return sparqlRepository.getQuery(query);
     }
 
     @GetMapping(value = "/admin")

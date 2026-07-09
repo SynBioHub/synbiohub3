@@ -96,4 +96,25 @@ public class SparqlService {
         update(query, graphUri, false);
     }
 
+    public Map<String, String> buildSearchQuery(Map<String, String> allParams) {
+        HashMap<String, String> sparqlArgs = new HashMap<>
+                (Map.of("from", "", "criteria", "", "limit", "", "offset", ""));
+
+        // Process search parameters
+        for (Map.Entry<String, String> param : allParams.entrySet()) {
+            // Set offset and limit of query
+            if (param.getKey().equals("offset")) {
+                sparqlArgs.replace("offset", "OFFSET " + param.getValue());
+                sparqlArgs.replace("limit", "LIMIT 50"); // Default limit for queries without limit
+            }
+
+            else if (param.getKey().equals("limit")) {
+                sparqlArgs.replace("limit", "LIMIT " + param.getValue());
+            }
+        }
+
+        return sparqlArgs;
+
+    }
+
 }

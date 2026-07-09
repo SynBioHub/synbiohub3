@@ -6,9 +6,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.synbiohub.sbh3.controllers.SearchController;
+import com.synbiohub.sbh3.dao.SparqlService;
+import com.synbiohub.sbh3.repo.SparqlRepository;
 import com.synbiohub.sbh3.security.model.User;
 import com.synbiohub.sbh3.sparql.SPARQLQuery;
 import com.synbiohub.sbh3.utils.ConfigUtil;
+import com.synbiohub.sbh3.utils.StringUtil;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -19,12 +23,11 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.net.URI;
 import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 /**
@@ -32,7 +35,11 @@ import java.util.*;
  * @see SearchController
  */
 @Service
+@RequiredArgsConstructor
 public class SearchService {
+
+    private final SparqlRepository sparqlRepository;
+    private final SparqlService sparqlService;
 
     /**
      * Returns the metadata for the object from the specified search query
@@ -40,58 +47,97 @@ public class SearchService {
      * @return String containing SPARQL query
      */
     public String getMetadataQuerySPARQL(Map<String,String> allParams) throws IOException {
-        SPARQLQuery searchQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/search.sparql");
-        HashMap<String, String> sparqlArgs = new HashMap<>
-                (Map.of("from", "", "criteria", "", "limit", "", "offset", ""));
+        Map<String, String> sparqlArgs = sparqlService.buildSearchQuery(allParams);
 
-        // Process search parameters
-        for (Map.Entry<String, String> param : allParams.entrySet()) {
-            // Set offset and limit of query
-            if (param.getKey().equals("offset")) {
-                sparqlArgs.replace("offset", "OFFSET " + param.getValue());
-                sparqlArgs.replace("limit", "LIMIT 50"); // Default limit for queries without limit
-            }
-
-            else if (param.getKey().equals("limit")) {
-                sparqlArgs.replace("limit", "LIMIT " + param.getValue());
-            }
-        }
         allParams.remove("offset"); // Remove this as we have already processed and it may mess up criteria string
-
         allParams.remove("limit");
 
-        String criteriaString = getCriteriaString(allParams);
-        sparqlArgs.replace("criteria", criteriaString);
-
-        String userGraph = getPrivateGraph();
-        if (!userGraph.isEmpty()) {
-            String defaultGraph = ConfigUtil.get("defaultGraph").toString();
-            sparqlArgs.replace("from", "FROM <" + defaultGraph.substring(1,defaultGraph.length()-1) + ">\nFROM NAMED <" + userGraph + ">");
-        }
-
-        return searchQuery.loadTemplate(sparqlArgs);
+        return loadSearchSPARQL(
+                getCriteriaString(allParams),
+                fromClauseForMetadataSearch(),
+                sparqlArgs.get("limit"),
+                sparqlArgs.get("offset"));
     }
 
     /**
-     * Escapes a value for use inside a SPARQL double-quoted string literal.
+     * SPARQL for twins / similar / uses around a single object URI ({@code search.sparql}).
      */
-    private static String escapeSparqlStringLiteral(String raw) {
-        if (raw == null) {
+    public String getURISPARQL(String collectionInfo, String endpoint) throws IOException {
+        return loadSearchSPARQL(
+                uriRelationshipCriteria(collectionInfo, endpoint),
+                fromClauseForUriSearch(),
+                "",
+                "");
+    }
+
+    private String loadSearchSPARQL(String criteria, String fromClause, String limit, String offset) {
+        HashMap<String, String> sparqlArgs = new HashMap<>(Map.of(
+                "from", fromClause != null ? fromClause : "",
+                "criteria", criteria != null ? criteria : "",
+                "limit", limit != null ? limit : "",
+                "offset", offset != null ? offset : ""));
+        return new SPARQLQuery(sparqlRepository.SEARCH_SPARQL).loadTemplate(sparqlArgs);
+    }
+
+    private String loadSearchCountSPARQL(String criteria, String fromClause) {
+        HashMap<String, String> sparqlArgs = new HashMap<>(Map.of(
+                "from", fromClause != null ? fromClause : "",
+                "criteria", criteria != null ? criteria : ""));
+        return new SPARQLQuery(sparqlRepository.SEARCH_COUNT_SPARQL).loadTemplate(sparqlArgs);
+    }
+
+    /** Logged-in metadata search: public default graph + user's named graph. */
+    private String fromClauseForMetadataSearch() throws IOException {
+        String userGraph = getPrivateGraph();
+        if (userGraph.isEmpty()) {
             return "";
         }
-        StringBuilder sb = new StringBuilder(raw.length() + 16);
-        for (int i = 0; i < raw.length(); i++) {
-            char c = raw.charAt(i);
-            switch (c) {
-                case '\\' -> sb.append("\\\\");
-                case '"' -> sb.append("\\\"");
-                case '\n' -> sb.append("\\n");
-                case '\r' -> sb.append("\\r");
-                case '\t' -> sb.append("\\t");
-                default -> sb.append(c);
-            }
+        String defaultGraph = ConfigUtil.get("defaultGraph").asText();
+        return "FROM <" + defaultGraph + ">\nFROM NAMED <" + userGraph + ">";
+    }
+
+    /** URI relationship endpoints: user's private graph only when logged in. */
+    private String fromClauseForUriSearch() throws IOException {
+        String userGraph = getPrivateGraph();
+        if (userGraph.isEmpty()) {
+            return "";
         }
-        return sb.toString();
+        return "FROM <" + userGraph + ">";
+    }
+
+    private String objectUri(String collectionInfo) throws IOException {
+        return ConfigUtil.get("databasePrefix").asText() + collectionInfo;
+    }
+
+    private String uriRelationshipCriteria(String collectionInfo, String endpoint) throws IOException {
+        String uri = objectUri(collectionInfo);
+        if (endpoint.equalsIgnoreCase("uses")) {
+            return usesCriteria(uri);
+        }
+        if (endpoint.equalsIgnoreCase("twins")) {
+            return twinsCriteria(uri);
+        }
+        if (endpoint.equalsIgnoreCase("similar") && ConfigUtil.get("useSBOLExplorer").asBoolean()) {
+            // TODO: Use Explorer here
+        }
+        return "";
+    }
+
+    private static String usesCriteria(String uri) {
+        return " { ?subject ?p <" + uri + "> } UNION { ?subject ?p ?use . ?use ?useP <" + uri + "> } ."
+                + " FILTER(?useP != <http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel>) "
+                + "# USES";
+    }
+
+    private static String twinsCriteria(String uri) {
+        return "   ?subject sbol2:sequence ?seq . ?seq sbol2:elements ?elements . <" + uri
+                + "> a sbol2:ComponentDefinition . <" + uri + "> sbol2:sequence ?seq2 . ?seq2 sbol2:elements ?elements2 . "
+                + "FILTER(?subject != <" + uri + "> && ?elements = ?elements2) # TWINS";
+    }
+
+    private static String similarCriteria(String uri) {
+        // TODO: turn on when SBOLExplorer is working
+        return null;
     }
 
     /**
@@ -145,11 +191,11 @@ public class SearchService {
             } else if (param.getKey().equalsIgnoreCase("sequence")) {
                 criteriaString.append("?subject a <http://sbols.org/v2#Sequence> .");
                 if (param.getValue() != null && !param.getValue().isEmpty()) {
-                    criteriaString.append(" ?subject sbol2:elements \"").append(escapeSparqlStringLiteral(param.getValue())).append("\" .");
+                    criteriaString.append(" ?subject sbol2:elements \"").append(StringUtil.escapeSparqlStringLiteral(param.getValue())).append("\" .");
                 }
             } else if (param.getKey().equalsIgnoreCase("globalsequence")
                     && param.getValue() != null && !param.getValue().isEmpty()) {
-                criteriaString.append("?subject sbol2:globalsequence \"").append(escapeSparqlStringLiteral(param.getValue())).append("\" .");
+                criteriaString.append("?subject sbol2:globalsequence \"").append(StringUtil.escapeSparqlStringLiteral(param.getValue())).append("\" .");
             }
 
             else if (param.getKey().equals("createdBefore")) {
@@ -209,12 +255,7 @@ public class SearchService {
      * @return Count of a part
      */
     public String getSearchCountSPARQL(Map<String,String> allParams) throws UnsupportedEncodingException {
-        SPARQLQuery searchQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/searchCount.sparql");
-        HashMap<String, String> sparqlArgs = new HashMap<>
-                (Map.of("from", "", "criteria", ""));
-        String criteriaString = getCriteriaString(allParams);
-        sparqlArgs.replace("criteria", criteriaString);
-        return searchQuery.loadTemplate(sparqlArgs);
+        return loadSearchCountSPARQL(getCriteriaString(allParams), "");
     }
 
     /**
@@ -223,46 +264,13 @@ public class SearchService {
      * @return Count of a type
      */
     public String getTypeCountSPARQL(String type) {
-        SPARQLQuery searchQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/Count.sparql");
+        SPARQLQuery searchQuery = new SPARQLQuery(sparqlRepository.COUNT_SPARQL);
         HashMap<String, String> sparqlArgs = new HashMap<>
                 (Map.of("type", type));
         return searchQuery.loadTemplate(sparqlArgs);
     }
 
     // TODO: Make sure this method (and others) are compatible with user authentication in the future
-    public String getURISPARQL(String collectionInfo, String endpoint) throws IOException {
-        // Initialize arguments to be parsed into SPARQL template
-        SPARQLQuery searchQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/search.sparql");
-        HashMap<String, String> sparqlArgs = new HashMap<>
-                (Map.of("from", getPrivateGraph(), "criteria", "", "limit", "", "offset", ""));
-
-        String URI = ConfigUtil.get("databasePrefix").asText() + collectionInfo;
-
-        if (endpoint.equalsIgnoreCase("uses")) {
-            sparqlArgs.replace("criteria", " { ?subject ?p <" + URI + "> } UNION { ?subject ?p ?use . ?use ?useP <" + URI + "> } ." +
-                    " FILTER(?useP != <http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel>) " +
-                    "# USES");
-        }
-
-        else if (endpoint.equalsIgnoreCase("similar")) {
-            // Make sure explorer is enabled
-            if (ConfigUtil.get("useSBOLExplorer").asBoolean()) {
-                // TODO: Use Explorer here
-            }
-        }
-
-        else if (endpoint.equalsIgnoreCase("twins")) {
-            sparqlArgs.replace("criteria", "   ?subject sbol2:sequence ?seq . ?seq sbol2:elements ?elements . <" + URI
-                    + "> a sbol2:ComponentDefinition . <" + URI + "> sbol2:sequence ?seq2 . ?seq2 sbol2:elements ?elements2 . " +
-                    "FILTER(?subject != <" + URI + "> && ?elements = ?elements2) # TWINS");
-        }
-        String userGraph = getPrivateGraph();
-        if (!userGraph.isEmpty()) {
-            sparqlArgs.replace("from", "FROM <" + userGraph + ">");
-        }
-
-        return searchQuery.loadTemplate(sparqlArgs);
-    }
 
     /**
      * Gets the count of components that have the same sequence as the given URI (twins), using the same criteria as the "twins" endpoint.
@@ -270,23 +278,7 @@ public class SearchService {
      * @return SPARQL query string that returns a single ?count binding
      */
     public String getTwinsCountSPARQL(String collectionInfo) throws IOException {
-        SPARQLQuery searchQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/searchCount.sparql");
-        HashMap<String, String> sparqlArgs = new HashMap<>
-                (Map.of("from", "", "criteria", ""));
-
-        String URI = ConfigUtil.get("databasePrefix").asText() + collectionInfo;
-
-        // Same criteria as the "twins" endpoint
-        sparqlArgs.replace("criteria", "   ?subject sbol2:sequence ?seq . ?seq sbol2:elements ?elements . <" + URI
-                + "> a sbol2:ComponentDefinition . <" + URI + "> sbol2:sequence ?seq2 . ?seq2 sbol2:elements ?elements2 . " +
-                "FILTER(?subject != <" + URI + "> && ?elements = ?elements2) # TWINS");
-
-        String userGraph = getPrivateGraph();
-        if (!userGraph.isEmpty()) {
-            sparqlArgs.replace("from", "FROM <" + userGraph + ">");
-        }
-
-        return searchQuery.loadTemplate(sparqlArgs);
+        return loadSearchCountSPARQL(twinsCriteria(objectUri(collectionInfo)), fromClauseForUriSearch());
     }
 
     /**
@@ -295,23 +287,7 @@ public class SearchService {
      * @return SPARQL query string that returns a single ?count binding
      */
     public String getUsesCountSPARQL(String collectionInfo) throws IOException {
-        SPARQLQuery searchQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/searchCount.sparql");
-        HashMap<String, String> sparqlArgs = new HashMap<>
-                (Map.of("from", "", "criteria", ""));
-
-        String URI = ConfigUtil.get("databasePrefix").asText() + collectionInfo;
-
-        // Same criteria as the "uses" endpoint
-        sparqlArgs.replace("criteria", " { ?subject ?p <" + URI + "> } UNION { ?subject ?p ?use . ?use ?useP <" + URI + "> } ." +
-                " FILTER(?useP != <http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel>) " +
-                "# USES");
-
-        String userGraph = getPrivateGraph();
-        if (!userGraph.isEmpty()) {
-            sparqlArgs.replace("from", "FROM <" + userGraph + ">");
-        }
-
-        return searchQuery.loadTemplate(sparqlArgs);
+        return loadSearchCountSPARQL(usesCriteria(objectUri(collectionInfo)), fromClauseForUriSearch());
     }
 
     /**
@@ -320,23 +296,8 @@ public class SearchService {
      * @return SPARQL query string that returns a single ?count binding
      */
     public String getSimilarCountSPARQL(String collectionInfo) throws IOException {
-        SPARQLQuery searchQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/searchCount.sparql");
-        HashMap<String, String> sparqlArgs = new HashMap<>
-                (Map.of("from", "", "criteria", ""));
-
-        String URI = ConfigUtil.get("databasePrefix").asText() + collectionInfo;
-
-        //TODO: when SBOLExplorer works, turn this on to make it work (current sent to /uses and not /similar)
-//        sparqlArgs.replace("criteria", " { ?subject ?p <" + URI + "> } UNION { ?subject ?p ?use . ?use ?useP <" + URI + "> } ." +
-//                " FILTER(?useP != <http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel>) " +
-//                "# USES");
-
-        String userGraph = getPrivateGraph();
-        if (!userGraph.isEmpty()) {
-            sparqlArgs.replace("from", "FROM <" + userGraph + ">");
-        }
-
-        return searchQuery.loadTemplate(sparqlArgs);
+        // TODO: when SBOLExplorer works, turn this on to make it work (current sent to /uses and not /similar)
+        return loadSearchCountSPARQL("", fromClauseForUriSearch());
     }
 
 //    public String getTwinsSPARQL(String collectionInfo) throws IOException {
@@ -359,12 +320,12 @@ public class SearchService {
 //    }
 
     public String getRootCollectionsSPARQL() {
-        SPARQLQuery searchQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/RootCollectionMetadata.sparql");
+        SPARQLQuery searchQuery = new SPARQLQuery(sparqlRepository.ROOT_COLLECTION_METADATA_SPARQL);
         return searchQuery.getQuery();
     }
 
     public String getSubCollectionsSPARQL(String collectionInfo) throws IOException {
-        SPARQLQuery searchQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/SubCollectionMetadata.sparql");
+        SPARQLQuery searchQuery = new SPARQLQuery(sparqlRepository.SUBCOLLECTION_METADATA_SPARQL);
         String IRI = "<" + ConfigUtil.get("databasePrefix").asText() + collectionInfo + ">";
 
         HashMap<String, String> sparqlArgs = new HashMap<>
@@ -432,7 +393,7 @@ public class SearchService {
      */
     public String getBrowseCollectionsJSON() throws IOException {
         ObjectMapper mapper = new ObjectMapper();
-        String raw = SPARQLQuery(getRootCollectionsSPARQL());
+        String raw = sparqlRepository.getQuery(getRootCollectionsSPARQL());
         ArrayNode list = collectionBindingsToArrayNode(mapper, raw);
         enrichLocalBrowseEntries(list);
         appendWebOfRegistries(mapper, list);
@@ -595,40 +556,6 @@ public class SearchService {
                 value = node.get("count").get("value").asText();
             }
         return value;
-    }
-
-    public String SPARQLOrExplorerQuery(String query) throws IOException {
-        RestTemplate restTemplate = new RestTemplate();
-        String url;
-        // Encoding the SPARQL query to be sent to Explorer/SPARQL
-        HashMap<String, String> params = new HashMap<>();
-        params.put("default-graph-uri", ConfigUtil.get("defaultGraph").asText());
-        params.put("query", query);
-
-        if (ConfigUtil.get("useSBOLExplorer").asBoolean() && query.length() > 0)
-            url = ConfigUtil.get("SBOLExplorerEndpoint").asText()  + "?default-graph-uri={default-graph-uri}&query={query}&";
-        else
-            url = ConfigUtil.get("sparqlEndpoint").asText() + "?default-graph-uri={default-graph-uri}&query={query}&format=json&";
-
-        return restTemplate.getForObject(url, String.class, params);
-    }
-
-    public String SPARQLQuery(String query) throws IOException {
-        return SPARQLQuery(query, null);
-    }
-
-    public String SPARQLQuery(String query, String defaultGraphUri) throws IOException {
-        RestTemplate restTemplate = new RestTemplate();
-        HashMap<String, String> params = new HashMap<>();
-        params.put("query", query);
-        String graphUri = (defaultGraphUri == null || defaultGraphUri.isBlank())
-                ? ConfigUtil.get("defaultGraph").asText()
-                : defaultGraphUri;
-        params.put("default-graph-uri", graphUri);
-        String url = ConfigUtil.get("sparqlEndpoint").asText()
-                + "?default-graph-uri={default-graph-uri}&query={query}&format=json&";
-
-        return restTemplate.getForObject(url, String.class, params);
     }
 
     /**
@@ -798,22 +725,13 @@ public class SearchService {
         return ConfigUtil.get("graphPrefix").asText() + "user/" + authentication.getName();
     }
 
-    // Method to encode a string value using `UTF-8` encoding scheme
-    private static String encodeValue(String value) {
-        try {
-            return URLEncoder.encode(value, StandardCharsets.UTF_8.toString());
-        } catch (UnsupportedEncodingException ex) {
-            throw new RuntimeException(ex.getCause());
-        }
-    }
-
     public String getManageSubmissionsSPARQL(String email, String username) throws IOException {
-        SPARQLQuery searchQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/search.sparql");
+        SPARQLQuery searchQuery = new SPARQLQuery(sparqlRepository.SEARCH_SPARQL);
         HashMap<String, String> sparqlArgs = new HashMap<>(
             Map.of("from", "", "criteria", "", "limit", "", "offset", ""));
 
         String ownedByUri = userSynbiohubMemberUri(username);
-        String escapedEmail = escapeSparqlStringLiteral(email == null ? "" : email);
+        String escapedEmail = StringUtil.escapeSparqlStringLiteral(email == null ? "" : email);
 
         String criteria =
             "?subject a sbol2:Collection . " +
@@ -827,12 +745,12 @@ public class SearchService {
     }
 
     public String getSharedCanViewSPARQL(String userResourceUri) throws IOException {
-        SPARQLQuery query = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/GetSharedCanView.sparql");
+        SPARQLQuery query = new SPARQLQuery(sparqlRepository.SHARED_VIEW_SPARQL);
         return query.loadTemplate(Map.of("userUri", userResourceUri));
     }
 
     public String getTopLevelMetadataSPARQL(String topLevelUri) throws IOException {
-        SPARQLQuery query = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/GetTopLevelMetadata.sparql");
+        SPARQLQuery query = new SPARQLQuery(sparqlRepository.TOPLEVEL_METADATA_SPARQL);
         return query.loadTemplate(Map.of("uri", topLevelUri));
     }
 
@@ -850,7 +768,7 @@ public class SearchService {
         JsonNode saltNode = ConfigUtil.get("shareLinkSalt");
         String shareLinkSalt = (saltNode == null || saltNode.isNull()) ? "" : saltNode.asText();
 
-        String canViewRaw = SPARQLQuery(getSharedCanViewSPARQL(userResourceUri), userGraphUri);
+        String canViewRaw = sparqlRepository.getQuery(getSharedCanViewSPARQL(userResourceUri), userGraphUri);
         JsonNode bindings = sparqlBindingsArray(mapper, canViewRaw);
         if (!bindings.isArray()) {
             return out;
@@ -867,7 +785,7 @@ public class SearchService {
             }
 
             String metaGraphUri = graphUriFromSharedTopLevelUri(sharedUri, user);
-            String metaRaw = SPARQLQuery(getTopLevelMetadataSPARQL(sharedUri), metaGraphUri);
+            String metaRaw = sparqlRepository.getQuery(getTopLevelMetadataSPARQL(sharedUri), metaGraphUri);
             JsonNode metaBindings = sparqlBindingsArray(mapper, metaRaw);
             if (!metaBindings.isArray() || metaBindings.size() == 0) {
                 continue;

@@ -38,6 +38,13 @@ public class SparqlRepository {
     public static final String ATTACH_UPLOAD_SPARQL = "src/main/java/com/synbiohub/sbh3/sparql/AttachUpload.sparql";
     public static final String UPDATE_ATTACHMENT_SPARQL = "src/main/java/com/synbiohub/sbh3/sparql/UpdateAttachment.sparql";
     public static final String ATTACHMENT_UPDATE_SPARQL = "src/main/java/com/synbiohub/sbh3/sparql/AttachmentUpdate.sparql";
+    public static final String SEARCH_SPARQL = "src/main/java/com/synbiohub/sbh3/sparql/search.sparql";
+    public static final String SEARCH_COUNT_SPARQL = "src/main/java/com/synbiohub/sbh3/sparql/searchCount.sparql";
+    public static final String COUNT_SPARQL = "src/main/java/com/synbiohub/sbh3/sparql/Count.sparql";
+    public static final String ROOT_COLLECTION_METADATA_SPARQL = "src/main/java/com/synbiohub/sbh3/sparql/RootCollectionMetadata.sparql";
+    public static final String SUBCOLLECTION_METADATA_SPARQL = "src/main/java/com/synbiohub/sbh3/sparql/SubCollectionMetadata.sparql";
+    public static final String SHARED_VIEW_SPARQL = "src/main/java/com/synbiohub/sbh3/sparql/GetSharedCanView.sparql";
+    public static final String TOPLEVEL_METADATA_SPARQL = "src/main/java/com/synbiohub/sbh3/sparql/GetTopLevelMetadata.sparql";
 
     private final ObjectMapper objectMapper;
     private final RestClient restClient;
@@ -70,6 +77,25 @@ public class SparqlRepository {
                 .uri(sparqlQueryUrl(), graphUri, query)
                 .retrieve()
                 .body(String.class);
+    }
+
+    public String SPARQLOrExplorerQuery(String query) throws IOException {
+        return getSparqlQuery(query);
+    }
+
+    /**
+     * Runs a read-only query against SBOL Explorer when enabled, otherwise {@link #getQuery}.
+     * Replaces legacy {@code SearchService#SPARQLOrExplorerQuery} RestTemplate usage.
+     */
+    public String getSparqlQuery(String query) throws IOException {
+        if (ConfigUtil.get("useSBOLExplorer").asBoolean() && query != null && !query.isEmpty()) {
+            String graphUri = ConfigUtil.get("defaultGraph").asText();
+            return restClient.get()
+                    .uri(explorerQueryUrl(), graphUri, query)
+                    .retrieve()
+                    .body(String.class);
+        }
+        return getQuery(query);
     }
 
     /**
@@ -148,6 +174,11 @@ public class SparqlRepository {
     private String sparqlQueryUrl() throws IOException {
         return ConfigUtil.get("sparqlEndpoint").asText()
                 + "?default-graph-uri={default-graph-uri}&query={query}&format=json&";
+    }
+
+    private String explorerQueryUrl() throws IOException {
+        return ConfigUtil.get("SBOLExplorerEndpoint").asText()
+                + "?default-graph-uri={default-graph-uri}&query={query}&";
     }
 
     private String resolveGraphUri(String defaultGraphUri) throws IOException {
