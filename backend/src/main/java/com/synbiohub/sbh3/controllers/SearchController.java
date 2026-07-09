@@ -2,6 +2,7 @@ package com.synbiohub.sbh3.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.synbiohub.sbh3.repo.SparqlRepository;
 import com.synbiohub.sbh3.security.customsecurity.ServletPathUtil;
 import com.synbiohub.sbh3.security.model.User;
 import com.synbiohub.sbh3.security.repo.UserRepository;
@@ -34,6 +35,7 @@ public class SearchController {
     private final SearchService searchService;
 
     private final UserRepository userRepository;
+    private final SparqlRepository sparqlRepository;
 
     /**
      * Returns the metadata for the object from the specified search query.
@@ -52,7 +54,7 @@ public class SearchController {
     public String getResults(@Parameter(description = "Key/value pairs of search filters (e.g. objectType, collection, creator, offset, limit)") @RequestParam Map<String, String> allParams, HttpServletRequest request)
             throws IOException {
         String sparqlQuery = searchService.getMetadataQuerySPARQL(allParams);
-        return searchService.rawJSONToOutput(searchService.SPARQLOrExplorerQuery(sparqlQuery));
+        return searchService.rawJSONToOutput(sparqlRepository.getQuery(sparqlQuery));
     }
 
     /**
@@ -80,7 +82,7 @@ public class SearchController {
             allParams.put(keyword, "");
         }
         String sparqlQuery = searchService.getMetadataQuerySPARQL(allParams);
-        return searchService.rawJSONToOutput(searchService.SPARQLOrExplorerQuery(sparqlQuery));
+        return searchService.rawJSONToOutput(sparqlRepository.getQuery(sparqlQuery));
     }
 
     /**
@@ -98,7 +100,7 @@ public class SearchController {
     @ResponseBody
     public String getSearchCount(@Parameter(description = "Key/value pairs of search filters (same as /search)") @RequestParam Map<String, String> allParams) throws IOException {
         String sparqlQuery = searchService.getSearchCountSPARQL(allParams);
-        return searchService.JSONToCount(searchService.SPARQLOrExplorerQuery(sparqlQuery));
+        return searchService.JSONToCount(sparqlRepository.SPARQLOrExplorerQuery(sparqlQuery));
     }
 
     /**
@@ -126,7 +128,7 @@ public class SearchController {
             allParams.put(keyword, "");
         }
         String sparqlQuery = searchService.getSearchCountSPARQL(allParams);
-        return searchService.JSONToCount(searchService.SPARQLOrExplorerQuery(sparqlQuery));
+        return searchService.JSONToCount(sparqlRepository.SPARQLOrExplorerQuery(sparqlQuery));
     }
 
     /**
@@ -159,7 +161,7 @@ public class SearchController {
     public String getRootCollections() throws IOException {
         String sparqlQuery = searchService.getRootCollectionsSPARQL();
         log.info("Getting root collections");
-        return searchService.collectionToOutput(searchService.SPARQLQuery(sparqlQuery));
+        return searchService.collectionToOutput(sparqlRepository.getQuery(sparqlQuery));
     }
 
     /**
@@ -178,8 +180,8 @@ public class SearchController {
 
         String sparql = searchService.getManageSubmissionsSPARQL(user.getEmail(), user.getUsername());
 
-        String publicResults = searchService.SPARQLQuery(sparql);
-        String privateResults = searchService.SPARQLQuery(sparql, searchService.resolveUserNamedGraphUri(user));
+        String publicResults = sparqlRepository.getQuery(sparql);
+        String privateResults = sparqlRepository.getQuery(sparql, searchService.resolveUserNamedGraphUri(user));
 
         return searchService.mergeManageResults(publicResults, privateResults);
     }
@@ -221,7 +223,7 @@ public class SearchController {
 
         String collectionInfo = collectionInfoFromRequestPath(request, "subCollections");
         String sparqlQuery = searchService.getSubCollectionsSPARQL(collectionInfo);
-        return searchService.collectionToOutput(searchService.SPARQLQuery(sparqlQuery));
+        return searchService.collectionToOutput(sparqlRepository.getQuery(sparqlQuery));
     }
 
     /**
@@ -246,7 +248,7 @@ public class SearchController {
         String collectionInfo = collectionInfoFromRequestPath(request, "twins");
 
         String sparqlQuery = searchService.getURISPARQL(collectionInfo, "twins");
-        return searchService.rawJSONToOutput(searchService.SPARQLOrExplorerQuery(sparqlQuery));
+        return searchService.rawJSONToOutput(sparqlRepository.SPARQLOrExplorerQuery(sparqlQuery));
     }
 
     /**
@@ -271,7 +273,7 @@ public class SearchController {
         String collectionInfo = collectionInfoFromRequestPath(request, "twinsCount");
 
         String sparqlQuery = searchService.getTwinsCountSPARQL(collectionInfo);
-        return searchService.JSONToCount(searchService.SPARQLQuery(sparqlQuery));
+        return searchService.JSONToCount(sparqlRepository.getQuery(sparqlQuery));
     }
 
     /**
@@ -297,7 +299,7 @@ public class SearchController {
         String collectionInfo = collectionInfoFromRequestPath(request, "similar");
 
         String sparqlQuery = searchService.getURISPARQL(collectionInfo, "similar");
-        return searchService.rawJSONToOutput(searchService.SPARQLOrExplorerQuery(sparqlQuery));
+        return searchService.rawJSONToOutput(sparqlRepository.SPARQLOrExplorerQuery(sparqlQuery));
     }
 
     /**
@@ -323,7 +325,7 @@ public class SearchController {
         String collectionInfo = collectionInfoFromRequestPath(request, "similarCount");
 
         String sparqlQuery = searchService.getSimilarCountSPARQL(collectionInfo);
-        return searchService.JSONToCount(searchService.SPARQLQuery(sparqlQuery));
+        return searchService.JSONToCount(sparqlRepository.getQuery(sparqlQuery));
     }
 
     /**
@@ -350,7 +352,7 @@ public class SearchController {
         String collectionInfo = collectionInfoFromRequestPath(request, "uses");
 
         String sparqlQuery = searchService.getURISPARQL(collectionInfo, "uses");
-        return searchService.rawJSONToOutput(searchService.SPARQLQuery(sparqlQuery));
+        return searchService.rawJSONToOutput(sparqlRepository.getQuery(sparqlQuery));
     }
 
     /**
@@ -377,7 +379,7 @@ public class SearchController {
         String collectionInfo = collectionInfoFromRequestPath(request, "usesCount");
 
         String sparqlQuery = searchService.getUsesCountSPARQL(collectionInfo);
-        return searchService.JSONToCount(searchService.SPARQLQuery(sparqlQuery));
+        return searchService.JSONToCount(sparqlRepository.getQuery(sparqlQuery));
     }
 
     /**
@@ -428,7 +430,7 @@ public class SearchController {
     public String getTypeCount(@Parameter(description = "SBOL object type (e.g. ComponentDefinition, Sequence)") @PathVariable("type") String type, HttpServletRequest request) throws IOException {
 
         String sparqlQuery = searchService.getTypeCountSPARQL(type);
-        return searchService.JSONToCount(searchService.SPARQLQuery(sparqlQuery));
+        return searchService.JSONToCount(sparqlRepository.getQuery(sparqlQuery));
     }
 
     /**
@@ -447,7 +449,7 @@ public class SearchController {
     @RequestMapping(value = "/sparql", headers = "Accept=application/json")
     @ResponseBody
     public String getSPARQL(@Parameter(description = "Query parameters: 'query' (SPARQL query string) and optional 'default-graph-uri'") @RequestParam Map<String, String> params) throws IOException {
-        return searchService.SPARQLQuery(params.get("query"), params.get("default-graph-uri"));
+        return sparqlRepository.getQuery(params.get("query"), params.get("default-graph-uri"));
     }
 
     // @GetMapping(value = "/search/**")

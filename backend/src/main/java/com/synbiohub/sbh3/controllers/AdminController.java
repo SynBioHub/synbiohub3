@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.synbiohub.sbh3.dto.LogEntry;
 import com.synbiohub.sbh3.security.model.User;
+import com.synbiohub.sbh3.repo.SparqlRepository;
 import com.synbiohub.sbh3.services.AdminService;
 import com.synbiohub.sbh3.services.SearchService;
 import com.synbiohub.sbh3.services.UserService;
@@ -46,6 +47,7 @@ public class AdminController {
     private final AdminService adminService;
     private final UserService userService;
     private final SearchService searchService;
+    private final SparqlRepository sparqlRepository;
     @Operation(summary = "Run Admin SPARQL Query", description = "Executes a SPARQL query with admin privileges.")
     @ApiResponse(responseCode = "200", description = "JSON containing SPARQL results")
     @GetMapping(value = "/admin/sparql")
@@ -57,7 +59,7 @@ public class AdminController {
         if (auth == null) {
             return null;
         }
-        return searchService.SPARQLQuery(query);
+        return sparqlRepository.getQuery(query);
     }
 
     @Operation(summary = "Get admin dashboard status", description = "Returns status of graphs, logs, plugins, users, and remotes.")

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.synbiohub.sbh3.dto.LogEntry;
+import com.synbiohub.sbh3.repo.SparqlRepository;
 import com.synbiohub.sbh3.security.model.Role;
 import com.synbiohub.sbh3.security.model.User;
 import com.synbiohub.sbh3.sparql.SPARQLQuery;
@@ -40,6 +41,7 @@ public class AdminService {
 
     private final UserService userService;
     private final SearchService searchService;
+    private final SparqlRepository sparqlRepository;
     private final PasswordEncoder passwordEncoder;
     private ObjectMapper mapper = new ObjectMapper();
 
@@ -73,7 +75,7 @@ public class AdminService {
             """;
 
         // Get raw JSON string from Virtuoso via SearchService
-        String rawJson = searchService.SPARQLQuery(sparql);
+        String rawJson = sparqlRepository.getQuery(sparql);
         JsonNode root = mapper.readTree(rawJson);
 
         // We want to mimic the SBH1 return structure: [{graphUri: "...", numTriples: 123}, ...]
@@ -310,7 +312,7 @@ public class AdminService {
         // BEFORE 1/27:
         SPARQLQuery statusQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/GetDatabaseStatus.sparql");
         try {
-            var result = searchService.SPARQLQuery(statusQuery.getQuery());
+            var result = sparqlRepository.getQuery(statusQuery.getQuery());
             if (result.getBytes().length > 0) {
                 return true;
             } else {

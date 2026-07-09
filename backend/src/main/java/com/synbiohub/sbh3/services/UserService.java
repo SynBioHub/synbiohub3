@@ -420,7 +420,7 @@ public User updateUserProfile(Map<String, String> allParams) throws Exception {
      */
     public Boolean isOwnedBy(String topLevelUri) throws IOException {
         SPARQLQuery query = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/GetOwnedBy.sparql");
-        String results = searchService.SPARQLQuery(query.loadTemplate(Collections.singletonMap("topLevel", topLevelUri)));
+        String results = sparqlRepository.getQuery(query.loadTemplate(Collections.singletonMap("topLevel", topLevelUri)));
         ArrayList<String> owners = new ArrayList<>();
         try {
             var mapper = new ObjectMapper();
