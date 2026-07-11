@@ -5,9 +5,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.synbiohub.sbh3.Synbiohub3Application;
+import com.synbiohub.sbh3.dao.SparqlService;
 import com.synbiohub.sbh3.dto.LoginDTO;
 import com.synbiohub.sbh3.dto.UserRegistrationDTO;
+import com.synbiohub.sbh3.repo.SparqlRepository;
 import com.synbiohub.sbh3.security.customsecurity.AuthenticationResponse;
 import com.synbiohub.sbh3.security.customsecurity.JwtService;
 import com.synbiohub.sbh3.security.model.AuthCodes;
@@ -19,10 +20,9 @@ import com.synbiohub.sbh3.sparql.SPARQLQuery;
 import com.synbiohub.sbh3.utils.ConfigUtil;
 import com.synbiohub.sbh3.utils.RestClient;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.ILoggerFactory;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -35,7 +35,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -45,11 +44,8 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.sql.*;
-import java.util.Base64;
 import java.util.*;
 import java.util.regex.Pattern;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Service
 @RequiredArgsConstructor
@@ -58,12 +54,13 @@ public class UserService {
     private static final int JWT_SECRET_BYTES = 48;
 
     private final UserRepository userRepository;
-    private final SearchService searchService;
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final AuthRepository authRepository;
     private final RestClient restClient;
+    private final SparqlRepository sparqlRepository;
+    private final SparqlService sparqlService;
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     public String loginUser(String username, String password) {
@@ -420,7 +417,8 @@ public User updateUserProfile(Map<String, String> allParams) throws Exception {
      */
     public Boolean isOwnedBy(String topLevelUri) throws IOException {
         SPARQLQuery query = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/GetOwnedBy.sparql");
-        String results = sparqlRepository.getQuery(query.loadTemplate(Collections.singletonMap("topLevel", topLevelUri)));
+        String results = sparqlService.read(sparqlService.getExplorerUrl(),
+                sparqlService.resolveGraphUri(""), query.loadTemplate(Collections.singletonMap("topLevel", topLevelUri)));
         ArrayList<String> owners = new ArrayList<>();
         try {
             var mapper = new ObjectMapper();
