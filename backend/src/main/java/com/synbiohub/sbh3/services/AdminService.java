@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.synbiohub.sbh3.dao.SparqlService;
 import com.synbiohub.sbh3.dto.LogEntry;
-import com.synbiohub.sbh3.repo.SparqlRepository;
 import com.synbiohub.sbh3.security.model.Role;
 import com.synbiohub.sbh3.security.model.User;
 import com.synbiohub.sbh3.sparql.SPARQLQuery;
@@ -13,10 +13,10 @@ import com.synbiohub.sbh3.utils.ConfigUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -40,8 +40,7 @@ import java.util.zip.GZIPInputStream;
 public class AdminService {
 
     private final UserService userService;
-    private final SearchService searchService;
-    private final SparqlRepository sparqlRepository;
+    private final SparqlService sparqlService;
     private final PasswordEncoder passwordEncoder;
     private ObjectMapper mapper = new ObjectMapper();
 
@@ -75,7 +74,7 @@ public class AdminService {
             """;
 
         // Get raw JSON string from Virtuoso via SearchService
-        String rawJson = sparqlRepository.getQuery(sparql);
+        String rawJson = sparqlService.read(sparqlService.getExplorerUrl(), sparqlService.resolveGraphUri(""), sparql);
         JsonNode root = mapper.readTree(rawJson);
 
         // We want to mimic the SBH1 return structure: [{graphUri: "...", numTriples: 123}, ...]
@@ -312,7 +311,7 @@ public class AdminService {
         // BEFORE 1/27:
         SPARQLQuery statusQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/GetDatabaseStatus.sparql");
         try {
-            var result = sparqlRepository.getQuery(statusQuery.getQuery());
+            var result = sparqlService.read(sparqlService.getExplorerUrl(), sparqlService.resolveGraphUri(""), statusQuery.getQuery());
             if (result.getBytes().length > 0) {
                 return true;
             } else {

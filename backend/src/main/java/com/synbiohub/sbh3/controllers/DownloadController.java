@@ -1,9 +1,11 @@
 package com.synbiohub.sbh3.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.synbiohub.sbh3.repo.SparqlRepository;
+import com.synbiohub.sbh3.dao.SparqlService;
+import com.synbiohub.sbh3.security.customsecurity.ServletPathUtil;
 import com.synbiohub.sbh3.services.DownloadService;
 import com.synbiohub.sbh3.services.SearchService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.sbolstandard.core2.SBOLDocument;
@@ -13,8 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.AntPathMatcher;
-import com.synbiohub.sbh3.security.customsecurity.ServletPathUtil;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -41,9 +41,9 @@ public class DownloadController extends AntPathMatcher {
     private final DownloadService downloadService;
 
     private final SearchService searchService;
-    private final SparqlRepository sparqlRepository;
 
     private final ObjectMapper mapper;
+    private final SparqlService sparqlService;
 
     /**
      * Legacy: GET /public/{db}/{id}/{ver}/sbol — SBOL2 RDF/XML (recursive closure). Same for /user/{username}/...
@@ -153,31 +153,45 @@ public class DownloadController extends AntPathMatcher {
             case "subCollections" -> ResponseEntity.ok()
                     .contentType(MediaType.APPLICATION_JSON)
                     .body(searchService.collectionToOutput(
-                            sparqlRepository.getQuery(searchService.getSubCollectionsSPARQL(collectionInfo))));
+                            sparqlService.read(sparqlService.getExplorerUrl(),
+                                    sparqlService.resolveGraphUri(""),
+                                    sparqlService.getSubCollectionsSPARQL(collectionInfo))));
             case "twins" -> ResponseEntity.ok()
                     .contentType(MediaType.APPLICATION_JSON)
                     .body(searchService.rawJSONToOutput(
-                            sparqlRepository.SPARQLOrExplorerQuery(searchService.getURISPARQL(collectionInfo, "twins"))));
+                            sparqlService.read(sparqlService.getExplorerUrl(),
+                                    sparqlService.resolveGraphUri(""),
+                                    sparqlService.getURISPARQL(collectionInfo, "twins"))));
             case "twinsCount" -> ResponseEntity.ok()
                     .contentType(MediaType.TEXT_PLAIN)
                     .body(searchService.JSONToCount(
-                            sparqlRepository.getQuery(searchService.getTwinsCountSPARQL(collectionInfo))));
+                            sparqlService.read(sparqlService.getExplorerUrl(),
+                                    sparqlService.resolveGraphUri(""),
+                                    sparqlService.getTwinsCountSPARQL(collectionInfo))));
             case "similar" -> ResponseEntity.ok()
                     .contentType(MediaType.APPLICATION_JSON)
                     .body(searchService.rawJSONToOutput(
-                            sparqlRepository.SPARQLOrExplorerQuery(searchService.getURISPARQL(collectionInfo, "similar"))));
+                            sparqlService.read(sparqlService.getExplorerUrl(),
+                                    sparqlService.resolveGraphUri(""),
+                                    sparqlService.getURISPARQL(collectionInfo, "similar"))));
             case "similarCount" -> ResponseEntity.ok()
                     .contentType(MediaType.TEXT_PLAIN)
                     .body(searchService.JSONToCount(
-                            sparqlRepository.getQuery(searchService.getSimilarCountSPARQL(collectionInfo))));
+                            sparqlService.read(sparqlService.getExplorerUrl(),
+                                    sparqlService.resolveGraphUri(""),
+                                    sparqlService.getSimilarCountSPARQL(collectionInfo))));
             case "uses" -> ResponseEntity.ok()
                     .contentType(MediaType.APPLICATION_JSON)
                     .body(searchService.rawJSONToOutput(
-                            sparqlRepository.SPARQLOrExplorerQuery(searchService.getURISPARQL(collectionInfo, "uses"))));
+                            sparqlService.read(sparqlService.getExplorerUrl(),
+                                    sparqlService.resolveGraphUri(""),
+                                    sparqlService.getURISPARQL(collectionInfo, "uses"))));
             case "usesCount" -> ResponseEntity.ok()
                     .contentType(MediaType.TEXT_PLAIN)
                     .body(searchService.JSONToCount(
-                            sparqlRepository.getQuery(searchService.getUsesCountSPARQL(collectionInfo))));
+                            sparqlService.read(sparqlService.getExplorerUrl(),
+                                    sparqlService.resolveGraphUri(""),
+                                    sparqlService.getUsesCountSPARQL(collectionInfo))));
             default -> throw new IllegalStateException("unexpected linked-search suffix: " + suffix);
         };
     }

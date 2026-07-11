@@ -50,52 +50,20 @@ public class SparqlRepository {
     private final RestClient restClient;
 
     /**
-     * Runs a read-only SPARQL query against {@code sparqlEndpoint} and returns JSON results.
+     * Runs a read-only SPARQL query via POST (same parameters as , for large queries).
      */
-    public String getQuery(String query) throws IOException {
-        return getQuery(query, null);
-    }
-
-    public String getQuery(String query, String defaultGraphUri) throws IOException {
-        String graphUri = resolveGraphUri(defaultGraphUri);
-        return restClient.get()
-                .uri(sparqlQueryUrl(), graphUri, query)
-                .retrieve()
-                .body(String.class);
-    }
-
-    /**
-     * Runs a read-only SPARQL query via POST (same parameters as {@link #getQuery}, for large queries).
-     */
-    public String postQuery(String query) throws IOException {
-        return postQuery(query, null);
-    }
-
-    public String postQuery(String query, String defaultGraphUri) throws IOException {
-        String graphUri = resolveGraphUri(defaultGraphUri);
+    public String executePostQuery(String url, String uri, String query) throws IOException {
         return restClient.post()
-                .uri(sparqlQueryUrl(), graphUri, query)
+                .uri(url, uri, query)
                 .retrieve()
                 .body(String.class);
     }
 
-    public String SPARQLOrExplorerQuery(String query) throws IOException {
-        return getSparqlQuery(query);
-    }
-
-    /**
-     * Runs a read-only query against SBOL Explorer when enabled, otherwise {@link #getQuery}.
-     * Replaces legacy {@code SearchService#SPARQLOrExplorerQuery} RestTemplate usage.
-     */
-    public String getSparqlQuery(String query) throws IOException {
-        if (ConfigUtil.get("useSBOLExplorer").asBoolean() && query != null && !query.isEmpty()) {
-            String graphUri = ConfigUtil.get("defaultGraph").asText();
-            return restClient.get()
-                    .uri(explorerQueryUrl(), graphUri, query)
-                    .retrieve()
-                    .body(String.class);
-        }
-        return getQuery(query);
+    public String executeReadQuery(String url, String uri, String query) {
+        return restClient.get()
+                .uri(url, uri, query)
+                .retrieve()
+                .body(String.class);
     }
 
     /**
@@ -168,24 +136,6 @@ public class SparqlRepository {
                 return null;
             });
         }
-    }
-
-    /** Derives sparql-auth URL from config (explicit or inferred from sparqlEndpoint). */
-    private String sparqlQueryUrl() throws IOException {
-        return ConfigUtil.get("sparqlEndpoint").asText()
-                + "?default-graph-uri={default-graph-uri}&query={query}&format=json&";
-    }
-
-    private String explorerQueryUrl() throws IOException {
-        return ConfigUtil.get("SBOLExplorerEndpoint").asText()
-                + "?default-graph-uri={default-graph-uri}&query={query}&";
-    }
-
-    private String resolveGraphUri(String defaultGraphUri) throws IOException {
-        if (defaultGraphUri == null || defaultGraphUri.isBlank()) {
-            return ConfigUtil.get("defaultGraph").asText();
-        }
-        return defaultGraphUri;
     }
 
     private String sparqlAuthEndpoint() throws IOException {
