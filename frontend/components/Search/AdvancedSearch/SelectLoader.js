@@ -55,6 +55,14 @@ export default function SelectLoader(properties) {
       isClearable={true}
       placeholder={properties.placeholder}
       className={styles.optionselect}
+      styles={{
+        singleValue: base => ({
+          ...base,
+          overflow: 'visible',
+          textOverflow: 'unset',
+          whiteSpace: 'normal'
+        })
+      }}
       onChange={option => {
         properties.onChange(option);
       }}

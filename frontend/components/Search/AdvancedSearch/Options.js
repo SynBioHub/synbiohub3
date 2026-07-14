@@ -42,14 +42,27 @@ export default function Options(properties) {
     return (
       <AdditionalFilter
         predicates={predicates}
-        key={element.filter + element.value}
+        key={index}
         index={index}
         extraFilters={properties.extraFilters}
         setExtraFilters={properties.setExtraFilters}
         handleDelete={properties.handleDelete}
+        creator={properties.creator}
+        objectType={properties.objectType}
+        role={properties.role}
+        sbolType={properties.sbolType}
+        collections={properties.collections}
       />
     );
   });
+
+  const addCountToResultName = result => {
+    const count = result.count ? ` (${result.count.value})` : '';
+    return {
+      value: result.object.value,
+      label: shortName(result.object.value) + count
+    };
+  };
 
   return (
     <div>
@@ -80,13 +93,7 @@ export default function Options(properties) {
         <SelectLoader
           sparql={facetQuery(getSBOLTypes, 'sbolType')}
           placeholder={shortName(properties.sbolType)}
-          parseResult={result => {
-            const count = result.count ? ` (${result.count.value})` : '';
-            return {
-              value: result.object.value,
-              label: shortName(result.object.value) + count
-            };
-          }}
+          parseResult={result => addCountToResultName(result)}
           onChange={option =>
             properties.setSbolType(option ? option.value : '')
           }
@@ -102,13 +109,7 @@ export default function Options(properties) {
           sparql={facetQuery(getRoles, 'role')}
           placeholder={shortName(properties.role)}
           value={properties.role}
-          parseResult={result => {
-            const count = result.count ? ` (${result.count.value})` : '';
-            return {
-              value: result.object.value,
-              label: shortName(result.object.value) + count
-            };
-          }}
+          parseResult={result => addCountToResultName(result)}
           onChange={option => properties.setRole(option ? option.value : '')}
         />
       </div>
@@ -121,13 +122,7 @@ export default function Options(properties) {
         <SelectLoader
           sparql={facetQuery(getTypes, 'objectType')}
           placeholder={shortName(properties.objectType)}
-          parseResult={result => {
-            const count = result.count ? ` (${result.count.value})` : '';
-            return {
-              value: result.object.value,
-              label: shortName(result.object.value) + count
-            };
-          }}
+          parseResult={result => addCountToResultName(result)}
           onChange={option =>
             properties.setObjectType(option ? option.value : '')
           }
