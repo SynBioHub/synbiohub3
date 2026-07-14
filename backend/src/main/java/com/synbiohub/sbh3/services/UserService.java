@@ -367,6 +367,7 @@ public User updateUserProfile(Map<String, String> allParams) throws Exception {
                 allParams.put("graphStoreEndpoint", "http://virtuoso3:8890/sparql-graph-crud-auth/");
                 allParams.put("firstLaunch", false);
                 allParams.put("version", 1);
+                allParams.put("isSynBioHub3", true);
                 Map<String, String> wor = new HashMap<>();
                 wor.put("https://synbiohub.org", "http://localhost:6789");
                 allParams.put("webOfRegistries", wor);// TODO: Make sure web of registries is correct
@@ -532,6 +533,14 @@ public User updateUserProfile(Map<String, String> allParams) throws Exception {
             }
         }
         return users;
+    }
+
+    public int getSynBioHubVersion() throws IOException {
+        JsonNode flag = ConfigUtil.get("isSynBioHub3");
+        if (flag != null && !flag.isNull() && flag.asBoolean(false)) {
+            return 3;
+        }
+        return 1;
     }
 
 }
