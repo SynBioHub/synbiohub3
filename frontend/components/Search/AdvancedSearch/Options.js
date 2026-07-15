@@ -60,7 +60,8 @@ export default function Options(properties) {
     const count = result.count ? ` (${result.count.value})` : '';
     return {
       value: result.object.value,
-      label: shortName(result.object.value) + count
+      label: shortName(result.object.value) + count,
+      count: result.count ? Number(result.count.value) : 0
     };
   };
 
@@ -78,7 +79,8 @@ export default function Options(properties) {
             const count = result.count ? ` (${result.count.value})` : '';
             return {
               value: result.object.value,
-              label: result.object.value + count
+              label: result.object.value + count,
+              count: result.count ? Number(result.count.value) : 0
             };
           }}
           onChange={option => properties.setCreator(option ? option.value : '')}
@@ -146,7 +148,11 @@ export default function Options(properties) {
             const label = !result.name
               ? result.displayId.value
               : result.name.value;
-            return { value: result.subject.value, label: label + count };
+            return {
+              value: result.subject.value,
+              label: label + count,
+              count: result.count ? Number(result.count.value) : 0
+            };
           }}
           onChange={collections => properties.setCollections(collections)}
         />

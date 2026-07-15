@@ -1,5 +1,23 @@
-const wrapValue = value =>
-  value.startsWith('http') ? `<${value}>` : `'${value.replace(/'/g, "\\'")}'`;
+const isUri = value => value.startsWith('http');
+
+// escapes a value for use inside a SPARQL "..." string literal.
+const escapeSparqlString = value =>
+  value
+    .replace(/\\/g, '\\\\')
+    .replace(/"/g, '\\"')
+    .replace(/\n/g, '\\n')
+    .replace(/\r/g, '\\r')
+    .replace(/\t/g, '\\t');
+
+// matches ?tl against a value regardless of the value's literal datatype.
+const matchClause = (predicate, value, variableName) => {
+  if (isUri(value)) {
+    return `?tl ${predicate} <${value}> .`;
+  }
+  return `?tl ${predicate} ${variableName} .\n      FILTER(STR(${variableName}) = "${escapeSparqlString(
+    value
+  )}")`;
+};
 
 const FACET_PREDICATES = {
   creator: 'dc:creator',
@@ -8,30 +26,34 @@ const FACET_PREDICATES = {
   sbolType: 'sbol2:type'
 };
 
-const singleValueFacetClauses = (properties, excludeFacet) =>
+const singleValueFacetClauses = (properties, excludeFacet, nextVariable) =>
   Object.entries(FACET_PREDICATES)
     .filter(([facet]) => excludeFacet !== facet && properties[facet])
-    .map(
-      ([facet, predicate]) =>
-        `?tl ${predicate} ${wrapValue(properties[facet])} .`
+    .map(([facet, predicate]) =>
+      matchClause(predicate, properties[facet], nextVariable())
     );
 
 const collectionClauses = (properties, excludeFacet) => {
   if (excludeFacet === 'collections' || !properties.collections?.length) {
     return [];
   }
+  // collection.value is always a Collection's own subject URI, never a literal
   return properties.collections.map(
-    collection => `${wrapValue(collection.value)} sbol2:member ?tl .`
+    collection => `<${collection.value}> sbol2:member ?tl .`
   );
 };
 
-const extraFilterClauses = (properties, excludeExtraFilterIndex) =>
+const extraFilterClauses = (
+  properties,
+  excludeExtraFilterIndex,
+  nextVariable
+) =>
   (properties.extraFilters || [])
     .filter(
       (filter, index) =>
         index !== excludeExtraFilterIndex && filter.filter && filter.value
     )
-    .map(filter => `?tl ${filter.filter} ${wrapValue(filter.value)} .`);
+    .map(filter => matchClause(filter.filter, filter.value, nextVariable()));
 
 const textQueryClauses = query => {
   if (!query) {
@@ -39,8 +61,8 @@ const textQueryClauses = query => {
   }
   const words = query.toLowerCase().split(/\s+/).filter(Boolean);
   return words.map(word => {
-    const escaped = word.replace(/'/g, "\\'");
-    return `FILTER(CONTAINS(LCASE(STR(?tlDisplayId)), '${escaped}') || CONTAINS(LCASE(STR(?tlName)), '${escaped}') || CONTAINS(LCASE(STR(?tlDescription)), '${escaped}'))`;
+    const escaped = escapeSparqlString(word);
+    return `FILTER(CONTAINS(LCASE(STR(?tlDisplayId)), "${escaped}") || CONTAINS(LCASE(STR(?tlName)), "${escaped}") || CONTAINS(LCASE(STR(?tlDescription)), "${escaped}"))`;
   });
 };
 
@@ -52,10 +74,13 @@ export default function buildFacetConstraints(
   excludeFacet,
   excludeExtraFilterIndex
 ) {
+  let variableCount = 0;
+  const nextVariable = () => `?litMatch${variableCount++}`;
+
   const clauses = [
-    ...singleValueFacetClauses(properties, excludeFacet),
+    ...singleValueFacetClauses(properties, excludeFacet, nextVariable),
     ...collectionClauses(properties, excludeFacet),
-    ...extraFilterClauses(properties, excludeExtraFilterIndex),
+    ...extraFilterClauses(properties, excludeExtraFilterIndex, nextVariable),
     ...textQueryClauses(query)
   ];
 

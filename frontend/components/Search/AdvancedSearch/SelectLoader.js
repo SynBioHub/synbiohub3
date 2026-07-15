@@ -12,13 +12,24 @@ const { publicRuntimeConfig } = getConfig();
 
 const customFilter = createFilter({ ignoreAccents: false });
 
+// sorts options by facet count (highest first), then alphabetically by label
+const sortByCount = data =>
+  data.sort((a, b) => {
+    const countDiff = (b.count || 0) - (a.count || 0);
+    if (countDiff !== 0) return countDiff;
+    return (a.label || '')
+      .toString()
+      .toLowerCase()
+      .localeCompare((b.label || '').toString().toLowerCase());
+  });
+
 export default function SelectLoader(properties) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [data, setData] = useState([]);
   const dispatch = useDispatch();
   const token = useSelector(state => state.user.token);
-  
+
   useEffect(() => {
     if (!properties.result) {
       fetchOptions(
@@ -90,14 +101,7 @@ const fetchOptions = async (
     }
   }
 
-  // Sort the data array by label
-  newData.sort((a, b) => {
-    const la = (a.label || '').toString().toLowerCase();
-    const lb = (b.label || '').toString().toLowerCase();
-    if (la < lb) return -1;
-    if (la > lb) return 1;
-    return 0;
-  });
+  sortByCount(newData);
 
   setData(newData);
   setLoading(false);
@@ -135,14 +139,7 @@ const processResults = (result, setLoading, setData, setError, parseResult) => {
       newData.push(parseResult(result));
     }
 
-    // Sort the data array by label 
-    newData.sort((a, b) => {
-      const la = (a.label || '').toString().toLowerCase();
-      const lb = (b.label || '').toString().toLowerCase();
-      if (la < lb) return -1;
-      if (la > lb) return 1;
-      return 0;
-    });
+    sortByCount(newData);
     setData(newData);
     setLoading(false);
   }

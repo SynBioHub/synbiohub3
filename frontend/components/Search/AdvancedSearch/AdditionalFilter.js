@@ -72,7 +72,8 @@ export default function AdditionalFilter(properties) {
             const count = result.count ? ` (${result.count.value})` : '';
             return {
               value: result.object.value,
-              label: shortName(result.object.value) + count
+              label: shortName(result.object.value) + count,
+              count: result.count ? Number(result.count.value) : 0
             };
           }}
           onChange={option => {
