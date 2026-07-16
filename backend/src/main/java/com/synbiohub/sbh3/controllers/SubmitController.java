@@ -5,6 +5,10 @@ import com.synbiohub.sbh3.submit.SubmitPayload;
 import lombok.RequiredArgsConstructor;
 import org.sbolstandard.core2.SBOLValidationException;
 import org.springframework.http.MediaType;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+@Tag(name = "Submissions", description = "Endpoints for creating and submitting registry objects")
 @RestController
 @RequiredArgsConstructor
 public class SubmitController {
@@ -32,5 +37,59 @@ public class SubmitController {
             @ModelAttribute SubmitPayload allParams,
             @RequestPart(value = "file", required = false) MultipartFile file) throws IOException, SBOLValidationException {
         return submitService.submit(allParams, file);
+    }
+
+    @Operation(summary = "Create new collection (Unimplemented)", description = "Currently an empty stub.", deprecated = true)
+    @PostMapping(value = "/newCollection")
+    public void createNewCollection(@RequestBody(required = false) Map<String, String> submissionData) {
+
+    }
+
+    @Operation(summary = "Make object public (Unimplemented)", description = "Currently an empty stub.", deprecated = true)
+    @PostMapping(value = "/makePublic")
+    public ResponseEntity<String> makePublic(@RequestParam Map<String, String> allParams) {
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @Operation(summary = "Remove collection form (Unimplemented)", description = "Currently an empty stub.", deprecated = true)
+    @GetMapping(value = "/removeCollection")
+    public void removeCollection(@RequestParam Map<String, String> allParams) {
+
+    }
+
+    @Operation(summary = "Remove collection (Unimplemented)", description = "Currently an empty stub.", deprecated = true)
+    @DeleteMapping(value = "/removeCollection")
+    public void removeCollection(@RequestBody(required = false) SubmissionDTO submissionDTO) {
+
+    }
+
+    @Operation(summary = "Remove object form (Unimplemented)", description = "Currently an empty stub.", deprecated = true)
+    @GetMapping(value = "/remove")
+    public void removeObject(@RequestParam Map<String, String> allParams) {
+
+    }
+
+    @Operation(summary = "Remove object (Unimplemented)", description = "Currently an empty stub.", deprecated = true)
+    @DeleteMapping(value = "/remove")
+    public void removeObject(@RequestBody(required = false) SBOLDocument sbolDocument, @RequestParam(required = false) String objectID) {
+
+    }
+
+    @Operation(summary = "Replace object (Unimplemented)", description = "Currently an empty stub.", deprecated = true)
+    @GetMapping(value = "/replace")
+    public void replaceObject(@RequestParam Map<String, String> allParams) {
+        //should just call remove object then add object
+    }
+
+    @Operation(summary = "Add object (Unimplemented)", description = "Currently an empty stub.", deprecated = true)
+    @PostMapping(value = "/add")
+    public void addObject(@RequestBody(required = false) SBOLDocument sbolDocument) {
+
+    }
+
+    @Operation(summary = "Update icon (Unimplemented)", description = "Currently an empty stub.", deprecated = true)
+    @PostMapping(value = "/icon")
+    public ResponseEntity<String> updateIcon(@RequestParam Map<String, String> allParams) {
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
