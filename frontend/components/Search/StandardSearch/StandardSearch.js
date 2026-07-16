@@ -2,7 +2,7 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import Loader from 'react-loader-spinner';
 import { useDispatch, useSelector } from 'react-redux';
-import { setOffset } from '../../../redux/actions'
+import { setOffset, addError } from '../../../redux/actions'
 import useSWR from 'swr';
 import { faHatWizard, faSearch, faBars } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -66,9 +66,32 @@ export default function StandardSearch() {
   const [collections, setCollections] = useState([]);
   const [extraFilters, setExtraFilters] = useState([]);
 
-  const [url, setUrl] = useState('');
+  const [url, setUrl] = useState(''); // v1: path filter blob
+  const [searchParams, setSearchParams] = useState(''); // v3: query string without '?'
   const [translation, setTranslation] = useState(0);
   const router = useRouter();
+
+  const [sbhVersion, setSbhVersion] = useState(1); // 1 or 3
+  useEffect(() => {
+    axios
+      .get(`${publicRuntimeConfig.backend}/getSynBioHubVersion`, {
+        headers: {
+          Accept: 'application/json',
+          'X-authorization': token
+        }
+      })
+      .then(response => {
+        const version = Number(
+          typeof response.data === 'object'
+            ? response.data.version
+            : response.data
+        );
+        setSbhVersion(version === 3 ? 3 : 1);
+      })
+      .catch(() => {
+        setSbhVersion(1); // keep default if endpoint missing / errors
+      });
+  }, [token]);
 
   useEffect(() => {
     if (theme.requireLogin && !loggedIn) {
@@ -76,13 +99,44 @@ export default function StandardSearch() {
     }
   }, [theme.requireLogin, router]);
 
+  const normalizeFilterValue = (value, isDate = false) => {
+    if (!value) return null;
+    if (isDate) return value.toISOString().slice(0, 10);
+    // Query params can carry the full URI (domain + path + hash)
+    return value;
+  };
 
   const constructSearch = () => {
+    if (sbhVersion === 3) {
+      const params = new URLSearchParams();
+      const add = (term, value, isDate = false) => {
+        const v = normalizeFilterValue(value, isDate);
+        if (v != null && v !== '') params.append(term, v);
+      };
+
+      add('objectType', objectType);
+      add('dc:creator', creator);
+      add('sbol2:role', role);
+      add('sbol2:type', sbolType);
+      collections.forEach(c => add('collection', c.value));
+      add('createdAfter', created[0].startDate, true);
+      add('createdBefore', created[0].endDate, true);
+      add('modifiedAfter', modifed[0].startDate, true);
+      add('modifiedBefore', modifed[0].endDate, true);
+      extraFilters.forEach(f => {
+        if (f.filter && f.value) add(f.filter, f.value);
+      });
+
+      setSearchParams(params.toString());
+      return;
+    }
+
+    // SynBioHub 1 (existing path filter string)
     let collectionUrls = '';
     for (const collection of collections) {
       collectionUrls += getUrl(collection.value, 'collection');
     }
-    const url = `${getUrl(objectType, 'objectType')}${getUrl(
+    const nextUrl = `${getUrl(objectType, 'objectType')}${getUrl(
       creator,
       'dc:creator'
     )}${getUrl(role, 'sbol2:role')}${getUrl(
@@ -101,8 +155,7 @@ export default function StandardSearch() {
       'modifedBefore',
       true
     )}${constructExtraFilters()}`;
-    console.log(url);
-    setUrl(url);
+    setUrl(nextUrl);
   };
 
   const handleDelete = (delFilterIndex) => {
@@ -123,32 +176,34 @@ export default function StandardSearch() {
   };
 
   const constructExtraFilters = () => {
-    let url = '';
+    let filterUrl = '';
     for (const filter of extraFilters) {
-      if (filter.filter && filter.value){
-        url += getUrl(filter.value, filter.filter);        
+      if (filter.filter && filter.value) {
+        filterUrl += getUrl(filter.value, filter.filter);
       }
     }
-    return url;
+    return filterUrl;
   };
 
+  // SynBioHub 1 only: build path filter fragments
   const getUrl = (value, term, isDate = false) => {
-    if (value) {
-      if (isDate) return `${term}=${encodeURIComponent(value.toISOString().slice(0, 10))}&`;
-      if (isValidURI(value)) {
-        return `${term}=<${encodeURIComponent(value)}>&`;
-      } 
-      return `${term}='${encodeURIComponent(value)}'&`;
+    if (!value) return '';
+    if (isDate) return `${term}=${encodeURIComponent(value.toISOString().slice(0, 10))}&`;
+    if (isValidURI(value)) {
+      return `${term}=<${encodeURIComponent(value)}>&`;
     }
-    return '';
+    return `${term}='${encodeURIComponent(value)}'&`;
   };
+
+  const filterString = sbhVersion === 3 ? searchParams : url;
 
   // get search count
   const { newCount, isCountLoading, isCountError } = useSearchCount(
-    encodeURIComponent(query),
-    url,
+    query,
+    filterString,
     token,
-    dispatch
+    dispatch,
+    sbhVersion
   );
 
   // update search count display
@@ -175,12 +230,13 @@ export default function StandardSearch() {
 
   // get search results
   const { results, isLoading, isError } = useSearchResults(
-    encodeURIComponent(query),
-    url,
+    query,
+    filterString,
     offset,
     limit,
     token,
-    dispatch
+    dispatch,
+    sbhVersion
   );
 
   if (isError) {
@@ -201,33 +257,33 @@ export default function StandardSearch() {
     getTypeAndUrl(result, registries);
   }
   return (
-  <div className={viewStyles.container}>
-    <div
-      className={viewStyles.panelbutton}
-      role="button"
-      onClick={() => {
-        translation == 14 ? setTranslation(0) : setTranslation(14);
-      }}
-    >
-      <FontAwesomeIcon icon={faBars} size="1x" />
-    </div>
-    <div
-      className={
-        translation === 0
-          ? viewStyles.searchSidepanelcontaineropen
-          : viewStyles.searchSidepanelcontainercollapse
-      }
-    >
-      <div className={viewStyles.sidepanel}
-        style={{
-          transform: `translateX(-${translation}rem)`,
-          transition: 'transform 0.3s'
+    <div className={viewStyles.container}>
+      <div
+        className={viewStyles.panelbutton}
+        role="button"
+        onClick={() => {
+          translation == 14 ? setTranslation(0) : setTranslation(14);
         }}
       >
-        <div className={viewStyles.headercontainer}>
-          <div className={viewStyles.emptySpace}>
+        <FontAwesomeIcon icon={faBars} size="1x" />
+      </div>
+      <div
+        className={
+          translation === 0
+            ? viewStyles.searchSidepanelcontaineropen
+            : viewStyles.searchSidepanelcontainercollapse
+        }
+      >
+        <div className={viewStyles.sidepanel}
+          style={{
+            transform: `translateX(-${translation}rem)`,
+            transition: 'transform 0.3s'
+          }}
+        >
+          <div className={viewStyles.headercontainer}>
+            <div className={viewStyles.emptySpace}>
+            </div>
           </div>
-        </div>
 
           <div className={viewStyles.searchBoundedheightforsidepanel}
             style={{
@@ -258,30 +314,30 @@ export default function StandardSearch() {
                 extraFilters={extraFilters}
                 setExtraFilters={setExtraFilters}
 
-              addFilter={addFilter}
-              handleDelete={handleDelete}
-            />
-            <div
-              className={advStyles.searchbutton}
-              role="button"
-              onClick={() => {
-                dispatch(setOffset(0));
-                constructSearch();
-              }}
-              style={{
-                backgroundColor: theme?.themeParameters?.[0]?.value || '#D25627',
-                color: theme?.themeParameters?.[1]?.value || '#fff',
-              }}
-            >
-            <FontAwesomeIcon
-              icon={faSearch}
-              size="1x"
-              color="#fff"
-              className={advStyles.searchicon}
-            />
-            <div>Search</div>
-          </div>
-        </div>
+                addFilter={addFilter}
+                handleDelete={handleDelete}
+              />
+              <div
+                className={advStyles.searchbutton}
+                role="button"
+                onClick={() => {
+                  dispatch(setOffset(0));
+                  constructSearch();
+                }}
+                style={{
+                  backgroundColor: theme?.themeParameters?.[0]?.value || '#D25627',
+                  color: theme?.themeParameters?.[1]?.value || '#fff',
+                }}
+              >
+                <FontAwesomeIcon
+                  icon={faSearch}
+                  size="1x"
+                  color="#fff"
+                  className={advStyles.searchicon}
+                />
+                <div>Search</div>
+              </div>
+            </div>
 
           </div>
         </div>
@@ -293,14 +349,22 @@ export default function StandardSearch() {
     </div>
   );
 }
-const useSearchResults = (query, url, offset, limit, token, dispatch) => {
-  query = url + query;
+const useSearchResults = (query, filterString, offset, limit, token, dispatch, sbhVersion) => {
+  let requestUrl;
+  if (sbhVersion === 3) {
+    const params = new URLSearchParams(filterString);
+    if (query) params.set('keyword', query);
+    params.set('offset', String(offset));
+    params.set('limit', String(limit));
+    requestUrl = `${publicRuntimeConfig.backend}/search?${params.toString()}`;
+  } else {
+    requestUrl = `${publicRuntimeConfig.backend}/search/${filterString}${encodeURIComponent(
+      query
+    )}?offset=${offset}&limit=${limit}`;
+  }
+
   const { data, error } = useSWR(
-    [
-      `${publicRuntimeConfig.backend}/search/${query}?offset=${offset}&limit=${limit}`,
-      token,
-      dispatch
-    ],
+    [requestUrl, token, dispatch],
     fetcher
   );
   return {
@@ -310,10 +374,20 @@ const useSearchResults = (query, url, offset, limit, token, dispatch) => {
   };
 };
 
-const useSearchCount = (query, url, token, dispatch) => {
-  query = url + query;
+const useSearchCount = (query, filterString, token, dispatch, sbhVersion) => {
+  let requestUrl;
+  if (sbhVersion === 3) {
+    const params = new URLSearchParams(filterString);
+    if (query) params.set('keyword', query);
+    requestUrl = `${publicRuntimeConfig.backend}/searchCount?${params.toString()}`;
+  } else {
+    requestUrl = `${publicRuntimeConfig.backend}/searchCount/${filterString}${encodeURIComponent(
+      query
+    )}`;
+  }
+
   const { data, error } = useSWR(
-    [`${publicRuntimeConfig.backend}/searchCount/${query}`, token, dispatch],
+    [requestUrl, token, dispatch],
     fetcher
   );
   return {

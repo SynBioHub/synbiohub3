@@ -13,9 +13,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
@@ -67,7 +64,9 @@ public class SparqlService {
         }
     }
 
-    /** Maps existing {@code sbol:source} values (e.g. {@code file:foo.png}) to attachment URIs. */
+    /**
+     * Maps existing {@code sbol:source} values (e.g. {@code file:foo.png}) to attachment URIs.
+     */
     public Map<String, String> loadAttachmentSources(String collectionUri, String graphUri) throws IOException {
         String query = new SPARQLQuery(SparqlRepository.GET_ATTACHMENT_SOURCE_SPARQL)
                 .loadTemplate(Map.of("uri", collectionUri));
@@ -92,7 +91,9 @@ public class SparqlService {
         update(query, graphUri, false);
     }
 
-    /** Replaces hash/size on an existing attachment when re-uploading the same {@code file:} source. */
+    /**
+     * Replaces hash/size on an existing attachment when re-uploading the same {@code file:} source.
+     */
     public void updateAttachment(String graphUri, String attachmentUri, String uploadHash, long size)
             throws IOException {
         String query = new SPARQLQuery(sparqlRepository.UPDATE_ATTACHMENT_SPARQL).loadTemplate(Map.of(
@@ -113,9 +114,7 @@ public class SparqlService {
             if (param.getKey().equals("offset")) {
                 sparqlArgs.replace("offset", "OFFSET " + param.getValue());
                 sparqlArgs.replace("limit", "LIMIT 50"); // Default limit for queries without limit
-            }
-
-            else if (param.getKey().equals("limit")) {
+            } else if (param.getKey().equals("limit")) {
                 sparqlArgs.replace("limit", "LIMIT " + param.getValue());
             }
         }
@@ -130,10 +129,11 @@ public class SparqlService {
 
     /**
      * Returns the metadata for the object from the specified search query
+     *
      * @param allParams Key/Value pairs of the query
      * @return String containing SPARQL query
      */
-    public String getMetadataQuerySPARQL(Map<String,String> allParams) throws IOException {
+    public String getMetadataQuerySPARQL(Map<String, String> allParams) throws IOException {
         Map<String, String> sparqlArgs = buildSearchQuery(allParams);
 
         allParams.remove("offset"); // Remove this as we have already processed and it may mess up criteria string
@@ -164,63 +164,42 @@ public class SparqlService {
 
     /**
      * Gets the criteria string for a SPARQL query
+     *
      * @param allParams Key/value pairs from GET request
      * @return SPARQL-compatible criteria string
      */
-    private String getCriteriaString(Map<String, String> allParams) throws UnsupportedEncodingException {
+    public String getCriteriaString(Map<String, String> allParams) throws IOException {
         StringBuilder criteriaString = new StringBuilder();
 
-        var paramMap = allParams.entrySet();
+        for (Map.Entry<String, String> param : allParams.entrySet()) {
 
-        // Take care of URL encoded string of params
-        for (Map.Entry<String, String> param : paramMap) {
-            if (paramMap.size() == 1 && param.getKey().contains("%")) {
-                String params = URLDecoder.decode(param.getKey(), StandardCharsets.UTF_8.name());
-                if (params.contains("&")) {
-                    String[] splitParams = params.split("&");
-                    for (String p:splitParams) {
-                        String[] splitParams1 = p.split("=");
-                        allParams.put(splitParams1[0], splitParams1[1]);
-                    }
-                    paramMap.remove(param);
-                } else {
-                    allParams.put(params, "");
-                    paramMap.remove(param);
-                }
-
+            String uriPrefix = ConfigUtil.get("uriPrefix").asText();
+            if (uriPrefix.endsWith("/")) {
+                uriPrefix = uriPrefix.substring(0, uriPrefix.length() - 1);
             }
-        }
-
-        for (Map.Entry<String, String> param : paramMap) {
+            criteriaString.append("   ?subject ").append(param.getKey()).append(" '").append(param.getValue()).append("' . ");
 
             // Search for "Created by.."
-            if (param.getKey().equals("dc:creator")) {
-                criteriaString.append("   ?subject ").append(param.getKey()).append(" '").append(param.getValue().substring(1, param.getValue().length() - 1)).append("' . ");
+            /*if (param.getKey().equals("dc:creator")) {
+                criteriaString.append("   ?subject ").append(param.getKey()).append(" '").append(param.getValue()).append("' . ");
+
             }
             // Type of object to search for
             else if (param.getKey().equals("objectType")) {
-                if (param.getValue().contains("Collection")) {
-                    criteriaString.append("?subject a <http://sbols.org/v2#Collection> .");
-                } else if (param.getValue().contains("Component")){
-                    criteriaString.append("?subject a <http://sbols.org/v2#ComponentDefinition> .");
-                } else if (param.getValue().contains("Sequence")){
-                    criteriaString.append("?subject a <http://sbols.org/v2#Sequence> .");
-                }
+                criteriaString.append("  ?subject a <http://sbols.org").append(param.getValue()).append("> .");
             } else if (param.getKey().equalsIgnoreCase("collection")) {
-                criteriaString.append("?subject a <http://sbols.org/v2#Collection> .");
+                criteriaString.append("  ?collection a sbol2:Collection . <").append(uriPrefix).append(param.getValue()).append("> sbol2:member ?subject .");
             } else if (param.getKey().equalsIgnoreCase("component")) {
-                criteriaString.append("?subject a <http://sbols.org/v2#ComponentDefinition> .");
+                criteriaString.append("  ?subject a <http://sbols.org/v2#ComponentDefinition> .");
             } else if (param.getKey().equalsIgnoreCase("sequence")) {
-                criteriaString.append("?subject a <http://sbols.org/v2#Sequence> .");
+                criteriaString.append("  ?subject a <http://sbols.org/v2#Sequence> .");
                 if (param.getValue() != null && !param.getValue().isEmpty()) {
                     criteriaString.append(" ?subject sbol2:elements \"").append(StringUtil.escapeSparqlStringLiteral(param.getValue())).append("\" .");
                 }
             } else if (param.getKey().equalsIgnoreCase("globalsequence")
                     && param.getValue() != null && !param.getValue().isEmpty()) {
-                criteriaString.append("?subject sbol2:globalsequence \"").append(StringUtil.escapeSparqlStringLiteral(param.getValue())).append("\" .");
-            }
-
-            else if (param.getKey().equals("createdBefore")) {
+                criteriaString.append("  ?subject sbol2:globalsequence \"").append(StringUtil.escapeSparqlStringLiteral(param.getValue())).append("\" .");
+            } else if (param.getKey().equals("createdBefore")) {
                 criteriaString.append("  ?subject dcterms:created ?cdate . FILTER (xsd:dateTime(?cdate) <= \"").append(param.getValue()).append("T23:59:59Z\"^^xsd:dateTime) ");
             } else if (param.getKey().equals("createdAfter")) {
                 criteriaString.append("  ?subject dcterms:created ?cdate . FILTER (xsd:dateTime(?cdate) >= \"").append(param.getValue()).append("T00:00:00Z\"^^xsd:dateTime) ");
@@ -264,14 +243,23 @@ public class SparqlService {
                     criteriaString.append(String.format(criteria, searchTerms[i], searchTerms[i], searchTerms[i]).replace("/''/g", "'\\''"));
                 }
                 criteriaString.append(')');
-            } else {
-                criteriaString.append("   ?subject sbol2:").append(param.getKey()).append(" ").append(param.getValue()).append(" . ");
-            }
+            } else if (param.getKey().equalsIgnoreCase("sbol2:type")) {
+                criteriaString.append("   ?subject ").append(param.getKey()).append(" <http://www.biopax.org").append(param.getValue()).append("> . ");
+            } else if (param.getKey().equalsIgnoreCase("sbol2:role")) {
+                if (param.getValue().contains("igem")) {
+                    criteriaString.append("   ?subject ").append(param.getKey()).append(" <http://wiki.synbiohub.org").append(param.getValue()).append("> . ");
+                } else if (param.getValue().contains("so")) {
+                    criteriaString.append("   ?subject ").append(param.getKey()).append(" <http://identifiers.org").append(param.getValue()).append("> . ");
+                }
+
+            }*/
         }
         return criteriaString.toString();
     }
 
-    /** Logged-in metadata search: public default graph + user's named graph. */
+    /**
+     * Logged-in metadata search: public default graph + user's named graph.
+     */
     private String fromClauseForMetadataSearch() throws IOException {
         String userGraph = getPrivateGraph();
         if (userGraph.isEmpty()) {
@@ -281,7 +269,9 @@ public class SparqlService {
         return "FROM <" + defaultGraph + ">\nFROM NAMED <" + userGraph + ">";
     }
 
-    /** URI relationship endpoints: user's private graph only when logged in. */
+    /**
+     * URI relationship endpoints: user's private graph only when logged in.
+     */
     private String fromClauseForUriSearch() throws IOException {
         String userGraph = getPrivateGraph();
         if (userGraph.isEmpty()) {
@@ -292,6 +282,7 @@ public class SparqlService {
 
     /**
      * Gets the user's private graph.
+     *
      * @return Empty string if user is not logged in, otherwise returns their private graph.
      */
     public String getPrivateGraph() throws IOException {
@@ -303,10 +294,11 @@ public class SparqlService {
 
     /**
      * Gets the count of a part
+     *
      * @param allParams Key/value pairs from GET request
      * @return Count of a part
      */
-    public String getSearchCountSPARQL(Map<String,String> allParams) throws UnsupportedEncodingException {
+    public String getSearchCountSPARQL(Map<String, String> allParams) throws IOException {
         return loadSearchCountSPARQL(getCriteriaString(allParams), "");
     }
 
@@ -353,6 +345,7 @@ public class SparqlService {
 
     /**
      * Gets the count of components that have the same sequence as the given URI (twins), using the same criteria as the "twins" endpoint.
+     *
      * @param collectionInfo Collection path portion of the URI
      * @return SPARQL query string that returns a single ?count binding
      */
@@ -362,6 +355,7 @@ public class SparqlService {
 
     /**
      * Gets the count of objects that use the specified URI, using the same criteria as the "uses" endpoint.
+     *
      * @param collectionInfo Collection path portion of the URI
      * @return SPARQL query string that returns a single ?count binding
      */
@@ -371,6 +365,7 @@ public class SparqlService {
 
     /**
      * Gets the count of objects that use the specified URI, using the same criteria as the "uses" endpoint.
+     *
      * @param collectionInfo Collection path portion of the URI
      * @return SPARQL query string that returns a single ?count binding
      */
@@ -394,7 +389,9 @@ public class SparqlService {
         return searchQuery.loadTemplate(sparqlArgs);
     }
 
-    /** Derives sparql-auth URL from config (explicit or inferred from sparqlEndpoint). */
+    /**
+     * Derives sparql-auth URL from config (explicit or inferred from sparqlEndpoint).
+     */
     public String sparqlQueryUrl() throws IOException {
         return ConfigUtil.get("sparqlEndpoint").asText()
                 + "?default-graph-uri={default-graph-uri}&query={query}&format=json&";
@@ -422,6 +419,7 @@ public class SparqlService {
 
     /**
      * Gets the count of a type
+     *
      * @param type Type to get count of
      * @return Count of a type
      */
