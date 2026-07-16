@@ -33,6 +33,7 @@ export default function InputField(properties) {
       <Input
         type={properties.customType || 'text'}
         name={properties.inputName}
+        id={properties.inputName}
         value={properties.value}
         checked={properties.value}
         onChange={event => properties.onChange(event)}
