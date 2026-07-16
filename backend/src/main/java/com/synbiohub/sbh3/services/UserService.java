@@ -537,10 +537,11 @@ public User updateUserProfile(Map<String, String> allParams) throws Exception {
 
     public int getSynBioHubVersion() throws IOException {
         JsonNode flag = ConfigUtil.get("isSynBioHub3");
-        if (flag != null && !flag.isNull() && flag.asBoolean(false)) {
+        if (flag == null || flag.isNull()) {
+            ConfigUtil.set(ConfigUtil.getLocaljson(), "isSynBioHub3", true);
             return 3;
         }
-        return 1;
+        return flag.asBoolean(false) ? 3 : 1;
     }
 
 }
