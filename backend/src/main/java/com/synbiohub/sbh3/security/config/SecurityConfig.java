@@ -68,7 +68,7 @@ public class SecurityConfig {
                         "/sparql", "/**/count", "/count",
                         "/logo",
                         "/admin/theme", "/admin/registries", "/admin/logo", "/admin/plugins",
-                        "/browse", "/rootCollections", "/root-collections", "/callPlugin", "/expose/**"
+                        "/browse", "/rootCollections", "/root-collections", "/callPlugin", "/expose/**",
                         "/v3/api-docs", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/openapi.yaml",
                         "/error"
                 ).permitAll()
