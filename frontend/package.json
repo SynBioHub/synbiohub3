@@ -73,6 +73,8 @@
     "redux-persist": "^6.0.0",
     "redux-thunk": "^2.3.0",
     "showdown": "^2.1.0",
+    "swagger-ui": "^5.32.6",
+    "swagger-ui-react": "^5.32.6",
     "swr": "^0.3.9"
   },
   "resolutions": {
