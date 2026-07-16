@@ -78,10 +78,14 @@ export default function StandardSearch() {
 
 
   const constructSearch = () => {
-    let collectionUrls = '';
-    for (const collection of collections) {
-      collectionUrls += getUrl(collection.value, 'collection');
-    }
+    const collectionUrls =
+      collections.length > 0
+        ? `collection=${encodeURIComponent(
+            `VALUES ?collectionMatch { ${collections
+              .map(collection => `<${collection.value}>`)
+              .join(' ')} } ?collectionMatch`
+          )}&`
+        : '';
     const url = `${getUrl(objectType, 'objectType')}${getUrl(
       creator,
       'dc:creator'

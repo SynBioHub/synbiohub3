@@ -37,10 +37,13 @@ const collectionClauses = (properties, excludeFacet) => {
   if (excludeFacet === 'collections' || !properties.collections?.length) {
     return [];
   }
-  // collection.value is always a Collection's own subject URI, never a literal
-  return properties.collections.map(
-    collection => `<${collection.value}> sbol2:member ?tl .`
-  );
+  // is always a Collection's own subject URI, never a literal.
+  const uris = properties.collections
+    .map(collection => `<${collection.value}>`)
+    .join(' ');
+  return [
+    `VALUES ?collectionMatch { ${uris} } ?collectionMatch sbol2:member ?tl .`
+  ];
 };
 
 const extraFilterClauses = (
