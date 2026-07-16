@@ -1,0 +1,16 @@
+{
+  "dc:creator": "   ?subject $key \"$escapedValue\" . ",
+  "objectType": "  ?subject a <$value> .",
+  "collection": "  <$value> sbol2:member ?subject .",
+  "component": "  ?subject a <http://sbols.org/v2#ComponentDefinition> .",
+  "sequence": "  ?subject a <http://sbols.org/v2#Sequence> . ?subject sbol2:elements \"$escapedValue\" .",
+  "globalsequence": "  ?subject sbol2:globalsequence \"$escapedValue\" .",
+  "createdBefore": "  ?subject dcterms:created ?cdate . FILTER (xsd:dateTime(?cdate) <= \"$escapedValueT23:59:59Z\"^^xsd:dateTime) ",
+  "createdAfter": "  ?subject dcterms:created ?cdate . FILTER (xsd:dateTime(?cdate) >= \"$escapedValueT00:00:00Z\"^^xsd:dateTime) ",
+  "modifiedBefore": "  ?subject dcterms:modified ?mdate . FILTER (xsd:dateTime(?mdate) <= \"$escapedValueT23:59:59Z\"^^xsd:dateTime) ",
+  "modifiedAfter": "  ?subject dcterms:modified ?mdate . FILTER (xsd:dateTime(?mdate) >= \"$escapedValueT00:00:00Z\"^^xsd:dateTime) ",
+  "sbol2:type": "   ?subject $key <$value> . ",
+  "sbol2:role": "   ?subject $key <$value> . ",
+  "default.uri": "   ?subject $key <$value> . ",
+  "default.literal": "   ?subject $key \"$escapedValue\" . "
+}
