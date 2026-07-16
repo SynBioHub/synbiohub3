@@ -9,6 +9,7 @@ COPY . .
 
 # Build
 RUN yarn install --frozen-lockfile
+ENV NODE_OPTIONS=--openssl-legacy-provider
 RUN yarn build
 
 # Install only production dependencies in a clean directory
