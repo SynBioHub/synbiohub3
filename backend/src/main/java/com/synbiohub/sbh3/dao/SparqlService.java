@@ -169,92 +169,67 @@ public class SparqlService {
      * @return SPARQL-compatible criteria string
      */
     public String getCriteriaString(Map<String, String> allParams) throws IOException {
+        JsonNode templates = objectMapper.readTree(
+                Path.of("src/main/java/com/synbiohub/sbh3/utils/searchCriteriaTemplate.json").toFile());
+
         StringBuilder criteriaString = new StringBuilder();
-
         for (Map.Entry<String, String> param : allParams.entrySet()) {
+            String key = param.getKey();
+            String value = param.getValue() != null ? param.getValue() : "";
 
-            String uriPrefix = ConfigUtil.get("uriPrefix").asText();
-            if (uriPrefix.endsWith("/")) {
-                uriPrefix = uriPrefix.substring(0, uriPrefix.length() - 1);
-            }
-            criteriaString.append("   ?subject ").append(param.getKey()).append(" '").append(param.getValue()).append("' . ");
-
-            // Search for "Created by.."
-            /*if (param.getKey().equals("dc:creator")) {
-                criteriaString.append("   ?subject ").append(param.getKey()).append(" '").append(param.getValue()).append("' . ");
-
-            }
-            // Type of object to search for
-            else if (param.getKey().equals("objectType")) {
-                criteriaString.append("  ?subject a <http://sbols.org").append(param.getValue()).append("> .");
-            } else if (param.getKey().equalsIgnoreCase("collection")) {
-                criteriaString.append("  ?collection a sbol2:Collection . <").append(uriPrefix).append(param.getValue()).append("> sbol2:member ?subject .");
-            } else if (param.getKey().equalsIgnoreCase("component")) {
-                criteriaString.append("  ?subject a <http://sbols.org/v2#ComponentDefinition> .");
-            } else if (param.getKey().equalsIgnoreCase("sequence")) {
-                criteriaString.append("  ?subject a <http://sbols.org/v2#Sequence> .");
-                if (param.getValue() != null && !param.getValue().isEmpty()) {
-                    criteriaString.append(" ?subject sbol2:elements \"").append(StringUtil.escapeSparqlStringLiteral(param.getValue())).append("\" .");
+            if ("keyword".equalsIgnoreCase(key)) {
+                if (!value.isEmpty()) {
+                    criteriaString.append(buildKeywordFilter(value));
                 }
-            } else if (param.getKey().equalsIgnoreCase("globalsequence")
-                    && param.getValue() != null && !param.getValue().isEmpty()) {
-                criteriaString.append("  ?subject sbol2:globalsequence \"").append(StringUtil.escapeSparqlStringLiteral(param.getValue())).append("\" .");
-            } else if (param.getKey().equals("createdBefore")) {
-                criteriaString.append("  ?subject dcterms:created ?cdate . FILTER (xsd:dateTime(?cdate) <= \"").append(param.getValue()).append("T23:59:59Z\"^^xsd:dateTime) ");
-            } else if (param.getKey().equals("createdAfter")) {
-                criteriaString.append("  ?subject dcterms:created ?cdate . FILTER (xsd:dateTime(?cdate) >= \"").append(param.getValue()).append("T00:00:00Z\"^^xsd:dateTime) ");
-            } else if (param.getKey().equals("modifiedBefore")) {
-                criteriaString.append("  ?subject dcterms:modified ?mdate . FILTER (xsd:dateTime(?mdate) <= \"").append(param.getValue()).append("T23:59:59Z\"^^xsd:dateTime) ");
-            } else if (param.getKey().equals("modifiedAfter")) {
-                criteriaString.append("  ?subject dcterms:modified ?mdate . FILTER (xsd:dateTime(?mdate) >= \"").append(param.getValue()).append("T00:00:00Z\"^^xsd:dateTime) ");
+                continue;
             }
 
-            // search keyword
-            else if (param.getValue().equals("")) {
-//                String[] searchTerms = param.getKey().split("/[ ]+/");
-                String[] searchTerms = param.getKey().split(" ");
-                criteriaString.append("FILTER (");
-                boolean andMode = true;
-                boolean notMode = false;
-                for (int i = 0; i < searchTerms.length; i++) {
-                    switch (searchTerms[i]) {
-                        case "and":
-                            andMode = true;
-                            continue;
-                        case "or":
-                            andMode = false;
-                            continue;
-                        case "not":
-                            notMode = true;
-                            continue;
-                    }
-                    if (i > 0) {
-                        if (notMode) {
-                            criteriaString.append("&& !");
-                            notMode = false;
-                        } else if (andMode) {
-                            criteriaString.append("&&");
-                            andMode = false;
-                        } else {
-                            criteriaString.append("||");
-                        }
-                    }
-                    String criteria = "(CONTAINS(lcase(?displayId), lcase('%s'))||CONTAINS(lcase(?name), lcase('%s'))||CONTAINS(lcase(?description), lcase('%s')))";
-                    criteriaString.append(String.format(criteria, searchTerms[i], searchTerms[i], searchTerms[i]).replace("/''/g", "'\\''"));
-                }
-                criteriaString.append(')');
-            } else if (param.getKey().equalsIgnoreCase("sbol2:type")) {
-                criteriaString.append("   ?subject ").append(param.getKey()).append(" <http://www.biopax.org").append(param.getValue()).append("> . ");
-            } else if (param.getKey().equalsIgnoreCase("sbol2:role")) {
-                if (param.getValue().contains("igem")) {
-                    criteriaString.append("   ?subject ").append(param.getKey()).append(" <http://wiki.synbiohub.org").append(param.getValue()).append("> . ");
-                } else if (param.getValue().contains("so")) {
-                    criteriaString.append("   ?subject ").append(param.getKey()).append(" <http://identifiers.org").append(param.getValue()).append("> . ");
-                }
+            JsonNode templateNode = templates.get(key);
+            if (templateNode == null || templateNode.isNull()) {
+                templateNode = templates.get(looksLikeIri(value) ? "default.uri" : "default.literal");
+            }
+            if (templateNode == null || templateNode.isNull()) {
+                continue;
+            }
 
-            }*/
+            criteriaString.append(templateNode.asText()
+                    .replace("$key", key)
+                    .replace("$escapedValue", StringUtil.escapeSparqlStringLiteral(value))
+                    .replace("$value", value));
         }
         return criteriaString.toString();
+    }
+
+    /** True when value should be treated as an IRI in SPARQL (wrapped in <>). */
+    private static boolean looksLikeIri(String value) {
+        if (value == null || value.isBlank()) {
+            return false;
+        }
+        String v = value.trim();
+        return v.startsWith("http://")
+                || v.startsWith("https://")
+                || v.startsWith("urn:")
+                || v.contains("://");
+    }
+
+    private String buildKeywordFilter(String keywords) {
+        String[] searchTerms = keywords.trim().split("\\s+");
+        StringBuilder sb = new StringBuilder("FILTER (");
+        String termCriteria =
+                "(CONTAINS(lcase(?displayId), lcase(\"%s\"))||CONTAINS(lcase(?name), lcase(\"%s\"))||CONTAINS(lcase(?description), lcase(\"%s\")))";
+
+        for (int i = 0; i < searchTerms.length; i++) {
+            if (searchTerms[i].isEmpty()) {
+                continue;
+            }
+            if (sb.length() > "FILTER (".length()) {
+                sb.append("||");
+            }
+            String escaped = StringUtil.escapeSparqlStringLiteral(searchTerms[i]);
+            sb.append(String.format(termCriteria, escaped, escaped, escaped));
+        }
+        sb.append(')');
+        return sb.toString();
     }
 
     /**
@@ -266,7 +241,7 @@ public class SparqlService {
             return "";
         }
         String defaultGraph = ConfigUtil.get("defaultGraph").asText();
-        return "FROM <" + defaultGraph + ">\nFROM NAMED <" + userGraph + ">";
+        return "FROM <" + defaultGraph + ">\nFROM <" + userGraph + ">";
     }
 
     /**
