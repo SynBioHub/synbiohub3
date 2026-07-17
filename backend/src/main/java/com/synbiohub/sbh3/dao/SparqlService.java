@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.synbiohub.sbh3.repo.SparqlRepository;
 import com.synbiohub.sbh3.sparql.SPARQLQuery;
 import com.synbiohub.sbh3.utils.ConfigUtil;
+import com.synbiohub.sbh3.utils.JsonUtil;
 import com.synbiohub.sbh3.utils.StringUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -16,6 +17,8 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -23,6 +26,7 @@ public class SparqlService {
 
     private final SparqlRepository sparqlRepository;
     private final ObjectMapper objectMapper;
+    private final JsonUtil jsonUtil;
 
     /**
      * Virtuoso DELETE templates return one row per batch; loop until nothing remains.
@@ -168,9 +172,37 @@ public class SparqlService {
      * @param allParams Key/value pairs from GET request
      * @return SPARQL-compatible criteria string
      */
+    public String getCriteriaString1(Map<String, String> allParams) throws IOException {
+        Map<String, String> templates =
+                jsonUtil.readStringMapFromClasspath("searchCriteriaTemplate.json");
+
+        return allParams.entrySet().stream()
+                .map(param -> criteriaForParam(param, templates))
+                .filter(Objects::nonNull)
+                .collect(Collectors.joining());
+    }
+
+    private String criteriaForParam(
+            Map.Entry<String, String> param,
+            Map<String, String> templates) {
+
+        String key = param.getKey();
+        if ("keyword".equalsIgnoreCase(key)) {
+            return buildKeywordFilter(param.getValue());
+        }
+
+        if (!templates.containsKey(key)) {
+            key = looksLikeIri(param.getValue()) ? "default.uri" : "default.literal";
+        }
+
+        return templates.get(key)
+                .replace("$key", key)
+                .replace("$escapedValue", StringUtil.escapeSparqlStringLiteral(param.getValue()))
+                .replace("$value", param.getValue());
+    }
+
     public String getCriteriaString(Map<String, String> allParams) throws IOException {
-        JsonNode templates = objectMapper.readTree(
-                Path.of("src/main/java/com/synbiohub/sbh3/utils/searchCriteriaTemplate.json").toFile());
+        Map<String, String> templates = jsonUtil.readStringMapFromClasspath("searchCriteriaTemplate.json");
 
         StringBuilder criteriaString = new StringBuilder();
         for (Map.Entry<String, String> param : allParams.entrySet()) {
@@ -184,15 +216,12 @@ public class SparqlService {
                 continue;
             }
 
-            JsonNode templateNode = templates.get(key);
-            if (templateNode == null || templateNode.isNull()) {
-                templateNode = templates.get(looksLikeIri(value) ? "default.uri" : "default.literal");
-            }
-            if (templateNode == null || templateNode.isNull()) {
-                continue;
+            String template = templates.get(key);
+            if (template == null) {
+                template = templates.get(looksLikeIri(value) ? "default.uri" : "default.literal");
             }
 
-            criteriaString.append(templateNode.asText()
+            criteriaString.append(template
                     .replace("$key", key)
                     .replace("$escapedValue", StringUtil.escapeSparqlStringLiteral(value))
                     .replace("$value", value));
@@ -213,6 +242,9 @@ public class SparqlService {
     }
 
     private String buildKeywordFilter(String keywords) {
+        if (keywords == null || keywords.isBlank()) {
+            return "";
+        }
         String[] searchTerms = keywords.trim().split("\\s+");
         StringBuilder sb = new StringBuilder("FILTER (");
         String termCriteria =
