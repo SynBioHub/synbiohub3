@@ -2,21 +2,20 @@ package com.synbiohub.sbh3.controllers;
 
 import com.synbiohub.sbh3.services.SubmitService;
 import com.synbiohub.sbh3.submit.SubmitPayload;
-import lombok.RequiredArgsConstructor;
-import org.sbolstandard.core2.SBOLValidationException;
-import org.springframework.http.MediaType;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+import org.sbolstandard.core2.SBOLDocument;
+import org.sbolstandard.core2.SBOLValidationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Map;
+
 @Tag(name = "Submissions", description = "Endpoints for creating and submitting registry objects")
 @RestController
 @RequiredArgsConstructor
@@ -41,7 +40,7 @@ public class SubmitController {
 
     @Operation(summary = "Create new collection (Unimplemented)", description = "Currently an empty stub.", deprecated = true)
     @PostMapping(value = "/newCollection")
-    public void createNewCollection(@RequestBody(required = false) Map<String, String> submissionData) {
+    public void createNewCollection(@RequestParam(required = false) Map<String, String> submissionData) {
 
     }
 
@@ -59,19 +58,13 @@ public class SubmitController {
 
     @Operation(summary = "Remove collection (Unimplemented)", description = "Currently an empty stub.", deprecated = true)
     @DeleteMapping(value = "/removeCollection")
-    public void removeCollection(@RequestBody(required = false) SubmissionDTO submissionDTO) {
+    public void removeCollection(@RequestBody(required = false) String submission) {
 
     }
 
     @Operation(summary = "Remove object form (Unimplemented)", description = "Currently an empty stub.", deprecated = true)
     @GetMapping(value = "/remove")
     public void removeObject(@RequestParam Map<String, String> allParams) {
-
-    }
-
-    @Operation(summary = "Remove object (Unimplemented)", description = "Currently an empty stub.", deprecated = true)
-    @DeleteMapping(value = "/remove")
-    public void removeObject(@RequestBody(required = false) SBOLDocument sbolDocument, @RequestParam(required = false) String objectID) {
 
     }
 
