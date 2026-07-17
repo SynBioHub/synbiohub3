@@ -10,6 +10,9 @@ import com.synbiohub.sbh3.security.model.User;
 import com.synbiohub.sbh3.services.AdminService;
 import com.synbiohub.sbh3.services.UserService;
 import com.synbiohub.sbh3.utils.ConfigUtil;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,10 +20,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -41,8 +40,8 @@ public class AdminController {
 
     private final AdminService adminService;
     private final UserService userService;
-    private final SearchService searchService;
-    private final SparqlRepository sparqlRepository;
+    private final SparqlService sparqlService;
+    
     @Operation(summary = "Run Admin SPARQL Query", description = "Executes a SPARQL query with admin privileges.")
     @ApiResponse(responseCode = "200", description = "JSON containing SPARQL results")
     private final SparqlService sparqlService;
