@@ -15,6 +15,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.AntPathMatcher;
+import com.synbiohub.sbh3.security.customsecurity.ServletPathUtil;
+import jakarta.servlet.http.HttpServletRequest;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,6 +31,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Tag(name = "Downloads", description = "Endpoints for downloading and exporting registry objects in various formats (SBOL, GenBank, FASTA, GFF3)")
 @RestController
 @RequiredArgsConstructor
 @Slf4j
@@ -48,6 +55,8 @@ public class DownloadController extends AntPathMatcher {
     /**
      * Legacy: GET /public/{db}/{id}/{ver}/sbol — SBOL2 RDF/XML (recursive closure). Same for /user/{username}/...
      */
+    @Operation(summary = "Download SBOL (Versioned)", description = "Downloads the recursive SBOL2 RDF/XML for a specific version.")
+    @ApiResponse(responseCode = "200", description = "SBOL2 RDF/XML file")
     @GetMapping(value = { "/public/{db}/{id}/{ver}/sbol", "/user/{username}/{db}/{id}/{ver}/sbol" })
     public ResponseEntity<?> getSbolVersioned(
             @PathVariable(required = false) String username,
@@ -63,6 +72,9 @@ public class DownloadController extends AntPathMatcher {
     /**
      * Legacy persistent-identity URL: /public/{db}/{id}/sbol (no version); resolves latest version via SPARQL.
      */
+    @Operation(summary = "Download SBOL (Latest)", description = "Resolves latest version via SPARQL and downloads the recursive SBOL2 RDF/XML.")
+    @ApiResponse(responseCode = "200", description = "SBOL2 RDF/XML file")
+    @ApiResponse(responseCode = "404", description = "URI not found")
     @GetMapping(value = { "/public/{db}/{id}/sbol", "/user/{username}/{db}/{id}/sbol" })
     public ResponseEntity<?> getSbolPersistentIdentity(
             @PathVariable(required = false) String username,
@@ -84,6 +96,8 @@ public class DownloadController extends AntPathMatcher {
      * Same SBOL document as /sbol but without the {@code /sbol} path suffix (legacy alternate URL).
      * Supports optional path segments between {@code id} and {@code ver} (e.g. child component URLs).
      */
+    @Operation(summary = "Download SBOL (Alternate)", description = "Same SBOL document as /sbol but without the path suffix. Also handles some legacy linked-search routes.")
+    @ApiResponse(responseCode = "200", description = "SBOL2 RDF/XML file")
     @GetMapping(value = { "/public/{db}/{id}/**/{ver}", "/user/{username}/{db}/{id}/**/{ver}" })
     public ResponseEntity<?> getSbolRecursiveRDF(
             @PathVariable(required = false) String username,
@@ -210,6 +224,8 @@ public class DownloadController extends AntPathMatcher {
                 .body(new InputStreamResource(new ByteArrayInputStream(bytes)));
     }
 
+    @Operation(summary = "Download non-recursive SBOL", description = "Downloads the non-recursive SBOL2 RDF/XML for a specific version.")
+    @ApiResponse(responseCode = "200", description = "SBOL2 RDF/XML file")
     @GetMapping(value = { "/public/{db}/{id}/{ver}/sbolnr", "/user/{username}/{db}/{id}/{ver}/sbolnr" })
     public ResponseEntity<?> getSBOLNonRecursive(
             @PathVariable(required = false) String username,
@@ -229,6 +245,8 @@ public class DownloadController extends AntPathMatcher {
                 .body(new InputStreamResource(new ByteArrayInputStream(body)));
     }
 
+    @Operation(summary = "Download metadata", description = "Downloads the JSON metadata for a specific object.")
+    @ApiResponse(responseCode = "200", description = "JSON metadata file")
     @GetMapping(value = "/public/{db}/{id}/**/{ver}/metadata")
     public ResponseEntity<?> getMetadata(
             @PathVariable String db,
@@ -249,6 +267,8 @@ public class DownloadController extends AntPathMatcher {
                 .body(new InputStreamResource(new ByteArrayInputStream(buf)));
     }
 
+    @Operation(summary = "Download GenBank", description = "Downloads the GenBank format export of the specified object.")
+    @ApiResponse(responseCode = "200", description = "GenBank (.gb) file")
     @GetMapping(value = { "/public/{db}/{id}/{ver}/gb", "/user/{username}/{db}/{id}/{ver}/gb" })
     public ResponseEntity<?> getSBOLRecursiveGenbank(
             @PathVariable(required = false) String username,
@@ -275,6 +295,9 @@ public class DownloadController extends AntPathMatcher {
                 .body(new InputStreamResource(new ByteArrayInputStream(byteOutput.toByteArray())));
     }
 
+    @Operation(summary = "Download FASTA", description = "Downloads the FASTA format export of the specified object.")
+    @ApiResponse(responseCode = "200", description = "FASTA file")
+    @ApiResponse(responseCode = "404", description = "No sequences found")
     @GetMapping(value = { "/public/{db}/{id}/{ver}/fasta", "/user/{username}/{db}/{id}/{ver}/fasta" })
     public ResponseEntity<?> getLegacyFasta(
             @PathVariable(required = false) String username,
@@ -299,6 +322,8 @@ public class DownloadController extends AntPathMatcher {
                 .body(fasta);
     }
 
+    @Operation(summary = "Download GFF3", description = "Downloads the GFF3 format export of the specified object.")
+    @ApiResponse(responseCode = "200", description = "GFF3 file")
     @GetMapping(value = { "/public/{db}/{id}/{ver}/gff", "/user/{username}/{db}/{id}/{ver}/gff" })
     public ResponseEntity<?> getSBOLRecursiveGff3(
             @PathVariable(required = false) String username,

@@ -23,9 +23,13 @@ import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import com.synbiohub.sbh3.security.customsecurity.AuthCodeAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -64,7 +68,9 @@ public class SecurityConfig {
                         "/sparql", "/**/count", "/count",
                         "/logo",
                         "/admin/theme", "/admin/registries", "/admin/logo", "/admin/plugins",
-                        "/browse", "/rootCollections", "/root-collections", "/callPlugin", "/expose/**", "/getSynBioHubVersion"
+                        "/browse", "/rootCollections", "/root-collections", "/callPlugin", "/expose/**", "/getSynBioHubVersion",
+                        "/v3/api-docs", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/openapi.yaml",
+                        "/error"
                 ).permitAll()
                 .anyRequest().authenticated()
                 .and()
@@ -89,5 +95,18 @@ public class SecurityConfig {
         JWK jwk = new RSAKey.Builder(this.pub).privateKey(this.priv).build();
         JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
         return new NimbusJwtEncoder(jwks);
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(List.of("http://localhost:3333", "http://localhost:8080"));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+        configuration.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type", "X-authorization"));
+        configuration.setExposedHeaders(List.of("Authorization", "X-authorization"));
+        configuration.setAllowCredentials(true);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 }

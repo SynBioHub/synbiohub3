@@ -5,14 +5,20 @@ import com.synbiohub.sbh3.services.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.http.MediaType;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+@Tag(name = "Migration", description = "Endpoints for migrating data from older SynBioHub versions")
 @RestController
 @AllArgsConstructor
 public class MigrationController {
@@ -20,8 +26,14 @@ public class MigrationController {
     private final UserService userService;
     private final MigrationService migrationService;
 
-    @PostMapping("/migration")
-    public ResponseEntity<?> handleFileUpload(@RequestParam("localjson") MultipartFile localConfigFile, @RequestParam("configjson") MultipartFile configFile, @RequestParam("userfile") MultipartFile userFile) {
+    @Operation(summary = "Migrate from older version", description = "Uploads old config files and user databases to migrate them into SynBioHub 3.")
+    @ApiResponse(responseCode = "200", description = "Migration successful")
+    @ApiResponse(responseCode = "500", description = "Internal server error during migration")
+    @PostMapping(value = "/migration", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> handleFileUpload(
+            @Parameter(description = "Old config.local.json file") @RequestParam("localjson") MultipartFile localConfigFile, 
+            @Parameter(description = "Old config.json file") @RequestParam("configjson") MultipartFile configFile, 
+            @Parameter(description = "Old users.sqlite database") @RequestParam("userfile") MultipartFile userFile) {
 
         String localConfigFileDest;
         String configFileDest;
