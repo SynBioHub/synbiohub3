@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.synbiohub.sbh3.dao.SparqlService;
 import com.synbiohub.sbh3.dto.LoginDTO;
 import com.synbiohub.sbh3.dto.UserRegistrationDTO;
+import com.synbiohub.sbh3.exceptions.LoginFailedException;
 import com.synbiohub.sbh3.repo.SparqlRepository;
 import com.synbiohub.sbh3.security.customsecurity.AuthenticationResponse;
 import com.synbiohub.sbh3.security.customsecurity.JwtService;
@@ -60,6 +61,17 @@ public class UserService {
     private final SparqlRepository sparqlRepository;
     private final SparqlService sparqlService;
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
+
+    public String login(String email, String password) {
+        String encodedPassword = passwordEncoder.encode(password);
+        User user = userRepository.findByEmail(email)
+                .orElse(userRepository.findByUsername(email).orElse(null));
+
+        return Optional.ofNullable(user)
+//                .filter(u -> u.getPassword().equals(encodedPassword))
+                .map(u -> jwtService.generateToken(u))
+                .orElseThrow(() -> new LoginFailedException("Login failed")); //TODO: centralized exception handler
+    }
 
     public String loginUser(String username, String password) {
         LoginDTO loginRequest = LoginDTO
@@ -217,7 +229,7 @@ public class UserService {
         String normalizedEmail = email.trim();
         String genericMessage = "If an account exists for that email, a password reset link has been sent.";
 
-        User user = getUserByEmail(normalizedEmail);
+        User user = userRepository.findByEmail(normalizedEmail).orElse(null);
         if (user == null) {
             return genericMessage;
         }
@@ -467,17 +479,6 @@ public User updateUserProfile(Map<String, String> allParams) throws Exception {
         return userRepository.save(user);
     }
 
-    public User getUserByUsername(String username) {
-        Optional<User> optionalUser = userRepository.findByUsername(username);
-        return optionalUser.orElse(null);
-    }
-
-    public User getUserByEmail(String email) {
-        Optional<User> optionalUser = userRepository.findByEmail(email);
-        return optionalUser.orElse(null);
-
-    }
-
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
@@ -543,4 +544,11 @@ public User updateUserProfile(Map<String, String> allParams) throws Exception {
         return flag.asBoolean(false) ? 3 : 1;
     }
 
+    public User getUserByUsername(String username) {
+        return userRepository.findByUsername(username).orElse(null);
+    }
+
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email).orElse(null);
+    }
 }

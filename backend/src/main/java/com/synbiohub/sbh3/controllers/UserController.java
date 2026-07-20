@@ -7,6 +7,11 @@ import com.synbiohub.sbh3.security.model.User;
 import com.synbiohub.sbh3.security.repo.AuthRepository;
 import com.synbiohub.sbh3.services.UserService;
 import com.synbiohub.sbh3.utils.ConfigUtil;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,11 +25,6 @@ import java.io.IOException;
 import java.util.Map;
 
 //swagger api documentation imports
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @Tag(name = "Auth & Users", description = "Authentication, registration, and user management")
@@ -46,28 +46,7 @@ public class UserController {
     @PostMapping(value = "/login", produces = "text/plain")
     public ResponseEntity<String> login(@Parameter(description = "User's email or username") @RequestParam String email, 
                                         @Parameter(description = "User's password") @RequestParam String password) {
-        if (email.isEmpty() || password.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Please enter your e-mail address and password.");
-        }
-        try {
-            String username;
-            if (userService.isValidEmail(email)) {
-                try {
-                    username = userService.getUserByEmail(email).getUsername();
-                } catch (Exception e) {
-                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Your e-mail address was not recognized.");
-                }
-            } else {
-                try {
-                    username = userService.getUserByUsername(email).getUsername();
-                } catch (Exception e) {
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please enter a valid email address or username.");
-                }
-            }
-            return ResponseEntity.ok(userService.loginUser(username, password));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Your password was not recognized.");
-        }
+        return ResponseEntity.ok(userService.login(email, password));
     }
 
     /**

@@ -1,7 +1,6 @@
 package com.synbiohub.sbh3.services;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.synbiohub.sbh3.dao.SparqlService;
 import com.synbiohub.sbh3.security.model.AuthCodes;
 import com.synbiohub.sbh3.security.repo.AuthRepository;
@@ -44,16 +43,13 @@ import java.util.Map;
 @Slf4j
 public class SubmitService {
 
-    private final UserService userService;
     private final AuthRepository authRepository;
-    private final SearchService searchService;
     private final SubmitPluginService submitPluginService;
     private final CitationService citationService;
     private final CollectionService collectionService;
     private final SbolService sbolService;
     private final SparqlService sparqlService;
     private final AttachmentService attachmentService;
-    private final ObjectMapper objectMapper;
 
     /**
      * Main submit entry point. Each step mutates {@code payload} in place.
