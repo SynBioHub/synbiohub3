@@ -172,7 +172,7 @@ public class SparqlService {
      * @param allParams Key/value pairs from GET request
      * @return SPARQL-compatible criteria string
      */
-    public String getCriteriaString1(Map<String, String> allParams) throws IOException {
+    public String getCriteriaString(Map<String, String> allParams) throws IOException {
         Map<String, String> templates =
                 jsonUtil.readStringMapFromClasspath("searchCriteriaTemplate.json");
 
@@ -192,53 +192,13 @@ public class SparqlService {
         }
 
         if (!templates.containsKey(key)) {
-            key = looksLikeIri(param.getValue()) ? "default.uri" : "default.literal";
+            key = "default";
         }
 
         return templates.get(key)
                 .replace("$key", key)
                 .replace("$escapedValue", StringUtil.escapeSparqlStringLiteral(param.getValue()))
                 .replace("$value", param.getValue());
-    }
-
-    public String getCriteriaString(Map<String, String> allParams) throws IOException {
-        Map<String, String> templates = jsonUtil.readStringMapFromClasspath("searchCriteriaTemplate.json");
-
-        StringBuilder criteriaString = new StringBuilder();
-        for (Map.Entry<String, String> param : allParams.entrySet()) {
-            String key = param.getKey();
-            String value = param.getValue() != null ? param.getValue() : "";
-
-            if ("keyword".equalsIgnoreCase(key)) {
-                if (!value.isEmpty()) {
-                    criteriaString.append(buildKeywordFilter(value));
-                }
-                continue;
-            }
-
-            String template = templates.get(key);
-            if (template == null) {
-                template = templates.get(looksLikeIri(value) ? "default.uri" : "default.literal");
-            }
-
-            criteriaString.append(template
-                    .replace("$key", key)
-                    .replace("$escapedValue", StringUtil.escapeSparqlStringLiteral(value))
-                    .replace("$value", value));
-        }
-        return criteriaString.toString();
-    }
-
-    /** True when value should be treated as an IRI in SPARQL (wrapped in <>). */
-    private static boolean looksLikeIri(String value) {
-        if (value == null || value.isBlank()) {
-            return false;
-        }
-        String v = value.trim();
-        return v.startsWith("http://")
-                || v.startsWith("https://")
-                || v.startsWith("urn:")
-                || v.contains("://");
     }
 
     private String buildKeywordFilter(String keywords) {
