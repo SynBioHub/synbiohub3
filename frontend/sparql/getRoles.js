@@ -1,11 +1,15 @@
-const query = `PREFIX sbol2: <http://sbols.org/v2#>
-PREFIX sbh: <http://wiki.synbiohub.org/wiki/Terms/synbiohub#>
-SELECT DISTINCT
-       ?object
-$from
+import SPARQL_PREFIXES from './prefixes';
+
+const query = `${SPARQL_PREFIXES}
+SELECT ?object (COUNT(DISTINCT ?tl) AS ?count)
 WHERE {
     ?tl sbol2:role ?object .
-    ?tl sbh:topLevel ?tl
-}`;
+    ?tl sbh:topLevel ?tl .
+    OPTIONAL { ?tl sbol2:displayId ?tlDisplayId . }
+    OPTIONAL { ?tl dcterms:title ?tlName . }
+    OPTIONAL { ?tl dcterms:description ?tlDescription . }
+    $constraints
+}
+GROUP BY ?object`;
 
 export default query;
