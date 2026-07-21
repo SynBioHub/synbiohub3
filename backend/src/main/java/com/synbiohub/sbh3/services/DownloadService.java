@@ -3,41 +3,41 @@ package com.synbiohub.sbh3.services;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.synbiohub.sbh3.dao.SparqlService;
 import com.synbiohub.sbh3.sparql.SPARQLQuery;
 import com.synbiohub.sbh3.utils.ConfigUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.jena.datatypes.RDFDatatype;
+import org.apache.jena.datatypes.TypeMapper;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.RDFNode;
-import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.rdf.model.ResourceFactory;
-import org.apache.jena.datatypes.RDFDatatype;
-import org.apache.jena.datatypes.TypeMapper;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RDFFormat;
 import org.apache.jena.riot.RiotException;
+import org.apache.jena.vocabulary.RDF;
+import org.sbolstandard.core2.Annotation;
 import org.sbolstandard.core2.ComponentDefinition;
+import org.sbolstandard.core2.GenericTopLevel;
+import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLReader;
+import org.sbolstandard.core2.SBOLValidationException;
+import org.sbolstandard.core2.SBOLWriter;
 import org.sbolstandard.core2.Sequence;
-
+import org.sbolstandard.core2.TopLevel;
 import org.springframework.stereotype.Service;
 
+import javax.xml.namespace.QName;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -47,6 +47,7 @@ public class DownloadService {
     private static final int FASTA_WRAP_WIDTH = 70;
 
     private final SearchService searchService;
+    private final SparqlService sparqlService;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     /**
@@ -117,7 +118,7 @@ public class DownloadService {
         var args = new HashMap<String, String>();
         args.put("persistentIdentity", "<" + persistentIdentityUri + ">");
         String query = q.loadTemplate(args);
-        String json = searchService.SPARQLQuery(query);
+        String json = sparqlService.read(sparqlService.getExplorerUrl(), sparqlService.resolveGraphUri(""), query);
         try {
             JsonNode bindings = objectMapper.readTree(json).path("results").path("bindings");
             if (!bindings.isArray() || bindings.isEmpty()) {
@@ -135,24 +136,88 @@ public class DownloadService {
     }
 
     /**
-     * Recursive SBOL2 closure as RDF/XML with legacy SynBioHub1 namespace layout ({@code sbh}, {@code igem},
-     * {@code dcterms}, etc.). The merged Jena model is written with {@link RDFFormat#RDFXML} and stable prefixes;
-     * {@link SBOLWriter} is not used because it emits generic {@code ns*} prefixes and splits iGEM IRIs into
-     * fragment namespaces that fail download regression tests.
+     * Recursive SBOL2 closure as RDF/XML matching SynBioHub1 {@code RDFToSBOLJob}:
+     * CONSTRUCT → Jena model → {@link SBOLReader} (via {@link RDFFormat#RDFXML_PLAIN} so
+     * {@code sbol:Sequence} stays link-style) → {@link #inlineNestedAnnotations} for
+     * {@code sbh:topLevel}-owned {@link GenericTopLevel}s → {@link SBOLWriter}.
      */
     public byte[] getSbol2RdfXmlBytes(String topLevelUri) throws IOException {
         Model model = getRecursiveModel(topLevelUri);
         if (model.isEmpty()) {
             return null;
         }
-        applyLegacySynbiohubRdfXmlPrefixes(model);
-        var out = new ByteArrayOutputStream();
-        RDFDataMgr.write(out, model, RDFFormat.RDFXML);
-        return postProcessLegacySbolRdfXml(out.toByteArray());
+        SBOLDocument doc = readModelAsSbolDocument(model);
+        if (doc == null) {
+            throw new IOException("Failed to read SBOL document for " + topLevelUri);
+        }
+        try {
+            prepareDocumentLikeSbh1(doc);
+            var out = new ByteArrayOutputStream();
+            SBOLWriter.write(doc, out);
+            return out.toByteArray();
+        } catch (SBOLValidationException | SBOLConversionException e) {
+            throw new IOException("Failed to serialize SBOL for " + topLevelUri, e);
+        }
+    }
+
+    private static final String SBH_NS = "http://wiki.synbiohub.org/wiki/Terms/synbiohub#";
+
+    /**
+     * SynBioHub1 {@code RDFToSBOLJob} prep: touch Collection members, then restore nested
+     * annotation objects owned via {@code sbh:topLevel} before {@link SBOLWriter}.
+     */
+    private static void prepareDocumentLikeSbh1(SBOLDocument doc) throws SBOLValidationException {
+        for (TopLevel topLevel : new ArrayList<>(doc.getTopLevels())) {
+            if (topLevel instanceof org.sbolstandard.core2.Collection) {
+                ((org.sbolstandard.core2.Collection) topLevel).getMembers();
+            }
+        }
+        for (TopLevel topLevel : new ArrayList<>(doc.getTopLevels())) {
+            inlineNestedAnnotations(doc, topLevel, topLevel.getAnnotations());
+        }
     }
 
     /**
-     * Prefix map aligned with SynBioHub1 RDF/XML root for {@code /sbol} (see legacy public igem downloads).
+     * Port of SynBioHub1 {@code RDFToSBOLJob.inlineNestedAnnotations}: when a URI annotation
+     * points at a {@link GenericTopLevel} whose {@code sbh:topLevel} is this top level, nest
+     * that GTL under the annotation and remove it as a top-level. Does not nest {@link Sequence}
+     * (Sequences are never GenericTopLevels with {@code sbh:topLevel}).
+     */
+    private static void inlineNestedAnnotations(SBOLDocument doc, TopLevel topLevel, List<Annotation> annotations)
+            throws SBOLValidationException {
+        if (annotations == null) {
+            return;
+        }
+        for (Annotation annotation : annotations) {
+            if (!annotation.isURIValue()) {
+                continue;
+            }
+            URI genericTopLevelURI = annotation.getURIValue();
+            GenericTopLevel genericTopLevel = doc.getGenericTopLevel(genericTopLevelURI);
+            if (genericTopLevel == null || genericTopLevelURI.equals(topLevel.getIdentity())) {
+                continue;
+            }
+            URI ownerTopLevelUri = null;
+            for (Annotation annotation2 : genericTopLevel.getAnnotations()) {
+                if (SBH_NS.equals(annotation2.getQName().getNamespaceURI())
+                        && "topLevel".equals(annotation2.getQName().getLocalPart())
+                        && annotation2.isURIValue()) {
+                    ownerTopLevelUri = annotation2.getURIValue();
+                    break;
+                }
+            }
+            if (ownerTopLevelUri != null && ownerTopLevelUri.equals(topLevel.getIdentity())) {
+                annotation.setAnnotations(genericTopLevel.getAnnotations());
+                annotation.setNestedIdentity(genericTopLevel.getIdentity());
+                annotation.setNestedQName(genericTopLevel.getRDFType());
+                doc.removeGenericTopLevel(genericTopLevel);
+                inlineNestedAnnotations(doc, topLevel, annotation.getAnnotations());
+            }
+        }
+    }
+
+    /**
+     * Prefix map aligned with SynBioHub1 RDF/XML root (used by {@code /sbolnr} Jena re-serialize).
      */
     private static void applyLegacySynbiohubRdfXmlPrefixes(Model model) {
         List<String> toClear = new ArrayList<>();
@@ -263,7 +328,7 @@ public class DownloadService {
         args.put("uri", uriClass.toString());
         args.put("offset", "0");
         String query = metadataQuery.loadTemplate(args);
-        String results = searchService.SPARQLQuery(query);
+        String results = sparqlService.read(sparqlService.getExplorerUrl(), sparqlService.resolveGraphUri(""),query);
         try {
             results = searchService.rawJSONToOutput(results);
         } catch (Exception e) {}
@@ -271,13 +336,13 @@ public class DownloadService {
     }
 
     /**
-     * Non-recursive SBOL RDF/XML for /sbolnr, using the same legacy namespace layout as {@link #getSbol2RdfXmlBytes}.
+     * Non-recursive SBOL RDF/XML for /sbolnr with legacy SynBioHub1-style namespace layout.
      * <p>
      * Virtuoso RDF/XML (and Turtle / N-Triples / SPARQL-JSON fallback from
      * {@link #readConstructResponseIntoModel}) is parsed into a Jena model, then written with
-     * {@link RDFFormat#RDFXML} and {@link #applyLegacySynbiohubRdfXmlPrefixes} so output matches SynBioHub1-style
-     * {@code sbh}/{@code igem} prefixes instead of auto-generated {@code ns*} names. If RDF/XML from Virtuoso cannot
-     * be parsed, the raw body is returned after {@link #postProcessLegacySbolRdfXml} only.
+     * {@link RDFFormat#RDFXML_PLAIN} and {@link #applyLegacySynbiohubRdfXmlPrefixes}. If RDF/XML from
+     * Virtuoso cannot be parsed, the raw body is returned after {@link #postProcessLegacySbolRdfXml} only.
+     * (Recursive {@code /sbol} uses {@link SBOLWriter} instead; see {@link #getSbol2RdfXmlBytes}.)
      */
     public byte[] getSBOLNonRecursiveRdfXmlBytes(String uri) throws IOException {
         URI uriClass;
@@ -301,7 +366,7 @@ public class DownloadService {
                 if (!model.isEmpty()) {
                     applyLegacySynbiohubRdfXmlPrefixes(model);
                     var out = new ByteArrayOutputStream();
-                    RDFDataMgr.write(out, model, RDFFormat.RDFXML);
+                    RDFDataMgr.write(out, model, RDFFormat.RDFXML_PLAIN);
                     return postProcessLegacySbolRdfXml(out.toByteArray());
                 }
             } catch (Exception e) {
@@ -315,7 +380,7 @@ public class DownloadService {
         readConstructResponseIntoModel(model, raw);
         applyLegacySynbiohubRdfXmlPrefixes(model);
         var out = new ByteArrayOutputStream();
-        RDFDataMgr.write(out, model, RDFFormat.RDFXML);
+        RDFDataMgr.write(out, model, RDFFormat.RDFXML_PLAIN);
         return postProcessLegacySbolRdfXml(out.toByteArray());
     }
 
@@ -460,19 +525,34 @@ public class DownloadService {
         return model;
     }
 
-    public SBOLDocument getSBOLRecursive(String uri) throws IOException {
-        var results = getRecursiveModel(uri);
-
-        // Write RDF Model to byte stream
-        SBOLDocument document = null;
+    /**
+     * Write the Jena model with {@link RDFFormat#RDFXML_PLAIN} (flat Identifiable links) and parse with
+     * {@link SBOLReader}. Plain RDF/XML avoids nested {@code sbol:Sequence} blocks that crash stock readers.
+     */
+    private SBOLDocument readModelAsSbolDocument(Model model) {
+        if (model == null || model.isEmpty()) {
+            return null;
+        }
         var modelOutput = new ByteArrayOutputStream();
-        RDFDataMgr.write(modelOutput, results, RDFFormat.RDFXML_PLAIN);
-        // Use libSBOLj to serialize and return
+        RDFDataMgr.write(modelOutput, model, RDFFormat.RDFXML_PLAIN);
         try {
-            document = SBOLReader.read(new ByteArrayInputStream(modelOutput.toByteArray()));
+            return SBOLReader.read(new ByteArrayInputStream(modelOutput.toByteArray()));
         } catch (Exception e) {
-            log.error("Error reading RDF to SBOL Document!");
-            e.printStackTrace();
+            log.error("Error reading RDF to SBOL Document!", e);
+            return null;
+        }
+    }
+
+    public SBOLDocument getSBOLRecursive(String uri) throws IOException {
+        Model results = getRecursiveModel(uri);
+        SBOLDocument document = readModelAsSbolDocument(results);
+        if (document == null) {
+            return null;
+        }
+        try {
+            prepareDocumentLikeSbh1(document);
+        } catch (SBOLValidationException e) {
+            throw new IOException("Failed to inline nested annotations for " + uri, e);
         }
         return document;
     }

@@ -1,6 +1,5 @@
 #!/bin/bash
 
-cd tests
 source ./testutil.sh
 
 message "Running synbiohub test suite."

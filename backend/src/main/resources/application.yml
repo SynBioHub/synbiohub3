@@ -4,6 +4,10 @@ server:
     relaxed-path-chars: ['<','>']
     relaxed-query-chars: ['<','>']
 spring:
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
   datasource:
     driver-class-name: org.h2.Driver
     url: jdbc:h2:./data/sbhdb
@@ -39,7 +43,7 @@ jwt:
   public.key: classpath:app.pub
 
 roleToEndpointPermissions:
-  USER: ["/profile", "/do_logout", "/submit", "/rootCollections", "/root-collections", "/browse", "/manage", "/shared", "/setup", "/login", "/register", "/resetPassword", "/setNewPassword", "/search", "/search/**", "/searchCount", "/searchCount/**", "/twins", "/twinsCount", "/uses", "/usesCount", "/similar", "/similarCount", "/sbol", "/sbolnr", "/metadata", "/gb", "/fasta", "/gff", "/download", "/public/**", "/sparql", "/ComponentDefinition/**", "/**/count", "/count", "/logo", "/user/**", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html"]
+  USER: ["/profile", "/do_logout", "/submit", "/rootCollections", "/root-collections", "/browse", "/manage", "/shared", "/setup", "/login", "/register", "/resetPassword", "/setNewPassword", "/search", "/search/**", "/searchCount", "/searchCount/**", "/twins", "/twinsCount", "/uses", "/usesCount", "/similar", "/similarCount", "/sbol", "/sbolnr", "/metadata", "/gb", "/fasta", "/gff", "/download", "/public/**", "/sparql", "/ComponentDefinition/**", "/**/count", "/count", "/logo", "/user/**", "/getSynBioHubVersion", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html"]
   CURATOR: ["/makePublic"]
   ADMIN: ['/admin/sparql', '/admin', '/admin/virtuoso', '/admin/graphs', '/admin/log', '/admin/listLogs', '/admin/mail', '/admin/plugins', '/admin/savePlugin', '/admin/deletePlugin', '/admin/registries', '/admin/saveRegistry', '/admin/deleteRegistry', '/admin/setAdministratorEmail', '/admin/retrieveFromWebOfRegistries', '/admin/federate', '/admin/remotes', '/admin/saveRemote', '/admin/deleteRemote', '/admin/explorerlog', '/admin/explorer', '/admin/explorerUpdateIndex', '/admin/theme', '/admin/logo', '/admin/users', '/admin/newUser', '/admin/updateUser', '/admin/deleteUser']
 
