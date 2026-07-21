@@ -1,0 +1,37 @@
+<?xml version="1.0" ?>
+<rdf:RDF xmlns:synbiohub="http://synbiohub.org#" xmlns:xsd="http://www.w3.org/2001/XMLSchema#dateTime/" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:sybio="http://www.sybio.ncl.ac.uk#" xmlns:ncbi="http://www.ncbi.nlm.nih.gov#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:igem="http://wiki.synbiohub.org/wiki/Terms/igem#" xmlns:sbh="http://wiki.synbiohub.org/wiki/Terms/synbiohub#" xmlns:sbol="http://sbols.org/v2#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:gbconv="http://sbols.org/genBankConversion#" xmlns:genbank="http://www.ncbi.nlm.nih.gov/genbank#" xmlns:prov="http://www.w3.org/ns/prov#" xmlns:obo="http://purl.obolibrary.org/obo/" xmlns:om="http://www.ontology-of-units-of-measure.org/resource/om-2/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <sbol:Collection rdf:about="https://synbiohub.org/user/testuser/Tester_1/Tester_1_collection/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Tester_1_collection"/>
+    <sbol:displayId>Tester_1_collection</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dcterms:title>Round_Trip_Tester</dcterms:title>
+    <dcterms:description>This is a simple roundtrip test</dcterms:description>
+    <dc:creator>Test User</dc:creator>
+    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <dcterms:created>2026-07-20T21:28:33.443102750Z</dcterms:created>
+    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Tester_1_collection/1"/>
+    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/BBa_E0040/1"/>
+    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/rbsB/1"/>
+    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Reporter/1"/>
+    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/partseq_185/1"/>
+    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/partseq_156/1"/>
+    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/RBS/1"/>
+    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/pTAKRightCasette/1"/>
+    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/BBa_C0051/1"/>
+    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/BBa_R0010/1"/>
+    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/_0a9f5ec9_e70e_4ed1_93b1_50d4b8b1a36c/1"/>
+    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Repressor1/1"/>
+    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Terminator/1"/>
+  </sbol:Collection>
+  <sbol:ComponentDefinition rdf:about="https://synbiohub.org/user/testuser/Tester_1/RBS/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/RBS"/>
+    <sbol:displayId>RBS</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <prov:wasDerivedFrom rdf:resource="urn:d0ca1539-371f-48b5-8e26-d27fa1693e5b"/>
+    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/RBS/1"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000139"/>
+  </sbol:ComponentDefinition>
+</rdf:RDF>

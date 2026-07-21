@@ -1,0 +1,78 @@
+<?xml version="1.0" ?>
+<rdf:RDF xmlns:synbiohub="http://synbiohub.org#" xmlns:xsd="http://www.w3.org/2001/XMLSchema#dateTime/" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:sybio="http://www.sybio.ncl.ac.uk#" xmlns:ncbi="http://www.ncbi.nlm.nih.gov#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:igem="http://wiki.synbiohub.org/wiki/Terms/igem#" xmlns:sbh="http://wiki.synbiohub.org/wiki/Terms/synbiohub#" xmlns:sbol="http://sbols.org/v2#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:gbconv="http://sbols.org/genBankConversion#" xmlns:genbank="http://www.ncbi.nlm.nih.gov/genbank#" xmlns:prov="http://www.w3.org/ns/prov#" xmlns:obo="http://purl.obolibrary.org/obo/" xmlns:om="http://www.ontology-of-units-of-measure.org/resource/om-2/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <sbol:Collection rdf:about="https://synbiohub.org/user/testuser/Tester_1/Tester_1_collection/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Tester_1_collection"/>
+    <sbol:displayId>Tester_1_collection</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dcterms:title>Round_Trip_Tester</dcterms:title>
+    <dcterms:description>This is a simple roundtrip test</dcterms:description>
+    <dc:creator>Test User</dc:creator>
+    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <dcterms:created>2026-07-21T00:27:44.063209688Z</dcterms:created>
+    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Tester_1_collection/1"/>
+    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/non_codon_optimized/1"/>
+    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/codon_optimized/1"/>
+    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/codon_optimization_software/1"/>
+    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/codon_optimization_activity/1"/>
+  </sbol:Collection>
+  <sbol:ComponentDefinition rdf:about="https://synbiohub.org/user/testuser/Tester_1/non_codon_optimized/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/non_codon_optimized"/>
+    <sbol:displayId>non_codon_optimized</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dcterms:title>Non Codon optimised CDS</dcterms:title>
+    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/non_codon_optimized/1"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="https://synbiohub.org/user/testuser/Tester_1/codon_optimized/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/codon_optimized"/>
+    <sbol:displayId>codon_optimized</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <prov:wasDerivedFrom rdf:resource="https://synbiohub.org/user/testuser/Tester_1/non_codon_optimized/1"/>
+    <prov:wasGeneratedBy rdf:resource="https://synbiohub.org/user/testuser/Tester_1/codon_optimization_activity/1"/>
+    <dcterms:title>Codon optimised CDS</dcterms:title>
+    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/codon_optimized/1"/>
+    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+  </sbol:ComponentDefinition>
+  <prov:Activity rdf:about="https://synbiohub.org/user/testuser/Tester_1/codon_optimization_activity/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/codon_optimization_activity"/>
+    <sbol:displayId>codon_optimization_activity</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dcterms:title>Codon Optimization Activity</dcterms:title>
+    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/codon_optimization_activity/1"/>
+    <prov:qualifiedAssociation>
+      <prov:Association rdf:about="https://synbiohub.org/user/testuser/Tester_1/codon_optimization_activity/association/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/codon_optimization_activity/association"/>
+        <sbol:displayId>association</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+        <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/codon_optimization_activity/1"/>
+        <prov:hadRole rdf:resource="http://myapp.com/codonoptimiser"/>
+        <prov:agent rdf:resource="https://synbiohub.org/user/testuser/Tester_1/codon_optimization_software/1"/>
+      </prov:Association>
+    </prov:qualifiedAssociation>
+    <prov:qualifiedUsage>
+      <prov:Usage rdf:about="https://synbiohub.org/user/testuser/Tester_1/codon_optimization_activity/usage/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/codon_optimization_activity/usage"/>
+        <sbol:displayId>usage</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+        <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/codon_optimization_activity/1"/>
+        <prov:hadRole rdf:resource="http://sbols.org/v2#source"/>
+        <prov:entity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/non_codon_optimized/1"/>
+      </prov:Usage>
+    </prov:qualifiedUsage>
+  </prov:Activity>
+  <prov:Agent rdf:about="https://synbiohub.org/user/testuser/Tester_1/codon_optimization_software/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/codon_optimization_software"/>
+    <sbol:displayId>codon_optimization_software</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dcterms:title>Codon Optimization Software</dcterms:title>
+    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/codon_optimization_software/1"/>
+  </prov:Agent>
+</rdf:RDF>

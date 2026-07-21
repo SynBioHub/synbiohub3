@@ -1,0 +1,43 @@
+<?xml version="1.0" ?>
+<rdf:RDF xmlns:synbiohub="http://synbiohub.org#" xmlns:xsd="http://www.w3.org/2001/XMLSchema#dateTime/" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:sybio="http://www.sybio.ncl.ac.uk#" xmlns:ncbi="http://www.ncbi.nlm.nih.gov#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:igem="http://wiki.synbiohub.org/wiki/Terms/igem#" xmlns:sbh="http://wiki.synbiohub.org/wiki/Terms/synbiohub#" xmlns:sbol="http://sbols.org/v2#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:gbconv="http://sbols.org/genBankConversion#" xmlns:genbank="http://www.ncbi.nlm.nih.gov/genbank#" xmlns:prov="http://www.w3.org/ns/prov#" xmlns:obo="http://purl.obolibrary.org/obo/" xmlns:om="http://www.ontology-of-units-of-measure.org/resource/om-2/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <sbol:Collection rdf:about="https://synbiohub.org/user/testuser/Tester_1/Tester_1_collection/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Tester_1_collection"/>
+    <sbol:displayId>Tester_1_collection</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dcterms:title>Round_Trip_Tester</dcterms:title>
+    <dcterms:description>This is a simple roundtrip test</dcterms:description>
+    <dc:creator>Test User</dc:creator>
+    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <dcterms:created>2026-07-21T00:30:34.689019019Z</dcterms:created>
+    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Tester_1_collection/1"/>
+    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/toggle_switch/1"/>
+    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/tetr_inverter/1"/>
+  </sbol:Collection>
+  <sbol:ModuleDefinition rdf:about="https://synbiohub.org/user/testuser/Tester_1/tetr_inverter/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/tetr_inverter"/>
+    <sbol:displayId>tetr_inverter</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/tetr_inverter/1"/>
+    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <sbol:role rdf:resource="http://parts.igem.org/cgi/partsdb/pgroup.cgi?pgroup=inverter"/>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="https://synbiohub.org/user/testuser/Tester_1/tetr_inverter/LacI_pLacI/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/tetr_inverter/LacI_pLacI"/>
+        <sbol:displayId>LacI_pLacI</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/tetr_inverter/1"/>
+        <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000169"/>
+      </sbol:Interaction>
+    </sbol:interaction>
+  </sbol:ModuleDefinition>
+  <sbol:ModuleDefinition rdf:about="https://synbiohub.org/user/testuser/Tester_1/toggle_switch/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/toggle_switch"/>
+    <sbol:displayId>toggle_switch</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/toggle_switch/1"/>
+    <dcterms:created>2003-12-04T12:00:00Z</dcterms:created>
+    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <sbol:role rdf:resource="http://sbolstandard.org/example/module_role/toggle_switch"/>
+  </sbol:ModuleDefinition>
+</rdf:RDF>

@@ -1,0 +1,53 @@
+<?xml version="1.0" ?>
+<rdf:RDF xmlns:grn="urn:bbn.com:tasbe:grn/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:sbh="http://wiki.synbiohub.org/wiki/Terms/synbiohub#" xmlns:sbol="http://sbols.org/v2#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:prov="http://www.w3.org/ns/prov#" xmlns:om="http://www.ontology-of-units-of-measure.org/resource/om-2/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <sbol:Collection rdf:about="https://synbiohub.org/user/testuser/Tester_1/Tester_1_collection/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Tester_1_collection"/>
+    <sbol:displayId>Tester_1_collection</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dcterms:title>Round_Trip_Tester</dcterms:title>
+    <dcterms:description>This is a simple roundtrip test</dcterms:description>
+    <dc:creator>Test User</dc:creator>
+    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Tester_1_collection/1"/>
+    <rdf:type rdf:resource="http://sbols.org/v2#Collection"/>
+    <dcterms:created>2026-07-20T21:26:11.011555489Z</dcterms:created>
+    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/experimental_data1/1.0"/>
+    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/GenericTopLevel/1.0"/>
+    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/experiment/1.0"/>
+    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/experimental_data2/1.0"/>
+  </sbol:Collection>
+  <grn:RegulatoryReaction rdf:about="https://synbiohub.org/user/testuser/Tester_1/GenericTopLevel/1.0">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/GenericTopLevel"/>
+    <sbol:displayId>GenericTopLevel</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/GenericTopLevel/1.0"/>
+    <rdf:type rdf:resource="http://sbols.org/v2#GenericTopLevel"/>
+  </grn:RegulatoryReaction>
+  <sbol:Experiment rdf:about="https://synbiohub.org/user/testuser/Tester_1/experiment/1.0">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/experiment"/>
+    <sbol:displayId>experiment</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/experiment/1.0"/>
+    <rdf:type rdf:resource="http://sbols.org/v2#Experiment"/>
+    <sbol:experimentalData rdf:resource="https://synbiohub.org/user/testuser/Tester_1/experimental_data1/1.0"/>
+    <sbol:experimentalData rdf:resource="https://synbiohub.org/user/testuser/Tester_1/experimental_data2/1.0"/>
+  </sbol:Experiment>
+  <sbol:ExperimentalData rdf:about="https://synbiohub.org/user/testuser/Tester_1/experimental_data2/1.0">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/experimental_data2"/>
+    <sbol:displayId>experimental_data2</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/experimental_data2/1.0"/>
+    <rdf:type rdf:resource="http://sbols.org/v2#ExperimentalData"/>
+  </sbol:ExperimentalData>
+  <sbol:ExperimentalData rdf:about="https://synbiohub.org/user/testuser/Tester_1/experimental_data1/1.0">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/experimental_data1"/>
+    <sbol:displayId>experimental_data1</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/experimental_data1/1.0"/>
+    <rdf:type rdf:resource="http://sbols.org/v2#ExperimentalData"/>
+  </sbol:ExperimentalData>
+</rdf:RDF>

@@ -1,0 +1,131 @@
+Running pICSL12006
+Submit Time (in sec): 1.058
+1 of 189: pICSL12006.xml Fail 1
+Running pICH87644
+Submit Time (in sec): 0.241
+2 of 189: pICH87644.xml Fail 2
+Running pICSL70005
+Submit Time (in sec): 0.373
+3 of 189: pICSL70005.xml Fail 3
+Running pICSL50006
+Submit Time (in sec): 0.247
+4 of 189: pICSL50006.xml Fail 4
+Running CD_SA_Cut_Example
+Submit Time (in sec): 0.305
+Doc Retrieval Time (in sec): 0.258
+Emulation Time (in sec): 0.012
+    Remove Time (in sec): 0.001
+    Change URI Prefix Time (in sec): 0.008
+    Add Collection Time (in sec): 0.001
+    Add Annotations Time (in sec): 0.002
+libSBOLj (%): 3.934426229508197
+5 of 189: CD_SA_Cut_Example.xml Success 1
+Running pICH45131
+Submit Time (in sec): 0.221
+6 of 189: pICH45131.xml Fail 5
+Running pICSL80001
+Submit Time (in sec): 0.213
+7 of 189: pICSL80001.xml Fail 6
+Running SequenceOutput
+Submit Time (in sec): 0.122
+Doc Retrieval Time (in sec): 0.074
+Emulation Time (in sec): 0.003
+    Remove Time (in sec): 0.0
+    Change URI Prefix Time (in sec): 0.002
+    Add Collection Time (in sec): 0.0
+    Add Annotations Time (in sec): 0.001
+libSBOLj (%): 2.459016393442623
+8 of 189: SequenceOutput.xml Success 2
+Running SequenceConstraintOutput
+Submit Time (in sec): 0.15
+Doc Retrieval Time (in sec): 0.102
+Emulation Time (in sec): 0.012
+    Remove Time (in sec): 0.0
+    Change URI Prefix Time (in sec): 0.009
+    Add Collection Time (in sec): 0.001
+    Add Annotations Time (in sec): 0.002
+libSBOLj (%): 8.0
+9 ogf 189: SequenceConstraintOutput.xml Fail 7
+Running pICH88103
+Submit Time (in sec): 0.163
+Doc Retrieval Time (in sec): 0.153
+Emulation Time (in sec): 0.013
+    Remove Time (in sec): 0.0
+    Change URI Prefix Time (in sec): 0.011
+    Add Collection Time (in sec): 0.0
+    Add Annotations Time (in sec): 0.002
+libSBOLj (%): 7.975460122699387
+10 of 189: pICH88103.xml Success 3
+Running pICSL50012
+Submit Time (in sec): 0.121
+11 of 189: pICSL50012.xml Fail 8
+Running sequence3
+Submit Time (in sec): 0.151
+12 of 189: sequence3.xml Fail 9
+Running multipleGenericTopLevel
+Submit Time (in sec): 0.106
+Doc Retrieval Time (in sec): 0.087
+Emulation Time (in sec): 0.007
+    Remove Time (in sec): 0.0
+    Change URI Prefix Time (in sec): 0.005
+    Add Collection Time (in sec): 0.001
+    Add Annotations Time (in sec): 0.001
+libSBOLj (%): 6.60377358490566
+13 of 189: multipleGenericTopLevel.xml Success 4
+Running pICH44199
+Submit Time (in sec): 0.113
+Doc Retrieval Time (in sec): 0.086
+Emulation Time (in sec): 0.013
+    Remove Time (in sec): 0.0
+    Change URI Prefix Time (in sec): 0.011
+    Add Collection Time (in sec): 0.0
+    Add Annotations Time (in sec): 0.002
+libSBOLj (%): 11.504424778761061
+14 of 189: pICH44199.xml Success 5
+Running test_Sequence_remove
+Submit Time (in sec): 0.112
+Doc Retrieval Time (in sec): 0.05
+Emulation Time (in sec): 0.002
+    Remove Time (in sec): 0.0
+    Change URI Prefix Time (in sec): 0.0
+    Add Collection Time (in sec): 0.001
+    Add Annotations Time (in sec): 0.001
+libSBOLj (%): 1.7857142857142856
+15 of 189: test_Sequence_remove.xml Success 6
+Running eukaryotic_transcriptional_cd_sa_gl
+Submit Time (in sec): 0.086
+Doc Retrieval Time (in sec): 0.072
+Emulation Time (in sec): 0.004
+    Remove Time (in sec): 0.001
+    Change URI Prefix Time (in sec): 0.002
+    Add Collection Time (in sec): 0.0
+    Add Annotations Time (in sec): 0.001
+libSBOLj (%): 4.651162790697675
+16 of 189: eukaryotic_transcriptional_cd_sa_gl.xml Success 7
+Running pICH78133
+Submit Time (in sec): 0.117
+Doc Retrieval Time (in sec): 0.104
+Emulation Time (in sec): 0.012
+    Remove Time (in sec): 0.0
+    Change URI Prefix Time (in sec): 0.01
+    Add Collection Time (in sec): 0.0
+    Add Annotations Time (in sec): 0.002
+libSBOLj (%): 10.256410256410255
+17 of 189: pICH78133.xml Success 8
+Running partial_pTAK_left_cassette
+Submit Time (in sec): 0.154
+Doc Retrieval Time (in sec): 0.203
+Emulation Time (in sec): 0.019
+    Remove Time (in sec): 0.0
+    Change URI Prefix Time (in sec): 0.017
+    Add Collection Time (in sec): 0.0
+    Add Annotations Time (in sec): 0.002
+libSBOLj (%): 12.337662337662337
+18 ogf 189: partial_pTAK_left_cassette.xml Fail 10
+Running pICH87611
+Submit Time (in sec): 0.134
+19 of 189: pICH87611.xml Fail 11
+Running simple_attachment_ref
+Submit Time (in sec): 0.176
+20 of 189: simple_attachment_ref.xml Fail 12
+Running pICH71421.

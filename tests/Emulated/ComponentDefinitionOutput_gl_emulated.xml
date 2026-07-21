@@ -1,0 +1,375 @@
+<?xml version="1.0" ?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:sbh="http://wiki.synbiohub.org/wiki/Terms/synbiohub#" xmlns:sbol="http://sbols.org/v2#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:prov="http://www.w3.org/ns/prov#" xmlns:om="http://www.ontology-of-units-of-measure.org/resource/om-2/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <sbol:Collection rdf:about="https://synbiohub.org/user/testuser/Tester_1/Tester_1_collection/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Tester_1_collection"/>
+    <sbol:displayId>Tester_1_collection</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dcterms:title>Round_Trip_Tester</dcterms:title>
+    <dcterms:description>This is a simple roundtrip test</dcterms:description>
+    <dc:creator>Test User</dc:creator>
+    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Tester_1_collection/1"/>
+    <rdf:type rdf:resource="http://sbols.org/v2#Collection"/>
+    <dcterms:created>2026-07-20T21:28:38.972184311Z</dcterms:created>
+    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/seq_BBa_B0015/1"/>
+    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_B0015/1"/>
+    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/seq_BBa_R0062/1"/>
+    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_R0040/1"/>
+    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/seq_BBa_B0034/1"/>
+    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/seq_BBa_C0062/1"/>
+    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/GenericLocationComponent/1"/>
+    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_R0062/1"/>
+    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_F2620/1"/>
+    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/seq_BBa_R0040/1"/>
+    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_B0034/1"/>
+    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_C0062/1"/>
+  </sbol:Collection>
+  <sbol:ComponentDefinition rdf:about="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_B0034/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_B0034"/>
+    <sbol:displayId>cd_BBa_B0034</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dcterms:title>BBa_B0034</dcterms:title>
+    <dcterms:description>RBS based on Elowitz repressilator</dcterms:description>
+    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_B0034/1"/>
+    <rdf:type rdf:resource="http://sbols.org/v2#ComponentDefinition"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000139"/>
+    <sbol:sequence rdf:resource="https://synbiohub.org/user/testuser/Tester_1/seq_BBa_B0034/1"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_R0062/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_R0062"/>
+    <sbol:displayId>cd_BBa_R0062</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dcterms:title>BBa_R0062</dcterms:title>
+    <dcterms:description>LuxR inducible promoter</dcterms:description>
+    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_R0062/1"/>
+    <rdf:type rdf:resource="http://sbols.org/v2#ComponentDefinition"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+    <sbol:sequence rdf:resource="https://synbiohub.org/user/testuser/Tester_1/seq_BBa_R0062/1"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_C0062/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_C0062"/>
+    <sbol:displayId>cd_BBa_C0062</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dcterms:title>BBa_C0062</dcterms:title>
+    <dcterms:description>luxR coding sequence</dcterms:description>
+    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_C0062/1"/>
+    <rdf:type rdf:resource="http://sbols.org/v2#ComponentDefinition"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+    <sbol:sequence rdf:resource="https://synbiohub.org/user/testuser/Tester_1/seq_BBa_C0062/1"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_F2620/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_F2620"/>
+    <sbol:displayId>cd_BBa_F2620</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dcterms:title>BBa_F2620</dcterms:title>
+    <dcterms:description>3OC6HSL -&gt; PoPS Receiver</dcterms:description>
+    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_F2620/1"/>
+    <rdf:type rdf:resource="http://sbols.org/v2#ComponentDefinition"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0001411"/>
+    <sbol:component>
+      <sbol:Component rdf:about="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_F2620/luxR/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_F2620/luxR"/>
+        <sbol:displayId>luxR</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+        <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_F2620/1"/>
+        <rdf:type rdf:resource="http://sbols.org/v2#Component"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:definition rdf:resource="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_B0034/1"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_F2620/rbs/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_F2620/rbs"/>
+        <sbol:displayId>rbs</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+        <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_F2620/1"/>
+        <rdf:type rdf:resource="http://sbols.org/v2#Component"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:definition rdf:resource="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_C0062/1"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_F2620/ter/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_F2620/ter"/>
+        <sbol:displayId>ter</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+        <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_F2620/1"/>
+        <rdf:type rdf:resource="http://sbols.org/v2#Component"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:definition rdf:resource="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_B0015/1"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_F2620/pLuxR/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_F2620/pLuxR"/>
+        <sbol:displayId>pLuxR</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+        <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_F2620/1"/>
+        <rdf:type rdf:resource="http://sbols.org/v2#Component"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:definition rdf:resource="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_R0062/1"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_F2620/pTetR/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_F2620/pTetR"/>
+        <sbol:displayId>pTetR</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+        <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_F2620/1"/>
+        <rdf:type rdf:resource="http://sbols.org/v2#Component"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:definition rdf:resource="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_R0040/1"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:sequenceAnnotation>
+      <sbol:SequenceAnnotation rdf:about="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_F2620/anno2/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_F2620/anno2"/>
+        <sbol:displayId>anno2</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+        <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_F2620/1"/>
+        <rdf:type rdf:resource="http://sbols.org/v2#SequenceAnnotation"/>
+        <sbol:location>
+          <sbol:Range rdf:about="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_F2620/anno2/range/1">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_F2620/anno2/range"/>
+            <sbol:displayId>range</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+            <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_F2620/1"/>
+            <rdf:type rdf:resource="http://sbols.org/v2#Range"/>
+            <sbol:start>56</sbol:start>
+            <sbol:end>68</sbol:end>
+            <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
+          </sbol:Range>
+        </sbol:location>
+        <sbol:component rdf:resource="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_F2620/rbs/1"/>
+      </sbol:SequenceAnnotation>
+    </sbol:sequenceAnnotation>
+    <sbol:sequenceAnnotation>
+      <sbol:SequenceAnnotation rdf:about="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_F2620/anno1/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_F2620/anno1"/>
+        <sbol:displayId>anno1</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+        <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_F2620/1"/>
+        <rdf:type rdf:resource="http://sbols.org/v2#SequenceAnnotation"/>
+        <sbol:location>
+          <sbol:Range rdf:about="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_F2620/anno1/range/1">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_F2620/anno1/range"/>
+            <sbol:displayId>range</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+            <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_F2620/1"/>
+            <rdf:type rdf:resource="http://sbols.org/v2#Range"/>
+            <sbol:start>1</sbol:start>
+            <sbol:end>55</sbol:end>
+            <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
+          </sbol:Range>
+        </sbol:location>
+        <sbol:component rdf:resource="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_F2620/pTetR/1"/>
+      </sbol:SequenceAnnotation>
+    </sbol:sequenceAnnotation>
+    <sbol:sequenceAnnotation>
+      <sbol:SequenceAnnotation rdf:about="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_F2620/anno3/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_F2620/anno3"/>
+        <sbol:displayId>anno3</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+        <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_F2620/1"/>
+        <rdf:type rdf:resource="http://sbols.org/v2#SequenceAnnotation"/>
+        <sbol:location>
+          <sbol:Range rdf:about="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_F2620/anno3/range/1">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_F2620/anno3/range"/>
+            <sbol:displayId>range</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+            <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_F2620/1"/>
+            <rdf:type rdf:resource="http://sbols.org/v2#Range"/>
+            <sbol:start>69</sbol:start>
+            <sbol:end>770</sbol:end>
+            <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
+          </sbol:Range>
+        </sbol:location>
+        <sbol:component rdf:resource="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_F2620/luxR/1"/>
+      </sbol:SequenceAnnotation>
+    </sbol:sequenceAnnotation>
+    <sbol:sequenceAnnotation>
+      <sbol:SequenceAnnotation rdf:about="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_F2620/anno4/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_F2620/anno4"/>
+        <sbol:displayId>anno4</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+        <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_F2620/1"/>
+        <rdf:type rdf:resource="http://sbols.org/v2#SequenceAnnotation"/>
+        <sbol:location>
+          <sbol:Range rdf:about="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_F2620/anno4/range/1">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_F2620/anno4/range"/>
+            <sbol:displayId>range</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+            <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_F2620/1"/>
+            <rdf:type rdf:resource="http://sbols.org/v2#Range"/>
+            <sbol:start>771</sbol:start>
+            <sbol:end>900</sbol:end>
+            <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
+          </sbol:Range>
+        </sbol:location>
+        <sbol:component rdf:resource="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_F2620/ter/1"/>
+      </sbol:SequenceAnnotation>
+    </sbol:sequenceAnnotation>
+    <sbol:sequenceAnnotation>
+      <sbol:SequenceAnnotation rdf:about="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_F2620/anno5/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_F2620/anno5"/>
+        <sbol:displayId>anno5</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+        <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_F2620/1"/>
+        <rdf:type rdf:resource="http://sbols.org/v2#SequenceAnnotation"/>
+        <sbol:location>
+          <sbol:Range rdf:about="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_F2620/anno5/range/1">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_F2620/anno5/range"/>
+            <sbol:displayId>range</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+            <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_F2620/1"/>
+            <rdf:type rdf:resource="http://sbols.org/v2#Range"/>
+            <sbol:start>901</sbol:start>
+            <sbol:end>956</sbol:end>
+            <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
+          </sbol:Range>
+        </sbol:location>
+        <sbol:component rdf:resource="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_F2620/pLuxR/1"/>
+      </sbol:SequenceAnnotation>
+    </sbol:sequenceAnnotation>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="https://synbiohub.org/user/testuser/Tester_1/GenericLocationComponent/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/GenericLocationComponent"/>
+    <sbol:displayId>GenericLocationComponent</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/GenericLocationComponent/1"/>
+    <rdf:type rdf:resource="http://sbols.org/v2#ComponentDefinition"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+    <sbol:sequenceAnnotation>
+      <sbol:SequenceAnnotation rdf:about="https://synbiohub.org/user/testuser/Tester_1/GenericLocationComponent/gl_seqAnn/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/GenericLocationComponent/gl_seqAnn"/>
+        <sbol:displayId>gl_seqAnn</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+        <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/GenericLocationComponent/1"/>
+        <rdf:type rdf:resource="http://sbols.org/v2#SequenceAnnotation"/>
+        <sbol:location>
+          <sbol:GenericLocation rdf:about="https://synbiohub.org/user/testuser/Tester_1/GenericLocationComponent/gl_seqAnn/gl/1">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/GenericLocationComponent/gl_seqAnn/gl"/>
+            <sbol:displayId>gl</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+            <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/GenericLocationComponent/1"/>
+            <rdf:type rdf:resource="http://sbols.org/v2#GenericLocation"/>
+          </sbol:GenericLocation>
+        </sbol:location>
+        <sbol:location>
+          <sbol:GenericLocation rdf:about="https://synbiohub.org/user/testuser/Tester_1/GenericLocationComponent/gl_seqAnn/GenericLocation/1">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/GenericLocationComponent/gl_seqAnn/GenericLocation"/>
+            <sbol:displayId>GenericLocation</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+            <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/GenericLocationComponent/1"/>
+            <rdf:type rdf:resource="http://sbols.org/v2#GenericLocation"/>
+            <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
+          </sbol:GenericLocation>
+        </sbol:location>
+      </sbol:SequenceAnnotation>
+    </sbol:sequenceAnnotation>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_B0015/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_B0015"/>
+    <sbol:displayId>cd_BBa_B0015</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dcterms:title>BBa_B0015</dcterms:title>
+    <dcterms:description>Double terminator</dcterms:description>
+    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_B0015/1"/>
+    <rdf:type rdf:resource="http://sbols.org/v2#ComponentDefinition"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000141"/>
+    <sbol:sequence rdf:resource="https://synbiohub.org/user/testuser/Tester_1/seq_BBa_B0015/1"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_R0040/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_R0040"/>
+    <sbol:displayId>cd_BBa_R0040</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dcterms:title>BBa_R0040</dcterms:title>
+    <dcterms:description>TetR repressible promoter</dcterms:description>
+    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_R0040/1"/>
+    <rdf:type rdf:resource="http://sbols.org/v2#ComponentDefinition"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+    <sbol:sequence rdf:resource="https://synbiohub.org/user/testuser/Tester_1/seq_BBa_R0040/1"/>
+  </sbol:ComponentDefinition>
+  <sbol:Sequence rdf:about="https://synbiohub.org/user/testuser/Tester_1/seq_BBa_R0040/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/seq_BBa_R0040"/>
+    <sbol:displayId>seq_BBa_R0040</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/seq_BBa_R0040/1"/>
+    <rdf:type rdf:resource="http://sbols.org/v2#Sequence"/>
+    <sbol:elements>tccctatcagtgatagagattgacatccctatcagtgatagagatactgagcac</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="https://synbiohub.org/user/testuser/Tester_1/seq_BBa_B0015/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/seq_BBa_B0015"/>
+    <sbol:displayId>seq_BBa_B0015</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/seq_BBa_B0015/1"/>
+    <rdf:type rdf:resource="http://sbols.org/v2#Sequence"/>
+    <sbol:elements>ccaggcatcaaataaaacgaaaggctcagtcgaaagactgggcctttcgttttatctgttgtttgtcggtgaacgctctctactagagtcacactggctcaccttcgggtgggcctttctgcgtttata</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="https://synbiohub.org/user/testuser/Tester_1/seq_BBa_C0062/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/seq_BBa_C0062"/>
+    <sbol:displayId>seq_BBa_C0062</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/seq_BBa_C0062/1"/>
+    <rdf:type rdf:resource="http://sbols.org/v2#Sequence"/>
+    <sbol:elements>atgcttatctgatatgactaaaatggtacattgtgaatattatttactcgcgatcatttatcctcattctatggttaaatctgatatttcaatcctagataattaccctaaaaaatggaggcaatattatgatgacgctaatttaataaaatatgatcctatagtagattattctaactccaatcattcaccaattaattggaatatatttgaaaacaatgctgtaaataaaaaatctccaaatgtaattaaagaagcgaaaacatcaggtcttatcactgggtttagtttccctattcatacggctaacaatggcttcggaatgcttagttttgcacattcagaaaaagacaactatatagatagtttatttttacatgcgtgtatgaacataccattaattgttccttctctagttgataattatcgaaaaataaatatagcaaataataaatcaaacaacgatttaaccaaaagagaaaaagaatgtttagcgtgggcatgcgaaggaaaaagctcttgggatatttcaaaaatattaggttgcagtgagcgtactgtcactttccatttaaccaatgcgcaaatgaaactcaatacaacaaaccgctgccaaagtatttctaaagcaattttaacaggagcaattgattgcccatactttaaaaattaataacactgatagtgctagtgtagatcac</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="https://synbiohub.org/user/testuser/Tester_1/seq_BBa_B0034/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/seq_BBa_B0034"/>
+    <sbol:displayId>seq_BBa_B0034</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/seq_BBa_B0034/1"/>
+    <rdf:type rdf:resource="http://sbols.org/v2#Sequence"/>
+    <sbol:elements>aaagaggagaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="https://synbiohub.org/user/testuser/Tester_1/seq_BBa_R0062/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/seq_BBa_R0062"/>
+    <sbol:displayId>seq_BBa_R0062</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/seq_BBa_R0062/1"/>
+    <rdf:type rdf:resource="http://sbols.org/v2#Sequence"/>
+    <sbol:elements>acctgtaggatcgtacaggtttacgcaagaaaatggtttgttatagtcgaataaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+</rdf:RDF>

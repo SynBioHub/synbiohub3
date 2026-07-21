@@ -1,0 +1,42 @@
+<?xml version="1.0" ?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:sbh="http://wiki.synbiohub.org/wiki/Terms/synbiohub#" xmlns:sbol="http://sbols.org/v2#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:prov="http://www.w3.org/ns/prov#" xmlns:myapp="http://www.myapp.org/" xmlns:om="http://www.ontology-of-units-of-measure.org/resource/om-2/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <sbol:Collection rdf:about="https://synbiohub.org/user/testuser/Tester_1/Tester_1_collection/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Tester_1_collection"/>
+    <sbol:displayId>Tester_1_collection</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dcterms:title>Round_Trip_Tester</dcterms:title>
+    <dcterms:description>This is a simple roundtrip test</dcterms:description>
+    <dc:creator>Test User</dc:creator>
+    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Tester_1_collection/1"/>
+    <rdf:type rdf:resource="http://sbols.org/v2#Collection"/>
+    <dcterms:created>2026-07-20T21:25:07.653139051Z</dcterms:created>
+    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_J23119/1"/>
+    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/gen_datasheet1/1"/>
+  </sbol:Collection>
+  <sbol:ComponentDefinition rdf:about="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_J23119/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_J23119"/>
+    <sbol:displayId>cd_BBa_J23119</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <prov:wasDerivedFrom rdf:resource="http://www.partsregistry.org/Part:BBa_J23119"/>
+    <dcterms:title>J23119</dcterms:title>
+    <dcterms:description>Constitutive promoter</dcterms:description>
+    <myapp:datasheet rdf:resource="https://synbiohub.org/user/testuser/Tester_1/gen_datasheet1/1"/>
+    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/cd_BBa_J23119/1"/>
+    <rdf:type rdf:resource="http://sbols.org/v2#ComponentDefinition"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+  </sbol:ComponentDefinition>
+  <myapp:Datasheet rdf:about="https://synbiohub.org/user/testuser/Tester_1/gen_datasheet1/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/gen_datasheet1"/>
+    <sbol:displayId>gen_datasheet1</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dcterms:title>Datasheet 1</dcterms:title>
+    <myapp:characterizationData rdf:resource="http://www.myapp.org//measurement/1"/>
+    <myapp:transcriptionRate>1</myapp:transcriptionRate>
+    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/gen_datasheet1/1"/>
+    <rdf:type rdf:resource="http://sbols.org/v2#GenericTopLevel"/>
+  </myapp:Datasheet>
+</rdf:RDF>

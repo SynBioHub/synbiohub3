@@ -1,0 +1,24 @@
+SBH Emulator failed to initalizeError reading SBOL
+
+org.synbiohub.frontend.SynBioHubException: Error reading SBOL
+	at org.synbiohub.frontend.SynBioHubFrontend.fetchFromSynBioHub(SynBioHubFrontend.java:3549)
+	at org.synbiohub.frontend.SynBioHubFrontend.getSBOL(SynBioHubFrontend.java:193)
+	at org.synbiohub.frontend.SynBioHubFrontend.getSBOL(SynBioHubFrontend.java:167)
+	at sb_rdtrip_tester.SynBioHubEmulator.<init>(SynBioHubEmulator.java:97)
+	at sb_rdtrip_tester.SynBioHubRunner.main(SynBioHubRunner.java:37)
+Caused by: java.lang.ClassCastException: class org.sbolstandard.core.datatree.NamedProperty$Impl cannot be cast to class org.sbolstandard.core.datatree.IdentifiableDocument (org.sbolstandard.core.datatree.NamedProperty$Impl and org.sbolstandard.core.datatree.IdentifiableDocument are in unnamed module of loader 'app')
+	at org.sbolstandard.core2.SBOLReader.parseComponentDefinition(SBOLReader.java:1939)
+	at org.sbolstandard.core2.SBOLReader.readTopLevelDocs(SBOLReader.java:1078)
+	at org.sbolstandard.core2.SBOLReader.read(SBOLReader.java:745)
+	at org.sbolstandard.core2.SBOLReader.read(SBOLReader.java:611)
+	at org.synbiohub.frontend.SynBioHubFrontend.fetchFromSynBioHub(SynBioHubFrontend.java:3545)
+	... 4 more
+
+java.io.FileNotFoundException: Emulated/pAGM1482_emulated.xml (No such file or directory)
+	at java.base/java.io.FileInputStream.open0(Native Method)
+	at java.base/java.io.FileInputStream.open(FileInputStream.java:216)
+	at java.base/java.io.FileInputStream.<init>(FileInputStream.java:157)
+	at org.sbolstandard.core2.SBOLReader.read(SBOLReader.java:517)
+	at org.sbolstandard.core2.SBOLReader.read(SBOLReader.java:499)
+	at org.sboltestrunner.SBOLTestRunner.main(SBOLTestRunner.java:146)
+Fail

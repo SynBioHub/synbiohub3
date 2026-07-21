@@ -1,0 +1,12 @@
+
+1
+ComponentDefinition https://synbiohub.org/user/testuser/Tester_1/cd_BBa_B0034/1 not found in ComponentDefinitionOutput_gl.xml_Retrieved
+ComponentDefinition https://synbiohub.org/user/testuser/Tester_1/cd_BBa_R0062/1 not found in ComponentDefinitionOutput_gl.xml_Retrieved
+ComponentDefinition https://synbiohub.org/user/testuser/Tester_1/cd_BBa_B0015/1 not found in ComponentDefinitionOutput_gl.xml_Retrieved
+ComponentDefinition https://synbiohub.org/user/testuser/Tester_1/cd_BBa_C0062/1 not found in ComponentDefinitionOutput_gl.xml_Retrieved
+ComponentDefinition https://synbiohub.org/user/testuser/Tester_1/cd_BBa_F2620/1 not found in ComponentDefinitionOutput_gl.xml_Retrieved
+ComponentDefinition https://synbiohub.org/user/testuser/Tester_1/cd_BBa_R0040/1 not found in ComponentDefinitionOutput_gl.xml_Retrieved
+Sequence https://synbiohub.org/user/testuser/Tester_1/seq_BBa_B0034/1 not found in ComponentDefinitionOutput_gl.xml_Retrieved
+Sequence https://synbiohub.org/user/testuser/Tester_1/seq_BBa_C0062/1 not found in ComponentDefinitionOutput_gl.xml_Retrieved
+Sequence https://synbiohub.org/user/testuser/Tester_1/seq_BBa_R0040/1 not found in ComponentDefinitionOutput_gl.xml_Retrieved
+Fail

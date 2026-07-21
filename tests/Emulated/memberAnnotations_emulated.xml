@@ -1,0 +1,208 @@
+<?xml version="1.0" ?>
+<rdf:RDF xmlns:grn="urn:bbn.com:tasbe:grn/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:sbh="http://wiki.synbiohub.org/wiki/Terms/synbiohub#" xmlns:sbol="http://sbols.org/v2#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:annot="http://myannotation.org/" xmlns:prov="http://www.w3.org/ns/prov#" xmlns:om="http://www.ontology-of-units-of-measure.org/resource/om-2/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <sbol:Collection rdf:about="https://synbiohub.org/user/testuser/Tester_1/Tester_1_collection/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Tester_1_collection"/>
+    <sbol:displayId>Tester_1_collection</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dcterms:title>Round_Trip_Tester</dcterms:title>
+    <dcterms:description>This is a simple roundtrip test</dcterms:description>
+    <dc:creator>Test User</dc:creator>
+    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Tester_1_collection/1"/>
+    <rdf:type rdf:resource="http://sbols.org/v2#Collection"/>
+    <dcterms:created>2026-07-21T00:28:13.006014902Z</dcterms:created>
+    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/someCompDefCDS/1.0"/>
+    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/someModuleDefSub/1.0"/>
+    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/someModel/1.0"/>
+    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/someModuleDef/1.0"/>
+    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/someCompDef/1.0"/>
+    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/myParts/1.0"/>
+    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/someGenericTopLevel/1.0"/>
+    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/someSeq/1.0"/>
+  </sbol:Collection>
+  <sbol:Collection rdf:about="https://synbiohub.org/user/testuser/Tester_1/myParts/1.0">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/myParts"/>
+    <sbol:displayId>myParts</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <annot:thisAnnotation>turtleString</annot:thisAnnotation>
+    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/myParts/1.0"/>
+    <rdf:type rdf:resource="http://sbols.org/v2#Collection"/>
+  </sbol:Collection>
+  <sbol:ModuleDefinition rdf:about="https://synbiohub.org/user/testuser/Tester_1/someModuleDef/1.0">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/someModuleDef"/>
+    <sbol:displayId>someModuleDef</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <annot:thisAnnotation>turtleString</annot:thisAnnotation>
+    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/someModuleDef/1.0"/>
+    <rdf:type rdf:resource="http://sbols.org/v2#ModuleDefinition"/>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="https://synbiohub.org/user/testuser/Tester_1/someModuleDef/someInteraction/1.0">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/someModuleDef/someInteraction"/>
+        <sbol:displayId>someInteraction</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+        <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/someModuleDef/1.0"/>
+        <rdf:type rdf:resource="http://sbols.org/v2#Interaction"/>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000177"/>
+      </sbol:Interaction>
+    </sbol:interaction>
+    <sbol:module>
+      <sbol:Module rdf:about="https://synbiohub.org/user/testuser/Tester_1/someModuleDef/someModule/1.0">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/someModuleDef/someModule"/>
+        <sbol:displayId>someModule</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+        <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/someModuleDef/1.0"/>
+        <rdf:type rdf:resource="http://sbols.org/v2#Module"/>
+        <sbol:definition rdf:resource="https://synbiohub.org/user/testuser/Tester_1/someModuleDefSub/1.0"/>
+      </sbol:Module>
+    </sbol:module>
+  </sbol:ModuleDefinition>
+  <sbol:ModuleDefinition rdf:about="https://synbiohub.org/user/testuser/Tester_1/someModuleDefSub/1.0">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/someModuleDefSub"/>
+    <sbol:displayId>someModuleDefSub</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/someModuleDefSub/1.0"/>
+    <rdf:type rdf:resource="http://sbols.org/v2#ModuleDefinition"/>
+  </sbol:ModuleDefinition>
+  <sbol:Model rdf:about="https://synbiohub.org/user/testuser/Tester_1/someModel/1.0">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/someModel"/>
+    <sbol:displayId>someModel</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <annot:thisAnnotation>turtleString</annot:thisAnnotation>
+    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/someModel/1.0"/>
+    <rdf:type rdf:resource="http://sbols.org/v2#Model"/>
+    <sbol:source rdf:resource="https://synbiohub.org/user/someModel_source"/>
+    <sbol:language rdf:resource="http://identifiers.org/edam/format_2585"/>
+    <sbol:framework rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000062"/>
+  </sbol:Model>
+  <sbol:ComponentDefinition rdf:about="https://synbiohub.org/user/testuser/Tester_1/someCompDefCDS/1.0">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/someCompDefCDS"/>
+    <sbol:displayId>someCompDefCDS</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/someCompDefCDS/1.0"/>
+    <rdf:type rdf:resource="http://sbols.org/v2#ComponentDefinition"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="https://synbiohub.org/user/testuser/Tester_1/someCompDef/1.0">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/someCompDef"/>
+    <sbol:displayId>someCompDef</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <annot:thisAnnotation>turtleString</annot:thisAnnotation>
+    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/someCompDef/1.0"/>
+    <rdf:type rdf:resource="http://sbols.org/v2#ComponentDefinition"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+    <sbol:component>
+      <sbol:Component rdf:about="https://synbiohub.org/user/testuser/Tester_1/someCompDef/someComponent/1.0">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/someCompDef/someComponent"/>
+        <sbol:displayId>someComponent</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <annot:thisAnnotation>turtleString</annot:thisAnnotation>
+        <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+        <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/someCompDef/1.0"/>
+        <rdf:type rdf:resource="http://sbols.org/v2#Component"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:definition rdf:resource="https://synbiohub.org/user/testuser/Tester_1/someCompDefCDS/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="https://synbiohub.org/user/testuser/Tester_1/someCompDef/someOtherComponent/1.0">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/someCompDef/someOtherComponent"/>
+        <sbol:displayId>someOtherComponent</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+        <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/someCompDef/1.0"/>
+        <rdf:type rdf:resource="http://sbols.org/v2#Component"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:definition rdf:resource="https://synbiohub.org/user/testuser/Tester_1/someCompDefCDS/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:sequenceAnnotation>
+      <sbol:SequenceAnnotation rdf:about="https://synbiohub.org/user/testuser/Tester_1/someCompDef/someSequenceAnnotation/1.0">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/someCompDef/someSequenceAnnotation"/>
+        <sbol:displayId>someSequenceAnnotation</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <annot:thisAnnotation>turtleString</annot:thisAnnotation>
+        <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+        <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/someCompDef/1.0"/>
+        <rdf:type rdf:resource="http://sbols.org/v2#SequenceAnnotation"/>
+        <sbol:location>
+          <sbol:Range rdf:about="https://synbiohub.org/user/testuser/Tester_1/someCompDef/someSequenceAnnotation/cut/1.0">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/someCompDef/someSequenceAnnotation/cut"/>
+            <sbol:displayId>cut</sbol:displayId>
+            <sbol:version>1.0</sbol:version>
+            <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+            <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/someCompDef/1.0"/>
+            <rdf:type rdf:resource="http://sbols.org/v2#Range"/>
+            <sbol:start>1</sbol:start>
+            <sbol:end>10</sbol:end>
+          </sbol:Range>
+        </sbol:location>
+      </sbol:SequenceAnnotation>
+    </sbol:sequenceAnnotation>
+    <sbol:sequenceAnnotation>
+      <sbol:SequenceAnnotation rdf:about="https://synbiohub.org/user/testuser/Tester_1/someCompDef/someSequenceAnnotation2/1.0">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/someCompDef/someSequenceAnnotation2"/>
+        <sbol:displayId>someSequenceAnnotation2</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+        <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/someCompDef/1.0"/>
+        <rdf:type rdf:resource="http://sbols.org/v2#SequenceAnnotation"/>
+        <sbol:location>
+          <sbol:Cut rdf:about="https://synbiohub.org/user/testuser/Tester_1/someCompDef/someSequenceAnnotation2/cut/1.0">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/someCompDef/someSequenceAnnotation2/cut"/>
+            <sbol:displayId>cut</sbol:displayId>
+            <sbol:version>1.0</sbol:version>
+            <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+            <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/someCompDef/1.0"/>
+            <rdf:type rdf:resource="http://sbols.org/v2#Cut"/>
+            <sbol:at>1</sbol:at>
+            <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
+          </sbol:Cut>
+        </sbol:location>
+      </sbol:SequenceAnnotation>
+    </sbol:sequenceAnnotation>
+    <sbol:sequenceConstraint>
+      <sbol:SequenceConstraint rdf:about="https://synbiohub.org/user/testuser/Tester_1/someCompDef/someSequenceConstraint/1.0">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/someCompDef/someSequenceConstraint"/>
+        <sbol:displayId>someSequenceConstraint</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <annot:thisAnnotation>turtleString</annot:thisAnnotation>
+        <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+        <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/someCompDef/1.0"/>
+        <rdf:type rdf:resource="http://sbols.org/v2#SequenceConstraint"/>
+        <sbol:restriction rdf:resource="http://sbols.org/v2#precedes"/>
+        <sbol:subject rdf:resource="https://synbiohub.org/user/testuser/Tester_1/someCompDef/someComponent/1.0"/>
+        <sbol:object rdf:resource="https://synbiohub.org/user/testuser/Tester_1/someCompDef/someOtherComponent/1.0"/>
+      </sbol:SequenceConstraint>
+    </sbol:sequenceConstraint>
+  </sbol:ComponentDefinition>
+  <sbol:Sequence rdf:about="https://synbiohub.org/user/testuser/Tester_1/someSeq/1.0">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/someSeq"/>
+    <sbol:displayId>someSeq</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <annot:thisAnnotation>turtleString</annot:thisAnnotation>
+    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/someSeq/1.0"/>
+    <rdf:type rdf:resource="http://sbols.org/v2#Sequence"/>
+    <sbol:elements>ACGTURYSWKMBDHVN-.</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <grn:RegulatoryReaction rdf:about="https://synbiohub.org/user/testuser/Tester_1/someGenericTopLevel/1.0">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/someGenericTopLevel"/>
+    <sbol:displayId>someGenericTopLevel</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <annot:thisAnnotation>turtleString</annot:thisAnnotation>
+    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/someGenericTopLevel/1.0"/>
+    <rdf:type rdf:resource="http://sbols.org/v2#GenericTopLevel"/>
+  </grn:RegulatoryReaction>
+</rdf:RDF>

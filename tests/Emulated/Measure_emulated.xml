@@ -1,0 +1,140 @@
+<?xml version="1.0" ?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:sbh="http://wiki.synbiohub.org/wiki/Terms/synbiohub#" xmlns:sbol="http://sbols.org/v2#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:prov="http://www.w3.org/ns/prov#" xmlns:om="http://www.ontology-of-units-of-measure.org/resource/om-2/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <sbol:Collection rdf:about="https://synbiohub.org/user/testuser/Tester_1/Tester_1_collection/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Tester_1_collection"/>
+    <sbol:displayId>Tester_1_collection</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dcterms:title>Round_Trip_Tester</dcterms:title>
+    <dcterms:description>This is a simple roundtrip test</dcterms:description>
+    <dc:creator>Test User</dc:creator>
+    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Tester_1_collection/1"/>
+    <rdf:type rdf:resource="http://sbols.org/v2#Collection"/>
+    <dcterms:created>2026-07-20T21:28:28.053504467Z</dcterms:created>
+    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/cd/1"/>
+    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/md/1"/>
+    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/empty_md/1"/>
+  </sbol:Collection>
+  <sbol:ModuleDefinition rdf:about="https://synbiohub.org/user/testuser/Tester_1/md/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/md"/>
+    <sbol:displayId>md</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/md/1"/>
+    <rdf:type rdf:resource="http://sbols.org/v2#ModuleDefinition"/>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="https://synbiohub.org/user/testuser/Tester_1/md/fc/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/md/fc"/>
+        <sbol:displayId>fc</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+        <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/md/1"/>
+        <rdf:type rdf:resource="http://sbols.org/v2#FunctionalComponent"/>
+        <sbol:measure>
+          <om:Measure rdf:about="https://synbiohub.org/user/testuser/Tester_1/md/fc/fc_measure/1">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/md/fc/fc_measure"/>
+            <sbol:displayId>fc_measure</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+            <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/md/1"/>
+            <rdf:type rdf:resource="http://www.ontology-of-units-of-measure.org/resource/om-2/Measure"/>
+            <om:hasNumericalValue>0.04</om:hasNumericalValue>
+            <om:hasUnit rdf:resource="http://purl.obolibrary.org/obo/UO_0000021"/>
+            <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000610"/>
+          </om:Measure>
+        </sbol:measure>
+        <sbol:definition rdf:resource="https://synbiohub.org/user/testuser/Tester_1/cd/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="https://synbiohub.org/user/testuser/Tester_1/md/i/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/md/i"/>
+        <sbol:displayId>i</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+        <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/md/1"/>
+        <rdf:type rdf:resource="http://sbols.org/v2#Interaction"/>
+        <sbol:measure>
+          <om:Measure rdf:about="https://synbiohub.org/user/testuser/Tester_1/md/i/i_measure/1">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/md/i/i_measure"/>
+            <sbol:displayId>i_measure</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+            <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/md/1"/>
+            <rdf:type rdf:resource="http://www.ontology-of-units-of-measure.org/resource/om-2/Measure"/>
+            <om:hasNumericalValue>0.04</om:hasNumericalValue>
+            <om:hasUnit rdf:resource="http://purl.obolibrary.org/obo/UO_0000077"/>
+          </om:Measure>
+        </sbol:measure>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000177"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="https://synbiohub.org/user/testuser/Tester_1/md/i/p/1">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/md/i/p"/>
+            <sbol:displayId>p</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+            <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/md/1"/>
+            <rdf:type rdf:resource="http://sbols.org/v2#Participation"/>
+            <sbol:measure>
+              <om:Measure rdf:about="https://synbiohub.org/user/testuser/Tester_1/md/i/p/pMeasure/1">
+                <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/md/i/p/pMeasure"/>
+                <sbol:displayId>pMeasure</sbol:displayId>
+                <sbol:version>1</sbol:version>
+                <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+                <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/md/1"/>
+                <rdf:type rdf:resource="http://www.ontology-of-units-of-measure.org/resource/om-2/Measure"/>
+                <om:hasNumericalValue>1.23</om:hasNumericalValue>
+                <om:hasUnit rdf:resource="http://purl.obolibrary.org/obo/UO_0000021"/>
+              </om:Measure>
+            </sbol:measure>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
+            <sbol:participant rdf:resource="https://synbiohub.org/user/testuser/Tester_1/md/fc/1"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+    <sbol:module>
+      <sbol:Module rdf:about="https://synbiohub.org/user/testuser/Tester_1/md/m/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/md/m"/>
+        <sbol:displayId>m</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+        <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/md/1"/>
+        <rdf:type rdf:resource="http://sbols.org/v2#Module"/>
+        <sbol:measure>
+          <om:Measure rdf:about="https://synbiohub.org/user/testuser/Tester_1/md/m/md_measure/1">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/md/m/md_measure"/>
+            <sbol:displayId>md_measure</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+            <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/md/1"/>
+            <rdf:type rdf:resource="http://www.ontology-of-units-of-measure.org/resource/om-2/Measure"/>
+            <om:hasNumericalValue>11.28</om:hasNumericalValue>
+            <om:hasUnit rdf:resource="http://purl.obolibrary.org/obo/UO_0000175"/>
+          </om:Measure>
+        </sbol:measure>
+        <sbol:definition rdf:resource="https://synbiohub.org/user/testuser/Tester_1/empty_md/1"/>
+      </sbol:Module>
+    </sbol:module>
+  </sbol:ModuleDefinition>
+  <sbol:ModuleDefinition rdf:about="https://synbiohub.org/user/testuser/Tester_1/empty_md/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/empty_md"/>
+    <sbol:displayId>empty_md</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/empty_md/1"/>
+    <rdf:type rdf:resource="http://sbols.org/v2#ModuleDefinition"/>
+  </sbol:ModuleDefinition>
+  <sbol:ComponentDefinition rdf:about="https://synbiohub.org/user/testuser/Tester_1/cd/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/cd"/>
+    <sbol:displayId>cd</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/cd/1"/>
+    <rdf:type rdf:resource="http://sbols.org/v2#ComponentDefinition"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#SmallMolecule"/>
+    <sbol:type rdf:resource="http://purl.obolibrary.org/obo/CHEBI_17634"/>
+  </sbol:ComponentDefinition>
+</rdf:RDF>

@@ -1,0 +1,8 @@
+
+1
+ComponentDefinition https://synbiohub.org/user/testuser/Tester_1/BBa_I0462/1 not found in BBa_I0462.xml_Retrieved
+ComponentDefinition https://synbiohub.org/user/testuser/Tester_1/BBa_B0015/1 not found in BBa_I0462.xml_Retrieved
+ComponentDefinition https://synbiohub.org/user/testuser/Tester_1/BBa_C0062/1 not found in BBa_I0462.xml_Retrieved
+ComponentDefinition https://synbiohub.org/user/testuser/Tester_1/BBa_B0034/1 not found in BBa_I0462.xml_Retrieved
+Sequence https://synbiohub.org/user/testuser/Tester_1/seq_d23749adb3a7e0e2f09168cb7267a6113b238973/1 not found in BBa_I0462.xml_Retrieved
+Fail

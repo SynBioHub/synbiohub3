@@ -1,0 +1,85 @@
+<?xml version="1.0" ?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:sbh="http://wiki.synbiohub.org/wiki/Terms/synbiohub#" xmlns:sbol="http://sbols.org/v2#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:prov="http://www.w3.org/ns/prov#" xmlns:om="http://www.ontology-of-units-of-measure.org/resource/om-2/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <sbol:Collection rdf:about="https://synbiohub.org/user/testuser/Tester_1/Tester_1_collection/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Tester_1_collection"/>
+    <sbol:displayId>Tester_1_collection</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dcterms:title>Round_Trip_Tester</dcterms:title>
+    <dcterms:description>This is a simple roundtrip test</dcterms:description>
+    <dc:creator>Test User</dc:creator>
+    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Tester_1_collection/1"/>
+    <rdf:type rdf:resource="http://sbols.org/v2#Collection"/>
+    <dcterms:created>2026-07-21T00:28:22.847148638Z</dcterms:created>
+    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/x_ray/1"/>
+    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/bsubtilisncimb3610/1"/>
+    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/bsubtilis168/1"/>
+    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/xraymutagenesis/1"/>
+  </sbol:Collection>
+  <sbol:ComponentDefinition rdf:about="https://synbiohub.org/user/testuser/Tester_1/bsubtilis168/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/bsubtilis168"/>
+    <sbol:displayId>bsubtilis168</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <prov:wasDerivedFrom rdf:resource="https://synbiohub.org/user/testuser/Tester_1/bsubtilisncimb3610/1"/>
+    <prov:wasGeneratedBy rdf:resource="https://synbiohub.org/user/testuser/Tester_1/xraymutagenesis/1"/>
+    <dcterms:title>Bacillus subtilis 168</dcterms:title>
+    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/bsubtilis168/1"/>
+    <rdf:type rdf:resource="http://sbols.org/v2#ComponentDefinition"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="https://synbiohub.org/user/testuser/Tester_1/bsubtilisncimb3610/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/bsubtilisncimb3610"/>
+    <sbol:displayId>bsubtilisncimb3610</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dcterms:title>Bacillus subtilis NCIMB 3610</dcterms:title>
+    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/bsubtilisncimb3610/1"/>
+    <rdf:type rdf:resource="http://sbols.org/v2#ComponentDefinition"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+  </sbol:ComponentDefinition>
+  <prov:Activity rdf:about="https://synbiohub.org/user/testuser/Tester_1/xraymutagenesis/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/xraymutagenesis"/>
+    <sbol:displayId>xraymutagenesis</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dcterms:title>X-ray mutagenesis</dcterms:title>
+    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/xraymutagenesis/1"/>
+    <rdf:type rdf:resource="http://www.w3.org/ns/prov#Activity"/>
+    <prov:qualifiedAssociation>
+      <prov:Association rdf:about="https://synbiohub.org/user/testuser/Tester_1/xraymutagenesis/association/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/xraymutagenesis/association"/>
+        <sbol:displayId>association</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+        <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/xraymutagenesis/1"/>
+        <rdf:type rdf:resource="http://www.w3.org/ns/prov#Association"/>
+        <prov:hadRole rdf:resource="http://myapp.com/mutagen"/>
+        <prov:agent rdf:resource="https://synbiohub.org/user/testuser/Tester_1/x_ray/1"/>
+      </prov:Association>
+    </prov:qualifiedAssociation>
+    <prov:qualifiedUsage>
+      <prov:Usage rdf:about="https://synbiohub.org/user/testuser/Tester_1/xraymutagenesis/usage/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/xraymutagenesis/usage"/>
+        <sbol:displayId>usage</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+        <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/xraymutagenesis/1"/>
+        <rdf:type rdf:resource="http://www.w3.org/ns/prov#Usage"/>
+        <prov:hadRole rdf:resource="http://sbols.org/v2#source"/>
+        <prov:entity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/bsubtilisncimb3610/1"/>
+      </prov:Usage>
+    </prov:qualifiedUsage>
+  </prov:Activity>
+  <prov:Agent rdf:about="https://synbiohub.org/user/testuser/Tester_1/x_ray/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/x_ray"/>
+    <sbol:displayId>x_ray</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dcterms:title>X-ray</dcterms:title>
+    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/x_ray/1"/>
+    <rdf:type rdf:resource="http://www.w3.org/ns/prov#Agent"/>
+  </prov:Agent>
+</rdf:RDF>

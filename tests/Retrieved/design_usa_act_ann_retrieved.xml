@@ -1,0 +1,72 @@
+<?xml version="1.0" ?>
+<rdf:RDF xmlns:synbiohub="http://synbiohub.org#" xmlns:xsd="http://www.w3.org/2001/XMLSchema#dateTime/" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:sybio="http://www.sybio.ncl.ac.uk#" xmlns:ncbi="http://www.ncbi.nlm.nih.gov#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:igem="http://wiki.synbiohub.org/wiki/Terms/igem#" xmlns:sbh="http://wiki.synbiohub.org/wiki/Terms/synbiohub#" xmlns:sbol="http://sbols.org/v2#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:gbconv="http://sbols.org/genBankConversion#" xmlns:genbank="http://www.ncbi.nlm.nih.gov/genbank#" xmlns:prov="http://www.w3.org/ns/prov#" xmlns:obo="http://purl.obolibrary.org/obo/" xmlns:om="http://www.ontology-of-units-of-measure.org/resource/om-2/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <sbol:Collection rdf:about="https://synbiohub.org/user/testuser/Tester_1/Tester_1_collection/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Tester_1_collection"/>
+    <sbol:displayId>Tester_1_collection</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dcterms:title>Round_Trip_Tester</dcterms:title>
+    <dcterms:description>This is a simple roundtrip test</dcterms:description>
+    <dc:creator>Test User</dc:creator>
+    <dcterms:created>2026-07-20T21:28:02.121833692Z</dcterms:created>
+    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Tester_1_collection/1"/>
+    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Activity_fit_model_generation/1.0.0"/>
+    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Activity_raw_data_generation/1.0.0"/>
+    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Activity_design_generation/1.0.0"/>
+  </sbol:Collection>
+  <prov:Activity rdf:about="https://synbiohub.org/user/testuser/Tester_1/Activity_raw_data_generation/1.0.0">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Activity_raw_data_generation"/>
+    <sbol:displayId>Activity_raw_data_generation</sbol:displayId>
+    <sbol:version>1.0.0</sbol:version>
+    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Activity_raw_data_generation/1.0.0"/>
+    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <prov:qualifiedUsage>
+      <prov:Usage rdf:about="https://synbiohub.org/user/testuser/Tester_1/Activity_raw_data_generation/build_usage/1.0.0">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Activity_raw_data_generation/build_usage"/>
+        <sbol:displayId>build_usage</sbol:displayId>
+        <sbol:version>1.0.0</sbol:version>
+        <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+        <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Activity_raw_data_generation/1.0.0"/>
+        <prov:hadRole rdf:resource="http://sbols.org/v2#build"/>
+        <prov:entity rdf:resource="http://sys-bio.org/Implementation_build/1.0.0"/>
+      </prov:Usage>
+    </prov:qualifiedUsage>
+  </prov:Activity>
+  <prov:Activity rdf:about="https://synbiohub.org/user/testuser/Tester_1/Activity_fit_model_generation/1.0.0">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Activity_fit_model_generation"/>
+    <sbol:displayId>Activity_fit_model_generation</sbol:displayId>
+    <sbol:version>1.0.0</sbol:version>
+    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Activity_fit_model_generation/1.0.0"/>
+    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <dcterms:created>2003-12-04T12:00:00Z</dcterms:created>
+    <prov:qualifiedUsage>
+      <prov:Usage rdf:about="https://synbiohub.org/user/testuser/Tester_1/Activity_fit_model_generation/raw_data_usage/1.0.0">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Activity_fit_model_generation/raw_data_usage"/>
+        <sbol:displayId>raw_data_usage</sbol:displayId>
+        <sbol:version>1.0.0</sbol:version>
+        <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+        <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Activity_fit_model_generation/1.0.0"/>
+        <prov:hadRole rdf:resource="http://sbols.org/v2#test"/>
+        <prov:entity rdf:resource="http://sys-bio.org/Attachment_raw_data/1.0.0"/>
+      </prov:Usage>
+    </prov:qualifiedUsage>
+  </prov:Activity>
+  <prov:Activity rdf:about="https://synbiohub.org/user/testuser/Tester_1/Activity_design_generation/1.0.0">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Activity_design_generation"/>
+    <sbol:displayId>Activity_design_generation</sbol:displayId>
+    <sbol:version>1.0.0</sbol:version>
+    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Activity_design_generation/1.0.0"/>
+    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <prov:qualifiedUsage>
+      <prov:Usage rdf:about="https://synbiohub.org/user/testuser/Tester_1/Activity_design_generation/predicted_usage/1.0.0">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Activity_design_generation/predicted_usage"/>
+        <sbol:displayId>predicted_usage</sbol:displayId>
+        <sbol:version>1.0.0</sbol:version>
+        <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Activity_design_generation/1.0.0"/>
+        <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+        <prov:hadRole rdf:resource="http://sbols.org/v2#learn"/>
+        <prov:entity rdf:resource="http://sys-bio.org/Model_predicted/1.0.0"/>
+      </prov:Usage>
+    </prov:qualifiedUsage>
+  </prov:Activity>
+</rdf:RDF>

@@ -1,0 +1,6 @@
+
+1
+ComponentDefinition https://synbiohub.org/user/testuser/Tester_1/pspac/1 not found in SequenceConstraintOutput.xml_Retrieved
+ComponentDefinition https://synbiohub.org/user/testuser/Tester_1/BBa_K174004/1 not found in SequenceConstraintOutput.xml_Retrieved
+ComponentDefinition https://synbiohub.org/user/testuser/Tester_1/LacI_operator/1 not found in SequenceConstraintOutput.xml_Retrieved
+Fail

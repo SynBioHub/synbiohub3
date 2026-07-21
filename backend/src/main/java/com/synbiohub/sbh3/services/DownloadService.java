@@ -130,9 +130,11 @@ public class DownloadService {
 
     /**
      * Recursive SBOL2 closure as RDF/XML with legacy SynBioHub1 namespace layout ({@code sbh}, {@code igem},
-     * {@code dcterms}, etc.). The merged Jena model is written with {@link RDFFormat#RDFXML} and stable prefixes;
-     * {@link SBOLWriter} is not used because it emits generic {@code ns*} prefixes and splits iGEM IRIs into
-     * fragment namespaces that fail download regression tests.
+     * {@code dcterms}, etc.). The merged Jena model is written with {@link RDFFormat#RDFXML_PLAIN} and stable
+     * prefixes so {@code sbol:sequence} (and similar) use {@code rdf:resource} links instead of nested
+     * {@code IdentifiableDocument} blocks that stock {@link SBOLReader} cannot cast. {@link org.sbolstandard.core2.SBOLWriter}
+     * is not used because it emits generic {@code ns*} prefixes and splits iGEM IRIs into fragment namespaces
+     * that fail download regression tests.
      */
     public byte[] getSbol2RdfXmlBytes(String topLevelUri) throws IOException {
         Model model = getRecursiveModel(topLevelUri);
@@ -141,7 +143,7 @@ public class DownloadService {
         }
         applyLegacySynbiohubRdfXmlPrefixes(model);
         var out = new ByteArrayOutputStream();
-        RDFDataMgr.write(out, model, RDFFormat.RDFXML);
+        RDFDataMgr.write(out, model, RDFFormat.RDFXML_PLAIN);
         return postProcessLegacySbolRdfXml(out.toByteArray());
     }
 
@@ -269,9 +271,10 @@ public class DownloadService {
      * <p>
      * Virtuoso RDF/XML (and Turtle / N-Triples / SPARQL-JSON fallback from
      * {@link #readConstructResponseIntoModel}) is parsed into a Jena model, then written with
-     * {@link RDFFormat#RDFXML} and {@link #applyLegacySynbiohubRdfXmlPrefixes} so output matches SynBioHub1-style
-     * {@code sbh}/{@code igem} prefixes instead of auto-generated {@code ns*} names. If RDF/XML from Virtuoso cannot
-     * be parsed, the raw body is returned after {@link #postProcessLegacySbolRdfXml} only.
+     * {@link RDFFormat#RDFXML_PLAIN} and {@link #applyLegacySynbiohubRdfXmlPrefixes} so output matches
+     * SynBioHub1-style {@code sbh}/{@code igem} prefixes and uses link-style object properties for
+     * Java {@link SBOLReader} clients. If RDF/XML from Virtuoso cannot be parsed, the raw body is
+     * returned after {@link #postProcessLegacySbolRdfXml} only.
      */
     public byte[] getSBOLNonRecursiveRdfXmlBytes(String uri) throws IOException {
         URI uriClass;
@@ -295,7 +298,7 @@ public class DownloadService {
                 if (!model.isEmpty()) {
                     applyLegacySynbiohubRdfXmlPrefixes(model);
                     var out = new ByteArrayOutputStream();
-                    RDFDataMgr.write(out, model, RDFFormat.RDFXML);
+                    RDFDataMgr.write(out, model, RDFFormat.RDFXML_PLAIN);
                     return postProcessLegacySbolRdfXml(out.toByteArray());
                 }
             } catch (Exception e) {
@@ -309,7 +312,7 @@ public class DownloadService {
         readConstructResponseIntoModel(model, raw);
         applyLegacySynbiohubRdfXmlPrefixes(model);
         var out = new ByteArrayOutputStream();
-        RDFDataMgr.write(out, model, RDFFormat.RDFXML);
+        RDFDataMgr.write(out, model, RDFFormat.RDFXML_PLAIN);
         return postProcessLegacySbolRdfXml(out.toByteArray());
     }
 
