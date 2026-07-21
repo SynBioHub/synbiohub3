@@ -180,7 +180,7 @@
     <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
     <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Tester_1_collection/1"/>
     <rdf:type rdf:resource="http://sbols.org/v2#Collection"/>
-    <dcterms:created>2026-07-21T00:25:59.660746293Z</dcterms:created>
+    <dcterms:created>2026-07-21T22:09:45.105233614Z</dcterms:created>
     <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/ARS_006_seq/1"/>
     <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_MCS_336_seq/1"/>
     <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AmpR_004/1"/>

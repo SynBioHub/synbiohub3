@@ -8,6 +8,14 @@
     <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/myPart2/1.0"/>
     <rdf:type rdf:resource="http://sbols.org/v2#Collection"/>
   </sbol:Collection>
+  <sbol:Collection rdf:about="https://synbiohub.org/user/testuser/Tester_1/myPart1/1.0">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/myPart1"/>
+    <sbol:displayId>myPart1</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/myPart1/1.0"/>
+    <rdf:type rdf:resource="http://sbols.org/v2#Collection"/>
+  </sbol:Collection>
   <sbol:Collection rdf:about="https://synbiohub.org/user/testuser/Tester_1/Tester_1_collection/1">
     <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Tester_1_collection"/>
     <sbol:displayId>Tester_1_collection</sbol:displayId>
@@ -18,18 +26,10 @@
     <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
     <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Tester_1_collection/1"/>
     <rdf:type rdf:resource="http://sbols.org/v2#Collection"/>
-    <dcterms:created>2026-07-20T21:25:57.262045496Z</dcterms:created>
+    <dcterms:created>2026-07-21T22:16:40.363583652Z</dcterms:created>
     <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/myPart3/1.0"/>
     <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/myPart1/1.0"/>
     <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/myPart2/1.0"/>
-  </sbol:Collection>
-  <sbol:Collection rdf:about="https://synbiohub.org/user/testuser/Tester_1/myPart1/1.0">
-    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/myPart1"/>
-    <sbol:displayId>myPart1</sbol:displayId>
-    <sbol:version>1.0</sbol:version>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/myPart1/1.0"/>
-    <rdf:type rdf:resource="http://sbols.org/v2#Collection"/>
   </sbol:Collection>
   <sbol:Collection rdf:about="https://synbiohub.org/user/testuser/Tester_1/myPart3/1.0">
     <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/myPart3"/>

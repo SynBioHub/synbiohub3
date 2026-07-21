@@ -1,15 +1,40 @@
 <?xml version="1.0" ?>
-<rdf:RDF xmlns:synbiohub="http://synbiohub.org#" xmlns:xsd="http://www.w3.org/2001/XMLSchema#dateTime/" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:sybio="http://www.sybio.ncl.ac.uk#" xmlns:ncbi="http://www.ncbi.nlm.nih.gov#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:igem="http://wiki.synbiohub.org/wiki/Terms/igem#" xmlns:sbh="http://wiki.synbiohub.org/wiki/Terms/synbiohub#" xmlns:sbol="http://sbols.org/v2#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:gbconv="http://sbols.org/genBankConversion#" xmlns:genbank="http://www.ncbi.nlm.nih.gov/genbank#" xmlns:prov="http://www.w3.org/ns/prov#" xmlns:obo="http://purl.obolibrary.org/obo/" xmlns:om="http://www.ontology-of-units-of-measure.org/resource/om-2/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+<rdf:RDF xmlns:ns6="https://synbiohub.org/user/testuser/Tester_1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:sbol="http://sbols.org/v2#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:ns2="http://purl.org/dc/terms/" xmlns:prov="http://www.w3.org/ns/prov#" xmlns:ns1="http://sbols.org/v2#" xmlns:j.0="http://www.w3.org/ns/prov#" xmlns:om="http://www.ontology-of-units-of-measure.org/resource/om-2/" xmlns:ns4="https://synbiohub.org/user/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:ns3="http://wiki.synbiohub.org/wiki/Terms/synbiohub#">
+  <sbol:Collection rdf:about="https://synbiohub.org/user/testuser/Tester_1/Kluyveromyces_lactis/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Kluyveromyces_lactis"/>
+    <sbol:displayId>Kluyveromyces_lactis</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <prov:wasDerivedFrom rdf:resource="http://genocad.org/SBOL/doi:10.6084/m9.figshare.1159038/Collection:Kluyveromyces_lactis"/>
+    <dcterms:title>Collection of Kluyveromyces lactis features</dcterms:title>
+    <dcterms:description>This is a collection of features that have been associated with Kluyveromyces lactis plasmids downloaded from the SnapGene Resources repository (http://www.snapgene.com).</dcterms:description>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Kluyveromyces_lactis/1"/>
+    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AmpR_promoter_009/1"/>
+    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/LAC4_promoter__3___002/1"/>
+    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/MCS_113/1"/>
+    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/alpha_factor_secretion_signal_005/1"/>
+    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/LAC4_terminator_002/1"/>
+    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/ori_013/1"/>
+    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/ADH1_promoter_002/1"/>
+    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/amdS_001/1"/>
+    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/f1_ori_008/1"/>
+    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/LAC4_promoter__5__/1"/>
+    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/MCS_105/1"/>
+    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/LAC4_promoter__3___001/1"/>
+    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/LAC4_terminator_001/1"/>
+    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AmpR_013/1"/>
+    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/amdS_002/1"/>
+  </sbol:Collection>
   <sbol:Collection rdf:about="https://synbiohub.org/user/testuser/Tester_1/Tester_1_collection/1">
     <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Tester_1_collection"/>
     <sbol:displayId>Tester_1_collection</sbol:displayId>
     <sbol:version>1</sbol:version>
     <dcterms:title>Round_Trip_Tester</dcterms:title>
     <dcterms:description>This is a simple roundtrip test</dcterms:description>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Tester_1_collection/1"/>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Tester_1_collection/1"/>
     <dc:creator>Test User</dc:creator>
-    <dcterms:created>2026-07-21T00:29:03.109991521Z</dcterms:created>
+    <ns2:created>2026-07-21T22:10:26.976524154Z</ns2:created>
     <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/MCS_113/1"/>
     <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_LAC4_terminator_002_seq/1"/>
     <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_ori_013_seq/1"/>
@@ -42,31 +67,6 @@
     <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_LAC4_promoter__3___002_seq/1"/>
     <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_LAC4_promoter__3___001_seq/1"/>
   </sbol:Collection>
-  <sbol:Collection rdf:about="https://synbiohub.org/user/testuser/Tester_1/Kluyveromyces_lactis/1">
-    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Kluyveromyces_lactis"/>
-    <sbol:displayId>Kluyveromyces_lactis</sbol:displayId>
-    <sbol:version>1</sbol:version>
-    <prov:wasDerivedFrom rdf:resource="http://genocad.org/SBOL/doi:10.6084/m9.figshare.1159038/Collection:Kluyveromyces_lactis"/>
-    <dcterms:title>Collection of Kluyveromyces lactis features</dcterms:title>
-    <dcterms:description>This is a collection of features that have been associated with Kluyveromyces lactis plasmids downloaded from the SnapGene Resources repository (http://www.snapgene.com).</dcterms:description>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Kluyveromyces_lactis/1"/>
-    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AmpR_promoter_009/1"/>
-    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/LAC4_promoter__3___002/1"/>
-    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/MCS_113/1"/>
-    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/alpha_factor_secretion_signal_005/1"/>
-    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/LAC4_terminator_002/1"/>
-    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/ori_013/1"/>
-    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/ADH1_promoter_002/1"/>
-    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/amdS_001/1"/>
-    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/f1_ori_008/1"/>
-    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/LAC4_promoter__5__/1"/>
-    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/MCS_105/1"/>
-    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/LAC4_promoter__3___001/1"/>
-    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/LAC4_terminator_001/1"/>
-    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AmpR_013/1"/>
-    <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/amdS_002/1"/>
-  </sbol:Collection>
   <sbol:ComponentDefinition rdf:about="https://synbiohub.org/user/testuser/Tester_1/AmpR_013/1">
     <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AmpR_013"/>
     <sbol:displayId>AmpR_013</sbol:displayId>
@@ -74,8 +74,8 @@
     <prov:wasDerivedFrom rdf:resource="http://genocad.org/SBOL/doi:10.6084/m9.figshare.1159038/Part:AmpR-013"/>
     <dcterms:title>AmpR-013</dcterms:title>
     <dcterms:description>confers resistance to ampicillin, carbenicillin, and related antibiotics</dcterms:description>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AmpR_013/1"/>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AmpR_013/1"/>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
@@ -88,8 +88,8 @@
     <prov:wasDerivedFrom rdf:resource="http://genocad.org/SBOL/doi:10.6084/m9.figshare.1159038/Part:LAC4_promoter_(3')-001"/>
     <dcterms:title>LAC4 promoter (3')-001</dcterms:title>
     <dcterms:description>3' portion of a modified Kluyveromyces lactis LAC4 promoter</dcterms:description>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/LAC4_promoter__3___001/1"/>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/LAC4_promoter__3___001/1"/>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
@@ -102,8 +102,8 @@
     <prov:wasDerivedFrom rdf:resource="http://genocad.org/SBOL/doi:10.6084/m9.figshare.1159038/Part:alpha-factor_secretion_signal-005"/>
     <dcterms:title>alpha-factor secretion signal-005</dcterms:title>
     <dcterms:description>Cleavage by the Kex2 protease occurs after the dibasic KR sequence. The EA dipeptides are then removed by</dcterms:description>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/alpha_factor_secretion_signal_005/1"/>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/alpha_factor_secretion_signal_005/1"/>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
@@ -116,8 +116,8 @@
     <prov:wasDerivedFrom rdf:resource="http://genocad.org/SBOL/doi:10.6084/m9.figshare.1159038/Part:ori-013"/>
     <dcterms:title>ori-013</dcterms:title>
     <dcterms:description>high-copy-number ColE1/pMB1/pBR322/pUC origin of replication</dcterms:description>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/ori_013/1"/>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/ori_013/1"/>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000296"/>
@@ -130,8 +130,8 @@
     <prov:wasDerivedFrom rdf:resource="http://genocad.org/SBOL/doi:10.6084/m9.figshare.1159038/Part:LAC4_promoter_(5')"/>
     <dcterms:title>LAC4 promoter (5')</dcterms:title>
     <dcterms:description>5' portion of a modified Kluyveromyces lactis LAC4 promoter</dcterms:description>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/LAC4_promoter__5__/1"/>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/LAC4_promoter__5__/1"/>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
@@ -143,8 +143,8 @@
     <sbol:version>1</sbol:version>
     <prov:wasDerivedFrom rdf:resource="http://genocad.org/SBOL/doi:10.6084/m9.figshare.1159038/Part:AmpR_promoter-009"/>
     <dcterms:title>AmpR promoter-009</dcterms:title>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AmpR_promoter_009/1"/>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AmpR_promoter_009/1"/>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
@@ -157,8 +157,8 @@
     <prov:wasDerivedFrom rdf:resource="http://genocad.org/SBOL/doi:10.6084/m9.figshare.1159038/Part:amdS-001"/>
     <dcterms:title>amdS-001</dcterms:title>
     <dcterms:description>confers ability to process acetamide for selection in fungal cells</dcterms:description>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/amdS_001/1"/>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/amdS_001/1"/>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
@@ -171,8 +171,8 @@
     <prov:wasDerivedFrom rdf:resource="http://genocad.org/SBOL/doi:10.6084/m9.figshare.1159038/Part:LAC4_promoter_(3')-002"/>
     <dcterms:title>LAC4 promoter (3')-002</dcterms:title>
     <dcterms:description>3' portion of a modified Kluyveromyces lactis LAC4 promoter</dcterms:description>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/LAC4_promoter__3___002/1"/>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/LAC4_promoter__3___002/1"/>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
@@ -185,8 +185,8 @@
     <prov:wasDerivedFrom rdf:resource="http://genocad.org/SBOL/doi:10.6084/m9.figshare.1159038/Part:f1_ori-008"/>
     <dcterms:title>f1 ori-008</dcterms:title>
     <dcterms:description>f1 bacteriophage origin of replication; arrow indicates direction of (+) strand synthesis</dcterms:description>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/f1_ori_008/1"/>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/f1_ori_008/1"/>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000296"/>
@@ -199,8 +199,8 @@
     <prov:wasDerivedFrom rdf:resource="http://genocad.org/SBOL/doi:10.6084/m9.figshare.1159038/Part:MCS-113"/>
     <dcterms:title>MCS-113</dcterms:title>
     <dcterms:description>multiple cloning site</dcterms:description>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/MCS_113/1"/>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/MCS_113/1"/>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000001"/>
@@ -213,8 +213,8 @@
     <prov:wasDerivedFrom rdf:resource="http://genocad.org/SBOL/doi:10.6084/m9.figshare.1159038/Part:MCS-105"/>
     <dcterms:title>MCS-105</dcterms:title>
     <dcterms:description>multiple cloning site</dcterms:description>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/MCS_105/1"/>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/MCS_105/1"/>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000001"/>
@@ -227,8 +227,8 @@
     <prov:wasDerivedFrom rdf:resource="http://genocad.org/SBOL/doi:10.6084/m9.figshare.1159038/Part:amdS-002"/>
     <dcterms:title>amdS-002</dcterms:title>
     <dcterms:description>confers ability to process acetamide for selection in fungal cells</dcterms:description>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/amdS_002/1"/>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/amdS_002/1"/>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
@@ -241,8 +241,8 @@
     <prov:wasDerivedFrom rdf:resource="http://genocad.org/SBOL/doi:10.6084/m9.figshare.1159038/Part:ADH1_promoter-002"/>
     <dcterms:title>ADH1 promoter-002</dcterms:title>
     <dcterms:description>promoter for alcohol dehydrogenase 1</dcterms:description>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/ADH1_promoter_002/1"/>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/ADH1_promoter_002/1"/>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
@@ -255,8 +255,8 @@
     <prov:wasDerivedFrom rdf:resource="http://genocad.org/SBOL/doi:10.6084/m9.figshare.1159038/Part:LAC4_terminator-001"/>
     <dcterms:title>LAC4 terminator-001</dcterms:title>
     <dcterms:description>transcription terminator for Kluyveromyces lactis LAC4</dcterms:description>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/LAC4_terminator_001/1"/>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/LAC4_terminator_001/1"/>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000141"/>
@@ -269,8 +269,8 @@
     <prov:wasDerivedFrom rdf:resource="http://genocad.org/SBOL/doi:10.6084/m9.figshare.1159038/Part:LAC4_terminator-002"/>
     <dcterms:title>LAC4 terminator-002</dcterms:title>
     <dcterms:description>transcription terminator for Kluyveromyces lactis LAC4</dcterms:description>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/LAC4_terminator_002/1"/>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/LAC4_terminator_002/1"/>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000141"/>
@@ -281,8 +281,8 @@
     <sbol:displayId>Part_LAC4_terminator_001_seq</sbol:displayId>
     <sbol:version>1</sbol:version>
     <prov:wasDerivedFrom rdf:resource="http://genocad.org/SBOL/doi:10.6084/m9.figshare.1159038/Part:LAC4_terminator-001#seq"/>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_LAC4_terminator_001_seq/1"/>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_LAC4_terminator_001_seq/1"/>
     <sbol:elements>tttatacttagataagtatgtacttacaggtatatttctatgagatactgatgtatacatgcatgataatatttaaacggttattagtgccgattgtcttgtgcgataatgacgttcctatcaaagcaatacacttaccacctattacatgggccaagaaaatattttcgaacttgtttagaatattagcacagagtatatgatgatatccgttagattatgcatgattcattcctacaactttttcgtagcataaggattaattacttggatgccaataaaaaaaaaaaacatcgagaaaatttcagcatgctcagaaacaattgcagtgtatcaaagtaaaaaaaagattttcactacatgttccttttgaagaaagaaaatcatggaacattagatttacaaaaatttaaccaccgctgattaacgattagaccgttaagcgcacaacaggttattagtacagagaaagcattctgtggtgttgccccggactttcttttgcgacataggtaaatcgaataccatcatactatcttttccaatgactccctaaagaaagactcttcttcgatgttgtatacgttggagcatagggcaagaattgtggcttgagatc</sbol:elements>
     <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
   </sbol:Sequence>
@@ -291,49 +291,9 @@
     <sbol:displayId>Part_LAC4_promoter__3___001_seq</sbol:displayId>
     <sbol:version>1</sbol:version>
     <prov:wasDerivedFrom rdf:resource="http://genocad.org/SBOL/doi:10.6084/m9.figshare.1159038/Part:LAC4_promoter_(3')-001#seq"/>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_LAC4_promoter__3___001_seq/1"/>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_LAC4_promoter__3___001_seq/1"/>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
     <sbol:elements>ggggatcgactcataaaatagtaaccttctaatgcgtatctattgactaccaaccattagtgtggttgcagaaggcggaattctcccttcttcgaattcagcttgctttttcattttttattttccatttttcagtttttgtttgtgtcgaatttagccagttgcttctccaagatgaaaaaaacccctgcgcagtttctgtgctgcaagatcctaatcgacttttccaccccccacaaaagtaaatgttcttttgttacattcgcgtgggtagctagctccccgaatcttcaaaggacttagggactgcactacatcagagtgtgttcacctggtttgctgcctggtttgaaagaaaagagcagggaactcgcgggttcccggcgaataatcatgcgatagtcctttggccttccaagtcgcatgtagagtagacaacagacagggagggcaggaaggatctttcactgagatcctgtatcttgttgggtaagtcggatgaaaggggaatcgtatgagattggagaggatgcggaagaggtaacgccttttgttaacttgtttaattattatggggcaggcgagagggggaggaatgtatgtgtgtgaggcgggcgagacggagccatccaggccaggtagaaatagagaaagccgaatgttagacaatatggcagcgtagtagagtaggtaggtaggcaagtactgctagcaaagaggagaagggtaagctcactcttcgcattccacaccgttagtgtgtcagtttgaacaaaaaaacaatcatcataccaattgatggactgtggactggcttttggaacggcttttcggactgcgattattcgtgaggaatcaaggtaggaatttggtcatatttacggacaacagtgggtgattcccatatggagtaggaaaacgagatcatggtatcctcagatatgttgcggaattctgttcaccgcaaagttcagggtgctctggtgggtttcggttggtctttgctttgcttctcccttgtcttgcatgttaataatagcctagcctgtgagccgaaacttagggtaggcttagtgttggaacgtacatatgtatcacgttgacttggtttaaccaggcgacctggtagccagccatacccacacacgttttttgtatcttcagtatagttgtgaaaagtgtagcggaaatttgtggtccgagcaacagcgtctttttctagtagtgcggtcggttacttggttgacattggtatttggactttgttgctacaccattcactacttgaagtcgagtgtgaagggtatgatttctagtggtgaacacctttagttacgtaatgttttcattgctgttttacttgagatttcgattgagaaaaaggtatttaatagctcgaatcaatgtgagaacagagagaagatgttcttccctaactcgaaaggtatatgaggcttgtgtttcttaggagaattattattcttttgttatgttgcgcttgtagttggaaaaggtgaagagacaaaagc</sbol:elements>
-    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
-  </sbol:Sequence>
-  <sbol:Sequence rdf:about="https://synbiohub.org/user/testuser/Tester_1/Part_AmpR_promoter_009_seq/1">
-    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_AmpR_promoter_009_seq"/>
-    <sbol:displayId>Part_AmpR_promoter_009_seq</sbol:displayId>
-    <sbol:version>1</sbol:version>
-    <prov:wasDerivedFrom rdf:resource="http://genocad.org/SBOL/doi:10.6084/m9.figshare.1159038/Part:AmpR_promoter-009#seq"/>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_AmpR_promoter_009_seq/1"/>
-    <sbol:elements>cgcggaacccctatttgtttatttttctaaatacattcaaatatgtatccgctcatgagacaataaccctgataaatgcttcaataatattgaaaaaggaagagt</sbol:elements>
-    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
-  </sbol:Sequence>
-  <sbol:Sequence rdf:about="https://synbiohub.org/user/testuser/Tester_1/Part_f1_ori_008_seq/1">
-    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_f1_ori_008_seq"/>
-    <sbol:displayId>Part_f1_ori_008_seq</sbol:displayId>
-    <sbol:version>1</sbol:version>
-    <prov:wasDerivedFrom rdf:resource="http://genocad.org/SBOL/doi:10.6084/m9.figshare.1159038/Part:f1_ori-008#seq"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_f1_ori_008_seq/1"/>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-    <sbol:elements>acgcgccctgtagcggcgcattaagcgcggcgggtgtggtggttacgcgcagcgtgaccgctacacttgccagcgccctagcgcccgctcctttcgctttcttcccttcctttctcgccacgttcgccggctttccccgtcaagctctaaatcgggggctccctttagggttccgatttagtgctttacggcacctcgaccccaaaaaacttgattagggtgatggttcacgtagtgggccatcgccctgatagacggtttttcgccctttgacgttggagtccacgttctttaatagtggactcttgttccaaactggaacaacactcaaccctatctcggtctattcttttgatttataagggattttgccgatttcggcctattggttaaaaaatgagctgatttaacaaaaatttaacgcgaattttaacaaaatattaacgcttacaattt</sbol:elements>
-    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
-  </sbol:Sequence>
-  <sbol:Sequence rdf:about="https://synbiohub.org/user/testuser/Tester_1/Part_LAC4_terminator_002_seq/1">
-    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_LAC4_terminator_002_seq"/>
-    <sbol:displayId>Part_LAC4_terminator_002_seq</sbol:displayId>
-    <sbol:version>1</sbol:version>
-    <prov:wasDerivedFrom rdf:resource="http://genocad.org/SBOL/doi:10.6084/m9.figshare.1159038/Part:LAC4_terminator-002#seq"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_LAC4_terminator_002_seq/1"/>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-    <sbol:elements>tttatacttagataagtatgtacttacaggtatatttctatgagatactgatgtatacatgcatgataatatttaaacggttattagtgccgattgtcttgtgcgataatgacgttcctatcaaagcaatacacttaccacctattacatgggccaagaaaatattttcgaacttgtttagaatattagcacagagtatatgatgttatccgttagattatgcatgattcattcctacaactttttcgtagcataaggattaattacttggatgccaataaaaaaaaaaaacatcgagaaaatttcagcatgctcagaaacaattgcagtgtatcaaagtaaaaaaaagattttcactacatgttccttttgaagaaagaaaatcatggaacattagatttacaaaaatttaaccaccgctgattaacgattagaccgttaagcgcacaacaggttattagtacagagaaagcattctgtggtgttgccccggactttcttttgcgacataggtaaatcgaataccatcatactatcttttccaatgactccctaaagaaagactcttcttcgatgttgtatacgttggagcatagggcaagaattgtggcttgagatc</sbol:elements>
-    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
-  </sbol:Sequence>
-  <sbol:Sequence rdf:about="https://synbiohub.org/user/testuser/Tester_1/Part_AmpR_013_seq/1">
-    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_AmpR_013_seq"/>
-    <sbol:displayId>Part_AmpR_013_seq</sbol:displayId>
-    <sbol:version>1</sbol:version>
-    <prov:wasDerivedFrom rdf:resource="http://genocad.org/SBOL/doi:10.6084/m9.figshare.1159038/Part:AmpR-013#seq"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_AmpR_013_seq/1"/>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-    <sbol:elements>atgagtattcaacatttccgtgtcgcccttattcccttttttgcggcattttgccttcctgtttttgctcacccagaaacgctggtgaaagtaaaagatgctgaagatcagttgggtgcacgagtgggttacatcgaactggatctcaacagcggtaagatccttgagagttttcgccccgaagaacgttttccaatgatgagcacttttaaagttctgctatgtggcgcggtattatcccgtattgacgccgggcaagagcaactcggtcgccgcatacactattctcagaatgacttggttgagtactcaccagtcacagaaaagcatcttacggatggcatgacagtaagagaattatgcagtgctgccataaccatgagtgataacactgcggccaacttacttctgacaacgatcggaggaccgaaggagctaaccgcttttttgcacaacatgggggatcatgtaactcgccttgatcgttgggaaccggagctgaatgaagccataccaaacgacgagcgtgacaccacgatgcctgtagcaatggcaacaacgttgcgcaaactattaactggcgaactacttactctagcttcccggcaacaattaatagactggatggaggcggataaagttgcaggaccacttctgcgctcggcccttccggctggctggtttattgctgataaatctggagccggtgagcgtgggtctcgcggtatcattgcagcactggggccagatggtaagccctcccgtatcgtagttatctacacgacggggagtcaggcaactatggatgaacgaaatagacagatcgctgagataggtgcctcactgattaagcattggtaa</sbol:elements>
     <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
   </sbol:Sequence>
   <sbol:Sequence rdf:about="https://synbiohub.org/user/testuser/Tester_1/Part_ADH1_promoter_002_seq/1">
@@ -341,8 +301,8 @@
     <sbol:displayId>Part_ADH1_promoter_002_seq</sbol:displayId>
     <sbol:version>1</sbol:version>
     <prov:wasDerivedFrom rdf:resource="http://genocad.org/SBOL/doi:10.6084/m9.figshare.1159038/Part:ADH1_promoter-002#seq"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_ADH1_promoter_002_seq/1"/>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_ADH1_promoter_002_seq/1"/>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
     <sbol:elements>atccttttgttgtttccgggtgtacaatatggacttcctcttttctggcaaccaaacccatacatcgggattcctataataccttcgttggtctccctaacatgtaggtggcggaggggagatatacaatagaacagataccagacaagacataatgggctaaacaagactacaccaattacactgcctcattgatggtggtacataacgaactaatactgtagccctagacttgatagccatcatcatatcgaagtttcactaccctttttccatttgccatctattgaagtaataataggcgcatgcaacttcttttctttttttttcttttctctctcccccgttgttgtctcaccatatccgcaatgacaaaaaaatgatggaagacactaaaggaaaaaattaacgacaaagacagcaccaacagatgtcgttgttccagagctgatgaggggtatctcgaagcacacgaaactttttccttccttcattcacgcacactactctctaatgagcaacggtatacggccttccttccagttacttgaatttgaaataaaaaaaagtttgctgtcttgctatcaagtataaatagacctgcaattattaatcttttgtttcctcgtcattgttctcgttccctttcttccttgtttctttttctgcacaatatttcaagctataccaagcatacaatcaa</sbol:elements>
     <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
   </sbol:Sequence>
@@ -351,9 +311,59 @@
     <sbol:displayId>Part_MCS_113_seq</sbol:displayId>
     <sbol:version>1</sbol:version>
     <prov:wasDerivedFrom rdf:resource="http://genocad.org/SBOL/doi:10.6084/m9.figshare.1159038/Part:MCS-113#seq"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_MCS_113_seq/1"/>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_MCS_113_seq/1"/>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
     <sbol:elements>ctcgagaaaagagaggctgaagctagaagagctcatatgtccatgggcggccgcgatatcgtcgacggatccgaattccctgcaggtaattaaataaaggcct</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="https://synbiohub.org/user/testuser/Tester_1/Part_LAC4_promoter__5___seq/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_LAC4_promoter__5___seq"/>
+    <sbol:displayId>Part_LAC4_promoter__5___seq</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <prov:wasDerivedFrom rdf:resource="http://genocad.org/SBOL/doi:10.6084/m9.figshare.1159038/Part:LAC4_promoter_(5')#seq"/>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_LAC4_promoter__5___seq/1"/>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <sbol:elements>ctagtaaccaaaggaaaggaacagatagataaaattccgagactgtcaaattaggtttttttctttttttttggcgggagtcagtgggccgaaatatgttcttggcctagaacttaatctggtttgatcatgccaatacttgcctgagtgcccgactttttgcccaccctcttgccttctgtcatccttcaaaacccacctgttttccagccgtatcttcgctcgcatctacacatactgtgccatatcttgtgtgtagccggacgtgactatgaccaaaaacaaacaaggagaactgttcgccgatttgtaacactcctgcatccatccaagtgggtatgcgctatgcaatgttaagctaggtcaggtcagaccaggtccaaggacagcaacttgactgtatgcaacctttaccatctttgcacagaacatacttgtagctagctagttacacttatggaccgaaaaggcaccccaccatgtctgtccggctttagagtacggccgcagaccgctgatttgccttgccaagcagtagtcacaatgcatcgcatgagcacacgggcacgggcacgggcacaggaaccattggcaaaaataccagatacactataccgacgtatatcaagcccaagtttaaaattcctaaatttccgc</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="https://synbiohub.org/user/testuser/Tester_1/Part_AmpR_promoter_009_seq/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_AmpR_promoter_009_seq"/>
+    <sbol:displayId>Part_AmpR_promoter_009_seq</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <prov:wasDerivedFrom rdf:resource="http://genocad.org/SBOL/doi:10.6084/m9.figshare.1159038/Part:AmpR_promoter-009#seq"/>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_AmpR_promoter_009_seq/1"/>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <sbol:elements>cgcggaacccctatttgtttatttttctaaatacattcaaatatgtatccgctcatgagacaataaccctgataaatgcttcaataatattgaaaaaggaagagt</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="https://synbiohub.org/user/testuser/Tester_1/Part_amdS_002_seq/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_amdS_002_seq"/>
+    <sbol:displayId>Part_amdS_002_seq</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <prov:wasDerivedFrom rdf:resource="http://genocad.org/SBOL/doi:10.6084/m9.figshare.1159038/Part:amdS-002#seq"/>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_amdS_002_seq/1"/>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <sbol:elements>atgcctcaatcctgggaagaactggccgctgataagcgcgcccgcctcgcaaaaaccatccctgatgaatggaaagtccagacgctgcctgcggaagacagcgttattgatttcccaaagaaatcgggcatcctttcagaggccgaactgaagatcacagaggcttccgctgcggatcttgtgtccaagctggcggccggagagttgacctcggtggaagttacgctagcattctgtaaacgggcagcaatcgcccagcagttaacaaactgcgcccacgagttcttccctgacgccgctctcgcgcaggcaagggaactcgatgaatactacgcaaagcacaagagacccgttggtccacttcatggcctccccatctctctcaaagaccagcttcgagtcaagggctacgaaacatcaatgggctacatctcatggctaaacaagtacgacgaaggggactcggttctgacaaccatgctccgcaaagccggtgccgtcttctacgtcaagacctctgtcccgcagaccctgatggtctgcgagacagtcaacaacatcatcgggcgcaccgtcaacccacgcaacaagaactggtcgtgcggcggcagttctggtggtgagggtgcgatcgttgggattcgtggtggcgtcatcggtgtaggaacggacatcggtggctcgattcgagtgccggccgcgttcaacttcctgtacggtctaaggccgagtcatgggcggctgccgtatgcaaagatggcgaacagcatggagggtcaggagacggtgcacagcgttgtcgggccgattacgcactctgttgaggacctccgcctcttcaccaaatccgtcctcggtcaggagccttggaaatacgactccaaggtcatccccatgccctggcgccagtccgagtcggacattattgcctccaagatcaagaacggcgggctcaatatcggctactacaacttcgacggcaatgtccttccacaccctcctatcctgcgcggcgtggaaactaccgtcgccgcactcgccaaagccggtcacaccgtgaccccgtggacgccatacaagcacgatttcggccacgatctcatctcccatatctacgcggctgacggcagcgccgacgtaatgcgcgacatcagtgcatccggcgagccggcgattccaaatatcaaagacctactgaacccgaacatcaaagctgttaacatgaacgagctctgggacacgcatctccagaagtggaattaccagatggagtaccttgagaaatggcgggaggctgaagaaaaggccgggaaggaactggacgccatcatcgcgccgattacgcctaccgctgcggtacggcatgaccagttccggtactatgggtatgcctctgtgatcaacctgctggatttcacgagcgtggttgttccggttacctttgcggataagaacatcgataagaagaatgagagtttcaaggcggttagtgagcttgatgccctcgtgcaggaagagtatgatccggaggcgtatcatggggcaccggttgcagtgcaggttatcggacggagactcagtgaagagaggacgttggcgattgcagaggaagtggggaagttgctgggaaatgtggtgactccatag</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="https://synbiohub.org/user/testuser/Tester_1/Part_LAC4_terminator_002_seq/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_LAC4_terminator_002_seq"/>
+    <sbol:displayId>Part_LAC4_terminator_002_seq</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <prov:wasDerivedFrom rdf:resource="http://genocad.org/SBOL/doi:10.6084/m9.figshare.1159038/Part:LAC4_terminator-002#seq"/>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_LAC4_terminator_002_seq/1"/>
+    <sbol:elements>tttatacttagataagtatgtacttacaggtatatttctatgagatactgatgtatacatgcatgataatatttaaacggttattagtgccgattgtcttgtgcgataatgacgttcctatcaaagcaatacacttaccacctattacatgggccaagaaaatattttcgaacttgtttagaatattagcacagagtatatgatgttatccgttagattatgcatgattcattcctacaactttttcgtagcataaggattaattacttggatgccaataaaaaaaaaaaacatcgagaaaatttcagcatgctcagaaacaattgcagtgtatcaaagtaaaaaaaagattttcactacatgttccttttgaagaaagaaaatcatggaacattagatttacaaaaatttaaccaccgctgattaacgattagaccgttaagcgcacaacaggttattagtacagagaaagcattctgtggtgttgccccggactttcttttgcgacataggtaaatcgaataccatcatactatcttttccaatgactccctaaagaaagactcttcttcgatgttgtatacgttggagcatagggcaagaattgtggcttgagatc</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="https://synbiohub.org/user/testuser/Tester_1/Part_amdS_001_seq/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_amdS_001_seq"/>
+    <sbol:displayId>Part_amdS_001_seq</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <prov:wasDerivedFrom rdf:resource="http://genocad.org/SBOL/doi:10.6084/m9.figshare.1159038/Part:amdS-001#seq"/>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_amdS_001_seq/1"/>
+    <sbol:elements>atgcctcaatcctgggaagaactggccgctgataagcgcgcccgcctcgcaaaaaccatccctgatgaatggaaagtccagacgctgcctgcggaagacagcgttattgatttcccaaagaaatcggggatcctttcagaggccgaactgaagatcacagaggcttccgctgcggatcttgtgtccaagctggcggccggagagttgacctcggtggaagttacgctagcattctgtaaacgggcagcaatcgcccagcagttaacaaactgcgcccacgagttcttccctgacgccgctctcgcgcaggcaagggaactcgatgaatactacgcaaagcacaagagacccgttggtccactccatggcctccccatctctctcaaagaccagcttcgagtcaagggctacgaaacatcaatgggctacatctcatggctaaacaagtacgacgaaggggactcggttctgacaaccatgctccgcaaagccggtgccgtcttctacgtcaagacctctgtcccgcagaccctgatggtctgcgagacagtcaacaacatcatcgggcgcaccgtcaacccacgcaacaagaactggtcgtgcggcggcagttctggtggtgagggtgcgatcgttgggattcgtggtggcgtcatcggtgtaggaacggatatcggtggctcgattcgagtgccggccgcgttcaacttcctgtacggtctaaggccgagtcatgggcggctgccgtatgcaaagatggcgaacagcatggagggtcaggagacggtgcacagcgttgtcgggccgattacgcactctgttgaggacctccgcctcttcaccaaatccgtcctcggtcaggagccatggaaatacgactccaaggtcatccccatgccctggcgccagtccgagtcggacattattgcctccaagatcaagaacggcgggctcaatatcggctactacaacttcgacggcaatgtccttccacaccctcctatcctgcgcggcgtggaaactaccgtcgccgcactcgccaaagccggtcacaccgtgaccccgtggacgccatacaagcacgatttcggccacgatctcatctcccatatctacgcggctgacggcagcgccgacgtaatgcgcgatatcagtgcatccggcgagccggcgattccaaatatcaaagacctactgaacccgaacatcaaagctgttaacatgaacgagctctgggacacgcatctccagaagtggaattaccagatggagtaccttgagaaatggcgggaggctgaagaaaaggccgggaaggaactggacgccatcatcgcgccgattacgcctaccgctgcggtacggcatgaccagttccggtactatgggtatgcctctgtgatcaacctgctggatttcacgagcgtggttgttccggttacctttgcggataagaacatcgataagaagaatgagagtttcaaggcggttagtgagcttgatgccctcgtgcaggaagagtatgatccggaggcgtaccatggggcaccggttgcagtgcaggttatcggacggagactcagtgaagagaggacgttggcgattgcagaggaagtggggaagttgctgggaaatgtggtgactccatag</sbol:elements>
     <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
   </sbol:Sequence>
   <sbol:Sequence rdf:about="https://synbiohub.org/user/testuser/Tester_1/Part_alpha_factor_secretion_signal_005_seq/1">
@@ -361,8 +371,8 @@
     <sbol:displayId>Part_alpha_factor_secretion_signal_005_seq</sbol:displayId>
     <sbol:version>1</sbol:version>
     <prov:wasDerivedFrom rdf:resource="http://genocad.org/SBOL/doi:10.6084/m9.figshare.1159038/Part:alpha-factor_secretion_signal-005#seq"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_alpha_factor_secretion_signal_005_seq/1"/>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_alpha_factor_secretion_signal_005_seq/1"/>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
     <sbol:elements>atgaaattctctactatattagccgcatctactgctttaatttccgttgttatggctgctccagtttctaccgaaactgacatcgacgatcttccaatatcggttccagaagaagccttgattggattcattgacttaaccggggatgaagtttccttgttgcctgttaataacggaacccacactggtattctattcttaaacaccaccatcgctgaagctgctttcgctgacaaggatgatctcgagaaaagagaggctgaagct</sbol:elements>
     <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
   </sbol:Sequence>
@@ -371,9 +381,19 @@
     <sbol:displayId>Part_LAC4_promoter__3___002_seq</sbol:displayId>
     <sbol:version>1</sbol:version>
     <prov:wasDerivedFrom rdf:resource="http://genocad.org/SBOL/doi:10.6084/m9.figshare.1159038/Part:LAC4_promoter_(3')-002#seq"/>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_LAC4_promoter__3___002_seq/1"/>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_LAC4_promoter__3___002_seq/1"/>
     <sbol:elements>ggggatcgactcataaaatagtaaccttctaatgcgtatctattgactaccaaccattagtgtggttgcagaaggcggaattttcccttcttcgaatttagcttgctttttcattttttattttccatttttcagtttttgtttgtgtcgaatttagccagttgcttctccaagatgaaaaaaacccctgcgcagtttctgtgctgcaagatcctaatcgacttttccaccccccacaaaagtaaatgttcttttgttacattcgcgtgggtagctagctccccgaatcttcaaaggacttagggactgcactacatcagagtgtgttcacctggtttgctgcctggtttgaaagaaaagagcagggaactcgcgggttcccggcgaataatcatgcgatagtcctttggccttccaagtcgcatgtagagtagacaacagacagggagggcaggaaggatctttcactgagatcctgtatcttgttgggtaagtcggatgaaaggggaatcgtatgagattggagaggatgcggaagaggtaacgccttttgttaacttgtttaattattatggggcaggcgagagggggaggaatgtatgtgtgtgaggcgggcgagacggagccatccaggccaggtagaaatagagaaagccgaatgttagacaatatggcagcgtagtagagtaggtaggtaggcaagtactgctagcaaagaggagaagggtaagctcactcttcgcattccacaccgttagtgtgtcagtttgaacaaaaaaacaatcatcataccaattgatggactgtggactggcttttggaacggcttttcggactgcgattattcgtgaggaatcaaggtaggaatttggtcatatttacggacaacagtgggtgattcccatatcgagtaggaaaacgagatcatggtatcctcagatatgttgcggaaatctgttcaccgcaaagttcagggtgctctggtgggtttcggttggtctttgctttgcttctcccttgtcttgcatgttaataatagcctagcctgtgagccgaaacttagggtaggcttagtgttggaacgtacatatctatcacgttgacttggtttaaccaggcgacctggtagccagccatacccacacacgttttttgtatcttcagtatagttgtgaaaagtgtagcggaaatttgtggtccgagcaacagcgtctttttctagtagtgcggtcggttacttggttgacattggtatttggactttgttgctacaccattcactacttgaagtcgagtgtgaagggtatgatttctagtggtgaacacctttagttacgtaatgttttcattgctgttttacttgagatttcgattgagaaaaaggtatttaatagctcgaatcaatgtgagaacagagagaagatgttcttccctaactcgaaaggtatatgaggcttgtgtttcttaggagaattattattcttttgttatgttgcgcttgtagttggaaaaggtgaagagacaaaagc</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="https://synbiohub.org/user/testuser/Tester_1/Part_AmpR_013_seq/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_AmpR_013_seq"/>
+    <sbol:displayId>Part_AmpR_013_seq</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <prov:wasDerivedFrom rdf:resource="http://genocad.org/SBOL/doi:10.6084/m9.figshare.1159038/Part:AmpR-013#seq"/>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_AmpR_013_seq/1"/>
+    <sbol:elements>atgagtattcaacatttccgtgtcgcccttattcccttttttgcggcattttgccttcctgtttttgctcacccagaaacgctggtgaaagtaaaagatgctgaagatcagttgggtgcacgagtgggttacatcgaactggatctcaacagcggtaagatccttgagagttttcgccccgaagaacgttttccaatgatgagcacttttaaagttctgctatgtggcgcggtattatcccgtattgacgccgggcaagagcaactcggtcgccgcatacactattctcagaatgacttggttgagtactcaccagtcacagaaaagcatcttacggatggcatgacagtaagagaattatgcagtgctgccataaccatgagtgataacactgcggccaacttacttctgacaacgatcggaggaccgaaggagctaaccgcttttttgcacaacatgggggatcatgtaactcgccttgatcgttgggaaccggagctgaatgaagccataccaaacgacgagcgtgacaccacgatgcctgtagcaatggcaacaacgttgcgcaaactattaactggcgaactacttactctagcttcccggcaacaattaatagactggatggaggcggataaagttgcaggaccacttctgcgctcggcccttccggctggctggtttattgctgataaatctggagccggtgagcgtgggtctcgcggtatcattgcagcactggggccagatggtaagccctcccgtatcgtagttatctacacgacggggagtcaggcaactatggatgaacgaaatagacagatcgctgagataggtgcctcactgattaagcattggtaa</sbol:elements>
     <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
   </sbol:Sequence>
   <sbol:Sequence rdf:about="https://synbiohub.org/user/testuser/Tester_1/Part_MCS_105_seq/1">
@@ -381,39 +401,19 @@
     <sbol:displayId>Part_MCS_105_seq</sbol:displayId>
     <sbol:version>1</sbol:version>
     <prov:wasDerivedFrom rdf:resource="http://genocad.org/SBOL/doi:10.6084/m9.figshare.1159038/Part:MCS-105#seq"/>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_MCS_105_seq/1"/>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_MCS_105_seq/1"/>
     <sbol:elements>ctcgagaaaagagaggctgaagctagaagagctagatctcctaggggtaccgtcgacggcgcgcctgcggccgcttaattaaggcct</sbol:elements>
     <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
   </sbol:Sequence>
-  <sbol:Sequence rdf:about="https://synbiohub.org/user/testuser/Tester_1/Part_LAC4_promoter__5___seq/1">
-    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_LAC4_promoter__5___seq"/>
-    <sbol:displayId>Part_LAC4_promoter__5___seq</sbol:displayId>
+  <sbol:Sequence rdf:about="https://synbiohub.org/user/testuser/Tester_1/Part_f1_ori_008_seq/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_f1_ori_008_seq"/>
+    <sbol:displayId>Part_f1_ori_008_seq</sbol:displayId>
     <sbol:version>1</sbol:version>
-    <prov:wasDerivedFrom rdf:resource="http://genocad.org/SBOL/doi:10.6084/m9.figshare.1159038/Part:LAC4_promoter_(5')#seq"/>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_LAC4_promoter__5___seq/1"/>
-    <sbol:elements>ctagtaaccaaaggaaaggaacagatagataaaattccgagactgtcaaattaggtttttttctttttttttggcgggagtcagtgggccgaaatatgttcttggcctagaacttaatctggtttgatcatgccaatacttgcctgagtgcccgactttttgcccaccctcttgccttctgtcatccttcaaaacccacctgttttccagccgtatcttcgctcgcatctacacatactgtgccatatcttgtgtgtagccggacgtgactatgaccaaaaacaaacaaggagaactgttcgccgatttgtaacactcctgcatccatccaagtgggtatgcgctatgcaatgttaagctaggtcaggtcagaccaggtccaaggacagcaacttgactgtatgcaacctttaccatctttgcacagaacatacttgtagctagctagttacacttatggaccgaaaaggcaccccaccatgtctgtccggctttagagtacggccgcagaccgctgatttgccttgccaagcagtagtcacaatgcatcgcatgagcacacgggcacgggcacgggcacaggaaccattggcaaaaataccagatacactataccgacgtatatcaagcccaagtttaaaattcctaaatttccgc</sbol:elements>
-    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
-  </sbol:Sequence>
-  <sbol:Sequence rdf:about="https://synbiohub.org/user/testuser/Tester_1/Part_amdS_002_seq/1">
-    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_amdS_002_seq"/>
-    <sbol:displayId>Part_amdS_002_seq</sbol:displayId>
-    <sbol:version>1</sbol:version>
-    <prov:wasDerivedFrom rdf:resource="http://genocad.org/SBOL/doi:10.6084/m9.figshare.1159038/Part:amdS-002#seq"/>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_amdS_002_seq/1"/>
-    <sbol:elements>atgcctcaatcctgggaagaactggccgctgataagcgcgcccgcctcgcaaaaaccatccctgatgaatggaaagtccagacgctgcctgcggaagacagcgttattgatttcccaaagaaatcgggcatcctttcagaggccgaactgaagatcacagaggcttccgctgcggatcttgtgtccaagctggcggccggagagttgacctcggtggaagttacgctagcattctgtaaacgggcagcaatcgcccagcagttaacaaactgcgcccacgagttcttccctgacgccgctctcgcgcaggcaagggaactcgatgaatactacgcaaagcacaagagacccgttggtccacttcatggcctccccatctctctcaaagaccagcttcgagtcaagggctacgaaacatcaatgggctacatctcatggctaaacaagtacgacgaaggggactcggttctgacaaccatgctccgcaaagccggtgccgtcttctacgtcaagacctctgtcccgcagaccctgatggtctgcgagacagtcaacaacatcatcgggcgcaccgtcaacccacgcaacaagaactggtcgtgcggcggcagttctggtggtgagggtgcgatcgttgggattcgtggtggcgtcatcggtgtaggaacggacatcggtggctcgattcgagtgccggccgcgttcaacttcctgtacggtctaaggccgagtcatgggcggctgccgtatgcaaagatggcgaacagcatggagggtcaggagacggtgcacagcgttgtcgggccgattacgcactctgttgaggacctccgcctcttcaccaaatccgtcctcggtcaggagccttggaaatacgactccaaggtcatccccatgccctggcgccagtccgagtcggacattattgcctccaagatcaagaacggcgggctcaatatcggctactacaacttcgacggcaatgtccttccacaccctcctatcctgcgcggcgtggaaactaccgtcgccgcactcgccaaagccggtcacaccgtgaccccgtggacgccatacaagcacgatttcggccacgatctcatctcccatatctacgcggctgacggcagcgccgacgtaatgcgcgacatcagtgcatccggcgagccggcgattccaaatatcaaagacctactgaacccgaacatcaaagctgttaacatgaacgagctctgggacacgcatctccagaagtggaattaccagatggagtaccttgagaaatggcgggaggctgaagaaaaggccgggaaggaactggacgccatcatcgcgccgattacgcctaccgctgcggtacggcatgaccagttccggtactatgggtatgcctctgtgatcaacctgctggatttcacgagcgtggttgttccggttacctttgcggataagaacatcgataagaagaatgagagtttcaaggcggttagtgagcttgatgccctcgtgcaggaagagtatgatccggaggcgtatcatggggcaccggttgcagtgcaggttatcggacggagactcagtgaagagaggacgttggcgattgcagaggaagtggggaagttgctgggaaatgtggtgactccatag</sbol:elements>
-    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
-  </sbol:Sequence>
-  <sbol:Sequence rdf:about="https://synbiohub.org/user/testuser/Tester_1/Part_amdS_001_seq/1">
-    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_amdS_001_seq"/>
-    <sbol:displayId>Part_amdS_001_seq</sbol:displayId>
-    <sbol:version>1</sbol:version>
-    <prov:wasDerivedFrom rdf:resource="http://genocad.org/SBOL/doi:10.6084/m9.figshare.1159038/Part:amdS-001#seq"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_amdS_001_seq/1"/>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-    <sbol:elements>atgcctcaatcctgggaagaactggccgctgataagcgcgcccgcctcgcaaaaaccatccctgatgaatggaaagtccagacgctgcctgcggaagacagcgttattgatttcccaaagaaatcggggatcctttcagaggccgaactgaagatcacagaggcttccgctgcggatcttgtgtccaagctggcggccggagagttgacctcggtggaagttacgctagcattctgtaaacgggcagcaatcgcccagcagttaacaaactgcgcccacgagttcttccctgacgccgctctcgcgcaggcaagggaactcgatgaatactacgcaaagcacaagagacccgttggtccactccatggcctccccatctctctcaaagaccagcttcgagtcaagggctacgaaacatcaatgggctacatctcatggctaaacaagtacgacgaaggggactcggttctgacaaccatgctccgcaaagccggtgccgtcttctacgtcaagacctctgtcccgcagaccctgatggtctgcgagacagtcaacaacatcatcgggcgcaccgtcaacccacgcaacaagaactggtcgtgcggcggcagttctggtggtgagggtgcgatcgttgggattcgtggtggcgtcatcggtgtaggaacggatatcggtggctcgattcgagtgccggccgcgttcaacttcctgtacggtctaaggccgagtcatgggcggctgccgtatgcaaagatggcgaacagcatggagggtcaggagacggtgcacagcgttgtcgggccgattacgcactctgttgaggacctccgcctcttcaccaaatccgtcctcggtcaggagccatggaaatacgactccaaggtcatccccatgccctggcgccagtccgagtcggacattattgcctccaagatcaagaacggcgggctcaatatcggctactacaacttcgacggcaatgtccttccacaccctcctatcctgcgcggcgtggaaactaccgtcgccgcactcgccaaagccggtcacaccgtgaccccgtggacgccatacaagcacgatttcggccacgatctcatctcccatatctacgcggctgacggcagcgccgacgtaatgcgcgatatcagtgcatccggcgagccggcgattccaaatatcaaagacctactgaacccgaacatcaaagctgttaacatgaacgagctctgggacacgcatctccagaagtggaattaccagatggagtaccttgagaaatggcgggaggctgaagaaaaggccgggaaggaactggacgccatcatcgcgccgattacgcctaccgctgcggtacggcatgaccagttccggtactatgggtatgcctctgtgatcaacctgctggatttcacgagcgtggttgttccggttacctttgcggataagaacatcgataagaagaatgagagtttcaaggcggttagtgagcttgatgccctcgtgcaggaagagtatgatccggaggcgtaccatggggcaccggttgcagtgcaggttatcggacggagactcagtgaagagaggacgttggcgattgcagaggaagtggggaagttgctgggaaatgtggtgactccatag</sbol:elements>
+    <prov:wasDerivedFrom rdf:resource="http://genocad.org/SBOL/doi:10.6084/m9.figshare.1159038/Part:f1_ori-008#seq"/>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_f1_ori_008_seq/1"/>
+    <sbol:elements>acgcgccctgtagcggcgcattaagcgcggcgggtgtggtggttacgcgcagcgtgaccgctacacttgccagcgccctagcgcccgctcctttcgctttcttcccttcctttctcgccacgttcgccggctttccccgtcaagctctaaatcgggggctccctttagggttccgatttagtgctttacggcacctcgaccccaaaaaacttgattagggtgatggttcacgtagtgggccatcgccctgatagacggtttttcgccctttgacgttggagtccacgttctttaatagtggactcttgttccaaactggaacaacactcaaccctatctcggtctattcttttgatttataagggattttgccgatttcggcctattggttaaaaaatgagctgatttaacaaaaatttaacgcgaattttaacaaaatattaacgcttacaattt</sbol:elements>
     <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
   </sbol:Sequence>
   <sbol:Sequence rdf:about="https://synbiohub.org/user/testuser/Tester_1/Part_ori_013_seq/1">
@@ -421,8 +421,8 @@
     <sbol:displayId>Part_ori_013_seq</sbol:displayId>
     <sbol:version>1</sbol:version>
     <prov:wasDerivedFrom rdf:resource="http://genocad.org/SBOL/doi:10.6084/m9.figshare.1159038/Part:ori-013#seq"/>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_ori_013_seq/1"/>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_ori_013_seq/1"/>
     <sbol:elements>ttgagatcctttttttctgcgcgtaatctgctgcttgcaaacaaaaaaaccaccgctaccagcggtggtttgtttgccggatcaagagctaccaactctttttccgaaggtaactggcttcagcagagcgcagataccaaatactgttcttctagtgtagccgtagttaggccaccacttcaagaactctgtagcaccgcctacatacctcgctctgctaatcctgttaccagtggctgctgccagtggcgataagtcgtgtcttaccgggttggactcaagacgatagttaccggataaggcgcagcggtcgggctgaacggggggttcgtgcacacagcccagcttggagcgaacgacctacaccgaactgagatacctacagcgtgagctatgagaaagcgccacgcttcccgaagggagaaaggcggacaggtatccggtaagcggcagggtcggaacaggagagcgcacgagggagcttccagggggaaacgcctggtatctttatagtcctgtcgggtttcgccacctctgacttgagcgtcgatttttgtgatgctcgtcaggggggcggagcctatggaaa</sbol:elements>
     <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
   </sbol:Sequence>

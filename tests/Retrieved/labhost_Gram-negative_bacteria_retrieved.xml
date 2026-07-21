@@ -1,15 +1,15 @@
 <?xml version="1.0" ?>
-<rdf:RDF xmlns:synbiohub="http://synbiohub.org#" xmlns:xsd="http://www.w3.org/2001/XMLSchema#dateTime/" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:sybio="http://www.sybio.ncl.ac.uk#" xmlns:ncbi="http://www.ncbi.nlm.nih.gov#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:igem="http://wiki.synbiohub.org/wiki/Terms/igem#" xmlns:sbh="http://wiki.synbiohub.org/wiki/Terms/synbiohub#" xmlns:sbol="http://sbols.org/v2#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:gbconv="http://sbols.org/genBankConversion#" xmlns:genbank="http://www.ncbi.nlm.nih.gov/genbank#" xmlns:prov="http://www.w3.org/ns/prov#" xmlns:obo="http://purl.obolibrary.org/obo/" xmlns:om="http://www.ontology-of-units-of-measure.org/resource/om-2/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+<rdf:RDF xmlns:ns6="https://synbiohub.org/user/testuser/Tester_1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:sbol="http://sbols.org/v2#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:ns2="http://purl.org/dc/terms/" xmlns:prov="http://www.w3.org/ns/prov#" xmlns:ns1="http://sbols.org/v2#" xmlns:j.0="http://www.w3.org/ns/prov#" xmlns:om="http://www.ontology-of-units-of-measure.org/resource/om-2/" xmlns:ns4="https://synbiohub.org/user/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:ns3="http://wiki.synbiohub.org/wiki/Terms/synbiohub#">
   <sbol:Collection rdf:about="https://synbiohub.org/user/testuser/Tester_1/Tester_1_collection/1">
     <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Tester_1_collection"/>
     <sbol:displayId>Tester_1_collection</sbol:displayId>
     <sbol:version>1</sbol:version>
     <dcterms:title>Round_Trip_Tester</dcterms:title>
     <dcterms:description>This is a simple roundtrip test</dcterms:description>
-    <dcterms:created>2026-07-21T00:30:16.784327880Z</dcterms:created>
+    <ns2:created>2026-07-21T22:07:27.350180703Z</ns2:created>
     <dc:creator>Test User</dc:creator>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Tester_1_collection/1"/>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Tester_1_collection/1"/>
     <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_pBBR1_Rep_seq/1"/>
     <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_KanR_002_seq/1"/>
     <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_soxR_terminator_seq/1"/>
@@ -45,8 +45,8 @@
     <dcterms:description>This is a collection of features that have been
 			associated with Gram-negative bacteria plasmids downloaded from the
 			SnapGene Resources repository (http://www.snapgene.com).</dcterms:description>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Gram_negative_bacteria/1"/>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Gram_negative_bacteria/1"/>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
     <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/tonB_terminator_002/1"/>
     <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/MCS_079/1"/>
     <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/MCS_093/1"/>
@@ -68,8 +68,8 @@
     <dcterms:title>AmpR-015</dcterms:title>
     <dcterms:description>confers resistance to ampicillin, carbenicillin, and
 					related antibiotics</dcterms:description>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AmpR_015/1"/>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AmpR_015/1"/>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
@@ -82,8 +82,8 @@
     <prov:wasDerivedFrom rdf:resource="http://genocad.org/SBOL/doi:10.6084/m9.figshare.1159038/Part:soxR_terminator"/>
     <dcterms:title>soxR terminator</dcterms:title>
     <dcterms:description>bidirectional E. coli soxR transcription terminator</dcterms:description>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/soxR_terminator/1"/>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/soxR_terminator/1"/>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000141"/>
@@ -96,8 +96,8 @@
     <prov:wasDerivedFrom rdf:resource="http://genocad.org/SBOL/doi:10.6084/m9.figshare.1159038/Part:KanR-002"/>
     <dcterms:title>KanR-002</dcterms:title>
     <dcterms:description>confers resistance to kanamycin</dcterms:description>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/KanR_002/1"/>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/KanR_002/1"/>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
@@ -110,8 +110,8 @@
     <prov:wasDerivedFrom rdf:resource="http://genocad.org/SBOL/doi:10.6084/m9.figshare.1159038/Part:tonB_terminator-002"/>
     <dcterms:title>tonB terminator-002</dcterms:title>
     <dcterms:description>bidirectional E. coli tonB-P14 transcription terminator</dcterms:description>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/tonB_terminator_002/1"/>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/tonB_terminator_002/1"/>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000141"/>
@@ -124,8 +124,8 @@
     <prov:wasDerivedFrom rdf:resource="http://genocad.org/SBOL/doi:10.6084/m9.figshare.1159038/Part:TpR"/>
     <dcterms:title>TpR</dcterms:title>
     <dcterms:description>confers resistance to trimethoprim</dcterms:description>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/TpR/1"/>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/TpR/1"/>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
@@ -137,8 +137,8 @@
     <sbol:version>1</sbol:version>
     <prov:wasDerivedFrom rdf:resource="http://genocad.org/SBOL/doi:10.6084/m9.figshare.1159038/Part:pBBR1_Rep"/>
     <dcterms:title>pBBR1 Rep</dcterms:title>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/pBBR1_Rep/1"/>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/pBBR1_Rep/1"/>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
@@ -152,8 +152,8 @@
     <dcterms:title>araBAD promoter-002</dcterms:title>
     <dcterms:description>promoter of the L-arabinose operon of E. coli; the araC
 					regulatory gene is transcribed in the opposite</dcterms:description>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/araBAD_promoter_002/1"/>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/araBAD_promoter_002/1"/>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
@@ -167,8 +167,8 @@
     <dcterms:title>araBAD promoter-001</dcterms:title>
     <dcterms:description>promoter of the L-arabinose operon of E. coli; the araC
 					regulatory gene is transcribed in the opposite</dcterms:description>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/araBAD_promoter_001/1"/>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/araBAD_promoter_001/1"/>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
@@ -181,8 +181,8 @@
     <prov:wasDerivedFrom rdf:resource="http://genocad.org/SBOL/doi:10.6084/m9.figshare.1159038/Part:MCS-079"/>
     <dcterms:title>MCS-079</dcterms:title>
     <dcterms:description>multiple cloning site</dcterms:description>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/MCS_079/1"/>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/MCS_079/1"/>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000001"/>
@@ -194,8 +194,8 @@
     <sbol:version>1</sbol:version>
     <prov:wasDerivedFrom rdf:resource="http://genocad.org/SBOL/doi:10.6084/m9.figshare.1159038/Part:araC-002"/>
     <dcterms:title>araC-002</dcterms:title>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/araC_002/1"/>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/araC_002/1"/>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
@@ -208,8 +208,8 @@
     <prov:wasDerivedFrom rdf:resource="http://genocad.org/SBOL/doi:10.6084/m9.figshare.1159038/Part:MCS-093"/>
     <dcterms:title>MCS-093</dcterms:title>
     <dcterms:description>multiple cloning site</dcterms:description>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/MCS_093/1"/>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/MCS_093/1"/>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000001"/>
@@ -222,31 +222,21 @@
     <prov:wasDerivedFrom rdf:resource="http://genocad.org/SBOL/doi:10.6084/m9.figshare.1159038/Part:CmR-013"/>
     <dcterms:title>CmR-013</dcterms:title>
     <dcterms:description>confers resistance to chloramphenicol</dcterms:description>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/CmR_013/1"/>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/CmR_013/1"/>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
     <sbol:sequence rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_CmR_013_seq/1"/>
   </sbol:ComponentDefinition>
-  <sbol:Sequence rdf:about="https://synbiohub.org/user/testuser/Tester_1/Part_MCS_093_seq/1">
-    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_MCS_093_seq"/>
-    <sbol:displayId>Part_MCS_093_seq</sbol:displayId>
+  <sbol:Sequence rdf:about="https://synbiohub.org/user/testuser/Tester_1/Part_TpR_seq/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_TpR_seq"/>
+    <sbol:displayId>Part_TpR_seq</sbol:displayId>
     <sbol:version>1</sbol:version>
-    <prov:wasDerivedFrom rdf:resource="http://genocad.org/SBOL/doi:10.6084/m9.figshare.1159038/Part:MCS-093#seq"/>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_MCS_093_seq/1"/>
-    <sbol:elements>gaattcgtcaacgaattcaagctt</sbol:elements>
-    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
-  </sbol:Sequence>
-  <sbol:Sequence rdf:about="https://synbiohub.org/user/testuser/Tester_1/Part_araC_002_seq/1">
-    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_araC_002_seq"/>
-    <sbol:displayId>Part_araC_002_seq</sbol:displayId>
-    <sbol:version>1</sbol:version>
-    <prov:wasDerivedFrom rdf:resource="http://genocad.org/SBOL/doi:10.6084/m9.figshare.1159038/Part:araC-002#seq"/>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_araC_002_seq/1"/>
-    <sbol:elements>atggctgaagcgcaaaatgatcccctgctgccgggatactcgtttaatgcccatctggtggcgggtttaacgccgattgaggccaacggttatctcgatttttttatcgaccgaccgctgggaatgaaaggttatattctcaatctcaccattcgcggtcagggggtggtgaaaaatcagggacgagaatttgtttgccgaccgggtgatattttgctgttcccgccaggagagattcatcactacggtcgtcatccggaggctcgcgaatggtatcaccagtgggtttactttcgtccgcgcgcctactggcatgaatggcttaactggccgtcaatatttgccaatacggggttctttcgcccggatgaagcgcaccagccgcatttcagcgacctgtttgggcaaatcattaacgccgggcaaggggaagggcgctattcggagctgctggcgataaatctgcttgagcaattgttactgcggcgcatggaagcgattaacgagtcgctccatccaccgatggataatcgggtacgcgaggcttgtcagtacatcagcgatcacctggcagacagcaattttgatatcgccagcgtcgcacagcatgtttgcttgtcgccgtcgcgtctgtcacatcttttccgccagcagttagggattagcgtcttaagctggcgcgaggaccaacgtatcagccaggcgaagctgcttttgagcaccacccggatgcctatcgccaccgtcggtcgcaatgttggttttgacgatcaactctatttctcgcgggtatttaaaaaatgcaccggggccagcccgagcgagttccgtgccggttgtgaagaaaaagtgaatgatgtagccgtcaagttgtcataa</sbol:elements>
+    <prov:wasDerivedFrom rdf:resource="http://genocad.org/SBOL/doi:10.6084/m9.figshare.1159038/Part:TpR#seq"/>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_TpR_seq/1"/>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <sbol:elements>atgggtcaaagtagcgatgaagccaacgctcccgttgcagggcagtttgcgcttcccctgagtgccacctttggcttaggggatcgcgtacgcaagaaatctggtgccgcttggcagggtcaagtcgtcggttggtattgcacaaaactcactcctgaaggctatgcggtcgagtccgaatcccacccaggctcagtgcaaatttatcctgtggctgcacttgaacgtgtggcctaa</sbol:elements>
     <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
   </sbol:Sequence>
   <sbol:Sequence rdf:about="https://synbiohub.org/user/testuser/Tester_1/Part_tonB_terminator_002_seq/1">
@@ -254,9 +244,19 @@
     <sbol:displayId>Part_tonB_terminator_002_seq</sbol:displayId>
     <sbol:version>1</sbol:version>
     <prov:wasDerivedFrom rdf:resource="http://genocad.org/SBOL/doi:10.6084/m9.figshare.1159038/Part:tonB_terminator-002#seq"/>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_tonB_terminator_002_seq/1"/>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_tonB_terminator_002_seq/1"/>
     <sbol:elements>agtcaaaagcctccggtcggaggcttttgact</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="https://synbiohub.org/user/testuser/Tester_1/Part_KanR_002_seq/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_KanR_002_seq"/>
+    <sbol:displayId>Part_KanR_002_seq</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <prov:wasDerivedFrom rdf:resource="http://genocad.org/SBOL/doi:10.6084/m9.figshare.1159038/Part:KanR-002#seq"/>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_KanR_002_seq/1"/>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <sbol:elements>atgagccatattcaacgggaaacgtcttgctcgaggccgcgattaaattccaacatggatgctgatttatatgggtataaatgggctcgcgataatgtcgggcaatcaggtgcgacaatctatcgattgtatgggaagcccgatgcgccagagttgtttctgaaacatggcaaaggtagcgttgccaatgatgttacagatgagatggtcaggctaaactggctgacggaatttatgcctcttccgaccatcaagcattttatccgtactcctgatgatgcatggttactcaccactgcgatcccagggaaaacagcattccaggtattagaagaatatcctgattcaggtgaaaatattgttgatgcgctggcagtgttcctgcgccggttgcattcgattcctgtttgtaattgtccttttaacggcgatcgcgtatttcgtctcgctcaggcgcaatcacgaatgaataacggtttggttggtgcgagtgattttgatgacgagcgtaatggctggcctgttgaacaagtctggaaagaaatgcataagcttttgccattctcaccggattcagtcgtcactcatggtgatttctcacttgataaccttatttttgacgaggggaaattaataggttgtattgatgttggacgagtcggaatcgcagaccgataccaggatcttgccatcctatggaactgcctcggtgagttttctccttcattacagaaacggctttttcaaaaatatggtattgataatcctgatatgaataaattgcagtttcacttgatgctcgatgagtttttctga</sbol:elements>
     <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
   </sbol:Sequence>
   <sbol:Sequence rdf:about="https://synbiohub.org/user/testuser/Tester_1/Part_soxR_terminator_seq/1">
@@ -264,8 +264,8 @@
     <sbol:displayId>Part_soxR_terminator_seq</sbol:displayId>
     <sbol:version>1</sbol:version>
     <prov:wasDerivedFrom rdf:resource="http://genocad.org/SBOL/doi:10.6084/m9.figshare.1159038/Part:soxR_terminator#seq"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_soxR_terminator_seq/1"/>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_soxR_terminator_seq/1"/>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
     <sbol:elements>aaaacaaactaaagcgcccttgtggcgctttagtttt</sbol:elements>
     <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
   </sbol:Sequence>
@@ -274,8 +274,8 @@
     <sbol:displayId>Part_MCS_079_seq</sbol:displayId>
     <sbol:version>1</sbol:version>
     <prov:wasDerivedFrom rdf:resource="http://genocad.org/SBOL/doi:10.6084/m9.figshare.1159038/Part:MCS-079#seq"/>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_MCS_079_seq/1"/>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_MCS_079_seq/1"/>
     <sbol:elements>gaattcgtcaacgaattc</sbol:elements>
     <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
   </sbol:Sequence>
@@ -284,19 +284,19 @@
     <sbol:displayId>Part_araBAD_promoter_002_seq</sbol:displayId>
     <sbol:version>1</sbol:version>
     <prov:wasDerivedFrom rdf:resource="http://genocad.org/SBOL/doi:10.6084/m9.figshare.1159038/Part:araBAD_promoter-002#seq"/>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_araBAD_promoter_002_seq/1"/>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_araBAD_promoter_002_seq/1"/>
     <sbol:elements>aaagccatgacaaaaacgcgtaacaaaagtgtctataatcacggcagaaaagtccacattgattatttgcacggcgtcacactttgctatgccatagcatttttatccataagattagcggatcctacctgacgctttttatcgcaactctctactgtttctccat</sbol:elements>
     <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
   </sbol:Sequence>
-  <sbol:Sequence rdf:about="https://synbiohub.org/user/testuser/Tester_1/Part_TpR_seq/1">
-    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_TpR_seq"/>
-    <sbol:displayId>Part_TpR_seq</sbol:displayId>
+  <sbol:Sequence rdf:about="https://synbiohub.org/user/testuser/Tester_1/Part_AmpR_015_seq/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_AmpR_015_seq"/>
+    <sbol:displayId>Part_AmpR_015_seq</sbol:displayId>
     <sbol:version>1</sbol:version>
-    <prov:wasDerivedFrom rdf:resource="http://genocad.org/SBOL/doi:10.6084/m9.figshare.1159038/Part:TpR#seq"/>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_TpR_seq/1"/>
-    <sbol:elements>atgggtcaaagtagcgatgaagccaacgctcccgttgcagggcagtttgcgcttcccctgagtgccacctttggcttaggggatcgcgtacgcaagaaatctggtgccgcttggcagggtcaagtcgtcggttggtattgcacaaaactcactcctgaaggctatgcggtcgagtccgaatcccacccaggctcagtgcaaatttatcctgtggctgcacttgaacgtgtggcctaa</sbol:elements>
+    <prov:wasDerivedFrom rdf:resource="http://genocad.org/SBOL/doi:10.6084/m9.figshare.1159038/Part:AmpR-015#seq"/>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_AmpR_015_seq/1"/>
+    <sbol:elements>atgagtattcaacatttccgtgtcgcccttattcccttttttgcggcattttgccttcctgtttttgctcacccagaaacgctggtgaaagtaaaagatgctgaagatcagttgggtgcacgagtgggttacatcgaactggatctcaacagcggtaagatccttgagagtttacgccccgaagaacgttttccaatgatgagcacttttaaagttctgctatgtggcgcggtattatcccgtattgacgccgggcaagagcaactcggtcgccgcatacactattctcagaatgacttggttgagtactcaccagtcacagaaaagcatctcacggatggcatgacagtaagagaattatgcagtgctgccataaccatgagtgataacactgcggccaacttacttctggcaacgatcggaggaccgaaggagctaaccgcttttttgcacaacatgggggatcatgtaactcgccttgatcgttgggaaccggagctgaatgaagccataccaaacgacgagcgtgacaccacgatgcctgtagcaatggcaacaacgttgcgcaaactattaactggcgaactacttactctagcttcccggcaacaattaatagactggatggaggcggataaagttgcaggatcacttctgcgctcggccctcccggctggctggtttattgctgataaatctggagccggtgagcgtgggtctcgcggtatcattgcagcactggggccagatggtaagccctcccgcatcgtagttatctacacgacggggagtcaggcaactatggatgaacgaaatagacagatcgctgagataggtgcctcactgattaagcattggtaa</sbol:elements>
     <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
   </sbol:Sequence>
   <sbol:Sequence rdf:about="https://synbiohub.org/user/testuser/Tester_1/Part_araBAD_promoter_001_seq/1">
@@ -304,8 +304,8 @@
     <sbol:displayId>Part_araBAD_promoter_001_seq</sbol:displayId>
     <sbol:version>1</sbol:version>
     <prov:wasDerivedFrom rdf:resource="http://genocad.org/SBOL/doi:10.6084/m9.figshare.1159038/Part:araBAD_promoter-001#seq"/>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_araBAD_promoter_001_seq/1"/>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_araBAD_promoter_001_seq/1"/>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
     <sbol:elements>aaagccatgacaaaaacgcgtaacaaaagtgtctataatcacggcagaaaagtccacattgattatttgcacggcgtcacactttgctatgccataacatttttatccataagattagcggatcctacctgacgctttttatcgcaactctctactgtttctccat</sbol:elements>
     <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
   </sbol:Sequence>
@@ -314,19 +314,19 @@
     <sbol:displayId>Part_CmR_013_seq</sbol:displayId>
     <sbol:version>1</sbol:version>
     <prov:wasDerivedFrom rdf:resource="http://genocad.org/SBOL/doi:10.6084/m9.figshare.1159038/Part:CmR-013#seq"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_CmR_013_seq/1"/>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_CmR_013_seq/1"/>
     <sbol:elements>atggagaaaaaaatcactggatataccaccgttgatatatcccaatggcatcgtaaagaacattttgaggcatttcagtcagttgctcaatgtacctataaccagaccgttcagctggatattacggcctttttaaagaccgtaaagaaaaataagcacaagttttatccggcctttattcacattcttgcccgcctgatgaatgctcatccggaattccgtatggcaatgaaagacggtgagctggtgatatgggatagtgttcacccttgttacaccgttttccatgagcaaactgaaacgttttcatcgctctggagtgaataccacgacgatttccggcagtttctacacatatattcgcaagatgtggcgtgttacggtgaaaacctggcctatttccctaaagggtttattgagaatatgtttttcgtctcagccaatccctgggtgagtttcaccagttttgatttaaacgtggccaatatggacaacttcttcgcccccgttttcaccatgggcaaatattatacgcaaggcgacaaggtgctgatgccgctggcgattcaggttcatcatgccgtttgtgatggcttccatgtcggcagaatgcttaatgaattacaacagtactgcgatgagtggcagggcggggcgtaa</sbol:elements>
     <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
   </sbol:Sequence>
-  <sbol:Sequence rdf:about="https://synbiohub.org/user/testuser/Tester_1/Part_AmpR_015_seq/1">
-    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_AmpR_015_seq"/>
-    <sbol:displayId>Part_AmpR_015_seq</sbol:displayId>
+  <sbol:Sequence rdf:about="https://synbiohub.org/user/testuser/Tester_1/Part_araC_002_seq/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_araC_002_seq"/>
+    <sbol:displayId>Part_araC_002_seq</sbol:displayId>
     <sbol:version>1</sbol:version>
-    <prov:wasDerivedFrom rdf:resource="http://genocad.org/SBOL/doi:10.6084/m9.figshare.1159038/Part:AmpR-015#seq"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_AmpR_015_seq/1"/>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-    <sbol:elements>atgagtattcaacatttccgtgtcgcccttattcccttttttgcggcattttgccttcctgtttttgctcacccagaaacgctggtgaaagtaaaagatgctgaagatcagttgggtgcacgagtgggttacatcgaactggatctcaacagcggtaagatccttgagagtttacgccccgaagaacgttttccaatgatgagcacttttaaagttctgctatgtggcgcggtattatcccgtattgacgccgggcaagagcaactcggtcgccgcatacactattctcagaatgacttggttgagtactcaccagtcacagaaaagcatctcacggatggcatgacagtaagagaattatgcagtgctgccataaccatgagtgataacactgcggccaacttacttctggcaacgatcggaggaccgaaggagctaaccgcttttttgcacaacatgggggatcatgtaactcgccttgatcgttgggaaccggagctgaatgaagccataccaaacgacgagcgtgacaccacgatgcctgtagcaatggcaacaacgttgcgcaaactattaactggcgaactacttactctagcttcccggcaacaattaatagactggatggaggcggataaagttgcaggatcacttctgcgctcggccctcccggctggctggtttattgctgataaatctggagccggtgagcgtgggtctcgcggtatcattgcagcactggggccagatggtaagccctcccgcatcgtagttatctacacgacggggagtcaggcaactatggatgaacgaaatagacagatcgctgagataggtgcctcactgattaagcattggtaa</sbol:elements>
+    <prov:wasDerivedFrom rdf:resource="http://genocad.org/SBOL/doi:10.6084/m9.figshare.1159038/Part:araC-002#seq"/>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_araC_002_seq/1"/>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <sbol:elements>atggctgaagcgcaaaatgatcccctgctgccgggatactcgtttaatgcccatctggtggcgggtttaacgccgattgaggccaacggttatctcgatttttttatcgaccgaccgctgggaatgaaaggttatattctcaatctcaccattcgcggtcagggggtggtgaaaaatcagggacgagaatttgtttgccgaccgggtgatattttgctgttcccgccaggagagattcatcactacggtcgtcatccggaggctcgcgaatggtatcaccagtgggtttactttcgtccgcgcgcctactggcatgaatggcttaactggccgtcaatatttgccaatacggggttctttcgcccggatgaagcgcaccagccgcatttcagcgacctgtttgggcaaatcattaacgccgggcaaggggaagggcgctattcggagctgctggcgataaatctgcttgagcaattgttactgcggcgcatggaagcgattaacgagtcgctccatccaccgatggataatcgggtacgcgaggcttgtcagtacatcagcgatcacctggcagacagcaattttgatatcgccagcgtcgcacagcatgtttgcttgtcgccgtcgcgtctgtcacatcttttccgccagcagttagggattagcgtcttaagctggcgcgaggaccaacgtatcagccaggcgaagctgcttttgagcaccacccggatgcctatcgccaccgtcggtcgcaatgttggttttgacgatcaactctatttctcgcgggtatttaaaaaatgcaccggggccagcccgagcgagttccgtgccggttgtgaagaaaaagtgaatgatgtagccgtcaagttgtcataa</sbol:elements>
     <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
   </sbol:Sequence>
   <sbol:Sequence rdf:about="https://synbiohub.org/user/testuser/Tester_1/Part_pBBR1_Rep_seq/1">
@@ -334,19 +334,19 @@
     <sbol:displayId>Part_pBBR1_Rep_seq</sbol:displayId>
     <sbol:version>1</sbol:version>
     <prov:wasDerivedFrom rdf:resource="http://genocad.org/SBOL/doi:10.6084/m9.figshare.1159038/Part:pBBR1_Rep#seq"/>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_pBBR1_Rep_seq/1"/>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_pBBR1_Rep_seq/1"/>
     <sbol:elements>atggccacgcagtccagagaaatcggcattcaagccaagaacaagcccggtcactgggtgcaaacggaacgcaaagcgcatgaggcgtgggccgggcttattgcgaggaaacccacggcggcaatgctgctgcatcacctcgtggcgcagatgggccaccagaacgccgtggtggtcagccagaagacactttccaagctcatcggacgttctttgcggacggtccaatacgcagtcaaggacttggtggccgagcgctggatctccgtcgtgaagctcaacggccccggcaccgtgtcggcctacgtggtcaatgaccgcgtggcgtggggccagccccgcgaccagttgcgcctgtcggtgttcagtgccgccgtggtggttgatcacgacgaccaggacgaatcgctgttggggcatggcgacctgcgccgcatcccgaccctgtatccgggcgagcagcaactaccgaccggccccggcgaggagccgcccagccagcccggcattccgggcatggaaccagacctgccagccttgaccgaaacggaggaatgggaacggcgcgggcagcagcgcctgccgatgcccgatgagccgtgttttctggacgatggcgagccgttggagccgccgacacgggtcacgctgccgcgccggtag</sbol:elements>
     <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
   </sbol:Sequence>
-  <sbol:Sequence rdf:about="https://synbiohub.org/user/testuser/Tester_1/Part_KanR_002_seq/1">
-    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_KanR_002_seq"/>
-    <sbol:displayId>Part_KanR_002_seq</sbol:displayId>
+  <sbol:Sequence rdf:about="https://synbiohub.org/user/testuser/Tester_1/Part_MCS_093_seq/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_MCS_093_seq"/>
+    <sbol:displayId>Part_MCS_093_seq</sbol:displayId>
     <sbol:version>1</sbol:version>
-    <prov:wasDerivedFrom rdf:resource="http://genocad.org/SBOL/doi:10.6084/m9.figshare.1159038/Part:KanR-002#seq"/>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_KanR_002_seq/1"/>
-    <sbol:elements>atgagccatattcaacgggaaacgtcttgctcgaggccgcgattaaattccaacatggatgctgatttatatgggtataaatgggctcgcgataatgtcgggcaatcaggtgcgacaatctatcgattgtatgggaagcccgatgcgccagagttgtttctgaaacatggcaaaggtagcgttgccaatgatgttacagatgagatggtcaggctaaactggctgacggaatttatgcctcttccgaccatcaagcattttatccgtactcctgatgatgcatggttactcaccactgcgatcccagggaaaacagcattccaggtattagaagaatatcctgattcaggtgaaaatattgttgatgcgctggcagtgttcctgcgccggttgcattcgattcctgtttgtaattgtccttttaacggcgatcgcgtatttcgtctcgctcaggcgcaatcacgaatgaataacggtttggttggtgcgagtgattttgatgacgagcgtaatggctggcctgttgaacaagtctggaaagaaatgcataagcttttgccattctcaccggattcagtcgtcactcatggtgatttctcacttgataaccttatttttgacgaggggaaattaataggttgtattgatgttggacgagtcggaatcgcagaccgataccaggatcttgccatcctatggaactgcctcggtgagttttctccttcattacagaaacggctttttcaaaaatatggtattgataatcctgatatgaataaattgcagtttcacttgatgctcgatgagtttttctga</sbol:elements>
+    <prov:wasDerivedFrom rdf:resource="http://genocad.org/SBOL/doi:10.6084/m9.figshare.1159038/Part:MCS-093#seq"/>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Part_MCS_093_seq/1"/>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <sbol:elements>gaattcgtcaacgaattcaagctt</sbol:elements>
     <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
   </sbol:Sequence>
 </rdf:RDF>

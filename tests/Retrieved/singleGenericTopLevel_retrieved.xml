@@ -1,5 +1,5 @@
 <?xml version="1.0" ?>
-<rdf:RDF xmlns:synbiohub="http://synbiohub.org#" xmlns:xsd="http://www.w3.org/2001/XMLSchema#dateTime/" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:j.0="urn:bbn.com:tasbe:grn/" xmlns:sybio="http://www.sybio.ncl.ac.uk#" xmlns:ncbi="http://www.ncbi.nlm.nih.gov#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:igem="http://wiki.synbiohub.org/wiki/Terms/igem#" xmlns:sbh="http://wiki.synbiohub.org/wiki/Terms/synbiohub#" xmlns:sbol="http://sbols.org/v2#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:gbconv="http://sbols.org/genBankConversion#" xmlns:genbank="http://www.ncbi.nlm.nih.gov/genbank#" xmlns:prov="http://www.w3.org/ns/prov#" xmlns:obo="http://purl.obolibrary.org/obo/" xmlns:om="http://www.ontology-of-units-of-measure.org/resource/om-2/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+<rdf:RDF xmlns:ns6="https://synbiohub.org/user/testuser/Tester_1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:sbol="http://sbols.org/v2#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:ns2="http://purl.org/dc/terms/" xmlns:prov="http://www.w3.org/ns/prov#" xmlns:j.0="urn:bbn.com:tasbe:grn/" xmlns:ns1="http://sbols.org/v2#" xmlns:om="http://www.ontology-of-units-of-measure.org/resource/om-2/" xmlns:ns4="https://synbiohub.org/user/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:ns3="http://wiki.synbiohub.org/wiki/Terms/synbiohub#">
   <sbol:Collection rdf:about="https://synbiohub.org/user/testuser/Tester_1/Tester_1_collection/1">
     <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Tester_1_collection"/>
     <sbol:displayId>Tester_1_collection</sbol:displayId>
@@ -7,16 +7,16 @@
     <dcterms:title>Round_Trip_Tester</dcterms:title>
     <dcterms:description>This is a simple roundtrip test</dcterms:description>
     <dc:creator>Test User</dc:creator>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-    <dcterms:created>2026-07-20T21:23:41.222187576Z</dcterms:created>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Tester_1_collection/1"/>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <ns2:created>2026-07-21T22:08:54.068158672Z</ns2:created>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Tester_1_collection/1"/>
     <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/GenericTopLevel/1.0"/>
   </sbol:Collection>
   <j.0:RegulatoryReaction rdf:about="https://synbiohub.org/user/testuser/Tester_1/GenericTopLevel/1.0">
     <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/GenericTopLevel"/>
     <sbol:displayId>GenericTopLevel</sbol:displayId>
     <sbol:version>1.0</sbol:version>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/GenericTopLevel/1.0"/>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/GenericTopLevel/1.0"/>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
   </j.0:RegulatoryReaction>
 </rdf:RDF>

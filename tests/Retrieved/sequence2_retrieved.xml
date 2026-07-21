@@ -1,15 +1,15 @@
 <?xml version="1.0" ?>
-<rdf:RDF xmlns:synbiohub="http://synbiohub.org#" xmlns:xsd="http://www.w3.org/2001/XMLSchema#dateTime/" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:sybio="http://www.sybio.ncl.ac.uk#" xmlns:ncbi="http://www.ncbi.nlm.nih.gov#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:igem="http://wiki.synbiohub.org/wiki/Terms/igem#" xmlns:sbh="http://wiki.synbiohub.org/wiki/Terms/synbiohub#" xmlns:sbol="http://sbols.org/v2#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:gbconv="http://sbols.org/genBankConversion#" xmlns:genbank="http://www.ncbi.nlm.nih.gov/genbank#" xmlns:prov="http://www.w3.org/ns/prov#" xmlns:obo="http://purl.obolibrary.org/obo/" xmlns:om="http://www.ontology-of-units-of-measure.org/resource/om-2/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+<rdf:RDF xmlns:ns2="http://purl.org/dc/terms/" xmlns:j.1="http://www.ncbi.nlm.nih.gov/genbank#" xmlns:j.0="http://sbols.org/genBankConversion#" xmlns:ns1="http://sbols.org/v2#" xmlns:ns4="https://synbiohub.org/user/" xmlns:ns3="http://wiki.synbiohub.org/wiki/Terms/synbiohub#" xmlns:ns6="https://synbiohub.org/user/testuser/Tester_1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:sbol="http://sbols.org/v2#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:prov="http://www.w3.org/ns/prov#" xmlns:om="http://www.ontology-of-units-of-measure.org/resource/om-2/" xmlns:dc="http://purl.org/dc/elements/1.1/">
   <sbol:Collection rdf:about="https://synbiohub.org/user/testuser/Tester_1/Tester_1_collection/1">
     <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Tester_1_collection"/>
     <sbol:displayId>Tester_1_collection</sbol:displayId>
     <sbol:version>1</sbol:version>
     <dcterms:title>Round_Trip_Tester</dcterms:title>
     <dcterms:description>This is a simple roundtrip test</dcterms:description>
-    <dcterms:created>2026-07-21T00:29:01.577580919Z</dcterms:created>
     <dc:creator>Test User</dc:creator>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Tester_1_collection/1"/>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Tester_1_collection/1"/>
+    <ns2:created>2026-07-21T22:17:09.244515361Z</ns2:created>
     <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912_seq/1"/>
     <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/1"/>
   </sbol:Collection>
@@ -18,164 +18,57 @@
     <sbol:displayId>AF165912</sbol:displayId>
     <sbol:version>1</sbol:version>
     <dcterms:description>Arabidopsis thaliana CTP:phosphocholine cytidylyltransferase (CCT) gene, complete cds.</dcterms:description>
-    <genbank:reference rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912_reference0/1"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/1"/>
-    <genbank:GInumber>GI:5640000</genbank:GInumber>
-    <genbank:molecule>DNA</genbank:molecule>
-    <genbank:division>PLN</genbank:division>
-    <genbank:locus>AF165912</genbank:locus>
-    <genbank:organism>Arabidopsis thaliana Eukaryota; Viridiplantae; Streptophyta; Embryophyta; Tracheophyta; Spermatophyta; Magnoliophyta; eudicotyledons; Gunneridae; Pentapetalae; rosids; malvids; Brassicales; Brassicaceae; Camelineae; Arabidopsis.</genbank:organism>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-    <genbank:date>29-JUL-1999</genbank:date>
-    <genbank:reference rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912_reference1/1"/>
-    <genbank:keywords>.</genbank:keywords>
-    <genbank:source>Arabidopsis thaliana (thale cress)</genbank:source>
+    <j.1:reference>
+      <j.1:Reference rdf:about="https://synbiohub.org/user/testuser/Tester_1/AF165912_reference0/1">
+        <j.1:title>Structure of a CTP:Phosphocholine Cytidylyltransferase Gene from Arabidopsis thaliana</j.1:title>
+        <j.1:authors>Choi,Y.H., Choi,S.B. and Cho,S.H.</j.1:authors>
+        <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/1"/>
+        <j.1:label>1  (bases 1 to 5485)</j.1:label>
+        <j.1:journal>Unpublished</j.1:journal>
+      </j.1:Reference>
+    </j.1:reference>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/1"/>
+    <j.1:molecule>DNA</j.1:molecule>
+    <j.1:GInumber>GI:5640000</j.1:GInumber>
+    <j.1:division>PLN</j.1:division>
+    <j.1:locus>AF165912</j.1:locus>
+    <j.1:organism>Arabidopsis thaliana Eukaryota; Viridiplantae; Streptophyta; Embryophyta; Tracheophyta; Spermatophyta; Magnoliophyta; eudicotyledons; Gunneridae; Pentapetalae; rosids; malvids; Brassicales; Brassicaceae; Camelineae; Arabidopsis.</j.1:organism>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <j.1:date>29-JUL-1999</j.1:date>
+    <j.1:reference>
+      <j.1:Reference rdf:about="https://synbiohub.org/user/testuser/Tester_1/AF165912_reference1/1">
+        <j.1:title>Direct Submission</j.1:title>
+        <j.1:label>2  (bases 1 to 5485)</j.1:label>
+        <j.1:authors>Choi,Y.H., Choi,S.B. and Cho,S.H.</j.1:authors>
+        <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/1"/>
+        <j.1:journal>Submitted (06-JUL-1999) Biology, Inha University, Yonghyon-Dong 253, Inchon 402-751, Korea</j.1:journal>
+      </j.1:Reference>
+    </j.1:reference>
+    <j.1:keywords>.</j.1:keywords>
+    <j.1:source>Arabidopsis thaliana (thale cress)</j.1:source>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000804"/>
-    <sbol:sequenceAnnotation>
-      <sbol:SequenceAnnotation rdf:about="https://synbiohub.org/user/testuser/Tester_1/AF165912/annotation6/1">
-        <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/annotation6"/>
-        <sbol:displayId>annotation6</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <dcterms:title>CTP:phosphocholine cytidylyltransferase</dcterms:title>
-        <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-        <gbconv:EC_number>2.7.7.15</gbconv:EC_number>
-        <gbconv:db_xref>GI:5640001</gbconv:db_xref>
-        <gbconv:translation>MSNVIGDRTEDGLSTAAAASGSTAVQSSPPTDRPVRVYADGIYDLFHFGHARSLEQAKLAFPNNTYLLVGCCNDETTHKYKGRTVMTAEERYESLRHCKWVDEVIPDAPWVVNQEFLDKHQIDYVAHDSLPYADSSGAGKDVYEFVKKVGRFKETQRTEGISTSDIIMRIVKDYNQYVMRNLDRGYSREDLGVSFVKEKRLRVNMRLKKLQERVKEQQERVGEKIQTVKMLRNEWVENADRWVAGFLEIFEEGCHKMGTAIVDSIQERLMRQKSAERLENGQDDDTDDQFYEEYFDHDMGSDDDEDEKFYDEEEVKEEETEKTVMTDAKDNK</gbconv:translation>
-        <gbconv:gene>CCT</gbconv:gene>
-        <gbconv:multiRangeType>join</gbconv:multiRangeType>
-        <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/1"/>
-        <gbconv:product>CTP:phosphocholine cytidylyltransferase</gbconv:product>
-        <gbconv:protein_id>AAD45922.1</gbconv:protein_id>
-        <gbconv:codon_start>1</gbconv:codon_start>
-        <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
-        <sbol:location>
-          <sbol:Range rdf:about="https://synbiohub.org/user/testuser/Tester_1/AF165912/annotation6/range5/1">
-            <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/annotation6/range5"/>
-            <sbol:displayId>range5</sbol:displayId>
-            <sbol:version>1</sbol:version>
-            <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-            <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/1"/>
-            <gbconv:position>position5</gbconv:position>
-            <sbol:start>3167</sbol:start>
-            <sbol:end>3247</sbol:end>
-            <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
-          </sbol:Range>
-        </sbol:location>
-        <sbol:location>
-          <sbol:Range rdf:about="https://synbiohub.org/user/testuser/Tester_1/AF165912/annotation6/range1/1">
-            <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/annotation6/range1"/>
-            <sbol:displayId>range1</sbol:displayId>
-            <sbol:version>1</sbol:version>
-            <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-            <gbconv:position>position1</gbconv:position>
-            <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/1"/>
-            <sbol:start>2322</sbol:start>
-            <sbol:end>2438</sbol:end>
-            <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
-          </sbol:Range>
-        </sbol:location>
-        <sbol:location>
-          <sbol:Range rdf:about="https://synbiohub.org/user/testuser/Tester_1/AF165912/annotation6/range2/1">
-            <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/annotation6/range2"/>
-            <sbol:displayId>range2</sbol:displayId>
-            <sbol:version>1</sbol:version>
-            <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/1"/>
-            <gbconv:position>position2</gbconv:position>
-            <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-            <sbol:start>2538</sbol:start>
-            <sbol:end>2633</sbol:end>
-            <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
-          </sbol:Range>
-        </sbol:location>
-        <sbol:location>
-          <sbol:Range rdf:about="https://synbiohub.org/user/testuser/Tester_1/AF165912/annotation6/range7/1">
-            <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/annotation6/range7"/>
-            <sbol:displayId>range7</sbol:displayId>
-            <sbol:version>1</sbol:version>
-            <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/1"/>
-            <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-            <gbconv:position>position7</gbconv:position>
-            <sbol:start>4082</sbol:start>
-            <sbol:end>4309</sbol:end>
-            <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
-          </sbol:Range>
-        </sbol:location>
-        <sbol:location>
-          <sbol:Range rdf:about="https://synbiohub.org/user/testuser/Tester_1/AF165912/annotation6/range0/1">
-            <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/annotation6/range0"/>
-            <sbol:displayId>range0</sbol:displayId>
-            <sbol:version>1</sbol:version>
-            <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/1"/>
-            <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-            <gbconv:position>position0</gbconv:position>
-            <sbol:start>1713</sbol:start>
-            <sbol:end>1891</sbol:end>
-            <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
-          </sbol:Range>
-        </sbol:location>
-        <sbol:location>
-          <sbol:Range rdf:about="https://synbiohub.org/user/testuser/Tester_1/AF165912/annotation6/range3/1">
-            <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/annotation6/range3"/>
-            <sbol:displayId>range3</sbol:displayId>
-            <sbol:version>1</sbol:version>
-            <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/1"/>
-            <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-            <gbconv:position>position3</gbconv:position>
-            <sbol:start>2801</sbol:start>
-            <sbol:end>2843</sbol:end>
-            <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
-          </sbol:Range>
-        </sbol:location>
-        <sbol:location>
-          <sbol:Range rdf:about="https://synbiohub.org/user/testuser/Tester_1/AF165912/annotation6/range4/1">
-            <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/annotation6/range4"/>
-            <sbol:displayId>range4</sbol:displayId>
-            <sbol:version>1</sbol:version>
-            <gbconv:position>position4</gbconv:position>
-            <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-            <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/1"/>
-            <sbol:start>2918</sbol:start>
-            <sbol:end>3073</sbol:end>
-            <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
-          </sbol:Range>
-        </sbol:location>
-        <sbol:location>
-          <sbol:Range rdf:about="https://synbiohub.org/user/testuser/Tester_1/AF165912/annotation6/range6/1">
-            <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/annotation6/range6"/>
-            <sbol:displayId>range6</sbol:displayId>
-            <sbol:version>1</sbol:version>
-            <gbconv:position>position6</gbconv:position>
-            <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/1"/>
-            <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-            <sbol:start>3874</sbol:start>
-            <sbol:end>3972</sbol:end>
-            <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
-          </sbol:Range>
-        </sbol:location>
-      </sbol:SequenceAnnotation>
-    </sbol:sequenceAnnotation>
     <sbol:sequenceAnnotation>
       <sbol:SequenceAnnotation rdf:about="https://synbiohub.org/user/testuser/Tester_1/AF165912/annotation4/1">
         <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/annotation4"/>
         <sbol:displayId>annotation4</sbol:displayId>
         <sbol:version>1</sbol:version>
         <dcterms:title>CTP:phosphocholine cytidylyltransferase</dcterms:title>
-        <gbconv:gene>CCT</gbconv:gene>
-        <gbconv:product>CTP:phosphocholine cytidylyltransferase</gbconv:product>
-        <gbconv:multiRangeType>join</gbconv:multiRangeType>
-        <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-        <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/1"/>
+        <j.0:gene>CCT</j.0:gene>
+        <j.0:product>CTP:phosphocholine cytidylyltransferase</j.0:product>
+        <j.0:multiRangeType>join</j.0:multiRangeType>
+        <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+        <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/1"/>
         <sbol:role rdf:resource="http://identifiers.org/so/SO:0000234"/>
         <sbol:location>
           <sbol:Range rdf:about="https://synbiohub.org/user/testuser/Tester_1/AF165912/annotation4/range7/1">
             <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/annotation4/range7"/>
             <sbol:displayId>range7</sbol:displayId>
             <sbol:version>1</sbol:version>
-            <gbconv:position>position7</gbconv:position>
-            <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-            <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/1"/>
+            <j.0:position>position7</j.0:position>
+            <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+            <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/1"/>
             <sbol:start>4082</sbol:start>
             <sbol:end>4637</sbol:end>
             <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
@@ -186,9 +79,9 @@
             <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/annotation4/range0"/>
             <sbol:displayId>range0</sbol:displayId>
             <sbol:version>1</sbol:version>
-            <gbconv:position>position0</gbconv:position>
-            <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-            <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/1"/>
+            <j.0:position>position0</j.0:position>
+            <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+            <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/1"/>
             <sbol:start>1603</sbol:start>
             <sbol:end>1891</sbol:end>
             <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
@@ -199,9 +92,9 @@
             <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/annotation4/range2"/>
             <sbol:displayId>range2</sbol:displayId>
             <sbol:version>1</sbol:version>
-            <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-            <gbconv:position>position2</gbconv:position>
-            <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/1"/>
+            <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+            <j.0:position>position2</j.0:position>
+            <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/1"/>
             <sbol:start>2538</sbol:start>
             <sbol:end>2633</sbol:end>
             <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
@@ -212,9 +105,9 @@
             <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/annotation4/range1"/>
             <sbol:displayId>range1</sbol:displayId>
             <sbol:version>1</sbol:version>
-            <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/1"/>
-            <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-            <gbconv:position>position1</gbconv:position>
+            <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/1"/>
+            <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+            <j.0:position>position1</j.0:position>
             <sbol:start>2322</sbol:start>
             <sbol:end>2438</sbol:end>
             <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
@@ -225,9 +118,9 @@
             <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/annotation4/range5"/>
             <sbol:displayId>range5</sbol:displayId>
             <sbol:version>1</sbol:version>
-            <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/1"/>
-            <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-            <gbconv:position>position5</gbconv:position>
+            <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/1"/>
+            <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+            <j.0:position>position5</j.0:position>
             <sbol:start>3167</sbol:start>
             <sbol:end>3247</sbol:end>
             <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
@@ -238,9 +131,9 @@
             <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/annotation4/range3"/>
             <sbol:displayId>range3</sbol:displayId>
             <sbol:version>1</sbol:version>
-            <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/1"/>
-            <gbconv:position>position3</gbconv:position>
-            <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+            <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/1"/>
+            <j.0:position>position3</j.0:position>
+            <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
             <sbol:start>2801</sbol:start>
             <sbol:end>2843</sbol:end>
             <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
@@ -251,9 +144,9 @@
             <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/annotation4/range4"/>
             <sbol:displayId>range4</sbol:displayId>
             <sbol:version>1</sbol:version>
-            <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/1"/>
-            <gbconv:position>position4</gbconv:position>
-            <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+            <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/1"/>
+            <j.0:position>position4</j.0:position>
+            <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
             <sbol:start>2918</sbol:start>
             <sbol:end>3073</sbol:end>
             <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
@@ -264,9 +157,9 @@
             <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/annotation4/range6"/>
             <sbol:displayId>range6</sbol:displayId>
             <sbol:version>1</sbol:version>
-            <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-            <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/1"/>
-            <gbconv:position>position6</gbconv:position>
+            <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+            <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/1"/>
+            <j.0:position>position6</j.0:position>
             <sbol:start>3874</sbol:start>
             <sbol:end>3972</sbol:end>
             <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
@@ -280,20 +173,20 @@
         <sbol:displayId>annotation0</sbol:displayId>
         <sbol:version>1</sbol:version>
         <dcterms:title>Arabidopsis thaliana</dcterms:title>
-        <gbconv:db_xref>taxon:3702</gbconv:db_xref>
-        <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-        <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/1"/>
-        <gbconv:organism>Arabidopsis thaliana</gbconv:organism>
-        <gbconv:mol_type>genomic DNA</gbconv:mol_type>
-        <gbconv:ecotype>Col-0</gbconv:ecotype>
+        <j.0:db_xref>taxon:3702</j.0:db_xref>
+        <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+        <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/1"/>
+        <j.0:organism>Arabidopsis thaliana</j.0:organism>
+        <j.0:mol_type>genomic DNA</j.0:mol_type>
+        <j.0:ecotype>Col-0</j.0:ecotype>
         <sbol:role rdf:resource="http://identifiers.org/so/SO:0002206"/>
         <sbol:location>
           <sbol:Range rdf:about="https://synbiohub.org/user/testuser/Tester_1/AF165912/annotation0/range/1">
             <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/annotation0/range"/>
             <sbol:displayId>range</sbol:displayId>
             <sbol:version>1</sbol:version>
-            <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-            <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/1"/>
+            <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+            <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/1"/>
             <sbol:start>1</sbol:start>
             <sbol:end>5485</sbol:end>
             <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
@@ -307,20 +200,44 @@
         <sbol:displayId>annotation3</sbol:displayId>
         <sbol:version>1</sbol:version>
         <dcterms:title>CCT</dcterms:title>
-        <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/1"/>
-        <gbconv:gene>CCT</gbconv:gene>
-        <gbconv:regulatory_class>TATA_box</gbconv:regulatory_class>
-        <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+        <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/1"/>
+        <j.0:gene>CCT</j.0:gene>
+        <j.0:regulatory_class>TATA_box</j.0:regulatory_class>
+        <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
         <sbol:role rdf:resource="http://identifiers.org/so/SO:0005836"/>
         <sbol:location>
           <sbol:Range rdf:about="https://synbiohub.org/user/testuser/Tester_1/AF165912/annotation3/range/1">
             <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/annotation3/range"/>
             <sbol:displayId>range</sbol:displayId>
             <sbol:version>1</sbol:version>
-            <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-            <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/1"/>
+            <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+            <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/1"/>
             <sbol:start>1554</sbol:start>
             <sbol:end>1560</sbol:end>
+            <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
+          </sbol:Range>
+        </sbol:location>
+      </sbol:SequenceAnnotation>
+    </sbol:sequenceAnnotation>
+    <sbol:sequenceAnnotation>
+      <sbol:SequenceAnnotation rdf:about="https://synbiohub.org/user/testuser/Tester_1/AF165912/annotation5/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/annotation5"/>
+        <sbol:displayId>annotation5</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <dcterms:title>CCT</dcterms:title>
+        <j.0:gene>CCT</j.0:gene>
+        <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/1"/>
+        <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+        <sbol:role rdf:resource="http://identifiers.org/so/SO:0000204"/>
+        <sbol:location>
+          <sbol:Range rdf:about="https://synbiohub.org/user/testuser/Tester_1/AF165912/annotation5/range/1">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/annotation5/range"/>
+            <sbol:displayId>range</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/1"/>
+            <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+            <sbol:start>1603</sbol:start>
+            <sbol:end>1712</sbol:end>
             <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
           </sbol:Range>
         </sbol:location>
@@ -332,17 +249,17 @@
         <sbol:displayId>annotation1</sbol:displayId>
         <sbol:version>1</sbol:version>
         <dcterms:title>CCT</dcterms:title>
-        <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-        <gbconv:gene>CCT</gbconv:gene>
-        <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/1"/>
+        <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+        <j.0:gene>CCT</j.0:gene>
+        <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/1"/>
         <sbol:role rdf:resource="http://identifiers.org/so/SO:0000704"/>
         <sbol:location>
           <sbol:Range rdf:about="https://synbiohub.org/user/testuser/Tester_1/AF165912/annotation1/range/1">
             <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/annotation1/range"/>
             <sbol:displayId>range</sbol:displayId>
             <sbol:version>1</sbol:version>
-            <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-            <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/1"/>
+            <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+            <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/1"/>
             <sbol:start>1</sbol:start>
             <sbol:end>4637</sbol:end>
             <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
@@ -356,17 +273,17 @@
         <sbol:displayId>annotation7</sbol:displayId>
         <sbol:version>1</sbol:version>
         <dcterms:title>CCT</dcterms:title>
-        <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/1"/>
-        <gbconv:gene>CCT</gbconv:gene>
-        <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+        <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/1"/>
+        <j.0:gene>CCT</j.0:gene>
+        <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
         <sbol:role rdf:resource="http://identifiers.org/so/SO:0000205"/>
         <sbol:location>
           <sbol:Range rdf:about="https://synbiohub.org/user/testuser/Tester_1/AF165912/annotation7/range/1">
             <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/annotation7/range"/>
             <sbol:displayId>range</sbol:displayId>
             <sbol:version>1</sbol:version>
-            <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/1"/>
-            <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+            <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/1"/>
+            <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
             <sbol:start>4310</sbol:start>
             <sbol:end>4637</sbol:end>
             <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
@@ -380,18 +297,18 @@
         <sbol:displayId>annotation2</sbol:displayId>
         <sbol:version>1</sbol:version>
         <dcterms:title>CCT</dcterms:title>
-        <gbconv:regulatory_class>promoter</gbconv:regulatory_class>
-        <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/1"/>
-        <gbconv:gene>CCT</gbconv:gene>
-        <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+        <j.0:regulatory_class>promoter</j.0:regulatory_class>
+        <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/1"/>
+        <j.0:gene>CCT</j.0:gene>
+        <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
         <sbol:role rdf:resource="http://identifiers.org/so/SO:0005836"/>
         <sbol:location>
           <sbol:Range rdf:about="https://synbiohub.org/user/testuser/Tester_1/AF165912/annotation2/range/1">
             <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/annotation2/range"/>
             <sbol:displayId>range</sbol:displayId>
             <sbol:version>1</sbol:version>
-            <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-            <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/1"/>
+            <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+            <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/1"/>
             <sbol:start>1</sbol:start>
             <sbol:end>1602</sbol:end>
             <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
@@ -400,24 +317,123 @@
       </sbol:SequenceAnnotation>
     </sbol:sequenceAnnotation>
     <sbol:sequenceAnnotation>
-      <sbol:SequenceAnnotation rdf:about="https://synbiohub.org/user/testuser/Tester_1/AF165912/annotation5/1">
-        <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/annotation5"/>
-        <sbol:displayId>annotation5</sbol:displayId>
+      <sbol:SequenceAnnotation rdf:about="https://synbiohub.org/user/testuser/Tester_1/AF165912/annotation6/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/annotation6"/>
+        <sbol:displayId>annotation6</sbol:displayId>
         <sbol:version>1</sbol:version>
-        <dcterms:title>CCT</dcterms:title>
-        <gbconv:gene>CCT</gbconv:gene>
-        <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/1"/>
-        <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-        <sbol:role rdf:resource="http://identifiers.org/so/SO:0000204"/>
+        <dcterms:title>CTP:phosphocholine cytidylyltransferase</dcterms:title>
+        <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+        <j.0:EC_number>2.7.7.15</j.0:EC_number>
+        <j.0:db_xref>GI:5640001</j.0:db_xref>
+        <j.0:translation>MSNVIGDRTEDGLSTAAAASGSTAVQSSPPTDRPVRVYADGIYDLFHFGHARSLEQAKLAFPNNTYLLVGCCNDETTHKYKGRTVMTAEERYESLRHCKWVDEVIPDAPWVVNQEFLDKHQIDYVAHDSLPYADSSGAGKDVYEFVKKVGRFKETQRTEGISTSDIIMRIVKDYNQYVMRNLDRGYSREDLGVSFVKEKRLRVNMRLKKLQERVKEQQERVGEKIQTVKMLRNEWVENADRWVAGFLEIFEEGCHKMGTAIVDSIQERLMRQKSAERLENGQDDDTDDQFYEEYFDHDMGSDDDEDEKFYDEEEVKEEETEKTVMTDAKDNK</j.0:translation>
+        <j.0:gene>CCT</j.0:gene>
+        <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/1"/>
+        <j.0:multiRangeType>join</j.0:multiRangeType>
+        <j.0:product>CTP:phosphocholine cytidylyltransferase</j.0:product>
+        <j.0:protein_id>AAD45922.1</j.0:protein_id>
+        <j.0:codon_start>1</j.0:codon_start>
+        <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
         <sbol:location>
-          <sbol:Range rdf:about="https://synbiohub.org/user/testuser/Tester_1/AF165912/annotation5/range/1">
-            <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/annotation5/range"/>
-            <sbol:displayId>range</sbol:displayId>
+          <sbol:Range rdf:about="https://synbiohub.org/user/testuser/Tester_1/AF165912/annotation6/range5/1">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/annotation6/range5"/>
+            <sbol:displayId>range5</sbol:displayId>
             <sbol:version>1</sbol:version>
-            <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-            <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/1"/>
-            <sbol:start>1603</sbol:start>
-            <sbol:end>1712</sbol:end>
+            <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+            <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/1"/>
+            <j.0:position>position5</j.0:position>
+            <sbol:start>3167</sbol:start>
+            <sbol:end>3247</sbol:end>
+            <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
+          </sbol:Range>
+        </sbol:location>
+        <sbol:location>
+          <sbol:Range rdf:about="https://synbiohub.org/user/testuser/Tester_1/AF165912/annotation6/range1/1">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/annotation6/range1"/>
+            <sbol:displayId>range1</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+            <j.0:position>position1</j.0:position>
+            <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/1"/>
+            <sbol:start>2322</sbol:start>
+            <sbol:end>2438</sbol:end>
+            <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
+          </sbol:Range>
+        </sbol:location>
+        <sbol:location>
+          <sbol:Range rdf:about="https://synbiohub.org/user/testuser/Tester_1/AF165912/annotation6/range2/1">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/annotation6/range2"/>
+            <sbol:displayId>range2</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/1"/>
+            <j.0:position>position2</j.0:position>
+            <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+            <sbol:start>2538</sbol:start>
+            <sbol:end>2633</sbol:end>
+            <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
+          </sbol:Range>
+        </sbol:location>
+        <sbol:location>
+          <sbol:Range rdf:about="https://synbiohub.org/user/testuser/Tester_1/AF165912/annotation6/range7/1">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/annotation6/range7"/>
+            <sbol:displayId>range7</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/1"/>
+            <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+            <j.0:position>position7</j.0:position>
+            <sbol:start>4082</sbol:start>
+            <sbol:end>4309</sbol:end>
+            <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
+          </sbol:Range>
+        </sbol:location>
+        <sbol:location>
+          <sbol:Range rdf:about="https://synbiohub.org/user/testuser/Tester_1/AF165912/annotation6/range0/1">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/annotation6/range0"/>
+            <sbol:displayId>range0</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/1"/>
+            <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+            <j.0:position>position0</j.0:position>
+            <sbol:start>1713</sbol:start>
+            <sbol:end>1891</sbol:end>
+            <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
+          </sbol:Range>
+        </sbol:location>
+        <sbol:location>
+          <sbol:Range rdf:about="https://synbiohub.org/user/testuser/Tester_1/AF165912/annotation6/range3/1">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/annotation6/range3"/>
+            <sbol:displayId>range3</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/1"/>
+            <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+            <j.0:position>position3</j.0:position>
+            <sbol:start>2801</sbol:start>
+            <sbol:end>2843</sbol:end>
+            <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
+          </sbol:Range>
+        </sbol:location>
+        <sbol:location>
+          <sbol:Range rdf:about="https://synbiohub.org/user/testuser/Tester_1/AF165912/annotation6/range4/1">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/annotation6/range4"/>
+            <sbol:displayId>range4</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <j.0:position>position4</j.0:position>
+            <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+            <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/1"/>
+            <sbol:start>2918</sbol:start>
+            <sbol:end>3073</sbol:end>
+            <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
+          </sbol:Range>
+        </sbol:location>
+        <sbol:location>
+          <sbol:Range rdf:about="https://synbiohub.org/user/testuser/Tester_1/AF165912/annotation6/range6/1">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/annotation6/range6"/>
+            <sbol:displayId>range6</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <j.0:position>position6</j.0:position>
+            <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/1"/>
+            <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+            <sbol:start>3874</sbol:start>
+            <sbol:end>3972</sbol:end>
             <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
           </sbol:Range>
         </sbol:location>
@@ -429,23 +445,9 @@
     <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912_seq"/>
     <sbol:displayId>AF165912_seq</sbol:displayId>
     <sbol:version>1</sbol:version>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912_seq/1"/>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912_seq/1"/>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
     <sbol:elements>ccagaatggttactatggacatccgccaaccatacaagctatggtgaaatgctttatctatctcatttttagtttcaaagcttttgttataacacatgcaaatccatatccgtaaccaatatccaatcgcttgacatagtctgatgaagtttttggtagttaagataaagctcgagactgatatttcatatactggatgatttagggaaacttgcattctattcatgaacgaatgagtcaatacgagacacaaccaagcatgcaaggagctgtgagttgatgttctatgctatttaagtatttttcgggagatatatatatcttattgttctcctcctcccgagtcaagttgttctaagaaagaaggatctatttcattttgtggattgtctagtttcagggacagacggggtttaggggaagcgctatccgtggctgctatgacatcgaagaaactctgcacgacatggtatgtaatcttgtgacgttagtaaaaacgctctaatgttacaaaagaaagaaagagaaaacgaacccaattcctcaaaatgttttcttttgacaatgtcaacttcttccttctcgggtttttatcagtttgattgaagcgagactgcgaaattcctctgtttacagtagaaaatgtgatcagccctatttataaccgttgtatgttttccggtttttgtttgtgcagacaatggggtcctcacagtttcagggatctgattcgagccatcctagtgatcaccgcttatccaattaacagaacagaacaagctcaagagttgctactttcatatctttaaaatagtggaatgttttgtatgtacagaaataggaaaggtctaaagtgtggaactggctttgaggtaaactcttactctgattggatttgcttgtatttataccggaatcataatagaaatatatgattaaagtattcacattctctaatcttcttttagacttgtagttaccattcaaaagtcatggacaaccttcgttaaccttgagggccactgagagacaaccttggacttggtcactggctcacttatgcgtgcctcgccaaagttaatctatcgactgagattggttaatctgggaacaaaaattaagagagaaagaagtagaactaaaaagcaatattcagttattcactctgttgtatatagctcaccaattaaattcaaacaactaattcaaaacattatactatagcttttcattaaaaaatttccaaaacattcatttaattatataaaccaaagaacagcttttaagacttaaaatatttcccaagtatccaacaagtcaatacagattttttaagaaaactaaaccattttttcaactttacaacaaaaacaccaactgttacaaaaaaactctcgaatttcctatttctccagccttatgacaaagatatcagattaataaaatttagaattcattactttttcttcatttttaaaattatctacatactatttatttctctccattttattcagtgagaaaataaaattacaaatgcctgaacacaaaaataaataaaattagaataatcagtttcctctagaggatattcttcgtcacaaaattaaaaaaaaaaagagtaggagaagagggaagcgactagcaccttttgtagttttccgtttattttctgtataaggcgggtgatttcggctccttcatcggaaattatgagcaacgttatcggcgatcgcactgaagacggcctttccaccgccgctgcggcctctggctctacggctgtccagagttctcctcccactgatcgtcctgtccgcgtctacgccgatgggatctacgatcttttccactttggtcatgctcgatctctcgaacaagccaaattagcgttagtatttcttatctcttagagatgattgtcctgattttcatctctaattcgacttttttttaccgtcgcgtgctcaattttcgccgttccagtgtcatttttctctgatctgttgagtctggttcattgtaagttgtacagtttttgtttaggtcgagagacatatcttccttattagatagtctcggtgattgattggtctgtattgattgaaatctgtgatgtgcaaggtcttgtcgcgtatgattttagtgaatccctttctaaatgttgaaatttgcaatagctgatactgtttctggatatatgttcttgacgaatgttttcgattttttattattttgaggaggtatgagagaaattgacttctggtttcgtgttcttatggtgttgctatgattgtgccgtttcttaatcggccgagcaggtttccaaacaacacttaccttcttgttggatgttgcaatgatgagactacccataagtacaagggaaggactgtaatgactgcagaagagcgatatgaatcacttcgacattgcaagtaattgttttctcttatgttctgttgaatgtgttagtagaaaaacccatggaagtggcagtgagtggaattttagaacacgttttttttatcatgcaggtgggtggatgaagtcatccctgatgcaccatgggtggtcaaccaggagtttcttgacaagcaccagattgactatgttgcccacgattctcttccgtaagaacatgtgtctcttgtgttagtttttatttagttttaaaaaatggtgaaaacttagttttgtagtttttacctttcacgacgtgcttgttgttagtttagctcttttcttacaaatgattttagaactacaataaccttctttgtataattctcatgcacagctatgctgattcaagcggagctggaaaggatgtctatgaatttgtgagtcggaagaattttcatactcctgcttttgacactttcatagttctgttgtaactgagcatctgttgcaggttaagaaagttgggaggtttaaggaaacacagcgaactgaaggaatatcgacctcggatataataatgagaatagtgaaagattacaatcagtatgtcatgcgtaacttggatagaggatactcaagggaagatcttggagttagctttgtcaaggcatgtcatcattttcttatctctacaattttgtcctttctcaaaaaaaattcacttgtaagaatcaactttggatttgtcgatttgcaacaggaaaagagacttagagttaatatgaggctaaagaaactccaggagagggtcaaagaacaacaagaaagagtgggagaaaaggcatgtcttctctcaacttcattttgcttaattgatcattagttcatcacaagtccatcatttggactgtattgcattcaatcaaataaagctgttcatcataagttacaaggagaaataactaaattttaggtcttgtctctgcctattcattcacatctccgcttgatcttgtacctttgactatttagcgactgtttggaaaccactcttaatgtgtcacgttttggagtctaacttgtccttaatttgaacctcgttcacttcttttaggactttaatactctgtttggttagtagcctctaggcagaaaacatttgtatgtattgcttttattttgtgtcttcttgttgtgattattgggttatagaattgcatcacaaagtgatgcttgttaatccgctgtagtagtgccaggcgatatcatgttatataatctcatctcggtagtagcagccttatctcgtgtatccgctgcgcttgaaacctccatgcagtttcatgctttagctagtaatatgatatctgatgagactaagttcatatgtgattctgaaaaagctgattttgtagaagtttcttataatgctccttcctctgttgttgttaaacccggtttttccagatccaaactgtaaaaatgctgcgcaacgagtgggtagagaatgcagatcgatgggtcgctggatttcttgaaatatttgaagaaggttgccataagatggtaagttcaatcttgaagacacatacagtgcttcaaaaatctactaatattcatgactatgttctgtataaccttgattaaacttgacaaatgcgtaaaatgttaacagggaactgcaatcgtagacagtatccaagaaaggttaatgagacaaaagtcggcagagaggctggagaacggtcaggatgatgacacagacgaccagttctatgaagaatacttcgatcatgacatgggtagtgacgatgatgaagatgaaaaattctacgacgaggaagaagtaaaggaagaagagacagagaaaactgttatgacggatgctaaagacaacaagtaagaacaaatttggcttgcagaaacctcagattagctctacttatggccacttctactaaactcccttaagcctcgcactctctctcgaaattcatctacttaacatataataccaatgtttagaaagagagagtgtgtgatgtgtttgtttgtgtgtgttgaacaaacgaacgtgcgtggttgtctttggtgagttggtctcatctttgttgatttttgaatgcgcatgtatttttttcttctttttcatgacgggcaaagtgttatgaagtacaatgcaattgtctaaaacaggataagtcaatggttcgtgtgtgccataaagtaaacatcgctgtgtacatcttccatgttccaaactcaactcgttttcttcaaatattgaaatacaaattggtcaaaagtcggttcttattttttttttaattcacatttttagtttgcagttttaatagattacaaatcacattttgtgctatttccaattccatgagccggccaagaatgtgagtaaaaggcagataaagcaaaggatagccgattgctttaaagatgtctttggtaactagttcgaaattctctgtccactcgaagactccacaactctcctctcaaatgtcagctaatcaagtcctacacaactatacaaaaaggcaattaattagtagaaaataaagattggaggtttagcttctcccatacataagtacctttatgaatcactaagctcagggtttatatgataaccattgctgatctgtgtaaagagaagttgatgaattactacgtgagtgttgttaaccaactctctttacatattaggaccgtgcttgtcaggccaatggttttcacttcgaaaaattgcttccgatatcaaactatgtgtacattattggtggactgtggacataacttaaacgcataattttattgtgtacctttaaaataaacaatagattacacatatatatatggcaaatatttgaacattagatgtcaagagaaaagtaaaacatgtcatgattacaccatctttgttattatttagagtgattctcactaaatcttaggcggttagcaaccgccatagttttcaaaatctcattctatcgggattaaatctgtttttggtgactatatataaacattggtcgaatttttaggtaagtaaaatcag</sbol:elements>
     <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
   </sbol:Sequence>
-  <genbank:Reference rdf:about="https://synbiohub.org/user/testuser/Tester_1/AF165912_reference0/1">
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/1"/>
-    <genbank:journal>Unpublished</genbank:journal>
-    <genbank:label>1  (bases 1 to 5485)</genbank:label>
-    <genbank:authors>Choi,Y.H., Choi,S.B. and Cho,S.H.</genbank:authors>
-    <genbank:title>Structure of a CTP:Phosphocholine Cytidylyltransferase Gene from Arabidopsis thaliana</genbank:title>
-  </genbank:Reference>
-  <genbank:Reference rdf:about="https://synbiohub.org/user/testuser/Tester_1/AF165912_reference1/1">
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/AF165912/1"/>
-    <genbank:label>2  (bases 1 to 5485)</genbank:label>
-    <genbank:journal>Submitted (06-JUL-1999) Biology, Inha University, Yonghyon-Dong 253, Inchon 402-751, Korea</genbank:journal>
-    <genbank:title>Direct Submission</genbank:title>
-    <genbank:authors>Choi,Y.H., Choi,S.B. and Cho,S.H.</genbank:authors>
-  </genbank:Reference>
 </rdf:RDF>

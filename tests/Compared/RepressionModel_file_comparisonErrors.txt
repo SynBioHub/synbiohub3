@@ -1,34 +1,3 @@
 
 1
-ComponentDefinition https://synbiohub.org/user/testuser/Tester_1/EYFP/1.0 not found in RepressionModel.xml_Retrieved
-ComponentDefinition https://synbiohub.org/user/testuser/Tester_1/gRNA_generic/1.0 not found in RepressionModel.xml_Retrieved
-ComponentDefinition https://synbiohub.org/user/testuser/Tester_1/gRNA_b_nc/1.0 not found in RepressionModel.xml_Retrieved
-ComponentDefinition https://synbiohub.org/user/testuser/Tester_1/CRa_U6/1.0 not found in RepressionModel.xml_Retrieved
-ComponentDefinition https://synbiohub.org/user/testuser/Tester_1/cas9m_BFP_gRNA_b/1.0 not found in RepressionModel.xml_Retrieved
-ComponentDefinition https://synbiohub.org/user/testuser/Tester_1/mKate/1.0 not found in RepressionModel.xml_Retrieved
-ComponentDefinition https://synbiohub.org/user/testuser/Tester_1/EYFP_gene/1.0 not found in RepressionModel.xml_Retrieved
-ComponentDefinition https://synbiohub.org/user/testuser/Tester_1/cas9_generic/1.0 not found in RepressionModel.xml_Retrieved
-ComponentDefinition https://synbiohub.org/user/testuser/Tester_1/target_gene/1.0 not found in RepressionModel.xml_Retrieved
-ComponentDefinition https://synbiohub.org/user/testuser/Tester_1/gRNA_b_gene/1.0 not found in RepressionModel.xml_Retrieved
-ComponentDefinition https://synbiohub.org/user/testuser/Tester_1/gRNA_b_terminator/1.0 not found in RepressionModel.xml_Retrieved
-ComponentDefinition https://synbiohub.org/user/testuser/Tester_1/gRNA_b/1.0 not found in RepressionModel.xml_Retrieved
-ComponentDefinition https://synbiohub.org/user/testuser/Tester_1/CRP_b/1.0 not found in RepressionModel.xml_Retrieved
-ComponentDefinition https://synbiohub.org/user/testuser/Tester_1/Gal4VP16_cds/1.0 not found in RepressionModel.xml_Retrieved
-ComponentDefinition https://synbiohub.org/user/testuser/Tester_1/EYFP_cds/1.0 not found in RepressionModel.xml_Retrieved
-ComponentDefinition https://synbiohub.org/user/testuser/Tester_1/mKate_cds/1.0 not found in RepressionModel.xml_Retrieved
-ComponentDefinition https://synbiohub.org/user/testuser/Tester_1/Gal4VP16/1.0 not found in RepressionModel.xml_Retrieved
-ComponentDefinition https://synbiohub.org/user/testuser/Tester_1/cas9m_BFP/1.0 not found in RepressionModel.xml_Retrieved
-ComponentDefinition https://synbiohub.org/user/testuser/Tester_1/cas9m_BFP_gene/1.0 not found in RepressionModel.xml_Retrieved
-ComponentDefinition https://synbiohub.org/user/testuser/Tester_1/Gal4VP16_gene/1.0 not found in RepressionModel.xml_Retrieved
-ComponentDefinition https://synbiohub.org/user/testuser/Tester_1/mKate_gene/1.0 not found in RepressionModel.xml_Retrieved
-ComponentDefinition https://synbiohub.org/user/testuser/Tester_1/pConst/1.0 not found in RepressionModel.xml_Retrieved
-ComponentDefinition https://synbiohub.org/user/testuser/Tester_1/target/1.0 not found in RepressionModel.xml_Retrieved
-ComponentDefinition https://synbiohub.org/user/testuser/Tester_1/cas9_gRNA_complex/1.0 not found in RepressionModel.xml_Retrieved
-ComponentDefinition https://synbiohub.org/user/testuser/Tester_1/cas9m_BFP_cds/1.0 not found in RepressionModel.xml_Retrieved
-Sequence https://synbiohub.org/user/testuser/Tester_1/CRa_U6_seq/1.0 not found in RepressionModel.xml_Retrieved
-Sequence https://synbiohub.org/user/testuser/Tester_1/CRP_b_seq/1.0 not found in RepressionModel.xml_Retrieved
-Sequence https://synbiohub.org/user/testuser/Tester_1/mKate_seq/1.0 not found in RepressionModel.xml_Retrieved
-Sequence https://synbiohub.org/user/testuser/Tester_1/gRNA_b_seq/1.0 not found in RepressionModel.xml_Retrieved
-ModuleDefinition https://synbiohub.org/user/testuser/Tester_1/CRISPR_Template/1.0 not found in RepressionModel.xml_Retrieved
-ModuleDefinition https://synbiohub.org/user/testuser/Tester_1/CRPb_characterization_Circuit/1.0 not found in RepressionModel.xml_Retrieved
-Fail
+Success

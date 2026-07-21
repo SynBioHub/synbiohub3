@@ -1,15 +1,15 @@
 <?xml version="1.0" ?>
-<rdf:RDF xmlns:synbiohub="http://synbiohub.org#" xmlns:xsd="http://www.w3.org/2001/XMLSchema#dateTime/" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:sybio="http://www.sybio.ncl.ac.uk#" xmlns:ncbi="http://www.ncbi.nlm.nih.gov#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:igem="http://wiki.synbiohub.org/wiki/Terms/igem#" xmlns:sbh="http://wiki.synbiohub.org/wiki/Terms/synbiohub#" xmlns:sbol="http://sbols.org/v2#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:gbconv="http://sbols.org/genBankConversion#" xmlns:genbank="http://www.ncbi.nlm.nih.gov/genbank#" xmlns:prov="http://www.w3.org/ns/prov#" xmlns:obo="http://purl.obolibrary.org/obo/" xmlns:om="http://www.ontology-of-units-of-measure.org/resource/om-2/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+<rdf:RDF xmlns:ns2="http://purl.org/dc/terms/" xmlns:j.1="http://purl.obolibrary.org/obo/" xmlns:j.0="http://sbols.org/genBankConversion#" xmlns:ns1="http://sbols.org/v2#" xmlns:ns4="https://synbiohub.org/user/" xmlns:j.2="http://www.ncbi.nlm.nih.gov/genbank#" xmlns:ns3="http://wiki.synbiohub.org/wiki/Terms/synbiohub#" xmlns:ns6="https://synbiohub.org/user/testuser/Tester_1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:sbol="http://sbols.org/v2#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:prov="http://www.w3.org/ns/prov#" xmlns:om="http://www.ontology-of-units-of-measure.org/resource/om-2/" xmlns:dc="http://purl.org/dc/elements/1.1/">
   <sbol:Collection rdf:about="https://synbiohub.org/user/testuser/Tester_1/Tester_1_collection/1">
     <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Tester_1_collection"/>
     <sbol:displayId>Tester_1_collection</sbol:displayId>
     <sbol:version>1</sbol:version>
     <dcterms:title>Round_Trip_Tester</dcterms:title>
     <dcterms:description>This is a simple roundtrip test</dcterms:description>
-    <dcterms:created>2026-07-21T00:31:42.121122240Z</dcterms:created>
     <dc:creator>Test User</dc:creator>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Tester_1_collection/1"/>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <ns2:created>2026-07-21T22:17:27.400227842Z</ns2:created>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Tester_1_collection/1"/>
     <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/EF587312/1"/>
     <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/EF587312_seq/1"/>
   </sbol:Collection>
@@ -18,19 +18,36 @@
     <sbol:displayId>EF587312</sbol:displayId>
     <sbol:version>1</sbol:version>
     <dcterms:description>Yeast expression vector pNIA-Cb, complete sequence.</dcterms:description>
-    <genbank:keywords>.</genbank:keywords>
-    <genbank:reference rdf:resource="https://synbiohub.org/user/testuser/Tester_1/EF587312_reference0/1"/>
-    <genbank:date>07-DEC-2007</genbank:date>
-    <genbank:division>SYN</genbank:division>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-    <genbank:locus>EF587312</genbank:locus>
-    <obo:OBI_0001617>17704231</obo:OBI_0001617>
-    <genbank:region>complement(1379..2083)</genbank:region>
-    <genbank:source>Yeast expression vector pNIA-Cb</genbank:source>
-    <genbank:reference rdf:resource="https://synbiohub.org/user/testuser/Tester_1/EF587312_reference1/1"/>
-    <genbank:molecule>DNA</genbank:molecule>
-    <genbank:organism>Yeast expression vector pNIA-Cb other sequences; artificial sequences; vectors.</genbank:organism>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/EF587312/1"/>
+    <j.2:keywords>.</j.2:keywords>
+    <j.2:reference>
+      <j.2:Reference rdf:about="https://synbiohub.org/user/testuser/Tester_1/EF587312_reference0/1">
+        <j.2:authors>Zaltsman,A., Yi,B.Y., Krichevsky,A., Gafni,Y. and Citovsky,V.</j.2:authors>
+        <j.2:title>Yeast-plant coupled vector system for identification of nuclear proteins</j.2:title>
+        <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/EF587312/1"/>
+        <j.2:journal>Plant Physiol. 145 (4), 1264-1271 (2007)</j.2:journal>
+        <j.2:label>1  (bases 1 to 705)</j.2:label>
+        <j.2:pubmed>17704231</j.2:pubmed>
+      </j.2:Reference>
+    </j.2:reference>
+    <j.2:date>07-DEC-2007</j.2:date>
+    <j.2:division>SYN</j.2:division>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <j.2:locus>EF587312</j.2:locus>
+    <j.1:OBI_0001617>17704231</j.1:OBI_0001617>
+    <j.2:region>complement(1379..2083)</j.2:region>
+    <j.2:source>Yeast expression vector pNIA-Cb</j.2:source>
+    <j.2:reference>
+      <j.2:Reference rdf:about="https://synbiohub.org/user/testuser/Tester_1/EF587312_reference1/1">
+        <j.2:title>Direct Submission</j.2:title>
+        <j.2:journal>Submitted (27-APR-2007) Biochemistry and Cell Bio, State University of New York, Stony Brook, NY 11777, USA</j.2:journal>
+        <j.2:label>2  (bases 1 to 705)</j.2:label>
+        <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/EF587312/1"/>
+        <j.2:authors>Zaltsman,A.A. and Citovsky,V.</j.2:authors>
+      </j.2:Reference>
+    </j.2:reference>
+    <j.2:molecule>DNA</j.2:molecule>
+    <j.2:organism>Yeast expression vector pNIA-Cb other sequences; artificial sequences; vectors.</j.2:organism>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/EF587312/1"/>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000804"/>
@@ -40,21 +57,21 @@
         <sbol:displayId>annotation1</sbol:displayId>
         <sbol:version>1</sbol:version>
         <dcterms:title>TRP1</dcterms:title>
-        <gbconv:product>TRP1</gbconv:product>
-        <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/EF587312/1"/>
-        <gbconv:codon_start>1</gbconv:codon_start>
-        <gbconv:translation>MIKHTKAAWSMSVINFTGSSGPLVKVCGLQSTEAAECALDSDADLLGIICVPNRKRTIDPVIARKISSLVKAYKNSSGTPKYLVGVFRNQPKEDVLALVNDYGIDIVQLHGDESWQEYQEFLGLPVIKRLVFPKDCNILLSAASQKPHSFIPLFDSEAGGTGELLDWNSISDWVGRQESPESLHFMLAGGLTPENVGDALRLNGVIGVDVSGGVETNGVKDSNKIANFVKNAKK</gbconv:translation>
-        <gbconv:protein_id>ABQ43169.1</gbconv:protein_id>
-        <gbconv:transl_table>11</gbconv:transl_table>
-        <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+        <j.0:product>TRP1</j.0:product>
+        <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/EF587312/1"/>
+        <j.0:codon_start>1</j.0:codon_start>
+        <j.0:translation>MIKHTKAAWSMSVINFTGSSGPLVKVCGLQSTEAAECALDSDADLLGIICVPNRKRTIDPVIARKISSLVKAYKNSSGTPKYLVGVFRNQPKEDVLALVNDYGIDIVQLHGDESWQEYQEFLGLPVIKRLVFPKDCNILLSAASQKPHSFIPLFDSEAGGTGELLDWNSISDWVGRQESPESLHFMLAGGLTPENVGDALRLNGVIGVDVSGGVETNGVKDSNKIANFVKNAKK</j.0:translation>
+        <j.0:protein_id>ABQ43169.1</j.0:protein_id>
+        <j.0:transl_table>11</j.0:transl_table>
+        <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
         <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
         <sbol:location>
           <sbol:Range rdf:about="https://synbiohub.org/user/testuser/Tester_1/EF587312/annotation1/range/1">
             <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/EF587312/annotation1/range"/>
             <sbol:displayId>range</sbol:displayId>
             <sbol:version>1</sbol:version>
-            <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/EF587312/1"/>
-            <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+            <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+            <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/EF587312/1"/>
             <sbol:start>1</sbol:start>
             <sbol:end>705</sbol:end>
             <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
@@ -68,19 +85,19 @@
         <sbol:displayId>annotation0</sbol:displayId>
         <sbol:version>1</sbol:version>
         <dcterms:title>Yeast expression vector pNIA-Cb</dcterms:title>
-        <gbconv:db_xref>taxon:443237</gbconv:db_xref>
-        <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/EF587312/1"/>
-        <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-        <gbconv:organism>Yeast expression vector pNIA-Cb</gbconv:organism>
-        <gbconv:mol_type>other DNA</gbconv:mol_type>
+        <j.0:db_xref>taxon:443237</j.0:db_xref>
+        <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/EF587312/1"/>
+        <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+        <j.0:organism>Yeast expression vector pNIA-Cb</j.0:organism>
+        <j.0:mol_type>other DNA</j.0:mol_type>
         <sbol:role rdf:resource="http://identifiers.org/so/SO:0002206"/>
         <sbol:location>
           <sbol:Range rdf:about="https://synbiohub.org/user/testuser/Tester_1/EF587312/annotation0/range/1">
             <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/EF587312/annotation0/range"/>
             <sbol:displayId>range</sbol:displayId>
             <sbol:version>1</sbol:version>
-            <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/EF587312/1"/>
-            <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+            <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+            <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/EF587312/1"/>
             <sbol:start>1</sbol:start>
             <sbol:end>705</sbol:end>
             <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
@@ -94,24 +111,9 @@
     <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/EF587312_seq"/>
     <sbol:displayId>EF587312_seq</sbol:displayId>
     <sbol:version>1</sbol:version>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/EF587312_seq/1"/>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/EF587312_seq/1"/>
     <sbol:elements>gtgattaagcacacaaaggcagcttggagtatgtctgttattaatttcacaggtagttctggtccattggtgaaagtttgcggcttgcagagcacagaggccgcagaatgtgctctagattccgatgctgacttgctgggtattatatgtgtgcccaatagaaagagaacaattgacccggttattgcaaggaaaatttcaagtcttgtaaaagcatataaaaatagttcaggcactccgaaatacttggttggcgtgtttcgtaatcaacctaaggaggatgttttggctctggtcaatgattacggcattgatatcgtccaactgcatggagatgagtcgtggcaagaataccaagagttcctcggtttgccagttattaaaagactcgtatttccaaaagactgcaacatactactcagtgcagcttcacagaaacctcattcgtttattcccttgtttgattcagaagcaggtgggacaggtgaacttttggattggaactcgatttctgactgggttggaaggcaagagagccccgaaagcttacattttatgttagctggtggactgacgccagaaaatgttggtgatgcgcttagattaaatggcgttattggtgttgatgtaagcggaggtgtggagacaaatggtgtaaaagactctaacaaaatagcaaatttcgtcaaaaatgctaagaaatag</sbol:elements>
     <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
   </sbol:Sequence>
-  <genbank:Reference rdf:about="https://synbiohub.org/user/testuser/Tester_1/EF587312_reference1/1">
-    <genbank:label>2  (bases 1 to 705)</genbank:label>
-    <genbank:journal>Submitted (27-APR-2007) Biochemistry and Cell Bio, State University of New York, Stony Brook, NY 11777, USA</genbank:journal>
-    <genbank:title>Direct Submission</genbank:title>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/EF587312/1"/>
-    <genbank:authors>Zaltsman,A.A. and Citovsky,V.</genbank:authors>
-  </genbank:Reference>
-  <genbank:Reference rdf:about="https://synbiohub.org/user/testuser/Tester_1/EF587312_reference0/1">
-    <genbank:label>1  (bases 1 to 705)</genbank:label>
-    <genbank:authors>Zaltsman,A., Yi,B.Y., Krichevsky,A., Gafni,Y. and Citovsky,V.</genbank:authors>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/EF587312/1"/>
-    <genbank:journal>Plant Physiol. 145 (4), 1264-1271 (2007)</genbank:journal>
-    <genbank:title>Yeast-plant coupled vector system for identification of nuclear proteins</genbank:title>
-    <genbank:pubmed>17704231</genbank:pubmed>
-  </genbank:Reference>
 </rdf:RDF>

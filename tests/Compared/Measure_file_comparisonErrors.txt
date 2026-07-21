@@ -1,5 +1,3 @@
 
 1
-ComponentDefinition https://synbiohub.org/user/testuser/Tester_1/cd/1 not found in Measure.xml_Retrieved
-ModuleDefinition https://synbiohub.org/user/testuser/Tester_1/md/1 not found in Measure.xml_Retrieved
-Fail
+Success

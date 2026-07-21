@@ -1,20 +1,3 @@
-SBH Emulator failed to initalizeorg.synbiohub.frontend.SynBioHubException: 413 
 
-org.synbiohub.frontend.SynBioHubException: org.synbiohub.frontend.SynBioHubException: 413 
-	at org.synbiohub.frontend.SynBioHubFrontend.submit(SynBioHubFrontend.java:3479)
-	at org.synbiohub.frontend.SynBioHubFrontend.createCollection(SynBioHubFrontend.java:3364)
-	at sb_rdtrip_tester.SynBioHubEmulator.<init>(SynBioHubEmulator.java:86)
-	at sb_rdtrip_tester.SynBioHubRunner.main(SynBioHubRunner.java:37)
-Caused by: org.synbiohub.frontend.SynBioHubException: 413 
-	at org.synbiohub.frontend.SynBioHubFrontend.checkResponseCode(SynBioHubFrontend.java:3710)
-	at org.synbiohub.frontend.SynBioHubFrontend.submit(SynBioHubFrontend.java:3474)
-	... 3 more
-
-java.io.FileNotFoundException: Emulated/labhost_All_emulated.xml (No such file or directory)
-	at java.base/java.io.FileInputStream.open0(Native Method)
-	at java.base/java.io.FileInputStream.open(FileInputStream.java:216)
-	at java.base/java.io.FileInputStream.<init>(FileInputStream.java:157)
-	at org.sbolstandard.core2.SBOLReader.read(SBOLReader.java:517)
-	at org.sbolstandard.core2.SBOLReader.read(SBOLReader.java:499)
-	at org.sboltestrunner.SBOLTestRunner.main(SBOLTestRunner.java:146)
-Fail
+1
+Success

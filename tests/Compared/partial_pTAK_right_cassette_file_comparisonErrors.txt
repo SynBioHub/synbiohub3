@@ -1,14 +1,3 @@
 
 1
-ComponentDefinition https://synbiohub.org/user/testuser/Tester_1/Reporter/1 not found in partial_pTAK_right_cassette.xml_Retrieved
-ComponentDefinition https://synbiohub.org/user/testuser/Tester_1/BBa_R0010/1 not found in partial_pTAK_right_cassette.xml_Retrieved
-ComponentDefinition https://synbiohub.org/user/testuser/Tester_1/Repressor1/1 not found in partial_pTAK_right_cassette.xml_Retrieved
-ComponentDefinition https://synbiohub.org/user/testuser/Tester_1/BBa_C0051/1 not found in partial_pTAK_right_cassette.xml_Retrieved
-ComponentDefinition https://synbiohub.org/user/testuser/Tester_1/rbsB/1 not found in partial_pTAK_right_cassette.xml_Retrieved
-ComponentDefinition https://synbiohub.org/user/testuser/Tester_1/Terminator/1 not found in partial_pTAK_right_cassette.xml_Retrieved
-ComponentDefinition https://synbiohub.org/user/testuser/Tester_1/BBa_E0040/1 not found in partial_pTAK_right_cassette.xml_Retrieved
-ComponentDefinition https://synbiohub.org/user/testuser/Tester_1/pTAKRightCasette/1 not found in partial_pTAK_right_cassette.xml_Retrieved
-Sequence https://synbiohub.org/user/testuser/Tester_1/partseq_185/1 not found in partial_pTAK_right_cassette.xml_Retrieved
-Sequence https://synbiohub.org/user/testuser/Tester_1/partseq_156/1 not found in partial_pTAK_right_cassette.xml_Retrieved
-Sequence https://synbiohub.org/user/testuser/Tester_1/_0a9f5ec9_e70e_4ed1_93b1_50d4b8b1a36c/1 not found in partial_pTAK_right_cassette.xml_Retrieved
-Fail
+Success

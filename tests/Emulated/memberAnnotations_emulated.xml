@@ -10,7 +10,7 @@
     <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
     <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Tester_1_collection/1"/>
     <rdf:type rdf:resource="http://sbols.org/v2#Collection"/>
-    <dcterms:created>2026-07-21T00:28:13.006014902Z</dcterms:created>
+    <dcterms:created>2026-07-21T22:15:25.639886442Z</dcterms:created>
     <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/someCompDefCDS/1.0"/>
     <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/someModuleDefSub/1.0"/>
     <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/someModel/1.0"/>

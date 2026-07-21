@@ -1,5 +1,5 @@
 <?xml version="1.0" ?>
-<rdf:RDF xmlns:synbiohub="http://synbiohub.org#" xmlns:xsd="http://www.w3.org/2001/XMLSchema#dateTime/" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:sybio="http://www.sybio.ncl.ac.uk#" xmlns:ncbi="http://www.ncbi.nlm.nih.gov#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:igem="http://wiki.synbiohub.org/wiki/Terms/igem#" xmlns:sbh="http://wiki.synbiohub.org/wiki/Terms/synbiohub#" xmlns:sbol="http://sbols.org/v2#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:gbconv="http://sbols.org/genBankConversion#" xmlns:genbank="http://www.ncbi.nlm.nih.gov/genbank#" xmlns:prov="http://www.w3.org/ns/prov#" xmlns:obo="http://purl.obolibrary.org/obo/" xmlns:om="http://www.ontology-of-units-of-measure.org/resource/om-2/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+<rdf:RDF xmlns:ns2="http://purl.org/dc/terms/" xmlns:j.1="http://purl.obolibrary.org/obo/" xmlns:j.0="http://sbols.org/genBankConversion#" xmlns:ns1="http://sbols.org/v2#" xmlns:ns4="https://synbiohub.org/user/" xmlns:j.2="http://www.ncbi.nlm.nih.gov/genbank#" xmlns:ns3="http://wiki.synbiohub.org/wiki/Terms/synbiohub#" xmlns:ns6="https://synbiohub.org/user/testuser/Tester_1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:sbol="http://sbols.org/v2#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:prov="http://www.w3.org/ns/prov#" xmlns:om="http://www.ontology-of-units-of-measure.org/resource/om-2/" xmlns:dc="http://purl.org/dc/elements/1.1/">
   <sbol:Collection rdf:about="https://synbiohub.org/user/testuser/Tester_1/Tester_1_collection/1">
     <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Tester_1_collection"/>
     <sbol:displayId>Tester_1_collection</sbol:displayId>
@@ -7,9 +7,9 @@
     <dcterms:title>Round_Trip_Tester</dcterms:title>
     <dcterms:description>This is a simple roundtrip test</dcterms:description>
     <dc:creator>Test User</dc:creator>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-    <dcterms:created>2026-07-20T21:24:40.849773366Z</dcterms:created>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Tester_1_collection/1"/>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <ns2:created>2026-07-21T22:09:23.562515007Z</ns2:created>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Tester_1_collection/1"/>
     <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/U49845_seq/1"/>
     <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/U49845/1"/>
   </sbol:Collection>
@@ -18,36 +18,36 @@
     <sbol:displayId>U49845</sbol:displayId>
     <sbol:version>1</sbol:version>
     <dcterms:description>Saccharomyces cerevisiae TCP1-beta gene, partial cds; and Axl2p (AXL2) and Rev7p (REV7) genes, complete cds.</dcterms:description>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/U49845/1"/>
-    <genbank:reference>
-      <genbank:Reference rdf:about="https://synbiohub.org/user/testuser/Tester_1/U49845_reference1/1">
-        <genbank:authors>Roemer,T.</genbank:authors>
-        <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/U49845/1"/>
-        <genbank:title>Direct Submission</genbank:title>
-        <genbank:label>2  (bases 1 to 5028)</genbank:label>
-        <genbank:journal>Submitted (22-FEB-1996) Biology, Yale University, New Haven, CT 06520, USA</genbank:journal>
-      </genbank:Reference>
-    </genbank:reference>
-    <genbank:GInumber>GI:1293613</genbank:GInumber>
-    <genbank:date>23-MAR-2010</genbank:date>
-    <genbank:source>Saccharomyces cerevisiae (baker's yeast)</genbank:source>
-    <genbank:reference>
-      <genbank:Reference rdf:about="https://synbiohub.org/user/testuser/Tester_1/U49845_reference0/1">
-        <genbank:label>1  (bases 1 to 5028)</genbank:label>
-        <genbank:journal>Genes Dev. 10 (7), 777-793 (1996)</genbank:journal>
-        <genbank:pubmed>8846915</genbank:pubmed>
-        <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/U49845/1"/>
-        <genbank:authors>Roemer,T., Madden,K., Chang,J. and Snyder,M.</genbank:authors>
-        <genbank:title>Selection of axial growth sites in yeast requires Axl2p, a novel plasma membrane glycoprotein</genbank:title>
-      </genbank:Reference>
-    </genbank:reference>
-    <genbank:locus>SCU49845</genbank:locus>
-    <genbank:molecule>DNA</genbank:molecule>
-    <genbank:keywords>.</genbank:keywords>
-    <genbank:division>PLN</genbank:division>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-    <obo:OBI_0001617>8846915</obo:OBI_0001617>
-    <genbank:organism>Saccharomyces cerevisiae Eukaryota; Fungi; Dikarya; Ascomycota; Saccharomycotina; Saccharomycetes; Saccharomycetales; Saccharomycetaceae; Saccharomyces.</genbank:organism>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/U49845/1"/>
+    <j.2:reference>
+      <j.2:Reference rdf:about="https://synbiohub.org/user/testuser/Tester_1/U49845_reference1/1">
+        <j.2:authors>Roemer,T.</j.2:authors>
+        <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/U49845/1"/>
+        <j.2:title>Direct Submission</j.2:title>
+        <j.2:label>2  (bases 1 to 5028)</j.2:label>
+        <j.2:journal>Submitted (22-FEB-1996) Biology, Yale University, New Haven, CT 06520, USA</j.2:journal>
+      </j.2:Reference>
+    </j.2:reference>
+    <j.2:GInumber>GI:1293613</j.2:GInumber>
+    <j.2:date>23-MAR-2010</j.2:date>
+    <j.2:source>Saccharomyces cerevisiae (baker's yeast)</j.2:source>
+    <j.2:reference>
+      <j.2:Reference rdf:about="https://synbiohub.org/user/testuser/Tester_1/U49845_reference0/1">
+        <j.2:pubmed>8846915</j.2:pubmed>
+        <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/U49845/1"/>
+        <j.2:journal>Genes Dev. 10 (7), 777-793 (1996)</j.2:journal>
+        <j.2:authors>Roemer,T., Madden,K., Chang,J. and Snyder,M.</j.2:authors>
+        <j.2:label>1  (bases 1 to 5028)</j.2:label>
+        <j.2:title>Selection of axial growth sites in yeast requires Axl2p, a novel plasma membrane glycoprotein</j.2:title>
+      </j.2:Reference>
+    </j.2:reference>
+    <j.2:locus>SCU49845</j.2:locus>
+    <j.2:molecule>DNA</j.2:molecule>
+    <j.2:keywords>.</j.2:keywords>
+    <j.2:division>PLN</j.2:division>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <j.1:OBI_0001617>8846915</j.1:OBI_0001617>
+    <j.2:organism>Saccharomyces cerevisiae Eukaryota; Fungi; Dikarya; Ascomycota; Saccharomycotina; Saccharomycetes; Saccharomycetales; Saccharomycetaceae; Saccharomyces.</j.2:organism>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000804"/>
@@ -57,23 +57,52 @@
         <sbol:displayId>annotation0</sbol:displayId>
         <sbol:version>1</sbol:version>
         <dcterms:title>Saccharomyces cerevisiae</dcterms:title>
-        <gbconv:organism>Saccharomyces cerevisiae</gbconv:organism>
-        <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/U49845/1"/>
-        <gbconv:mol_type>genomic DNA</gbconv:mol_type>
-        <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-        <gbconv:chromosome>IX</gbconv:chromosome>
-        <gbconv:db_xref>taxon:4932</gbconv:db_xref>
+        <j.0:organism>Saccharomyces cerevisiae</j.0:organism>
+        <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/U49845/1"/>
+        <j.0:mol_type>genomic DNA</j.0:mol_type>
+        <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+        <j.0:chromosome>IX</j.0:chromosome>
+        <j.0:db_xref>taxon:4932</j.0:db_xref>
         <sbol:role rdf:resource="http://identifiers.org/so/SO:0002206"/>
         <sbol:location>
           <sbol:Range rdf:about="https://synbiohub.org/user/testuser/Tester_1/U49845/annotation0/range/1">
             <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/U49845/annotation0/range"/>
             <sbol:displayId>range</sbol:displayId>
             <sbol:version>1</sbol:version>
-            <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-            <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/U49845/1"/>
+            <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/U49845/1"/>
+            <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
             <sbol:start>1</sbol:start>
             <sbol:end>5028</sbol:end>
             <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
+          </sbol:Range>
+        </sbol:location>
+      </sbol:SequenceAnnotation>
+    </sbol:sequenceAnnotation>
+    <sbol:sequenceAnnotation>
+      <sbol:SequenceAnnotation rdf:about="https://synbiohub.org/user/testuser/Tester_1/U49845/annotation8/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/U49845/annotation8"/>
+        <sbol:displayId>annotation8</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <dcterms:title>Rev7p</dcterms:title>
+        <j.0:codon_start>1</j.0:codon_start>
+        <j.0:translation>MNRWVEKWLRVYLKCYINLILFYRNVYPPQSFDYTTYQSFNLPQFVPINRHPALIDYIEELILDVLSKLTHVYRFSICIINKKNDLCIEKYVLDFSELQHVDKDDQIITETEVFDEFRSSLNSLIMHLEKLPKVNDDTITFEAVINAIELELGHKLDRNRRVDSLEEKAEIERDSNWVKCQEDENLPDNNGFQPPKIKLTSLVGSDVGPLIIHQFSEKLISGDDKILNGVYSQYEEGESIFGSLF</j.0:translation>
+        <j.0:protein_id>AAA98667.1</j.0:protein_id>
+        <j.0:db_xref>GI:1293616</j.0:db_xref>
+        <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+        <j.0:gene>REV7</j.0:gene>
+        <j.0:product>Rev7p</j.0:product>
+        <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/U49845/1"/>
+        <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+        <sbol:location>
+          <sbol:Range rdf:about="https://synbiohub.org/user/testuser/Tester_1/U49845/annotation8/range/1">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/U49845/annotation8/range"/>
+            <sbol:displayId>range</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/U49845/1"/>
+            <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+            <sbol:start>3300</sbol:start>
+            <sbol:end>4037</sbol:end>
+            <sbol:orientation rdf:resource="http://sbols.org/v2#reverseComplement"/>
           </sbol:Range>
         </sbol:location>
       </sbol:SequenceAnnotation>
@@ -84,20 +113,20 @@
         <sbol:displayId>annotation7</sbol:displayId>
         <sbol:version>1</sbol:version>
         <dcterms:title>Rev7p</dcterms:title>
-        <gbconv:gene>REV7</gbconv:gene>
-        <gbconv:product>Rev7p</gbconv:product>
-        <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/U49845/1"/>
-        <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+        <j.0:gene>REV7</j.0:gene>
+        <j.0:product>Rev7p</j.0:product>
+        <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/U49845/1"/>
+        <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
         <sbol:role rdf:resource="http://identifiers.org/so/SO:0000234"/>
         <sbol:location>
           <sbol:Range rdf:about="https://synbiohub.org/user/testuser/Tester_1/U49845/annotation7/range/1">
             <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/U49845/annotation7/range"/>
             <sbol:displayId>range</sbol:displayId>
             <sbol:version>1</sbol:version>
-            <gbconv:startLessThan>true</gbconv:startLessThan>
-            <gbconv:endGreaterThan>true</gbconv:endGreaterThan>
-            <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-            <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/U49845/1"/>
+            <j.0:startLessThan>true</j.0:startLessThan>
+            <j.0:endGreaterThan>true</j.0:endGreaterThan>
+            <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+            <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/U49845/1"/>
             <sbol:start>3300</sbol:start>
             <sbol:end>4037</sbol:end>
             <sbol:orientation rdf:resource="http://sbols.org/v2#reverseComplement"/>
@@ -111,19 +140,19 @@
         <sbol:displayId>annotation6</sbol:displayId>
         <sbol:version>1</sbol:version>
         <dcterms:title>REV7</dcterms:title>
-        <gbconv:gene>REV7</gbconv:gene>
-        <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-        <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/U49845/1"/>
+        <j.0:gene>REV7</j.0:gene>
+        <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+        <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/U49845/1"/>
         <sbol:role rdf:resource="http://identifiers.org/so/SO:0000704"/>
         <sbol:location>
           <sbol:Range rdf:about="https://synbiohub.org/user/testuser/Tester_1/U49845/annotation6/range/1">
             <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/U49845/annotation6/range"/>
             <sbol:displayId>range</sbol:displayId>
             <sbol:version>1</sbol:version>
-            <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/U49845/1"/>
-            <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-            <gbconv:startLessThan>true</gbconv:startLessThan>
-            <gbconv:endGreaterThan>true</gbconv:endGreaterThan>
+            <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/U49845/1"/>
+            <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+            <j.0:startLessThan>true</j.0:startLessThan>
+            <j.0:endGreaterThan>true</j.0:endGreaterThan>
             <sbol:start>3300</sbol:start>
             <sbol:end>4037</sbol:end>
             <sbol:orientation rdf:resource="http://sbols.org/v2#reverseComplement"/>
@@ -137,22 +166,22 @@
         <sbol:displayId>annotation2</sbol:displayId>
         <sbol:version>1</sbol:version>
         <dcterms:title>TCP1-beta</dcterms:title>
-        <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-        <gbconv:codon_start>3</gbconv:codon_start>
-        <gbconv:db_xref>GI:1293614</gbconv:db_xref>
-        <gbconv:product>TCP1-beta</gbconv:product>
-        <gbconv:protein_id>AAA98665.1</gbconv:protein_id>
-        <gbconv:translation>SSIYNGISTSGLDLNNGTIADMRQLGIVESYKLKRAVVSSASEAAEVLLRVDNIIRARPRTANRQHM</gbconv:translation>
-        <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/U49845/1"/>
+        <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+        <j.0:codon_start>3</j.0:codon_start>
+        <j.0:db_xref>GI:1293614</j.0:db_xref>
+        <j.0:product>TCP1-beta</j.0:product>
+        <j.0:protein_id>AAA98665.1</j.0:protein_id>
+        <j.0:translation>SSIYNGISTSGLDLNNGTIADMRQLGIVESYKLKRAVVSSASEAAEVLLRVDNIIRARPRTANRQHM</j.0:translation>
+        <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/U49845/1"/>
         <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
         <sbol:location>
           <sbol:Range rdf:about="https://synbiohub.org/user/testuser/Tester_1/U49845/annotation2/range/1">
             <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/U49845/annotation2/range"/>
             <sbol:displayId>range</sbol:displayId>
             <sbol:version>1</sbol:version>
-            <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-            <gbconv:startLessThan>true</gbconv:startLessThan>
-            <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/U49845/1"/>
+            <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+            <j.0:startLessThan>true</j.0:startLessThan>
+            <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/U49845/1"/>
             <sbol:start>1</sbol:start>
             <sbol:end>206</sbol:end>
             <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
@@ -166,19 +195,19 @@
         <sbol:displayId>annotation1</sbol:displayId>
         <sbol:version>1</sbol:version>
         <dcterms:title>TCP1-beta</dcterms:title>
-        <gbconv:product>TCP1-beta</gbconv:product>
-        <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/U49845/1"/>
-        <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+        <j.0:product>TCP1-beta</j.0:product>
+        <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/U49845/1"/>
+        <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
         <sbol:role rdf:resource="http://identifiers.org/so/SO:0000234"/>
         <sbol:location>
           <sbol:Range rdf:about="https://synbiohub.org/user/testuser/Tester_1/U49845/annotation1/range/1">
             <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/U49845/annotation1/range"/>
             <sbol:displayId>range</sbol:displayId>
             <sbol:version>1</sbol:version>
-            <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-            <gbconv:endGreaterThan>true</gbconv:endGreaterThan>
-            <gbconv:startLessThan>true</gbconv:startLessThan>
-            <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/U49845/1"/>
+            <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+            <j.0:endGreaterThan>true</j.0:endGreaterThan>
+            <j.0:startLessThan>true</j.0:startLessThan>
+            <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/U49845/1"/>
             <sbol:start>1</sbol:start>
             <sbol:end>206</sbol:end>
             <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
@@ -192,19 +221,19 @@
         <sbol:displayId>annotation3</sbol:displayId>
         <sbol:version>1</sbol:version>
         <dcterms:title>AXL2</dcterms:title>
-        <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-        <gbconv:gene>AXL2</gbconv:gene>
-        <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/U49845/1"/>
+        <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+        <j.0:gene>AXL2</j.0:gene>
+        <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/U49845/1"/>
         <sbol:role rdf:resource="http://identifiers.org/so/SO:0000704"/>
         <sbol:location>
           <sbol:Range rdf:about="https://synbiohub.org/user/testuser/Tester_1/U49845/annotation3/range/1">
             <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/U49845/annotation3/range"/>
             <sbol:displayId>range</sbol:displayId>
             <sbol:version>1</sbol:version>
-            <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/U49845/1"/>
-            <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-            <gbconv:startLessThan>true</gbconv:startLessThan>
-            <gbconv:endGreaterThan>true</gbconv:endGreaterThan>
+            <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/U49845/1"/>
+            <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+            <j.0:startLessThan>true</j.0:startLessThan>
+            <j.0:endGreaterThan>true</j.0:endGreaterThan>
             <sbol:start>687</sbol:start>
             <sbol:end>3158</sbol:end>
             <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
@@ -218,55 +247,26 @@
         <sbol:displayId>annotation5</sbol:displayId>
         <sbol:version>1</sbol:version>
         <dcterms:title>Axl2p</dcterms:title>
-        <gbconv:codon_start>1</gbconv:codon_start>
-        <gbconv:product>Axl2p</gbconv:product>
-        <gbconv:note>plasma membrane glycoprotein</gbconv:note>
-        <gbconv:translation>MTQLQISLLLTATISLLHLVVATPYEAYPIGKQYPPVARVNESFTFQISNDTYKSSVDKTAQITYNCFDLPSWLSFDSSSRTFSGEPSSDLLSDANTTLYFNVILEGTDSADSTSLNNTYQFVVTNRPSISLSSDFNLLALLKNYGYTNGKNALKLDPNEVFNVTFDRSMFTNEESIVSYYGRSQLYNAPLPNWLFFDSGELKFTGTAPVINSAIAPETSYSFVIIATDIEGFSAVEVEFELVIGAHQLTTSIQNSLIINVTDTGNVSYDLPLNYVYLDDDPISSDKLGSINLLDAPDWVALDNATISGSVPDELLGKNSNPANFSVSIYDTYGDVIYFNFEVVSTTDLFAISSLPNINATRGEWFSYYFLPSQFTDYVNTNVSLEFTNSSQDHDWVKFQSSNLTLAGEVPKNFDKLSLGLKANQGSQSQELYFNIIGMDSKITHSNHSANATSTRSSHHSTSTSSYTSSTYTAKISSTSAAATSSAPAALPAANKTSSHNKKAVAIACGVAIPLGVILVALICFLIFWRRRRENPDDENLPHAISGPDLNNPANKPNQENATPLNNPFDDDASSYDDTSIARRLAALNTLKLDNHSATESDISSVDEKRDSLSGMNTYNDQFQSQSKEELLAKPPVQPPESPFFDPQNRSSSVYMDSEPAVNKSWRYTGNLSPVSDIVRDSYGSQKTVDTEKLFDLEAPEKEKRTSRDVTMSSLDPWNSNISPSPVRKSVTPSPYNVTKHRNRHLQNIQDSQSGKNGITPTTMSTSSSDDFVPVKDGENFCWVHSMEPDRRPSKKRLVDFSNKSNVNVGQVKDIHGRIPEML</gbconv:translation>
-        <gbconv:db_xref>GI:1293615</gbconv:db_xref>
-        <gbconv:protein_id>AAA98666.1</gbconv:protein_id>
-        <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/U49845/1"/>
-        <gbconv:gene>AXL2</gbconv:gene>
-        <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+        <j.0:codon_start>1</j.0:codon_start>
+        <j.0:product>Axl2p</j.0:product>
+        <j.0:note>plasma membrane glycoprotein</j.0:note>
+        <j.0:translation>MTQLQISLLLTATISLLHLVVATPYEAYPIGKQYPPVARVNESFTFQISNDTYKSSVDKTAQITYNCFDLPSWLSFDSSSRTFSGEPSSDLLSDANTTLYFNVILEGTDSADSTSLNNTYQFVVTNRPSISLSSDFNLLALLKNYGYTNGKNALKLDPNEVFNVTFDRSMFTNEESIVSYYGRSQLYNAPLPNWLFFDSGELKFTGTAPVINSAIAPETSYSFVIIATDIEGFSAVEVEFELVIGAHQLTTSIQNSLIINVTDTGNVSYDLPLNYVYLDDDPISSDKLGSINLLDAPDWVALDNATISGSVPDELLGKNSNPANFSVSIYDTYGDVIYFNFEVVSTTDLFAISSLPNINATRGEWFSYYFLPSQFTDYVNTNVSLEFTNSSQDHDWVKFQSSNLTLAGEVPKNFDKLSLGLKANQGSQSQELYFNIIGMDSKITHSNHSANATSTRSSHHSTSTSSYTSSTYTAKISSTSAAATSSAPAALPAANKTSSHNKKAVAIACGVAIPLGVILVALICFLIFWRRRRENPDDENLPHAISGPDLNNPANKPNQENATPLNNPFDDDASSYDDTSIARRLAALNTLKLDNHSATESDISSVDEKRDSLSGMNTYNDQFQSQSKEELLAKPPVQPPESPFFDPQNRSSSVYMDSEPAVNKSWRYTGNLSPVSDIVRDSYGSQKTVDTEKLFDLEAPEKEKRTSRDVTMSSLDPWNSNISPSPVRKSVTPSPYNVTKHRNRHLQNIQDSQSGKNGITPTTMSTSSSDDFVPVKDGENFCWVHSMEPDRRPSKKRLVDFSNKSNVNVGQVKDIHGRIPEML</j.0:translation>
+        <j.0:db_xref>GI:1293615</j.0:db_xref>
+        <j.0:protein_id>AAA98666.1</j.0:protein_id>
+        <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/U49845/1"/>
+        <j.0:gene>AXL2</j.0:gene>
+        <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
         <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
         <sbol:location>
           <sbol:Range rdf:about="https://synbiohub.org/user/testuser/Tester_1/U49845/annotation5/range/1">
             <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/U49845/annotation5/range"/>
             <sbol:displayId>range</sbol:displayId>
             <sbol:version>1</sbol:version>
-            <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/U49845/1"/>
-            <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+            <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/U49845/1"/>
+            <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
             <sbol:start>687</sbol:start>
             <sbol:end>3158</sbol:end>
             <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
-          </sbol:Range>
-        </sbol:location>
-      </sbol:SequenceAnnotation>
-    </sbol:sequenceAnnotation>
-    <sbol:sequenceAnnotation>
-      <sbol:SequenceAnnotation rdf:about="https://synbiohub.org/user/testuser/Tester_1/U49845/annotation8/1">
-        <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/U49845/annotation8"/>
-        <sbol:displayId>annotation8</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <dcterms:title>Rev7p</dcterms:title>
-        <gbconv:codon_start>1</gbconv:codon_start>
-        <gbconv:translation>MNRWVEKWLRVYLKCYINLILFYRNVYPPQSFDYTTYQSFNLPQFVPINRHPALIDYIEELILDVLSKLTHVYRFSICIINKKNDLCIEKYVLDFSELQHVDKDDQIITETEVFDEFRSSLNSLIMHLEKLPKVNDDTITFEAVINAIELELGHKLDRNRRVDSLEEKAEIERDSNWVKCQEDENLPDNNGFQPPKIKLTSLVGSDVGPLIIHQFSEKLISGDDKILNGVYSQYEEGESIFGSLF</gbconv:translation>
-        <gbconv:protein_id>AAA98667.1</gbconv:protein_id>
-        <gbconv:db_xref>GI:1293616</gbconv:db_xref>
-        <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-        <gbconv:gene>REV7</gbconv:gene>
-        <gbconv:product>Rev7p</gbconv:product>
-        <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/U49845/1"/>
-        <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
-        <sbol:location>
-          <sbol:Range rdf:about="https://synbiohub.org/user/testuser/Tester_1/U49845/annotation8/range/1">
-            <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/U49845/annotation8/range"/>
-            <sbol:displayId>range</sbol:displayId>
-            <sbol:version>1</sbol:version>
-            <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-            <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/U49845/1"/>
-            <sbol:start>3300</sbol:start>
-            <sbol:end>4037</sbol:end>
-            <sbol:orientation rdf:resource="http://sbols.org/v2#reverseComplement"/>
           </sbol:Range>
         </sbol:location>
       </sbol:SequenceAnnotation>
@@ -277,20 +277,20 @@
         <sbol:displayId>annotation4</sbol:displayId>
         <sbol:version>1</sbol:version>
         <dcterms:title>Axl2p</dcterms:title>
-        <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/U49845/1"/>
-        <gbconv:gene>AXL2</gbconv:gene>
-        <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-        <gbconv:product>Axl2p</gbconv:product>
+        <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/U49845/1"/>
+        <j.0:gene>AXL2</j.0:gene>
+        <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+        <j.0:product>Axl2p</j.0:product>
         <sbol:role rdf:resource="http://identifiers.org/so/SO:0000234"/>
         <sbol:location>
           <sbol:Range rdf:about="https://synbiohub.org/user/testuser/Tester_1/U49845/annotation4/range/1">
             <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/U49845/annotation4/range"/>
             <sbol:displayId>range</sbol:displayId>
             <sbol:version>1</sbol:version>
-            <gbconv:endGreaterThan>true</gbconv:endGreaterThan>
-            <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-            <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/U49845/1"/>
-            <gbconv:startLessThan>true</gbconv:startLessThan>
+            <j.0:endGreaterThan>true</j.0:endGreaterThan>
+            <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+            <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/U49845/1"/>
+            <j.0:startLessThan>true</j.0:startLessThan>
             <sbol:start>687</sbol:start>
             <sbol:end>3158</sbol:end>
             <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
@@ -304,8 +304,8 @@
     <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/U49845_seq"/>
     <sbol:displayId>U49845_seq</sbol:displayId>
     <sbol:version>1</sbol:version>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/U49845_seq/1"/>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/U49845_seq/1"/>
     <sbol:elements>gatcctccatatacaacggtatctccacctcaggtttagatctcaacaacggaaccattgccgacatgagacagttaggtatcgtcgagagttacaagctaaaacgagcagtagtcagctctgcatctgaagccgctgaagttctactaagggtggataacatcatccgtgcaagaccaagaaccgccaatagacaacatatgtaacatatttaggatatacctcgaaaataataaaccgccacactgtcattattataattagaaacagaacgcaaaaattatccactatataattcaaagacgcgaaaaaaaaagaacaacgcgtcatagaacttttggcaattcgcgtcacaaataaattttggcaacttatgtttcctcttcgagcagtactcgagccctgtctcaagaatgtaataatacccatcgtaggtatggttaaagatagcatctccacaacctcaaagctccttgccgagagtcgccctcctttgtcgagtaattttcacttttcatatgagaacttattttcttattctttactctcacatcctgtagtgattgacactgcaacagccaccatcactagaagaacagaacaattacttaatagaaaaattatatcttcctcgaaacgatttcctgcttccaacatctacgtatatcaagaagcattcacttaccatgacacagcttcagatttcattattgctgacagctactatatcactactccatctagtagtggccacgccctatgaggcatatcctatcggaaaacaataccccccagtggcaagagtcaatgaatcgtttacatttcaaatttccaatgatacctataaatcgtctgtagacaagacagctcaaataacatacaattgcttcgacttaccgagctggctttcgtttgactctagttctagaacgttctcaggtgaaccttcttctgacttactatctgatgcgaacaccacgttgtatttcaatgtaatactcgagggtacggactctgccgacagcacgtctttgaacaatacataccaatttgttgttacaaaccgtccatccatctcgctatcgtcagatttcaatctattggcgttgttaaaaaactatggttatactaacggcaaaaacgctctgaaactagatcctaatgaagtcttcaacgtgacttttgaccgttcaatgttcactaacgaagaatccattgtgtcgtattacggacgttctcagttgtataatgcgccgttacccaattggctgttcttcgattctggcgagttgaagtttactgggacggcaccggtgataaactcggcgattgctccagaaacaagctacagttttgtcatcatcgctacagacattgaaggattttctgccgttgaggtagaattcgaattagtcatcggggctcaccagttaactacctctattcaaaatagtttgataatcaacgttactgacacaggtaacgtttcatatgacttacctctaaactatgtttatctcgatgacgatcctatttcttctgataaattgggttctataaacttattggatgctccagactgggtggcattagataatgctaccatttccgggtctgtcccagatgaattactcggtaagaactccaatcctgccaatttttctgtgtccatttatgatacttatggtgatgtgatttatttcaacttcgaagttgtctccacaacggatttgtttgccattagttctcttcccaatattaacgctacaaggggtgaatggttctcctactattttttgccttctcagtttacagactacgtgaatacaaacgtttcattagagtttactaattcaagccaagaccatgactgggtgaaattccaatcatctaatttaacattagctggagaagtgcccaagaatttcgacaagctttcattaggtttgaaagcgaaccaaggttcacaatctcaagagctatattttaacatcattggcatggattcaaagataactcactcaaaccacagtgcgaatgcaacgtccacaagaagttctcaccactccacctcaacaagttcttacacatcttctacttacactgcaaaaatttcttctacctccgctgctgctacttcttctgctccagcagcgctgccagcagccaataaaacttcatctcacaataaaaaagcagtagcaattgcgtgcggtgttgctatcccattaggcgttatcctagtagctctcatttgcttcctaatattctggagacgcagaagggaaaatccagacgatgaaaacttaccgcatgctattagtggacctgatttgaataatcctgcaaataaaccaaatcaagaaaacgctacacctttgaacaacccctttgatgatgatgcttcctcgtacgatgatacttcaatagcaagaagattggctgctttgaacactttgaaattggataaccactctgccactgaatctgatatttccagcgtggatgaaaagagagattctctatcaggtatgaatacatacaatgatcagttccaatcccaaagtaaagaagaattattagcaaaacccccagtacagcctccagagagcccgttctttgacccacagaataggtcttcttctgtgtatatggatagtgaaccagcagtaaataaatcctggcgatatactggcaacctgtcaccagtctctgatattgtcagagacagttacggatcacaaaaaactgttgatacagaaaaacttttcgatttagaagcaccagagaaggaaaaacgtacgtcaagggatgtcactatgtcttcactggacccttggaacagcaatattagcccttctcccgtaagaaaatcagtaacaccatcaccatataacgtaacgaagcatcgtaaccgccacttacaaaatattcaagactctcaaagcggtaaaaacggaatcactcccacaacaatgtcaacttcatcttctgacgattttgttccggttaaagatggtgaaaatttttgctgggtccatagcatggaaccagacagaagaccaagtaagaaaaggttagtagatttttcaaataagagtaatgtcaatgttggtcaagttaaggacattcacggacgcatcccagaaatgctgtgattatacgcaacgatattttgcttaattttattttcctgttttattttttattagtggtttacagataccctatattttatttagtttttatacttagagacatttaattttaattccattcttcaaatttcatttttgcacttaaaacaaagatccaaaaatgctctcgccctcttcatattgagaatacactccattcaaaattttgtcgtcaccgctgattaatttttcactaaactgatgaataatcaaaggccccacgtcagaaccgactaaagaagtgagttttattttaggaggttgaaaaccattattgtctggtaaattttcatcttcttgacatttaacccagtttgaatccctttcaatttctgctttttcctccaaactatcgaccctcctgtttctgtccaacttatgtcctagttccaattcgatcgcattaataactgcttcaaatgttattgtgtcatcgttgactttaggtaatttctccaaatgcataatcaaactatttaaggaagatcggaattcgtcgaacacttcagtttccgtaatgatctgatcgtctttatccacatgttgtaattcactaaaatctaaaacgtatttttcaatgcataaatcgttctttttattaataatgcagatggaaaatctgtaaacgtgcgttaatttagaaagaacatccagtataagttcttctatatagtcaattaaagcaggatgcctattaatgggaacgaactgcggcaagttgaatgactggtaagtagtgtagtcgaatgactgaggtgggtatacatttctataaaataaaatcaaattaatgtagcattttaagtataccctcagccacttctctacccatctattcataaagctgacgcaacgattactattttttttttcttcttggatctcagtcgtcgcaaaaacgtataccttctttttccgaccttttttttagctttctggaaaagtttatattagttaaacagggtctagtcttagtgtgaaagctagtggtttcgattgactgatattaagaaagtggaaattaaattagtagtgtagacgtatatgcatatgtatttctcgcctgtttatgtttctacgtacttttgatttatagcaaggggaaaagaaatacatactattttttggtaaaggtgaaagcataatgtaaaagctagaataaaatggacgaaataaagagaggcttagttcatcttttttccaaaaagcacccaatgataataactaaaatgaaaaggatttgccatctgtcagcaacatcagttgtgtgagcaataataaaatcatcacctccgttgcctttagcgcgtttgtcgtttgtatcttccgtaattttagtcttatcaatgggaatcataaattttccaatgaattagcaatttcgtccaattctttttgagcttcttcatatttgctttggaattcttcgcacttcttttcccattcatctctttcttcttccaaagcaacgatccttctacccatttgctcagagttcaaatcggcctctttcagtttatccattgcttccttcagtttggcttcactgtcttctagctgttgttctagatcctggtttttcttggtgtagttctcattattagatctcaagttattggagtcttcagccaattgctttgtatcagacaattgactctctaacttctccacttcactgtcgagttgctcgtttttagcggacaaagatttaatctcgttttctttttcagtgttagattgctctaattctttgagctgttctctcagctcctcatatttttcttgccatgactcagattctaattttaagctattcaatttctctttgatc</sbol:elements>
     <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
   </sbol:Sequence>

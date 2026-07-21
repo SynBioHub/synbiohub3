@@ -1,5 +1,3 @@
 
 1
-ComponentDefinition https://synbiohub.org/user/testuser/Tester_1/cd_BBa_J23119/1 differ.
-GenericTopLevel https://synbiohub.org/user/testuser/Tester_1/gen_datasheet1/1 not found in GenericTopLevelOutput.xml_Retrieved
-Fail
+Success

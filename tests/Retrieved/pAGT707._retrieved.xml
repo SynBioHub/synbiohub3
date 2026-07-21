@@ -1,15 +1,15 @@
 <?xml version="1.0" ?>
-<rdf:RDF xmlns:synbiohub="http://synbiohub.org#" xmlns:xsd="http://www.w3.org/2001/XMLSchema#dateTime/" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:sybio="http://www.sybio.ncl.ac.uk#" xmlns:ncbi="http://www.ncbi.nlm.nih.gov#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:igem="http://wiki.synbiohub.org/wiki/Terms/igem#" xmlns:sbh="http://wiki.synbiohub.org/wiki/Terms/synbiohub#" xmlns:sbol="http://sbols.org/v2#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:gbconv="http://sbols.org/genBankConversion#" xmlns:genbank="http://www.ncbi.nlm.nih.gov/genbank#" xmlns:prov="http://www.w3.org/ns/prov#" xmlns:obo="http://purl.obolibrary.org/obo/" xmlns:om="http://www.ontology-of-units-of-measure.org/resource/om-2/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+<rdf:RDF xmlns:ns2="http://purl.org/dc/terms/" xmlns:j.1="http://www.ncbi.nlm.nih.gov/genbank#" xmlns:j.0="http://sbols.org/genBankConversion#" xmlns:ns1="http://sbols.org/v2#" xmlns:ns4="https://synbiohub.org/user/" xmlns:ns3="http://wiki.synbiohub.org/wiki/Terms/synbiohub#" xmlns:ns6="https://synbiohub.org/user/testuser/Tester_1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:sbol="http://sbols.org/v2#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:prov="http://www.w3.org/ns/prov#" xmlns:om="http://www.ontology-of-units-of-measure.org/resource/om-2/" xmlns:dc="http://purl.org/dc/elements/1.1/">
   <sbol:Collection rdf:about="https://synbiohub.org/user/testuser/Tester_1/Tester_1_collection/1">
     <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Tester_1_collection"/>
     <sbol:displayId>Tester_1_collection</sbol:displayId>
     <sbol:version>1</sbol:version>
     <dcterms:title>Round_Trip_Tester</dcterms:title>
     <dcterms:description>This is a simple roundtrip test</dcterms:description>
+    <ns2:created>2026-07-21T22:07:10.766423589Z</ns2:created>
     <dc:creator>Test User</dc:creator>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-    <dcterms:created>2026-07-21T00:31:25.429828259Z</dcterms:created>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Tester_1_collection/1"/>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Tester_1_collection/1"/>
     <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Exported_File_seq/1"/>
     <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Exported_File/1"/>
   </sbol:Collection>
@@ -18,67 +18,77 @@
     <sbol:displayId>Exported_File</sbol:displayId>
     <sbol:version>1</sbol:version>
     <dcterms:description>.</dcterms:description>
-    <genbank:organism>synthetic DNA construct</genbank:organism>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-    <genbank:molecule>ds-DNA</genbank:molecule>
-    <genbank:date>12-MAR-2014</genbank:date>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Exported_File/1"/>
-    <genbank:division>SYN</genbank:division>
-    <genbank:comment>This file is created by Vector NTI http://www.invitrogen.com/</genbank:comment>
-    <genbank:keywords>pAGT707 (1)</genbank:keywords>
-    <genbank:locus>Exported File</genbank:locus>
-    <genbank:reference rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Exported_File_reference0/1"/>
-    <genbank:source>synthetic DNA construct</genbank:source>
+    <j.1:organism>synthetic DNA construct</j.1:organism>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <j.1:molecule>ds-DNA</j.1:molecule>
+    <j.1:date>12-MAR-2014</j.1:date>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Exported_File/1"/>
+    <j.1:division>SYN</j.1:division>
+    <j.1:comment>This file is created by Vector NTI http://www.invitrogen.com/</j.1:comment>
+    <j.1:keywords>pAGT707 (1)</j.1:keywords>
+    <j.1:locus>Exported File</j.1:locus>
+    <j.1:reference>
+      <j.1:Reference rdf:about="https://synbiohub.org/user/testuser/Tester_1/Exported_File_reference0/1">
+        <j.1:title>Direct Submission</j.1:title>
+        <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Exported_File/1"/>
+        <j.1:journal>Exported Mar 12, 2014 from SnapGene Viewer 1.1.2 http://www.snapgene.com</j.1:journal>
+        <j.1:label>1  (bases 1 to 2332)</j.1:label>
+        <j.1:authors>.</j.1:authors>
+      </j.1:Reference>
+    </j.1:reference>
+    <j.1:source>synthetic DNA construct</j.1:source>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:type rdf:resource="http://identifiers.org/so/SO:0000988"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000804"/>
     <sbol:sequenceAnnotation>
-      <sbol:SequenceAnnotation rdf:about="https://synbiohub.org/user/testuser/Tester_1/Exported_File/annotation6/1">
-        <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Exported_File/annotation6"/>
-        <sbol:displayId>annotation6</sbol:displayId>
+      <sbol:SequenceAnnotation rdf:about="https://synbiohub.org/user/testuser/Tester_1/Exported_File/annotation2/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Exported_File/annotation2"/>
+        <sbol:displayId>annotation2</sbol:displayId>
         <sbol:version>1</sbol:version>
-        <dcterms:title>TMV UTR</dcterms:title>
-        <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-        <gbconv:label>TMV UTR</gbconv:label>
-        <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Exported_File/1"/>
-        <gbconv:note>color: #009966</gbconv:note>
-        <gbconv:note>TMV UTR</gbconv:note>
-        <sbol:role rdf:resource="http://identifiers.org/so/SO:0000204"/>
+        <dcterms:title>Sm/Sp no DraIII</dcterms:title>
+        <j.0:note>color: #ff9966</j.0:note>
+        <j.0:label>Sm/Sp no DraIII</j.0:label>
+        <j.0:codon_start>1</j.0:codon_start>
+        <j.0:translation>MRSRNWSRTLTERSGGNGAVAVFMACYDCFFGVQSMPRASKQQARYAVGRCLMLWSSNDVTQQGSRPKTKLNIMREAVIAEVSTQLSEVVGVIERHLEPTLLAVHLYGSAVDGGLKPHSDIDLLVTVTVRLDETTRRALINDLLETSASPGESEILRAVEVTIVVHDDIIPWRYPAKRELQFGEWQRNDILAGIFEPATIDIDLAILLTKAREHSVALVGPAAEELFDPVPEQDLFEALNETLTLWNSPPDWAGDERNVVLTLSRIWYSAVTGKIAPKDVAADWAMERLPAQYQPVILEARQAYLGQEEDRLASRADQLEEFVHYVKGEITKVVGK</j.0:translation>
+        <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+        <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Exported_File/1"/>
+        <j.0:note>Sm/Sp no DraIII</j.0:note>
+        <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
         <sbol:location>
-          <sbol:Range rdf:about="https://synbiohub.org/user/testuser/Tester_1/Exported_File/annotation6/range/1">
-            <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Exported_File/annotation6/range"/>
+          <sbol:Range rdf:about="https://synbiohub.org/user/testuser/Tester_1/Exported_File/annotation2/range/1">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Exported_File/annotation2/range"/>
             <sbol:displayId>range</sbol:displayId>
             <sbol:version>1</sbol:version>
-            <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Exported_File/1"/>
-            <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-            <sbol:start>2248</sbol:start>
-            <sbol:end>2332</sbol:end>
+            <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+            <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Exported_File/1"/>
+            <sbol:start>231</sbol:start>
+            <sbol:end>1241</sbol:end>
             <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
           </sbol:Range>
         </sbol:location>
       </sbol:SequenceAnnotation>
     </sbol:sequenceAnnotation>
     <sbol:sequenceAnnotation>
-      <sbol:SequenceAnnotation rdf:about="https://synbiohub.org/user/testuser/Tester_1/Exported_File/annotation1/1">
-        <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Exported_File/annotation1"/>
-        <sbol:displayId>annotation1</sbol:displayId>
+      <sbol:SequenceAnnotation rdf:about="https://synbiohub.org/user/testuser/Tester_1/Exported_File/annotation6/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Exported_File/annotation6"/>
+        <sbol:displayId>annotation6</sbol:displayId>
         <sbol:version>1</sbol:version>
-        <dcterms:title>CCAT</dcterms:title>
-        <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-        <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Exported_File/1"/>
-        <gbconv:note>CCAT</gbconv:note>
-        <gbconv:label>CCAT</gbconv:label>
-        <gbconv:note>color: #3366cc</gbconv:note>
-        <sbol:role rdf:resource="http://identifiers.org/so/SO:0001411"/>
+        <dcterms:title>TMV UTR</dcterms:title>
+        <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+        <j.0:label>TMV UTR</j.0:label>
+        <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Exported_File/1"/>
+        <j.0:note>color: #009966</j.0:note>
+        <j.0:note>TMV UTR</j.0:note>
+        <sbol:role rdf:resource="http://identifiers.org/so/SO:0000204"/>
         <sbol:location>
-          <sbol:Range rdf:about="https://synbiohub.org/user/testuser/Tester_1/Exported_File/annotation1/range/1">
-            <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Exported_File/annotation1/range"/>
+          <sbol:Range rdf:about="https://synbiohub.org/user/testuser/Tester_1/Exported_File/annotation6/range/1">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Exported_File/annotation6/range"/>
             <sbol:displayId>range</sbol:displayId>
             <sbol:version>1</sbol:version>
-            <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Exported_File/1"/>
-            <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-            <sbol:start>1</sbol:start>
-            <sbol:end>4</sbol:end>
+            <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+            <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Exported_File/1"/>
+            <sbol:start>2248</sbol:start>
+            <sbol:end>2332</sbol:end>
             <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
           </sbol:Range>
         </sbol:location>
@@ -90,76 +100,22 @@
         <sbol:displayId>annotation5</sbol:displayId>
         <sbol:version>1</sbol:version>
         <dcterms:title>ORI</dcterms:title>
-        <gbconv:note>RNaseH cleavage point</gbconv:note>
-        <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Exported_File/1"/>
-        <gbconv:note>ORI</gbconv:note>
-        <gbconv:note>color: #3366cc</gbconv:note>
-        <gbconv:label>ORI</gbconv:label>
-        <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+        <j.0:note>RNaseH cleavage point</j.0:note>
+        <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Exported_File/1"/>
+        <j.0:note>ORI</j.0:note>
+        <j.0:note>color: #3366cc</j.0:note>
+        <j.0:label>ORI</j.0:label>
+        <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
         <sbol:role rdf:resource="http://identifiers.org/so/SO:0000296"/>
         <sbol:location>
           <sbol:Range rdf:about="https://synbiohub.org/user/testuser/Tester_1/Exported_File/annotation5/range/1">
             <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Exported_File/annotation5/range"/>
             <sbol:displayId>range</sbol:displayId>
             <sbol:version>1</sbol:version>
-            <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Exported_File/1"/>
-            <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+            <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+            <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Exported_File/1"/>
             <sbol:start>2000</sbol:start>
             <sbol:end>2000</sbol:end>
-            <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
-          </sbol:Range>
-        </sbol:location>
-      </sbol:SequenceAnnotation>
-    </sbol:sequenceAnnotation>
-    <sbol:sequenceAnnotation>
-      <sbol:SequenceAnnotation rdf:about="https://synbiohub.org/user/testuser/Tester_1/Exported_File/annotation4/1">
-        <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Exported_File/annotation4"/>
-        <sbol:displayId>annotation4</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <dcterms:title>rep (pMB1)</dcterms:title>
-        <gbconv:note>color: #66cc99; direction: RIGHT</gbconv:note>
-        <gbconv:label>rep (pMB1)</gbconv:label>
-        <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Exported_File/1"/>
-        <gbconv:note>rep (pMB1)</gbconv:note>
-        <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-        <sbol:role rdf:resource="http://identifiers.org/so/SO:0001411"/>
-        <sbol:location>
-          <sbol:Range rdf:about="https://synbiohub.org/user/testuser/Tester_1/Exported_File/annotation4/range/1">
-            <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Exported_File/annotation4/range"/>
-            <sbol:displayId>range</sbol:displayId>
-            <sbol:version>1</sbol:version>
-            <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Exported_File/1"/>
-            <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-            <sbol:start>1401</sbol:start>
-            <sbol:end>2015</sbol:end>
-            <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
-          </sbol:Range>
-        </sbol:location>
-      </sbol:SequenceAnnotation>
-    </sbol:sequenceAnnotation>
-    <sbol:sequenceAnnotation>
-      <sbol:SequenceAnnotation rdf:about="https://synbiohub.org/user/testuser/Tester_1/Exported_File/annotation2/1">
-        <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Exported_File/annotation2"/>
-        <sbol:displayId>annotation2</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <dcterms:title>Sm/Sp no DraIII</dcterms:title>
-        <gbconv:note>color: #ff9966</gbconv:note>
-        <gbconv:label>Sm/Sp no DraIII</gbconv:label>
-        <gbconv:codon_start>1</gbconv:codon_start>
-        <gbconv:translation>MRSRNWSRTLTERSGGNGAVAVFMACYDCFFGVQSMPRASKQQARYAVGRCLMLWSSNDVTQQGSRPKTKLNIMREAVIAEVSTQLSEVVGVIERHLEPTLLAVHLYGSAVDGGLKPHSDIDLLVTVTVRLDETTRRALINDLLETSASPGESEILRAVEVTIVVHDDIIPWRYPAKRELQFGEWQRNDILAGIFEPATIDIDLAILLTKAREHSVALVGPAAEELFDPVPEQDLFEALNETLTLWNSPPDWAGDERNVVLTLSRIWYSAVTGKIAPKDVAADWAMERLPAQYQPVILEARQAYLGQEEDRLASRADQLEEFVHYVKGEITKVVGK</gbconv:translation>
-        <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-        <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Exported_File/1"/>
-        <gbconv:note>Sm/Sp no DraIII</gbconv:note>
-        <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
-        <sbol:location>
-          <sbol:Range rdf:about="https://synbiohub.org/user/testuser/Tester_1/Exported_File/annotation2/range/1">
-            <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Exported_File/annotation2/range"/>
-            <sbol:displayId>range</sbol:displayId>
-            <sbol:version>1</sbol:version>
-            <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Exported_File/1"/>
-            <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-            <sbol:start>231</sbol:start>
-            <sbol:end>1241</sbol:end>
             <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
           </sbol:Range>
         </sbol:location>
@@ -171,18 +127,18 @@
         <sbol:displayId>annotation0</sbol:displayId>
         <sbol:version>1</sbol:version>
         <dcterms:title>synthetic DNA construct</dcterms:title>
-        <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-        <gbconv:organism>synthetic DNA construct</gbconv:organism>
-        <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Exported_File/1"/>
-        <gbconv:mol_type>other DNA</gbconv:mol_type>
+        <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+        <j.0:organism>synthetic DNA construct</j.0:organism>
+        <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Exported_File/1"/>
+        <j.0:mol_type>other DNA</j.0:mol_type>
         <sbol:role rdf:resource="http://identifiers.org/so/SO:0002206"/>
         <sbol:location>
           <sbol:Range rdf:about="https://synbiohub.org/user/testuser/Tester_1/Exported_File/annotation0/range/1">
             <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Exported_File/annotation0/range"/>
             <sbol:displayId>range</sbol:displayId>
             <sbol:version>1</sbol:version>
-            <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Exported_File/1"/>
-            <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+            <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Exported_File/1"/>
+            <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
             <sbol:start>1</sbol:start>
             <sbol:end>2332</sbol:end>
             <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
@@ -196,20 +152,72 @@
         <sbol:displayId>annotation3</sbol:displayId>
         <sbol:version>1</sbol:version>
         <dcterms:title>color: #3366cc</dcterms:title>
-        <gbconv:note>color: #3366cc</gbconv:note>
-        <gbconv:note>G to A</gbconv:note>
-        <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Exported_File/1"/>
-        <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+        <j.0:note>color: #3366cc</j.0:note>
+        <j.0:note>G to A</j.0:note>
+        <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Exported_File/1"/>
+        <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
         <sbol:role rdf:resource="http://identifiers.org/so/SO:0001060"/>
         <sbol:location>
           <sbol:Range rdf:about="https://synbiohub.org/user/testuser/Tester_1/Exported_File/annotation3/range/1">
             <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Exported_File/annotation3/range"/>
             <sbol:displayId>range</sbol:displayId>
             <sbol:version>1</sbol:version>
-            <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-            <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Exported_File/1"/>
+            <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+            <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Exported_File/1"/>
             <sbol:start>1208</sbol:start>
             <sbol:end>1208</sbol:end>
+            <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
+          </sbol:Range>
+        </sbol:location>
+      </sbol:SequenceAnnotation>
+    </sbol:sequenceAnnotation>
+    <sbol:sequenceAnnotation>
+      <sbol:SequenceAnnotation rdf:about="https://synbiohub.org/user/testuser/Tester_1/Exported_File/annotation4/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Exported_File/annotation4"/>
+        <sbol:displayId>annotation4</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <dcterms:title>rep (pMB1)</dcterms:title>
+        <j.0:note>color: #66cc99; direction: RIGHT</j.0:note>
+        <j.0:label>rep (pMB1)</j.0:label>
+        <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Exported_File/1"/>
+        <j.0:note>rep (pMB1)</j.0:note>
+        <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+        <sbol:role rdf:resource="http://identifiers.org/so/SO:0001411"/>
+        <sbol:location>
+          <sbol:Range rdf:about="https://synbiohub.org/user/testuser/Tester_1/Exported_File/annotation4/range/1">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Exported_File/annotation4/range"/>
+            <sbol:displayId>range</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+            <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Exported_File/1"/>
+            <sbol:start>1401</sbol:start>
+            <sbol:end>2015</sbol:end>
+            <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
+          </sbol:Range>
+        </sbol:location>
+      </sbol:SequenceAnnotation>
+    </sbol:sequenceAnnotation>
+    <sbol:sequenceAnnotation>
+      <sbol:SequenceAnnotation rdf:about="https://synbiohub.org/user/testuser/Tester_1/Exported_File/annotation1/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Exported_File/annotation1"/>
+        <sbol:displayId>annotation1</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <dcterms:title>CCAT</dcterms:title>
+        <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+        <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Exported_File/1"/>
+        <j.0:note>CCAT</j.0:note>
+        <j.0:label>CCAT</j.0:label>
+        <j.0:note>color: #3366cc</j.0:note>
+        <sbol:role rdf:resource="http://identifiers.org/so/SO:0001411"/>
+        <sbol:location>
+          <sbol:Range rdf:about="https://synbiohub.org/user/testuser/Tester_1/Exported_File/annotation1/range/1">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Exported_File/annotation1/range"/>
+            <sbol:displayId>range</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+            <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Exported_File/1"/>
+            <sbol:start>1</sbol:start>
+            <sbol:end>4</sbol:end>
             <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
           </sbol:Range>
         </sbol:location>
@@ -221,16 +229,9 @@
     <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Exported_File_seq"/>
     <sbol:displayId>Exported_File_seq</sbol:displayId>
     <sbol:version>1</sbol:version>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Exported_File_seq/1"/>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Exported_File_seq/1"/>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
     <sbol:elements>ccattgagaccacgaagtggctcttcagtggacgaaagggcctcgtgatacgcctatttttataggttaatgtcatgataataatggtttcttagacgtcaggtggcacttttcggggaaatgtgcgcggaacccctatttgtttatttttctaaatacattcaaatatgtatccgctcatgagacaataaccctgataaatgcttcaataatattgaaaaaggaagagtatgcgctcacgcaactggtccagaaccttgaccgaacgcagcggtggtaacggcgcagtggcggttttcatggcttgttatgactgtttttttggggtacagtctatgcctcgggcatccaagcagcaagcgcgttacgccgtgggtcgatgtttgatgttatggagcagcaacgatgttacgcagcagggcagtcgccctaaaacaaagttaaacatcatgagggaagcggtgatcgccgaagtatcgactcaactatcagaggtagttggcgtcatcgagcgccatctcgaaccgacgttgctggccgtacatttgtacggctccgcagtggatggcggcctgaagccacacagcgatattgatttgctggttacggtgaccgtaaggcttgatgaaacaacgcggcgagctttgatcaacgaccttttggaaacttcggcttcccctggagagagcgagattctccgcgctgtagaagtcaccattgttgtgcacgacgacatcattccgtggcgttatccagctaagcgcgaactgcaatttggagaatggcagcgcaatgacattcttgcaggtatcttcgagccagccacgatcgacattgatctggctatcttgctgacaaaagcaagagaacatagcgttgccttggtaggtccagcggcggaggaactctttgatccggttcctgaacaggatctatttgaggcgctaaatgaaaccttaacgctatggaactcgccgcccgactgggctggcgatgagcgaaatgtagtgcttacgttgtcccgcatttggtacagcgcagtaaccggcaaaatcgcgccgaaggatgtcgctgccgactgggcaatggagcgcctgccggcccagtatcagcccgtcatacttgaagctagacaggcttatcttggacaagaagaagatcgcttggcctcgcgcgcagatcagttggaagaatttgtccattacgtaaaaggcgagatcaccaaggtagtcggcaaataactgtcagaccaagtttactcatatatactttagattgatttaaaacttcatttttaatttaaaaggatctaggtgaagatcctttttgataatctcatgaccaaaatcccttaacgtgagttttcgttccactgagcgtcagaccccgtagaaaagatcaaaggatcttcttgagatcctttttttctgcgcgtaatctgctgcttgcaaacaaaaaaaccaccgctaccagcggtggtttgtttgccggatcaagagctaccaactctttttccgaaggtaactggcttcagcagagcgcagataccaaatactgtccttctagtgtagccgtagttaggccaccacttcaagaactctgtagcaccgcctacatacctcgctctgctaatcctgttaccagtggctgctgccagtggcgataagtcgtgtcttaccgggttggactcaagacgatagttaccggataaggcgcagcggtcgggctgaacggggggttcgtgcacacagcccagcttggagcgaacgacctacaccgaactgagatacctacagcgtgagctatgagaaagcgccacgcttcccgaagggagaaaggcggacaggtatccggtaagcggcagggtcggaacaggagagcgcacgagggagcttccagggggaaacgcctggtatctttatagtcctgtcgggtttcgccacctctgacttgagcgtcgatttttgtgatgctcgtcaggggggcggagcctatggaaaaacgccagcaacgcggcctttttacggttcctggccttttgctggccttttgctcacatgttctttcctgcgttatcccctgattctgtggataaccgtattaccgcctttgagtgagctgataccgctcgccgcagccgaacgaccgagcgcagcgagtcagtgagcgaggaagcggaagagcgcccaatacgcaaaccgcctctccccgcgcgttggccgattcattaatcactctgtggtctcatactgtataagagctcatttttacaacaattaccaacaacaacaaacaacaaacaacattacaattacatttacaattatcgata</sbol:elements>
     <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
   </sbol:Sequence>
-  <genbank:Reference rdf:about="https://synbiohub.org/user/testuser/Tester_1/Exported_File_reference0/1">
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Exported_File/1"/>
-    <genbank:title>Direct Submission</genbank:title>
-    <genbank:label>1  (bases 1 to 2332)</genbank:label>
-    <genbank:authors>.</genbank:authors>
-    <genbank:journal>Exported Mar 12, 2014 from SnapGene Viewer 1.1.2 http://www.snapgene.com</genbank:journal>
-  </genbank:Reference>
 </rdf:RDF>

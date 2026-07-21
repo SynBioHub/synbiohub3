@@ -1,5 +1,8 @@
 {
   "devDependencies": {
     "eslint-plugin-unused-imports": "^4.1.4"
+  },
+  "dependencies": {
+    "requests": "^0.3.0"
   }
 }

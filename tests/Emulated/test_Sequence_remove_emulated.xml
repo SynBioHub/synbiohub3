@@ -10,6 +10,6 @@
     <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
     <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Tester_1_collection/1"/>
     <rdf:type rdf:resource="http://sbols.org/v2#Collection"/>
-    <dcterms:created>2026-07-20T21:23:30.836082689Z</dcterms:created>
+    <dcterms:created>2026-07-21T22:09:53.901049749Z</dcterms:created>
   </sbol:Collection>
 </rdf:RDF>

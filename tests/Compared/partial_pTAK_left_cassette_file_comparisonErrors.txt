@@ -1,11 +1,3 @@
 
 1
-ComponentDefinition https://synbiohub.org/user/testuser/Tester_1/RBS/1 not found in partial_pTAK_left_cassette.xml_Retrieved
-ComponentDefinition https://synbiohub.org/user/testuser/Tester_1/pTAKLeftCassete/1 not found in partial_pTAK_left_cassette.xml_Retrieved
-ComponentDefinition https://synbiohub.org/user/testuser/Tester_1/Repressor2/1 not found in partial_pTAK_left_cassette.xml_Retrieved
-ComponentDefinition https://synbiohub.org/user/testuser/Tester_1/BBa_K121014/1 not found in partial_pTAK_left_cassette.xml_Retrieved
-ComponentDefinition https://synbiohub.org/user/testuser/Tester_1/Terminator/1 not found in partial_pTAK_left_cassette.xml_Retrieved
-ComponentDefinition https://synbiohub.org/user/testuser/Tester_1/BBa_C0012/1 not found in partial_pTAK_left_cassette.xml_Retrieved
-Sequence https://synbiohub.org/user/testuser/Tester_1/partseq_153/1 not found in partial_pTAK_left_cassette.xml_Retrieved
-Sequence https://synbiohub.org/user/testuser/Tester_1/partseq_12077/1 not found in partial_pTAK_left_cassette.xml_Retrieved
-Fail
+Success

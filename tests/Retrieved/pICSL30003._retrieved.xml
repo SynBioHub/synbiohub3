@@ -1,15 +1,15 @@
 <?xml version="1.0" ?>
-<rdf:RDF xmlns:synbiohub="http://synbiohub.org#" xmlns:xsd="http://www.w3.org/2001/XMLSchema#dateTime/" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:sybio="http://www.sybio.ncl.ac.uk#" xmlns:ncbi="http://www.ncbi.nlm.nih.gov#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:igem="http://wiki.synbiohub.org/wiki/Terms/igem#" xmlns:sbh="http://wiki.synbiohub.org/wiki/Terms/synbiohub#" xmlns:sbol="http://sbols.org/v2#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:gbconv="http://sbols.org/genBankConversion#" xmlns:genbank="http://www.ncbi.nlm.nih.gov/genbank#" xmlns:prov="http://www.w3.org/ns/prov#" xmlns:obo="http://purl.obolibrary.org/obo/" xmlns:om="http://www.ontology-of-units-of-measure.org/resource/om-2/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+<rdf:RDF xmlns:ns2="http://purl.org/dc/terms/" xmlns:j.1="http://www.ncbi.nlm.nih.gov/genbank#" xmlns:j.0="http://sbols.org/genBankConversion#" xmlns:ns1="http://sbols.org/v2#" xmlns:ns4="https://synbiohub.org/user/" xmlns:ns3="http://wiki.synbiohub.org/wiki/Terms/synbiohub#" xmlns:ns6="https://synbiohub.org/user/testuser/Tester_1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:sbol="http://sbols.org/v2#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:prov="http://www.w3.org/ns/prov#" xmlns:om="http://www.ontology-of-units-of-measure.org/resource/om-2/" xmlns:dc="http://purl.org/dc/elements/1.1/">
   <sbol:Collection rdf:about="https://synbiohub.org/user/testuser/Tester_1/Tester_1_collection/1">
     <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Tester_1_collection"/>
     <sbol:displayId>Tester_1_collection</sbol:displayId>
     <sbol:version>1</sbol:version>
     <dcterms:title>Round_Trip_Tester</dcterms:title>
     <dcterms:description>This is a simple roundtrip test</dcterms:description>
-    <dcterms:created>2026-07-20T21:25:04.218965875Z</dcterms:created>
+    <ns2:created>2026-07-21T22:14:56.311612402Z</ns2:created>
     <dc:creator>Test User</dc:creator>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Tester_1_collection/1"/>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/Tester_1_collection/1"/>
     <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/pICSL30003_seq/1"/>
     <sbol:member rdf:resource="https://synbiohub.org/user/testuser/Tester_1/pICSL30003/1"/>
   </sbol:Collection>
@@ -17,60 +17,33 @@
     <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/pICSL30003"/>
     <sbol:displayId>pICSL30003</sbol:displayId>
     <sbol:version>1</sbol:version>
-    <genbank:molecule>DNA</genbank:molecule>
-    <genbank:locus>pICSL30003</genbank:locus>
-    <genbank:division>UNA</genbank:division>
-    <genbank:date>3-MAR-2009</genbank:date>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/pICSL30003/1"/>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-    <genbank:comment>This file is created by Vector NTI http://www.invitrogen.com/</genbank:comment>
+    <j.1:molecule>DNA</j.1:molecule>
+    <j.1:locus>pICSL30003</j.1:locus>
+    <j.1:division>UNA</j.1:division>
+    <j.1:date>3-MAR-2009</j.1:date>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/pICSL30003/1"/>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <j.1:comment>This file is created by Vector NTI http://www.invitrogen.com/</j.1:comment>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:type rdf:resource="http://identifiers.org/so/SO:0000988"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000804"/>
-    <sbol:sequenceAnnotation>
-      <sbol:SequenceAnnotation rdf:about="https://synbiohub.org/user/testuser/Tester_1/pICSL30003/annotation4/1">
-        <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/pICSL30003/annotation4"/>
-        <sbol:displayId>annotation4</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <dcterms:title>P(LAC)</dcterms:title>
-        <gbconv:featureType>Promoter</gbconv:featureType>
-        <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-        <gbconv:vntifkey>30</gbconv:vntifkey>
-        <gbconv:note> lac promoter </gbconv:note>
-        <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/pICSL30003/1"/>
-        <gbconv:label>P(LAC)</gbconv:label>
-        <sbol:role rdf:resource="http://identifiers.org/so/SO:0000110"/>
-        <sbol:location>
-          <sbol:Range rdf:about="https://synbiohub.org/user/testuser/Tester_1/pICSL30003/annotation4/range/1">
-            <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/pICSL30003/annotation4/range"/>
-            <sbol:displayId>range</sbol:displayId>
-            <sbol:version>1</sbol:version>
-            <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/pICSL30003/1"/>
-            <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-            <sbol:start>1986</sbol:start>
-            <sbol:end>1986</sbol:end>
-            <sbol:orientation rdf:resource="http://sbols.org/v2#reverseComplement"/>
-          </sbol:Range>
-        </sbol:location>
-      </sbol:SequenceAnnotation>
-    </sbol:sequenceAnnotation>
     <sbol:sequenceAnnotation>
       <sbol:SequenceAnnotation rdf:about="https://synbiohub.org/user/testuser/Tester_1/pICSL30003/annotation3/1">
         <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/pICSL30003/annotation3"/>
         <sbol:displayId>annotation3</sbol:displayId>
         <sbol:version>1</sbol:version>
         <dcterms:title>mCHerry</dcterms:title>
-        <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-        <gbconv:label>mCHerry</gbconv:label>
-        <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/pICSL30003/1"/>
+        <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+        <j.0:label>mCHerry</j.0:label>
+        <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/pICSL30003/1"/>
         <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
         <sbol:location>
           <sbol:Range rdf:about="https://synbiohub.org/user/testuser/Tester_1/pICSL30003/annotation3/range/1">
             <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/pICSL30003/annotation3/range"/>
             <sbol:displayId>range</sbol:displayId>
             <sbol:version>1</sbol:version>
-            <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-            <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/pICSL30003/1"/>
+            <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+            <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/pICSL30003/1"/>
             <sbol:start>1397</sbol:start>
             <sbol:end>2122</sbol:end>
             <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
@@ -84,21 +57,48 @@
         <sbol:displayId>annotation2</sbol:displayId>
         <sbol:version>1</sbol:version>
         <dcterms:title>NT-mCherry</dcterms:title>
-        <gbconv:label>NT-mCherry</gbconv:label>
-        <gbconv:featureType>Golden_Gate_Par</gbconv:featureType>
-        <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/pICSL30003/1"/>
-        <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+        <j.0:label>NT-mCherry</j.0:label>
+        <j.0:featureType>Golden_Gate_Par</j.0:featureType>
+        <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/pICSL30003/1"/>
+        <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
         <sbol:role rdf:resource="http://identifiers.org/so/SO:0000110"/>
         <sbol:location>
           <sbol:Range rdf:about="https://synbiohub.org/user/testuser/Tester_1/pICSL30003/annotation2/range/1">
             <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/pICSL30003/annotation2/range"/>
             <sbol:displayId>range</sbol:displayId>
             <sbol:version>1</sbol:version>
-            <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-            <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/pICSL30003/1"/>
+            <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/pICSL30003/1"/>
+            <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
             <sbol:start>1395</sbol:start>
             <sbol:end>2125</sbol:end>
             <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
+          </sbol:Range>
+        </sbol:location>
+      </sbol:SequenceAnnotation>
+    </sbol:sequenceAnnotation>
+    <sbol:sequenceAnnotation>
+      <sbol:SequenceAnnotation rdf:about="https://synbiohub.org/user/testuser/Tester_1/pICSL30003/annotation4/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/pICSL30003/annotation4"/>
+        <sbol:displayId>annotation4</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <dcterms:title>P(LAC)</dcterms:title>
+        <j.0:label>P(LAC)</j.0:label>
+        <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+        <j.0:vntifkey>30</j.0:vntifkey>
+        <j.0:note> lac promoter </j.0:note>
+        <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/pICSL30003/1"/>
+        <j.0:featureType>Promoter</j.0:featureType>
+        <sbol:role rdf:resource="http://identifiers.org/so/SO:0000110"/>
+        <sbol:location>
+          <sbol:Range rdf:about="https://synbiohub.org/user/testuser/Tester_1/pICSL30003/annotation4/range/1">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/pICSL30003/annotation4/range"/>
+            <sbol:displayId>range</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+            <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/pICSL30003/1"/>
+            <sbol:start>1986</sbol:start>
+            <sbol:end>1986</sbol:end>
+            <sbol:orientation rdf:resource="http://sbols.org/v2#reverseComplement"/>
           </sbol:Range>
         </sbol:location>
       </sbol:SequenceAnnotation>
@@ -109,20 +109,20 @@
         <sbol:displayId>annotation6</sbol:displayId>
         <sbol:version>1</sbol:version>
         <dcterms:title>ORI</dcterms:title>
-        <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/pICSL30003/1"/>
-        <gbconv:note> RNaseH cleavage point </gbconv:note>
-        <gbconv:vntifkey>33</gbconv:vntifkey>
-        <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-        <gbconv:featureType>Replication_ori</gbconv:featureType>
-        <gbconv:label>ORI</gbconv:label>
+        <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/pICSL30003/1"/>
+        <j.0:note> RNaseH cleavage point </j.0:note>
+        <j.0:vntifkey>33</j.0:vntifkey>
+        <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+        <j.0:featureType>Replication_ori</j.0:featureType>
+        <j.0:label>ORI</j.0:label>
         <sbol:role rdf:resource="http://identifiers.org/so/SO:0000110"/>
         <sbol:location>
           <sbol:Range rdf:about="https://synbiohub.org/user/testuser/Tester_1/pICSL30003/annotation6/range/1">
             <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/pICSL30003/annotation6/range"/>
             <sbol:displayId>range</sbol:displayId>
             <sbol:version>1</sbol:version>
-            <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/pICSL30003/1"/>
-            <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+            <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+            <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/pICSL30003/1"/>
             <sbol:start>2372</sbol:start>
             <sbol:end>2372</sbol:end>
             <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
@@ -136,19 +136,19 @@
         <sbol:displayId>annotation5</sbol:displayId>
         <sbol:version>1</sbol:version>
         <dcterms:title>rep (pMB1)</dcterms:title>
-        <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-        <gbconv:vntifkey>21</gbconv:vntifkey>
-        <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/pICSL30003/1"/>
-        <gbconv:featureType>Misc._feature</gbconv:featureType>
-        <gbconv:label>rep (pMB1)</gbconv:label>
+        <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+        <j.0:vntifkey>21</j.0:vntifkey>
+        <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/pICSL30003/1"/>
+        <j.0:featureType>Misc._feature</j.0:featureType>
+        <j.0:label>rep (pMB1)</j.0:label>
         <sbol:role rdf:resource="http://identifiers.org/so/SO:0000110"/>
         <sbol:location>
           <sbol:Range rdf:about="https://synbiohub.org/user/testuser/Tester_1/pICSL30003/annotation5/range/1">
             <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/pICSL30003/annotation5/range"/>
             <sbol:displayId>range</sbol:displayId>
             <sbol:version>1</sbol:version>
-            <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-            <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/pICSL30003/1"/>
+            <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+            <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/pICSL30003/1"/>
             <sbol:start>2357</sbol:start>
             <sbol:end>2971</sbol:end>
             <sbol:orientation rdf:resource="http://sbols.org/v2#reverseComplement"/>
@@ -162,18 +162,18 @@
         <sbol:displayId>annotation0</sbol:displayId>
         <sbol:version>1</sbol:version>
         <dcterms:title>Sm/Sp no DraIII</dcterms:title>
-        <gbconv:vntifkey>4</gbconv:vntifkey>
-        <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/pICSL30003/1"/>
-        <gbconv:label>Sm/Sp no DraIII</gbconv:label>
-        <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+        <j.0:vntifkey>4</j.0:vntifkey>
+        <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/pICSL30003/1"/>
+        <j.0:label>Sm/Sp no DraIII</j.0:label>
+        <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
         <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
         <sbol:location>
           <sbol:Range rdf:about="https://synbiohub.org/user/testuser/Tester_1/pICSL30003/annotation0/range/1">
             <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/pICSL30003/annotation0/range"/>
             <sbol:displayId>range</sbol:displayId>
             <sbol:version>1</sbol:version>
-            <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-            <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/pICSL30003/1"/>
+            <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/pICSL30003/1"/>
+            <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
             <sbol:start>160</sbol:start>
             <sbol:end>1170</sbol:end>
             <sbol:orientation rdf:resource="http://sbols.org/v2#reverseComplement"/>
@@ -187,19 +187,19 @@
         <sbol:displayId>annotation1</sbol:displayId>
         <sbol:version>1</sbol:version>
         <dcterms:title>G to A</dcterms:title>
-        <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-        <gbconv:label>G to A</gbconv:label>
-        <gbconv:vntifkey>62</gbconv:vntifkey>
-        <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/pICSL30003/1"/>
-        <gbconv:featureType>Mutation</gbconv:featureType>
+        <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+        <j.0:label>G to A</j.0:label>
+        <j.0:vntifkey>62</j.0:vntifkey>
+        <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/pICSL30003/1"/>
+        <j.0:featureType>Mutation</j.0:featureType>
         <sbol:role rdf:resource="http://identifiers.org/so/SO:0000110"/>
         <sbol:location>
           <sbol:Range rdf:about="https://synbiohub.org/user/testuser/Tester_1/pICSL30003/annotation1/range/1">
             <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/pICSL30003/annotation1/range"/>
             <sbol:displayId>range</sbol:displayId>
             <sbol:version>1</sbol:version>
-            <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
-            <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/pICSL30003/1"/>
+            <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/pICSL30003/1"/>
+            <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
             <sbol:start>193</sbol:start>
             <sbol:end>193</sbol:end>
             <sbol:orientation rdf:resource="http://sbols.org/v2#reverseComplement"/>
@@ -213,8 +213,8 @@
     <sbol:persistentIdentity rdf:resource="https://synbiohub.org/user/testuser/Tester_1/pICSL30003_seq"/>
     <sbol:displayId>pICSL30003_seq</sbol:displayId>
     <sbol:version>1</sbol:version>
-    <sbh:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/pICSL30003_seq/1"/>
-    <sbh:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <ns3:ownedBy rdf:resource="https://synbiohub.org/user/testuser"/>
+    <ns3:topLevel rdf:resource="https://synbiohub.org/user/testuser/Tester_1/pICSL30003_seq/1"/>
     <sbol:elements>GATCTTTTCTACGGGGTCTGACGCTCAGTGGAACGAAAACTCACGTTAAGGGATTTTGGTCATGAGATTATCAAAAAGGATCTTCACCTAGATCCTTTTAAATTAAAAATGAAGTTTTAAATCAATCTAAAGTATATATGAGTAAACTTGGTCTGACAGTTATTTGCCGACTACCTTGGTGATCTCGCCTTTTACGTAATGGACAAATTCTTCCAACTGATCTGCGCGCGAGGCCAAGCGATCTTCTTCTTGTCCAAGATAAGCCTGTCTAGCTTCAAGTATGACGGGCTGATACTGGGCCGGCAGGCGCTCCATTGCCCAGTCGGCAGCGACATCCTTCGGCGCGATTTTGCCGGTTACTGCGCTGTACCAAATGCGGGACAACGTAAGCACTACATTTCGCTCATCGCCAGCCCAGTCGGGCGGCGAGTTCCATAGCGTTAAGGTTTCATTTAGCGCCTCAAATAGATCCTGTTCAGGAACCGGATCAAAGAGTTCCTCCGCCGCTGGACCTACCAAGGCAACGCTATGTTCTCTTGCTTTTGTCAGCAAGATAGCCAGATCAATGTCGATCGTGGCTGGCTCGAAGATACCTGCAAGAATGTCATTGCGCTGCCATTCTCCAAATTGCAGTTCGCGCTTAGCTGGATAACGCCACGGAATGATGTCGTCGTGCACAACAATGGTGACTTCTACAGCGCGGAGAATCTCGCTCTCTCCAGGGGAAGCCGAAGTTTCCAAAAGGTCGTTGATCAAAGCTCGCCGCGTTGTTTCATCAAGCCTTACGGTCACCGTAACCAGCAAATCAATATCGCTGTGTGGCTTCAGGCCGCCATCCACTGCGGAGCCGTACAAATGTACGGCCAGCAACGTCGGTTCGAGATGGCGCTCGATGACGCCAACTACCTCTGATAGTTGAGTCGATACTTCGGCGATCACCGCTTCCCTCATGATGTTTAACTTTGTTTTAGGGCGACTGCCCTGCTGCGTAACATCGTTGCTGCTCCATAACATCAAACATCGACCCACGGCGTAACGCGCTTGCTGCTTGGATGCCCGAGGCATAGACTGTACCCCAAAAAAACAGTCATAACAAGCCATGAAAACCGCCACTGCGCCGTTACCACCGCTGCGTTCGGTCAAGGTTCTGGACCAGTTGCGTGAGCGCATACTCTTCCTTTTTCAATATTATTGAAGCATTTATCAGGGTTATTGTCTCATGAGCGGATACATATTTGAATGTATTTAGAAAAATAAACAAATAGGGGTTCCGCGCACATTTCCCCGAAAAGTGCCACCTGACGTCTAAGAAACCATTATTATCATGACATTAACCTATAAAAATAGGCGTATCACGAGGCCCTTTCGTCCACTGAAGAGCCACTGTGGTCTCACCATGGTGAGCAAGGGCGAGGAGGATAACATGGCCATCATCAAGGAGTTCATGCGCTTCAAGGTGCACATGGAGGGCTCCGTGAACGGCCACGAGTTCGAGATCGAGGGCGAGGGCGAGGGCCGCCCCTACGAGGGCACCCAGACCGCCAAGCTGAAGGTGACCAAGGGTGGCCCCCTGCCCTTCGCCTGGGACATCCTGTCCCCTCAGTTCATGTACGGCTCCAAGGCCTACGTGAAGCACCCCGCCGACATCCCCGACTACTTGAAGCTGTCCTTCCCCGAGGGCTTCAAGTGGGAGCGCGTGATGAACTTCGAGGACGGCGGCGTGGTGACCGTGACCCAGGACTCCTCCCTGCAGGACGGCGAGTTCATCTACAAGGTGAAGCTGCGCGGCACCAACTTCCCCTCCGACGGCCCCGTAATGCAGAAGAAAACCATGGGCTGGGAGGCCTCCTCCGAGCGGATGTACCCCGAGGACGGCGCCCTGAAGGGCGAGATCAAGCAGAGGCTGAAGCTGAAGGACGGCGGCCACTACGACGCTGAGGTCAAGACCACCTACAAGGCCAAGAAGCCCGTGCAGCTGCCCGGCGCCTACAACGTCAACATCAAGTTGGACATCACCTCCCACAACGAGGACTACACCATCGTGGAACAGTACGAACGCGCCGAGGGCCGCCACTCCACCGGCGGCATGGACGAGCTGTACAAGAACGCGGCTATTAGATCAATGTGAGACCACGAGTGATTAATGAATCGGCCAACGCGCGGGGAGAGGCGGTTTGCGTATTGGGCGCTCTTCCGCTTCCTCGCTCACTGACTCGCTGCGCTCGGTCGTTCGGCTGCGGCGAGCGGTATCAGCTCACTCAAAGGCGGTAATACGGTTATCCACAGAATCAGGGGATAACGCAGGAAAGAACATGTGAGCAAAAGGCCAGCAAAAGGCCAGGAACCGTAAAAAGGCCGCGTTGCTGGCGTTTTTCCATAGGCTCCGCCCCCCTGACGAGCATCACAAAAATCGACGCTCAAGTCAGAGGTGGCGAAACCCGACAGGACTATAAAGATACCAGGCGTTTCCCCCTGGAAGCTCCCTCGTGCGCTCTCCTGTTCCGACCCTGCCGCTTACCGGATACCTGTCCGCCTTTCTCCCTTCGGGAAGCGTGGCGCTTTCTCATAGCTCACGCTGTAGGTATCTCAGTTCGGTGTAGGTCGTTCGCTCCAAGCTGGGCTGTGTGCACGAACCCCCCGTTCAGCCCGACCGCTGCGCCTTATCCGGTAACTATCGTCTTGAGTCCAACCCGGTAAGACACGACTTATCGCCACTGGCAGCAGCCACTGGTAACAGGATTAGCAGAGCGAGGTATGTAGGCGGTGCTACAGAGTTCTTGAAGTGGTGGCCTAACTACGGCTACACTAGAAGGACAGTATTTGGTATCTGCGCTCTGCTGAAGCCAGTTACCTTCGGAAAAAGAGTTGGTAGCTCTTGATCCGGCAAACAAACCACCGCTGGTAGCGGTGGTTTTTTTGTTTGCAAGCAGCAGATTACGCGCAGAAAAAAAGGATCTCAAGAAGATCCTTT</sbol:elements>
     <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
   </sbol:Sequence>
