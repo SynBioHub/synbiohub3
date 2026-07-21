@@ -63,14 +63,13 @@ public class UserService {
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     public String login(String email, String password) {
-        String encodedPassword = passwordEncoder.encode(password);
         User user = userRepository.findByEmail(email)
                 .orElse(userRepository.findByUsername(email).orElse(null));
 
         return Optional.ofNullable(user)
-//                .filter(u -> u.getPassword().equals(encodedPassword))
+                .filter(u -> passwordEncoder.matches(password, u.getPassword()))
                 .map(u -> jwtService.generateToken(u))
-                .orElseThrow(() -> new LoginFailedException("Login failed")); //TODO: centralized exception handler
+                .orElseThrow(() -> new LoginFailedException("Login failed"));
     }
 
     public String loginUser(String username, String password) {
