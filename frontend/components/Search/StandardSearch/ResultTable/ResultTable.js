@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import styles from '../../../../styles/resulttable.module.css';
+import Navigation from './Navigation';
 import ResultRow from './ResultRow';
 import ResultTableHeader from './ResultTableHeader';
 import TableButtons from './TableButtons';
@@ -47,7 +48,7 @@ export default function ResultTable(properties) {
         name={row.name}
         displayId={row.displayId}
         description={row.description}
-        type={ row.derivedType || row.type }
+        type={row.derivedType || row.type}
         version={row.version}
         uri={row.uri}
         key={row.uri}
@@ -70,37 +71,41 @@ export default function ResultTable(properties) {
         count={properties.count}
         submissionsPage={properties.submissionsPage}
       />
-        <table className={styles.table} id={styles.results}>
-          <thead>
-            <tr>
-              <th>
-                <input
-                  checked={selectAll}
-                  onChange={event => {
-                    checklist = new Map();
-                    for (const row of properties.data)
-                      checklist.set(row.displayId, event.target.checked);
-                    setSelected(checklist);
-                    setSelectAll(event.target.checked);
-                  }}
-                  type="checkbox"
-                />
-              </th>
+      <table
+        className={`${styles.table} ${styles.resultsTable}`}
+        id={styles.results}
+      >
+        <thead>
+          <tr>
+            <th>
+              <input
+                className={styles.checkbox}
+                checked={selectAll}
+                onChange={event => {
+                  checklist = new Map();
+                  for (const row of properties.data)
+                    checklist.set(row.displayId, event.target.checked);
+                  setSelected(checklist);
+                  setSelectAll(event.target.checked);
+                }}
+                type="checkbox"
+              />
+            </th>
 
-              <ResultTableHeader title="Name" />
+            <ResultTableHeader title="ID / Name" />
 
-              <ResultTableHeader title="Display ID" />
+            <ResultTableHeader title="Description" />
 
-              <ResultTableHeader title="Description" />
+            <ResultTableHeader title="Type" />
 
-              <ResultTableHeader title="Type" />
+            <ResultTableHeader title="Privacy" />
+          </tr>
+        </thead>
 
-              <ResultTableHeader title="Privacy" />
-            </tr>
-          </thead>
+        <tbody>{rows}</tbody>
+      </table>
 
-          <tbody>{rows}</tbody>
-        </table>
-      </div>
+      <Navigation count={properties.count} />
+    </div>
   );
 }

@@ -10,7 +10,7 @@ import { useDispatch } from 'react-redux';
 
 import { addToBasket, downloadFiles } from '../../../../redux/actions';
 import styles from '../../../../styles/resulttable.module.css';
-import Navigation from './Navigation';
+import ResultsMeta from './ResultsMeta';
 import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
 
@@ -90,7 +90,7 @@ export default function TableButtons(properties) {
         ) : null}
       </div>
 
-      <Navigation count={properties.count} />
+      <ResultsMeta count={properties.count} />
     </div>
   );
 }

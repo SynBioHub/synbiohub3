@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { LIMIT } from '../../../../redux/types'; 
+
 import { setOffset } from '../../../../redux/actions';
 import styles from '../../../../styles/resulttable.module.css';
 
@@ -31,13 +31,7 @@ export default function Navigation(properties) {
     }
   }, [offset, properties.count, limit]);
 
-  const handleLimitChange = (e) => {
-    const newLimit = Number(e.target.value);
-    dispatch({ type: LIMIT, payload: newLimit });
-    dispatch(setOffset(0)); 
-  };
-
-  const handlePageClick = (pageNum) => {
+  const handlePageClick = pageNum => {
     dispatch(setOffset((pageNum - 1) * limit));
   };
 
@@ -68,95 +62,45 @@ export default function Navigation(properties) {
   }
 
   return (
-    <div
-      className={styles.navigation}
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'flex-end',
-        gap: '0.75rem',
-        fontFamily: 'inherit',
-        fontSize: '0.95rem',
-        color: '#333',
-        flexWrap: 'wrap',
-        paddingRight: '2rem',
-      }}
-    >
-      {/* Previous */}
-      <div
-        role="button"
-        className={`${styles.tablebutton} ${previous}`}
-        onClick={() => previous !== styles.disabled && dispatch(setOffset(offset - limit))}
-      >
-        «
-      </div>
-
-      {/* Page numbers */}
-      <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
-        {pageNumbers.map((num) => (
-          <div
-            key={num}
-            role="button"
-            onClick={() => handlePageClick(num)}
-            style={{
-              cursor: 'pointer',
-              fontWeight: num === currentPage ? '700' : '400',
-              color: num === currentPage ? '#D25627' : '#333',
-              textDecoration: num === currentPage ? 'underline' : 'none',
-            }}
-          >
-            {num}
-          </div>
-        ))}
-      </div>
-
-      {/* Next */}
-      <div
-        role="button"
-        className={`${styles.tablebutton} ${next}`}
-        onClick={() => next !== styles.disabled && dispatch(setOffset(offset + limit))}
-      >
-        »
-      </div>
-
-      {/* Showing X - Y of Z */}
-      <div className={styles.count}>
-        Showing {Math.min(properties.count, offset + 1)} - {Math.min(offset + limit, properties.count)} of {properties.count} result(s)
-      </div>
-
-      {/* Results per page dropdown */}
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.4rem',
-          fontFamily: 'inherit'
-        }}
-      >
-        <label htmlFor="limit" style={{ fontWeight: 500 }}>
-          Results per page:
-        </label>
-        <select
-          id="limit"
-          value={limit}
-          onChange={handleLimitChange}
-          style={{
-            fontFamily: 'inherit',
-            fontSize: 'inherit',
-            padding: '4px 8px',
-            borderRadius: '6px',
-            border: '1px solid #ccc',
-            backgroundColor: '#ffffff',
-            color: '#333',
-          }}
-          onFocus={(e) => (e.target.style.borderColor = '#D25627')}
-          onBlur={(e) => (e.target.style.borderColor = '#ccc')}
+    <div className={styles.navigation}>
+      <div className={styles.pagecluster}>
+        {/* Previous */}
+        <div
+          role="button"
+          className={`${styles.pagebubble} ${previous}`}
+          onClick={() =>
+            previous !== styles.disabled && dispatch(setOffset(offset - limit))
+          }
         >
-          <option value={10}>10</option>
-          <option value={25}>25</option>
-          <option value={50}>50</option>
-          <option value={100}>100</option>
-        </select>
+          «
+        </div>
+
+        {/* Page numbers */}
+        <div className={styles.pagenumbers}>
+          {pageNumbers.map(num => (
+            <div
+              key={num}
+              role="button"
+              onClick={() => handlePageClick(num)}
+              className={`${styles.pagebubble} ${
+                num === currentPage ? styles.pagebubbleactive : ''
+              }`}
+            >
+              {num}
+            </div>
+          ))}
+        </div>
+
+        {/* Next */}
+        <div
+          role="button"
+          className={`${styles.pagebubble} ${next}`}
+          onClick={() =>
+            next !== styles.disabled && dispatch(setOffset(offset + limit))
+          }
+        >
+          »
+        </div>
       </div>
     </div>
   );
