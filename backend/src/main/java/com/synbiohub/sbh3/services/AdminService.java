@@ -76,20 +76,55 @@ public class AdminService {
         String rawJson = searchService.SPARQLQuery(sparql);
         JsonNode root = mapper.readTree(rawJson);
 
-        // We want to mimic the SBH1 return structure: [{graphUri: "...", numTriples: 123}, ...]
+        // Mimic SBH1: only SynBioHub application graphs (not Virtuoso/system named graphs).
         ArrayNode responseArray = mapper.createArrayNode();
 
         JsonNode bindings = root.path("results").path("bindings");
         if (bindings.isArray()) {
             for (JsonNode binding : bindings) {
+                String graphUri = binding.path("graph").path("value").asText();
+                if (!isSynBioHubApplicationGraph(graphUri)) {
+                    continue;
+                }
                 ObjectNode graphInfo = mapper.createObjectNode();
-                graphInfo.put("graphUri", binding.path("graph").path("value").asText());
+                graphInfo.put("graphUri", graphUri);
                 graphInfo.put("numTriples", binding.path("count").path("value").asInt());
                 responseArray.add(graphInfo);
             }
         }
 
         return responseArray;
+    }
+
+    /**
+     * Keep graphs that belong to this SynBioHub instance (under configured URI prefixes),
+     * and never return known Virtuoso/system graphs (virtrdf, LDP, OWL, DAV, sparql endpoint).
+     */
+    private static boolean isSynBioHubApplicationGraph(String graphUri) throws IOException {
+        if (graphUri == null || graphUri.isBlank() || isVirtuosoOrSystemGraph(graphUri)) {
+            return false;
+        }
+        String graphPrefix = ConfigUtil.get("graphPrefix").asText("");
+        String databasePrefix = ConfigUtil.get("databasePrefix").asText("");
+        String defaultGraph = ConfigUtil.get("defaultGraph").asText("");
+        return startsWithConfiguredPrefix(graphUri, graphPrefix)
+                || startsWithConfiguredPrefix(graphUri, databasePrefix)
+                || (!defaultGraph.isBlank() && graphUri.equals(defaultGraph));
+    }
+
+    private static boolean startsWithConfiguredPrefix(String graphUri, String prefix) {
+        return prefix != null && !prefix.isBlank() && graphUri.startsWith(prefix);
+    }
+
+    private static boolean isVirtuosoOrSystemGraph(String graphUri) {
+        String lower = graphUri.toLowerCase(Locale.ROOT);
+        return lower.contains("openlinksw.com/schemas/virtrdf")
+                || lower.contains("www.w3.org/ns/ldp")
+                || lower.contains("www.w3.org/2002/07/owl")
+                || lower.contains("/dav/")
+                || lower.endsWith("/dav")
+                || lower.endsWith("/sparql")
+                || lower.contains("/sparql?");
     }
 
     /**
