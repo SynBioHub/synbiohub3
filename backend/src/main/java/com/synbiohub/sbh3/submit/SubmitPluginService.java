@@ -33,39 +33,43 @@ public class SubmitPluginService {
     private final SubmitExposeRegistry exposeRegistry;
     private final ObjectMapper mapper;
 
-    public void applySubmitPlugin(SubmitPayload payload) throws IOException {
-        if (payload.getUploadedFilePath() == null || isDefaultPlugin(payload.getPlugin())) {
-            return;
-        }
-
-        String pluginName = pluginService.resolveSubmitPluginName(payload.getPlugin());
-        pluginService.checkSubmitPluginStatus(pluginName);
-
-        Path inputFile = Path.of(payload.getUploadedFilePath());
-        String filename = inputFile.getFileName().toString();
-        String mimeType = URLConnection.guessContentTypeFromName(filename);
-        if (mimeType == null) {
-            mimeType = "application/octet-stream";
-        }
-
-        String exposeUrl = exposeRegistry.register(inputFile);
-        String exposeToken = exposeUrl.substring(exposeUrl.lastIndexOf('/') + 1);
-
-        try {
-            ObjectNode evaluateManifest = buildPluginManifest(exposeUrl, filename, mimeType, false);
-            JsonNode evaluateResponse = pluginService.evaluateSubmitPlugin(pluginName, evaluateManifest);
-            if (!pluginCanConvert(evaluateResponse, filename)) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                        "The plugin " + pluginName + " requires a different file type.");
-            }
-
-            ObjectNode runRequest = buildPluginManifest(exposeUrl, filename, mimeType, true);
-            byte[] zipBytes = pluginService.runSubmitPlugin(pluginName, runRequest);
-            payload.setUploadedFilePath(extractConvertedSbolPath(zipBytes, inputFile.getParent()));
-        } finally {
-            exposeRegistry.revoke(exposeToken);
-        }
+    public void applySubmitPlugin(SubmitPayload payload) {
+        // TODO: restore PluginService submit-plugin methods from submitEndpoint4
     }
+
+    // public void applySubmitPlugin(SubmitPayload payload) throws IOException {
+    //     if (payload.getUploadedFilePath() == null || isDefaultPlugin(payload.getPlugin())) {
+    //         return;
+    //     }
+
+    //     String pluginName = pluginService.resolveSubmitPluginName(payload.getPlugin());
+    //     pluginService.checkSubmitPluginStatus(pluginName);
+
+    //     Path inputFile = Path.of(payload.getUploadedFilePath());
+    //     String filename = inputFile.getFileName().toString();
+    //     String mimeType = URLConnection.guessContentTypeFromName(filename);
+    //     if (mimeType == null) {
+    //         mimeType = "application/octet-stream";
+    //     }
+
+    //     String exposeUrl = exposeRegistry.register(inputFile);
+    //     String exposeToken = exposeUrl.substring(exposeUrl.lastIndexOf('/') + 1);
+
+    //     try {
+    //         ObjectNode evaluateManifest = buildPluginManifest(exposeUrl, filename, mimeType, false);
+    //         JsonNode evaluateResponse = pluginService.evaluateSubmitPlugin(pluginName, evaluateManifest);
+    //         if (!pluginCanConvert(evaluateResponse, filename)) {
+    //             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+    //                     "The plugin " + pluginName + " requires a different file type.");
+    //         }
+
+    //         ObjectNode runRequest = buildPluginManifest(exposeUrl, filename, mimeType, true);
+    //         byte[] zipBytes = pluginService.runSubmitPlugin(pluginName, runRequest);
+    //         payload.setUploadedFilePath(extractConvertedSbolPath(zipBytes, inputFile.getParent()));
+    //     } finally {
+    //         exposeRegistry.revoke(exposeToken);
+    //     }
+    // }
 
     private static boolean isDefaultPlugin(String plugin) {
         return plugin == null || plugin.isBlank() || "default".equalsIgnoreCase(plugin);
