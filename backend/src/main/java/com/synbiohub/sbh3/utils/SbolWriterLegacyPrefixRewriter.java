@@ -18,8 +18,10 @@ import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Rewrites {@link org.sbolstandard.core2.SBOLWriter} RDF/XML so root namespaces match
@@ -28,10 +30,13 @@ import java.util.Map;
  * SBOL validator equality / download regression tests.
  * <p>
  * Element nesting from SBOLWriter is preserved; only prefixes / xmlns decls are changed.
+ * Non-legacy namespaces that are still used by elements/attributes (e.g. partsregistry
+ * {@code j.0}) are kept so the XML stays well-formed.
  */
 public final class SbolWriterLegacyPrefixRewriter {
 
     private static final String RDF_NS = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
+    private static final String XMLNS_NS = "http://www.w3.org/2000/xmlns/";
 
     /** Exact namespace URI → preferred legacy prefix (declaration order on rdf:RDF). */
     private static final Map<String, String> LEGACY_URI_TO_PREFIX = new LinkedHashMap<>();
@@ -106,10 +111,31 @@ public final class SbolWriterLegacyPrefixRewriter {
 
         renamePrefixedNodes(root, oldPrefixToNewPrefix);
 
-        // Rebuild rdf:RDF xmlns: only legacy prefixes (in stable order).
+        // Prefixes still used by elements/attrs after remap (keeps partsregistry / custom NS).
+        Map<String, String> usedPrefixToUri = collectUsedPrefixes(root);
+
+        // Rebuild rdf:RDF xmlns: legacy set first, then any still-used non-legacy prefixes.
         stripAllXmlns(root);
+        Set<String> declared = new LinkedHashSet<>();
         for (Map.Entry<String, String> e : LEGACY_URI_TO_PREFIX.entrySet()) {
-            root.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:" + e.getValue(), e.getKey());
+            root.setAttributeNS(XMLNS_NS, "xmlns:" + e.getValue(), e.getKey());
+            declared.add(e.getValue());
+        }
+        for (Map.Entry<String, String> e : usedPrefixToUri.entrySet()) {
+            String prefix = e.getKey();
+            if (prefix == null || prefix.isEmpty() || declared.contains(prefix)) {
+                continue;
+            }
+            if ("xml".equals(prefix) || "xmlns".equals(prefix)) {
+                continue;
+            }
+            String uri = normalizeUri(e.getValue());
+            // Skip if this URI already has a legacy prefix declared.
+            if (LEGACY_URI_TO_PREFIX.containsKey(uri)) {
+                continue;
+            }
+            root.setAttributeNS(XMLNS_NS, "xmlns:" + prefix, uri);
+            declared.add(prefix);
         }
 
         String serialized = serialize(doc);
@@ -137,6 +163,34 @@ public final class SbolWriterLegacyPrefixRewriter {
             }
         }
         return map;
+    }
+
+    private static Map<String, String> collectUsedPrefixes(Element root) {
+        Map<String, String> used = new LinkedHashMap<>();
+        collectUsedPrefixesRecursive(root, used);
+        return used;
+    }
+
+    private static void collectUsedPrefixesRecursive(Element el, Map<String, String> used) {
+        String prefix = el.getPrefix();
+        if (prefix != null && !prefix.isEmpty() && el.getNamespaceURI() != null) {
+            used.putIfAbsent(prefix, el.getNamespaceURI());
+        }
+        NamedNodeMap attrs = el.getAttributes();
+        for (int i = 0; i < attrs.getLength(); i++) {
+            Attr a = (Attr) attrs.item(i);
+            String ap = a.getPrefix();
+            if (ap != null && !ap.isEmpty() && !"xmlns".equals(ap) && a.getNamespaceURI() != null) {
+                used.putIfAbsent(ap, a.getNamespaceURI());
+            }
+        }
+        NodeList children = el.getChildNodes();
+        for (int i = 0; i < children.getLength(); i++) {
+            Node n = children.item(i);
+            if (n.getNodeType() == Node.ELEMENT_NODE) {
+                collectUsedPrefixesRecursive((Element) n, used);
+            }
+        }
     }
 
     private static void stripAllXmlns(Element root) {
