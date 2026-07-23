@@ -41,10 +41,9 @@ public class AdminController {
     private final AdminService adminService;
     private final UserService userService;
     private final SparqlService sparqlService;
-    
+
     @Operation(summary = "Run Admin SPARQL Query", description = "Executes a SPARQL query with admin privileges.")
     @ApiResponse(responseCode = "200", description = "JSON containing SPARQL results")
-    private final SparqlService sparqlService;
     @GetMapping(value = "/admin/sparql")
     @ResponseBody
     public String runAdminSparqlQuery(@RequestParam String query, HttpServletRequest request) throws Exception {
