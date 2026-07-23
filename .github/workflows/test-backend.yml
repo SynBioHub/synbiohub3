@@ -34,8 +34,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         name: Checkout source tree
-        with:
-          submodules: recursive
       - uses: actions/download-artifact@v4
         name: Download Docker image
         with:
@@ -66,8 +64,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         name: Checkout source tree
-        with:
-          submodules: recursive
       - uses: actions/download-artifact@v4
         name: Download Docker image
         with:
