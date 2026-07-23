@@ -32,10 +32,23 @@ if [ ! -f SBOLTestRunner/pom.xml ]; then
     exit 1
 fi
 
+# Use repo-root .venv so setup doesn't hit Homebrew's externally-managed Python.
+REPO_ROOT="$(cd .. && pwd)"
+if [ -x "$REPO_ROOT/.venv/bin/python3" ]; then
+    PYTHON="$REPO_ROOT/.venv/bin/python3"
+else
+    message "Creating .venv in repo root"
+    python3 -m venv "$REPO_ROOT/.venv"
+    PYTHON="$REPO_ROOT/.venv/bin/python3"
+fi
+
+message "Installing Python test deps"
+"$PYTHON" -m pip install -q requests requests_html beautifulsoup4 lxml lxml_html_clean
+
 bash ./start_containers.sh
 
 message "Running first-time setup"
-python3 -c "from first_time_setup import TestSetup; ts = TestSetup(); ts.test_post()"
+"$PYTHON" -c "from first_time_setup import TestSetup; ts = TestSetup(); ts.test_post()"
 
 bash ./run_sboltestrunner.sh
 exitcode=$?
