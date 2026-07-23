@@ -50,7 +50,7 @@ public class SearchService {
         String[] uriArr = requestURL.split("/");
         String keyword = uriArr[uriArr.length - 1].split("\\?")[0];
         if (!(uriArr.length == 4 && (keyword.equals(key)))) {
-            params.put(keyword, "");
+            params.put("keyword", keyword);
         }
         return params;
     }
