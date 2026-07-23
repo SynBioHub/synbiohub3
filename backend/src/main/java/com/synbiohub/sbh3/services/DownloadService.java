@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.synbiohub.sbh3.sparql.SPARQLQuery;
 import com.synbiohub.sbh3.utils.ConfigUtil;
+import com.synbiohub.sbh3.utils.SbolWriterLegacyPrefixRewriter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.jena.rdf.model.Model;
@@ -144,7 +145,10 @@ public class DownloadService {
      * Recursive SBOL2 closure as RDF/XML matching SynBioHub1 {@code RDFToSBOLJob}:
      * CONSTRUCT → Jena model → {@link SBOLReader} (via {@link RDFFormat#RDFXML_PLAIN} so
      * {@code sbol:Sequence} stays link-style) → {@link #inlineNestedAnnotations} for
-     * {@code sbh:topLevel}-owned {@link GenericTopLevel}s → {@link SBOLWriter}.
+     * {@code sbh:topLevel}-owned {@link GenericTopLevel}s → {@link SBOLWriter} →
+     * {@link SbolWriterLegacyPrefixRewriter} so root prefixes match SBH1 ({@code sbh},
+     * {@code igem}, …) instead of {@code ns*} / fragment-split xmlns that fail download
+     * validator equality.
      */
     public byte[] getSbol2RdfXmlBytes(String topLevelUri) throws IOException {
         Model model = getRecursiveModel(topLevelUri);
@@ -159,7 +163,7 @@ public class DownloadService {
             prepareDocumentLikeSbh1(doc);
             var out = new ByteArrayOutputStream();
             SBOLWriter.write(doc, out);
-            return out.toByteArray();
+            return SbolWriterLegacyPrefixRewriter.rewrite(out.toByteArray());
         } catch (SBOLValidationException | SBOLConversionException e) {
             throw new IOException("Failed to serialize SBOL for " + topLevelUri, e);
         }
