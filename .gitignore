@@ -161,3 +161,14 @@ frontend/yarn.lock
 backend/data/config.local.json
 data/config.local.json
 
+# Python / local test artifacts
+.venv/
+**/__pycache__/
+*.pyc
+
+# SBOL / suite outputs
+tests/Compared/
+tests/Emulated/
+tests/Retrieved/
+tests/SynBioHubRunner/
+tests/logs_from_test_suite/

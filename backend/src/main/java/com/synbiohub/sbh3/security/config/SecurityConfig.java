@@ -70,7 +70,7 @@ public class SecurityConfig {
                         "/admin/theme", "/admin/registries", "/admin/logo", "/admin/plugins",
                         "/v3/api-docs", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/openapi.yaml",
                         "/error",
-                        "/browse", "/rootCollections", "/root-collections", "/callPlugin", "/expose/**", "/getSynBioHubVersion"
+                        "/browse", "/rootCollections", "/root-collections", "/callPlugin", "/getSynBioHubVersion"
                 ).permitAll()
                 .anyRequest().authenticated()
                 .and()
