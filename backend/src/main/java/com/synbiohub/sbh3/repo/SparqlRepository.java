@@ -1,7 +1,6 @@
 package com.synbiohub.sbh3.repo;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.synbiohub.sbh3.utils.ConfigUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -46,21 +45,21 @@ public class SparqlRepository {
     public static final String SHARED_VIEW_SPARQL = "src/main/java/com/synbiohub/sbh3/sparql/GetSharedCanView.sparql";
     public static final String TOPLEVEL_METADATA_SPARQL = "src/main/java/com/synbiohub/sbh3/sparql/GetTopLevelMetadata.sparql";
 
-    private final ObjectMapper objectMapper;
     private final RestClient restClient;
 
-    /**
-     * Runs a read-only SPARQL query via POST (same parameters as , for large queries).
-     */
-    public String executePostQuery(String url, String uri, String query) throws IOException {
-        return restClient.post()
+
+    public String executeReadQuery(String url, String uri, String query) {
+        return restClient.get()
                 .uri(url, uri, query)
                 .retrieve()
                 .body(String.class);
     }
 
-    public String executeReadQuery(String url, String uri, String query) {
-        return restClient.get()
+    /**
+     * Runs a read-only SPARQL query via POST (same parameters as {@link #executeReadQuery}, for large queries).
+     */
+    public String executePostQuery(String url, String uri, String query) throws IOException {
+        return restClient.post()
                 .uri(url, uri, query)
                 .retrieve()
                 .body(String.class);

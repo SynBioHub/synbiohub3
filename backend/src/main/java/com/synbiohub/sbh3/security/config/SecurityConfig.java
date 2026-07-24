@@ -68,9 +68,9 @@ public class SecurityConfig {
                         "/sparql", "/**/count", "/count",
                         "/logo",
                         "/admin/theme", "/admin/registries", "/admin/logo", "/admin/plugins",
-                        "/browse", "/rootCollections", "/root-collections", "/callPlugin", "/expose/**", "/getSynBioHubVersion",
                         "/v3/api-docs", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/openapi.yaml",
-                        "/error"
+                        "/error",
+                        "/browse", "/rootCollections", "/root-collections", "/callPlugin", "/expose/**", "/getSynBioHubVersion"
                 ).permitAll()
                 .anyRequest().authenticated()
                 .and()

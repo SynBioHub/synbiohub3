@@ -445,7 +445,7 @@ public class SearchController {
     @RequestMapping(value = "/sparql", headers = "Accept=application/json")
     @ResponseBody
     public String getSPARQL(@Parameter(description = "Query parameters: 'query' (SPARQL query string) and optional 'default-graph-uri'") @RequestParam Map<String, String> params) throws IOException {
-      return sparqlService.read(sparqlService.getExplorerUrl(), params.get("default-graph-uri"), params.get("query"));  
+        return sparqlService.read(sparqlService.getExplorerUrl(), params.get("default-graph-uri"), params.get("query"));
     }
 
     // @GetMapping(value = "/search/**")

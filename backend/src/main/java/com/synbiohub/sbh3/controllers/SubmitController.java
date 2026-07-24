@@ -56,12 +56,6 @@ public class SubmitController {
 
     }
 
-    @Operation(summary = "Remove collection (Unimplemented)", description = "Currently an empty stub.", deprecated = true)
-    @DeleteMapping(value = "/removeCollection")
-    public void removeCollection(@RequestBody(required = false) String submission) {
-
-    }
-
     @Operation(summary = "Remove object form (Unimplemented)", description = "Currently an empty stub.", deprecated = true)
     @GetMapping(value = "/remove")
     public void removeObject(@RequestParam Map<String, String> allParams) {
@@ -71,7 +65,7 @@ public class SubmitController {
     @Operation(summary = "Replace object (Unimplemented)", description = "Currently an empty stub.", deprecated = true)
     @GetMapping(value = "/replace")
     public void replaceObject(@RequestParam Map<String, String> allParams) {
-        //should just call remove object then add object
+        // should just call remove object then add object
     }
 
     @Operation(summary = "Add object (Unimplemented)", description = "Currently an empty stub.", deprecated = true)

@@ -226,7 +226,7 @@ export default function StandardSearch() {
     } else {
       setCount(newCount);
     }
-  }, [isCountLoading, isCountError, query, extraFilters]);
+  }, [isCountLoading, isCountError, newCount, query, extraFilters]);
 
   // get search results
   const { results, isLoading, isError } = useSearchResults(
@@ -239,22 +239,10 @@ export default function StandardSearch() {
     sbhVersion
   );
 
-  if (isError) {
-    return (
-      <div className={standarderror}>
-        Errors were encountered while fetching the data
-      </div>
-    );
-  }
-  if (isLoading) {
-    return (
-      <div className={standardresultsloading}>
-        <Loader color="#D25627" type="ThreeDots" />
-      </div>
-    );
-  }
-  for (const result of results) {
-    getTypeAndUrl(result, registries);
+  if (!isLoading && !isError) {
+    for (const result of results) {
+      getTypeAndUrl(result, registries);
+    }
   }
   return (
     <div className={viewStyles.container}>
@@ -344,7 +332,19 @@ export default function StandardSearch() {
       </div>
       <div className={viewStyles.searchContent}>
         <SearchHeader selected="Standard Search" />
-        <ResultTable count={count} data={results} />
+        {isError ? (
+          <div className={standarderror}>
+            Errors were encountered while fetching the data
+          </div>
+        ) : (
+          isLoading ? (
+            <div className={standardresultsloading}>
+              <Loader color="#D25627" type="ThreeDots" />
+            </div>
+          ) : (
+            <ResultTable count={count} data={results} />
+          )
+        )}
       </div>
     </div>
   );
