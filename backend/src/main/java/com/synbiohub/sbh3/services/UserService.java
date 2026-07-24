@@ -1,13 +1,13 @@
 package com.synbiohub.sbh3.services;
 
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.synbiohub.sbh3.Synbiohub3Application;
+import com.synbiohub.sbh3.dao.SparqlService;
 import com.synbiohub.sbh3.dto.LoginDTO;
 import com.synbiohub.sbh3.dto.UserRegistrationDTO;
+import com.synbiohub.sbh3.repo.SparqlRepository;
 import com.synbiohub.sbh3.security.customsecurity.AuthenticationResponse;
 import com.synbiohub.sbh3.security.customsecurity.JwtService;
 import com.synbiohub.sbh3.security.model.AuthCodes;
@@ -17,12 +17,10 @@ import com.synbiohub.sbh3.security.repo.AuthRepository;
 import com.synbiohub.sbh3.security.repo.UserRepository;
 import com.synbiohub.sbh3.sparql.SPARQLQuery;
 import com.synbiohub.sbh3.utils.ConfigUtil;
-import com.synbiohub.sbh3.utils.RestClient;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.ILoggerFactory;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -35,7 +33,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -45,11 +42,8 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.sql.*;
-import java.util.Base64;
 import java.util.*;
 import java.util.regex.Pattern;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Service
 @RequiredArgsConstructor
@@ -58,12 +52,12 @@ public class UserService {
     private static final int JWT_SECRET_BYTES = 48;
 
     private final UserRepository userRepository;
-    private final SearchService searchService;
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final AuthRepository authRepository;
-    private final RestClient restClient;
+    private final SparqlRepository sparqlRepository;
+    private final SparqlService sparqlService;
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     public String loginUser(String username, String password) {
@@ -105,7 +99,9 @@ public class UserService {
     }
 
     /**
-     * This function, during login, will take in the loginDTO and generate the jwtToken.
+     * This function, during login, will take in the loginDTO and generate the
+     * jwtToken.
+     * 
      * @param loginDTO
      * @return
      */
@@ -113,8 +109,7 @@ public class UserService {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginDTO.getUsername(),
-                        loginDTO.getPassword()
-                ));
+                        loginDTO.getPassword()));
         var user = userRepository.findByUsername(loginDTO.getUsername())
                 .orElseThrow();
         var jwtToken = jwtService.generateToken(user);
@@ -126,19 +121,23 @@ public class UserService {
 
     /**
      * This is the main method to check one's authentication.
-     * It will check both the security context and the authTokens table to verify the user is logged in.
+     * It will check both the security context and the authTokens table to verify
+     * the user is logged in.
      *
      * Currently not used. Eventually will be deprecated out and deleted.
+     * 
      * @param inputToken
      * @return
      * @throws Exception
      */
-    //TODO: either delete this or put inside filter when filter is done
+    // TODO: either delete this or put inside filter when filter is done
     public Authentication checkAuthentication(String inputToken) throws Exception {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication instanceof AnonymousAuthenticationToken || authentication == null) return null;
+        if (authentication instanceof AnonymousAuthenticationToken || authentication == null)
+            return null;
         var authCode = authRepository.findByName(authentication.getName())
-                .orElseThrow(() -> new RuntimeException("Authentication not found")); // TODO: requires error handling, find out what SBH1 returns
+                .orElseThrow(() -> new RuntimeException("Authentication not found")); // TODO: requires error handling,
+                                                                                      // find out what SBH1 returns
         if (inputToken.equals(authCode.getAuth())) {
             return authentication;
         } else {
@@ -148,6 +147,7 @@ public class UserService {
 
     /**
      * Helper function for registering a new user.
+     * 
      * @param userRegistrationDTO
      * @return
      */
@@ -179,7 +179,8 @@ public class UserService {
     }
 
     /**
-     * Sets a new password using a JWT issued for password reset (see {@link JwtService#generatePasswordResetToken}).
+     * Sets a new password using a JWT issued for password reset (see
+     * {@link JwtService#generatePasswordResetToken}).
      * Invalidates stored session auth for that user.
      */
     public void setNewPasswordWithToken(String token, String password1, String password2) {
@@ -201,7 +202,8 @@ public class UserService {
     }
 
     /**
-     * Issues a password-reset JWT for {@code username}, or {@code null} if no such user (for forgot-password flows).
+     * Issues a password-reset JWT for {@code username}, or {@code null} if no such
+     * user (for forgot-password flows).
      */
     public String generatePasswordResetTokenForUsername(String username) {
         if (username == null || username.isBlank()) {
@@ -213,7 +215,8 @@ public class UserService {
     }
 
     /**
-     * Sends a password-reset email (generic success message whether user exists or not).
+     * Sends a password-reset email (generic success message whether user exists or
+     * not).
      */
     public String requestPasswordReset(String email) throws IOException {
         if (email == null || email.isBlank() || !isValidEmail(email.trim())) {
@@ -269,9 +272,11 @@ public class UserService {
         payload.put("subject", "SynBioHub password reset");
         payload.put("text", body);
 
-        ResponseEntity<?> response = restClient.post("https://api.resend.com/emails", payload, String.class, headers);
+        ResponseEntity<?> response = sparqlRepository.postJson(
+                "https://api.resend.com/emails", payload, String.class, headers);
         if (!response.getStatusCode().is2xxSuccessful()) {
-            throw new IOException("Resend rejected password reset email with status " + response.getStatusCode().value());
+            throw new IOException("Resend rejected password reset email with status "
+                    + response.getStatusCode().value());
         }
     }
 
@@ -293,9 +298,8 @@ public class UserService {
      * @param email
      * @return
      */
-    public boolean isValidEmail(String email)
-    {
-        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."+
+    public boolean isValidEmail(String email) {
+        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\." +
                 "[a-zA-Z0-9_+&*-]+)*@" +
                 "(?:[a-zA-Z0-9-]+\\.)+[a-z" +
                 "A-Z]{2,17}$";
@@ -306,34 +310,31 @@ public class UserService {
         return pat.matcher(email).matches();
     }
 
-// from (1/20/26)
-public User getUserProfile() {
-    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-    if (auth != null && auth.isAuthenticated() && !(auth instanceof AnonymousAuthenticationToken)) {
-        if (auth.getPrincipal() instanceof User) {
-            User user = (User) auth.getPrincipal();
-            // reload from DB to ensure it's fresh
-            return userRepository.findByUsername(user.getUsername()).orElse(null);
+    // from (1/20/26)
+    public User getUserProfile() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.isAuthenticated() && !(auth instanceof AnonymousAuthenticationToken)) {
+            if (auth.getPrincipal() instanceof User) {
+                User user = (User) auth.getPrincipal();
+                // reload from DB to ensure it's fresh
+                return userRepository.findByUsername(user.getUsername()).orElse(null);
+            }
         }
-    }
-    return null;
-}
-
-
-
-
-// from (1/20/26)
-public User updateUserProfile(Map<String, String> allParams) throws Exception {
-    User existingUser = getUserProfile();
-    if (existingUser == null) {
-        throw new Exception("User not found");
+        return null;
     }
 
-    updateUserFields(existingUser, allParams);
+    // from (1/20/26)
+    public User updateUserProfile(Map<String, String> allParams) throws Exception {
+        User existingUser = getUserProfile();
+        if (existingUser == null) {
+            throw new Exception("User not found");
+        }
 
-    // Save the changes to the database. the GET will always pull from this DB
-    return userRepository.save(existingUser);
-}
+        updateUserFields(existingUser, allParams);
+
+        // Save the changes to the database. the GET will always pull from this DB
+        return userRepository.save(existingUser);
+    }
 
     public String setupInstance(Map<String, Object> allParams) {
         String fileName = "config.local.json";
@@ -343,7 +344,8 @@ public User updateUserProfile(Map<String, String> allParams) throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         mapper.enable(SerializationFeature.INDENT_OUTPUT);
 
-        // Ensure jwtSecret is available before registration, which may trigger JWT usage.
+        // Ensure jwtSecret is available before registration, which may trigger JWT
+        // usage.
         allParams.put("jwtSecret", generateJwtSecret());
 
         UserRegistrationDTO userRegistrationDTO = UserRegistrationDTO
@@ -370,6 +372,7 @@ public User updateUserProfile(Map<String, String> allParams) throws Exception {
                 allParams.put("graphStoreEndpoint", "http://virtuoso3:8890/sparql-graph-crud-auth/");
                 allParams.put("firstLaunch", false);
                 allParams.put("version", 1);
+                allParams.put("isSynBioHub3", true);
                 Map<String, String> wor = new HashMap<>();
                 wor.put("https://synbiohub.org", "http://localhost:6789");
                 allParams.put("webOfRegistries", wor);// TODO: Make sure web of registries is correct
@@ -406,6 +409,7 @@ public User updateUserProfile(Map<String, String> allParams) throws Exception {
 
     /**
      * Compares the user's X-authorization token to the one passed in
+     * 
      * @param xauth X-authorization token passed in from HTTP header
      * @return True if the tokens are the same, false otherwise.
      */
@@ -416,17 +420,20 @@ public User updateUserProfile(Map<String, String> allParams) throws Exception {
     /**
      * Compares a part to see if it matches a user's graph.
      * The user's graph is the default graph + "/user" + their username.
+     * 
      * @return True if it matches, false otherwise.
      */
     public Boolean isOwnedBy(String topLevelUri) throws IOException {
         SPARQLQuery query = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/GetOwnedBy.sparql");
-        String results = searchService.SPARQLQuery(query.loadTemplate(Collections.singletonMap("topLevel", topLevelUri)));
+        String results = sparqlService.read(sparqlService.getExplorerUrl(),
+                sparqlService.resolveGraphUri(""),
+                query.loadTemplate(Collections.singletonMap("topLevel", topLevelUri)));
         ArrayList<String> owners = new ArrayList<>();
         try {
             var mapper = new ObjectMapper();
             JsonNode rawTree = mapper.readTree(results);
-            for(JsonNode node : rawTree.get("results").get("bindings")) {
-                for (Iterator<Map.Entry<String, JsonNode>> it = node.fields(); it.hasNext(); ) {
+            for (JsonNode node : rawTree.get("results").get("bindings")) {
+                for (Iterator<Map.Entry<String, JsonNode>> it = node.fields(); it.hasNext();) {
                     Map.Entry<String, JsonNode> subNode = it.next();
                     owners.add(subNode.getValue().get("value").asText());
                 }
@@ -434,7 +441,8 @@ public User updateUserProfile(Map<String, String> allParams) throws Exception {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return owners.contains(ConfigUtil.get("graphPrefix").asText() + "user/" + SecurityContextHolder.getContext().getAuthentication().getName());
+        return owners.contains(ConfigUtil.get("graphPrefix").asText() + "user/"
+                + SecurityContextHolder.getContext().getAuthentication().getName());
     }
 
     private void updateUserFields(User user, Map<String, String> allParams) {
@@ -504,7 +512,7 @@ public User updateUserProfile(Map<String, String> allParams) throws Exception {
             resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 User user = User.builder()
-                        .id((long)resultSet.getInt("id"))
+                        .id((long) resultSet.getInt("id"))
                         .name(resultSet.getString("name"))
                         .username(resultSet.getString("username"))
                         .email(resultSet.getString("email"))
@@ -534,6 +542,15 @@ public User updateUserProfile(Map<String, String> allParams) throws Exception {
             }
         }
         return users;
+    }
+
+    public int getSynBioHubVersion() throws IOException {
+        JsonNode flag = ConfigUtil.get("isSynBioHub3");
+        if (flag == null || flag.isNull()) {
+            ConfigUtil.set(ConfigUtil.getLocaljson(), "isSynBioHub3", true);
+            return 3;
+        }
+        return flag.asBoolean(false) ? 3 : 1;
     }
 
 }

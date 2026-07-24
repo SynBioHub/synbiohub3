@@ -2,13 +2,15 @@ package com.synbiohub.sbh3.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.synbiohub.sbh3.dao.SparqlService;
 import com.synbiohub.sbh3.security.customsecurity.ServletPathUtil;
 import com.synbiohub.sbh3.security.model.User;
-import com.synbiohub.sbh3.security.repo.UserRepository;
 import com.synbiohub.sbh3.services.SearchService;
+import com.synbiohub.sbh3.services.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import io.swagger.v3.oas.annotations.Operation;
@@ -33,7 +35,8 @@ public class SearchController {
     // Singleton search object for business logic
     private final SearchService searchService;
 
-    private final UserRepository userRepository;
+    private final SparqlService sparqlService;
+    private final UserService userService;
 
     /**
      * Returns the metadata for the object from the specified search query.
@@ -51,14 +54,13 @@ public class SearchController {
     @ResponseBody
     public String getResults(@Parameter(description = "Key/value pairs of search filters (e.g. objectType, collection, creator, offset, limit)") @RequestParam Map<String, String> allParams, HttpServletRequest request)
             throws IOException {
-        String sparqlQuery = searchService.getMetadataQuerySPARQL(allParams);
-        return searchService.rawJSONToOutput(searchService.SPARQLOrExplorerQuery(sparqlQuery));
+        return searchService.search(allParams);
     }
 
     /**
      * Redirects from the old search URI to a standardized URI
      * <p>
-     * Use {@link SearchController#getResults(Map, HttpServletRequest)} instead.
+     * Use instead.
      * 
      * @deprecated
      * @param request The incoming request
@@ -73,14 +75,8 @@ public class SearchController {
     @GetMapping(value = "/search/**", produces = "text/plain")
     public String redirectOldSearch(HttpServletRequest request, @Parameter(description = "Key/value pairs of search filters") @RequestParam Map<String, String> allParams)
             throws IOException {
-        String requestURL = request.getRequestURL().toString();
-        String[] uriArr = requestURL.split("/");
-        String keyword = uriArr[uriArr.length - 1].split("\\?")[0];
-        if (!(uriArr.length == 4 && (keyword.equals("search")))) {
-            allParams.put(keyword, "");
-        }
-        String sparqlQuery = searchService.getMetadataQuerySPARQL(allParams);
-        return searchService.rawJSONToOutput(searchService.SPARQLOrExplorerQuery(sparqlQuery));
+        allParams = searchService.searchKeyword(request, allParams, "search");
+        return searchService.search(allParams);
     }
 
     /**
@@ -97,8 +93,7 @@ public class SearchController {
     @GetMapping(value = "/searchCount")
     @ResponseBody
     public String getSearchCount(@Parameter(description = "Key/value pairs of search filters (same as /search)") @RequestParam Map<String, String> allParams) throws IOException {
-        String sparqlQuery = searchService.getSearchCountSPARQL(allParams);
-        return searchService.JSONToCount(searchService.SPARQLOrExplorerQuery(sparqlQuery));
+        return searchService.searchCount(allParams);
     }
 
     /**
@@ -119,14 +114,8 @@ public class SearchController {
     @GetMapping(value = "/searchCount/**", produces = "text/plain")
     public String redirectOldSearchCount(HttpServletRequest request, @Parameter(description = "Key/value pairs of search filters") @RequestParam Map<String, String> allParams)
             throws IOException {
-        String requestURL = request.getRequestURL().toString();
-        String[] uriArr = requestURL.split("/");
-        String keyword = uriArr[uriArr.length - 1].split("\\?")[0];
-        if (!(uriArr.length == 4 && (keyword.equals("searchCount")))) {
-            allParams.put(keyword, "");
-        }
-        String sparqlQuery = searchService.getSearchCountSPARQL(allParams);
-        return searchService.JSONToCount(searchService.SPARQLOrExplorerQuery(sparqlQuery));
+        allParams = searchService.searchKeyword(request, allParams, "searchCount");
+        return searchService.searchCount(allParams);
     }
 
     /**
@@ -157,9 +146,10 @@ public class SearchController {
     })
     @GetMapping(value = "/rootCollections")
     public String getRootCollections() throws IOException {
-        String sparqlQuery = searchService.getRootCollectionsSPARQL();
+        String sparqlQuery = sparqlService.getRootCollectionsSPARQL();
         log.info("Getting root collections");
-        return searchService.collectionToOutput(searchService.SPARQLQuery(sparqlQuery));
+        String results = sparqlService.read(sparqlService.sparqlQueryUrl(), sparqlService.resolveGraphUri(""), sparqlQuery);
+        return searchService.collectionToOutput(results);
     }
 
     /**
@@ -174,12 +164,12 @@ public class SearchController {
     @GetMapping(value = "/manage", produces = MediaType.APPLICATION_JSON_VALUE)
     public JsonNode getSubmissions() throws IOException {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        User user = userRepository.findByUsername(auth.getName()).orElseThrow();
+        User user = userService.getUserProfile();
 
-        String sparql = searchService.getManageSubmissionsSPARQL(user.getEmail(), user.getUsername());
+        String query = sparqlService.getManageSubmissionsSPARQL(user.getEmail(), user.getUsername());
 
-        String publicResults = searchService.SPARQLQuery(sparql);
-        String privateResults = searchService.SPARQLQuery(sparql, searchService.resolveUserNamedGraphUri(user));
+        String publicResults = sparqlService.read(sparqlService.getExplorerUrl(), sparqlService.resolveGraphUri(""), query);
+        String privateResults = sparqlService.read(sparqlService.getExplorerUrl(), searchService.resolveUserNamedGraphUri(user), query);
 
         return searchService.mergeManageResults(publicResults, privateResults);
     }
@@ -196,7 +186,7 @@ public class SearchController {
     @GetMapping(value = "/shared", produces = MediaType.APPLICATION_JSON_VALUE)
     public JsonNode getSharedObjects() throws IOException, JsonProcessingException {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        User user = userRepository.findByUsername(auth.getName()).orElseThrow();
+        User user = userService.getUserProfile();
         return searchService.getSharedObjectsJSON(user);
     }
 
@@ -220,8 +210,9 @@ public class SearchController {
             HttpServletRequest request) throws IOException {
 
         String collectionInfo = collectionInfoFromRequestPath(request, "subCollections");
-        String sparqlQuery = searchService.getSubCollectionsSPARQL(collectionInfo);
-        return searchService.collectionToOutput(searchService.SPARQLQuery(sparqlQuery));
+        String sparqlQuery = sparqlService.getSubCollectionsSPARQL(collectionInfo);
+        String results = sparqlService.read(sparqlService.getExplorerUrl(), sparqlService.resolveGraphUri(""), sparqlQuery);
+        return searchService.collectionToOutput(results);
     }
 
     /**
@@ -245,8 +236,9 @@ public class SearchController {
 
         String collectionInfo = collectionInfoFromRequestPath(request, "twins");
 
-        String sparqlQuery = searchService.getURISPARQL(collectionInfo, "twins");
-        return searchService.rawJSONToOutput(searchService.SPARQLOrExplorerQuery(sparqlQuery));
+        String sparqlQuery = sparqlService.getURISPARQL(collectionInfo, "twins");
+        String results = sparqlService.read(sparqlService.getExplorerUrl(), sparqlService.resolveGraphUri(""), sparqlQuery);
+        return searchService.rawJSONToOutput(results);
     }
 
     /**
@@ -270,8 +262,9 @@ public class SearchController {
 
         String collectionInfo = collectionInfoFromRequestPath(request, "twinsCount");
 
-        String sparqlQuery = searchService.getTwinsCountSPARQL(collectionInfo);
-        return searchService.JSONToCount(searchService.SPARQLQuery(sparqlQuery));
+        String sparqlQuery = sparqlService.getTwinsCountSPARQL(collectionInfo);
+        String results = sparqlService.read(sparqlService.getExplorerUrl(), sparqlService.resolveGraphUri(""), sparqlQuery);
+        return searchService.JSONToCount(results);
     }
 
     /**
@@ -296,8 +289,9 @@ public class SearchController {
 
         String collectionInfo = collectionInfoFromRequestPath(request, "similar");
 
-        String sparqlQuery = searchService.getURISPARQL(collectionInfo, "similar");
-        return searchService.rawJSONToOutput(searchService.SPARQLOrExplorerQuery(sparqlQuery));
+        String sparqlQuery = sparqlService.getURISPARQL(collectionInfo, "similar");
+        String results = sparqlService.read(sparqlService.getExplorerUrl(), sparqlService.resolveGraphUri(""), sparqlQuery);
+        return searchService.rawJSONToOutput(results);
     }
 
     /**
@@ -322,8 +316,9 @@ public class SearchController {
 
         String collectionInfo = collectionInfoFromRequestPath(request, "similarCount");
 
-        String sparqlQuery = searchService.getSimilarCountSPARQL(collectionInfo);
-        return searchService.JSONToCount(searchService.SPARQLQuery(sparqlQuery));
+        String sparqlQuery = sparqlService.getSimilarCountSPARQL(collectionInfo);
+        String results = sparqlService.read(sparqlService.getExplorerUrl(), sparqlService.resolveGraphUri(""), sparqlQuery);
+        return searchService.JSONToCount(results);
     }
 
     /**
@@ -349,8 +344,9 @@ public class SearchController {
 
         String collectionInfo = collectionInfoFromRequestPath(request, "uses");
 
-        String sparqlQuery = searchService.getURISPARQL(collectionInfo, "uses");
-        return searchService.rawJSONToOutput(searchService.SPARQLQuery(sparqlQuery));
+        String sparqlQuery = sparqlService.getURISPARQL(collectionInfo, "uses");
+        String results = sparqlService.read(sparqlService.getExplorerUrl(), sparqlService.resolveGraphUri(""), sparqlQuery);
+        return searchService.rawJSONToOutput(results);
     }
 
     /**
@@ -376,8 +372,9 @@ public class SearchController {
 
         String collectionInfo = collectionInfoFromRequestPath(request, "usesCount");
 
-        String sparqlQuery = searchService.getUsesCountSPARQL(collectionInfo);
-        return searchService.JSONToCount(searchService.SPARQLQuery(sparqlQuery));
+        String sparqlQuery = sparqlService.getUsesCountSPARQL(collectionInfo);
+        String results = sparqlService.read(sparqlService.getExplorerUrl(), sparqlService.resolveGraphUri(""), sparqlQuery);
+        return searchService.JSONToCount(results);
     }
 
     /**
@@ -427,8 +424,9 @@ public class SearchController {
     @GetMapping("/{type:.+}/count")
     public String getTypeCount(@Parameter(description = "SBOL object type (e.g. ComponentDefinition, Sequence)") @PathVariable("type") String type, HttpServletRequest request) throws IOException {
 
-        String sparqlQuery = searchService.getTypeCountSPARQL(type);
-        return searchService.JSONToCount(searchService.SPARQLQuery(sparqlQuery));
+        String sparqlQuery = sparqlService.getTypeCountSPARQL(type);
+        String results = sparqlService.read(sparqlService.getExplorerUrl(), sparqlService.resolveGraphUri(""), sparqlQuery);
+        return searchService.JSONToCount(results);
     }
 
     /**
@@ -436,7 +434,7 @@ public class SearchController {
      * Use SBOLExplorer if it is enabled in the config, else send query directly to
      * Virtuoso.
      * 
-     * @param query SPARQL Query
+     * @param
      * @return JSON containing parts
      */
     @Operation(summary = "Execute SPARQL query", description = "Executes a raw SPARQL query against the triplestore and returns results as JSON. Routes through SBOLExplorer if enabled, otherwise queries Virtuoso directly.")
@@ -447,7 +445,7 @@ public class SearchController {
     @RequestMapping(value = "/sparql", headers = "Accept=application/json")
     @ResponseBody
     public String getSPARQL(@Parameter(description = "Query parameters: 'query' (SPARQL query string) and optional 'default-graph-uri'") @RequestParam Map<String, String> params) throws IOException {
-        return searchService.SPARQLQuery(params.get("query"), params.get("default-graph-uri"));
+        return sparqlService.read(sparqlService.getExplorerUrl(), params.get("default-graph-uri"), params.get("query"));
     }
 
     // @GetMapping(value = "/search/**")

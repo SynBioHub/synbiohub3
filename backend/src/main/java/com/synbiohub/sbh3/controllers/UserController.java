@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.Map;
 
 //swagger api documentation imports
@@ -239,5 +240,10 @@ public class UserController {
     @GetMapping("/privateUser")
     public String getPrivateUserGraph() throws Exception {
         return ConfigUtil.get("uriPrefix") + "user/" + userService.getUserProfile().getUsername();
+    }
+
+    @GetMapping("/getSynBioHubVersion")
+    public ResponseEntity<Integer> getSynBioHubVersion() throws IOException {
+        return ResponseEntity.ok(userService.getSynBioHubVersion());
     }
 }
