@@ -171,4 +171,6 @@ tests/Compared/
 tests/Emulated/
 tests/Retrieved/
 tests/SynBioHubRunner/
+tests/Timing/
+tests/sbol_testrunner_result
 tests/logs_from_test_suite/

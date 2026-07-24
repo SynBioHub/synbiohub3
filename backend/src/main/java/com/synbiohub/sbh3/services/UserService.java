@@ -15,6 +15,7 @@ import com.synbiohub.sbh3.security.model.Role;
 import com.synbiohub.sbh3.security.model.User;
 import com.synbiohub.sbh3.security.repo.AuthRepository;
 import com.synbiohub.sbh3.security.repo.UserRepository;
+import com.synbiohub.sbh3.repo.SparqlRepository;
 import com.synbiohub.sbh3.sparql.SPARQLQuery;
 import com.synbiohub.sbh3.utils.ConfigUtil;
 import jakarta.servlet.http.HttpServletRequest;
@@ -272,7 +273,7 @@ public class UserService {
         payload.put("subject", "SynBioHub password reset");
         payload.put("text", body);
 
-        ResponseEntity<?> response = sparqlRepository.postJson(
+        ResponseEntity<String> response = sparqlRepository.postJson(
                 "https://api.resend.com/emails", payload, String.class, headers);
         if (!response.getStatusCode().is2xxSuccessful()) {
             throw new IOException("Resend rejected password reset email with status "
