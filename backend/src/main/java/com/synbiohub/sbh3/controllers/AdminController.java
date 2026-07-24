@@ -4,24 +4,23 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.synbiohub.sbh3.dao.SparqlService;
 import com.synbiohub.sbh3.dto.LogEntry;
 import com.synbiohub.sbh3.security.model.User;
 import com.synbiohub.sbh3.services.AdminService;
-import com.synbiohub.sbh3.services.SearchService;
 import com.synbiohub.sbh3.services.UserService;
 import com.synbiohub.sbh3.utils.ConfigUtil;
-import jakarta.servlet.http.HttpServletRequest;
-import lombok.AllArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.http.ResponseEntity;
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -32,11 +31,7 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Base64;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Tag(name = "Administration", description = "Admin dashboard APIs for configuring SynBioHub (Theme, Users, Registries, Plugins, SPARQL)")
 @RestController
@@ -45,7 +40,8 @@ public class AdminController {
 
     private final AdminService adminService;
     private final UserService userService;
-    private final SearchService searchService;
+    private final SparqlService sparqlService;
+
     @Operation(summary = "Run Admin SPARQL Query", description = "Executes a SPARQL query with admin privileges.")
     @ApiResponse(responseCode = "200", description = "JSON containing SPARQL results")
     @GetMapping(value = "/admin/sparql")
@@ -57,7 +53,7 @@ public class AdminController {
         if (auth == null) {
             return null;
         }
-        return searchService.SPARQLQuery(query);
+        return sparqlService.read(sparqlService.getExplorerUrl(), sparqlService.resolveGraphUri(""), query);
     }
 
     @Operation(summary = "Get admin dashboard status", description = "Returns status of graphs, logs, plugins, users, and remotes.")

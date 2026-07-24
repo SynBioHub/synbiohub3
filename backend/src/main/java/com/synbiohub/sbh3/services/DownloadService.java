@@ -3,23 +3,24 @@ package com.synbiohub.sbh3.services;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.synbiohub.sbh3.dao.SparqlService;
 import com.synbiohub.sbh3.sparql.SPARQLQuery;
 import com.synbiohub.sbh3.utils.ConfigUtil;
 import com.synbiohub.sbh3.utils.SbolWriterLegacyPrefixRewriter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.jena.datatypes.RDFDatatype;
+import org.apache.jena.datatypes.TypeMapper;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.RDFNode;
-import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.rdf.model.ResourceFactory;
-import org.apache.jena.datatypes.RDFDatatype;
-import org.apache.jena.datatypes.TypeMapper;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RDFFormat;
 import org.apache.jena.riot.RiotException;
 import org.sbolstandard.core2.Annotation;
+import org.apache.jena.vocabulary.RDF;
 import org.sbolstandard.core2.ComponentDefinition;
 import org.sbolstandard.core2.GenericTopLevel;
 import org.sbolstandard.core2.SBOLConversionException;
@@ -37,14 +38,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -54,6 +48,7 @@ public class DownloadService {
     private static final int FASTA_WRAP_WIDTH = 70;
 
     private final SearchService searchService;
+    private final SparqlService sparqlService;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     /**
@@ -124,7 +119,7 @@ public class DownloadService {
         var args = new HashMap<String, String>();
         args.put("persistentIdentity", "<" + persistentIdentityUri + ">");
         String query = q.loadTemplate(args);
-        String json = searchService.SPARQLQuery(query);
+        String json = sparqlService.read(sparqlService.getExplorerUrl(), sparqlService.resolveGraphUri(""), query);
         try {
             JsonNode bindings = objectMapper.readTree(json).path("results").path("bindings");
             if (!bindings.isArray() || bindings.isEmpty()) {
@@ -337,7 +332,7 @@ public class DownloadService {
         args.put("uri", uriClass.toString());
         args.put("offset", "0");
         String query = metadataQuery.loadTemplate(args);
-        String results = searchService.SPARQLQuery(query);
+        String results = sparqlService.read(sparqlService.getExplorerUrl(), sparqlService.resolveGraphUri(""),query);
         try {
             results = searchService.rawJSONToOutput(results);
         } catch (Exception e) {}

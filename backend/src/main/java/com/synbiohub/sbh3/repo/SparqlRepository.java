@@ -15,6 +15,9 @@ import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.io.entity.ByteArrayEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -38,7 +41,14 @@ public class SparqlRepository {
     public static final String ATTACH_UPLOAD_SPARQL = "src/main/java/com/synbiohub/sbh3/sparql/AttachUpload.sparql";
     public static final String UPDATE_ATTACHMENT_SPARQL = "src/main/java/com/synbiohub/sbh3/sparql/UpdateAttachment.sparql";
     public static final String ATTACHMENT_UPDATE_SPARQL = "src/main/java/com/synbiohub/sbh3/sparql/AttachmentUpdate.sparql";
-
+    public static final String SEARCH_SPARQL = "src/main/java/com/synbiohub/sbh3/sparql/search.sparql";
+    public static final String SEARCH_COUNT_SPARQL = "src/main/java/com/synbiohub/sbh3/sparql/searchCount.sparql";
+    public static final String COUNT_SPARQL = "src/main/java/com/synbiohub/sbh3/sparql/Count.sparql";
+    public static final String ROOT_COLLECTION_METADATA_SPARQL = "src/main/java/com/synbiohub/sbh3/sparql/RootCollectionMetadata.sparql";
+    public static final String SUBCOLLECTION_METADATA_SPARQL = "src/main/java/com/synbiohub/sbh3/sparql/SubCollectionMetadata.sparql";
+    public static final String SHARED_VIEW_SPARQL = "src/main/java/com/synbiohub/sbh3/sparql/GetSharedCanView.sparql";
+    public static final String TOPLEVEL_METADATA_SPARQL = "src/main/java/com/synbiohub/sbh3/sparql/GetTopLevelMetadata.sparql";
+  
     private final ObjectMapper objectMapper;
     private final RestClient restClient;
 
@@ -52,7 +62,11 @@ public class SparqlRepository {
     public String getQuery(String query, String defaultGraphUri) throws IOException {
         String graphUri = resolveGraphUri(defaultGraphUri);
         return restClient.get()
-                .uri(sparqlQueryUrl(), graphUri, query)
+                .uri(sparqlQueryUrl(), graphUri, query);
+      
+    public String executeReadQuery(String url, String uri, String query) {
+        return restClient.get()
+                .uri(url, uri, query)
                 .retrieve()
                 .body(String.class);
     }
@@ -68,6 +82,13 @@ public class SparqlRepository {
         String graphUri = resolveGraphUri(defaultGraphUri);
         return restClient.post()
                 .uri(sparqlQueryUrl(), graphUri, query)
+          
+    /**
+     * Runs a read-only SPARQL query via POST (same parameters as , for large queries).
+     */
+    public String executePostQuery(String url, String uri, String query) throws IOException {
+        return restClient.post()
+                .uri(url, uri, query)
                 .retrieve()
                 .body(String.class);
     }

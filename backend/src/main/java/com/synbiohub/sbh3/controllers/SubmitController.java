@@ -65,7 +65,7 @@ public class SubmitController {
     @Operation(summary = "Replace object (Unimplemented)", description = "Currently an empty stub.", deprecated = true)
     @GetMapping(value = "/replace")
     public void replaceObject(@RequestParam Map<String, String> allParams) {
-        //should just call remove object then add object
+        // should just call remove object then add object
     }
 
     @Operation(summary = "Add object (Unimplemented)", description = "Currently an empty stub.", deprecated = true)
