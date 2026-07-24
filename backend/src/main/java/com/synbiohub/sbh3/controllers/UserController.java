@@ -3,6 +3,7 @@ package com.synbiohub.sbh3.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.synbiohub.sbh3.dto.UserRegistrationDTO;
 import com.synbiohub.sbh3.security.customsecurity.AuthenticationResponse;
+import com.synbiohub.sbh3.security.model.Role;
 import com.synbiohub.sbh3.security.model.User;
 import com.synbiohub.sbh3.security.repo.AuthRepository;
 import com.synbiohub.sbh3.services.UserService;
@@ -71,7 +72,7 @@ public class UserController {
     })
     @PostMapping(value = "/register")
     public ResponseEntity<String> registerNewUser(
-            @Parameter(description = "Unique username") @RequestParam String username, 
+            @Parameter(description = "Unique username") @RequestParam String username,
             @Parameter(description = "Full display name") @RequestParam String name, 
             @Parameter(description = "Institutional affiliation") @RequestParam String affiliation, 
             @Parameter(description = "Email address") @RequestParam String email, 
@@ -87,6 +88,7 @@ public class UserController {
                     .email(email)
                     .password1(password1)
                     .password2(password2)
+                    .role(Role.USER)
                     .build();
             AuthenticationResponse response = userService.register(userRegistrationDTO);
             return ResponseEntity.ok(response.getToken());

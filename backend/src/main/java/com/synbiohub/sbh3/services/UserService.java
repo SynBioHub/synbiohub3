@@ -171,7 +171,7 @@ public class UserService {
                 .email(userRegistrationDTO.getEmail())
                 .affiliation(userRegistrationDTO.getAffiliation())
                 .password(passwordEncoder.encode(userRegistrationDTO.getPassword1()))
-                .role(Role.ADMIN)
+                .role(userRegistrationDTO.getRole())
                 .isMember(true)
                 .isCurator(false)
                 .build();
@@ -361,6 +361,7 @@ public User updateUserProfile(Map<String, String> allParams) throws Exception {
                 .email((String) allParams.get("userEmail"))
                 .password1((String) allParams.get("userPassword"))
                 .password2((String) allParams.get("userPasswordConfirm"))
+                .role(Role.ADMIN)
                 .build();
         register(userRegistrationDTO);
 
