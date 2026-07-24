@@ -4,16 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.synbiohub.sbh3.repo.SparqlRepository;
 import com.synbiohub.sbh3.sparql.SPARQLQuery;
-import com.synbiohub.sbh3.utils.StringUtil;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Map;
-import com.synbiohub.sbh3.repo.SparqlRepository;
-import com.synbiohub.sbh3.sparql.SPARQLQuery;
 import com.synbiohub.sbh3.utils.ConfigUtil;
 import com.synbiohub.sbh3.utils.JsonUtil;
 import com.synbiohub.sbh3.utils.StringUtil;
@@ -24,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -35,6 +26,7 @@ public class SparqlService {
 
     private final SparqlRepository sparqlRepository;
     private final ObjectMapper objectMapper;
+    private final JsonUtil jsonUtil;
 
     /**
      * Virtuoso DELETE templates return one row per batch; loop until nothing remains.
@@ -111,8 +103,6 @@ public class SparqlService {
                 "size", StringUtil.sparqlStringLiteral(Long.toString(size))));
         update(query, graphUri, false);
     }
-
-    private final JsonUtil jsonUtil;
 
     public Map<String, String> buildSearchQuery(Map<String, String> allParams) {
         HashMap<String, String> sparqlArgs = new HashMap<>
