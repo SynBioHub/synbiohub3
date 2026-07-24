@@ -2,6 +2,7 @@ import SPARQL_PREFIXES from './prefixes';
 
 const query = `${SPARQL_PREFIXES}
 SELECT ?subject ?displayId ?name (COUNT(DISTINCT ?tl) AS ?count)
+$from
 WHERE {
       ?subject a sbol2:Collection .
       OPTIONAL { ?subject sbol2:displayId ?displayId . }

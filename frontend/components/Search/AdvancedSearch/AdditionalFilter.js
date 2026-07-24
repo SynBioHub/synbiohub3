@@ -15,6 +15,7 @@ export default function AdditionalFilter(properties) {
   const [selectedValue, setSelectedValue] = useState("");
   const wrapIRI = v => (v?.startsWith("http") ? `<${v}>` : v);
   const searchQuery = useSelector(state => state.search.query);
+  const privateGraphUri = useSelector(state => state.user.graphUri);
 
   useEffect(() => {
     const newFilters = [...properties.extraFilters];
@@ -66,7 +67,8 @@ export default function AdditionalFilter(properties) {
           placeholder={shortName(wrapIRI(properties.extraFilters[properties.index].value))}//{selectedValue}
           sparql={configureQuery(searchObject, {
             predicate: wrapIRI(properties.extraFilters[properties.index].filter), //selectedPredicate
-            constraints: buildFacetConstraints(properties, searchQuery, undefined, properties.index)
+            constraints: buildFacetConstraints(properties, searchQuery, undefined, properties.index),
+            from: privateGraphUri ? `FROM <${privateGraphUri}>` : ''
           })}
           parseResult={result => {
             const count = result.count ? ` (${result.count.value})` : '';
