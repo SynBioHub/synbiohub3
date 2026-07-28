@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import io.swagger.v3.oas.annotations.Operation;
@@ -162,6 +163,7 @@ public class SearchController {
             @ApiResponse(responseCode = "500", description = "SPARQL query or database error")
     })
     @GetMapping(value = "/manage", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAnyAuthority('USER', 'CURATOR', 'ADMIN')")
     public JsonNode getSubmissions() throws IOException {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.getUserProfile();
@@ -184,6 +186,7 @@ public class SearchController {
             @ApiResponse(responseCode = "500", description = "SPARQL query or database error")
     })
     @GetMapping(value = "/shared", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAnyAuthority('USER', 'CURATOR', 'ADMIN')")
     public JsonNode getSharedObjects() throws IOException, JsonProcessingException {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.getUserProfile();

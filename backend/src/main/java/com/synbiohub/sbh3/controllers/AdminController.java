@@ -18,10 +18,13 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import com.synbiohub.sbh3.security.model.Role;
+import com.synbiohub.sbh3.dto.UserDto;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,6 +39,7 @@ import java.util.*;
 @Tag(name = "Administration", description = "Admin dashboard APIs for configuring SynBioHub (Theme, Users, Registries, Plugins, SPARQL)")
 @RestController
 @AllArgsConstructor
+@PreAuthorize("hasAuthority('ADMIN')")
 public class AdminController {
 
     private final AdminService adminService;
@@ -47,8 +51,6 @@ public class AdminController {
     @GetMapping(value = "/admin/sparql")
     @ResponseBody
     public String runAdminSparqlQuery(@RequestParam String query, HttpServletRequest request) throws Exception {
-        String inputToken = request.getHeader("X-authorization");
-//        Authentication auth = userService.checkAuthentication(inputToken);
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth == null) {
             return null;
@@ -173,6 +175,7 @@ public class AdminController {
 
     //TODO: get admin plugins needs to be public, post admin plugins need to be admin only
     @Operation(summary = "Get plugins", description = "Returns all configured plugins.")
+    @PreAuthorize("permitAll()")
     @GetMapping(value = "/admin/plugins")
     @ResponseBody
     public String getPlugins(@RequestParam Map<String,String> allParams, HttpServletRequest request) throws IOException {
@@ -218,6 +221,7 @@ public class AdminController {
     }
 
     @Operation(summary = "Get Web of Registries", description = "Returns the configured Web of Registries instances.")
+    @PreAuthorize("permitAll()")
     @GetMapping(value = "/admin/registries")
     @ResponseBody
     public JsonNode getRegistries() throws IOException {
@@ -341,7 +345,7 @@ public class AdminController {
     public String setAdminEmail(String newEmail) throws Exception {
         User adminUser = userService.getUserProfile();
         try {
-            if (adminUser.getIsAdmin()) {
+            if (Role.ADMIN.equals(adminUser.getRole())) {
                 Map<String, String> params = new HashMap<>();
                 params.put("email", newEmail);
                 userService.updateUserProfile(params);
@@ -425,6 +429,7 @@ public class AdminController {
 
     //TODO: get admin theme needs to be public, post admin theme needs to be admin only
     @Operation(summary = "Get theme", description = "Returns the currently configured UI theme.")
+    @PreAuthorize("permitAll()")
     @GetMapping(value = "/admin/theme")
     @ResponseBody
     public String getTheme() throws IOException {
@@ -457,6 +462,7 @@ public class AdminController {
     }
 
     @Operation(summary = "Get instance logo", description = "Returns the raw image file for the current instance logo.")
+    @PreAuthorize("permitAll()")
     @GetMapping(value = "/logo")
     @ResponseBody
     public ResponseEntity<byte[]> getLogo() {
@@ -526,8 +532,14 @@ public class AdminController {
     @Operation(summary = "Get all users", description = "Returns a JSON list of all registered users.")
     @GetMapping(value = "/admin/users")
     @ResponseBody
-    public String getUsers(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
-        return adminService.getUsers();
+    public Map<String, Object> getUsers(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
+        Boolean allowPublicSignup = false;
+        try {
+            allowPublicSignup = ConfigUtil.get("allowPublicSignup").asBoolean();
+        } catch (Exception e) {
+            allowPublicSignup = false;
+        }
+        return Map.of("allowPublicSignup", allowPublicSignup, "users", adminService.getUsers());
     }
 
     @Operation(summary = "Update users configuration", description = "Updates user settings in the local config.")

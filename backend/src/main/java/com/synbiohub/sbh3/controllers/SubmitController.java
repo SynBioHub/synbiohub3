@@ -10,6 +10,7 @@ import org.sbolstandard.core2.SBOLValidationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -32,6 +33,7 @@ public class SubmitController {
     @PostMapping(value = "/submit",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = "text/plain; charset=UTF-8")
+    @PreAuthorize("hasAnyAuthority('USER', 'CURATOR', 'ADMIN')")
     public ResponseEntity<String> submit(
             @ModelAttribute SubmitPayload allParams,
             @RequestPart(value = "file", required = false) MultipartFile file) throws IOException, SBOLValidationException {
@@ -45,6 +47,7 @@ public class SubmitController {
     }
 
     @Operation(summary = "Make object public (Unimplemented)", description = "Currently an empty stub.", deprecated = true)
+    @PreAuthorize("hasAuthority('CURATOR')")
     @PostMapping(value = "/makePublic")
     public ResponseEntity<String> makePublic(@RequestParam Map<String, String> allParams) {
         return new ResponseEntity<>(HttpStatus.OK);
