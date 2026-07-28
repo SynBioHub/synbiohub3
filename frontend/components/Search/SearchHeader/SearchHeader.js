@@ -42,6 +42,8 @@ export default function SearchHeader(properties) {
           selected={properties.selected}
           icon={faDatabase}
         />
+
+        <div id="search-header-table-actions" className={styles.headerextra} />
       </div>
       <Basket />
     </React.Fragment>
