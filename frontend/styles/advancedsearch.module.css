@@ -109,6 +109,136 @@
    font-size: 0.8rem;
 }
 
+.facetcard {
+   background: #fff;
+   border-radius: 0.6rem;
+   box-shadow: 0 1px 2px rgba(23, 29, 38, 0.06), 0 4px 12px rgba(23, 29, 38, 0.06);
+   padding: 1rem 1.1rem 0.9rem;
+   margin: 0 0 0.9rem 0;
+}
+
+.facetheader {
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+}
+
+.facettitle {
+   font-size: 0.78rem;
+   font-weight: 700;
+   letter-spacing: 0.04em;
+   text-transform: uppercase;
+   color: #5b6472;
+}
+
+.facetclear {
+   cursor: pointer;
+   color: #9aa1ab;
+   font-size: 1.1rem;
+   line-height: 1;
+   padding: 0.1rem 0.2rem;
+}
+
+.facetclear:hover {
+   color: #D25627;
+}
+
+.facetsubtitle {
+   margin-top: 0.15rem;
+   font-size: 0.78rem;
+   color: #9aa1ab;
+}
+
+.facetsearchwrap {
+   position: relative;
+   margin-top: 0.75rem;
+}
+
+.facetsearchicon {
+   position: absolute;
+   left: 0.75rem;
+   top: 50%;
+   transform: translateY(-50%);
+   color: #9aa1ab;
+   font-size: 0.8rem;
+}
+
+.facetsearchinput {
+   width: 100%;
+   font-family: inherit;
+   font-size: 0.85rem;
+   padding: 0.55rem 0.75rem 0.55rem 2rem;
+   border-radius: 0.5rem;
+   border: 1px solid #e3e6ea;
+   background: #f4f5f7;
+   color: #333;
+}
+
+.facetsearchinput:focus {
+   outline: none;
+   border-color: #D25627;
+   background: #fff;
+}
+
+.facetoptions {
+   margin-top: 0.6rem;
+   display: flex;
+   flex-direction: column;
+   max-height: 8rem;
+   overflow-y: auto;
+   padding-right: 0.3rem;
+}
+
+.facetoption {
+   display: flex;
+   align-items: center;
+   gap: 0.6rem;
+   padding: 0.5rem 0.3rem;
+   border-radius: 0.4rem;
+   cursor: pointer;
+   transition: background 0.12s ease;
+}
+
+.facetoption:hover {
+   background: #f4f5f7;
+}
+
+.facetoptionactive {
+   background: #fdf1ec;
+}
+
+.facetdot {
+   width: 0.55rem;
+   height: 0.55rem;
+   border-radius: 50%;
+   flex-shrink: 0;
+}
+
+.facetlabel {
+   flex: 1;
+   font-size: 0.9rem;
+   color: #1f2430;
+   overflow: hidden;
+   text-overflow: ellipsis;
+   white-space: nowrap;
+}
+
+.facetoptionactive .facetlabel {
+   font-weight: 600;
+   color: #D25627;
+}
+
+.facetcount {
+   font-size: 0.82rem;
+   color: #9aa1ab;
+}
+
+.facetempty {
+   padding: 0.5rem 0.3rem;
+   font-size: 0.85rem;
+   color: #9aa1ab;
+}
+
 /**STANDARD SEARCH CSS**/
 .standardcontainer {
    width: 100%;
