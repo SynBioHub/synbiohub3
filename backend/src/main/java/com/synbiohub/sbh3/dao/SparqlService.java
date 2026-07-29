@@ -68,11 +68,13 @@ public class SparqlService {
         }
     }
 
-    /** Maps existing {@code sbol:source} values (e.g. {@code file:foo.png}) to attachment URIs. */
+    /**
+     * Maps existing {@code sbol:source} values (e.g. {@code file:foo.png}) to attachment URIs.
+     */
     public Map<String, String> loadAttachmentSources(String collectionUri, String graphUri) throws IOException {
         String query = new SPARQLQuery(SparqlRepository.GET_ATTACHMENT_SOURCE_SPARQL)
                 .loadTemplate(Map.of("uri", collectionUri));
-        String raw = sparqlRepository.getQuery(query, graphUri);
+        String raw = sparqlRepository.executeReadQuery(sparqlQueryUrl(), graphUri, query);
         Map<String, String> sources = new HashMap<>();
         JsonNode bindings = objectMapper.readTree(raw).path("results").path("bindings");
         if (!bindings.isArray()) {
@@ -93,7 +95,9 @@ public class SparqlService {
         update(query, graphUri, false);
     }
 
-    /** Replaces hash/size on an existing attachment when re-uploading the same {@code file:} source. */
+    /**
+     * Replaces hash/size on an existing attachment when re-uploading the same {@code file:} source.
+     */
     public void updateAttachment(String graphUri, String attachmentUri, String uploadHash, long size)
             throws IOException {
         String query = new SPARQLQuery(sparqlRepository.UPDATE_ATTACHMENT_SPARQL).loadTemplate(Map.of(

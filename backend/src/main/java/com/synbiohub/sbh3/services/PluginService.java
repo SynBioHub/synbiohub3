@@ -23,6 +23,11 @@ import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+/**
+ * External plugin HTTP helpers.
+ * Note: unused auth-plugin DTOs under {@code com.synbiohub.sbh3.dto.authplugindto}
+ * (PluginLoginDTO, PluginServerDTO, PluginAction) were removed; restore from git if plugin auth is needed.
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j

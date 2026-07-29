@@ -1,8 +1,8 @@
 package com.synbiohub.sbh3.services;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.synbiohub.sbh3.dao.SparqlService;
-import com.synbiohub.sbh3.repo.SparqlRepository;
 import com.synbiohub.sbh3.submit.SubmitPayload;
 import com.synbiohub.sbh3.submit.SubmitRootCollectionMetadata;
 import com.synbiohub.sbh3.utils.ConfigUtil;
@@ -15,7 +15,6 @@ import org.sbolstandard.core2.TopLevel;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-import com.fasterxml.jackson.databind.JsonNode;
 
 import java.io.IOException;
 import java.net.URI;
@@ -30,7 +29,6 @@ public class CollectionService {
     private final ObjectMapper mapper;
     private final UserService userService;
     private final SparqlService sparqlService;
-    private final SparqlRepository sparqlRepository;
 
 // -------------------------------------------------------------------------
 // sanitize — resolve collection URI, check existence, enforce overwrite_merge
@@ -103,14 +101,14 @@ public class CollectionService {
 
     public boolean collectionExists(String collectionUri, String graphUri) throws IOException {
         String query = "ASK { <" + collectionUri + "> a <http://sbols.org/v2#Collection> . }";
-        String raw = sparqlRepository.getQuery(query, graphUri);
+        String raw = sparqlService.read(sparqlService.getExplorerUrl(), graphUri, query);
         return mapper.readTree(raw).path("boolean").asBoolean(false);
     }
 
     public SubmitRootCollectionMetadata loadExistingCollection(String collectionUri, String graphUri)
             throws IOException {
-        String sparql = sparqlService.getTopLevelMetadataSPARQL(collectionUri);
-        String raw = sparqlRepository.getQuery(sparql, graphUri);
+        String query = sparqlService.getTopLevelMetadataSPARQL(collectionUri);
+        String raw = sparqlService.read(sparqlService.getExplorerUrl(), graphUri, query);
         JsonNode bindings = mapper.readTree(raw).path("results").path("bindings");
         if (!bindings.isArray() || bindings.isEmpty()) {
             return SubmitRootCollectionMetadata.builder().build();

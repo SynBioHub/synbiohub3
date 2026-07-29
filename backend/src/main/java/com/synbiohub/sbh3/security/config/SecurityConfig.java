@@ -1,58 +1,39 @@
 package com.synbiohub.sbh3.security.config;
 
-import com.nimbusds.jose.jwk.JWK;
-import com.nimbusds.jose.jwk.JWKSet;
-import com.nimbusds.jose.jwk.RSAKey;
-import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
-import com.nimbusds.jose.jwk.source.JWKSource;
-import com.nimbusds.jose.proc.SecurityContext;
+import com.synbiohub.sbh3.security.customsecurity.AuthCodeAuthenticationFilter;
 import com.synbiohub.sbh3.security.customsecurity.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.jwt.JwtEncoder;
-import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
-import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import com.synbiohub.sbh3.security.customsecurity.AuthCodeAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.security.interfaces.RSAPrivateKey;
-import java.security.interfaces.RSAPublicKey;
 import java.util.List;
 
+/**
+ * Note: RSA JwtEncoder/JwtDecoder (Nimbus + app.priv/app.pub) were removed as unused.
+ * Live JWTs are HS256 via {@link com.synbiohub.sbh3.security.customsecurity.JwtService} and jwtSecret.
+ * Restore encoder/decoder beans if switching to Spring OAuth2 resource-server JWT validation.
+ */
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-
-    @Value("${jwt.public.key}")
-    RSAPublicKey pub;
-
-    @Value("${jwt.private.key}")
-    RSAPrivateKey priv;
-
-//    @Autowired
-//    private UserRepository userRepository;
-//
-//    @Autowired
-//    private DataSource dataSource;
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final AuthCodeAuthenticationFilter authCodeAuthenticationFilter;
     private final AuthenticationProvider authenticationProvider;
 
-    //TODO: ADD isOwnedBy method
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -70,7 +51,8 @@ public class SecurityConfig {
                         "/admin/theme", "/admin/registries", "/admin/logo", "/admin/plugins",
                         "/v3/api-docs", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/openapi.yaml",
                         "/error",
-                        "/browse", "/rootCollections", "/root-collections", "/callPlugin", "/expose/**", "/getSynBioHubVersion"
+                        "/browse", "/rootCollections", "/root-collections", "/callPlugin", "/expose/**", "/getSynBioHubVersion",
+                        "/**/twins", "/**/twinsCount", "/**/uses", "/**/usesCount", "/**/similar", "/**/similarCount"
                 ).permitAll()
                 .anyRequest().authenticated()
                 .and()
@@ -80,21 +62,9 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authenticationProvider(authenticationProvider)
-                .addFilterBefore(authCodeAuthenticationFilter, UsernamePasswordAuthenticationFilter.class) // everything goes through the authcode filter first
+                .addFilterBefore(authCodeAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
-    }
-
-    @Bean
-    JwtDecoder jwtDecoder() {
-        return NimbusJwtDecoder.withPublicKey(this.pub).build();
-    }
-
-    @Bean
-    JwtEncoder jwtEncoder() {
-        JWK jwk = new RSAKey.Builder(this.pub).privateKey(this.priv).build();
-        JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
-        return new NimbusJwtEncoder(jwks);
     }
 
     @Bean

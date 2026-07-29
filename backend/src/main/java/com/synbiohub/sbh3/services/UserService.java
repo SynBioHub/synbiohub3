@@ -5,20 +5,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.synbiohub.sbh3.dao.SparqlService;
-import com.synbiohub.sbh3.dto.LoginDTO;
 import com.synbiohub.sbh3.dto.UserRegistrationDTO;
+import com.synbiohub.sbh3.exceptions.LoginFailedException;
 import com.synbiohub.sbh3.repo.SparqlRepository;
-import com.synbiohub.sbh3.security.customsecurity.AuthenticationResponse;
 import com.synbiohub.sbh3.security.customsecurity.JwtService;
-import com.synbiohub.sbh3.security.model.AuthCodes;
 import com.synbiohub.sbh3.security.model.Role;
 import com.synbiohub.sbh3.security.model.User;
 import com.synbiohub.sbh3.security.repo.AuthRepository;
 import com.synbiohub.sbh3.security.repo.UserRepository;
-import com.synbiohub.sbh3.repo.SparqlRepository;
 import com.synbiohub.sbh3.sparql.SPARQLQuery;
 import com.synbiohub.sbh3.utils.ConfigUtil;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -27,14 +23,16 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
+import java.util.stream.Collectors;
 
+import com.synbiohub.sbh3.dto.UserDto;
+import com.synbiohub.sbh3.exceptions.RegistrationFailedException;
+import com.synbiohub.sbh3.mapper.UserMapper;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -55,95 +53,20 @@ public class UserService {
     private final UserRepository userRepository;
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
-    private final AuthenticationManager authenticationManager;
     private final AuthRepository authRepository;
     private final SparqlRepository sparqlRepository;
     private final SparqlService sparqlService;
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
-    public String loginUser(String username, String password) {
-        LoginDTO loginRequest = LoginDTO
-                .builder()
-                .username(username)
-                .password(password)
-                .build();
-        AuthenticationResponse response = authenticate(loginRequest); // generate JWT
-        if (authRepository.findByName(username).isPresent()) {
-            AuthCodes authCode = authRepository.findByName(username).get();
-            authCode.setAuth(response.getToken());
-            authRepository.save(authCode);
-        } else { // save the jwt in the authcode db
-            AuthCodes authCode = AuthCodes.builder()
-                    .name(username)
-                    .auth(response.getToken())
-                    .build();
-            authRepository.save(authCode);
-        }
-        return response.getToken();
-    }
+    // TODO: do we want to use an authrepository to store the jwt?
+    public String login(String email, String password) {
+        User user = userRepository.findByEmail(email)
+                .orElse(userRepository.findByUsername(email).orElse(null));
 
-    public String logoutUser(HttpServletRequest request) throws Exception {
-        // from 1/20/26
-        String token = request.getHeader("X-authorization");
-        if (token != null && !token.isBlank()) {
-            // remove JWT from the whitelist
-            authRepository.findByAuth(token).ifPresent(authRepository::delete);
-
-            // clear the current request's session memory
-            SecurityContextHolder.clearContext();
-
-            log.info("Token invalidated and removed from DB.");
-            return "User logged out successfully";
-        }
-
-        return "No active session found to log out";
-    }
-
-    /**
-     * This function, during login, will take in the loginDTO and generate the
-     * jwtToken.
-     * 
-     * @param loginDTO
-     * @return
-     */
-    public AuthenticationResponse authenticate(LoginDTO loginDTO) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        loginDTO.getUsername(),
-                        loginDTO.getPassword()));
-        var user = userRepository.findByUsername(loginDTO.getUsername())
-                .orElseThrow();
-        var jwtToken = jwtService.generateToken(user);
-        return AuthenticationResponse
-                .builder()
-                .token(jwtToken)
-                .build();
-    }
-
-    /**
-     * This is the main method to check one's authentication.
-     * It will check both the security context and the authTokens table to verify
-     * the user is logged in.
-     *
-     * Currently not used. Eventually will be deprecated out and deleted.
-     * 
-     * @param inputToken
-     * @return
-     * @throws Exception
-     */
-    // TODO: either delete this or put inside filter when filter is done
-    public Authentication checkAuthentication(String inputToken) throws Exception {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication instanceof AnonymousAuthenticationToken || authentication == null)
-            return null;
-        var authCode = authRepository.findByName(authentication.getName())
-                .orElseThrow(() -> new RuntimeException("Authentication not found")); // TODO: requires error handling,
-                                                                                      // find out what SBH1 returns
-        if (inputToken.equals(authCode.getAuth())) {
-            return authentication;
-        } else {
-            throw new Exception("Authentication failed.");
-        }
+        return Optional.ofNullable(user)
+                .filter(u -> passwordEncoder.matches(password, u.getPassword()))
+                .map(u -> jwtService.generateToken(u))
+                .orElseThrow(() -> new LoginFailedException("Login failed"));
     }
 
     /**
@@ -152,13 +75,11 @@ public class UserService {
      * @param userRegistrationDTO
      * @return
      */
-    public AuthenticationResponse register(UserRegistrationDTO userRegistrationDTO) {
+    public String register(UserRegistrationDTO userRegistrationDTO) {
         if (!verifyPasswords(userRegistrationDTO.getPassword1(), userRegistrationDTO.getPassword2())) {
-            return AuthenticationResponse
-                    .builder()
-                    .token("User registration failed")
-                    .build();
+            throw new RegistrationFailedException("Passwords do not match.");
         }
+        // TODO: check for username and email uniqueness
         var user = User
                 .builder()
                 .username(userRegistrationDTO.getUsername())
@@ -166,17 +87,11 @@ public class UserService {
                 .email(userRegistrationDTO.getEmail())
                 .affiliation(userRegistrationDTO.getAffiliation())
                 .password(passwordEncoder.encode(userRegistrationDTO.getPassword1()))
-                .role(Role.ADMIN)
-                .isMember(true)
-                .isCurator(false)
+                .role(userRegistrationDTO.getRole())
                 .build();
         user.setGraphUri("https://synbiohub.org/user/" + user.getUsername());
-        user.setIsAdmin(user.getRole().equals(Role.ADMIN));
         userRepository.save(user);
-        return AuthenticationResponse
-                .builder()
-                .token("User registered successfully")
-                .build();
+        return "User registered successfully";
     }
 
     /**
@@ -226,7 +141,7 @@ public class UserService {
         String normalizedEmail = email.trim();
         String genericMessage = "If an account exists for that email, a password reset link has been sent.";
 
-        User user = getUserByEmail(normalizedEmail);
+        User user = userRepository.findByEmail(normalizedEmail).orElse(null);
         if (user == null) {
             return genericMessage;
         }
@@ -357,6 +272,7 @@ public class UserService {
                 .email((String) allParams.get("userEmail"))
                 .password1((String) allParams.get("userPassword"))
                 .password2((String) allParams.get("userPasswordConfirm"))
+                .role(Role.ADMIN)
                 .build();
         register(userRegistrationDTO);
 
@@ -458,18 +374,6 @@ public class UserService {
         }
     }
 
-    public Map<String, String> registerNewAdminUser(Map<String, String> allParams) {
-        Map<String, String> registerParams = new HashMap<>();
-        registerParams.put("username", allParams.get("userName"));
-        registerParams.put("name", allParams.get("userFullName"));
-        registerParams.put("affiliation", allParams.get("affiliation"));
-        registerParams.put("email", allParams.get("userEmail"));
-        registerParams.put("password1", allParams.get("userPassword"));
-        registerParams.put("password2", allParams.get("userPasswordConfirm"));
-        return registerParams;
-
-    }
-
     private Boolean verifyPasswords(String password1, String password2) {
         return password1.equals(password2);
     }
@@ -478,19 +382,20 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public User getUserByUsername(String username) {
-        Optional<User> optionalUser = userRepository.findByUsername(username);
-        return optionalUser.orElse(null);
+    public List<UserDto> getAllUsers() {
+        return userRepository.findAll().stream()
+                .map(UserMapper.INSTANCE::toDto)
+                .collect(Collectors.toList());
     }
 
-    public User getUserByEmail(String email) {
-        Optional<User> optionalUser = userRepository.findByEmail(email);
-        return optionalUser.orElse(null);
-
-    }
-
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    public User getUserById(Long id) {
+        if (id == null) {
+            return null;
+        }
+        return userRepository.findAll().stream()
+                .filter(user -> id.equals(user.getId()))
+                .findFirst()
+                .orElse(null);
     }
 
     public void deleteUser(User user) {
@@ -554,4 +459,11 @@ public class UserService {
         return flag.asBoolean(false) ? 3 : 1;
     }
 
+    public User getUserByUsername(String username) {
+        return userRepository.findByUsername(username).orElse(null);
+    }
+
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email).orElse(null);
+    }
 }
