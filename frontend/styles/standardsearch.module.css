@@ -115,3 +115,16 @@
 .filterchipclear:hover {
    color: #D25627;
 }
+
+.clearallfilters {
+   cursor: pointer;
+   color: #465775;
+   font-size: 0.8rem;
+   font-weight: 600;
+   text-decoration: underline;
+   white-space: nowrap;
+}
+
+.clearallfilters:hover {
+   color: #D25627;
+}

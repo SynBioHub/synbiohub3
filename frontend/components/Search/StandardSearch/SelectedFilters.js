@@ -94,6 +94,15 @@ export default function SelectedFilters(properties) {
           </span>
         </div>
       ))}
+      {chips.length > 1 && (
+        <span
+          role="button"
+          className={styles.clearallfilters}
+          onClick={properties.onClearAll}
+        >
+          Clear all
+        </span>
+      )}
     </div>
   );
 }

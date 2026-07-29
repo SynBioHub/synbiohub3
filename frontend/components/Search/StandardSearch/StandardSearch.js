@@ -129,6 +129,15 @@ export default function StandardSearch() {
     });
   };
 
+  const handleClearAllFilters = () => {
+    setCreator('');
+    setSbolType('');
+    setRole('');
+    setObjectType('');
+    setCollections([]);
+    setExtraFilters([]);
+  };
+
 
   const addFilter = filters => {
     return [
@@ -234,6 +243,7 @@ export default function StandardSearch() {
           setCollections={setCollections}
           extraFilters={extraFilters}
           onRemoveExtraFilter={handleDelete}
+          onClearAll={handleClearAllFilters}
         />
       </ResultTable>
     );

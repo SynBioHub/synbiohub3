@@ -31,9 +31,12 @@ export default function Navigation(properties) {
     }
   }, [offset, properties.count, limit]);
 
-  const handlePageClick = pageNum => {
-    dispatch(setOffset((pageNum - 1) * limit));
+  const goToOffset = newOffset => {
+    dispatch(setOffset(newOffset));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
+  const handlePageClick = pageNum => goToOffset((pageNum - 1) * limit);
 
   // Calculate visible page range (initial 5 pages, then 5 left + 4 right = total 10)
   const pageNumbers = [];
@@ -69,7 +72,7 @@ export default function Navigation(properties) {
           role="button"
           className={`${styles.pagebubble} ${previous}`}
           onClick={() =>
-            previous !== styles.disabled && dispatch(setOffset(offset - limit))
+            previous !== styles.disabled && goToOffset(offset - limit)
           }
         >
           «
@@ -96,7 +99,7 @@ export default function Navigation(properties) {
           role="button"
           className={`${styles.pagebubble} ${next}`}
           onClick={() =>
-            next !== styles.disabled && dispatch(setOffset(offset + limit))
+            next !== styles.disabled && goToOffset(offset + limit)
           }
         >
           »
