@@ -4,10 +4,11 @@ import Loader from 'react-loader-spinner';
 import { useDispatch, useSelector } from 'react-redux';
 import { setOffset } from '../../../redux/actions'
 import useSWR from 'swr';
-import { faHatWizard, faSearch, faBars } from '@fortawesome/free-solid-svg-icons';
+import { faHatWizard, faBars } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRouter } from 'next/router';
 import Options from '../AdvancedSearch/Options';
+import SelectedFilters from './SelectedFilters';
 import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
 import SearchHeader from '../SearchHeader/SearchHeader';
@@ -17,15 +18,12 @@ import lookupRole from '../../../namespace/lookupRole';
 
 
 import {
-  countloader,
-  countloadercontainer,
   standarderror,
   standardresultsloading,
   standardcontainer
 } from '../../../styles/standardsearch.module.css';
 
 import viewStyles from '../../../styles/view.module.css';
-import advStyles from '../../../styles/advancedsearch.module.css';
 import ResultTable from './ResultTable/ResultTable';
 import { filter } from 'jszip';
 
@@ -109,6 +107,22 @@ export default function StandardSearch() {
     setUrl(url);
   };
 
+  // automatically re-run the search whenever a filter selection changes,
+  // so selecting a facet doesn't require clicking the Search button
+  useEffect(() => {
+    dispatch(setOffset(0));
+    constructSearch();
+  }, [
+    creator,
+    role,
+    sbolType,
+    objectType,
+    collections,
+    extraFilters,
+    created,
+    modifed
+  ]);
+
   const handleDelete = (delFilterIndex) => {
     setExtraFilters(prevFilters => {
       return prevFilters.filter((_, index) => index !== delFilterIndex);
@@ -155,24 +169,12 @@ export default function StandardSearch() {
     dispatch
   );
 
-  // update search count display
+  // update search count display, keeping the last known count visible
+  // while a new one is loading instead of blanking it out
   useEffect(() => {
-    if (isCountLoading) {
-      setCount(
-        <div className={countloadercontainer}>
-          <Loader
-            className={countloader}
-            color="#D25627"
-            height={10}
-            type="ThreeDots"
-            width={25}
-          />
-        </div>
-      );
-    }
     if (isCountError) {
       setCount('Error');
-    } else {
+    } else if (!isCountLoading) {
       setCount(newCount);
     }
   }, [isCountLoading, isCountError, newCount, query, extraFilters]);
@@ -192,6 +194,51 @@ export default function StandardSearch() {
       getTypeAndUrl(result, registries);
     }
   }
+
+  // keep showing the last successful results (dimmed via isLoading) while a
+  // new search runs, instead of unmounting the whole table on every filter
+  // change
+  const [displayResults, setDisplayResults] = useState([]);
+  useEffect(() => {
+    if (!isLoading && !isError && results) {
+      setDisplayResults(results);
+    }
+  }, [results, isLoading, isError]);
+
+  let resultsContent;
+  if (isError) {
+    resultsContent = (
+      <div className={standarderror}>
+        Errors were encountered while fetching the data
+      </div>
+    );
+  } else if (isLoading && displayResults.length === 0) {
+    resultsContent = (
+      <div className={standardresultsloading}>
+        <Loader color="#D25627" type="ThreeDots" />
+      </div>
+    );
+  } else {
+    resultsContent = (
+      <ResultTable count={count} data={displayResults} isLoading={isLoading}>
+        <SelectedFilters
+          creator={creator}
+          setCreator={setCreator}
+          sbolType={sbolType}
+          setSbolType={setSbolType}
+          role={role}
+          setRole={setRole}
+          objectType={objectType}
+          setObjectType={setObjectType}
+          collections={collections}
+          setCollections={setCollections}
+          extraFilters={extraFilters}
+          onRemoveExtraFilter={handleDelete}
+        />
+      </ResultTable>
+    );
+  }
+
   return (
   <div className={viewStyles.container}>
     <div
@@ -210,15 +257,15 @@ export default function StandardSearch() {
           : viewStyles.searchSidepanelcontainercollapse
       }
     >
-      <div className={viewStyles.sidepanel}
+      <div
+        className={`${viewStyles.sidepanel} ${viewStyles.searchSidepanelHeight}`}
         style={{
           transform: `translateX(-${translation}rem)`,
           transition: 'transform 0.3s'
         }}
       >
         <div className={viewStyles.headercontainer}>
-          <div className={viewStyles.emptySpace}>
-          </div>
+          <div className={viewStyles.emptySpace}></div>
         </div>
 
           <div className={viewStyles.searchBoundedheightforsidepanel}
@@ -253,26 +300,6 @@ export default function StandardSearch() {
               addFilter={addFilter}
               handleDelete={handleDelete}
             />
-            <div
-              className={advStyles.searchbutton}
-              role="button"
-              onClick={() => {
-                dispatch(setOffset(0));
-                constructSearch();
-              }}
-              style={{
-                backgroundColor: theme?.themeParameters?.[0]?.value || '#D25627',
-                color: theme?.themeParameters?.[1]?.value || '#fff',
-              }}
-            >
-            <FontAwesomeIcon
-              icon={faSearch}
-              size="1x"
-              color="#fff"
-              className={advStyles.searchicon}
-            />
-            <div>Search</div>
-          </div>
         </div>
 
           </div>
@@ -280,19 +307,7 @@ export default function StandardSearch() {
       </div>
       <div className={viewStyles.searchContent}>
         <SearchHeader selected="Standard Search" />
-        {isError ? (
-          <div className={standarderror}>
-            Errors were encountered while fetching the data
-          </div>
-        ) : (
-          isLoading ? (
-            <div className={standardresultsloading}>
-              <Loader color="#D25627" type="ThreeDots" />
-            </div>
-          ) : (
-            <ResultTable count={count} data={results} />
-          )
-        )}
+        {resultsContent}
       </div>
     </div>
   );

@@ -6,6 +6,20 @@
    border-bottom: 2px solid #A99C0F;
 }
 
+.headerextra {
+   margin-left: auto;
+   margin-right: 3.5rem;
+   align-self: center;
+   display: flex;
+   align-items: center;
+   flex-wrap: wrap;
+   gap: 0.4rem;
+}
+
+.headerextra:empty {
+   margin-left: 0;
+}
+
 .categoryheader {
    display: flex;
    align-items: center;

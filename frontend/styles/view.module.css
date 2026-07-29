@@ -43,6 +43,10 @@
   width: 3.5rem;
   overflow: hidden;
   transition: width 0.3s;
+  position: sticky;
+  top: 4rem;
+  height: calc(100vh - 4rem);
+  align-self: flex-start;
 }
 
 .searchSidepanelcontaineropen {
@@ -51,6 +55,10 @@
   width: 17.5rem;
   overflow: hidden;
   transition: width 0.3s;
+  position: sticky;
+  top: 4rem;
+  height: calc(100vh - 4rem);
+  align-self: flex-start;
 }
 
 .preventoverflowmetadata {
@@ -65,7 +73,6 @@
   left: 0;
   top: 0;
   padding-top: 3.5rem;
-  padding-bottom: 3rem;
   z-index: 5;
   overflow-x: hidden;
   overflow-y: auto;
@@ -74,6 +81,16 @@
   min-height: 100%;
   display: flex;
   flex-direction: column;
+}
+
+/* the search sidebar sits in a position: sticky, fixed-height parent (see
+   .searchSidepanelcontaineropen/collapse), so it needs an actual height
+   (not just min-height) to make its own overflow-y: auto scroll instead of
+   growing past the parent and getting clipped by the parent's overflow:
+   hidden */
+.sidepanel.searchSidepanelHeight {
+  min-height: 0;
+  height: 100%;
 }
 
 .standardcontainer {
@@ -91,9 +108,8 @@
 }
 
 .searchBoundedheightforsidepanel {
-  max-height: calc(100vh - 5rem);
-  overflow-y: auto;
   overflow-x: hidden;
+  padding: 0 0.85rem;
 }
 
 .headercontainer {

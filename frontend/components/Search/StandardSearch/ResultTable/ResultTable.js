@@ -3,7 +3,9 @@ import { useEffect, useState } from 'react';
 import styles from '../../../../styles/resulttable.module.css';
 import Navigation from './Navigation';
 import ResultRow from './ResultRow';
+import ResultsMeta from './ResultsMeta';
 import ResultTableHeader from './ResultTableHeader';
+import TableActionsPortal from './TableActionsPortal';
 import TableButtons from './TableButtons';
 
 /**
@@ -63,14 +65,21 @@ export default function ResultTable(properties) {
   }
   return (
     <div className={styles.resultcontainer}>
-      <TableButtons
-        buttonClass={buttonClass}
-        selected={selected}
-        setSelected={setSelected}
-        data={properties.data}
-        count={properties.count}
-        submissionsPage={properties.submissionsPage}
-      />
+      <TableActionsPortal>
+        <TableButtons
+          buttonClass={buttonClass}
+          selected={selected}
+          setSelected={setSelected}
+          data={properties.data}
+          submissionsPage={properties.submissionsPage}
+        />
+      </TableActionsPortal>
+
+      <div className={styles.tablemeta}>
+        {properties.children}
+        <ResultsMeta count={properties.count} />
+      </div>
+
       <table
         className={`${styles.table} ${styles.resultsTable}`}
         id={styles.results}
@@ -102,7 +111,9 @@ export default function ResultTable(properties) {
           </tr>
         </thead>
 
-        <tbody>{rows}</tbody>
+        <tbody className={properties.isLoading ? styles.tableloading : ''}>
+          {rows}
+        </tbody>
       </table>
 
       <Navigation count={properties.count} />
