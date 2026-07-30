@@ -1,0 +1,9 @@
+DELETE {
+    ?s ?p <$oldUri>
+}
+INSERT {
+    ?s ?p <$newUri>
+}
+WHERE {
+    ?s ?p <$oldUri>
+}

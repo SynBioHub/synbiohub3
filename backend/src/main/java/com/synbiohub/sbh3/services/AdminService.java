@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.synbiohub.sbh3.dao.SparqlService;
 import com.synbiohub.sbh3.dto.LogEntry;
 import com.synbiohub.sbh3.security.model.Role;
 import com.synbiohub.sbh3.security.model.User;
@@ -12,14 +13,15 @@ import com.synbiohub.sbh3.utils.ConfigUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.synbiohub.sbh3.dto.UserDto;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -39,7 +41,7 @@ import java.util.zip.GZIPInputStream;
 public class AdminService {
 
     private final UserService userService;
-    private final SearchService searchService;
+    private final SparqlService sparqlService;
     private final PasswordEncoder passwordEncoder;
     private ObjectMapper mapper = new ObjectMapper();
 
@@ -65,25 +67,30 @@ public class AdminService {
     public JsonNode getGraphStatus() throws Exception {
         // Single query to get graph URIs and their respective triple counts
         String sparql = """
-            SELECT ?graph (COUNT(*) AS ?count) 
-            WHERE { 
-                GRAPH ?graph { ?s ?p ?o } 
-            } 
-            GROUP BY ?graph
-            """;
+                SELECT ?graph (COUNT(*) AS ?count)
+                WHERE {
+                    GRAPH ?graph { ?s ?p ?o }
+                }
+                GROUP BY ?graph
+                """;
 
         // Get raw JSON string from Virtuoso via SearchService
-        String rawJson = searchService.SPARQLQuery(sparql);
+        String rawJson = sparqlService.read(sparqlService.getExplorerUrl(), sparqlService.resolveGraphUri(""), sparql);
         JsonNode root = mapper.readTree(rawJson);
 
-        // We want to mimic the SBH1 return structure: [{graphUri: "...", numTriples: 123}, ...]
+        // Mimic SBH1: only SynBioHub application graphs (not Virtuoso/system named
+        // graphs).
         ArrayNode responseArray = mapper.createArrayNode();
 
         JsonNode bindings = root.path("results").path("bindings");
         if (bindings.isArray()) {
             for (JsonNode binding : bindings) {
+                String graphUri = binding.path("graph").path("value").asText();
+                if (!isSynBioHubApplicationGraph(graphUri)) {
+                    continue;
+                }
                 ObjectNode graphInfo = mapper.createObjectNode();
-                graphInfo.put("graphUri", binding.path("graph").path("value").asText());
+                graphInfo.put("graphUri", graphUri);
                 graphInfo.put("numTriples", binding.path("count").path("value").asInt());
                 responseArray.add(graphInfo);
             }
@@ -93,7 +100,41 @@ public class AdminService {
     }
 
     /**
-     * Merges one entry into {@code webOfRegistries} (URI → base URL) and persists to {@code config.local.json}.
+     * Keep graphs that belong to this SynBioHub instance (under configured URI
+     * prefixes),
+     * and never return known Virtuoso/system graphs (virtrdf, LDP, OWL, DAV, sparql
+     * endpoint).
+     */
+    private static boolean isSynBioHubApplicationGraph(String graphUri) throws IOException {
+        if (graphUri == null || graphUri.isBlank() || isVirtuosoOrSystemGraph(graphUri)) {
+            return false;
+        }
+        String graphPrefix = ConfigUtil.get("graphPrefix").asText("");
+        String databasePrefix = ConfigUtil.get("databasePrefix").asText("");
+        String defaultGraph = ConfigUtil.get("defaultGraph").asText("");
+        return startsWithConfiguredPrefix(graphUri, graphPrefix)
+                || startsWithConfiguredPrefix(graphUri, databasePrefix)
+                || (!defaultGraph.isBlank() && graphUri.equals(defaultGraph));
+    }
+
+    private static boolean startsWithConfiguredPrefix(String graphUri, String prefix) {
+        return prefix != null && !prefix.isBlank() && graphUri.startsWith(prefix);
+    }
+
+    private static boolean isVirtuosoOrSystemGraph(String graphUri) {
+        String lower = graphUri.toLowerCase(Locale.ROOT);
+        return lower.contains("openlinksw.com/schemas/virtrdf")
+                || lower.contains("www.w3.org/ns/ldp")
+                || lower.contains("www.w3.org/2002/07/owl")
+                || lower.contains("/dav/")
+                || lower.endsWith("/dav")
+                || lower.endsWith("/sparql")
+                || lower.contains("/sparql?");
+    }
+
+    /**
+     * Merges one entry into {@code webOfRegistries} (URI → base URL) and persists
+     * to {@code config.local.json}.
      */
     public void saveWebOfRegistry(String registryUri, String registryUrl) throws IOException {
         if (!ConfigUtil.checkLocalJson("webOfRegistries")) {
@@ -114,7 +155,8 @@ public class AdminService {
     }
 
     /**
-     * Removes {@code registryUri} from {@code webOfRegistries} and persists to {@code config.local.json}.
+     * Removes {@code registryUri} from {@code webOfRegistries} and persists to
+     * {@code config.local.json}.
      * No-op if the key is absent.
      */
     public void deleteWebOfRegistry(String registryUri) throws IOException {
@@ -136,22 +178,24 @@ public class AdminService {
     }
 
     /**
-     * Outcome of SynBioHub-compatible registry admin routes ({@code saveRegistry}, {@code deleteRegistry}).
-     * Map to HTTP in the controller via {@link #isRedirect()} and the status / body fields.
+     * Outcome of SynBioHub-compatible registry admin routes ({@code saveRegistry},
+     * {@code deleteRegistry}).
+     * Map to HTTP in the controller via {@link #isRedirect()} and the status / body
+     * fields.
      */
     public record SaveRegistryOutcome(
             HttpStatus status,
             MediaType contentType,
             String body,
-            String redirectLocation
-    ) {
+            String redirectLocation) {
         public boolean isRedirect() {
             return redirectLocation != null && !redirectLocation.isEmpty();
         }
     }
 
     /**
-     * Validates admin, uri/url, persists webOfRegistries, and selects plain-text vs redirect response semantics.
+     * Validates admin, uri/url, persists webOfRegistries, and selects plain-text vs
+     * redirect response semantics.
      */
     public SaveRegistryOutcome saveRegistry(User user, String uri, String url, boolean clientAcceptsHtml)
             throws IOException {
@@ -162,7 +206,7 @@ public class AdminService {
                     "Authentication required",
                     null);
         }
-        if (!Boolean.TRUE.equals(user.getIsAdmin())) {
+        if (!Role.ADMIN.equals(user.getRole())) {
             return new SaveRegistryOutcome(
                     HttpStatus.FORBIDDEN,
                     MediaType.TEXT_PLAIN,
@@ -196,7 +240,8 @@ public class AdminService {
     }
 
     /**
-     * Validates admin and registry URI, removes the entry from {@code webOfRegistries}, optional HTML redirect.
+     * Validates admin and registry URI, removes the entry from
+     * {@code webOfRegistries}, optional HTML redirect.
      */
     public SaveRegistryOutcome deleteRegistry(User user, String uri, boolean clientAcceptsHtml) throws IOException {
         if (user == null) {
@@ -206,7 +251,7 @@ public class AdminService {
                     "Authentication required",
                     null);
         }
-        if (!Boolean.TRUE.equals(user.getIsAdmin())) {
+        if (!Role.ADMIN.equals(user.getRole())) {
             return new SaveRegistryOutcome(
                     HttpStatus.FORBIDDEN,
                     MediaType.TEXT_PLAIN,
@@ -310,7 +355,8 @@ public class AdminService {
         // BEFORE 1/27:
         SPARQLQuery statusQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/GetDatabaseStatus.sparql");
         try {
-            var result = searchService.SPARQLQuery(statusQuery.getQuery());
+            var result = sparqlService.read(sparqlService.getExplorerUrl(), sparqlService.resolveGraphUri(""),
+                    statusQuery.getQuery());
             if (result.getBytes().length > 0) {
                 return true;
             } else {
@@ -339,7 +385,8 @@ public class AdminService {
         List<LogEntry> logEntries = new ArrayList<>();
         String[] lines = logContent.split("\\r?\\n");
 
-        // Pattern to match log levels: INFO, WARN, ERROR, DEBUG, TRACE (case-insensitive)
+        // Pattern to match log levels: INFO, WARN, ERROR, DEBUG, TRACE
+        // (case-insensitive)
         Pattern levelPattern = Pattern.compile("\\b(INFO|WARN|ERROR|DEBUG|TRACE)\\b", Pattern.CASE_INSENSITIVE);
 
         for (String line : lines) {
@@ -382,8 +429,8 @@ public class AdminService {
         if (requested.getFileName().toString().endsWith(".gz")) {
             StringBuilder sb = new StringBuilder();
             try (GZIPInputStream gzipInputStream = new GZIPInputStream(Files.newInputStream(requested));
-                 InputStreamReader inputStreamReader = new InputStreamReader(gzipInputStream);
-                 BufferedReader bufferedReader = new BufferedReader(inputStreamReader)) {
+                    InputStreamReader inputStreamReader = new InputStreamReader(gzipInputStream);
+                    BufferedReader bufferedReader = new BufferedReader(inputStreamReader)) {
                 String line;
                 while ((line = bufferedReader.readLine()) != null) {
                     sb.append(line).append(System.lineSeparator());
@@ -485,32 +532,33 @@ public class AdminService {
         return "Plugin updated";
     }
 
-    public String getUsers() {
-        ArrayNode usersArray = mapper.createArrayNode();
-
-        for (User user : userService.getAllUsers()) {
-            usersArray.add(
-                    mapper.createObjectNode()
-                            .put("id", user.getId())
-                            .put("name", user.getName())
-                            .put("username", user.getUsername())
-                            .put("email", user.getEmail())
-                            .put("affiliation", user.getAffiliation())
-                            .put("graphUri", user.getGraphUri())
-                            .put("isAdmin", Boolean.TRUE.equals(user.getIsAdmin()))
-                            .put("isCurator", Boolean.TRUE.equals(user.getIsCurator()))
-                            .put("isMember", Boolean.TRUE.equals(user.getIsMember()))
-            );
-        }
-
-        ObjectNode response = mapper.createObjectNode().set("users", usersArray);
-        try {
-            response.put("allowPublicSignup", ConfigUtil.get("allowPublicSignup").asBoolean());
-        } catch (Exception e) {
-            response.put("allowPublicSignup", false);
-        }
-        return response.toString();
+    public List<UserDto> getUsers() {
+        return userService.getAllUsers();
     }
+
+    // public String getUsers() {
+    //     ArrayNode usersArray = mapper.createArrayNode();
+
+    //     for (User user : userService.getAllUsers()) {
+    //         usersArray.add(
+    //                 mapper.createObjectNode()
+    //                         .put("id", user.getId())
+    //                         .put("name", user.getName())
+    //                         .put("username", user.getUsername())
+    //                         .put("email", user.getEmail())
+    //                         .put("affiliation", user.getAffiliation())
+    //                         .put("graphUri", user.getGraphUri())
+    //                         .put("role", user.getRole().name()));
+    //     }
+
+    //     ObjectNode response = mapper.createObjectNode().set("users", usersArray);
+    //     try {
+    //         response.put("allowPublicSignup", ConfigUtil.get("allowPublicSignup").asBoolean());
+    //     } catch (Exception e) {
+    //         response.put("allowPublicSignup", false);
+    //     }
+    //     return response.toString();
+    // }
 
     public String updateUsers(Map<String, String> allParams) throws IOException {
         boolean allowPublicSignup = Boolean.parseBoolean(allParams.getOrDefault("allowPublicSignup", "false"));
@@ -544,19 +592,10 @@ public class AdminService {
             return "Email already exists.";
         }
 
-        boolean isAdmin = parseBooleanParam(allParams.get("isAdmin"));
-        boolean isCurator = parseBooleanParam(allParams.get("isCurator"));
-        boolean isMember = parseBooleanParam(allParams.get("isMember"));
-
-        // Admin and curator are independent toggles, but either implies membership.
-        if (isAdmin || isCurator) {
-            isMember = true;
-        }
-
-        Role role = Role.USER;
-        if (isAdmin) {
+        var role = Role.USER;
+        if ("1".equalsIgnoreCase(allParams.get("isAdmin"))) {
             role = Role.ADMIN;
-        } else if (isCurator) {
+        } else if ("1".equalsIgnoreCase(allParams.get("isCurator"))) {
             role = Role.CURATOR;
         }
 
@@ -570,9 +609,6 @@ public class AdminService {
                 .password(passwordEncoder.encode(temporaryPassword))
                 .role(role)
                 .graphUri(graphPrefix + "user/" + username)
-                .isAdmin(isAdmin)
-                .isCurator(isCurator)
-                .isMember(isMember)
                 .build();
 
         userService.createUser(newUser);
@@ -592,7 +628,7 @@ public class AdminService {
             return "Invalid user id.";
         }
 
-        User targetUser = findUserById(userId);
+        User targetUser = userService.getUserById(userId);
         if (targetUser == null) {
             return "User not found.";
         }
@@ -603,9 +639,9 @@ public class AdminService {
         }
 
         long adminCount = userService.getAllUsers().stream()
-                .filter(user -> Boolean.TRUE.equals(user.getIsAdmin()))
+                .filter(user -> Role.ADMIN.equals(user.getRole()))
                 .count();
-        if (Boolean.TRUE.equals(targetUser.getIsAdmin()) && adminCount <= 1) {
+        if (Role.ADMIN.equals(targetUser.getRole()) && adminCount <= 1) {
             return "Cannot delete the last administrator.";
         }
 
@@ -626,7 +662,7 @@ public class AdminService {
             return "Invalid user id.";
         }
 
-        User targetUser = findUserById(userId);
+        User targetUser = userService.getUserById(userId);
         if (targetUser == null) {
             return "User not found.";
         }
@@ -647,26 +683,17 @@ public class AdminService {
             return "Email already exists.";
         }
 
-        boolean isAdmin = parseBooleanParam(allParams.get("isAdmin"));
-        boolean isCurator = parseBooleanParam(allParams.get("isCurator"));
-        boolean isMember = parseBooleanParam(allParams.get("isMember"));
-
-        // Admin and curator are independent toggles, but either implies membership.
-        if (isAdmin || isCurator) {
-            isMember = true;
-        }
-
-        Role role = Role.USER;
-        if (isAdmin) {
+        var role = Role.USER;
+        if ("true".equalsIgnoreCase(allParams.get("isAdmin"))) {
             role = Role.ADMIN;
-        } else if (isCurator) {
+        } else if ("true".equalsIgnoreCase(allParams.get("isCurator"))) {
             role = Role.CURATOR;
         }
 
         long adminCount = userService.getAllUsers().stream()
-                .filter(user -> Boolean.TRUE.equals(user.getIsAdmin()))
+                .filter(user -> Role.ADMIN.equals(user.getRole()))
                 .count();
-        if (Boolean.TRUE.equals(targetUser.getIsAdmin()) && !isAdmin && adminCount <= 1) {
+        if (Role.ADMIN.equals(targetUser.getRole()) && role != Role.ADMIN && adminCount <= 1) {
             return "Cannot remove admin role from the last administrator.";
         }
 
@@ -674,19 +701,9 @@ public class AdminService {
         targetUser.setEmail(email);
         targetUser.setAffiliation(affiliation);
         targetUser.setRole(role);
-        targetUser.setIsAdmin(isAdmin);
-        targetUser.setIsCurator(isCurator);
-        targetUser.setIsMember(isMember);
 
         userService.createUser(targetUser);
         return "User updated successfully.";
-    }
-
-    private User findUserById(Long userId) {
-        return userService.getAllUsers().stream()
-                .filter(user -> user.getId() != null && user.getId().equals(userId))
-                .findFirst()
-                .orElse(null);
     }
 
     private boolean parseBooleanParam(String value) {
@@ -700,7 +717,7 @@ public class AdminService {
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode pluginMap = mapper.createObjectNode();
         pluginMap.put("name", allParams.get("name"));
-        pluginMap.put("url", allParams.get("url")+"/");
+        pluginMap.put("url", allParams.get("url") + "/");
         pluginMap.put("index", arraySize);
         return pluginMap;
     }

@@ -23,6 +23,11 @@ import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+/**
+ * External plugin HTTP helpers.
+ * Note: unused auth-plugin DTOs under {@code com.synbiohub.sbh3.dto.authplugindto}
+ * (PluginLoginDTO, PluginServerDTO, PluginAction) were removed; restore from git if plugin auth is needed.
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -242,5 +247,103 @@ public class PluginService {
         ObjectNode node = objectMapper.createObjectNode();
         node.put("type", type);
         return objectMapper.convertValue(node, JsonNode.class);
+    }
+
+    /**
+     * Resolves a submit plugin config entry by array index or by {@code name}.
+     */
+    public String resolveSubmitPluginName(String pluginRef) throws IOException {
+        if (pluginRef == null || pluginRef.isBlank() || "default".equalsIgnoreCase(pluginRef)) {
+            return null;
+        }
+        JsonNode submitPlugins = ConfigUtil.get("plugins").get("submit");
+        if (submitPlugins == null || !submitPlugins.isArray()) {
+            throw new IllegalStateException("No submit plugins are configured.");
+        }
+        if (pluginRef.matches("\\d+")) {
+            int index = Integer.parseInt(pluginRef);
+            if (index < 0 || index >= submitPlugins.size()) {
+                throw new IllegalArgumentException("Invalid submit plugin index: " + pluginRef);
+            }
+            String name = submitPlugins.get(index).path("name").asText(null);
+            if (name == null || name.isBlank()) {
+                throw new IllegalStateException("Submit plugin at index " + index + " has no name.");
+            }
+            return name;
+        }
+        for (JsonNode plugin : submitPlugins) {
+            if (pluginRef.equals(plugin.path("name").asText())) {
+                return pluginRef;
+            }
+        }
+        throw new IllegalArgumentException("Unknown submit plugin: " + pluginRef);
+    }
+
+    public void checkSubmitPluginStatus(String pluginName) throws IOException {
+        String pluginUrl = requireSubmitPluginUrl(pluginName);
+        try {
+            HttpURLConnection connection = openConnection(pluginUrl + "status", "GET", 5000);
+            int code = connection.getResponseCode();
+            if (code < 200 || code >= 300) {
+                throw new IOException("HTTP " + code);
+            }
+        } catch (IOException e) {
+            throw new IOException("The plugin " + pluginName
+                    + " status endpoint is not responding. Check that the plugin is active and running.", e);
+        }
+    }
+
+    public JsonNode evaluateSubmitPlugin(String pluginName, JsonNode evaluateManifest) throws IOException {
+        String pluginUrl = requireSubmitPluginUrl(pluginName);
+        try {
+            HttpURLConnection connection = openConnection(pluginUrl + "evaluate", "POST", 10000);
+            connection.setRequestProperty("Content-Type", "application/json");
+            connection.setRequestProperty("Accept", "application/json");
+            connection.setDoOutput(true);
+            connection.getOutputStream().write(mapper.writeValueAsBytes(evaluateManifest));
+
+            int code = connection.getResponseCode();
+            byte[] responseBody = readResponse(
+                    code >= 400 ? connection.getErrorStream() : connection.getInputStream());
+            if (code < 200 || code >= 300) {
+                throw new IOException(new String(responseBody, StandardCharsets.UTF_8));
+            }
+            return mapper.readTree(responseBody);
+        } catch (IOException e) {
+            throw new IOException("The plugin " + pluginName
+                    + " evaluate endpoint is not responding. Check that the plugin is active and running.", e);
+        }
+    }
+
+    public byte[] runSubmitPlugin(String pluginName, JsonNode runRequest) throws IOException {
+        String pluginUrl = requireSubmitPluginUrl(pluginName);
+        try {
+            HttpURLConnection connection = openConnection(pluginUrl + "run", "POST", 120000);
+            connection.setRequestProperty("Content-Type", "application/json");
+            connection.setDoOutput(true);
+            connection.getOutputStream().write(mapper.writeValueAsBytes(runRequest));
+
+            int code = connection.getResponseCode();
+            byte[] responseBody = readResponse(
+                    code >= 400 ? connection.getErrorStream() : connection.getInputStream());
+            if (code < 200 || code >= 300) {
+                throw new IOException(new String(responseBody, StandardCharsets.UTF_8));
+            }
+            return responseBody;
+        } catch (IOException e) {
+            throw new IOException("The plugin " + pluginName
+                    + " run endpoint is not responding. Check that the plugin is active and running.", e);
+        }
+    }
+
+    private String requireSubmitPluginUrl(String pluginName) throws IOException {
+        String pluginUrl = findPluginUrl(pluginName, "submit");
+        if (pluginUrl == null) {
+            throw new IllegalArgumentException("Submit plugin not found: " + pluginName);
+        }
+        if (!pluginUrl.endsWith("/")) {
+            pluginUrl = pluginUrl + "/";
+        }
+        return pluginUrl;
     }
 }

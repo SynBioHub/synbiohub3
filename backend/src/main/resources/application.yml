@@ -4,6 +4,10 @@ server:
     relaxed-path-chars: ['<','>']
     relaxed-query-chars: ['<','>']
 spring:
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
   datasource:
     driver-class-name: org.h2.Driver
     url: jdbc:h2:./data/sbhdb
@@ -35,10 +39,10 @@ plugin:
       status: http://localhost:8104/status
 
 jwt:
-  private.key: classpath:app.priv
-  public.key: classpath:app.pub
+  # RSA app.priv/app.pub were for unused Spring JwtEncoder/Decoder (removed). Live JWTs use jwtSecret (HS256) in config.local.json.
+  # private.key / public.key can be restored with NimbusJwtEncoder/Decoder if needed.
 
-roleToEndpointPermissions:
-  USER: ["/profile", "/do_logout", "/submit", "/rootCollections", "/root-collections", "/browse", "/manage", "/shared", "/setup", "/login", "/register", "/resetPassword", "/setNewPassword", "/search", "/search/**", "/searchCount", "/searchCount/**", "/twins", "/twinsCount", "/uses", "/usesCount", "/similar", "/similarCount", "/sbol", "/sbolnr", "/metadata", "/gb", "/fasta", "/gff", "/download", "/public/**", "/sparql", "/ComponentDefinition/**", "/**/count", "/count", "/logo", "/user/**"]
-  CURATOR: ["/makePublic"]
-  ADMIN: ['/admin/sparql', '/admin', '/admin/virtuoso', '/admin/graphs', '/admin/log', '/admin/listLogs', '/admin/mail', '/admin/plugins', '/admin/savePlugin', '/admin/deletePlugin', '/admin/registries', '/admin/saveRegistry', '/admin/deleteRegistry', '/admin/setAdministratorEmail', '/admin/retrieveFromWebOfRegistries', '/admin/federate', '/admin/remotes', '/admin/saveRemote', '/admin/deleteRemote', '/admin/explorerlog', '/admin/explorer', '/admin/explorerUpdateIndex', '/admin/theme', '/admin/logo', '/admin/users', '/admin/newUser', '/admin/updateUser', '/admin/deleteUser']
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
