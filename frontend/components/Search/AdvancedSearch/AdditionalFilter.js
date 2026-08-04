@@ -16,6 +16,14 @@ export default function AdditionalFilter(properties) {
   const wrapIRI = v => (v?.startsWith("http") ? `<${v}>` : v);
   const searchQuery = useSelector(state => state.search.query);
   const privateGraphUri = useSelector(state => state.user.graphUri);
+  const theme = JSON.parse(localStorage.getItem('theme')) || {};
+  const publicGraphUri = theme.defaultGraph || '';
+  const fromClause = [
+    publicGraphUri ? `FROM <${publicGraphUri}>` : '',
+    privateGraphUri ? `FROM <${privateGraphUri}>` : ''
+  ]
+    .filter(Boolean)
+    .join('\n');
 
   useEffect(() => {
     const newFilters = [...properties.extraFilters];
@@ -68,7 +76,7 @@ export default function AdditionalFilter(properties) {
           sparql={configureQuery(searchObject, {
             predicate: wrapIRI(properties.extraFilters[properties.index].filter), //selectedPredicate
             constraints: buildFacetConstraints(properties, searchQuery, undefined, properties.index),
-            from: privateGraphUri ? `FROM <${privateGraphUri}>` : ''
+            from: fromClause
           })}
           parseResult={result => {
             const count = result.count ? ` (${result.count.value})` : '';
