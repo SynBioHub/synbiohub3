@@ -75,20 +75,13 @@ public class UserService {
      * @param userRegistrationDTO
      * @return
      */
-    public String register(UserRegistrationDTO userRegistrationDTO) {
-        if (!verifyPasswords(userRegistrationDTO.getPassword1(), userRegistrationDTO.getPassword2())) {
+    public String register(UserRegistrationDTO dto) {
+        if (!verifyPasswords(dto.getPassword1(), dto.getPassword2())) {
             throw new RegistrationFailedException("Passwords do not match.");
         }
         // TODO: check for username and email uniqueness
-        var user = User
-                .builder()
-                .username(userRegistrationDTO.getUsername())
-                .name(userRegistrationDTO.getName())
-                .email(userRegistrationDTO.getEmail())
-                .affiliation(userRegistrationDTO.getAffiliation())
-                .password(passwordEncoder.encode(userRegistrationDTO.getPassword1()))
-                .role(userRegistrationDTO.getRole())
-                .build();
+        User user = UserMapper.INSTANCE.toUser(dto);
+        user.setPassword(passwordEncoder.encode(dto.getPassword1()));
         user.setGraphUri("https://synbiohub.org/user/" + user.getUsername());
         userRepository.save(user);
         return "User registered successfully";
@@ -227,29 +220,20 @@ public class UserService {
     }
 
     // from (1/20/26)
-    public User getUserProfile() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth != null && auth.isAuthenticated() && !(auth instanceof AnonymousAuthenticationToken)) {
-            if (auth.getPrincipal() instanceof User) {
-                User user = (User) auth.getPrincipal();
-                // reload from DB to ensure it's fresh
-                return userRepository.findByUsername(user.getUsername()).orElse(null);
-            }
-        }
-        return null;
+    public UserDto getUserProfile(String username) {
+        return userRepository.findByUsername(username)
+                .map(UserMapper.INSTANCE::toDto)
+                .orElse(null);
     }
 
     // from (1/20/26)
-    public User updateUserProfile(Map<String, String> allParams) throws Exception {
-        User existingUser = getUserProfile();
-        if (existingUser == null) {
-            throw new Exception("User not found");
-        }
+    public UserDto updateUserProfile(String username, Map<String, String> allParams) {
+        User existingUser = userRepository.findByUsername(username).orElseThrow(); // TODO: throw custom exception
 
         updateUserFields(existingUser, allParams);
 
-        // Save the changes to the database. the GET will always pull from this DB
-        return userRepository.save(existingUser);
+        userRepository.save(existingUser);
+        return UserMapper.INSTANCE.toDto(existingUser);
     }
 
     public String setupInstance(Map<String, Object> allParams) {

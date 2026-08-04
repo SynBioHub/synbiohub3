@@ -26,19 +26,27 @@ export default function Options(properties) {
   const dispatch = useDispatch();
   const token = useSelector(state => state.user.token);
   const searchQuery = useSelector(state => state.search.query);
-  const username = useSelector(state => state.user.username);
   const privateGraphUri = useSelector(state => state.user.graphUri);
+  const theme = JSON.parse(localStorage.getItem('theme')) || {};
+  const publicGraphUri = theme.defaultGraph || '';
+
+  const fromClause = [
+    publicGraphUri ? `FROM <${publicGraphUri}>` : '',
+    privateGraphUri ? `FROM <${privateGraphUri}>` : ''
+  ]
+    .filter(Boolean)
+    .join('\n');
 
   const facetQuery = (template, excludeFacet) =>
     configureQuery(template, {
       constraints: buildFacetConstraints(properties, searchQuery, excludeFacet),
-      from: username ? `FROM <${privateGraphUri}>` : ''
+      from: fromClause
     });
 
   // load predicates on component mount
   useEffect(() => {
-    loadPredicates(setPredicates, token, dispatch, privateGraphUri);
-  }, [privateGraphUri]);
+    loadPredicates(setPredicates, token, dispatch, fromClause);
+  }, [fromClause]);
 
   // map through extra filters to display them
   const filterDisplay = properties.extraFilters.map((element, index) => {
@@ -182,16 +190,15 @@ export default function Options(properties) {
 }
 
 // function to load predicates
-const loadPredicates = async (setPredicates, token, dispatch, privateGraphUri) => {
-  const results = await fetchPredicates(token, dispatch, privateGraphUri);
+const loadPredicates = async (setPredicates, token, dispatch, fromClause) => {
+  const results = await fetchPredicates(token, dispatch, fromClause);
   setPredicates(results);
 };
 
 // function to fetch predicates
-const fetchPredicates = async (token, dispatch, privateGraphUri) => {
-  const from = privateGraphUri ? `FROM <${privateGraphUri}>` : '';
+const fetchPredicates = async (token, dispatch, fromClause) => {
   const url = `${publicRuntimeConfig.backend}/sparql?query=${encodeURIComponent(
-    configureQuery(getPredicates, { from })
+    configureQuery(getPredicates, { from: fromClause || '' })
   )}`;
   try {
     const headers = {

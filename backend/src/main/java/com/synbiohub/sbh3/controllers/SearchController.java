@@ -3,23 +3,21 @@ package com.synbiohub.sbh3.controllers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.synbiohub.sbh3.dao.SparqlService;
+import com.synbiohub.sbh3.dto.UserDto;
+import com.synbiohub.sbh3.security.customsecurity.JwtService;
 import com.synbiohub.sbh3.security.customsecurity.ServletPathUtil;
-import com.synbiohub.sbh3.security.model.User;
 import com.synbiohub.sbh3.services.SearchService;
 import com.synbiohub.sbh3.services.UserService;
-import jakarta.servlet.http.HttpServletRequest;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.MediaType;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -38,6 +36,7 @@ public class SearchController {
 
     private final SparqlService sparqlService;
     private final UserService userService;
+    private final JwtService jwtService;
 
     /**
      * Returns the metadata for the object from the specified search query.
@@ -164,9 +163,9 @@ public class SearchController {
     })
     @GetMapping(value = "/manage", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyAuthority('USER', 'CURATOR', 'ADMIN')")
-    public JsonNode getSubmissions() throws IOException {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        User user = userService.getUserProfile();
+    public JsonNode getSubmissions(@RequestHeader(value = "X-authorization", required = false) String xauth) throws IOException {
+        String username = jwtService.extractUsername(xauth);
+        UserDto user = userService.getUserProfile(username);
 
         String query = sparqlService.getManageSubmissionsSPARQL(user.getEmail(), user.getUsername());
 
@@ -187,9 +186,9 @@ public class SearchController {
     })
     @GetMapping(value = "/shared", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyAuthority('USER', 'CURATOR', 'ADMIN')")
-    public JsonNode getSharedObjects() throws IOException, JsonProcessingException {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        User user = userService.getUserProfile();
+    public JsonNode getSharedObjects(@RequestHeader(value = "X-authorization", required = false) String xauth) throws IOException, JsonProcessingException {
+        String username = jwtService.extractUsername(xauth);
+        UserDto user = userService.getUserProfile(username);
         return searchService.getSharedObjectsJSON(user);
     }
 

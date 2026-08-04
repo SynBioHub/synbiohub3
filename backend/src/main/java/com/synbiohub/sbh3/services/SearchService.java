@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.synbiohub.sbh3.controllers.SearchController;
 import com.synbiohub.sbh3.dao.SparqlService;
+import com.synbiohub.sbh3.dto.UserDto;
 import com.synbiohub.sbh3.security.model.User;
 import com.synbiohub.sbh3.utils.ConfigUtil;
 import jakarta.servlet.http.HttpServletRequest;
@@ -446,7 +447,7 @@ public class SearchService {
      * otherwise derived from configured {@code graphPrefix} — same derivation as anonymous
      * would use after login).
      */
-    public String resolveUserNamedGraphUri(User user) throws IOException {
+    public String resolveUserNamedGraphUri(UserDto user) throws IOException {
         String g = user.getGraphUri();
         if (g != null && !g.isBlank()) {
             return g;
@@ -457,7 +458,7 @@ public class SearchService {
     /**
      * Objects shared via {@code sbh:canView} triples stored in the viewer's named graph (legacy {@code /shared} JSON).
      */
-    public ArrayNode getSharedObjectsJSON(User user) throws IOException, JsonProcessingException {
+    public ArrayNode getSharedObjectsJSON(UserDto user) throws IOException, JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         ArrayNode out = mapper.createArrayNode();
 
@@ -538,7 +539,7 @@ public class SearchService {
     /**
      * Legacy {@code getGraphUriFromTopLevelUri}: which Virtuoso graph holds metadata for a top-level RDF URI?
      */
-    private String graphUriFromSharedTopLevelUri(String topLevelUri, User user) throws IOException {
+    private String graphUriFromSharedTopLevelUri(String topLevelUri, UserDto user) throws IOException {
         String databasePrefix = ConfigUtil.get("databasePrefix").asText();
         String defaultGraph = ConfigUtil.get("defaultGraph").asText();
 

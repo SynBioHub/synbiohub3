@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.synbiohub.sbh3.dao.SparqlService;
 import com.synbiohub.sbh3.dto.LogEntry;
-import com.synbiohub.sbh3.security.model.User;
+import com.synbiohub.sbh3.security.customsecurity.JwtService;
 import com.synbiohub.sbh3.services.AdminService;
 import com.synbiohub.sbh3.services.UserService;
 import com.synbiohub.sbh3.utils.ConfigUtil;
@@ -23,8 +23,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import com.synbiohub.sbh3.security.model.Role;
-import com.synbiohub.sbh3.dto.UserDto;
 
 import java.io.File;
 import java.io.IOException;
@@ -45,6 +43,7 @@ public class AdminController {
     private final AdminService adminService;
     private final UserService userService;
     private final SparqlService sparqlService;
+    private final JwtService jwtService;
 
     @Operation(summary = "Run Admin SPARQL Query", description = "Executes a SPARQL query with admin privileges.")
     @ApiResponse(responseCode = "200", description = "JSON containing SPARQL results")
@@ -280,10 +279,9 @@ public class AdminController {
 
     private ResponseEntity<String> saveRegistryResponse(String uri, String url, HttpServletRequest request)
             throws IOException {
-        User user = userService.getUserProfile();
         String accept = request.getHeader("Accept");
         boolean htmlAccept = accept != null && accept.contains("text/html");
-        AdminService.SaveRegistryOutcome outcome = adminService.saveRegistry(user, uri, url, htmlAccept);
+        AdminService.SaveRegistryOutcome outcome = adminService.saveRegistry(uri, url, htmlAccept);
         if (outcome.isRedirect()) {
             return ResponseEntity.status(outcome.status())
                     .location(URI.create(outcome.redirectLocation()))
@@ -323,10 +321,9 @@ public class AdminController {
 
     private ResponseEntity<String> deleteRegistryResponse(String uri, HttpServletRequest request)
             throws IOException {
-        User user = userService.getUserProfile();
         String accept = request.getHeader("Accept");
         boolean htmlAccept = accept != null && accept.contains("text/html");
-        AdminService.SaveRegistryOutcome outcome = adminService.deleteRegistry(user, uri, htmlAccept);
+        AdminService.SaveRegistryOutcome outcome = adminService.deleteRegistry(uri, htmlAccept);
         if (outcome.isRedirect()) {
             return ResponseEntity.status(outcome.status())
                     .location(URI.create(outcome.redirectLocation()))
@@ -342,19 +339,10 @@ public class AdminController {
     @Operation(summary = "Set administrator email", description = "Updates the email address of the current administrator.")
     @PostMapping(value = "/admin/setAdministratorEmail")
     @ResponseBody
-    public String setAdminEmail(String newEmail) throws Exception {
-        User adminUser = userService.getUserProfile();
-        try {
-            if (Role.ADMIN.equals(adminUser.getRole())) {
-                Map<String, String> params = new HashMap<>();
-                params.put("email", newEmail);
-                userService.updateUserProfile(params);
-                return "Updated administrator email";
-            }
-        } catch (Exception e) {
-            return "Unable to update administrator email " + e.getMessage();
-        }
-        return "Unable to update administrator email, but no error was thrown";
+    public String setAdminEmail(@RequestHeader(value = "X-authorization", required = false) String xauth, String newEmail) throws Exception {
+        String username = jwtService.extractUsername(xauth);
+        userService.updateUserProfile(username, Map.of("email", newEmail));
+        return "Updated administrator email";
     }
 
     @Operation(summary = "Retrieve from Web of Registries (Dead Code)", description = "Not implemented. Always returns null.", deprecated = true)
@@ -574,8 +562,23 @@ public class AdminController {
     @Operation(summary = "Delete user (Admin)", description = "Allows an admin to delete a user account.")
     @PostMapping(value = "/admin/deleteUser")
     @ResponseBody
-    public String deleteUser(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
-        return adminService.deleteUser(allParams);
+    public String deleteUser(@RequestHeader(value = "X-authorization", required = false) String xauth,
+                             @RequestParam Map<String,String> allParams) {
+        String username = jwtService.extractUsername(xauth);
+        return adminService.deleteUser(username, getUserId(allParams));
+    }
+
+    private Long getUserId(Map<String, String> allParams) {
+        String idParam = allParams.get("id");
+        if (idParam == null || idParam.isBlank()) {
+            throw new RuntimeException("Missing required field: id.");
+        }
+
+        try {
+            return Long.parseLong(idParam);
+        } catch (NumberFormatException e) {
+            throw new RuntimeException("Invalid user id.");
+        }
     }
 
 

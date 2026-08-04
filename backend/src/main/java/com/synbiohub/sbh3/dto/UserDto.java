@@ -16,4 +16,6 @@ public class UserDto {
     private Boolean isAdmin;
     private Boolean isCurator;
     private Boolean isMember;
+    private String graphUri;
+
 }

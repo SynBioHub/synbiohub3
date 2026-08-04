@@ -152,7 +152,7 @@ export const fetchUserInfo = () => async (dispatch, getState) => {
   const url = `${publicRuntimeConfig.backend}/profile`;
   const token = getState().user.token;
   const headers = {
-    Accept: 'text/plain',
+    Accept: 'application/json',
     'X-authorization': token
   };
   let response;

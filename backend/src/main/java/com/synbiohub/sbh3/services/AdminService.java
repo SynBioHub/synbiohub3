@@ -8,6 +8,7 @@ import com.synbiohub.sbh3.dao.SparqlService;
 import com.synbiohub.sbh3.dto.LogEntry;
 import com.synbiohub.sbh3.security.model.Role;
 import com.synbiohub.sbh3.security.model.User;
+import com.synbiohub.sbh3.security.repo.UserRepository;
 import com.synbiohub.sbh3.sparql.SPARQLQuery;
 import com.synbiohub.sbh3.utils.ConfigUtil;
 import jakarta.servlet.http.HttpServletRequest;
@@ -41,6 +42,7 @@ import java.util.zip.GZIPInputStream;
 public class AdminService {
 
     private final UserService userService;
+    private final UserRepository userRepository;
     private final SparqlService sparqlService;
     private final PasswordEncoder passwordEncoder;
     private ObjectMapper mapper = new ObjectMapper();
@@ -197,23 +199,8 @@ public class AdminService {
      * Validates admin, uri/url, persists webOfRegistries, and selects plain-text vs
      * redirect response semantics.
      */
-    public SaveRegistryOutcome saveRegistry(User user, String uri, String url, boolean clientAcceptsHtml)
+    public SaveRegistryOutcome saveRegistry(String uri, String url, boolean clientAcceptsHtml)
             throws IOException {
-        if (user == null) {
-            return new SaveRegistryOutcome(
-                    HttpStatus.UNAUTHORIZED,
-                    MediaType.TEXT_PLAIN,
-                    "Authentication required",
-                    null);
-        }
-        if (!Role.ADMIN.equals(user.getRole())) {
-            return new SaveRegistryOutcome(
-                    HttpStatus.FORBIDDEN,
-                    MediaType.TEXT_PLAIN,
-                    "Admin access required",
-                    null);
-        }
-
         String registryUri = uri != null ? uri.trim() : "";
         String registryUrl = url != null ? url.trim() : "";
         if (registryUri.isEmpty()) {
@@ -243,22 +230,7 @@ public class AdminService {
      * Validates admin and registry URI, removes the entry from
      * {@code webOfRegistries}, optional HTML redirect.
      */
-    public SaveRegistryOutcome deleteRegistry(User user, String uri, boolean clientAcceptsHtml) throws IOException {
-        if (user == null) {
-            return new SaveRegistryOutcome(
-                    HttpStatus.UNAUTHORIZED,
-                    MediaType.TEXT_PLAIN,
-                    "Authentication required",
-                    null);
-        }
-        if (!Role.ADMIN.equals(user.getRole())) {
-            return new SaveRegistryOutcome(
-                    HttpStatus.FORBIDDEN,
-                    MediaType.TEXT_PLAIN,
-                    "Admin access required",
-                    null);
-        }
-
+    public SaveRegistryOutcome deleteRegistry(String uri, boolean clientAcceptsHtml) throws IOException {
         String registryUri = uri != null ? uri.trim() : "";
         if (registryUri.isEmpty()) {
             return new SaveRegistryOutcome(
@@ -295,6 +267,7 @@ public class AdminService {
         json.set("suppressErrorLogs", ConfigUtil.get("suppressErrorLogs"));
         json.set("firstLaunch", ConfigUtil.get("firstLaunch"));
         json.set("uriPrefix", ConfigUtil.get("uriPrefix"));
+        json.set("defaultGraph", ConfigUtil.get("defaultGraph"));
         String result = mapper.writeValueAsString(json);
         return result;
     }
@@ -615,37 +588,14 @@ public class AdminService {
         return "User created successfully.";
     }
 
-    public String deleteUser(Map<String, String> allParams) {
-        String idParam = allParams.get("id");
-        if (idParam == null || idParam.isBlank()) {
-            return "Missing required field: id.";
-        }
-
-        Long userId;
-        try {
-            userId = Long.parseLong(idParam);
-        } catch (NumberFormatException e) {
-            return "Invalid user id.";
-        }
-
-        User targetUser = userService.getUserById(userId);
-        if (targetUser == null) {
-            return "User not found.";
-        }
-
-        User currentUser = userService.getUserProfile();
-        if (currentUser != null && currentUser.getId() != null && currentUser.getId().equals(userId)) {
-            return "Cannot delete the currently logged in user.";
-        }
-
-        long adminCount = userService.getAllUsers().stream()
-                .filter(user -> Role.ADMIN.equals(user.getRole()))
-                .count();
-        if (Role.ADMIN.equals(targetUser.getRole()) && adminCount <= 1) {
-            return "Cannot delete the last administrator.";
-        }
-
-        userService.deleteUser(targetUser);
+    public String deleteUser(String username, Long userId) {
+        userRepository.findByUsername(username)
+                .map(u -> u.getId())
+                .filter(id -> !id.equals(userId))
+                .ifPresentOrElse(id -> userRepository.deleteById(userId), () -> {
+                    throw new RuntimeException("Cannot delete user " + userId);
+                });
+        userRepository.deleteById(userId);
         return "User deleted successfully.";
     }
 

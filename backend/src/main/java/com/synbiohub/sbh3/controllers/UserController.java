@@ -19,6 +19,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import com.synbiohub.sbh3.security.customsecurity.JwtService;
+import com.synbiohub.sbh3.dto.UserDto;
 
 import java.io.IOException;
 import java.util.Map;
@@ -30,6 +32,7 @@ import java.util.Map;
 public class UserController {
     private final UserService userService;
     private final ObjectMapper mapper;
+    private final JwtService jwtService;
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @Operation(summary = "Login", description = "Authenticate a user with email or username and password.")
@@ -125,19 +128,16 @@ public class UserController {
             @ApiResponse(responseCode = "401", description = "Error retrieving user profile")
     })
     @PreAuthorize("hasAnyAuthority('USER', 'CURATOR', 'ADMIN')")
-    @GetMapping(value = "/profile", produces = "text/plain")
-    public ResponseEntity<String> getProfile(HttpServletRequest request) throws Exception {
-        User user = userService.getUserProfile();
-        if (user == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Error retrieving user profile.");
-        }
-        user.setPassword("");
-        return ResponseEntity.ok(mapper.writeValueAsString(user));
+    @GetMapping(value = "/profile", produces = "application/json")
+    public ResponseEntity<UserDto> getProfile(@RequestHeader(value = "X-authorization", required = false) String xauth) throws Exception {
+        String username = jwtService.extractUsername(xauth);
+        return ResponseEntity.ok(userService.getUserProfile(username));
     }
 
     /**
      * Changes user's profile fields.
      * Only updates the fields name, email, and affiliation currently
+     * should be changed to patch instead of post
      */
     @Operation(summary = "Update user profile", description = "Updates the authenticated user's profile fields.")
     @ApiResponses({
@@ -146,18 +146,10 @@ public class UserController {
     })
     @PreAuthorize("hasAnyAuthority('USER', 'CURATOR', 'ADMIN')")
     @PostMapping(value = "/profile", produces = "text/plain")
-    public ResponseEntity<String> updateProfile(
-            @Parameter(description = "Map of fields to update") @RequestParam Map<String, String> allParams,
-            HttpServletRequest request) throws Exception {
-        User updatedUser;
-        try {
-            updatedUser = userService.updateUserProfile(allParams);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found.");
-        }
-        User copyUser = (User) updatedUser.clone();
-        copyUser.setPassword("");
-        log.info(copyUser.toString());
+    public ResponseEntity<String> updateProfile(@RequestHeader(value = "X-authorization", required = false) String xauth,
+            @Parameter(description = "Map of fields to update") @RequestParam Map<String, String> allParams) {
+        String username = jwtService.extractUsername(xauth);
+        userService.updateUserProfile(username, allParams);
         return ResponseEntity.ok("Profile updated successfully");
     }
 
