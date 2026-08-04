@@ -19,16 +19,30 @@ yarn install
 npm install
 ```
 
-In order to connect the frontend to your backend, go to the next.config.js file.
-Then, change the env backendUrl variable to your backend's url.
+In order to connect the frontend to your backend, set the `backend` environment
+variable to your backend's URL. In development this is read from `.env.development`,
+which ships pointing at this repo's backend (`http://localhost:6789`). Edit that
+file if your backend runs elsewhere. (`backendSS` is the server-side equivalent and
+should normally match `backend`.) Note: `next.config.js` exposes these via
+`publicRuntimeConfig` — there is no `backendUrl` variable to change.
 
 Finally, run the development server:
 
 ```bash
-npm run dev
-# or
 yarn dev
 ```
+
+If you are on Node 17 or newer, `yarn dev` fails with an OpenSSL error
+(`ERR_OSSL_EVP_UNSUPPORTED`), because Next.js 10 / webpack 4 rely on a legacy
+algorithm. Use the legacy-OpenSSL script instead:
+
+```bash
+yarn devNextGen
+```
+
+The recommended Node version is 14–16 (the Docker image uses Node 14), with which
+plain `yarn dev` works. Once running, open
+[http://localhost:3333](http://localhost:3333) in your browser.
 
 ### Installing and running through Docker
 

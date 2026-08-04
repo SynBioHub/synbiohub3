@@ -41,14 +41,27 @@ Open ``backend`` as a project in IntelliJ.
 To setup your JDK, go to ``File``->``Project Structure``->``Project``->``ProjectSDK``
 and click on your downloaded Java JDK.
 
-If you're not using IntelliJ:
-To build a JAR file using maven, navigate to the ``backend`` directory and run:
+If you're not using IntelliJ, use the bundled Maven wrapper (`./mvnw`) — a
+separate Maven install is not required. From the ``backend`` directory:
 
-``mvn package``
+Run directly (recommended for development):
 
-and run the JAR file with
+``./mvnw spring-boot:run``
 
-``java -jar target/{name of JAR}``
+Or build a JAR and run it:
+
+``./mvnw package``
+
+``java -jar target/sbh3-0.0.1-SNAPSHOT-exec.jar``
+
+The backend serves on **http://localhost:6789** and uses an embedded H2 database
+by default, so no external database is needed. (The `local` Spring profile in
+`application-local.yml` switches to PostgreSQL on `:5432`; activate it with
+`./mvnw spring-boot:run -Dspring-boot.run.profiles=local` only if you want that.)
+
+**Important:** the backend reads `src/main/resources/config.json` relative to its
+working directory, so it must be run from the ``backend`` directory (IntelliJ users
+already set this in the working-directory step above).
 
 #### _Running_
 
@@ -64,6 +77,44 @@ The main class is the ``Synbiohub3Application`` class.
 
 Note: If packages or dependencies aren't found, click on ``Maven`` in the top right corner
 and click ``Reload all Maven projects``.
+
+#### _Connecting to Virtuoso (local development)_
+
+The backend needs a Virtuoso triplestore for SPARQL queries (set up below). The
+bundled `src/main/resources/config.json` defaults to the `virtuoso3` Docker host,
+because the backend is normally run as a container alongside Virtuoso on the same
+Docker network. When you run the backend directly via `java`/`./mvnw` on the host,
+Virtuoso is reached at `localhost` instead. To point the backend there at runtime
+set these environment variables before running the backend:
+
+```sh
+export SBH_SPARQL_ENDPOINT="http://localhost:8890/sparql"
+export SBH_GRAPH_STORE_ENDPOINT="http://localhost:8890/sparql-graph-crud-auth/"
+./mvnw spring-boot:run
+```
+
+These take precedence over both `config.json` and `config.local.json`, so the
+committed Docker defaults stay intact. (In IntelliJ, add them under
+`Edit Configuration` → `Environment variables`.)
+
+> **Any** key in `config.json` can be overridden this way: prefix the key with
+> `SBH_` in upper snake case (e.g. `sparqlEndpoint` → `SBH_SPARQL_ENDPOINT`,
+> `useSBOLExplorer` → `SBH_USE_SBOL_EXPLORER`, `instanceUrl` → `SBH_INSTANCE_URL`).
+> Values are parsed as JSON, so types are preserved — `SBH_USE_SBOL_EXPLORER=true`
+> is a boolean, `SBH_FETCH_LIMIT=1000` a number — while plain strings like a URL are
+> used as-is. This is the recommended way to supply secrets (`SBH_PASSWORD`,
+> `SBH_SESSION_SECRET`, …) and per-environment settings without editing committed files.
+
+Alternatively — or to override other settings — create
+`backend/data/config.local.json` (gitignored; takes precedence over `config.json`
+on a per-key basis, but is itself overridden by the environment variables above):
+
+```json
+{
+  "sparqlEndpoint": "http://your-host:8890/sparql",
+  "graphStoreEndpoint": "http://your-host:8890/sparql-graph-crud-auth/"
+}
+```
 
 ## **Installing the Backend from Docker**
 
