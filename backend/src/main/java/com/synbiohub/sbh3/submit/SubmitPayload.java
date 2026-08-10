@@ -86,4 +86,8 @@ public class SubmitPayload {
     public void setOverwrite_merge(String overwriteMerge) {
         this.overwriteMerge = overwriteMerge;
     }
+
+    public void setRootCollections(String rootCollections) {
+        this.collectionUri = rootCollections;
+    }
 }
