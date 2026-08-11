@@ -295,6 +295,7 @@ public class AdminService {
         json.set("suppressErrorLogs", ConfigUtil.get("suppressErrorLogs"));
         json.set("firstLaunch", ConfigUtil.get("firstLaunch"));
         json.set("uriPrefix", ConfigUtil.get("uriPrefix"));
+        json.set("defaultGraph", ConfigUtil.get("defaultGraph"));
         String result = mapper.writeValueAsString(json);
         return result;
     }

@@ -22,12 +22,7 @@ const parseValueOption = result => ({
   count: result.count ? Number(result.count.value) : 0
 });
 
-const buildValueSparql = (
-  properties,
-  searchQuery,
-  predicate,
-  privateGraphUri
-) =>
+const buildValueSparql = (properties, searchQuery, predicate, fromClause) =>
   configureQuery(searchObject, {
     predicate: wrapIRI(predicate),
     constraints: buildFacetConstraints(
@@ -36,7 +31,7 @@ const buildValueSparql = (
       undefined,
       properties.index
     ),
-    from: privateGraphUri ? `FROM <${privateGraphUri}>` : ''
+    from: fromClause
   });
 
 const syncFilterFromState = (properties, selectedPredicate, selectedValue) => {
@@ -70,6 +65,14 @@ export default function AdditionalFilter(properties) {
   const [selectedValue, setSelectedValue] = useState('');
   const searchQuery = useSelector(state => state.search.query);
   const privateGraphUri = useSelector(state => state.user.graphUri);
+  const theme = JSON.parse(localStorage.getItem('theme')) || {};
+  const publicGraphUri = theme.defaultGraph || '';
+  const fromClause = [
+    publicGraphUri ? `FROM <${publicGraphUri}>` : '',
+    privateGraphUri ? `FROM <${privateGraphUri}>` : ''
+  ]
+    .filter(Boolean)
+    .join('\n');
 
   useEffect(() => {
     syncFilterFromState(properties, selectedPredicate, selectedValue);
@@ -93,7 +96,7 @@ export default function AdditionalFilter(properties) {
           properties,
           searchQuery,
           currentFilter.filter,
-          privateGraphUri
+          fromClause
         )
       : undefined,
     parseResult: parseValueOption
