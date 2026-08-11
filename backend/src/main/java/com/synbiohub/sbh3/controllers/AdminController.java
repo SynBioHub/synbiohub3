@@ -4,21 +4,27 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.synbiohub.sbh3.dao.SparqlService;
 import com.synbiohub.sbh3.dto.LogEntry;
 import com.synbiohub.sbh3.security.model.User;
 import com.synbiohub.sbh3.services.AdminService;
-import com.synbiohub.sbh3.services.SearchService;
 import com.synbiohub.sbh3.services.UserService;
 import com.synbiohub.sbh3.utils.ConfigUtil;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.web.multipart.MultipartFile;
+import com.synbiohub.sbh3.security.model.Role;
+import com.synbiohub.sbh3.dto.UserDto;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,31 +34,31 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Base64;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+@Tag(name = "Administration", description = "Admin dashboard APIs for configuring SynBioHub (Theme, Users, Registries, Plugins, SPARQL)")
 @RestController
 @AllArgsConstructor
+@PreAuthorize("hasAuthority('ADMIN')")
 public class AdminController {
 
     private final AdminService adminService;
     private final UserService userService;
-    private final SearchService searchService;
+    private final SparqlService sparqlService;
+
+    @Operation(summary = "Run Admin SPARQL Query", description = "Executes a SPARQL query with admin privileges.")
+    @ApiResponse(responseCode = "200", description = "JSON containing SPARQL results")
     @GetMapping(value = "/admin/sparql")
     @ResponseBody
     public String runAdminSparqlQuery(@RequestParam String query, HttpServletRequest request) throws Exception {
-        String inputToken = request.getHeader("X-authorization");
-//        Authentication auth = userService.checkAuthentication(inputToken);
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth == null) {
             return null;
         }
-        return searchService.SPARQLQuery(query);
+        return sparqlService.read(sparqlService.getExplorerUrl(), sparqlService.resolveGraphUri(""), query);
     }
 
+    @Operation(summary = "Get admin dashboard status", description = "Returns status of graphs, logs, plugins, users, and remotes.")
     @GetMapping(value = "/admin")
     @ResponseBody
     public String status(@RequestParam Map<String,String> allParams, HttpServletRequest request) throws Exception {
@@ -63,6 +69,9 @@ public class AdminController {
      * This will just run a basic query on Virtuoso. If the result exists, return "Alive". Otherwise, return "Dead".
      * @return
      */
+    @Operation(summary = "Get Virtuoso status", description = "Checks if Virtuoso database is alive.")
+    @ApiResponse(responseCode = "200", description = "Alive")
+    @ApiResponse(responseCode = "500", description = "Dead")
     @GetMapping(value = "/admin/virtuoso")
     @ResponseBody
     // to mimic sbh api docs: "return 500 when it is not [alive]"
@@ -75,6 +84,7 @@ public class AdminController {
         }
     }
 
+    @Operation(summary = "Get graph status", description = "Returns graphUri and count of triples in the graph.")
     @GetMapping(value = "/admin/graphs")
     @ResponseBody
     public ResponseEntity<String> getGraph(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
@@ -88,6 +98,7 @@ public class AdminController {
         }
     }
 
+    @Operation(summary = "List log files", description = "Lists all available log files in the backend.")
     @GetMapping(value = "/admin/listLogs")
     @ResponseBody
     public ResponseEntity<JsonNode> listLogs() {
@@ -98,6 +109,7 @@ public class AdminController {
         }
     }
 
+    @Operation(summary = "Get log file contents", description = "Returns contents of a specific log file.")
     @GetMapping(value = "/admin/log")
     @ResponseBody
     public ResponseEntity<JsonNode> getLog(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
@@ -118,6 +130,7 @@ public class AdminController {
      * Body is JSON serialized as {@code text/plain} so clients that send {@code Accept: text/plain}
      * still match; parse the string as JSON on the client if needed.
      */
+    @Operation(summary = "Get mail settings", description = "Returns SendGrid settings from merged config.")
     @GetMapping(value = "/admin/mail", produces = {MediaType.TEXT_PLAIN_VALUE, MediaType.APPLICATION_JSON_VALUE})
     @ResponseBody
     public String getMailSettings(@RequestParam Map<String, String> allParams, HttpServletRequest request)
@@ -140,6 +153,7 @@ public class AdminController {
      * Params: {@code key} and {@code fromEmail} (as used by the admin UI), or {@code sendgridApiKey} and
      * {@code fromAddress}.
      */
+    @Operation(summary = "Update mail settings", description = "Persists SendGrid settings to config.local.json.")
     @PostMapping(value = "/admin/mail")
     @ResponseBody
     public String updateMailSettings(@RequestParam Map<String, String> allParams, HttpServletRequest request)
@@ -160,12 +174,15 @@ public class AdminController {
     }
 
     //TODO: get admin plugins needs to be public, post admin plugins need to be admin only
+    @Operation(summary = "Get plugins", description = "Returns all configured plugins.")
+    @PreAuthorize("permitAll()")
     @GetMapping(value = "/admin/plugins")
     @ResponseBody
     public String getPlugins(@RequestParam Map<String,String> allParams, HttpServletRequest request) throws IOException {
         return ConfigUtil.get("plugins").toString();
     }
 
+    @Operation(summary = "Save plugin", description = "Saves a new plugin or updates an existing one.")
     @PostMapping(value = "/admin/savePlugin")
     @ResponseBody
     public String savePlugin(@RequestParam Map<String,String> allParams, HttpServletRequest request) throws IOException {
@@ -189,6 +206,7 @@ public class AdminController {
         }
     }
 
+    @Operation(summary = "Delete plugin", description = "Deletes a plugin from the configuration.")
     @PostMapping(value = "/admin/deletePlugin")
     @ResponseBody
     public String deletePlugin(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
@@ -202,6 +220,8 @@ public class AdminController {
         }
     }
 
+    @Operation(summary = "Get Web of Registries", description = "Returns the configured Web of Registries instances.")
+    @PreAuthorize("permitAll()")
     @GetMapping(value = "/admin/registries")
     @ResponseBody
     public JsonNode getRegistries() throws IOException {
@@ -237,6 +257,7 @@ public class AdminController {
      * <p>Browser form submits ({@code Accept} includes {@code text/html}): 302 to {@code /admin/registries}.
      * API clients (e.g. {@code Accept: text/plain}): 200 plain text success body.</p>
      */
+    @Operation(summary = "Save registry (JSON)", description = "SynBioHub-compatible Web of Registries save.")
     @PostMapping(value = "/admin/saveRegistry", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> saveRegistryJson(
             @RequestBody Map<String, String> body,
@@ -247,6 +268,7 @@ public class AdminController {
         return saveRegistryResponse(body.get("uri"), body.get("url"), request);
     }
 
+    @Operation(summary = "Save registry (Form)", description = "SynBioHub-compatible Web of Registries save (Form Data).")
     @PostMapping(value = "/admin/saveRegistry",
             consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<String> saveRegistryForm(
@@ -279,6 +301,7 @@ public class AdminController {
      * <p>Frontend sends {@code application/x-www-form-urlencoded} with {@code uri}. JSON body {@code {"uri":"..."}}
      * is also supported.</p>
      */
+    @Operation(summary = "Delete registry (JSON)", description = "SynBioHub-compatible Web of Registries delete.")
     @PostMapping(value = "/admin/deleteRegistry", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> deleteRegistryJson(
             @RequestBody Map<String, String> body,
@@ -289,6 +312,7 @@ public class AdminController {
         return deleteRegistryResponse(body.get("uri"), request);
     }
 
+    @Operation(summary = "Delete registry (Form)", description = "SynBioHub-compatible Web of Registries delete (Form Data).")
     @PostMapping(value = "/admin/deleteRegistry",
             consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<String> deleteRegistryForm(
@@ -315,12 +339,13 @@ public class AdminController {
         return builder.body(outcome.body());
     }
 
+    @Operation(summary = "Set administrator email", description = "Updates the email address of the current administrator.")
     @PostMapping(value = "/admin/setAdministratorEmail")
     @ResponseBody
     public String setAdminEmail(String newEmail) throws Exception {
         User adminUser = userService.getUserProfile();
         try {
-            if (adminUser.getIsAdmin()) {
+            if (Role.ADMIN.equals(adminUser.getRole())) {
                 Map<String, String> params = new HashMap<>();
                 params.put("email", newEmail);
                 userService.updateUserProfile(params);
@@ -332,18 +357,21 @@ public class AdminController {
         return "Unable to update administrator email, but no error was thrown";
     }
 
+    @Operation(summary = "Retrieve from Web of Registries (Dead Code)", description = "Not implemented. Always returns null.", deprecated = true)
     @PostMapping(value = "/admin/retrieveFromWebOfRegistries")
     @ResponseBody
     public String updateRegistries(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
         return null;
     }
 
+    @Operation(summary = "Send federate request (Dead Code)", description = "Not yet implemented.", deprecated = true)
     @PostMapping(value = "/admin/federate")
     @ResponseBody
     public String sendFederateRequest(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
         return "This is send Federate Request. It is not yet implemented.";
     }
 
+    @Operation(summary = "Get remotes", description = "Returns configured remote instances (Benchling, ICE).")
     @GetMapping(value = "/admin/remotes")
     @ResponseBody
     public String getRemotes() throws IOException {
@@ -351,30 +379,35 @@ public class AdminController {
         return ConfigUtil.get("remotes").toString();
     }
 
+    @Operation(summary = "Save remote (Dead Code)", description = "Not implemented yet. Empty method.", deprecated = true)
     @PostMapping(value = "/admin/saveRemote") //benchling and ice remotes have different params
     @ResponseBody
     public void saveRemote(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
         // TODO: need to check format of remotes
     }
 
+    @Operation(summary = "Delete remote (Dead Code)", description = "Not implemented yet. Empty method.", deprecated = true)
     @PostMapping(value = "/admin/deleteRemote")
     @ResponseBody
     public void deleteRemote(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
         // TODO: need to check format of remotes
     }
 
+    @Operation(summary = "Get Explorer log (Dead Code)", description = "Not implemented. Always returns null.", deprecated = true)
     @GetMapping(value = "/admin/explorerlog")
     @ResponseBody
     public String getExplorerLog() {
         return null;
     }
 
+    @Operation(summary = "Get Explorer config (Dead Code)", description = "Not implemented. Always returns null.", deprecated = true)
     @GetMapping(value = "/admin/explorer")
     @ResponseBody
     public String getExplorerConfig(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
         return null;
     }
 
+    @Operation(summary = "Update Explorer config (Dead Code)", description = "Not implemented. Always returns null.", deprecated = true)
     @PostMapping(value = "/admin/explorer")
     @ResponseBody
     public String updateExplorerConfig(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
@@ -386,6 +419,7 @@ public class AdminController {
      * @return
      */
     // TODO: check if this method should be returning SBOL Explorer status
+    @Operation(summary = "Update Explorer index", description = "Returns the SBOLExplorer status.")
     @PostMapping(value = "/admin/explorerUpdateIndex")
     @ResponseBody
     public String updateExplorerIndex() throws IOException {
@@ -394,12 +428,15 @@ public class AdminController {
     }
 
     //TODO: get admin theme needs to be public, post admin theme needs to be admin only
+    @Operation(summary = "Get theme", description = "Returns the currently configured UI theme.")
+    @PreAuthorize("permitAll()")
     @GetMapping(value = "/admin/theme")
     @ResponseBody
     public String getTheme() throws IOException {
         return adminService.getTheme();
     }
 
+    @Operation(summary = "Update theme", description = "Updates the UI theme parameters.")
     @PostMapping(value = "/admin/theme")
     @ResponseBody
     public String updateTheme(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
@@ -410,6 +447,7 @@ public class AdminController {
         }
     }
 
+    @Operation(summary = "Update instance logo", description = "Uploads a new logo for the SynBioHub instance.")
     @PostMapping(value = "/admin/logo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseBody
     public ResponseEntity<String> updateLogo(@RequestPart("logo") MultipartFile logo) {
@@ -423,6 +461,8 @@ public class AdminController {
         }
     }
 
+    @Operation(summary = "Get instance logo", description = "Returns the raw image file for the current instance logo.")
+    @PreAuthorize("permitAll()")
     @GetMapping(value = "/logo")
     @ResponseBody
     public ResponseEntity<byte[]> getLogo() {
@@ -489,12 +529,20 @@ public class AdminController {
         }
     }
 
+    @Operation(summary = "Get all users", description = "Returns a JSON list of all registered users.")
     @GetMapping(value = "/admin/users")
     @ResponseBody
-    public String getUsers(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
-        return adminService.getUsers();
+    public Map<String, Object> getUsers(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
+        Boolean allowPublicSignup = false;
+        try {
+            allowPublicSignup = ConfigUtil.get("allowPublicSignup").asBoolean();
+        } catch (Exception e) {
+            allowPublicSignup = false;
+        }
+        return Map.of("allowPublicSignup", allowPublicSignup, "users", adminService.getUsers());
     }
 
+    @Operation(summary = "Update users configuration", description = "Updates user settings in the local config.")
     @PostMapping(value = "/admin/users")
     @ResponseBody
     public String updateUsers(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
@@ -505,6 +553,7 @@ public class AdminController {
         }
     }
 
+    @Operation(summary = "Create new user (Admin)", description = "Allows an admin to manually create a new user.")
     @PostMapping(value = "/admin/newUser")
     @ResponseBody
     public String createNewUser(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
@@ -515,12 +564,14 @@ public class AdminController {
         }
     }
 
+    @Operation(summary = "Update user (Admin)", description = "Allows an admin to update an existing user's details.")
     @PostMapping(value = "/admin/updateUser")
     @ResponseBody
     public String updateUser(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
         return adminService.updateUser(allParams);
     }
 
+    @Operation(summary = "Delete user (Admin)", description = "Allows an admin to delete a user account.")
     @PostMapping(value = "/admin/deleteUser")
     @ResponseBody
     public String deleteUser(@RequestParam Map<String,String> allParams, HttpServletRequest request) {

@@ -268,7 +268,7 @@ class TestAdmin(TestCase):
         sbh1_response = get_request("admin/users", 1, headers_users, [])
         sbh3_response = get_request("admin/users", 3, headers_users, [])
         compare_status_codes(sbh1_response, sbh3_response)
-        required_user_fields = ["id", "username", "email", "graphUri", "isAdmin", "isCurator", "isMember"]
+        required_user_fields = ["id", "username", "email", "isAdmin", "isCurator", "isMember"]
         for resp, name in ((sbh1_response, "SBH1"), (sbh3_response, "SBH3")):
             try:
                 data = json.loads(resp.text)

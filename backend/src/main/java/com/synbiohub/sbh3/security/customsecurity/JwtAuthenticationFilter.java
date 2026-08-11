@@ -6,18 +6,15 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
-import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.*;
 
 @Component
 @RequiredArgsConstructor
@@ -26,9 +23,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
 
     private final UserDetailsService userDetailsService;
-
-    @Autowired
-    private EndpointProperties endpointProperties;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -59,7 +53,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         final String username;
-        final List<String> userRoles;
         try {
             Claims claim = jwtService.extractAllClaims(jwt);
             if (JwtService.PURPOSE_PASSWORD_RESET.equals(claim.get(JwtService.CLAIM_PURPOSE))) {
@@ -67,7 +60,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 return;
             }
             username = jwtService.extractUsername(jwt);
-            userRoles = convertAuthoritiesToRoles(claim);
         } catch (RuntimeException e) {
             // Not a JWT or bad signature — continue anonymously; Spring Security still enforces auth on protected routes.
             if (SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -88,37 +80,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
         }
 
-        Set<String> allowedEndpoints = new HashSet<>(endpointProperties.getRoleToEndpointPermissions("USER"));
-        String requestedEndpoint = ServletPathUtil.getPathWithinApplication(request);
-        for (String role : userRoles) {
-            allowedEndpoints.addAll(endpointProperties.getRoleToEndpointPermissions(role));
-        }
-        boolean isEndpointAllowed = false;
-        AntPathMatcher pathMatcher = new AntPathMatcher();
-        for (String allowedEndpoint : allowedEndpoints) {
-            if (pathMatcher.match(allowedEndpoint, requestedEndpoint)) {
-                isEndpointAllowed = true;
-                break;
-            }
-        }
-
-        if (!isEndpointAllowed) {
-            // User's role does not have the correct permission for the requested endpoint.
-            response.sendError(HttpServletResponse.SC_FORBIDDEN, "You don't have the permission to access this resource.");
-            return;
-        }
         filterChain.doFilter(request, response);
-
-    }
-
-    private List<String> convertAuthoritiesToRoles(Claims claim) {
-        List<LinkedHashMap<String, String>> userAuthorities = (List<LinkedHashMap<String, String>>) claim.get("Role");
-
-        List<String> userRoles = new ArrayList<>();
-        for (LinkedHashMap<String, String> authority : userAuthorities) {
-            String role = authority.values().iterator().next();
-            userRoles.add(role);
-        }
-        return userRoles;
     }
 }

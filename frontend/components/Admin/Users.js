@@ -567,7 +567,7 @@ const fetcher = (url, token, dispatch) =>
     .get(url, {
       headers: {
         'Content-Type': 'application/json',
-        Accept: 'text/plain',
+        Accept: 'application/json',
         'X-authorization': token
       }
     })

@@ -2,16 +2,14 @@
 
 source ./testutil.sh
 
-# stop the containers
+COMPOSE_FILE="docker-compose.yml"
+PROJECT="testsuiteproject"
+
+if docker compose version >/dev/null 2>&1; then
+    COMPOSE=(docker compose)
+else
+    COMPOSE=(docker-compose)
+fi
+
 message "Stopping containers"
-docker stop testsuiteproject_synbiohub_1
-docker stop testsuiteproject_explorer_1
-docker stop testsuiteproject_autoheal_1
-docker stop testsuiteproject_virtuoso_1
-docker stop testsuiteproject_virtuoso3_1
-docker stop testsuiteproject_synbiohubbackend_1
-docker stop testsuiteproject_synbiohubFrontend_1
-
-
-
-
+"${COMPOSE[@]}" -f "$COMPOSE_FILE" -p "$PROJECT" stop

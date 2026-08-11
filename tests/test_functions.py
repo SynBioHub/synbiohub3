@@ -369,13 +369,15 @@ def file_diff(sbh1requestcontent, sbh3requestcontent, request, requesttype):
         changelist.append(c)
         changelist.append("\n")
 
-    changelist.append("\n Here is the last 50 lines of the synbiohub error log: \n")
-    changelist.append(get_end_of_error_log(50))
-    
-    if numofchanges>0:
+    if numofchanges > 0:
+        changelist.append("\n Here is the last 50 lines of the synbiohub error log: \n")
+        try:
+            changelist.append(get_end_of_error_log(50))
+        except Exception as e:
+            changelist.append(f"(Could not fetch error log: {e})\n")
+        print(''.join(changelist))
         return 0
-    else:
-        return 1
+    return 1
 
 def login_with(data, valid, headers = {'Accept':'text/plain'}):
     resultSBH1 = post_request("login", 1, data, headers, [], files = None)
@@ -472,20 +474,23 @@ def show_test_results():
     test_state.show_test_results()
 
 def run_bash(command):
-    process = subprocess.Popen(command.split(), stdout=subprocess.PIPE)
+    process = subprocess.Popen(command.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     output, error = process.communicate()
+    return process.returncode, output, error
 
 def file_tail(filename, length):
     return os.popen('tail -n ' + str(length) +' '+filename).read()
 
 def get_end_of_error_log(num_of_lines):
     copy_docker_log()
+    if not os.path.isdir("./logs_from_test_suite"):
+        return "No logs_from_test_suite directory (docker log copy failed).\n"
     directory = os.listdir("./logs_from_test_suite")
     for filename in directory:
         if filename[len(filename)-5:] == "error":
             return file_tail("./logs_from_test_suite/" + filename, num_of_lines)
 
-    raise Exception("Could not find error log")
+    return "Could not find error log in logs_from_test_suite.\n"
 
 
 def copy_docker_log():
@@ -495,7 +500,23 @@ def copy_docker_log():
     if os.path.isdir("docker_logs"):
         shutil.rmtree("./docker_logs")
 
-    run_bash("docker cp testsuiteproject_synbiohub_1:/mnt/data/logs .")
-    run_bash("mv ./logs ./logs_from_test_suite")
+    if os.path.isdir("./logs"):
+        shutil.rmtree("./logs")
+
+    # Prefer Compose v2 hyphen names; fall back to legacy underscore names.
+    containers = [
+        "testsuiteproject-synbiohub-1",
+        "testsuiteproject_synbiohub_1",
+    ]
+    for container in containers:
+        rc, _, _ = run_bash(f"docker cp {container}:/mnt/data/logs .")
+        if rc == 0 and os.path.isdir("./logs"):
+            run_bash("mv ./logs ./logs_from_test_suite")
+            return
+
+    # Last resort: docker compose cp from the test project.
+    rc, _, _ = run_bash("docker compose -p testsuiteproject cp synbiohub:/mnt/data/logs ./logs")
+    if rc == 0 and os.path.isdir("./logs"):
+        run_bash("mv ./logs ./logs_from_test_suite")
 
 

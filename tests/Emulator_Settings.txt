@@ -1,0 +1,15 @@
+{
+ 'url':'http://localhost:6789',
+ 'prefix':'https://synbiohub.org',
+ 'email':'test@user.synbiohub',
+ 'pass':'test',
+ 'user':'testuser',
+ 'creator':'Test User',
+ 'id':'Tester_1',
+ 'version':'1',
+ 'name':'Round_Trip_Tester',
+ 'desc':'This is a simple roundtrip test',
+ 'topLevel':'https://synbiohub.org/user/testuser/Tester_1/Tester_1_collection/1',
+ 'complete':true,
+ 'create_defaults':true
+}

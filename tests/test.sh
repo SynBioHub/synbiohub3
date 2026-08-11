@@ -10,13 +10,17 @@ message "pulling backend image"
 
 #docker pull synbiohub/sbh3backend:snapshot
 
-# Clone the SBOLTestRunner for necessary files
+# Clone the SBOLTestRunner for necessary files (empty gitlink/submodule is common in CI)
 message "pulling mehersam/SBOLTestRunner"
-if cd SBOLTestRunner; then
-    git pull;
-    cd ..;
+if [ -f SBOLTestRunner/pom.xml ]; then
+    (
+        cd SBOLTestRunner
+        git pull --ff-only 2>/dev/null || true
+        git submodule update --init --recursive 2>/dev/null || true
+    )
 else
-    git clone --recurse-submodules https://github.com/mehersam/SBOLTestRunner;
+    rm -rf SBOLTestRunner
+    git clone --recurse-submodules https://github.com/mehersam/SBOLTestRunner
 fi
 
 #clone libSBOLj

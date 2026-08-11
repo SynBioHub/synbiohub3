@@ -1,5 +1,6 @@
 package com.synbiohub.sbh3.dto;
 
+import com.synbiohub.sbh3.security.model.Role;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Data;
@@ -26,4 +27,6 @@ public class UserRegistrationDTO {
 
     @NotBlank
     private String password2;
+
+    private Role role;
 }

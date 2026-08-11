@@ -1,9 +1,15 @@
-const query = `PREFIX dc: <http://purl.org/dc/elements/1.1/>
-SELECT DISTINCT
-       ?object
+import SPARQL_PREFIXES from './prefixes';
+
+const query = `${SPARQL_PREFIXES}
+SELECT ?object (COUNT(DISTINCT ?tl) AS ?count)
 $from
 WHERE {
-      ?tl dc:creator ?object
-}`;
+      ?tl dc:creator ?object .
+      OPTIONAL { ?tl sbol2:displayId ?tlDisplayId . }
+      OPTIONAL { ?tl dcterms:title ?tlName . }
+      OPTIONAL { ?tl dcterms:description ?tlDescription . }
+      $constraints
+}
+GROUP BY ?object`;
 
 export default query;

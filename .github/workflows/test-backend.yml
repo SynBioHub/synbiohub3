@@ -55,3 +55,39 @@ jobs:
       - name: Run tests
         run: |
           tests/test.sh
+
+  sboltestrunner:
+    name: SBOLTestRunner
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v3
+        name: Checkout source tree
+      - uses: actions/download-artifact@v4
+        name: Download Docker image
+        with:
+          name: sbh3-image
+      - name: Import saved Docker image
+        run: |
+          cat sbh3.tar.gz | docker load
+      - name: Install Docker Compose
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker-compose
+      - uses: actions/setup-java@v4
+        name: Install Java
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: actions/setup-python@v4
+        name: Install Python
+        with:
+          python-version: '3.9'
+      - name: Install test dependencies
+        run: |
+          pip install -r tests/test_requirements.txt
+      - name: Run SBOLTestRunner
+        run: |
+          cd tests
+          bash ./sbolsuite.sh
