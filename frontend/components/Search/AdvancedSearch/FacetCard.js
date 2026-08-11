@@ -1,3 +1,6 @@
+import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
 import styles from '../../../styles/advancedsearch.module.css';
 import FacetOptionList from './FacetOptionList';
 import useFacetOptions from './useFacetOptions';
@@ -7,8 +10,16 @@ import useFacetOptions from './useFacetOptions';
  * predicate, a search box, and the top options by count
  */
 export default function FacetCard(properties) {
-  const { title, subtitle, sparql, parseResult, isMulti, value, onChange } =
-    properties;
+  const {
+    title,
+    subtitle,
+    description,
+    sparql,
+    parseResult,
+    isMulti,
+    value,
+    onChange
+  } = properties;
   const { loading, error, data } = useFacetOptions({ sparql, parseResult });
 
   const hasSelection = isMulti ? value.length > 0 : Boolean(value);
@@ -16,7 +27,20 @@ export default function FacetCard(properties) {
   return (
     <div className={styles.facetcard}>
       <div className={styles.facetheader}>
-        <span className={styles.facettitle}>{title}</span>
+        <span className={styles.facettitlewrap}>
+          <span className={styles.facettitle}>{title}</span>
+          {description && (
+            <span
+              className={styles.facetinfo}
+              tabIndex={0}
+              role="button"
+              aria-label={`What is ${title}?`}
+            >
+              <FontAwesomeIcon icon={faInfoCircle} />
+              <span className={styles.facettooltip}>{description}</span>
+            </span>
+          )}
+        </span>
         {hasSelection && (
           <span
             role="button"

@@ -16,6 +16,7 @@ import getRoles from '../../../sparql/getRoles';
 import getSBOLTypes from '../../../sparql/getSBOLTypes';
 import getTypes from '../../../sparql/getTypes';
 import styles from '../../../styles/advancedsearch.module.css';
+import facetDefinitions from '../../../utilities/facetDefinitions';
 import AdditionalFilter from './AdditionalFilter';
 import FacetCard from './FacetCard';
 const { publicRuntimeConfig } = getConfig();
@@ -81,6 +82,7 @@ export default function Options(properties) {
       <FacetCard
         title="Part Type"
         subtitle="sbol2:type"
+        description={facetDefinitions['Part Type']}
         sparql={facetQuery(getSBOLTypes, 'sbolType')}
         value={properties.sbolType}
         parseResult={addCountToResultName}
@@ -90,6 +92,7 @@ export default function Options(properties) {
       <FacetCard
         title="Part Role"
         subtitle="sbol2:role"
+        description={facetDefinitions['Part Role']}
         sparql={facetQuery(getRoles, 'role')}
         value={properties.role}
         parseResult={addCountToResultName}
@@ -99,6 +102,7 @@ export default function Options(properties) {
       <FacetCard
         title="Object Type"
         subtitle="rdf:type"
+        description={facetDefinitions['Object Type']}
         sparql={facetQuery(getTypes, 'objectType')}
         value={properties.objectType}
         parseResult={addCountToResultName}
@@ -110,6 +114,7 @@ export default function Options(properties) {
       <FacetCard
         title="Collections"
         subtitle="sbol2:member"
+        description={facetDefinitions.Collections}
         sparql={facetQuery(getCollections, 'collections')}
         value={properties.collections}
         isMulti={true}
@@ -129,6 +134,7 @@ export default function Options(properties) {
       <FacetCard
         title="Creator"
         subtitle="dc:creator"
+        description={facetDefinitions.Creator}
         sparql={facetQuery(getCreators, 'creator')}
         value={properties.creator}
         parseResult={result => ({
