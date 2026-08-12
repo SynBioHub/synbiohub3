@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -36,7 +37,7 @@ public class AttachmentService {
      * For each non-SBOL attachment: gzip+hash to {@code ./uploads/}, insert or update triples,
      * then rewrite {@code file:filename} placeholders to real attachment URIs.
      */
-    public void uploadAttachments(SubmitPayload payload, String graphUri) throws IOException {
+    public void uploadAttachments(SubmitPayload payload, String graphUri) throws IOException, URISyntaxException {
         String collectionUri = payload.getCollectionUri();
         String baseUri = attachmentBaseUri(payload);
         Map<String, String> existingSources = sparqlService.loadAttachmentSources(collectionUri, graphUri);
@@ -86,7 +87,7 @@ public class AttachmentService {
     /** Inserts attachment triples and links them to the root collection ({@code AttachUpload.sparql}). */
     private String addAttachmentToTopLevel(String graphUri, String baseUri, String topLevelUri,
                                            String name, String uploadHash, long size, String attachmentType,
-                                           String owner) throws IOException {
+                                           String owner) throws IOException, URISyntaxException {
         String displayId = "attachment_" + UUID.randomUUID().toString().replace("-", "");
         String persistentIdentity = baseUri + "/" + displayId;
         String version = "1";

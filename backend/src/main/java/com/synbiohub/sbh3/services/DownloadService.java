@@ -537,6 +537,8 @@ public class DownloadService {
         if (model == null || model.isEmpty()) {
             return null;
         }
+        // Drop invalid xmlns (e.g. sbol-db's its=…/its) that fail SBOL sbol-10106.
+        applyLegacySynbiohubRdfXmlPrefixes(model);
         var modelOutput = new ByteArrayOutputStream();
         RDFDataMgr.write(modelOutput, model, RDFFormat.RDFXML_PLAIN);
         try {

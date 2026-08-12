@@ -173,6 +173,60 @@ public class AdminController {
         return "Mail settings updated";
     }
 
+    /**
+     * Triplestore endpoints and auth mode from merged config ({@code data/config.local.json} overrides
+     * {@code src/main/resources/config.json} via {@link ConfigUtil#get(String)}).
+     */
+    @Operation(summary = "Get database endpoints", description = "Returns sparqlEndpoint, graphStoreEndpoint, and triplestoreAuth from merged config.")
+    @GetMapping(value = "/admin/database", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public String getDatabaseConfig() throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectNode out = mapper.createObjectNode();
+        JsonNode sparqlEndpoint = ConfigUtil.get("sparqlEndpoint");
+        JsonNode graphStoreEndpoint = ConfigUtil.get("graphStoreEndpoint");
+        JsonNode triplestoreAuth = ConfigUtil.get("triplestoreAuth");
+        out.put("sparqlEndpoint", sparqlEndpoint != null && !sparqlEndpoint.isNull()
+                ? sparqlEndpoint.asText("") : "");
+        out.put("graphStoreEndpoint", graphStoreEndpoint != null && !graphStoreEndpoint.isNull()
+                ? graphStoreEndpoint.asText("") : "");
+        String auth = triplestoreAuth != null && !triplestoreAuth.isNull()
+                ? triplestoreAuth.asText("digest") : "digest";
+        if (!"basic".equalsIgnoreCase(auth) && !"digest".equalsIgnoreCase(auth)) {
+            auth = "digest";
+        }
+        out.put("triplestoreAuth", auth.toLowerCase());
+        return mapper.writeValueAsString(out);
+    }
+
+    /**
+     * Persists {@code sparqlEndpoint}, {@code graphStoreEndpoint}, and {@code triplestoreAuth}
+     * to {@code data/config.local.json}.
+     */
+    @Operation(summary = "Update database endpoints", description = "Persists sparqlEndpoint, graphStoreEndpoint, and triplestoreAuth to config.local.json.")
+    @PostMapping(value = "/admin/database")
+    @ResponseBody
+    public String updateDatabaseConfig(@RequestParam Map<String, String> allParams) throws IOException {
+        String sparqlEndpoint = allParams.getOrDefault("sparqlEndpoint", "");
+        String graphStoreEndpoint = allParams.getOrDefault("graphStoreEndpoint", "");
+        String triplestoreAuth = allParams.getOrDefault("triplestoreAuth", "digest").trim().toLowerCase();
+        if (!"basic".equals(triplestoreAuth) && !"digest".equals(triplestoreAuth)) {
+            return "Invalid triplestoreAuth; use basic or digest";
+        }
+
+        ObjectNode local = (ObjectNode) ConfigUtil.getLocaljson();
+        local.put("sparqlEndpoint", sparqlEndpoint);
+        local.put("graphStoreEndpoint", graphStoreEndpoint);
+        local.put("triplestoreAuth", triplestoreAuth);
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.writerWithDefaultPrettyPrinter()
+                .writeValue(new File("data/config.local.json"), local);
+        ConfigUtil.refreshLocalJson();
+
+        return "Database configuration updated";
+    }
+
     //TODO: get admin plugins needs to be public, post admin plugins need to be admin only
     @Operation(summary = "Get plugins", description = "Returns all configured plugins.")
     @PreAuthorize("permitAll()")

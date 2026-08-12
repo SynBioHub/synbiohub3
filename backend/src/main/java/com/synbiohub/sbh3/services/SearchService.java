@@ -329,22 +329,22 @@ public class SearchService {
         RestTemplate restTemplate = new RestTemplate();
         HashMap<String, String> params = new HashMap<>();
         params.put("query", query);
-        params.put("format", "application/rdf+xml");
 
         String user = usernameFromUserResourceUri(resourceUriForDefaultGraph);
         boolean privateResource = user != null && !user.isBlank();
 
         String url;
         if (privateResource) {
-            url = ConfigUtil.get("sparqlEndpoint").asText() + "?query={query}&format={format}";
+            url = ConfigUtil.get("sparqlEndpoint").asText() + "?query={query}";
         } else {
             params.put("default-graph-uri", ConfigUtil.get("defaultGraph").asText());
             url = ConfigUtil.get("sparqlEndpoint").asText()
-                    + "?default-graph-uri={default-graph-uri}&query={query}&format={format}";
+                    + "?default-graph-uri={default-graph-uri}&query={query}";
         }
 
+        // Negotiate RDF/XML via Accept (avoids format=application/rdf+xml '+' / encoding issues with sbol-db).
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Accept", "*/*");
+        headers.setAccept(List.of(MediaType.parseMediaType("application/rdf+xml")));
         HttpEntity<?> entity = new HttpEntity<>(headers);
 
         ResponseEntity<byte[]> response = restTemplate.exchange(url, HttpMethod.GET, entity, byte[].class, params);
@@ -407,13 +407,13 @@ public class SearchService {
 
     /**
      * Hit the /sparql endpoint on other SBH instances (Web of Registries).
-     * Aligns with {@link #SPARQLRDFXMLQuery}: CONSTRUCT needs {@code format} + default graph + permissive Accept;
+     * Aligns with {@link #SPARQLRDFXMLQuery}: CONSTRUCT via Accept RDF/XML + default graph;
      * {@code String} responses often end up null for RDF MIME types.
      */
     public byte[] queryOldSBHSparqlEndpoint(String WOREndpoint, String query) throws IOException {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Accept", "*/*");
+        headers.setAccept(List.of(MediaType.parseMediaType("application/rdf+xml")));
 
         String base = WOREndpoint.endsWith("/") ? WOREndpoint.substring(0, WOREndpoint.length() - 1) : WOREndpoint;
         String remoteDefaultGraph = base + "/public";
@@ -421,9 +421,8 @@ public class SearchService {
         HashMap<String, String> params = new HashMap<>();
         params.put("default-graph-uri", remoteDefaultGraph);
         params.put("query", query);
-        params.put("format", "application/rdf+xml");
 
-        String url = base + "/sparql?default-graph-uri={default-graph-uri}&query={query}&format={format}";
+        String url = base + "/sparql?default-graph-uri={default-graph-uri}&query={query}";
         HttpEntity<?> entity = new HttpEntity<>(headers);
 
         ResponseEntity<byte[]> rest;

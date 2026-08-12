@@ -24,22 +24,27 @@ export default function buildQuery(uri, tableJSON) {
     }
     rootPredicateDictionary[root].push(column);
   });
-  let queryToReturn = getTableQuery(
+  const primary = getTableQuery(
     uri,
     rootPredicateDictionary[tableJSON.rootPredicate],
     tableJSON.rootPredicate,
     false,
     additionalSelections
   );
+  let queryToReturn = primary.query;
   delete rootPredicateDictionary[tableJSON.rootPredicate];
   for (const [rootPredicate, columns] of Object.entries(
     rootPredicateDictionary
   )) {
-    queryToReturn += `{\n${getTableQuery(uri, columns, rootPredicate, true)}}`;
+    const nested = getTableQuery(uri, columns, rootPredicate, true);
+    queryToReturn += `{\n${nested.query}}`;
   }
+  const groupBy = primary.groupByVars.length
+    ? ` GROUP BY ${primary.groupByVars.join(' ')}`
+    : '';
   return (
     queryToReturn +
-    `} ${tableJSON.orderBy ? 'ORDER BY ' + tableJSON.orderBy : ''}`
+    `}${groupBy}${tableJSON.orderBy ? ' ORDER BY ' + tableJSON.orderBy : ''}`
   );
 }
 
@@ -54,6 +59,7 @@ function getTableQuery(
   const items = [...additionalSelections];
   items.push(rootId);
   const subqueries = [];
+  let hasAggregate = false;
   subqueries.push(`{\n<${uri}> ${rootPredicate} ${rootId}`);
   columns.forEach(column => {
     if (!column.predicates && !column.bindTo) {
@@ -86,8 +92,10 @@ function getTableQuery(
         subqueries.push(`OPTIONAL { ${topLevelId} ${predicate} ${predicateId}`);
         topLevelId = predicateId;
         if (isLastPredicate && groupResults) {
+          hasAggregate = true;
+          // STR() so IRI values concatenate on sbol-db/Oxigraph; GROUP BY added by caller.
           items.push(
-            `(group_concat(${predicateId}; separator=", ") AS ${predicateId})`
+            `(GROUP_CONCAT(DISTINCT STR(${predicateId}); separator=", ") AS ${predicateId})`
           );
         } else {
           items.push(predicateId);
@@ -97,10 +105,32 @@ function getTableQuery(
     }
   });
   subqueries.push('}');
-  return (
-    'SELECT\n' +
-    [...new Set(items)].join('\n') +
-    `${!nestedQuery ? '\n{' : '\n'}` +
-    subqueries.join('\n')
-  );
+  const uniqueItems = [...new Set(items)];
+  const groupByVars = hasAggregate
+    ? [...new Set(uniqueItems.flatMap(groupByVarsFromSelectItem))]
+    : [];
+  return {
+    query:
+      'SELECT\n' +
+      uniqueItems.join('\n') +
+      `${!nestedQuery ? '\n{' : '\n'}` +
+      subqueries.join('\n'),
+    groupByVars
+  };
+}
+
+/**
+ * Non-aggregate SELECT items contribute their underlying variable(s) to GROUP BY.
+ * Aggregate projections (GROUP_CONCAT) are skipped.
+ */
+function groupByVarsFromSelectItem(item) {
+  if (/GROUP_CONCAT/i.test(item)) {
+    return [];
+  }
+  const asMatch = /^\((.+) AS (.+)\)$/.exec(item.trim());
+  if (asMatch) {
+    const source = asMatch[1].trim();
+    return source.startsWith('?') ? [source] : [];
+  }
+  return item.startsWith('?') ? [item] : [];
 }

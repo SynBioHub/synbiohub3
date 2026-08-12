@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -54,7 +55,7 @@ public class SubmitService {
     /**
      * Main submit entry point. Each step mutates {@code payload} in place.
      */
-    public ResponseEntity<String> submit(SubmitPayload allParams, MultipartFile file) throws IOException, SBOLValidationException {
+    public ResponseEntity<String> submit(SubmitPayload allParams, MultipartFile file) throws IOException, SBOLValidationException, URISyntaxException {
         SubmitPayload payload = parse(allParams, file);
         collectionService.sanitize(payload);
         submitPluginService.applySubmitPlugin(payload); // optional transform of uploaded file
@@ -113,7 +114,7 @@ public class SubmitService {
      * Overwrite mode: stagger-delete all objects under the collection URI prefix, then remove
      * the collection itself. Mirrors {@code submit.js} after prepareSubmission succeeds.
      */
-    private void prepare(SubmitPayload payload) throws IOException {
+    private void prepare(SubmitPayload payload) throws IOException, URISyntaxException {
         if (!"1".equals(payload.getOverwriteMerge())) {
             return;
         }
@@ -161,7 +162,7 @@ public class SubmitService {
      * Posts prepared SBOL XML to Virtuoso, stores attachment binaries, rewrites {@code file:}
      * sources in the graph, then deletes temp files.
      */
-    private void upload(SubmitPayload payload) throws IOException {
+    private void upload(SubmitPayload payload) throws IOException, URISyntaxException {
         String graphUri = collectionService.graphUriForCollection(payload.getCollectionUri(), payload);
         String resultPath = payload.getResultFilePath();
         if (resultPath == null || resultPath.isBlank()) {

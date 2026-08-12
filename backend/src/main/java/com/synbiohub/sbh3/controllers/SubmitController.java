@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Map;
 
 @Tag(name = "Submissions", description = "Endpoints for creating and submitting registry objects")
@@ -36,7 +37,7 @@ public class SubmitController {
     @PreAuthorize("hasAnyAuthority('USER', 'CURATOR', 'ADMIN')")
     public ResponseEntity<String> submit(
             @ModelAttribute SubmitPayload allParams,
-            @RequestPart(value = "file", required = false) MultipartFile file) throws IOException, SBOLValidationException {
+            @RequestPart(value = "file", required = false) MultipartFile file) throws IOException, SBOLValidationException, URISyntaxException {
         return submitService.submit(allParams, file);
     }
 
