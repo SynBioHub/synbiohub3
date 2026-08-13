@@ -26,7 +26,7 @@ public class PermissionController {
     }
 
     @Operation(summary = "Remove owner (Unimplemented)", description = "Removes an owner from a registry object. Currently an empty stub.", deprecated = true)
-    @PostMapping(value = "/removeOwner/**")
+    @PostMapping(value = "/removeOwner")
     public ResponseEntity<String> removeOwner(@Parameter(description = "Key/value pairs including uri and user email") @RequestParam Map<String, String> allParams, @Parameter(description = "JWT Token") @RequestHeader("X-authorization") String xauth) {
         return new ResponseEntity<>(HttpStatus.OK);
     }
