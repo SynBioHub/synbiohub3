@@ -15,6 +15,9 @@ import SearchHeader from '../SearchHeader/SearchHeader';
 import { processUrl } from '../../Admin/Registries';
 import { isValidURI } from '../../Viewing/Shell';
 import lookupRole from '../../../namespace/lookupRole';
+import buildFacetConstraints from '../../../sparql/buildFacetConstraints';
+import configureQuery from '../../../sparql/configureQuery';
+import getSearchResultCount from '../../../sparql/getSearchResultCount';
 
 
 import {
@@ -40,6 +43,7 @@ export default function StandardSearch() {
   const limit = useSelector(state => state.search.limit);
   const token = useSelector(state => state.user.token);
   const loggedIn = useSelector(state => state.user.loggedIn);
+  const privateGraphUri = useSelector(state => state.user.graphUri);
   const registries = JSON.parse(localStorage.getItem("registries")) || {};
   const [count, setCount] = useState();
   const dispatch = useDispatch();
@@ -220,13 +224,24 @@ export default function StandardSearch() {
 
   const filterString = sbhVersion === 3 ? searchParams : url;
 
-  // get search count
+  // Count via /sparql rather than /searchCount to agree with private constraints
+  const countQuery = configureQuery(getSearchResultCount, {
+    from: [
+      theme.defaultGraph ? `FROM <${theme.defaultGraph}>` : '',
+      privateGraphUri ? `FROM <${privateGraphUri}>` : ''
+    ]
+      .filter(Boolean)
+      .join('\n'),
+    constraints: buildFacetConstraints(
+      { creator, objectType, role, sbolType, collections, extraFilters },
+      query
+    )
+  });
+
   const { newCount, isCountLoading, isCountError } = useSearchCount(
-    query,
-    filterString,
+    countQuery,
     token,
-    dispatch,
-    sbhVersion
+    dispatch
   );
 
   // update search count display, keeping the last known count visible
@@ -399,25 +414,15 @@ const useSearchResults = (query, filterString, offset, limit, token, dispatch, s
   };
 };
 
-const useSearchCount = (query, filterString, token, dispatch, sbhVersion) => {
-  let requestUrl;
-  if (sbhVersion === 3) {
-    const params = new URLSearchParams(filterString);
-    if (query) params.set('keyword', query);
-    requestUrl = `${publicRuntimeConfig.backend}/searchCount?${params.toString()}`;
-  } else {
-    requestUrl = `${publicRuntimeConfig.backend}/searchCount/${filterString}${encodeURIComponent(
-      query
-    )}`;
-  }
+const useSearchCount = (countQuery, token, dispatch) => {
+  const requestUrl = `${
+    publicRuntimeConfig.backend
+  }/sparql?query=${encodeURIComponent(countQuery)}`;
 
-  const { data, error } = useSWR(
-    [requestUrl, token, dispatch],
-    fetcher
-  );
+  const { data, error } = useSWR([requestUrl, token, dispatch], countFetcher);
   return {
     newCount: data,
-    isCountLoading: !error && !data,
+    isCountLoading: !error && data === undefined,
     isCountError: error
   };
 };
@@ -465,6 +470,26 @@ const getTypeAndUrl = async (result, registries) => {
   // result.url = newUrl;
 };
 
+
+// unwraps the single ?count binding of a SPARQL results document
+const countFetcher = (url, token, dispatch) =>
+  axios
+    .get(url, {
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        'X-authorization': token
+      }
+    })
+    .then(response => {
+      const binding = response.data?.results?.bindings?.[0];
+      return binding ? Number(binding.count.value) : 0;
+    })
+    .catch(error => {
+      error.customMessage = 'Request failed while counting search results';
+      error.fullUrl = url;
+      dispatch(addError(error));
+    });
 
 const fetcher = (url, token, dispatch) =>
   axios
