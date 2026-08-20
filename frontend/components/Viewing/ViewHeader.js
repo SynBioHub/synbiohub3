@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styles from '../../styles/view.module.css';
 
 import React, { useRef, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 
@@ -14,6 +14,9 @@ import Link from 'next/link';
 
 import { isUriOwner } from './Shell';
 import getConfig from 'next/config';
+import { processUrl } from '../Admin/Registries';
+import getMemberOfCollections from '../../sparql/getMemberOfCollections';
+import getQueryResponse from '../../sparql/tools/getQueryResponse';
 const { publicRuntimeConfig } = getConfig();
 
 function renderSplitTitle(title) {
@@ -46,8 +49,11 @@ export default function ViewHeader(properties) {
   const [isEditingDescription, setIsEditingDescription] = useState(false);
   const [editedDescription, setEditedDescription] = useState(properties.description);
   const [counts, setCounts] = useState({ twins: 0, uses: 0, similar: 0 });
+  const [parentCollectionUrl, setParentCollectionUrl] = useState(null);
 
   const token = useSelector(state => state.user.token);
+  const dispatch = useDispatch();
+  const registries = JSON.parse(localStorage.getItem('registries')) || {};
 
   useEffect(() => {
     const base = `${publicRuntimeConfig.backend}/${getAfterThirdSlash(properties.uri)}`;
@@ -70,6 +76,43 @@ export default function ViewHeader(properties) {
     })
     .catch(err => console.error("Error fetching linked counts:", err));
   }, [properties.uri, token]);
+
+  // Resolve parent collection for "Back to Collection"; hide when none (e.g. root collection)
+  useEffect(() => {
+    let cancelled = false;
+    setParentCollectionUrl(null);
+
+    if (!properties.uri) return undefined;
+
+    getQueryResponse(
+      dispatch,
+      getMemberOfCollections,
+      { uri: properties.uri },
+      token
+    )
+      .then(async collections => {
+        if (cancelled) return;
+        if (!collections || collections.length === 0) {
+          setParentCollectionUrl(null);
+          return;
+        }
+        const processed = await processUrl(collections[0].subject, registries);
+        if (cancelled) return;
+        setParentCollectionUrl(
+          processed.urlRemovedForLink || processed.original || null
+        );
+      })
+      .catch(err => {
+        if (!cancelled) {
+          console.error('Error fetching parent collection:', err);
+          setParentCollectionUrl(null);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [properties.uri, token, dispatch]);
 
   const theme = JSON.parse(localStorage.getItem('theme')) || {};
 
@@ -379,6 +422,19 @@ export default function ViewHeader(properties) {
                 </button>
               )} */}
 
+              {parentCollectionUrl && (
+                <button
+                  type="button"
+                  className={styles.button}
+                  onClick={() => router.push(parentCollectionUrl)}
+                  style={{
+                    backgroundColor: theme?.themeParameters?.[0]?.value || '#333',
+                    color: theme?.themeParameters?.[1]?.value || '#fff'
+                  }}
+                >
+                  Back to Root Collection
+                </button>
+              )}
               {(search.twins || search.uses || search.similar) && (
                 <span>Search For:</span>
               )}

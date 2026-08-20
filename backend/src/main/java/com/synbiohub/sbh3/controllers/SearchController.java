@@ -204,7 +204,10 @@ public class SearchController {
             @ApiResponse(responseCode = "200", description = "JSON array of sub-collection metadata"),
             @ApiResponse(responseCode = "500", description = "SPARQL query or database error")
     })
-    @GetMapping("/{visibility:.+}/{collectionID:.+}/{displayID:.+}/{version:.+}/**/subCollections")
+    @GetMapping({
+            "/{visibility:.+}/{collectionID:.+}/{displayID:.+}/{version:.+}/**/subCollections",
+            "/{visibility}/{collectionID}/{displayID}/{version}/subCollections"
+    })
     public String getSubCollections(
             @Parameter(description = "Visibility scope (e.g. 'public')") @PathVariable("visibility") String visibility,
             @Parameter(description = "Collection database ID") @PathVariable("collectionID") String collectionID,
@@ -229,7 +232,10 @@ public class SearchController {
             @ApiResponse(responseCode = "200", description = "JSON array of twin component metadata"),
             @ApiResponse(responseCode = "500", description = "SPARQL query or database error")
     })
-    @GetMapping("/{visibility:.+}/{collectionID:.+}/{displayID:.+}/{version:.+}/**/twins")
+    @GetMapping({
+            "/{visibility:.+}/{collectionID:.+}/{displayID:.+}/{version:.+}/**/twins",
+            "/{visibility}/{collectionID}/{displayID}/{version}/twins"
+    })
     public String getTwins(
             @Parameter(description = "Visibility scope (e.g. 'public')") @PathVariable("visibility") String visibility,
             @Parameter(description = "Collection database ID") @PathVariable("collectionID") String collectionID,
@@ -255,7 +261,10 @@ public class SearchController {
             @ApiResponse(responseCode = "200", description = "Plaintext count of twin components"),
             @ApiResponse(responseCode = "500", description = "SPARQL query or database error")
     })
-    @GetMapping("/{visibility:.+}/{collectionID:.+}/{displayID:.+}/{version:.+}/**/twinsCount")
+    @GetMapping({
+            "/{visibility:.+}/{collectionID:.+}/{displayID:.+}/{version:.+}/**/twinsCount",
+            "/{visibility}/{collectionID}/{displayID}/{version}/twinsCount"
+    })
     public String getTwinsCount(
             @Parameter(description = "Visibility scope (e.g. 'public')") @PathVariable("visibility") String visibility,
             @Parameter(description = "Collection database ID") @PathVariable("collectionID") String collectionID,
@@ -282,7 +291,10 @@ public class SearchController {
             @ApiResponse(responseCode = "200", description = "JSON array of similar component metadata"),
             @ApiResponse(responseCode = "500", description = "SPARQL query or database error, or SBOLExplorer not enabled")
     })
-    @GetMapping("/{visibility:.+}/{collectionID:.+}/{displayID:.+}/{version:.+}/**/similar")
+    @GetMapping({
+            "/{visibility:.+}/{collectionID:.+}/{displayID:.+}/{version:.+}/**/similar",
+            "/{visibility}/{collectionID}/{displayID}/{version}/similar"
+    })
     public String getSimilar(
             @Parameter(description = "Visibility scope (e.g. 'public')") @PathVariable("visibility") String visibility,
             @Parameter(description = "Collection database ID") @PathVariable("collectionID") String collectionID,
@@ -309,7 +321,10 @@ public class SearchController {
             @ApiResponse(responseCode = "200", description = "Plaintext count of similar components"),
             @ApiResponse(responseCode = "500", description = "SPARQL query or database error, or SBOLExplorer not enabled")
     })
-    @GetMapping("/{visibility:.+}/{collectionID:.+}/{displayID:.+}/{version:.+}/**/similarCount")
+    @GetMapping({
+            "/{visibility:.+}/{collectionID:.+}/{displayID:.+}/{version:.+}/**/similarCount",
+            "/{visibility}/{collectionID}/{displayID}/{version}/similarCount"
+    })
     public String getSimilarCount(
             @Parameter(description = "Visibility scope (e.g. 'public')") @PathVariable("visibility") String visibility,
             @Parameter(description = "Collection database ID") @PathVariable("collectionID") String collectionID,
@@ -337,7 +352,10 @@ public class SearchController {
             @ApiResponse(responseCode = "200", description = "JSON array of referencing object metadata"),
             @ApiResponse(responseCode = "500", description = "SPARQL query or database error")
     })
-    @GetMapping("/{visibility:.+}/{collectionID:.+}/{displayID:.+}/{version:.+}/**/uses")
+    @GetMapping({
+            "/{visibility:.+}/{collectionID:.+}/{displayID:.+}/{version:.+}/**/uses",
+            "/{visibility}/{collectionID}/{displayID}/{version}/uses"
+    })
     public String getUses(
             @Parameter(description = "Visibility scope (e.g. 'public')") @PathVariable("visibility") String visibility,
             @Parameter(description = "Collection database ID") @PathVariable("collectionID") String collectionID,
@@ -365,7 +383,10 @@ public class SearchController {
             @ApiResponse(responseCode = "200", description = "Plaintext count of referencing objects"),
             @ApiResponse(responseCode = "500", description = "SPARQL query or database error")
     })
-    @GetMapping("/{visibility:.+}/{collectionID:.+}/{displayID:.+}/{version:.+}/**/usesCount")
+    @GetMapping({
+            "/{visibility:.+}/{collectionID:.+}/{displayID:.+}/{version:.+}/**/usesCount",
+            "/{visibility}/{collectionID}/{displayID}/{version}/usesCount"
+    })
     public String getUsesCount(
             @Parameter(description = "Visibility scope (e.g. 'public')") @PathVariable("visibility") String visibility,
             @Parameter(description = "Collection database ID") @PathVariable("collectionID") String collectionID,
@@ -445,7 +466,7 @@ public class SearchController {
             @ApiResponse(responseCode = "200", description = "SPARQL query results as JSON"),
             @ApiResponse(responseCode = "500", description = "SPARQL syntax error or database error")
     })
-    @RequestMapping(value = "/sparql", headers = "Accept=application/json")
+    @GetMapping(value = "/sparql", headers = "Accept=application/json")
     @ResponseBody
     public String getSPARQL(@Parameter(description = "Query parameters: 'query' (SPARQL query string) and optional 'default-graph-uri'") @RequestParam Map<String, String> params) throws IOException {
         return sparqlService.read(sparqlService.getExplorerUrl(), params.get("default-graph-uri"), params.get("query"));

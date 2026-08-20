@@ -40,12 +40,6 @@ public class SubmitController {
         return submitService.submit(allParams, file);
     }
 
-    @Operation(summary = "Create new collection (Unimplemented)", description = "Currently an empty stub.", deprecated = true)
-    @PostMapping(value = "/newCollection")
-    public void createNewCollection(@RequestParam(required = false) Map<String, String> submissionData) {
-
-    }
-
     @Operation(summary = "Make object public (Unimplemented)", description = "Currently an empty stub.", deprecated = true)
     @PreAuthorize("hasAuthority('CURATOR')")
     @PostMapping(value = "/makePublic")
@@ -69,12 +63,6 @@ public class SubmitController {
     @GetMapping(value = "/replace")
     public void replaceObject(@RequestParam Map<String, String> allParams) {
         // should just call remove object then add object
-    }
-
-    @Operation(summary = "Add object (Unimplemented)", description = "Currently an empty stub.", deprecated = true)
-    @PostMapping(value = "/add")
-    public void addObject(@RequestBody(required = false) SBOLDocument sbolDocument) {
-
     }
 
     @Operation(summary = "Update icon (Unimplemented)", description = "Currently an empty stub.", deprecated = true)
