@@ -221,29 +221,6 @@ public class DownloadService {
     }
 
     /**
-     * Drop xmlns prefixes whose URI is not a valid RDF/XML namespace name (must end in {@code /},
-     * {@code #}, or {@code :}). Clears junk like sbol-db's {@code its=…/its} that triggers sbol-10106
-     * without rewriting Virtuoso's legitimate prefixes (needed for SBOLTestRunner).
-     */
-    private static void stripInvalidRdfXmlNamespacePrefixes(Model model) {
-        List<String> toRemove = new ArrayList<>();
-        for (Map.Entry<String, String> e : model.getNsPrefixMap().entrySet()) {
-            String prefix = e.getKey();
-            String uri = e.getValue();
-            if (prefix == null || prefix.isEmpty() || uri == null || uri.isEmpty()) {
-                continue;
-            }
-            char last = uri.charAt(uri.length() - 1);
-            if (last != '/' && last != '#' && last != ':') {
-                toRemove.add(prefix);
-            }
-        }
-        for (String p : toRemove) {
-            model.removeNsPrefix(p);
-        }
-    }
-
-    /**
      * Prefix map aligned with SynBioHub1 RDF/XML root (used by {@code /sbolnr} Jena re-serialize).
      */
     private static void applyLegacySynbiohubRdfXmlPrefixes(Model model) {
@@ -432,8 +409,99 @@ public class DownloadService {
         return start.startsWith("<rdf:rdf") || start.startsWith("<rdf:");
     }
 
+    /**
+     * True when {@code resourceUri} belongs to this instance ({@code graphPrefix} / {@code uriPrefix} /
+     * {@code databasePrefix}). Local URIs must be fetched via Virtuoso, not via WOR HTTP loopback.
+     */
+    private static boolean isLocalResourceUri(String resourceUri) throws IOException {
+        if (resourceUri == null || resourceUri.isBlank()) {
+            return false;
+        }
+        for (String prefix : localUriPrefixes()) {
+            if (resourceUri.startsWith(prefix)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static List<String> localUriPrefixes() throws IOException {
+        List<String> prefixes = new ArrayList<>();
+        for (String key : List.of("graphPrefix", "uriPrefix", "databasePrefix")) {
+            JsonNode n = ConfigUtil.get(key);
+            if (n == null || n.isNull()) {
+                continue;
+            }
+            String t = n.asText().trim();
+            if (t.isEmpty()) {
+                continue;
+            }
+            prefixes.add(t);
+            // Also match without trailing slash when config includes one (and vice versa).
+            if (t.endsWith("/")) {
+                prefixes.add(t.substring(0, t.length() - 1));
+            } else {
+                prefixes.add(t + "/");
+            }
+        }
+        return prefixes;
+    }
+
+    /** True when a WOR endpoint URL points at this process (loopback / compose service name). */
+    private static boolean isLocalRegistryEndpoint(String worUrl) {
+        if (worUrl == null || worUrl.isBlank()) {
+            return true;
+        }
+        try {
+            URI u = URI.create(worUrl);
+            String host = u.getHost();
+            if (host == null) {
+                return true;
+            }
+            return "localhost".equalsIgnoreCase(host)
+                    || "127.0.0.1".equals(host)
+                    || "synbiohubbackend".equalsIgnoreCase(host);
+        } catch (Exception e) {
+            return true;
+        }
+    }
+
+    /**
+     * Follow object URIs that are local to this instance or listed in {@code webOfRegistries}.
+     */
+    private static boolean shouldFollowLinkedUri(String objectUri, JsonNode webOfRegistries) throws IOException {
+        if (objectUri == null || objectUri.isBlank()) {
+            return false;
+        }
+        if (isLocalResourceUri(objectUri)) {
+            return true;
+        }
+        if (webOfRegistries == null || !webOfRegistries.isObject()) {
+            return false;
+        }
+        var it = webOfRegistries.fields();
+        while (it.hasNext()) {
+            if (objectUri.startsWith(it.next().getKey())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Fetch RDF for a linked TopLevel: local instance → Virtuoso; remote WOR → other SBH {@code /sparql}.
+     */
+    private byte[] fetchRecursiveSubjectRdf(String subject, String subjectQuery, String worUrl) throws IOException {
+        boolean remote = !worUrl.isEmpty()
+                && !isLocalResourceUri(subject)
+                && !isLocalRegistryEndpoint(worUrl);
+        if (remote) {
+            return searchService.queryOldSBHSparqlEndpoint(worUrl, subjectQuery);
+        }
+        return searchService.SPARQLRDFXMLQuery(subjectQuery, subject);
+    }
+
     public Model getRecursiveModel(String uri) throws IOException {
-        String graphPrefix = ConfigUtil.get("graphPrefix").asText();
         URI uriClass = null;
         try {
             uriClass = new URI(uri);
@@ -441,7 +509,6 @@ public class DownloadService {
             e.printStackTrace();
         }
 
-//        String modifiedUri = graphPrefix + uriClass.getPath().substring(1);     // The path contains a / at the beginning, so does our graph prefix
         var metadataQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/FetchSBOLRecursive.sparql");
         var args = new HashMap<String, String>();
         args.put("uri", uriClass.toString());
@@ -470,17 +537,14 @@ public class DownloadService {
         }
         var unresolved = new LinkedHashSet<String>();  // list of unresolved URI's
         var wor = ConfigUtil.get("webOfRegistries");
-        var worIterator = wor.fields();
-        // Add all valid objects to unresolved list
+        // Add all valid objects to unresolved list (local instance URIs + WOR-listed remotes)
         for(var m : model.listStatements().toSet()) {
             if (m.getObject().isURIResource() && !resolved.contains(m.getObject().asResource().getURI()) &&
                     !m.getPredicate().getURI().equals("http://sbols.org/v2#persistentIdentity")) {
-                while(worIterator.hasNext()) {
-                    if (m.getObject().asResource().getURI().startsWith(worIterator.next().getKey())) {
-                        unresolved.add(m.getObject().asResource().getURI());
-                    }
+                String objectUri = m.getObject().asResource().getURI();
+                if (shouldFollowLinkedUri(objectUri, wor)) {
+                    unresolved.add(objectUri);
                 }
-                worIterator = wor.fields();
             }
         }
 
@@ -490,42 +554,34 @@ public class DownloadService {
             if (!resolved.contains(subject)) {
 
                 // Check if subject contains a WOR URI
-                worIterator = wor.fields();
                 var worUrl = "";
-                while(worIterator.hasNext()) {
-                    var next = worIterator.next();
-                    if (subject.startsWith(next.getKey())) {
-                        worUrl = next.getValue().asText();
+                if (wor != null && wor.isObject()) {
+                    var worIterator = wor.fields();
+                    while (worIterator.hasNext()) {
+                        var next = worIterator.next();
+                        if (subject.startsWith(next.getKey())) {
+                            worUrl = next.getValue().asText();
+                        }
                     }
                 }
-//                var subjectArgs = Collections.singletonMap("uri", subject);
                 HashMap<String, String> subjectArgs = new HashMap<>();
                 subjectArgs.put("uri", subject);
                 subjectArgs.put("offset", "0");
                 subjectArgs.put("fromClause", searchService.fromClauseForPrivateFetch(subject));
                 String subjectQuery = metadataQuery.loadTemplate(subjectArgs);
-                byte[] subjectResults;
-                if (!worUrl.isEmpty()) {
-                    subjectResults = searchService.queryOldSBHSparqlEndpoint(worUrl, subjectQuery);
-                } else {
-                    subjectResults = searchService.SPARQLRDFXMLQuery(subjectQuery, subject);
-                }
+                byte[] subjectResults = fetchRecursiveSubjectRdf(subject, subjectQuery, worUrl);
                 Model tempModel = ModelFactory.createDefaultModel();
                 readConstructResponseIntoModel(tempModel, subjectResults);
 
-                if (model.size() > 10000) {
+                if (tempModel.size() >= 10000) {
                     int counter = 1;
-                    var offset = model.size();
-                    log.info("model size is " + model.size());
-                    while (model.size() / 10000 >= counter) {    // Limit at 10k; we may need to fetch more than that
-                        args.replace("offset", Integer.toString((int) offset));
-                        query = metadataQuery.loadTemplate(args);
-                        if (!worUrl.isEmpty()) {
-                            readConstructResponseIntoModel(model, searchService.queryOldSBHSparqlEndpoint(worUrl, query));
-                        } else {
-                            readConstructResponseIntoModel(model, searchService.SPARQLRDFXMLQuery(query, uriClass.toString()));
-                        }
-                        offset = model.size();
+                    var offset = tempModel.size();
+                    log.info("temp model size is " + tempModel.size());
+                    while (tempModel.size() / 10000 >= counter) {
+                        subjectArgs.replace("offset", Integer.toString((int) offset));
+                        subjectQuery = metadataQuery.loadTemplate(subjectArgs);
+                        readConstructResponseIntoModel(tempModel, fetchRecursiveSubjectRdf(subject, subjectQuery, worUrl));
+                        offset = tempModel.size();
                         counter++;
                     }
                 }
@@ -533,17 +589,14 @@ public class DownloadService {
                 for(var s : tempModel.listSubjects().toSet()) {  // Add all subjects to list of resolved
                     resolved.add(s.getURI());
                 }
-                worIterator = wor.fields();
-                for(var m : tempModel.listStatements().toSet()) { // Add all valid objects to list of resolved
+                for(var m : tempModel.listStatements().toSet()) { // Add newly linked objects to unresolved
                     if (m.getObject().isURIResource() && !resolved.contains(m.getObject().asResource().getURI()) &&
                             !m.getPredicate().getURI().equals("http://sbols.org/v2#persistentIdentity") &&
                             !m.getPredicate().getURI().equals("http://wiki.synbiohub.org/wiki/Terms/synbiohub#ownedBy")) {
-                        while(worIterator.hasNext()) {
-                            if (m.getObject().asResource().getURI().startsWith(worIterator.next().getKey())) {
-                                unresolved.add(m.getObject().asResource().getURI());
-                            }
+                        String objectUri = m.getObject().asResource().getURI();
+                        if (shouldFollowLinkedUri(objectUri, wor)) {
+                            unresolved.add(objectUri);
                         }
-                        worIterator = wor.fields();
                     }
                 }
             }
@@ -560,8 +613,8 @@ public class DownloadService {
         if (model == null || model.isEmpty()) {
             return null;
         }
-        // Drop invalid xmlns only (e.g. sbol-db its); do not apply full SBH1 remap (breaks Virtuoso CI).
-        stripInvalidRdfXmlNamespacePrefixes(model);
+        // Drop invalid xmlns (e.g. sbol-db's its=…/its) that fail SBOL sbol-10106.
+        applyLegacySynbiohubRdfXmlPrefixes(model);
         var modelOutput = new ByteArrayOutputStream();
         RDFDataMgr.write(modelOutput, model, RDFFormat.RDFXML_PLAIN);
         try {
