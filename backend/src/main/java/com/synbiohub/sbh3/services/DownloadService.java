@@ -221,6 +221,29 @@ public class DownloadService {
     }
 
     /**
+     * Drop xmlns prefixes whose URI is not a valid RDF/XML namespace name (must end in {@code /},
+     * {@code #}, or {@code :}). Clears junk like sbol-db's {@code its=…/its} that triggers sbol-10106
+     * without rewriting Virtuoso's legitimate prefixes (needed for SBOLTestRunner).
+     */
+    private static void stripInvalidRdfXmlNamespacePrefixes(Model model) {
+        List<String> toRemove = new ArrayList<>();
+        for (Map.Entry<String, String> e : model.getNsPrefixMap().entrySet()) {
+            String prefix = e.getKey();
+            String uri = e.getValue();
+            if (prefix == null || prefix.isEmpty() || uri == null || uri.isEmpty()) {
+                continue;
+            }
+            char last = uri.charAt(uri.length() - 1);
+            if (last != '/' && last != '#' && last != ':') {
+                toRemove.add(prefix);
+            }
+        }
+        for (String p : toRemove) {
+            model.removeNsPrefix(p);
+        }
+    }
+
+    /**
      * Prefix map aligned with SynBioHub1 RDF/XML root (used by {@code /sbolnr} Jena re-serialize).
      */
     private static void applyLegacySynbiohubRdfXmlPrefixes(Model model) {
@@ -537,8 +560,8 @@ public class DownloadService {
         if (model == null || model.isEmpty()) {
             return null;
         }
-        // Drop invalid xmlns (e.g. sbol-db's its=…/its) that fail SBOL sbol-10106.
-        applyLegacySynbiohubRdfXmlPrefixes(model);
+        // Drop invalid xmlns only (e.g. sbol-db its); do not apply full SBH1 remap (breaks Virtuoso CI).
+        stripInvalidRdfXmlNamespacePrefixes(model);
         var modelOutput = new ByteArrayOutputStream();
         RDFDataMgr.write(modelOutput, model, RDFFormat.RDFXML_PLAIN);
         try {
