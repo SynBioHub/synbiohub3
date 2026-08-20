@@ -18,14 +18,12 @@ export default function Database() {
   const { config, loading } = useDatabaseConfig(token, dispatch);
   const [sparqlEndpoint, setSparqlEndpoint] = useState('');
   const [graphStoreEndpoint, setGraphStoreEndpoint] = useState('');
-  const [triplestoreAuth, setTriplestoreAuth] = useState('digest');
   const [error, setError] = useState('');
 
   useEffect(() => {
     if (config) {
       setSparqlEndpoint(config.sparqlEndpoint || '');
       setGraphStoreEndpoint(config.graphStoreEndpoint || '');
-      setTriplestoreAuth(config.triplestoreAuth === 'basic' ? 'basic' : 'digest');
     }
   }, [config]);
 
@@ -57,23 +55,12 @@ export default function Database() {
         onChange={e => setGraphStoreEndpoint(e.target.value)}
       />
 
-      <p>Triplestore Auth</p>
-      <select
-        className={styles.tableinput}
-        value={triplestoreAuth}
-        onChange={e => setTriplestoreAuth(e.target.value)}
-      >
-        <option value="digest">digest (Virtuoso)</option>
-        <option value="basic">basic (sbol-db)</option>
-      </select>
-
       <div className={styles.savebuttoncontainer}>
         <SaveButton
           onClick={() =>
             saveDatabaseConfig(
               sparqlEndpoint,
               graphStoreEndpoint,
-              triplestoreAuth,
               token,
               setError,
               dispatch
@@ -115,7 +102,6 @@ const fetcher = (url, token, dispatch) =>
 const saveDatabaseConfig = async (
   sparqlEndpoint,
   graphStoreEndpoint,
-  triplestoreAuth,
   token,
   setError,
   dispatch
@@ -124,7 +110,6 @@ const saveDatabaseConfig = async (
   const parameters = new URLSearchParams();
   parameters.append('sparqlEndpoint', sparqlEndpoint);
   parameters.append('graphStoreEndpoint', graphStoreEndpoint);
-  parameters.append('triplestoreAuth', triplestoreAuth);
 
   try {
     const response = await axios.post(url, parameters, {

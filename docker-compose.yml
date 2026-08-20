@@ -17,7 +17,7 @@ services:
       start_period: 90s
     restart: unless-stopped
   migrate:
-    image: ghcr.io/marpaia/sbol-db:v0.1.5
+    image: ghcr.io/marpaia/sbol-db:v0.1.6
     environment:
       DATABASE_URL: rocksdb:///var/lib/sbol-db/store.rocksdb
       SBOL_DB_BACKEND: rocksdb
@@ -27,7 +27,7 @@ services:
     restart: "no"
 
   sbol-db:
-    image: ghcr.io/marpaia/sbol-db:v0.1.5
+    image: ghcr.io/marpaia/sbol-db:v0.1.6
     depends_on:
       migrate:
         condition: service_completed_successfully

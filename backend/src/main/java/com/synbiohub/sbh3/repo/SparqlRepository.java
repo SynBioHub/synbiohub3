@@ -4,16 +4,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.synbiohub.sbh3.utils.ConfigUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.hc.client5.http.ContextBuilder;
 import org.apache.hc.client5.http.auth.AuthScope;
 import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.impl.auth.BasicCredentialsProvider;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
-import org.apache.hc.client5.http.protocol.HttpClientContext;
 import org.apache.hc.core5.http.ContentType;
-import org.apache.hc.core5.http.HttpHost;
 import org.apache.hc.core5.http.io.HttpClientResponseHandler;
 import org.apache.hc.core5.http.io.entity.ByteArrayEntity;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
@@ -26,8 +23,6 @@ import org.springframework.web.client.RestClient;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -51,9 +46,6 @@ public class SparqlRepository {
     public static final String SUBCOLLECTION_METADATA_SPARQL = "src/main/java/com/synbiohub/sbh3/sparql/SubCollectionMetadata.sparql";
     public static final String SHARED_VIEW_SPARQL = "src/main/java/com/synbiohub/sbh3/sparql/GetSharedCanView.sparql";
     public static final String TOPLEVEL_METADATA_SPARQL = "src/main/java/com/synbiohub/sbh3/sparql/GetTopLevelMetadata.sparql";
-
-    private static final String AUTH_BASIC = "basic";
-    private static final String AUTH_DIGEST = "digest";
 
     private final RestClient restClient;
 
@@ -96,11 +88,11 @@ public class SparqlRepository {
 
     /**
      * POST a SPARQL update to sparql-auth.
-     * Auth mode is {@code triplestoreAuth}: {@code digest} (Virtuoso) or {@code basic} (sbol-db).
+     * Uses challenge auth (credentials after {@code WWW-Authenticate}) for Virtuoso Digest and sbol-db Basic.
      *
      * @param jsonResults when {@code true}, requests {@code application/sparql-results+json}
      */
-    public String update(String query, String graphUri, boolean jsonResults) throws IOException, URISyntaxException {
+    public String update(String query, String graphUri, boolean jsonResults) throws IOException {
         StringBuilder url = new StringBuilder(sparqlAuthEndpoint());
         url.append("?query=").append(URLEncoder.encode(query, StandardCharsets.UTF_8));
         url.append("&default-graph-uri=").append(URLEncoder.encode(graphUri, StandardCharsets.UTF_8));
@@ -122,9 +114,9 @@ public class SparqlRepository {
 
     /**
      * POST RDF/XML to the graph store endpoint.
-     * Auth mode is {@code triplestoreAuth}: {@code digest} (Virtuoso) or {@code basic} (sbol-db).
+     * Uses challenge auth (credentials after {@code WWW-Authenticate}) for Virtuoso Digest and sbol-db Basic.
      */
-    public void save(String graphUri, Path file) throws IOException, URISyntaxException {
+    public void save(String graphUri, Path file) throws IOException {
         String endpoint = ConfigUtil.get("graphStoreEndpoint").asText();
         String url = endpoint
                 + (endpoint.contains("?") ? "&" : "?")
@@ -158,30 +150,13 @@ public class SparqlRepository {
     }
 
     /**
-     * Resolves {@code triplestoreAuth} from config ({@code basic} or {@code digest}; default {@code digest}).
-     */
-    private static String resolveTriplestoreAuth() throws IOException {
-        JsonNode configured = ConfigUtil.get("triplestoreAuth");
-        if (configured == null || configured.isNull()) {
-            return AUTH_DIGEST;
-        }
-        String value = configured.asText("").trim().toLowerCase();
-        if (AUTH_BASIC.equals(value)) {
-            return AUTH_BASIC;
-        }
-        return AUTH_DIGEST;
-    }
-
-    /**
      * Authenticated POST for triplestore write endpoints.
-     * <ul>
-     *   <li>{@code basic} — preemptive Basic auth for sbol-db (avoids 401 + large-body disconnects).</li>
-     *   <li>{@code digest} — challenge Digest auth for Virtuoso (legacy behavior).</li>
-     * </ul>
+     * Sends the request, then retries with credentials when the server challenges
+     * ({@code WWW-Authenticate} Basic or Digest).
      */
     private <T> T executeAuthenticated(
             HttpPost post,
-            HttpClientResponseHandler<T> handler) throws IOException, URISyntaxException {
+            HttpClientResponseHandler<T> handler) throws IOException {
         UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(
                 ConfigUtil.get("username").asText(),
                 ConfigUtil.get("password").asText().toCharArray());
@@ -189,20 +164,9 @@ public class SparqlRepository {
         BasicCredentialsProvider credsProvider = new BasicCredentialsProvider();
         credsProvider.setCredentials(new AuthScope(null, -1), credentials);
 
-        String authMode = resolveTriplestoreAuth();
         try (CloseableHttpClient client = HttpClients.custom()
                 .setDefaultCredentialsProvider(credsProvider)
                 .build()) {
-            if (AUTH_BASIC.equals(authMode)) {
-                URI uri = post.getUri();
-                HttpHost target = HttpHost.create(uri);
-                HttpClientContext context = ContextBuilder.create()
-                        .useCredentialsProvider(credsProvider)
-                        .preemptiveBasicAuth(target, credentials)
-                        .build();
-                return client.execute(target, post, context, handler);
-            }
-            // Digest (Virtuoso): wait for WWW-Authenticate challenge, then retry with Digest.
             return client.execute(post, handler);
         }
     }

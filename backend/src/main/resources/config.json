@@ -18,7 +18,6 @@
   "graphPrefix": "https://synbiohub.org/",
   "username": "dba",
   "password": "dba",
-  "triplestoreAuth": "digest",
   "virtuosoINI": "/etc/virtuoso-opensource-7/virtuoso.ini",
   "virtuosoDB": "/var/lib/virtuoso-opensource-7/db",
   "isql": "isql-vt",

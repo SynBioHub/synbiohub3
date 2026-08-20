@@ -14,7 +14,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,28 +32,28 @@ public class SparqlService {
      * Virtuoso DELETE templates return one row per batch; loop until nothing remains.
      * Legacy {@code sparql.deleteStaggered}.
      */
-    public void deleteCollection(Map<String, String> params, String graphUri) throws IOException, URISyntaxException {
+    public void deleteCollection(Map<String, String> params, String graphUri) throws IOException {
         deleteStaggered(sparqlRepository.REMOVE_COLLECTION_SPARQL, params, graphUri);
     }
 
-    public void delete(Map<String, String> params, String graphUri) throws IOException, URISyntaxException {
+    public void delete(Map<String, String> params, String graphUri) throws IOException {
         deleteStaggered(sparqlRepository.REMOVE_SPARQL, params, graphUri);
     }
 
-    public void uploadGraphStore(String graphUri, Path file) throws IOException, URISyntaxException {
+    public void uploadGraphStore(String graphUri, Path file) throws IOException {
         sparqlRepository.save(graphUri, file);
     }
 
-    public void uploadAttachment(Map<String, String> params, String graphUri) throws IOException, URISyntaxException {
+    public void uploadAttachment(Map<String, String> params, String graphUri) throws IOException {
         String query = new SPARQLQuery(sparqlRepository.ATTACHMENT_UPDATE_SPARQL).loadTemplate(params);
         sparqlRepository.update(query, graphUri, false);
     }
 
-    public void update(String query, String graphUri, boolean jsonResults) throws IOException, URISyntaxException {
+    public void update(String query, String graphUri, boolean jsonResults) throws IOException {
         sparqlRepository.update(query, graphUri, jsonResults);
     }
 
-    private void deleteStaggered(String queryTemplate, Map<String, String> params, String graphUri) throws IOException, URISyntaxException {
+    private void deleteStaggered(String queryTemplate, Map<String, String> params, String graphUri) throws IOException {
         String query = new SPARQLQuery(queryTemplate).loadTemplate(params);
         while (true) {
             String raw = sparqlRepository.update(query, graphUri, true);
@@ -91,7 +90,7 @@ public class SparqlService {
         return sources;
     }
 
-    public void attachUpload(Map<String, String> params, String graphUri, boolean jsonResults) throws IOException, URISyntaxException {
+    public void attachUpload(Map<String, String> params, String graphUri, boolean jsonResults) throws IOException {
         String query = new SPARQLQuery(sparqlRepository.ATTACH_UPLOAD_SPARQL).loadTemplate(params);
         update(query, graphUri, false);
     }
@@ -100,7 +99,7 @@ public class SparqlService {
      * Replaces hash/size on an existing attachment when re-uploading the same {@code file:} source.
      */
     public void updateAttachment(String graphUri, String attachmentUri, String uploadHash, long size)
-            throws IOException, URISyntaxException {
+            throws IOException {
         String query = new SPARQLQuery(sparqlRepository.UPDATE_ATTACHMENT_SPARQL).loadTemplate(Map.of(
                 "attachmentURI", attachmentUri,
                 "attachmentSource", attachmentUri + "/download",
