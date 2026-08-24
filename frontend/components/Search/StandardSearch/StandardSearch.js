@@ -435,7 +435,12 @@ function getType(member) {
     memberType = member.sbolType.slice(member.sbolType.lastIndexOf('#') + 1);
   }
   if (member.role) {
-    memberType = lookupRole(member.role).description.name;
+    const role = lookupRole(member.role);
+    if (role.description) {
+      memberType = role.description.name;
+    } else {
+      memberType = role.term ? role.term : memberType;
+    }
   }
   return memberType;
 }
