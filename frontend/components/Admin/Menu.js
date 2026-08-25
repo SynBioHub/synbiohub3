@@ -9,6 +9,7 @@ import {
   faPlug,
   faProjectDiagram,
   faSearch,
+  faServer,
   faUsers
 } from '@fortawesome/free-solid-svg-icons';
 
@@ -24,6 +25,13 @@ export default function Menu(properties) {
         selected={properties.selected}
         route="status"
         icon={faInfoCircle}
+      />
+      <MenuSelector
+        themeColor={theme?.themeParameters?.[0]?.value}
+        name="Database"
+        selected={properties.selected}
+        route="database"
+        icon={faServer}
       />
       <MenuSelector
         themeColor={theme?.themeParameters?.[0]?.value}
