@@ -11,9 +11,7 @@ import org.apache.hc.client5.http.impl.auth.BasicCredentialsProvider;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.ContentType;
-import org.apache.hc.core5.http.io.HttpClientResponseHandler;
 import org.apache.hc.core5.http.io.entity.ByteArrayEntity;
-import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -87,8 +85,7 @@ public class SparqlRepository {
     }
 
     /**
-     * POST a SPARQL update to sparql-auth.
-     * Uses challenge auth (credentials after {@code WWW-Authenticate}) for Virtuoso Digest and sbol-db Basic.
+     * POST a SPARQL update to sparql-auth with digest auth (not preemptive basic auth).
      *
      * @param jsonResults when {@code true}, requests {@code application/sparql-results+json}
      */
@@ -101,20 +98,22 @@ public class SparqlRepository {
                     .append(URLEncoder.encode("application/sparql-results+json", StandardCharsets.UTF_8));
         }
 
-        HttpPost post = new HttpPost(url.toString());
-        return executeAuthenticated(post, response -> {
-            int code = response.getCode();
-            if (code >= 300) {
-                throw new ResponseStatusException(HttpStatus.BAD_GATEWAY,
-                        "SPARQL update failed (" + code + "): " + readResponseBody(response));
-            }
-            return readResponseBody(response);
-        });
+        try (CloseableHttpClient client = virtuosoDigestClient()) {
+            HttpPost post = new HttpPost(url.toString());
+            return client.execute(post, response -> {
+                int code = response.getCode();
+                if (code >= 300) {
+                    throw new ResponseStatusException(HttpStatus.BAD_GATEWAY,
+                            "SPARQL update failed (" + code + "): " + readResponseBody(response));
+                }
+                return readResponseBody(response);
+            });
+        }
     }
 
     /**
-     * POST RDF/XML to the graph store endpoint.
-     * Uses challenge auth (credentials after {@code WWW-Authenticate}) for Virtuoso Digest and sbol-db Basic.
+     * POST RDF/XML to the Virtuoso graph store. Uses digest auth (not preemptive basic auth),
+     * matching legacy {@code sparql.uploadSmallFile}.
      */
     public void save(String graphUri, Path file) throws IOException {
         String endpoint = ConfigUtil.get("graphStoreEndpoint").asText();
@@ -123,18 +122,19 @@ public class SparqlRepository {
                 + "graph-uri=" + URLEncoder.encode(graphUri, StandardCharsets.UTF_8);
 
         byte[] body = Files.readAllBytes(file);
-        HttpPost post = new HttpPost(url);
-        post.setHeader(HttpHeaders.CONTENT_TYPE, "application/rdf+xml");
-        post.setEntity(new ByteArrayEntity(body, ContentType.APPLICATION_XML));
-        executeAuthenticated(post, response -> {
-            int code = response.getCode();
-            if (code >= 300) {
-                throw new ResponseStatusException(HttpStatus.BAD_GATEWAY,
-                        "Graph store upload failed (" + code + "): " + readResponseBody(response));
-            }
-            EntityUtils.consume(response.getEntity());
-            return null;
-        });
+        try (CloseableHttpClient client = virtuosoDigestClient()) {
+            HttpPost post = new HttpPost(url);
+            post.setHeader(HttpHeaders.CONTENT_TYPE, "application/rdf+xml");
+            post.setEntity(new ByteArrayEntity(body, ContentType.APPLICATION_XML));
+            client.execute(post, response -> {
+                int code = response.getCode();
+                if (code >= 300) {
+                    throw new ResponseStatusException(HttpStatus.BAD_GATEWAY,
+                            "Graph store upload failed (" + code + "): " + readResponseBody(response));
+                }
+                return null;
+            });
+        }
     }
 
     private String sparqlAuthEndpoint() throws IOException {
@@ -149,26 +149,17 @@ public class SparqlRepository {
         return base.replaceAll("/sparql/?$", "/sparql-auth");
     }
 
-    /**
-     * Authenticated POST for triplestore write endpoints.
-     * Sends the request, then retries with credentials when the server challenges
-     * ({@code WWW-Authenticate} Basic or Digest).
-     */
-    private <T> T executeAuthenticated(
-            HttpPost post,
-            HttpClientResponseHandler<T> handler) throws IOException {
-        UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(
-                ConfigUtil.get("username").asText(),
-                ConfigUtil.get("password").asText().toCharArray());
-
+    /** HttpClient configured for Virtuoso digest auth (waits for 401 challenge). */
+    private static CloseableHttpClient virtuosoDigestClient() throws IOException {
         BasicCredentialsProvider credsProvider = new BasicCredentialsProvider();
-        credsProvider.setCredentials(new AuthScope(null, -1), credentials);
-
-        try (CloseableHttpClient client = HttpClients.custom()
+        credsProvider.setCredentials(
+                new AuthScope(null, -1),
+                new UsernamePasswordCredentials(
+                        ConfigUtil.get("username").asText(),
+                        ConfigUtil.get("password").asText().toCharArray()));
+        return HttpClients.custom()
                 .setDefaultCredentialsProvider(credsProvider)
-                .build()) {
-            return client.execute(post, handler);
-        }
+                .build();
     }
 
     private String readResponseBody(org.apache.hc.core5.http.ClassicHttpResponse response)
