@@ -1,0 +1,50 @@
+services:
+  virtuoso:
+    image: tenforce/virtuoso:virtuoso7.2.5
+    ports:
+      - "8890:8890"
+    volumes:
+      - virtuoso-data:/data
+    environment:
+      DBA_PASSWORD: dba
+      SPARQL_UPDATE: "true"
+      DEFAULT_GRAPH: "https://synbiohub.org/public"
+    healthcheck:
+      test: ["CMD-SHELL", "timeout 4 bash -c 'cat < /dev/null > /dev/tcp/127.0.0.1/8890'"]
+      interval: 10s
+      timeout: 8s
+      retries: 8
+      start_period: 90s
+    restart: unless-stopped
+  migrate:
+    image: ghcr.io/marpaia/sbol-db:v0.1.6
+    environment:
+      DATABASE_URL: rocksdb:///var/lib/sbol-db/store.rocksdb
+      SBOL_DB_BACKEND: rocksdb
+    command: ["db", "migrate"]
+    volumes:
+      - sbol-db-data:/var/lib/sbol-db
+    restart: "no"
+
+  sbol-db:
+    image: ghcr.io/marpaia/sbol-db:v0.1.6
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    environment:
+      DATABASE_URL: rocksdb:///var/lib/sbol-db/store.rocksdb
+      SBOL_DB_BACKEND: rocksdb
+      SBOL_DB_DATA_DIR: /var/lib/sbol-db
+      SBOL_DB_BLOB_ROOT: /var/lib/sbol-db/blobs
+      SBOL_DB_TEXT_INDEX_PATH: /var/lib/sbol-db/text-index
+    command: ["server", "--bind", "0.0.0.0:8080"]
+    ports:
+      - "8080:8080"
+    volumes:
+      - sbol-db-data:/var/lib/sbol-db
+    restart: unless-stopped
+
+volumes:
+  virtuoso-data:
+  sbol-db-data:
+    name: sbol-db-rocksdb-data
