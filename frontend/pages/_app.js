@@ -20,6 +20,10 @@ import { addError } from '../redux/actions';
 import Errors from '../components/Error/Errors';
 import { persistStore } from 'redux-persist';
 import { PersistGate } from 'redux-persist/integration/react';
+import {
+    setupAxiosAuthInterceptor,
+    validateStoredSession
+} from '../lib/axiosAuth';
 
 /**
 * This component is the starting component for the sbh app. Uses Provider
@@ -31,6 +35,10 @@ function MyApp({ Component, pageProps }) {
     const [isInitializing, setIsInitializing] = useState(true);
     const [inSetupMode, setInSetupMode] = useState(false);
     const router = useRouter();
+
+    useEffect(() => {
+        setupAxiosAuthInterceptor(store);
+    }, [store]);
 
     useEffect(() => {
         console.log('Checking if in setup mode...');
@@ -74,7 +82,11 @@ function MyApp({ Component, pageProps }) {
     if (isInitializing) {
         return (
             <Provider store={store}>
-                <PersistGate loading={null} persistor={persistor}>
+                <PersistGate
+                    loading={null}
+                    persistor={persistor}
+                    onBeforeLift={() => validateStoredSession(store)}
+                >
                     <div
                         style={{
                             display: 'flex',
@@ -94,7 +106,11 @@ function MyApp({ Component, pageProps }) {
 
     return (
         <Provider store={store}>
-            <PersistGate loading={null} persistor={persistor} >
+            <PersistGate
+                loading={null}
+                persistor={persistor}
+                onBeforeLift={() => validateStoredSession(store)}
+            >
                 {inSetupMode ? (
                     <Setup setInSetupMode={setInSetupMode} />
                 ) : (

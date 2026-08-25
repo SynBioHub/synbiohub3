@@ -10,6 +10,7 @@ import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
 
 import mime from 'mime-types';
+import { clearClientAuthStorage } from '../lib/clearAuth';
 
 /* eslint sonarjs/no-duplicate-string: "off" */
 
@@ -105,8 +106,7 @@ export const restoreLogin = (username, token) => dispatch => {
  * @returns
  */
 export const logoutUser = () => dispatch => {
-  localStorage.removeItem('userToken');
-  localStorage.removeItem('username');
+  clearClientAuthStorage();
   dispatch({ type: types.LOGOUT });
 };
 
@@ -151,34 +151,38 @@ export const updateUser =
 export const fetchUserInfo = () => async (dispatch, getState) => {
   const url = `${publicRuntimeConfig.backend}/profile`;
   const token = getState().user.token;
+  if (!token) {
+    return;
+  }
   const headers = {
     Accept: 'text/plain',
     'X-authorization': token
   };
-  let response;
 
   try {
-    response = await axios.get(url, { headers });
-  } catch (error) {
-    if (error.response) {
-      console.error('Error:', error.message);
+    const response = await axios.get(url, { headers });
+    if (response.status === 200) {
+      const message = response.data;
+      dispatch({
+        type: types.USERINFO,
+        payload: {
+          username: message.username,
+          name: message.name,
+          email: message.email,
+          affiliation: message.affiliation,
+          isAdmin: message.isAdmin,
+          graphUri: message.graphUri
+        }
+      });
+    } else {
+      dispatch(logoutUser());
     }
-  }
-  if (response.status === 200) {
-    const message = await response.data;
-    dispatch({
-      type: types.USERINFO,
-      payload: {
-        username: message.username,
-        name: message.name,
-        email: message.email,
-        affiliation: message.affiliation,
-        isAdmin: message.isAdmin,
-        graphUri: message.graphUri
-      }
-    });
-  } else {
-    dispatch(logoutUser());
+  } catch (error) {
+    // 401 is handled by the global axios interceptor (logout + redirect).
+    if (error.response?.status !== 401) {
+      console.error('Error:', error.message);
+      dispatch(logoutUser());
+    }
   }
 };
 
