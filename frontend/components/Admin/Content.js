@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import styles from '../../styles/admin.module.css';
+import Database from './Database';
 import Graphs from './Graphs';
 import Log from './Log';
 import Mail from './Mail';
@@ -17,6 +18,9 @@ export default function Content(properties) {
   const [content, setContent] = useState(properties.selected);
   useEffect(() => {
     switch (properties.selected) {
+      case 'database':
+        setContent(<Database />);
+        break;
       case 'graphs':
         setContent(<Graphs />);
         break;
