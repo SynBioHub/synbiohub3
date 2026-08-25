@@ -448,11 +448,9 @@ function getType(member) {
     memberType = member.sbolType.slice(member.sbolType.lastIndexOf('#') + 1);
   }
   if (member.role) {
-    memberType = lookupRole(member.role).description.name;
+    const role = lookupRole(member.role);
+    memberType = role.description?.name || role.term || memberType;
   }
-  // if (memberType === 'ComponentDefinition') memberType = 'Component';
-  // else if (memberType === 'ModuleDefinition') memberType = 'Module';
-
   return memberType;
 }
 

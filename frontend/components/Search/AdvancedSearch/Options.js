@@ -70,9 +70,13 @@ export default function Options(properties) {
   });
 
   const addCountToResultName = result => {
+    const uri = result.object.value;
+    let label = shortName(uri);
+    if (uri === 'http://sbols.org/v2#ComponentDefinition') label = 'Component';
+    else if (uri === 'http://sbols.org/v2#ModuleDefinition') label = 'Module';
     return {
-      value: result.object.value,
-      label: shortName(result.object.value),
+      value: uri,
+      label,
       count: result.count ? Number(result.count.value) : 0
     };
   };
