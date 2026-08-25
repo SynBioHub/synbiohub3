@@ -16,6 +16,7 @@ import styles from '../../styles/basket.module.css';
 import Table from '../Reusable/Table/Table';
 import TableButton from '../Reusable/TableButton';
 import BasketItem from './BasketItem';
+import BasketRecommendations from './BasketRecommendations';
 import CreateCollection from './CreateCollection';
 
 const searchable = ['name', 'displayId', 'type', 'description'];
@@ -170,6 +171,12 @@ export default function Basket() {
             )}
           />
         </div>
+
+        <BasketRecommendations
+          basketItems={basketItems}
+          selected={selected}
+          theme={theme}
+        />
       </div>
       <div className={styles.basketiconcontainer}>
         <FontAwesomeIcon

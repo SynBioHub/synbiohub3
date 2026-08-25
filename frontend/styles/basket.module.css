@@ -90,6 +90,71 @@
    padding: 0.9rem 0;
 }
 
+.recommendations {
+   border-top: 1px solid #e5e5e5;
+   margin-top: 0.6rem;
+   padding-top: 0.7rem;
+}
+
+.recommendationsheading {
+   display: flex;
+   align-items: center;
+   font-size: 1rem;
+}
+
+.recommendationstitle {
+   margin-left: 0.5rem;
+   font-weight: 500;
+}
+
+.recommendationssubtitle {
+   font-size: 0.8rem;
+   color: #777;
+   margin: 0.2rem 0 0.5rem 0;
+}
+
+.recommendation {
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   padding: 0.4rem 0.6rem;
+   border-radius: 0.4rem;
+   background-color: #f4f4f4;
+   margin-bottom: 0.35rem;
+   cursor: pointer;
+}
+
+.recommendation:hover {
+   background-color: #e9e9e9;
+}
+
+.recommendationinfo {
+   display: flex;
+   flex-direction: column;
+   overflow: hidden;
+}
+
+.recommendationname {
+   overflow: hidden;
+   text-overflow: ellipsis;
+   white-space: nowrap;
+}
+
+.recommendationdetail {
+   font-size: 0.75rem;
+   color: #777;
+}
+
+.recommendationadd {
+   padding: 0.3rem 0.5rem;
+   border-radius: 0.3rem;
+   cursor: pointer;
+}
+
+.recommendationadd:hover {
+   background-color: #ffffff;
+}
+
 .backtobasket {
    background-color: #D25627;
    margin-top: 1rem;
