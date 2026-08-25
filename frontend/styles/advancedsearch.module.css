@@ -269,6 +269,7 @@
    overflow: hidden;
    text-overflow: ellipsis;
    white-space: nowrap;
+   transition: color 0.12s ease;
 }
 
 .facetoptionactive .facetlabel {
