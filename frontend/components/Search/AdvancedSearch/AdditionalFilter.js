@@ -102,6 +102,14 @@ export default function AdditionalFilter(properties) {
     parseResult: parseValueOption
   });
 
+  const activeOptions = hasPredicate ? valueOptions : predicateOptions;
+  const isEmpty =
+    !activeOptions.loading &&
+    !activeOptions.error &&
+    activeOptions.data.length === 0;
+
+  if (hasPredicate && isEmpty) return null;
+
   return (
     <div className={styles.facetcard}>
       <div className={styles.facetheader}>
@@ -117,30 +125,23 @@ export default function AdditionalFilter(properties) {
         </span>
       </div>
 
-      {!hasPredicate && (
-        <FacetOptionList
-          data={predicateOptions.data}
-          loading={predicateOptions.loading}
-          error={predicateOptions.error}
-          value={null}
-          onChange={option => setSelectedPredicate(option ? option.label : '')}
-          searchPlaceholder="Search filter type..."
-          emptyLabel="No filters available"
-        />
-      )}
-
-      {hasPredicate && (
-        <FacetOptionList
-          data={valueOptions.data}
-          loading={valueOptions.loading}
-          error={valueOptions.error}
-          value={selectedValue}
-          onChange={option => setSelectedValue(option ? option.value : '')}
-          searchPlaceholder={`Search ${shortName(
-            currentFilter.filter
-          ).toLowerCase()}...`}
-        />
-      )}
+      <FacetOptionList
+        data={activeOptions.data}
+        loading={activeOptions.loading}
+        error={activeOptions.error}
+        value={hasPredicate ? selectedValue : null}
+        onChange={option =>
+          hasPredicate
+            ? setSelectedValue(option ? option.value : '')
+            : setSelectedPredicate(option ? option.label : '')
+        }
+        searchPlaceholder={
+          hasPredicate
+            ? `Search ${shortName(currentFilter.filter).toLowerCase()}...`
+            : 'Search filter type...'
+        }
+        emptyLabel={hasPredicate ? undefined : 'No filters available'}
+      />
     </div>
   );
 }

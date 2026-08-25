@@ -24,6 +24,8 @@ export default function FacetCard(properties) {
 
   const hasSelection = isMulti ? value.length > 0 : Boolean(value);
 
+  if (!loading && !error && data.length === 0) return null;
+
   return (
     <div className={styles.facetcard}>
       <div className={styles.facetheader}>
