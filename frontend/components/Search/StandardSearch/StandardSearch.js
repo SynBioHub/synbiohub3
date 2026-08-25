@@ -4,28 +4,29 @@ import Loader from 'react-loader-spinner';
 import { useDispatch, useSelector } from 'react-redux';
 import { setOffset, addError } from '../../../redux/actions'
 import useSWR from 'swr';
-import { faHatWizard, faSearch, faBars } from '@fortawesome/free-solid-svg-icons';
+import { faHatWizard, faBars } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRouter } from 'next/router';
 import Options from '../AdvancedSearch/Options';
+import SelectedFilters from './SelectedFilters';
 import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
 import SearchHeader from '../SearchHeader/SearchHeader';
 import { processUrl } from '../../Admin/Registries';
 import { isValidURI } from '../../Viewing/Shell';
 import lookupRole from '../../../namespace/lookupRole';
+import buildFacetConstraints from '../../../sparql/buildFacetConstraints';
+import configureQuery from '../../../sparql/configureQuery';
+import getSearchResultCount from '../../../sparql/getSearchResultCount';
 
 
 import {
-  countloader,
-  countloadercontainer,
   standarderror,
   standardresultsloading,
   standardcontainer
 } from '../../../styles/standardsearch.module.css';
 
 import viewStyles from '../../../styles/view.module.css';
-import advStyles from '../../../styles/advancedsearch.module.css';
 import ResultTable from './ResultTable/ResultTable';
 import { filter } from 'jszip';
 
@@ -42,6 +43,7 @@ export default function StandardSearch() {
   const limit = useSelector(state => state.search.limit);
   const token = useSelector(state => state.user.token);
   const loggedIn = useSelector(state => state.user.loggedIn);
+  const privateGraphUri = useSelector(state => state.user.graphUri);
   const registries = JSON.parse(localStorage.getItem("registries")) || {};
   const [count, setCount] = useState();
   const dispatch = useDispatch();
@@ -158,10 +160,35 @@ export default function StandardSearch() {
     setUrl(nextUrl);
   };
 
+  // automatically re-run the search whenever a filter selection changes,
+  // so selecting a facet doesn't require clicking the Search button
+  useEffect(() => {
+    dispatch(setOffset(0));
+    constructSearch();
+  }, [
+    creator,
+    role,
+    sbolType,
+    objectType,
+    collections,
+    extraFilters,
+    created,
+    modifed
+  ]);
+
   const handleDelete = (delFilterIndex) => {
     setExtraFilters(prevFilters => {
       return prevFilters.filter((_, index) => index !== delFilterIndex);
     });
+  };
+
+  const handleClearAllFilters = () => {
+    setCreator('');
+    setSbolType('');
+    setRole('');
+    setObjectType('');
+    setCollections([]);
+    setExtraFilters([]);
   };
 
 
@@ -197,33 +224,32 @@ export default function StandardSearch() {
 
   const filterString = sbhVersion === 3 ? searchParams : url;
 
-  // get search count
+  // Count via /sparql rather than /searchCount to agree with private constraints
+  const countQuery = configureQuery(getSearchResultCount, {
+    from: [
+      theme.defaultGraph ? `FROM <${theme.defaultGraph}>` : '',
+      privateGraphUri ? `FROM <${privateGraphUri}>` : ''
+    ]
+      .filter(Boolean)
+      .join('\n'),
+    constraints: buildFacetConstraints(
+      { creator, objectType, role, sbolType, collections, extraFilters },
+      query
+    )
+  });
+
   const { newCount, isCountLoading, isCountError } = useSearchCount(
-    query,
-    filterString,
+    countQuery,
     token,
-    dispatch,
-    sbhVersion
+    dispatch
   );
 
-  // update search count display
+  // update search count display, keeping the last known count visible
+  // while a new one is loading instead of blanking it out
   useEffect(() => {
-    if (isCountLoading) {
-      setCount(
-        <div className={countloadercontainer}>
-          <Loader
-            className={countloader}
-            color="#D25627"
-            height={10}
-            type="ThreeDots"
-            width={25}
-          />
-        </div>
-      );
-    }
     if (isCountError) {
       setCount('Error');
-    } else {
+    } else if (!isCountLoading) {
       setCount(newCount);
     }
   }, [isCountLoading, isCountError, newCount, query, extraFilters]);
@@ -244,34 +270,80 @@ export default function StandardSearch() {
       getTypeAndUrl(result, registries);
     }
   }
+
+  // keep showing the last successful results (dimmed via isLoading) while a
+  // new search runs, instead of unmounting the whole table on every filter
+  // change
+  const [displayResults, setDisplayResults] = useState([]);
+  useEffect(() => {
+    if (!isLoading && !isError && results) {
+      setDisplayResults(results);
+    }
+  }, [results, isLoading, isError]);
+
+  let resultsContent;
+  if (isError) {
+    resultsContent = (
+      <div className={standarderror}>
+        Errors were encountered while fetching the data
+      </div>
+    );
+  } else if (isLoading && displayResults.length === 0) {
+    resultsContent = (
+      <div className={standardresultsloading}>
+        <Loader color="#D25627" type="ThreeDots" />
+      </div>
+    );
+  } else {
+    resultsContent = (
+      <ResultTable count={count} data={displayResults} isLoading={isLoading}>
+        <SelectedFilters
+          creator={creator}
+          setCreator={setCreator}
+          sbolType={sbolType}
+          setSbolType={setSbolType}
+          role={role}
+          setRole={setRole}
+          objectType={objectType}
+          setObjectType={setObjectType}
+          collections={collections}
+          setCollections={setCollections}
+          extraFilters={extraFilters}
+          onRemoveExtraFilter={handleDelete}
+          onClearAll={handleClearAllFilters}
+        />
+      </ResultTable>
+    );
+  }
+
   return (
-    <div className={viewStyles.container}>
+  <div className={viewStyles.container}>
+    <div
+      className={viewStyles.panelbutton}
+      role="button"
+      onClick={() => {
+        translation == 14 ? setTranslation(0) : setTranslation(14);
+      }}
+    >
+      <FontAwesomeIcon icon={faBars} size="1x" />
+    </div>
+    <div
+      className={
+        translation === 0
+          ? viewStyles.searchSidepanelcontaineropen
+          : viewStyles.searchSidepanelcontainercollapse
+      }
+    >
       <div
-        className={viewStyles.panelbutton}
-        role="button"
-        onClick={() => {
-          translation == 14 ? setTranslation(0) : setTranslation(14);
+        className={`${viewStyles.sidepanel} ${viewStyles.searchSidepanelHeight}`}
+        style={{
+          transform: `translateX(-${translation}rem)`,
+          transition: 'transform 0.3s'
         }}
       >
-        <FontAwesomeIcon icon={faBars} size="1x" />
-      </div>
-      <div
-        className={
-          translation === 0
-            ? viewStyles.searchSidepanelcontaineropen
-            : viewStyles.searchSidepanelcontainercollapse
-        }
-      >
-        <div className={viewStyles.sidepanel}
-          style={{
-            transform: `translateX(-${translation}rem)`,
-            transition: 'transform 0.3s'
-          }}
-        >
-          <div className={viewStyles.headercontainer}>
-            <div className={viewStyles.emptySpace}>
-            </div>
-          </div>
+        <div className={viewStyles.headercontainer}>
+          <div className={viewStyles.emptySpace}></div>
+        </div>
 
           <div className={viewStyles.searchBoundedheightforsidepanel}
             style={{
@@ -302,49 +374,17 @@ export default function StandardSearch() {
                 extraFilters={extraFilters}
                 setExtraFilters={setExtraFilters}
 
-                addFilter={addFilter}
-                handleDelete={handleDelete}
-              />
-              <div
-                className={advStyles.searchbutton}
-                role="button"
-                onClick={() => {
-                  dispatch(setOffset(0));
-                  constructSearch();
-                }}
-                style={{
-                  backgroundColor: theme?.themeParameters?.[0]?.value || '#D25627',
-                  color: theme?.themeParameters?.[1]?.value || '#fff',
-                }}
-              >
-                <FontAwesomeIcon
-                  icon={faSearch}
-                  size="1x"
-                  color="#fff"
-                  className={advStyles.searchicon}
-                />
-                <div>Search</div>
-              </div>
-            </div>
+              addFilter={addFilter}
+              handleDelete={handleDelete}
+            />
+        </div>
 
           </div>
         </div>
       </div>
       <div className={viewStyles.searchContent}>
         <SearchHeader selected="Standard Search" />
-        {isError ? (
-          <div className={standarderror}>
-            Errors were encountered while fetching the data
-          </div>
-        ) : (
-          isLoading ? (
-            <div className={standardresultsloading}>
-              <Loader color="#D25627" type="ThreeDots" />
-            </div>
-          ) : (
-            <ResultTable count={count} data={results} />
-          )
-        )}
+        {resultsContent}
       </div>
     </div>
   );
@@ -374,25 +414,15 @@ const useSearchResults = (query, filterString, offset, limit, token, dispatch, s
   };
 };
 
-const useSearchCount = (query, filterString, token, dispatch, sbhVersion) => {
-  let requestUrl;
-  if (sbhVersion === 3) {
-    const params = new URLSearchParams(filterString);
-    if (query) params.set('keyword', query);
-    requestUrl = `${publicRuntimeConfig.backend}/searchCount?${params.toString()}`;
-  } else {
-    requestUrl = `${publicRuntimeConfig.backend}/searchCount/${filterString}${encodeURIComponent(
-      query
-    )}`;
-  }
+const useSearchCount = (countQuery, token, dispatch) => {
+  const requestUrl = `${
+    publicRuntimeConfig.backend
+  }/sparql?query=${encodeURIComponent(countQuery)}`;
 
-  const { data, error } = useSWR(
-    [requestUrl, token, dispatch],
-    fetcher
-  );
+  const { data, error } = useSWR([requestUrl, token, dispatch], countFetcher);
   return {
     newCount: data,
-    isCountLoading: !error && !data,
+    isCountLoading: !error && data === undefined,
     isCountError: error
   };
 };
@@ -405,7 +435,12 @@ function getType(member) {
     memberType = member.sbolType.slice(member.sbolType.lastIndexOf('#') + 1);
   }
   if (member.role) {
-    memberType = lookupRole(member.role).description.name;
+    const role = lookupRole(member.role);
+    if (role.description) {
+      memberType = role.description.name;
+    } else {
+      memberType = role.term ? role.term : memberType;
+    }
   }
   return memberType;
 }
@@ -440,6 +475,26 @@ const getTypeAndUrl = async (result, registries) => {
   // result.url = newUrl;
 };
 
+
+// unwraps the single ?count binding of a SPARQL results document
+const countFetcher = (url, token, dispatch) =>
+  axios
+    .get(url, {
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        'X-authorization': token
+      }
+    })
+    .then(response => {
+      const binding = response.data?.results?.bindings?.[0];
+      return binding ? Number(binding.count.value) : 0;
+    })
+    .catch(error => {
+      error.customMessage = 'Request failed while counting search results';
+      error.fullUrl = url;
+      dispatch(addError(error));
+    });
 
 const fetcher = (url, token, dispatch) =>
   axios

@@ -1,19 +1,14 @@
-import { useEffect, useState } from 'react';
-import WindowedSelect from 'react-windowed-select';
-import { createFilter } from 'react-windowed-select';
-
-import styles from '../../../styles/advancedsearch.module.css';
-import Loading from '../../Reusable/MiniLoading';
-import { useDispatch, useSelector } from 'react-redux';
-import { addError } from '../../../redux/actions';
 import axios from 'axios';
 import getConfig from 'next/config';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+
+import { addError } from '../../../redux/actions';
+
 const { publicRuntimeConfig } = getConfig();
 
-const customFilter = createFilter({ ignoreAccents: false });
-
 // sorts options by facet count (highest first), then alphabetically by label
-const sortByCount = data =>
+export const sortByCount = data =>
   data.sort((a, b) => {
     const countDiff = (b.count || 0) - (a.count || 0);
     if (countDiff !== 0) return countDiff;
@@ -23,7 +18,12 @@ const sortByCount = data =>
       .localeCompare((b.label || '').toString().toLowerCase());
   });
 
-export default function SelectLoader(properties) {
+/**
+ * Fetches (or parses an already-fetched) SPARQL facet result set into
+ * { loading, error, data } for a facet's option list. Shared by FacetCard
+ * and AdditionalFilter.
+ */
+export default function useFacetOptions({ sparql, parseResult, result }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [data, setData] = useState([]);
@@ -31,54 +31,27 @@ export default function SelectLoader(properties) {
   const token = useSelector(state => state.user.token);
 
   useEffect(() => {
-    if (!properties.result) {
+    if (!sparql && !result) {
+      setData([]);
+      setLoading(false);
+      return;
+    }
+    if (!result) {
       fetchOptions(
-        properties.parseResult,
+        parseResult,
         setLoading,
         setData,
-        properties.sparql,
+        sparql,
         setError,
         token,
         dispatch
       );
     } else {
-      processResults(
-        properties.result,
-        setLoading,
-        setData,
-        setError,
-        properties.parseResult
-      );
+      processResults(result, setLoading, setData, setError, parseResult);
     }
-  }, [properties.result, properties.sparql]);
+  }, [result, sparql]);
 
-  if (error) {
-    return <div>Error Occured</div>;
-  }
-  if (loading) {
-    return <Loading height={20} />;
-  }
-  return (
-    <WindowedSelect
-      isMulti={properties.isMulti}
-      filterOption={customFilter}
-      options={data}
-      isClearable={true}
-      placeholder={properties.placeholder}
-      className={styles.optionselect}
-      styles={{
-        singleValue: base => ({
-          ...base,
-          overflow: 'visible',
-          textOverflow: 'unset',
-          whiteSpace: 'normal'
-        })
-      }}
-      onChange={option => {
-        properties.onChange(option);
-      }}
-    />
-  );
+  return { loading, error, data };
 }
 
 const fetchOptions = async (
@@ -135,8 +108,8 @@ const processResults = (result, setLoading, setData, setError, parseResult) => {
   else if (result === 'loading') setLoading(true);
   else {
     const newData = [];
-    for (const result of result.results.bindings) {
-      newData.push(parseResult(result));
+    for (const item of result.results.bindings) {
+      newData.push(parseResult(item));
     }
 
     sortByCount(newData);

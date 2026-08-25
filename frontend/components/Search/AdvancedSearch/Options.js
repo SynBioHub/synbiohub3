@@ -16,8 +16,9 @@ import getRoles from '../../../sparql/getRoles';
 import getSBOLTypes from '../../../sparql/getSBOLTypes';
 import getTypes from '../../../sparql/getTypes';
 import styles from '../../../styles/advancedsearch.module.css';
+import facetDefinitions from '../../../utilities/facetDefinitions';
 import AdditionalFilter from './AdditionalFilter';
-import SelectLoader from './SelectLoader';
+import FacetCard from './FacetCard';
 const { publicRuntimeConfig } = getConfig();
 
 // main options component
@@ -69,106 +70,84 @@ export default function Options(properties) {
   });
 
   const addCountToResultName = result => {
-    const count = result.count ? ` (${result.count.value})` : '';
+    const uri = result.object.value;
+    let label = shortName(uri);
+    if (uri === 'http://sbols.org/v2#ComponentDefinition') label = 'Component';
+    else if (uri === 'http://sbols.org/v2#ModuleDefinition') label = 'Module';
     return {
-      value: result.object.value,
-      label: shortName(result.object.value) + count,
+      value: uri,
+      label,
       count: result.count ? Number(result.count.value) : 0
     };
   };
 
   return (
     <div>
-      {/* select creator section */}
-      <div className={styles.inputsection}>
-        <div className={styles.labelsection}>
-          <span>Select Creator</span>
-        </div>
-        <SelectLoader
-          sparql={facetQuery(getCreators, 'creator')}
-          placeholder={shortName(properties.creator)}
-          parseResult={result => {
-            const count = result.count ? ` (${result.count.value})` : '';
-            return {
-              value: result.object.value,
-              label: result.object.value + count,
-              count: result.count ? Number(result.count.value) : 0
-            };
-          }}
-          onChange={option => properties.setCreator(option ? option.value : '')}
-        />
-      </div>
+      <FacetCard
+        title="Part Type"
+        subtitle="sbol2:type"
+        description={facetDefinitions['Part Type']}
+        sparql={facetQuery(getSBOLTypes, 'sbolType')}
+        value={properties.sbolType}
+        parseResult={addCountToResultName}
+        onChange={option => properties.setSbolType(option ? option.value : '')}
+      />
 
-      {/* select part type section */}
-      <div className={styles.inputsection}>
-        <div className={styles.labelsection}>
-          <span>Select Part Type</span>
-        </div>
-        <SelectLoader
-          sparql={facetQuery(getSBOLTypes, 'sbolType')}
-          placeholder={shortName(properties.sbolType)}
-          parseResult={result => addCountToResultName(result)}
-          onChange={option =>
-            properties.setSbolType(option ? option.value : '')
-          }
-        />
-      </div>
+      <FacetCard
+        title="Part Role"
+        subtitle="sbol2:role"
+        description={facetDefinitions['Part Role']}
+        sparql={facetQuery(getRoles, 'role')}
+        value={properties.role}
+        parseResult={addCountToResultName}
+        onChange={option => properties.setRole(option ? option.value : '')}
+      />
 
-      {/* select part role section */}
-      <div className={styles.inputsection}>
-        <div className={styles.labelsection}>
-          <span>Select Part Role</span>
-        </div>
-        <SelectLoader
-          sparql={facetQuery(getRoles, 'role')}
-          placeholder={shortName(properties.role)}
-          value={properties.role}
-          parseResult={result => addCountToResultName(result)}
-          onChange={option => properties.setRole(option ? option.value : '')}
-        />
-      </div>
+      <FacetCard
+        title="Object Type"
+        subtitle="rdf:type"
+        description={facetDefinitions['Object Type']}
+        sparql={facetQuery(getTypes, 'objectType')}
+        value={properties.objectType}
+        parseResult={addCountToResultName}
+        onChange={option =>
+          properties.setObjectType(option ? option.value : '')
+        }
+      />
 
-      {/* select object type section */}
-      <div className={styles.inputsection}>
-        <div className={styles.labelsection}>
-          <span>Select Object Type</span>
-        </div>
-        <SelectLoader
-          sparql={facetQuery(getTypes, 'objectType')}
-          placeholder={shortName(properties.objectType)}
-          parseResult={result => addCountToResultName(result)}
-          onChange={option =>
-            properties.setObjectType(option ? option.value : '')
-          }
-        />
-      </div>
+      <FacetCard
+        title="Collections"
+        subtitle="sbol2:member"
+        description={facetDefinitions.Collections}
+        sparql={facetQuery(getCollections, 'collections')}
+        value={properties.collections}
+        isMulti={true}
+        parseResult={result => {
+          const label = !result.name
+            ? result.displayId.value
+            : result.name.value;
+          return {
+            value: result.subject.value,
+            label,
+            count: result.count ? Number(result.count.value) : 0
+          };
+        }}
+        onChange={collections => properties.setCollections(collections)}
+      />
 
-      {/* select collections section */}
-      <div className={styles.inputsection}>
-        <div className={styles.labelsection}>
-          <span>Select Collections</span>
-        </div>
-        <SelectLoader
-          className={styles.optionselectW}
-          sparql={facetQuery(getCollections, 'collections')}
-          placeholder={properties.collections.map(
-            collection => collection.label
-          )}
-          isMulti={true}
-          parseResult={result => {
-            const count = result.count ? ` (${result.count.value})` : '';
-            const label = !result.name
-              ? result.displayId.value
-              : result.name.value;
-            return {
-              value: result.subject.value,
-              label: label + count,
-              count: result.count ? Number(result.count.value) : 0
-            };
-          }}
-          onChange={collections => properties.setCollections(collections)}
-        />
-      </div>
+      <FacetCard
+        title="Creator"
+        subtitle="dc:creator"
+        description={facetDefinitions.Creator}
+        sparql={facetQuery(getCreators, 'creator')}
+        value={properties.creator}
+        parseResult={result => ({
+          value: result.object.value,
+          label: result.object.value,
+          count: result.count ? Number(result.count.value) : 0
+        })}
+        onChange={option => properties.setCreator(option ? option.value : '')}
+      />
 
       {/* display additional filters */}
       {filterDisplay}

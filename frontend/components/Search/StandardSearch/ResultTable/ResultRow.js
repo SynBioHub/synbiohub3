@@ -7,6 +7,7 @@ import { processUrl } from '../../../Admin/Registries';
 import { useSelector, useDispatch } from 'react-redux';
 import showdown from 'showdown';
 
+import { getTypeColor } from '../../../../utilities/typeColor';
 import styles from '../../../../styles/resulttable.module.css';
 
 const sdconverter = new showdown.Converter();
@@ -17,6 +18,7 @@ const sdconverter = new showdown.Converter();
 export default function ResultRow(properties) {
   // Use the type prop directly
   const displayType = properties.type || '';
+  const typeColor = getTypeColor(displayType);
 
   const token = useSelector(state => state.user.token);
   const dispatch = useDispatch();
@@ -45,6 +47,7 @@ export default function ResultRow(properties) {
     >
       <td>
         <input
+          className={styles.checkbox}
           checked={properties.selected.get(properties.displayId)}
           onChange={event => {
             properties.setSelected(
@@ -63,17 +66,36 @@ export default function ResultRow(properties) {
         />
       </td>
 
-      <td className={styles.name}>
-        <code>{properties.name}</code>
+      <td className={styles.nameCell}>
+        <div className={styles.displayId}>{properties.displayId}</div>
+        <div className={styles.name}>{properties.name}</div>
       </td>
 
-      <td>{properties.displayId}</td>
+      <td>
+        <div
+          className={styles.markdownContent}
+          dangerouslySetInnerHTML={{
+            __html: sdconverter.makeHtml(properties.description || '')
+          }}
+        />
+      </td>
 
-      <td className={styles.markdownContent} dangerouslySetInnerHTML={{ __html: sdconverter.makeHtml(properties.description || '') }} />
+      <td>
+        {displayType && (
+          <span
+            className={styles.typeBadge}
+            style={{
+              backgroundColor: typeColor.background,
+              borderColor: typeColor.border,
+              color: typeColor.color
+            }}
+          >
+            {displayType}
+          </span>
+        )}
+      </td>
 
-      <td>{displayType}</td>
-
-      <td>{privacy}</td>
+      <td className={styles.privacyCell}>{privacy}</td>
     </tr>
   );
 }

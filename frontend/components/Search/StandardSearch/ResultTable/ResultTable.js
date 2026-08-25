@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react';
 
 import styles from '../../../../styles/resulttable.module.css';
+import Navigation from './Navigation';
 import ResultRow from './ResultRow';
+import ResultsMeta from './ResultsMeta';
 import ResultTableHeader from './ResultTableHeader';
+import TableActionsPortal from './TableActionsPortal';
 import TableButtons from './TableButtons';
 
 /**
@@ -47,7 +50,7 @@ export default function ResultTable(properties) {
         name={row.name}
         displayId={row.displayId}
         description={row.description}
-        type={ row.derivedType || row.type }
+        type={row.derivedType || row.type}
         version={row.version}
         uri={row.uri}
         key={row.uri}
@@ -62,45 +65,58 @@ export default function ResultTable(properties) {
   }
   return (
     <div className={styles.resultcontainer}>
-      <TableButtons
-        buttonClass={buttonClass}
-        selected={selected}
-        setSelected={setSelected}
-        data={properties.data}
-        count={properties.count}
-        submissionsPage={properties.submissionsPage}
-      />
-        <table className={styles.table} id={styles.results}>
-          <thead>
-            <tr>
-              <th>
-                <input
-                  checked={selectAll}
-                  onChange={event => {
-                    checklist = new Map();
-                    for (const row of properties.data)
-                      checklist.set(row.displayId, event.target.checked);
-                    setSelected(checklist);
-                    setSelectAll(event.target.checked);
-                  }}
-                  type="checkbox"
-                />
-              </th>
+      <TableActionsPortal>
+        <TableButtons
+          buttonClass={buttonClass}
+          selected={selected}
+          setSelected={setSelected}
+          data={properties.data}
+          submissionsPage={properties.submissionsPage}
+        />
+      </TableActionsPortal>
 
-              <ResultTableHeader title="Name" />
-
-              <ResultTableHeader title="Display ID" />
-
-              <ResultTableHeader title="Description" />
-
-              <ResultTableHeader title="Type" />
-
-              <ResultTableHeader title="Privacy" />
-            </tr>
-          </thead>
-
-          <tbody>{rows}</tbody>
-        </table>
+      <div className={styles.tablemeta}>
+        {properties.children}
+        <ResultsMeta count={properties.count} />
       </div>
+
+      <table
+        className={`${styles.table} ${styles.resultsTable}`}
+        id={styles.results}
+      >
+        <thead>
+          <tr>
+            <th>
+              <input
+                className={styles.checkbox}
+                checked={selectAll}
+                onChange={event => {
+                  checklist = new Map();
+                  for (const row of properties.data)
+                    checklist.set(row.displayId, event.target.checked);
+                  setSelected(checklist);
+                  setSelectAll(event.target.checked);
+                }}
+                type="checkbox"
+              />
+            </th>
+
+            <ResultTableHeader title="ID / Name" />
+
+            <ResultTableHeader title="Description" />
+
+            <ResultTableHeader title="Type" />
+
+            <ResultTableHeader title="Privacy" />
+          </tr>
+        </thead>
+
+        <tbody className={properties.isLoading ? styles.tableloading : ''}>
+          {rows}
+        </tbody>
+      </table>
+
+      <Navigation count={properties.count} />
+    </div>
   );
 }

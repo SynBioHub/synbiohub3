@@ -6,14 +6,63 @@ import buildFacetConstraints from '../../../sparql/buildFacetConstraints';
 import configureQuery from '../../../sparql/configureQuery';
 import searchObject from '../../../sparql/searchObject';
 import styles from '../../../styles/advancedsearch.module.css';
-import SelectLoader from './SelectLoader';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTimesCircle } from '@fortawesome/free-solid-svg-icons';
+import FacetOptionList from './FacetOptionList';
+import useFacetOptions from './useFacetOptions';
+
+const wrapIRI = value => (value?.startsWith('http') ? `<${value}>` : value);
+
+const parsePredicateOption = result => ({
+  value: result.predicate.value,
+  label: shortName(result.predicate.value)
+});
+
+const parseValueOption = result => ({
+  value: result.object.value,
+  label: shortName(result.object.value),
+  count: result.count ? Number(result.count.value) : 0
+});
+
+const buildValueSparql = (properties, searchQuery, predicate, fromClause) =>
+  configureQuery(searchObject, {
+    predicate: wrapIRI(predicate),
+    constraints: buildFacetConstraints(
+      properties,
+      searchQuery,
+      undefined,
+      properties.index
+    ),
+    from: fromClause
+  });
+
+const syncFilterFromState = (properties, selectedPredicate, selectedValue) => {
+  const newFilters = [...properties.extraFilters];
+  newFilters[properties.index] = {
+    filter: selectedPredicate,
+    value: selectedPredicate ? selectedValue : ''
+  };
+
+  if (newFilters[properties.index].filter !== '')
+    properties.setExtraFilters(newFilters);
+};
+
+const syncStateFromFilter = (
+  properties,
+  setSelectedPredicate,
+  setSelectedValue
+) => {
+  if (properties.index >= properties.extraFilters.length) {
+    setSelectedPredicate('');
+    setSelectedValue('');
+    return;
+  }
+  const currentFilter = properties.extraFilters[properties.index];
+  setSelectedPredicate(currentFilter.filter || '');
+  setSelectedValue(currentFilter.value || '');
+};
 
 export default function AdditionalFilter(properties) {
-  const [selectedPredicate, setSelectedPredicate] = useState("");
-  const [selectedValue, setSelectedValue] = useState("");
-  const wrapIRI = v => (v?.startsWith("http") ? `<${v}>` : v);
+  const [selectedPredicate, setSelectedPredicate] = useState('');
+  const [selectedValue, setSelectedValue] = useState('');
   const searchQuery = useSelector(state => state.search.query);
   const privateGraphUri = useSelector(state => state.user.graphUri);
   const theme = JSON.parse(localStorage.getItem('theme')) || {};
@@ -26,86 +75,73 @@ export default function AdditionalFilter(properties) {
     .join('\n');
 
   useEffect(() => {
-    const newFilters = [...properties.extraFilters];
-    newFilters[properties.index] = {
-      filter: selectedPredicate,
-      value: selectedPredicate ? selectedValue : "",
-    };
-
-    if(newFilters[properties.index].filter != '')
-      properties.setExtraFilters(newFilters);
+    syncFilterFromState(properties, selectedPredicate, selectedValue);
   }, [selectedPredicate, selectedValue]);
 
   useEffect(() => {
-    if (properties.index < properties.extraFilters.length) {
-      const currentFilter = properties.extraFilters[properties.index];
-      setSelectedPredicate(currentFilter.filter || "");
-      setSelectedValue(currentFilter.value || "");
-    } else {
-      // Reset local state if this filter no longer exists
-      setSelectedPredicate("");
-      setSelectedValue("");
-    }
+    syncStateFromFilter(properties, setSelectedPredicate, setSelectedValue);
   }, [properties.extraFilters.length, properties.index]);
 
+  const currentFilter = properties.extraFilters[properties.index];
+  const hasPredicate = Boolean(currentFilter.filter);
+
+  const predicateOptions = useFacetOptions({
+    result: properties.predicates,
+    parseResult: parsePredicateOption
+  });
+
+  const valueOptions = useFacetOptions({
+    sparql: hasPredicate
+      ? buildValueSparql(
+          properties,
+          searchQuery,
+          currentFilter.filter,
+          fromClause
+        )
+      : undefined,
+    parseResult: parseValueOption
+  });
+
+  const activeOptions = hasPredicate ? valueOptions : predicateOptions;
+  const isEmpty =
+    !activeOptions.loading &&
+    !activeOptions.error &&
+    activeOptions.data.length === 0;
+
+  if (hasPredicate && isEmpty) return null;
+
   return (
-    <div className={styles.inputsection}>
-      {<div className={styles.labelsection}>
-        <span>{shortName(properties.extraFilters[properties.index].filter)}</span>
-      </div>}
-      {<div className={styles.inputsection2}>
-        <div className={styles.containerLeft}>
-        {!properties.extraFilters[properties.index].filter &&
-        (<SelectLoader
-          result={properties.predicates}
-          placeholder="Select filter type..."
-          parseResult={result => {
-            return {
-              value: result.predicate.value,
-              label: shortName(result.predicate.value)
-            };
-          }}
-          onChange={option => {
-            setSelectedPredicate(option ? option.label : "");
-          }}
-          />
-        )}
-      {properties.extraFilters[properties.index].filter &&
-        (<SelectLoader
-          placeholder={shortName(wrapIRI(properties.extraFilters[properties.index].value))}//{selectedValue}
-          sparql={configureQuery(searchObject, {
-            predicate: wrapIRI(properties.extraFilters[properties.index].filter), //selectedPredicate
-            constraints: buildFacetConstraints(properties, searchQuery, undefined, properties.index),
-            from: fromClause
-          })}
-          parseResult={result => {
-            const count = result.count ? ` (${result.count.value})` : '';
-            return {
-              value: result.object.value,
-              label: shortName(result.object.value) + count,
-              count: result.count ? Number(result.count.value) : 0
-            };
-          }}
-          onChange={option => {
-            setSelectedValue(option ? option.value : "");
-          }}
-        />
-      )}
-        </div>
-        <div className={styles.containerRight}>
-          <div
-          style={{
-            padding: '0.6rem 0.5rem 0.1rem 0.5rem',
-            cursor: 'pointer'
-          }}
-          onClick={() => {
-            properties.handleDelete(properties.index);
-          }}
+    <div className={styles.facetcard}>
+      <div className={styles.facetheader}>
+        <span className={styles.facettitle}>
+          {hasPredicate ? shortName(currentFilter.filter) : 'Add Filter'}
+        </span>
+        <span
+          role="button"
+          className={styles.facetclear}
+          onClick={() => properties.handleDelete(properties.index)}
         >
-          <FontAwesomeIcon icon={faTimesCircle} size="1x" color="red" />
-          </div>
-        </div>
-      </div>}
+          &times;
+        </span>
+      </div>
+
+      <FacetOptionList
+        data={activeOptions.data}
+        loading={activeOptions.loading}
+        error={activeOptions.error}
+        value={hasPredicate ? selectedValue : null}
+        onChange={option =>
+          hasPredicate
+            ? setSelectedValue(option ? option.value : '')
+            : setSelectedPredicate(option ? option.label : '')
+        }
+        searchPlaceholder={
+          hasPredicate
+            ? `Search ${shortName(currentFilter.filter).toLowerCase()}...`
+            : 'Search filter type...'
+        }
+        emptyLabel={hasPredicate ? undefined : 'No filters available'}
+      />
     </div>
   );
 }
