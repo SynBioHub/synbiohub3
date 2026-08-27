@@ -1,7 +1,7 @@
 import re
 from unittest import TestCase
 from test_arguments import test_print
-from test_functions import compare_get_request, compare_post_request, get_request, login_with, post_request, test_state
+from test_functions import compare_get_request, compare_post_request, get_request, login_with, post_request, record_test_coverage, test_state
 
 class TestSubmit(TestCase):
     def _increment_submit_id(self, submit_id):
@@ -30,7 +30,7 @@ class TestSubmit(TestCase):
         raise Exception("Could not find an available submission id after multiple attempts.")
 
     def test_submit(self):
-        test_type = "Submit"
+        test_type = "Submission"
         login_with({'email': 'test@user.synbiohub', 'password': 'test'}, 1)
 
         test_print("test_main_page starting")
@@ -85,6 +85,7 @@ class TestSubmit(TestCase):
         files = {'file':("./fixtures/SBOL2/BBa_I0462.xml",
                                               open('./fixtures/SBOL2/BBa_I0462.xml', 'rb'))}
         post_request("submit", 3, data, headers = headers, route_parameters = [], files = files)
+        record_test_coverage("submit", "post", "submit_test_BBa", test_type)
         test_state.set_submit_collection_id(used_submit_id)
         test_print("submit collection id for download tests: " + test_state.get_submit_collection_id())
 
@@ -96,10 +97,9 @@ class TestSubmit(TestCase):
                 'citations':(None, ''),
                 'overwrite_merge':(None, '0')}
 
-        for version in (1, 3):
-            files = {'file':("./fixtures/SBOL2/BBa_I0462.xml",
-                                                  open('./fixtures/SBOL2/BBa_I0462.xml', 'rb'))}
-            post_request("submit", version, data, headers = headers, route_parameters = [], files = files)
+        files = {'file':("./fixtures/SBOL2/BBa_I0462.xml",
+                                              open('./fixtures/SBOL2/BBa_I0462.xml', 'rb'))}
+        compare_post_request("submit", data, headers = {"Accept": "text/plain"}, files = files, test_name = "create_2", test_type = test_type)
 
         test_print("create_collection2 completed")
 

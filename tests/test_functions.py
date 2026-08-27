@@ -309,6 +309,21 @@ def add_test_results(test_pass, test_type):
         test_state.add_test_result(test_type, "fail")
 
 
+def record_test_coverage(request, request_method, test_name, test_type, passed=1):
+    """Register endpoint coverage and category stats when raw requests are used."""
+    request = clip_request(request)
+    if request_method == "post":
+        testpath = request_file_path(request, "post request", test_name)
+        test_state.add_post_request(request, testpath, test_name)
+    elif request_method == "get_file":
+        testpath = request_file_path_download(request, "get_file", test_name)
+        test_state.add_get_request(request, testpath, test_name)
+    else:
+        testpath = request_file_path(request, "get request", test_name)
+        test_state.add_get_request(request, testpath, test_name)
+    add_test_results(passed, test_type)
+
+
 def file_diff_download(sbh1requestcontent, sbh3requestcontent, request, requesttype):
     request = { 'options': {'language' : 'SBOL2',
         'test_equality': True,

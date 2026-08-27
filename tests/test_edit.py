@@ -17,7 +17,7 @@ class TestEdit(TestCase):
             'uri': PRIVATE_TOP_LEVEL_URI,
             'value': 'testUpdateMutableDescription',
         }
-        compare_post_request("updateMutableDescription", data, headers={"Accept": "text/plain"}, test_name="test_update_mutableDescription")
+        compare_post_request("updateMutableDescription", data, headers={"Accept": "text/plain"}, test_name="test_update_mutableDescription", test_type="Edit")
         test_print("test_update_mutableDescription completed")
 
         # test_update_mutableNotes
@@ -26,7 +26,7 @@ class TestEdit(TestCase):
             'uri': PRIVATE_TOP_LEVEL_URI,
             'value': 'testUpdateMutableNotes',
         }
-        compare_post_request("updateMutableNotes", data, headers={"Accept": "text/plain"}, test_name="test_update_mutableNotes")
+        compare_post_request("updateMutableNotes", data, headers={"Accept": "text/plain"}, test_name="test_update_mutableNotes", test_type="Edit")
         test_print("test_update_mutableNotes completed")
 
         # test_update_mutableSource
@@ -35,7 +35,7 @@ class TestEdit(TestCase):
             'uri': PRIVATE_TOP_LEVEL_URI,
             'value': 'testUpdateMutableSource',
         }
-        compare_post_request("updateMutableSource", data, headers={"Accept": "text/plain"}, test_name="test_update_mutableSource")
+        compare_post_request("updateMutableSource", data, headers={"Accept": "text/plain"}, test_name="test_update_mutableSource", test_type="Edit")
         test_print("test_update_mutableSource completed")
 
         # test_edit_citations
@@ -44,5 +44,5 @@ class TestEdit(TestCase):
             'uri': PRIVATE_TOP_LEVEL_URI,
             'value': '1234',
         }
-        compare_post_request("updateCitations", data, headers={"Accept": "text/plain"}, test_name="test_edit_mutable_citations")
+        compare_post_request("updateCitations", data, headers={"Accept": "text/plain"}, test_name="test_edit_mutable_citations", test_type="Edit")
         test_print("test_edit_citations completed")
