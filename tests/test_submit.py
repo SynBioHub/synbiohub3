@@ -81,6 +81,10 @@ class TestSubmit(TestCase):
         #compare_post_request("submit", data, headers = {"Accept": "text/plain"}, files = files, test_name = "submit_test_BBa", test_type = test_type)
         used_submit_id = self._submit_with_incrementing_id(data, headers, files)
         test_print("submit created with id " + used_submit_id)
+        data["id"] = (None, used_submit_id)
+        files = {'file':("./fixtures/SBOL2/BBa_I0462.xml",
+                                              open('./fixtures/SBOL2/BBa_I0462.xml', 'rb'))}
+        post_request("submit", 3, data, headers = headers, route_parameters = [], files = files)
         test_state.set_submit_collection_id(used_submit_id)
         test_print("submit collection id for download tests: " + test_state.get_submit_collection_id())
 
