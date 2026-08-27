@@ -1,33 +1,8 @@
-import re
 from unittest import TestCase
 from test_arguments import test_print
-from test_functions import compare_get_request, compare_post_request, get_request, login_with, post_request, record_test_coverage, test_state
+from test_functions import compare_get_request, compare_post_request, get_request, login_with, test_state
 
 class TestSubmit(TestCase):
-    def _increment_submit_id(self, submit_id):
-        match = re.search(r"(\d+)$", submit_id)
-        if match:
-            prefix = submit_id[:match.start(1)]
-            next_number = int(match.group(1)) + 1
-            return f"{prefix}{next_number}"
-        return f"{submit_id}1"
-
-    def _submit_with_incrementing_id(self, data, headers, files, max_attempts=10):
-        current_id = data["id"][1]
-        for _ in range(max_attempts):
-            data["id"] = (None, current_id)
-            response = post_request("submit", 1, data, headers=headers, route_parameters=[], files=files)
-
-            response_text = (response.text or "").lower()
-            if response.status_code < 400:
-                return current_id
-
-            if "already exists" not in response_text and "already in use" not in response_text:
-                response.raise_for_status()
-
-            current_id = self._increment_submit_id(current_id)
-
-        raise Exception("Could not find an available submission id after multiple attempts.")
 
     def test_submit(self):
         test_type = "Submission"
@@ -78,15 +53,8 @@ class TestSubmit(TestCase):
         files = {'file':("./fixtures/SBOL2/BBa_I0462.xml",
                                               open('./fixtures/SBOL2/BBa_I0462.xml', 'rb'))}
 
-        #compare_post_request("submit", data, headers = {"Accept": "text/plain"}, files = files, test_name = "submit_test_BBa", test_type = test_type)
-        used_submit_id = self._submit_with_incrementing_id(data, headers, files)
-        test_print("submit created with id " + used_submit_id)
-        data["id"] = (None, used_submit_id)
-        files = {'file':("./fixtures/SBOL2/BBa_I0462.xml",
-                                              open('./fixtures/SBOL2/BBa_I0462.xml', 'rb'))}
-        post_request("submit", 3, data, headers = headers, route_parameters = [], files = files)
-        record_test_coverage("submit", "post", "submit_test_BBa", test_type)
-        test_state.set_submit_collection_id(used_submit_id)
+        compare_post_request("submit", data, headers = {"Accept": "text/plain"}, files = files, test_name = "submit_test_BBa", test_type = test_type)
+        test_state.set_submit_collection_id("testid1")
         test_print("submit collection id for download tests: " + test_state.get_submit_collection_id())
 
         test_print("create_collection2 starting")
