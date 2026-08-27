@@ -82,7 +82,20 @@ class TestSubmit(TestCase):
         test_state.set_submit_collection_id(used_submit_id)
         test_print("submit collection id for download tests: " + test_state.get_submit_collection_id())
 
-#        self.create_collection2()
+        test_print("create_collection2 starting")
+        data = {'id':(None, 'testid2'),
+                'version' : (None, '1'),
+                'name' : (None, 'testcollection2'),
+                'description':(None, 'testdescription'),
+                'citations':(None, ''),
+                'overwrite_merge':(None, '0')}
+
+        for version in (1, 3):
+            files = {'file':("./fixtures/SBOL2/BBa_I0462.xml",
+                                                  open('./fixtures/SBOL2/BBa_I0462.xml', 'rb'))}
+            post_request("submit", version, data, headers = headers, route_parameters = [], files = files)
+
+        test_print("create_collection2 completed")
 
         #compare_get_request("manage", test_name = "two_submissions", test_type = test_type)
         #compare_get_request("submit", test_name = "two_submissions", test_type = test_type)
