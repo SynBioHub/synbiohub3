@@ -79,7 +79,7 @@ public class EditService {
         log.debug(query);
         updateInGraph(query, topLevelUri);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok("Success");
     }
 
     private static String citationInsertTriples(String topLevelUri, List<Integer> pubmedIds) {
