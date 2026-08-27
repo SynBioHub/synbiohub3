@@ -189,6 +189,25 @@ def post_request(request, version, data, headers, route_parameters, files):
 
     return response
 
+def fresh_upload_files(files):
+    """Re-open multipart file handles so each HTTP request sends full file contents."""
+    if files is None:
+        return None
+
+    fresh = {}
+    for key, value in files.items():
+        if not isinstance(value, tuple) or not value:
+            fresh[key] = value
+            continue
+
+        path = value[0]
+        file_obj = open(path, 'rb')
+        if len(value) == 2:
+            fresh[key] = (path, file_obj)
+        else:
+            fresh[key] = (path, file_obj) + value[2:]
+    return fresh
+
 # creates a file path for a given request and request type
 # testname is a name to avoid collisions between tests testing the same endpoint
 def request_file_path(request, requesttype, testname):
@@ -471,9 +490,15 @@ def compare_post_request(request, data, test_name = "", route_parameters = [], h
     test_state.add_post_request(request, testpath, test_name)
 
     if(comparison_type == "text"):
-        compare_request(post_request(request, 1, data, headers, route_parameters, files = files), post_request(request, 3, data, headers, route_parameters, files = files), request, "post request", test_type)
+        compare_request(
+            post_request(request, 1, data, headers, route_parameters, files=fresh_upload_files(files)),
+            post_request(request, 3, data, headers, route_parameters, files=fresh_upload_files(files)),
+            request, "post request", test_type)
     if(comparison_type == "json"):
-        compare_request(post_request(request, 1, data, headers, route_parameters, files = files), post_json_request(request, 3, data, headers, route_parameters, files = files), request, "post request", test_type)
+        compare_request(
+            post_request(request, 1, data, headers, route_parameters, files=fresh_upload_files(files)),
+            post_json_request(request, 3, data, headers, route_parameters, files=fresh_upload_files(files)),
+            request, "post request", test_type)
 
 # TODO: make checking throw an error when all endpoints are not checked, instead of printing a warning.
 def cleanup_check():
