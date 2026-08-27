@@ -27,7 +27,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.context.request.RequestContextHolder;
 import java.util.stream.Collectors;
 
 import com.synbiohub.sbh3.dto.UserDto;
@@ -325,16 +324,6 @@ public class UserService {
     }
 
     /**
-     * Compares the user's X-authorization token to the one passed in
-     * 
-     * @param xauth X-authorization token passed in from HTTP header
-     * @return True if the tokens are the same, false otherwise.
-     */
-    public Boolean validateXAuth(String xauth) {
-        return RequestContextHolder.currentRequestAttributes().getSessionId().equals(xauth);
-    }
-
-    /**
      * Compares a part to see if it matches a user's graph.
      * The user's graph is the default graph + "/user" + their username.
      * 
@@ -342,8 +331,9 @@ public class UserService {
      */
     public Boolean isOwnedBy(String topLevelUri) throws IOException {
         SPARQLQuery query = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/GetOwnedBy.sparql");
+        String graphUri = sparqlService.resolveGraphUriForTopLevel(topLevelUri);
         String results = sparqlService.read(sparqlService.getExplorerUrl(),
-                sparqlService.resolveGraphUri(""),
+                graphUri,
                 query.loadTemplate(Collections.singletonMap("topLevel", topLevelUri)));
         ArrayList<String> owners = new ArrayList<>();
         try {

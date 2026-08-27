@@ -1,43 +1,96 @@
 package com.synbiohub.sbh3.services;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.synbiohub.sbh3.utils.ConfigUtil;
+import com.synbiohub.sbh3.dao.SparqlService;
+import com.synbiohub.sbh3.sparql.SPARQLQuery;
+import com.synbiohub.sbh3.utils.StringUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
+import lombok.extern.slf4j.Slf4j;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class EditService {
 
-    /**
-     * Sends a SPARQL query with full admin credentials.
-     * @param query SPARQL Query to send
-     * @return Virtuoso response
-     */
-    public String AuthSPARQLQuery(String query) throws IOException {
-        String sparqlAuthEndpoint = ConfigUtil.get("sparqlAuthEndpoint").asText();
-        String adminUsername = ConfigUtil.get("username").asText();
-        String adminPassword = ConfigUtil.get("password").asText();
-        String defaultGraph = ConfigUtil.get("defaultGraph").asText();
+    private static final String UPDATE_MUTABLE_DESCRIPTION_SPARQL =
+            "src/main/java/com/synbiohub/sbh3/sparql/UpdateMutableDescription.sparql";
+    private static final String UPDATE_MUTABLE_NOTES_SPARQL =
+            "src/main/java/com/synbiohub/sbh3/sparql/UpdateMutableNotes.sparql";
+    private static final String UPDATE_MUTABLE_SOURCE_SPARQL =
+            "src/main/java/com/synbiohub/sbh3/sparql/UpdateMutableSource.sparql";
+    private static final String UPDATE_CITATIONS_SPARQL =
+            "src/main/java/com/synbiohub/sbh3/sparql/UpdateCitations.sparql";
 
-        RestTemplate restTemplate = new RestTemplate();
-        String url = sparqlAuthEndpoint + "?default-graph-uri={defaultGraph}&query={query}&format=json&";
-        HashMap<String, String> params = new HashMap<>();
-        params.put("defaultGraph", defaultGraph);
-        params.put("query", query);
-        HttpHeaders headers = new HttpHeaders();
-        headers.setBasicAuth(adminUsername, adminPassword);
+    private final SparqlService sparqlService;
+    private final UserService userService;
+    private final CitationService citationService;
 
-        HttpEntity<String> entity = new HttpEntity<>(headers);
+    public ResponseEntity<String> updateMutableDescription(Map<String, String> allParams) throws IOException {
+        return updateTopLevel(allParams, UPDATE_MUTABLE_DESCRIPTION_SPARQL,
+                (uri, value) -> Map.of("desc", value));
+    }
 
-        return restTemplate.exchange(url, HttpMethod.POST, entity, String.class, params).getBody();
+    public ResponseEntity<String> updateMutableNotes(Map<String, String> allParams) throws IOException {
+        return updateTopLevel(allParams, UPDATE_MUTABLE_NOTES_SPARQL,
+                (uri, value) -> Map.of("notes", value));
+    }
+
+    public ResponseEntity<String> updateMutableSource(Map<String, String> allParams) throws IOException {
+        return updateTopLevel(allParams, UPDATE_MUTABLE_SOURCE_SPARQL,
+                (uri, value) -> Map.of("source", value));
+    }
+
+    public ResponseEntity<String> updateCitations(Map<String, String> allParams) throws IOException {
+        return updateTopLevel(allParams, UPDATE_CITATIONS_SPARQL, (uri, value) -> {
+            List<Integer> pubmedIds = citationService.parseCitationPubmedIds(value);
+            return Map.of("insertCitations", citationInsertTriples(uri, pubmedIds));
+        });
+    }
+
+    private ResponseEntity<String> updateTopLevel(
+            Map<String, String> allParams,
+            String sparqlTemplate,
+            BiFunction<String, String, Map<String, String>> templateParams)
+            throws IOException {
+        String topLevelUri = allParams.get("uri");
+        String value = allParams.get("value");
+        if (!userService.isOwnedBy(topLevelUri)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        DateTimeFormatter dtf = ISODateTimeFormat.dateHourMinuteSecond();
+        Map<String, String> args = new HashMap<>(templateParams.apply(topLevelUri, value));
+        args.put("topLevel", topLevelUri);
+        args.put("modified", dtf.print(DateTime.now()));
+
+        String query = new SPARQLQuery(sparqlTemplate).loadTemplate(args);
+        log.debug(query);
+        updateInGraph(query, topLevelUri);
+
+        return ResponseEntity.ok().build();
+    }
+
+    private static String citationInsertTriples(String topLevelUri, List<Integer> pubmedIds) {
+        return pubmedIds.stream()
+                .map(id -> "    <" + topLevelUri + "> obo:OBI_0001617 "
+                        + StringUtil.sparqlStringLiteral(String.valueOf(id)) + " .\n")
+                .collect(Collectors.joining());
+    }
+
+    private void updateInGraph(String query, String topLevelUri) throws IOException {
+        String graphUri = sparqlService.resolveGraphUriForTopLevel(topLevelUri);
+        sparqlService.update(query, graphUri, false);
     }
 }

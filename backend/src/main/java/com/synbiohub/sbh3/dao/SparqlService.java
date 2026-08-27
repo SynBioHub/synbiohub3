@@ -376,6 +376,29 @@ public class SparqlService {
         return defaultGraphUri;
     }
 
+    /**
+     * Virtuoso named graph that holds RDF for a top-level object URI (public vs per-user private graph).
+     */
+    public String resolveGraphUriForTopLevel(String topLevelUri) throws IOException {
+        String defaultGraph = ConfigUtil.get("defaultGraph").asText();
+        if (topLevelUri == null || topLevelUri.isBlank()) {
+            return defaultGraph;
+        }
+        if (topLevelUri.contains("/public/")) {
+            return defaultGraph;
+        }
+        int userSeg = topLevelUri.indexOf("/user/");
+        if (userSeg >= 0) {
+            int afterUserKw = userSeg + "/user/".length();
+            int slashAfterName = topLevelUri.indexOf('/', afterUserKw);
+            if (slashAfterName > afterUserKw) {
+                String username = topLevelUri.substring(afterUserKw, slashAfterName);
+                return ConfigUtil.get("graphPrefix").asText() + "user/" + username;
+            }
+        }
+        return defaultGraph;
+    }
+
     public String getExplorerUrl() throws IOException {
         if (ConfigUtil.get("useSBOLExplorer").asBoolean()) {
             return explorerQueryUrl();

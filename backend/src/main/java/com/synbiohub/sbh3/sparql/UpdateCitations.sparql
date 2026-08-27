@@ -1,0 +1,14 @@
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX obo: <http://purl.obolibrary.org/obo/>
+
+DELETE WHERE {
+    <$topLevel> obo:OBI_0001617 ?citation .
+}
+;
+DELETE WHERE {
+    <$topLevel> dcterms:modified ?modified .
+}
+;
+INSERT DATA {
+$insertCitations    <$topLevel> dcterms:modified "$modified" .
+}
