@@ -1,7 +1,7 @@
 import re
 from unittest import TestCase
 from test_arguments import test_print
-from test_functions import compare_get_request, compare_post_request, get_request, post_request, test_state
+from test_functions import compare_get_request, compare_post_request, get_request, login_with, post_request, test_state
 
 class TestSubmit(TestCase):
     def _increment_submit_id(self, submit_id):
@@ -31,6 +31,8 @@ class TestSubmit(TestCase):
 
     def test_submit(self):
         test_type = "Submit"
+        login_with({'email': 'test@user.synbiohub', 'password': 'test'}, 1)
+
         test_print("test_main_page starting")
         headers = {'Accept':'text/plain'}
         #compare_get_request("/", test_name = "after_admin_login", headers = headers)
