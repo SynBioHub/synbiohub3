@@ -185,6 +185,6 @@ public class SubmitService {
     private ResponseEntity<String> successResponse() {
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType("text/plain; charset=UTF-8"))
-                .body("Submission successful");
+                .body("Successfully uploaded");
     }
 }

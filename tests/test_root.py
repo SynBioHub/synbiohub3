@@ -31,9 +31,9 @@ def test_root():
     testSearch.test_search()
 
     # no commented tests
-    # from test_submit import TestSubmit
-    # testSubmit = TestSubmit()
-    # testSubmit.test_submit()
+    from test_submit import TestSubmit
+    testSubmit = TestSubmit()
+    testSubmit.test_submit()
 
     #TODO: TEST TEST_DOWNLOAD
     from test_download import TestDownload
@@ -41,9 +41,9 @@ def test_root():
     testDownload.test_download()
 
     # # TODO: add field edit field are commented out
-    # from test_edit import TestEdit
-    # testEdit = TestEdit()
-    # testEdit.test_edit()
+    from test_edit import TestEdit
+    testEdit = TestEdit()
+    testEdit.test_edit()
 
     # # TODO: both public and private attachURL seem nondeterministic
     # from test_attachment import TestAttachment

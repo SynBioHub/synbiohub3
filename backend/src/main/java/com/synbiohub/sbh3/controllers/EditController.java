@@ -2,20 +2,15 @@ package com.synbiohub.sbh3.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.synbiohub.sbh3.services.EditService;
-import com.synbiohub.sbh3.services.UserService;
-import com.synbiohub.sbh3.sparql.SPARQLQuery;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.ISODateTimeFormat;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -24,10 +19,7 @@ import java.util.Map;
 @Tag(name = "Edit", description = "Endpoints for editing registry objects (Most are currently unimplemented stubs)")
 @RestController
 @RequiredArgsConstructor
-@Slf4j
 public class EditController {
-
-    private final UserService userService;
 
     private final EditService editService;
     /**
@@ -35,45 +27,53 @@ public class EditController {
      * @param allParams Key/value pairs of all parameters
      * @return Metadata for the object from the specified search query in JSON format
      */
-    @Operation(summary = "Update mutable description", description = "Updates the description of an object via SPARQL query.")
+    @Operation(summary = "Update mutable description", description = "Updates the description of an object via SPARQL query. Requires JWT in X-authorization header.")
     @ApiResponse(responseCode = "200", description = "Description updated successfully")
-    @ApiResponse(responseCode = "401", description = "Unauthorized")
+    @ApiResponse(responseCode = "401", description = "Unauthorized or not the object owner")
+    @PreAuthorize("hasAnyAuthority('USER', 'CURATOR', 'ADMIN')")
     @PostMapping(value = "/updateMutableDescription")
     @ResponseBody
-    public ResponseEntity<String> updateMutableDescription(@Parameter(description = "Key/value pairs including uri and value") @RequestParam Map<String, String> allParams, @Parameter(description = "JWT Token") @RequestHeader("X-authorization") String xauth, HttpServletRequest request) throws IOException {
-        String topLevelUri = allParams.get("uri");
-        String value = allParams.get("value");
-        if (!userService.validateXAuth(xauth) || !userService.isOwnedBy(topLevelUri))
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-
-        SPARQLQuery sparqlQuery = new SPARQLQuery("src/main/java/com/synbiohub/sbh3/sparql/UpdateMutableDescription.sparql");
-        DateTimeFormatter dtf = ISODateTimeFormat.dateHourMinuteSecond();
-        String query = sparqlQuery.loadTemplate(Map.of("desc", value, "topLevel", topLevelUri, "modified", dtf.print(DateTime.now())));
-        log.debug(query);
-        editService.AuthSPARQLQuery(query);
-
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<String> updateMutableDescription(
+            @Parameter(description = "Key/value pairs including uri and value") @RequestParam Map<String, String> allParams)
+            throws IOException {
+        return editService.updateMutableDescription(allParams);
     }
 
-    @Operation(summary = "Update mutable notes (Unimplemented)", description = "Currently an empty stub.", deprecated = true)
+    @Operation(summary = "Update mutable notes", description = "Updates the notes of an object via SPARQL query. Requires JWT in X-authorization header.")
+    @ApiResponse(responseCode = "200", description = "Notes updated successfully")
+    @ApiResponse(responseCode = "401", description = "Unauthorized or not the object owner")
+    @PreAuthorize("hasAnyAuthority('USER', 'CURATOR', 'ADMIN')")
     @PostMapping(value = "/updateMutableNotes")
     @ResponseBody
-    public ResponseEntity<String> updateMutableNotes(@RequestParam Map<String, String> allParams, @RequestHeader("X-authorization") String xauth, HttpServletRequest request) throws JsonProcessingException {
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<String> updateMutableNotes(
+            @Parameter(description = "Key/value pairs including uri and value") @RequestParam Map<String, String> allParams)
+            throws IOException {
+        return editService.updateMutableNotes(allParams);
     }
 
-    @Operation(summary = "Update mutable source (Unimplemented)", description = "Currently an empty stub.", deprecated = true)
+    @Operation(summary = "Update mutable source", description = "Updates the source/provenance of an object via SPARQL query. Requires JWT in X-authorization header.")
+    @ApiResponse(responseCode = "200", description = "Source updated successfully")
+    @ApiResponse(responseCode = "401", description = "Unauthorized or not the object owner")
+    @PreAuthorize("hasAnyAuthority('USER', 'CURATOR', 'ADMIN')")
     @PostMapping(value = "/updateMutableSource")
     @ResponseBody
-    public ResponseEntity<String> updateMutableSource(@RequestParam Map<String, String> allParams, @RequestHeader("X-authorization") String xauth, HttpServletRequest request) throws JsonProcessingException {
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<String> updateMutableSource(
+            @Parameter(description = "Key/value pairs including uri and value") @RequestParam Map<String, String> allParams)
+            throws IOException {
+        return editService.updateMutableSource(allParams);
     }
 
-    @Operation(summary = "Update citations (Unimplemented)", description = "Currently an empty stub.", deprecated = true)
+    @Operation(summary = "Update citations", description = "Replaces PubMed citation IDs on an object. Value is comma-separated PMIDs, or empty to clear. Requires JWT in X-authorization header.")
+    @ApiResponse(responseCode = "200", description = "Citations updated successfully")
+    @ApiResponse(responseCode = "400", description = "Invalid citation format")
+    @ApiResponse(responseCode = "401", description = "Unauthorized or not the object owner")
+    @PreAuthorize("hasAnyAuthority('USER', 'CURATOR', 'ADMIN')")
     @PostMapping(value = "/updateCitations")
     @ResponseBody
-    public ResponseEntity<String> updateCitations(@RequestParam Map<String, String> allParams, @RequestHeader("X-authorization") String xauth, HttpServletRequest request) throws JsonProcessingException {
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<String> updateCitations(
+            @Parameter(description = "Key/value pairs including uri and value") @RequestParam Map<String, String> allParams)
+            throws IOException {
+        return editService.updateCitations(allParams);
     }
 
     @Operation(summary = "Edit field (Unimplemented)", description = "Currently an empty stub.", deprecated = true)
