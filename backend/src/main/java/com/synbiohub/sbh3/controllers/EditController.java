@@ -108,7 +108,7 @@ public class EditController {
 
     @Operation(summary = "Remove object field value", description = "Removes one RDF predicate value from a private object.")
     @PreAuthorize(USER_AUTH)
-    @PostMapping(value = "/user/{userId}/{collectionId}/{displayId}/{version}/remove/{field}")
+    @PostMapping(value = "/user/{userId}/{collectionId}/{displayId}/{version}/remove/{field}", produces = "text/plain;charset=UTF-8")
     public ResponseEntity<String> removeUserField(
             @PathVariable String userId,
             @PathVariable String collectionId,
@@ -145,7 +145,7 @@ public class EditController {
 
     @Operation(summary = "Remove public object field value", description = "Admin-only remove on a public object.")
     @PreAuthorize("hasAuthority('ADMIN')")
-    @PostMapping(value = "/public/{collectionId}/{displayId}/{version}/remove/{field}")
+    @PostMapping(value = "/public/{collectionId}/{displayId}/{version}/remove/{field}", produces = "text/plain;charset=UTF-8")
     public ResponseEntity<String> removePublicField(
             @PathVariable String collectionId,
             @PathVariable String displayId,

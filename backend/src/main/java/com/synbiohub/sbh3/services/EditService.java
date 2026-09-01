@@ -203,7 +203,7 @@ public class EditService {
         }
 
         if (mutation == FieldMutation.REMOVE) {
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok("OK");
         }
         return ResponseEntity.ok(object);
     }
