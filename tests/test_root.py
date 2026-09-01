@@ -40,7 +40,6 @@ def test_root():
     testDownload = TestDownload()
     testDownload.test_download()
 
-    # # TODO: add field edit field are commented out
     from test_edit import TestEdit
     testEdit = TestEdit()
     testEdit.test_edit()
