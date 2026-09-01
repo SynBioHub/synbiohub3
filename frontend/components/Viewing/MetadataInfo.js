@@ -8,7 +8,7 @@ import styles from '../../styles/view.module.css';
 import axios from 'axios';
 
 import { getAfterThirdSlash } from './ViewHeader';
-import { isUriOwner, formatMultipleTitles } from './Shell';
+import { isUriOwner, formatMultipleTitles, isValidURI } from './Shell';
 import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
 
@@ -189,7 +189,19 @@ export default function MetadataInfo({ title, link, label, icon, specific, uri }
   };
 
   const handleAddMetadata = (label) => {
-    const editedText = newMetadata;
+    const editedText = newMetadata.trim();
+
+    if (editedText === '') {
+      alert('Content cannot be empty.');
+      return;
+    }
+
+    if (label === 'Source' && !isValidURI(editedText)) {
+      alert(
+        'The source must be a full URI starting with http:// or https://, for example: https://synbiohub.org/user/testuser/collection/part/1'
+      );
+      return;
+    }
 
     let urlEnd;
     if (label === 'Source') {
@@ -213,7 +225,7 @@ export default function MetadataInfo({ title, link, label, icon, specific, uri }
       })
       .catch(error => {
         console.error('Error adding metadata', error);
-        // Additional error handling logic can be added here
+        alert(getAddMetadataErrorMessage(label, error));
       });
   };
 
@@ -453,4 +465,27 @@ export default function MetadataInfo({ title, link, label, icon, specific, uri }
     </div>
   );
   return renderedSection;
+}
+
+function getAddMetadataErrorMessage(label, error) {
+  const serverMessage =
+    typeof error?.response?.data === 'string' ? error.response.data.trim() : '';
+  if (serverMessage) {
+    return serverMessage;
+  }
+
+  switch (error?.response?.status) {
+    case 400:
+      return 'The value cannot be empty.';
+    case 401:
+      return 'You are not authorized to edit this record. Please log in as the object owner.';
+    case 403:
+      return 'You do not have permission to add this field.';
+    case 404:
+      return 'This field cannot be added on this record.';
+    case 500:
+      return 'The server failed to save the change. Please try again.';
+    default:
+      return `Failed to add ${label.toLowerCase()}. Please check your input and try again.`;
+  }
 }

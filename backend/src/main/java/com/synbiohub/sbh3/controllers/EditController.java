@@ -21,6 +21,8 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class EditController {
 
+    private static final String USER_AUTH = "hasAnyAuthority('USER', 'CURATOR', 'ADMIN')";
+
     private final EditService editService;
     /**
      * Returns the metadata for the object from the specified search query.
@@ -76,7 +78,84 @@ public class EditController {
         return editService.updateCitations(allParams);
     }
 
-    @Operation(summary = "Edit field (Unimplemented)", description = "Currently an empty stub.", deprecated = true)
+    @Operation(summary = "Edit object field", description = "Updates a single RDF predicate on a private object. Body: object, previous (edit), pred (annotation).")
+    @ApiResponse(responseCode = "200", description = "Field updated; plain-text display value returned")
+    @ApiResponse(responseCode = "401", description = "Unauthorized or not the object owner")
+    @PreAuthorize(USER_AUTH)
+    @PostMapping(value = "/user/{userId}/{collectionId}/{displayId}/{version}/edit/{field}", produces = "text/plain;charset=UTF-8")
+    public ResponseEntity<String> editUserField(
+            @PathVariable String userId,
+            @PathVariable String collectionId,
+            @PathVariable String displayId,
+            @PathVariable String version,
+            @PathVariable String field,
+            @RequestBody Map<String, String> body) throws IOException {
+        return editService.editField(false, userId, collectionId, displayId, version, field, body);
+    }
+
+    @Operation(summary = "Add object field value", description = "Adds a multi-valued RDF predicate on a private object.")
+    @PreAuthorize(USER_AUTH)
+    @PostMapping(value = "/user/{userId}/{collectionId}/{displayId}/{version}/add/{field}", produces = "text/plain;charset=UTF-8")
+    public ResponseEntity<String> addUserField(
+            @PathVariable String userId,
+            @PathVariable String collectionId,
+            @PathVariable String displayId,
+            @PathVariable String version,
+            @PathVariable String field,
+            @RequestBody Map<String, String> body) throws IOException {
+        return editService.addField(false, userId, collectionId, displayId, version, field, body);
+    }
+
+    @Operation(summary = "Remove object field value", description = "Removes one RDF predicate value from a private object.")
+    @PreAuthorize(USER_AUTH)
+    @PostMapping(value = "/user/{userId}/{collectionId}/{displayId}/{version}/remove/{field}")
+    public ResponseEntity<String> removeUserField(
+            @PathVariable String userId,
+            @PathVariable String collectionId,
+            @PathVariable String displayId,
+            @PathVariable String version,
+            @PathVariable String field,
+            @RequestBody Map<String, String> body) throws IOException {
+        return editService.removeField(false, userId, collectionId, displayId, version, field, body);
+    }
+
+    @Operation(summary = "Edit public object field", description = "Admin-only edit on a public object.")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @PostMapping(value = "/public/{collectionId}/{displayId}/{version}/edit/{field}", produces = "text/plain;charset=UTF-8")
+    public ResponseEntity<String> editPublicField(
+            @PathVariable String collectionId,
+            @PathVariable String displayId,
+            @PathVariable String version,
+            @PathVariable String field,
+            @RequestBody Map<String, String> body) throws IOException {
+        return editService.editField(true, null, collectionId, displayId, version, field, body);
+    }
+
+    @Operation(summary = "Add public object field value", description = "Admin-only add on a public object.")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @PostMapping(value = "/public/{collectionId}/{displayId}/{version}/add/{field}", produces = "text/plain;charset=UTF-8")
+    public ResponseEntity<String> addPublicField(
+            @PathVariable String collectionId,
+            @PathVariable String displayId,
+            @PathVariable String version,
+            @PathVariable String field,
+            @RequestBody Map<String, String> body) throws IOException {
+        return editService.addField(true, null, collectionId, displayId, version, field, body);
+    }
+
+    @Operation(summary = "Remove public object field value", description = "Admin-only remove on a public object.")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @PostMapping(value = "/public/{collectionId}/{displayId}/{version}/remove/{field}")
+    public ResponseEntity<String> removePublicField(
+            @PathVariable String collectionId,
+            @PathVariable String displayId,
+            @PathVariable String version,
+            @PathVariable String field,
+            @RequestBody Map<String, String> body) throws IOException {
+        return editService.removeField(true, null, collectionId, displayId, version, field, body);
+    }
+
+    @Operation(summary = "Edit field (Unimplemented)", description = "Deprecated stub; use …/edit/{field} on the object URL.", deprecated = true)
     @PostMapping(value = "/editField")
     @ResponseBody
     public ResponseEntity<String> editField(@RequestParam Map<String, String> allParams, @RequestHeader("X-authorization") String xauth, HttpServletRequest request) throws JsonProcessingException {
