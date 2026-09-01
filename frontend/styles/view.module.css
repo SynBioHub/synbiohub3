@@ -728,6 +728,14 @@
   background-color: #f9f9f9;
 }
 
+.otherPropertiesTable {
+  overflow: visible;
+}
+
+.otherPropertiesTable td {
+  overflow: visible;
+}
+
 .searchicon {
   margin: 0 0.3rem;
   cursor: pointer;
@@ -735,6 +743,59 @@
 
 .searchicon:hover {
   color: #D25627;
+}
+
+.predicateInputWrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.predicateInfo {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.predicateInfo:hover,
+.predicateInfo:focus {
+  outline: none;
+}
+
+.predicateTooltip {
+  position: absolute;
+  left: 0;
+  bottom: calc(100% + 0.4rem);
+  width: 20rem;
+  padding: 0.5rem 0.65rem;
+  border-radius: 0.4rem;
+  background: #2d333b;
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 400;
+  line-height: 1.35;
+  box-shadow: 0 4px 12px rgba(23, 29, 38, 0.18);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.12s ease;
+  z-index: 20;
+  cursor: default;
+  white-space: normal;
+  word-break: break-word;
+}
+
+.predicateExample {
+  display: block;
+  margin-top: 0.35rem;
+  font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+  word-break: break-word;
+}
+
+.predicateInfo:hover .predicateTooltip,
+.predicateInfo:focus .predicateTooltip {
+  opacity: 1;
+  visibility: visible;
 }
 
 .link {

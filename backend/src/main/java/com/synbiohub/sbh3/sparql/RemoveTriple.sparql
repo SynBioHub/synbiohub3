@@ -1,0 +1,15 @@
+PREFIX dcterms: <http://purl.org/dc/terms/>
+
+DELETE {
+    $subject $predicate $object .
+    $subject dcterms:modified ?mod .
+}
+INSERT {
+    $subject dcterms:modified $modified .
+}
+WHERE {
+    $subject $predicate $object .
+    OPTIONAL {
+        $subject dcterms:modified ?mod .
+    }
+}
