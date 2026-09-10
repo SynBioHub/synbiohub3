@@ -648,45 +648,118 @@
   color: #263040;
 }
 
-.memberheadercontainer {
-  margin: 0.5rem 0 1rem 0;
-  display: flex;
-}
-
-.membersearchinput {
-  width: 100%;
-  padding: 0.5rem;
-  border-radius: 0.4rem 0 0 0.4rem;
-  border: none;
-  outline: none;
-  background-color: #e6e6e6;
-}
-
-.membername:hover {
-  color: #c2244b;
-}
-
-.memberid:hover {
-  text-decoration: underline;
-  color: #465875;
-}
-
 .loadinginline {
   display: inline-block;
 }
 
-.filtercontainer {
+.membercontrols {
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
   width: 100%;
-  margin-bottom: 1rem;
-  font-weight: 500;
 }
 
-.filterSelect {
+.membersearchbox {
+  display: flex;
+  align-items: center;
+  flex: 1 1 16rem;
+  min-width: 12rem;
+}
+
+.membersearchboxinput {
   width: 100%;
-  margin-left: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.4rem 0 0 0.4rem;
+  border: 1px solid #d5d9e0;
+  border-right: none;
+  outline: none;
+  font-size: 0.85rem;
+  background-color: #fff;
+}
+
+.membersearchboxinput:focus {
+  border-color: #D25627;
+}
+
+.membersearchboxbutton {
+  padding: 0.5rem 0.9rem;
+  border: 1px solid #D25627;
+  border-radius: 0 0.4rem 0.4rem 0;
+  background-color: #D25627;
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.membersearchboxbutton:hover {
+  background-color: #973d1c;
+  border-color: #973d1c;
+}
+
+.memberfiltergroup {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #465775;
+}
+
+.memberfilterselect {
+  min-width: 12rem;
   font-weight: 400;
+}
+
+.memberactionicon {
+  text-align: center;
+  color: #9aa1ab;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.memberactionicon:hover {
+  color: #D25627;
+}
+
+.memberstable {
+  table-layout: fixed;
+  margin: 0.4rem 0 1.5rem;
+  border: 1px solid #f4f4f4;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 2px rgba(23, 29, 38, 0.05);
+}
+
+.memberstable thead tr:first-child th:first-child {
+  border-top-left-radius: 0.5rem;
+}
+
+.memberstable thead tr:first-child th:last-child {
+  border-top-right-radius: 0.5rem;
+}
+
+.memberstable tbody tr:last-child td:first-child {
+  border-bottom-left-radius: 0.5rem;
+}
+
+.memberstable tbody tr:last-child td:last-child {
+  border-bottom-right-radius: 0.5rem;
+}
+
+.membernamecolumn {
+  width: 28%;
+}
+
+.membertypecolumn {
+  width: 10rem;
+}
+
+.memberremovecolumn {
+  width: 3.5rem;
+  text-align: center;
 }
 
 .table {
