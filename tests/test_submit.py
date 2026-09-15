@@ -74,16 +74,44 @@ class TestSubmit(TestCase):
         #compare_get_request("manage", test_name = "two_submissions", test_type = test_type)
         #compare_get_request("submit", test_name = "two_submissions", test_type = test_type)
 
-
         # now remove the collections
-        #compare_get_request('/user/:userId/:collectionId/:displayId/:version/removeCollection', route_parameters = ["testuser", "testid", "testid_collection", "1"], test_type = test_type)
-        #compare_get_request('/user/:userId/:collectionId/:displayId/:version/removeCollection', route_parameters = ["testuser", "testid2", "testid2_collection", "1"], test_name = 'remove_second', test_type = test_type)
-        # get_request('user/:userId/:collectionId/:displayId/:version/removeCollection', 1, headers = headers, route_parameters = ["testuser", "testid", "testid_collection", "1"])
-        #TODO: make sure this is okay -> didn't work forbidden#get_request('user/:userId/:collectionId/:displayId/:version/removeCollection', 1, headers = headers, route_parameters = ["testuser", "testid2", "testid2_collection", "1"])
-        
-        #compare_get_request("manage", test_name = "no_submissions", test_type = test_type)
+        compare_get_request(
+            '/user/:userId/:collectionId/:displayId/:version/removeCollection',
+            route_parameters=["testuser", "testid1", "testid1_collection", "1"],
+            headers={"Accept": "text/plain"},
+            test_name="remove_first",
+            test_type=test_type)
+        compare_get_request(
+            '/user/:userId/:collectionId/:displayId/:version/removeCollection',
+            route_parameters=["testuser", "testid2", "testid2_collection", "1"],
+            headers={"Accept": "text/plain"},
+            test_name="remove_second",
+            test_type=test_type)
 
-        # test_print("test_create_and_delete_collections completed")
+        # recreate for later tests (e.g. test_edit uses testid2)
+        data = {'id': (None, 'testid1'),
+                'version': (None, '1'),
+                'name': (None, 'testcollection'),
+                'description': (None, 'testdescription'),
+                'citations': (None, ''),
+                'overwrite_merge': (None, '0')}
+        files = {'file': ("./fixtures/SBOL2/BBa_I0462.xml",
+                          open('./fixtures/SBOL2/BBa_I0462.xml', 'rb'))}
+        compare_post_request("submit", data, headers={"Accept": "text/plain"}, files=files,
+                             test_name="recreate_testid1", test_type=test_type)
+
+        data = {'id': (None, 'testid2'),
+                'version': (None, '1'),
+                'name': (None, 'testcollection2'),
+                'description': (None, 'testdescription'),
+                'citations': (None, ''),
+                'overwrite_merge': (None, '0')}
+        files = {'file': ("./fixtures/SBOL2/BBa_I0462.xml",
+                          open('./fixtures/SBOL2/BBa_I0462.xml', 'rb'))}
+        compare_post_request("submit", data, headers={"Accept": "text/plain"}, files=files,
+                             test_name="recreate_testid2", test_type=test_type)
+
+        test_print("test_create_and_delete_collections completed")
 
         # test_print("create_collection2 starting")
         # data = {'id':(None, 'testid2'),
