@@ -50,6 +50,7 @@ public class SubmitService {
     private final SbolService sbolService;
     private final SparqlService sparqlService;
     private final AttachmentService attachmentService;
+    private final UserService userService;
 
     /**
      * Main submit entry point. Each step mutates {@code payload} in place.
@@ -110,6 +111,47 @@ public class SubmitService {
     // -------------------------------------------------------------------------
 
     /**
+     * Path-suffixed removeCollection (SBH1 {@code actions/removeCollection}).
+     */
+    public ResponseEntity<String> removeCollection(
+            boolean isPublic, String userId, String collectionId, String displayId, String version)
+            throws IOException {
+        String prefix = ConfigUtil.get("databasePrefix").asText();
+        String collectionUri = isPublic
+                ? prefix + "public/" + collectionId + "/" + displayId + "/" + version
+                : prefix + "user/" + userId + "/" + collectionId + "/" + displayId + "/" + version;
+
+        if (isPublic) {
+            var enabled = ConfigUtil.get("removePublicEnabled");
+            if (enabled == null || !enabled.asBoolean()) {
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+                        "Removing public submissions is not allowed");
+            }
+        }
+
+        if (!userService.isOwnedBy(collectionUri)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+                    "Not authorized to remove this submission");
+        }
+
+        String uriPrefix = collectionService.uriPrefixFromCollectionUri(null, collectionUri);
+        if (uriPrefix == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid collection URI");
+        }
+
+        if (ConfigUtil.get("useSBOLExplorer").asBoolean(false)) {
+            notifyExplorerRemoveCollection(collectionUri, uriPrefix);
+        }
+
+        String graphUri = sparqlService.resolveGraphUriForTopLevel(collectionUri);
+        deleteCollectionTriples(collectionUri, uriPrefix, graphUri);
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType("text/plain; charset=UTF-8"))
+                .body("Success");
+    }
+
+    /**
      * Overwrite mode: stagger-delete all objects under the collection URI prefix, then remove
      * the collection itself. Mirrors {@code submit.js} after prepareSubmission succeeds.
      */
@@ -124,21 +166,21 @@ public class SubmitService {
         }
 
         String graphUri = collectionService.graphUriForCollection(collectionUri, payload);
-        Map<String, String> templateParams = Map.of(
-                "collection", collectionUri,
-                "uriPrefix", uriPrefix);
-
         log.debug("prepare overwrite: removing {}", uriPrefix);
-        sparqlService.deleteCollection(templateParams, graphUri);
-        sparqlService.delete(Map.of("uri", collectionUri), graphUri);
+        deleteCollectionTriples(collectionUri, uriPrefix, graphUri);
 
         if (ConfigUtil.get("useSBOLExplorer").asBoolean(false)) {
             notifyExplorerRemoveCollection(collectionUri, uriPrefix);
         }
     }
 
+    private void deleteCollectionTriples(String collectionUri, String uriPrefix, String graphUri)
+            throws IOException {
+        sparqlService.deleteCollection(Map.of("collection", collectionUri, "uriPrefix", uriPrefix), graphUri);
+        sparqlService.delete(Map.of("uri", collectionUri), graphUri);
+    }
+
     private void notifyExplorerRemoveCollection(String collectionUri, String uriPrefix) throws IOException {
-        // TODO: refactor this method in the future, currently not being called
         String endpoint = ConfigUtil.get("SBOLExplorerEndpoint").asText();
         if (!endpoint.endsWith("/")) {
             endpoint += "/";
