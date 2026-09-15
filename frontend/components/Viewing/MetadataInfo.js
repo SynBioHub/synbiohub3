@@ -14,7 +14,6 @@ const { publicRuntimeConfig } = getConfig();
 
 export default function MetadataInfo({ title, link, label, icon, specific, uri }) {
   const theme = JSON.parse(localStorage.getItem('theme')) || {};
-  const [isHovered, setIsHovered] = useState(false);
 
   const [isEditing, setIsEditing] = useState(false);
   const [newMetadata, setNewMetadata] = useState('');
@@ -184,10 +183,6 @@ export default function MetadataInfo({ title, link, label, icon, specific, uri }
       });
   };
 
-  const hoverStyle = {
-    backgroundColor: isHovered ? (theme?.hoverColor || '#00A1E4') : (theme?.themeParameters?.[0]?.value || styles.infoheader.backgroundColor)
-  };
-
   const handleAddMetadata = (label) => {
     const editedText = newMetadata.trim();
 
@@ -280,22 +275,13 @@ export default function MetadataInfo({ title, link, label, icon, specific, uri }
   const renderedLabel = (
     <div className={styles.infolabel}>
       {label}
-      {(label === "Source" || label === "Type" || label === "Role") && (
-        <>
-          <span style={{ marginRight: '0.5rem' }}></span> {/* Add space */}
-          {
-            isOwner && (
-              <>
-                <FontAwesomeIcon
-                  icon={faPlus}
-                  onClick={() => setIsEditing(true)}
-                  className={styles.plusIcon}
-                  title="Add a new source"
-                />
-              </>
-            )
-          }
-        </>
+      {(label === "Source" || label === "Type" || label === "Role") && isOwner && (
+        <FontAwesomeIcon
+          icon={faPlus}
+          onClick={() => setIsEditing(true)}
+          className={styles.plusIcon}
+          title="Add a new source"
+        />
       )}
     </div>
   );
@@ -321,10 +307,8 @@ export default function MetadataInfo({ title, link, label, icon, specific, uri }
     return parts.map(part => part.replace(new RegExp(commaPlaceholder, 'g'), ','));
   }
   const renderedTitle = (
-    <div className={styles.infotitle}>
-      <div>
-        <div>
-          {metadata.map((data, index) => {
+    <div className={specific ? styles.infotitlegeneric : styles.infotitle}>
+      {metadata.map((data, index) => {
             let isEditingThisItem = false;
             let currentValue = "";
             let correspondingLink = (label === 'Source' || label === 'Type' || label === 'Role')
@@ -351,9 +335,8 @@ export default function MetadataInfo({ title, link, label, icon, specific, uri }
                 break;
             }
             return (
-              <div key={index}>
-                <div>
-                  {isEditingThisItem ? (
+              <React.Fragment key={index}>
+                {isEditingThisItem ? (
                     <div>
                       <input
                         type="text"
@@ -378,37 +361,25 @@ export default function MetadataInfo({ title, link, label, icon, specific, uri }
                       </button>
                     </div>
                   ) : (
-                    <a
-                      href={correspondingLink ? correspondingLink : `/${processedSource}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {processedSource}
-                    </a>
+                    <>
+                      <a
+                        href={correspondingLink ? correspondingLink : `/${processedSource}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {processedSource}
+                      </a>
+                      {(label === "Source" || label === "Type" || label === "Role") && data && isOwner && (
+                        <span className={styles.metarowactions}>
+                          <FontAwesomeIcon icon={faPencilAlt} title="Edit metadata" onClick={() => handleEditMetadata(index, data, label)} />
+                          <FontAwesomeIcon icon={faTrash} title="Delete metadata" onClick={(e) => handleDeleteMetadata(e, data, label)} />
+                        </span>
+                      )}
+                    </>
                   )}
-                </div><div>
-                  {(label === "Source" || label === "Type" || label === "Role") && data && (
-                    isEditingThisItem ? null : (
-                      <div>
-                        {isOwner && (
-                          <>
-                            <button onClick={() => handleEditMetadata(index, data, label)}>
-                              <FontAwesomeIcon icon={faPencilAlt} title="Edit metadata" style={{ cursor: 'pointer' }} />
-                            </button>
-                            <button onClick={(e) => handleDeleteMetadata(e, data, label)}>
-                              <FontAwesomeIcon icon={faTrash} title="Delete metadata" style={{ cursor: 'pointer' }} />
-                            </button>
-                          </>
-                        )}
-                      </div>
-                    )
-                  )}
-                </div>
-              </div>
+              </React.Fragment>
             );
           })}
-        </div>
-      </div>
     </div>
   );
 
@@ -421,47 +392,42 @@ export default function MetadataInfo({ title, link, label, icon, specific, uri }
 
   // Rendered section including the header and the title (without link)
   const renderedSection = (
-    <div className={styles.info}>
-      <div
-        className={specific ? styles.infogeneric : styles.infoheader}
-        style={hoverStyle}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-      >
-        <div className={styles.infoiconcontainer}>
-          {!specific ? (
-            <FontAwesomeIcon icon={icon} size="1x" className={styles.infoicon} />
-          ) : (
-            <RenderIcon icon={icon} color="#fff" style={styles.infoicon} />
-          )}
-        </div>
-        {renderedLabel}
+    <div className={styles.metarow}>
+      <div className={styles.infoiconcontainer}>
+        {!specific ? (
+          <FontAwesomeIcon icon={icon} size="1x" className={styles.infoicon} />
+        ) : (
+          <RenderIcon icon={icon} color="#D25627" style={styles.infoicon} />
+        )}
       </div>
-      {renderedTitle}
-      {isEditing ? (
-        <div className={styles.addMetadata}>
-          <input
-            type="text"
-            value={newMetadata}
-            onChange={(e) => setNewMetadata(e.target.value)}
-          />
-          <button className={styles.button} type="button" onClick={() => handleAddMetadata(label)}
-            style={{
-              backgroundColor: theme?.themeParameters?.[0]?.value || '#333', // Use theme color or default to #333
-              color: theme?.themeParameters?.[1]?.value || '#fff', // Use text color from theme or default to #fff
+      <div className={styles.metarowbody}>
+        {renderedLabel}
+        {renderedTitle}
+        {isEditing ? (
+          <div className={styles.addMetadata}>
+            <input
+              type="text"
+              value={newMetadata}
+              onChange={(e) => setNewMetadata(e.target.value)}
+            />
+            <button className={styles.button} type="button" onClick={() => handleAddMetadata(label)}
+              style={{
+                backgroundColor: theme?.themeParameters?.[0]?.value || '#333', // Use theme color or default to #333
+                color: theme?.themeParameters?.[1]?.value || '#fff', // Use text color from theme or default to #fff
+              }}
+            >Save</button>
+            <button className={styles.button} type="button" onClick={() => {
+              setIsEditing(false);
+              setNewMetadata(''); // Optional: Clear the input if needed
             }}
-          >Save</button>
-          <button className={styles.button} type="button" onClick={() => {
-            setIsEditing(false);
-            setNewMetadata(''); // Optional: Clear the input if needed
-          }}
-            style={{
-              backgroundColor: theme?.themeParameters?.[0]?.value || '#333', // Use theme color or default to #333
-              color: theme?.themeParameters?.[1]?.value || '#fff', // Use text color from theme or default to #fff
-            }}
-          >Cancel</button>
-        </div>
-      ) : null}
+              style={{
+                backgroundColor: theme?.themeParameters?.[0]?.value || '#333', // Use theme color or default to #333
+                color: theme?.themeParameters?.[1]?.value || '#fff', // Use text color from theme or default to #fff
+              }}
+            >Cancel</button>
+          </div>
+        ) : null}
+      </div>
     </div>
   );
   return renderedSection;
