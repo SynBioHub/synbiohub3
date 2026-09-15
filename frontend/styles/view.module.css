@@ -201,9 +201,10 @@
 }
 
 .subheader {
-  margin: 0.5rem 1rem;
+  margin: 0.5rem 1rem 0.75rem 1rem;
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .id {
@@ -219,16 +220,32 @@
   color: #263040;
 }
 
+.actionicons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
 .actionicon {
-  margin-left: 0.4rem;
-  color: #D25627;
-  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.65rem;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: #fff;
+  background-color: #D25627;
+  border-radius: 0.3rem;
   cursor: pointer;
-  transition: transform .2s;
+  transition: background-color .15s ease;
 }
 
 .actionicon:hover {
-  transform: scale(1.3);
+  background-color: #973d1c;
+}
+
+.actioniconlabel {
+  white-space: nowrap;
 }
 
 .infocontainer {
