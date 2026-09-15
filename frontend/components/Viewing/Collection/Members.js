@@ -20,6 +20,7 @@ import loadTemplate from '../../../sparql/tools/loadTemplate';
 import { shortName } from '../../../namespace/namespace';
 import lookupRole from '../../../namespace/lookupRole';
 import { getTypeColor } from '../../../utilities/typeColor';
+import { condenseLabel } from '../../../utilities/condenseLabel';
 import Link from 'next/link';
 import { addError, logoutUser } from '../../../redux/actions';
 import { processUrl } from '../../Admin/Registries';
@@ -268,7 +269,7 @@ function MembersFilterBar(properties) {
     if (properties.filters) {
       const newFilters = properties.filters.map(filter => {
         const shortNamedFilter = shortName(filter.uri);
-        return { value: filter.uri, label: shortNamedFilter };
+        return { value: filter.uri, label: condenseLabel(shortNamedFilter) };
       });
       newFilters.sort((a, b) => (a.label > b.label ? 1 : -1));
       newFilters.unshift({

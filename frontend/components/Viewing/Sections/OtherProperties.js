@@ -8,6 +8,7 @@ import { getAfterThirdSlash } from '../ViewHeader';
 import { isUriOwner, isValidURI } from '../Shell';
 import Loading from '../../Reusable/Loading';
 import Link from 'next/link';
+import lookupRole from '../../../namespace/lookupRole';
 
 import styles from '../../../styles/view.module.css';
 import { useDispatch, useSelector } from 'react-redux';
@@ -239,7 +240,7 @@ export default function OtherProperties(properties) {
     return (
       <tr key={key}>
         <td>
-          {name.split('/').pop()}
+          {lookupRole(name).term || name}
           <Link href={name}>
             <a>
               <FontAwesomeIcon
