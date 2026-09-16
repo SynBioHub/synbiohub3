@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import useSWR from 'swr';
 import axios from 'axios';
 import Select from 'react-select';
+import showdown from 'showdown';
 
 import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
@@ -41,6 +42,8 @@ const sortOptions = [
   { value: 'name', label: 'Name' },
   { value: 'displayId', label: 'Identifier' }
 ];
+
+const sdconverter = new showdown.Converter();
 
 export default function Members(properties) {
   const token = useSelector(state => state.user.token);
@@ -215,6 +218,17 @@ export default function Members(properties) {
       ? processedMembers.length
       : Math.min(processedMembers.length, pageStart + numberEntries);
   const pageMembers = processedMembers.slice(pageStart, pageEnd);
+
+  useEffect(() => {
+    if (
+      displayOffset > 0 &&
+      processedMembers.length > 0 &&
+      pageStart >= processedMembers.length
+    ) {
+      const limit = numberEntries === 'all' ? processedMembers.length : numberEntries;
+      setDisplayOffset(previous => Math.max(0, previous - limit));
+    }
+  }, [processedMembers, pageStart]);
 
   return (
     <div className={tableStyles.resultcontainer}>
@@ -555,7 +569,10 @@ function MemberTable(properties) {
                 )}
               </td>
               <td>
-                <div className={tableStyles.markdownContent}>{member.description}</div>
+                <div
+                  className={tableStyles.markdownContent}
+                  dangerouslySetInnerHTML={{ __html: sdconverter.makeHtml(member.description || '') }}
+                />
               </td>
               {!isPublicCollection && (icon === faTrash || icon === faUnlink) && (
                 <td
