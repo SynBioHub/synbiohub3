@@ -797,25 +797,6 @@
 .memberstable {
   table-layout: fixed;
   margin: 0.4rem 0 1.5rem;
-  border: 1px solid #f4f4f4;
-  border-radius: 0.5rem;
-  box-shadow: 0 1px 2px rgba(23, 29, 38, 0.05);
-}
-
-.memberstable thead tr:first-child th:first-child {
-  border-top-left-radius: 0.5rem;
-}
-
-.memberstable thead tr:first-child th:last-child {
-  border-top-right-radius: 0.5rem;
-}
-
-.memberstable tbody tr:last-child td:first-child {
-  border-bottom-left-radius: 0.5rem;
-}
-
-.memberstable tbody tr:last-child td:last-child {
-  border-bottom-right-radius: 0.5rem;
 }
 
 .membernamecolumn {

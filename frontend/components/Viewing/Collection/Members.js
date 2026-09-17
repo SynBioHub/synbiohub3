@@ -516,8 +516,8 @@ function MemberTable(properties) {
       <thead>
         <tr>
           <th className={styles.membernamecolumn}>ID / Name</th>
-          <th className={styles.membertypecolumn}>Type</th>
           <th>Description</th>
+          <th className={styles.membertypecolumn}>Type</th>
           {!isPublicCollection && <th className={styles.memberremovecolumn}>Remove</th>}
         </tr>
       </thead>
@@ -549,10 +549,16 @@ function MemberTable(properties) {
                   <a>
                     <div className={tableStyles.displayId}>{member.displayId}</div>
                     <div className={tableStyles.name}>
-                      <code>{member.name || member.displayId}</code>
+                      {member.name || member.displayId}
                     </div>
                   </a>
                 </Link>
+              </td>
+              <td>
+                <div
+                  className={tableStyles.markdownContent}
+                  dangerouslySetInnerHTML={{ __html: sdconverter.makeHtml(member.description || '') }}
+                />
               </td>
               <td>
                 {displayType && (
@@ -567,12 +573,6 @@ function MemberTable(properties) {
                     {displayType}
                   </span>
                 )}
-              </td>
-              <td>
-                <div
-                  className={tableStyles.markdownContent}
-                  dangerouslySetInnerHTML={{ __html: sdconverter.makeHtml(member.description || '') }}
-                />
               </td>
               {!isPublicCollection && (icon === faTrash || icon === faUnlink) && (
                 <td
