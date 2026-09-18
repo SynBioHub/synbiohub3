@@ -47,10 +47,25 @@ public class SubmitController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @Operation(summary = "Remove collection form (Unimplemented)", description = "Currently an empty stub.", deprecated = true)
-    @GetMapping(value = "/removeCollection")
-    public void removeCollection(@RequestParam Map<String, String> allParams) {
+    @GetMapping(value = "/user/{userId}/{collectionId}/{displayId}/{version}/removeCollection",
+            produces = "text/plain;charset=UTF-8")
+    @PreAuthorize("hasAnyAuthority('USER', 'CURATOR', 'ADMIN')")
+    public ResponseEntity<String> removeUserCollection(
+            @PathVariable String userId,
+            @PathVariable String collectionId,
+            @PathVariable String displayId,
+            @PathVariable String version) throws IOException {
+        return submitService.removeCollection(false, userId, collectionId, displayId, version);
+    }
 
+    @GetMapping(value = "/public/{collectionId}/{displayId}/{version}/removeCollection",
+            produces = "text/plain;charset=UTF-8")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<String> removePublicCollection(
+            @PathVariable String collectionId,
+            @PathVariable String displayId,
+            @PathVariable String version) throws IOException {
+        return submitService.removeCollection(true, null, collectionId, displayId, version);
     }
 
     @Operation(summary = "Remove object form (Unimplemented)", description = "Currently an empty stub.", deprecated = true)

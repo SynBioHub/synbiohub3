@@ -847,6 +847,34 @@
   background-color: #fff;
 }
 
+.sequenceTableHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.sequenceCopyButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-left: auto;
+  padding: 0.25rem 0.55rem;
+  border: 1px solid #ddd;
+  border-radius: 0.3rem;
+  background-color: #fff;
+  color: #465875;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.sequenceCopyButton:hover {
+  border-color: #D25627;
+  color: #D25627;
+}
+
 .table tr:nth-child(odd) {
   background-color: #f9f9f9;
 }
