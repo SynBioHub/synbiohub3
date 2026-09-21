@@ -1,0 +1,7 @@
+{
+  "database": "dolt",
+  "backend": "dolt",
+  "dolt_mode": "embedded",
+  "dolt_database": "synbiohub3",
+  "project_id": "cf542e5f-2528-441d-96a9-a356b74c996a"
+}

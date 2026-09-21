@@ -174,3 +174,10 @@ tests/SynBioHubRunner/
 tests/Timing/
 tests/sbol_testrunner_result
 tests/logs_from_test_suite/
+
+# Beads / Dolt files (added by bd init)
+.dolt/
+*.db
+.beads-credential-key
+.beads/proxieddb/
+*.gate.lock*
