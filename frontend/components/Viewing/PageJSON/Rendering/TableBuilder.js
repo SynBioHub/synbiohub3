@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import styles from '../../../../styles/view.module.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faCopy, faPlus } from '@fortawesome/free-solid-svg-icons';
 import Link from 'next/link';
+import { toast } from 'react-toastify';
 import RenderIcon from './RenderIcon';
 import MetadataRenderer from './MetadataRenderer';
 import parseQueryResult from '../Fetching/parseQueryResult';
@@ -64,7 +65,12 @@ function TableRenderer({ uri, prefixes, table, metadata, owner }) {
     });
   }, [uri, prefixes, table]);
 
-  const header = metadata ? null : createHeader(table.sections, content);
+  const plainSequence =
+    !metadata && table.title === 'Sequence' ? getPlainSequence(content) : null;
+
+  const header = metadata
+    ? null
+    : createHeader(table.sections, content, plainSequence);
 
   const isEditable = metadata && metadata.editable && owner;
 
@@ -117,7 +123,43 @@ function TableRenderer({ uri, prefixes, table, metadata, owner }) {
   );
 }
 
-function createHeader(columns, content) {
+function getPlainSequence(content) {
+  if (!content || content.length === 0) return null;
+  const sequenceSection = content[0].sequence;
+  if (!sequenceSection || sequenceSection.length === 0) return null;
+  const value = sequenceSection[0].value;
+  if (!value || typeof value !== 'string') return null;
+  // Strip whitespace so clipboard gets contiguous letters only
+  const plain = value.replace(/\s+/g, '');
+  return plain || null;
+}
+
+function copySequenceToClipboard(plainSequence) {
+  navigator.clipboard.writeText(plainSequence).then(() => {
+    toast(
+      <div>
+        <FontAwesomeIcon
+          icon={faCopy}
+          size="1x"
+          className={styles.toastcopyicon}
+        />
+        Sequence Copied!
+      </div>,
+      {
+        position: 'top-right',
+        autoClose: 500,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        className: styles.modaltoast
+      }
+    );
+  });
+}
+
+function createHeader(columns, content, plainSequence) {
   parseTableHeaders(columns);
 
   const columnsProcessed = {};
@@ -131,14 +173,30 @@ function createHeader(columns, content) {
           content.length > 0 &&
           content[0][index] &&
           content[0][index].infoLink;
+        const showCopy = column.title === 'Sequence' && plainSequence;
         return (
           <th key={index}>
-            {column.title}
-            <Link href={customInfoLink || column.infoLink || 'NA'}>
-              <a target="_blank" title={column.info}>
-                <RenderIcon icon={column.icon || 'faInfoCircle'} />
-              </a>
-            </Link>
+            <div className={styles.sequenceTableHeader}>
+              <span>
+                {column.title}
+                <Link href={customInfoLink || column.infoLink || 'NA'}>
+                  <a target="_blank" title={column.info}>
+                    <RenderIcon icon={column.icon || 'faInfoCircle'} />
+                  </a>
+                </Link>
+              </span>
+              {showCopy && (
+                <button
+                  type="button"
+                  className={styles.sequenceCopyButton}
+                  title="Copy sequence"
+                  onClick={() => copySequenceToClipboard(plainSequence)}
+                >
+                  <FontAwesomeIcon icon={faCopy} size="sm" />
+                  Copy
+                </button>
+              )}
+            </div>
           </th>
         );
       }

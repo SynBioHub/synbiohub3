@@ -13,6 +13,7 @@ from test_functions import (
     get_request,
     login_with,
     post_request,
+    record_test_coverage,
     request_file_path,
     test_state,
 )
@@ -49,6 +50,7 @@ class TestAdmin(TestCase):
         sbh1_response = get_request("admin/log", 1, {"Accept": "application/json"}, [])
         sbh3_response = get_request("admin/log", 3, {"Accept": "application/json"}, [])
         compare_status_codes(sbh1_response, sbh3_response)
+        record_test_coverage("admin/log", "get", "admin_log", test_type)
         test_print("test_admin_log completed")
 
         # test_print("test_admin_mail starting")

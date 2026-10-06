@@ -8,6 +8,7 @@ import { getAfterThirdSlash } from '../ViewHeader';
 import { isUriOwner, isValidURI } from '../Shell';
 import Loading from '../../Reusable/Loading';
 import Link from 'next/link';
+import lookupRole from '../../../namespace/lookupRole';
 
 import styles from '../../../styles/view.module.css';
 import { useDispatch, useSelector } from 'react-redux';
@@ -166,18 +167,40 @@ export default function OtherProperties(properties) {
 
   return (
     <div>
-      <table className={styles.table}>
+      <table className={`${styles.table} ${styles.otherPropertiesTable}`}>
         <tbody>
           {generateRows()}
           <tr>
             <td>
-              <input
-                id="newPredicateInput"
-                type="text"
-                value={newPredicate}
-                onChange={(e) => setNewPredicate(e.target.value)}
-                placeholder="Enter predicate"
-              />
+              <span className={styles.predicateInputWrap}>
+                <input
+                  id="newPredicateInput"
+                  type="text"
+                  value={newPredicate}
+                  onChange={(e) => setNewPredicate(e.target.value)}
+                  placeholder="Enter predicate"
+                />
+                <span
+                  className={styles.predicateInfo}
+                  tabIndex={0}
+                  role="button"
+                  aria-label="Predicate format help"
+                >
+                  <FontAwesomeIcon
+                    icon={faInfoCircle}
+                    size="1x"
+                    color="#465875"
+                    className={styles.searchicon}
+                  />
+                  <span className={styles.predicateTooltip}>
+                    Predicate must be a full URI starting with http:// or https://.
+                    Use a vocabulary term, for example:
+                    <span className={styles.predicateExample}>
+                      http://wiki.synbiohub.org/wiki/Terms/synbiohub#myAnnotation
+                    </span>
+                  </span>
+                </span>
+              </span>
             </td>
             <td>
               <input
@@ -217,7 +240,7 @@ export default function OtherProperties(properties) {
     return (
       <tr key={key}>
         <td>
-          {name.split('/').pop()}
+          {lookupRole(name).term || name}
           <Link href={name}>
             <a>
               <FontAwesomeIcon

@@ -201,6 +201,15 @@ const processSubmissions = submissions => {
       submission.privacy = 'public';
       if (!submission.uri.includes('/public/')) submission.privacy = 'private';
     }
+
+    // Path form for backend actions (removeCollection, download, publish)
+    if (submission.uri && !submission.url) {
+      try {
+        submission.url = new URL(submission.uri).pathname;
+      } catch {
+        submission.url = submission.uri;
+      }
+    }
   }
 
   return submissions;

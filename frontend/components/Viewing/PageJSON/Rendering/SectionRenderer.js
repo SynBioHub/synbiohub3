@@ -2,16 +2,11 @@ import styles from '../../../../styles/view.module.css';
 import Link from 'next/link';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
-import { useDispatch, useSelector } from 'react-redux';
-import axios from 'axios';
 import { useEffect } from 'react';
 import { useState } from 'react';
-import { addError } from '../../../../redux/actions';
 import sequenceOntology from '../../../../namespace/sequence-ontology';
 import systemsBiologyOntology from '../../../../namespace/systems-biology-ontology';
 import edamOntology from '../../../../namespace/edam-ontology';
-import getConfig from 'next/config';
-const { publicRuntimeConfig } = getConfig();
 
 import { processUrl } from '../../../Admin/Registries';
 
@@ -22,61 +17,42 @@ function loadText(template, args) {
   return template;
 }
 
+function getCachedRegistries() {
+  try {
+    const stored = JSON.parse(localStorage.getItem("registries"));
+    if (Array.isArray(stored)) return stored;
+    if (stored && Array.isArray(stored.registries)) return stored.registries;
+  } catch (e) {
+    // fall through
+  }
+  return [];
+}
+
 export default function SectionRenderer({ section, metadata }) {
-  const dispatch = useDispatch();
-  const url = `${publicRuntimeConfig.backend}/admin/registries`;
-  const registries = JSON.parse(localStorage.getItem("registries")) || {};
-  const [data, setData] = useState(null);
+  const registries = getCachedRegistries();
   const [processedLink, setProcessedLink] = useState(null);
-  const token = useSelector(state => state.user.token);
 
   useEffect(() => {
     let isMounted = true;
 
-    async function fetchDataAndProcessLink() {
-      //... your existing code fetching the data
-
-      // After you set the data, process the link
+    async function processLink() {
       if (isMounted && section.link) {
-        const processed = await processUrl(section.link, registries); // Assuming you have token available
+        const processed = await processUrl(section.link, registries);
         setProcessedLink(processed);
       }
     }
 
-    fetchDataAndProcessLink();
+    processLink();
 
     return () => {
       isMounted = false;
     };
   }, []);
 
+  let usedProcessedLink = false;
 
-  useEffect(() => {
-    let isMounted = true; // <-- add this line
-
-    axios
-      .get(url, { headers: { accept: 'application/json' } })
-      .then(res => res.data.registries)
-      .then((registries) => {
-        if (isMounted) {  // <-- check this condition before setting state
-          setData(registries);
-        }
-      })
-      .catch(error => {
-        error.customMessage = 'Request failed for GET /admin/registries';
-        error.fullUrl = url;
-        dispatch(addError(error))
-      });
-
-    return () => {  // <-- cleanup function
-      isMounted = false;  // <-- set the flag to false when the component unmounts
-    };
-  }, []);
-  if (data) {
-    let usedProcessedLink = false;
-
-    if (section.link) {
-      data.forEach(registry => {
+  if (section.link) {
+    registries.forEach(registry => {
         if (
           section.link.startsWith(registry.uri) &&
           processedLink &&
@@ -183,13 +159,6 @@ export default function SectionRenderer({ section, metadata }) {
         )}
       </td>
     );
-
-
-  } else {
-    return <td>
-      Loading...
-    </td>
-  }
 }
 
 function ColumnLink({ text, link, linkType }) {

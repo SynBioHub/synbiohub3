@@ -177,75 +177,89 @@ export default function SidePanelTools(properties) {
         </Link>
       </div>
       <div className={styles.actionicons}>
-        <FontAwesomeIcon
-          icon={faShare}
-          size="1x"
+        <div
+          role="button"
           className={styles.actionicon}
           onClick={() => {
             setModal("Share");
           }}
-          title="Share Item" // Placeholder for share button description
-        />
-        <FontAwesomeIcon
-          icon={faCloudDownloadAlt}
-          size="1x"
+          title="Share this item's link"
+        >
+          <FontAwesomeIcon icon={faShare} size="1x" />
+          <span className={styles.actioniconlabel}>Share</span>
+        </div>
+        <div
+          role="button"
           className={styles.actionicon}
           onClick={() => {
             setModal("Download");
           }}
-          title="Download Item" // placeholder for download button description
-        />
-        <FontAwesomeIcon
-          icon={faQuoteRight}
-          size="1x"
+          title="Download this item"
+        >
+          <FontAwesomeIcon icon={faCloudDownloadAlt} size="1x" />
+          <span className={styles.actioniconlabel}>Download</span>
+        </div>
+        <div
+          role="button"
           className={styles.actionicon}
           onClick={() => {
             copyToast("Citation Copied!");
             copyToClipboard();
           }}
-          title="Copy Citation" // placeholder for copy button description
-        />
-        {!isPublic && ( <FontAwesomeIcon
-          icon={faGlobeAmericas}
-          size="1x"
-          className={styles.actionicon}
-          onClick={() => {
-            setModal("MakePublic");
-          }}
-          title="Make Public" // placeholder for unlock button description
-        />
+          title="Copy a citation for this item"
+        >
+          <FontAwesomeIcon icon={faQuoteRight} size="1x" />
+          <span className={styles.actioniconlabel}>Cite</span>
+        </div>
+        {!isPublic && (
+          <div
+            role="button"
+            className={styles.actionicon}
+            onClick={() => {
+              setModal("MakePublic");
+            }}
+            title="Publish this item to the public collection"
+          >
+            <FontAwesomeIcon icon={faGlobeAmericas} size="1x" />
+            <span className={styles.actioniconlabel}>Make Public</span>
+          </div>
         )}
         {isPublic && isCollection && loggedIn && (
-          <FontAwesomeIcon
-            icon={faCamera}
-            size="1x"
+          <div
+            role="button"
             className={styles.actionicon}
             onClick={() => {
               setModal("CollectionIcon");
             }}
-            title="Change Collection Icon"
-          />
+            title="Change this collection's icon"
+          >
+            <FontAwesomeIcon icon={faCamera} size="1x" />
+            <span className={styles.actioniconlabel}>Icon</span>
+          </div>
         )}
         {loggedIn && (
-          <FontAwesomeIcon
-            icon={faPlus}
-            size="1x"
+          <div
+            role="button"
             className={styles.actionicon}
             onClick={() => {
               setModal("AddToCollection");
             }}
-            title="Add to Collection" // placeholder for add to collection button description
-          />
+            title="Add this item to one of your collections"
+          >
+            <FontAwesomeIcon icon={faPlus} size="1x" />
+            <span className={styles.actioniconlabel}>Add to Collection</span>
+          </div>
         )}
         {isOwner && (
-          <FontAwesomeIcon
-            icon={faTrashAlt}
-            size="1x"
+          <div
+            role="button"
             className={styles.actionicon}
             onClick={() => setModal("Delete")}
-            title="Delete Item" // placeholder for delete button description
-            uri={properties.url}
-          />
+            title="Delete this item"
+          >
+            <FontAwesomeIcon icon={faTrashAlt} size="1x" />
+            <span className={styles.actioniconlabel}>Delete</span>
+          </div>
         )}
       </div>
     </div>

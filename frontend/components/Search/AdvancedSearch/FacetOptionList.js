@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
 
 import styles from '../../../styles/advancedsearch.module.css';
+import { condenseLabel } from '../../../utilities/condenseLabel';
 import { getFacetDotColor } from '../../../utilities/facetColor';
 import Loading from '../../Reusable/MiniLoading';
 
@@ -16,17 +17,6 @@ export const toggleOption = (value, isMulti, option) => {
   return isOptionSelected(value, true, option)
     ? value.filter(selected => selected.value !== option.value)
     : [...value, option];
-};
-
-// drops the "prefix:" and/or "category/" from a short name for display
-// (so:engineered_region -> engineered_region, partType/RBS -> RBS)
-export const condenseLabel = label => {
-  const afterPrefix = label.includes(':')
-    ? label.slice(label.lastIndexOf(':') + 1)
-    : label;
-  return afterPrefix.includes('/')
-    ? afterPrefix.slice(afterPrefix.lastIndexOf('/') + 1)
-    : afterPrefix;
 };
 
 const getVisibleOptions = (data, search) =>

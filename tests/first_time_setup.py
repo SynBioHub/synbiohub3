@@ -1,5 +1,5 @@
 from unittest import TestCase
-from test_functions import compare_get_request, compare_post_request, post_request, post_json_request
+from test_functions import compare_get_request, compare_post_request, post_request, post_json_request, record_test_coverage
 from test_arguments import test_print, SETUP_URI_PREFIX
 
 
@@ -42,6 +42,7 @@ class TestSetup(TestCase):
         #Use to do /setup "without" comparing the responses
         post_json_request("setup", 1, setup, headers = {"Accept": "text/plain", "Content-Type": "application/json"}, route_parameters = [], files = None)
         post_json_request("setup", 3, setup, headers = {"Accept": "text/plain", "Content-Type": "application/json"}, route_parameters = [], files = None)
+        record_test_coverage("setup", "post", "setup_post", "Other")
 
         test_print("test_setup_post completed")
 

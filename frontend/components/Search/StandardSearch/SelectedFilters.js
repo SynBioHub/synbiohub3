@@ -1,7 +1,7 @@
 import { shortName } from '../../../namespace/namespace';
 import styles from '../../../styles/standardsearch.module.css';
+import { condenseLabel } from '../../../utilities/condenseLabel';
 import { getFacetDotColor } from '../../../utilities/facetColor';
-import { condenseLabel } from '../AdvancedSearch/FacetOptionList';
 
 const buildSingleChips = properties => {
   const filters = [
