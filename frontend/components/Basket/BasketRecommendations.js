@@ -21,6 +21,7 @@ const MAX_SHOWN = 5;
 export default function BasketRecommendations(properties) {
   const { basketItems, selected, theme } = properties;
   const token = useSelector(state => state.user.token);
+  const privateGraphUri = useSelector(state => state.user.graphUri);
   const dispatch = useDispatch();
   const router = useRouter();
 
@@ -34,10 +35,20 @@ export default function BasketRecommendations(properties) {
     [basketItems, selected]
   );
 
+  const graphParams = [
+    theme?.uriPrefix ? `${theme.uriPrefix}public` : null,
+    privateGraphUri
+  ]
+    .filter(Boolean)
+    .map(graph => `&default-graph-uri=${encodeURIComponent(graph)}`)
+    .join('');
+
   const { data, error } = useSWR(
     subjects.length > 0
       ? [
-          `/api/recommend?subject=${encodeURIComponent(subjects.join(','))}`,
+          `/api/recommend?subject=${encodeURIComponent(
+            subjects.join(',')
+          )}${graphParams}`,
           token
         ]
       : null,

@@ -13,12 +13,18 @@ const MAX_ENRICHED = 10;
 
 export default async function handler(request, response) {
   const { subject, role, limit } = request.query;
+  const defaultGraphUri = request.query['default-graph-uri'];
   if (!subject) {
     response.status(400).json({ error: 'subject is required' });
     return;
   }
 
-  const recommendations = await fetchRecommendations(subject, role, limit);
+  const recommendations = await fetchRecommendations(
+    subject,
+    role,
+    limit,
+    defaultGraphUri
+  );
   if (!recommendations) {
     // A missing or unhealthy Explorer means "no suggestions", not a broken basket.
     response.status(200).json({
@@ -40,13 +46,20 @@ export default async function handler(request, response) {
   });
 }
 
-const fetchRecommendations = (subject, role, limit) => {
+const fetchRecommendations = (subject, role, limit, defaultGraphUri) => {
   const endpoint = withTrailingSlash(
     process.env.sbolExplorer || DEFAULT_EXPLORER_ENDPOINT
   );
+  const params = new URLSearchParams();
+  params.append('subject', subject);
+  if (role) params.append('role', role);
+  if (limit) params.append('limit', limit);
+  (Array.isArray(defaultGraphUri) ? defaultGraphUri : [defaultGraphUri])
+    .filter(Boolean)
+    .forEach(graph => params.append('default-graph-uri', graph));
+
   return axios
-    .get(`${endpoint}recommend`, {
-      params: { subject, role, limit },
+    .get(`${endpoint}recommend?${params.toString()}`, {
       timeout: REQUEST_TIMEOUT
     })
     .then(explorerResponse => explorerResponse.data)
