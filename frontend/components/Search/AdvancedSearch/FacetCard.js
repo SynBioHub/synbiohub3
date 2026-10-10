@@ -3,11 +3,15 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import styles from '../../../styles/advancedsearch.module.css';
 import FacetOptionList from './FacetOptionList';
-import useFacetOptions from './useFacetOptions';
+import useFacetOptions, { sortByCount } from './useFacetOptions';
 
 /**
  * Renders a single facet as an always-expanded card: title, underlying
- * predicate, a search box, and the top options by count
+ * predicate, a search box, and the top options by count.
+ *
+ * Options come either from `sparql` (queried here) or ready-made from
+ * `options` ([{ value, label, count }], e.g. from SBOLExplorer's /facets);
+ * when `options` is given no SPARQL query is sent.
  */
 export default function FacetCard(properties) {
   const {
@@ -16,11 +20,19 @@ export default function FacetCard(properties) {
     description,
     sparql,
     parseResult,
+    options,
+    optionsLoading,
     isMulti,
     value,
     onChange
   } = properties;
-  const { loading, error, data } = useFacetOptions({ sparql, parseResult });
+  const fromSparql = useFacetOptions({
+    sparql: options ? undefined : sparql,
+    parseResult
+  });
+  const { loading, error, data } = options
+    ? { loading: Boolean(optionsLoading), error: false, data: sortByCount([...options]) }
+    : fromSparql;
 
   const hasSelection = isMulti ? value.length > 0 : Boolean(value);
 
