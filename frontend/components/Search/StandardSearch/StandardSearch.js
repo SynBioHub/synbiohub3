@@ -8,6 +8,7 @@ import { faHatWizard, faBars } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRouter } from 'next/router';
 import Options from '../AdvancedSearch/Options';
+import useExplorerFacets from '../AdvancedSearch/useExplorerFacets';
 import SelectedFilters from './SelectedFilters';
 import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
@@ -240,22 +241,31 @@ export default function StandardSearch() {
     )
   });
 
+  // Facet counts and total from SBOLExplorer when available; otherwise the
+  // sidebar and the count fall back to SPARQL.
+  const explorerFacets = useExplorerFacets(query, {
+    creator, objectType, role, sbolType, collections, extraFilters
+  });
+
   const { newCount, isCountLoading, isCountError } = useSearchCount(
     countQuery,
     token,
     dispatch,
-    loginBlocked
+    loginBlocked || explorerFacets.available
   );
 
   // update search count display, keeping the last known count visible
   // while a new one is loading instead of blanking it out
   useEffect(() => {
-    if (isCountError) {
+    if (explorerFacets.available) {
+      if (!explorerFacets.loading) setCount(explorerFacets.found);
+    } else if (isCountError) {
       setCount('Error');
     } else if (!isCountLoading) {
       setCount(newCount);
     }
-  }, [isCountLoading, isCountError, newCount, query, extraFilters]);
+  }, [isCountLoading, isCountError, newCount, query, extraFilters,
+    explorerFacets.available, explorerFacets.loading, explorerFacets.found]);
 
   // get search results
   const { results, isLoading, isError } = useSearchResults(
@@ -362,6 +372,7 @@ export default function StandardSearch() {
           >
             <div>
               <Options
+                explorerFacets={explorerFacets}
                 creator={creator}
                 setCreator={setCreator}
 
