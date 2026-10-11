@@ -9,6 +9,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRouter } from 'next/router';
 import Options from '../AdvancedSearch/Options';
 import useExplorerFacets from '../AdvancedSearch/useExplorerFacets';
+import useDebouncedValue from '../../../utilities/useDebouncedValue';
 import SelectedFilters from './SelectedFilters';
 import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
@@ -39,7 +40,8 @@ import { filter } from 'jszip';
 
 export default function StandardSearch() {
   const theme = JSON.parse(localStorage.getItem('theme')) || {};
-  const query = useSelector(state => state.search.query);
+  const inputQuery = useSelector(state => state.search.query);
+  const query = useDebouncedValue(inputQuery, 300);
   const offset = useSelector(state => state.search.offset);
   const limit = useSelector(state => state.search.limit);
   const token = useSelector(state => state.user.token);
@@ -372,6 +374,7 @@ export default function StandardSearch() {
           >
             <div>
               <Options
+                searchQuery={query}
                 explorerFacets={explorerFacets}
                 creator={creator}
                 setCreator={setCreator}
