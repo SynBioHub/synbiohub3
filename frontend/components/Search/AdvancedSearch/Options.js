@@ -26,7 +26,8 @@ export default function Options(properties) {
   const [predicates, setPredicates] = useState('loading');
   const dispatch = useDispatch();
   const token = useSelector(state => state.user.token);
-  const searchQuery = useSelector(state => state.search.query);
+  const inputQuery = useSelector(state => state.search.query);
+  const searchQuery = properties.searchQuery ?? inputQuery;
   const username = useSelector(state => state.user.username);
   const privateGraphUri = useSelector(state => state.user.graphUri);
   const theme = JSON.parse(localStorage.getItem('theme')) || {};
