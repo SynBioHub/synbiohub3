@@ -8,6 +8,8 @@ import { faHatWizard, faBars } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRouter } from 'next/router';
 import Options from '../AdvancedSearch/Options';
+import useExplorerFacets from '../AdvancedSearch/useExplorerFacets';
+import useDebouncedValue from '../../../utilities/useDebouncedValue';
 import SelectedFilters from './SelectedFilters';
 import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
@@ -38,7 +40,8 @@ import { filter } from 'jszip';
 
 export default function StandardSearch() {
   const theme = JSON.parse(localStorage.getItem('theme')) || {};
-  const query = useSelector(state => state.search.query);
+  const inputQuery = useSelector(state => state.search.query);
+  const query = useDebouncedValue(inputQuery, 500);
   const offset = useSelector(state => state.search.offset);
   const limit = useSelector(state => state.search.limit);
   const token = useSelector(state => state.user.token);
@@ -238,21 +241,31 @@ export default function StandardSearch() {
     )
   });
 
+  // Facet counts and total from SBOLExplorer when available; otherwise the
+  // sidebar and the count fall back to SPARQL.
+  const explorerFacets = useExplorerFacets(query, {
+    creator, objectType, role, sbolType, collections, extraFilters
+  });
+
   const { newCount, isCountLoading, isCountError } = useSearchCount(
     countQuery,
     token,
-    dispatch
+    dispatch,
+    !explorerFacets.available
   );
 
   // update search count display, keeping the last known count visible
   // while a new one is loading instead of blanking it out
   useEffect(() => {
-    if (isCountError) {
+    if (explorerFacets.available) {
+      if (!explorerFacets.loading) setCount(explorerFacets.found);
+    } else if (isCountError) {
       setCount('Error');
     } else if (!isCountLoading) {
       setCount(newCount);
     }
-  }, [isCountLoading, isCountError, newCount, query, extraFilters]);
+  }, [isCountLoading, isCountError, newCount, query, extraFilters,
+    explorerFacets.available, explorerFacets.loading, explorerFacets.found]);
 
   // get search results
   const { results, isLoading, isError } = useSearchResults(
@@ -353,6 +366,8 @@ export default function StandardSearch() {
           >
             <div>
               <Options
+                searchQuery={query}
+                explorerFacets={explorerFacets}
                 creator={creator}
                 setCreator={setCreator}
 
@@ -414,12 +429,15 @@ const useSearchResults = (query, filterString, offset, limit, token, dispatch, s
   };
 };
 
-const useSearchCount = (countQuery, token, dispatch) => {
+const useSearchCount = (countQuery, token, dispatch, enabled = true) => {
   const requestUrl = `${
     publicRuntimeConfig.backend
   }/sparql?query=${encodeURIComponent(countQuery)}`;
 
-  const { data, error } = useSWR([requestUrl, token, dispatch], countFetcher);
+  const { data, error } = useSWR(
+    enabled ? [requestUrl, token, dispatch] : null,
+    countFetcher
+  );
   return {
     newCount: data,
     isCountLoading: !error && data === undefined,
