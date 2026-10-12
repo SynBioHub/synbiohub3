@@ -41,7 +41,7 @@ import { filter } from 'jszip';
 export default function StandardSearch() {
   const theme = JSON.parse(localStorage.getItem('theme')) || {};
   const inputQuery = useSelector(state => state.search.query);
-  const query = useDebouncedValue(inputQuery, 300);
+  const query = useDebouncedValue(inputQuery, 500);
   const offset = useSelector(state => state.search.offset);
   const limit = useSelector(state => state.search.limit);
   const token = useSelector(state => state.user.token);
