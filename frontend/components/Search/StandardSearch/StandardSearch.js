@@ -43,6 +43,7 @@ export default function StandardSearch() {
   const limit = useSelector(state => state.search.limit);
   const token = useSelector(state => state.user.token);
   const loggedIn = useSelector(state => state.user.loggedIn);
+  const loginBlocked = theme.requireLogin && !loggedIn;
   const privateGraphUri = useSelector(state => state.user.graphUri);
   const registries = JSON.parse(localStorage.getItem("registries")) || {};
   const [count, setCount] = useState();
@@ -96,10 +97,11 @@ export default function StandardSearch() {
   }, [token]);
 
   useEffect(() => {
-    if (theme.requireLogin && !loggedIn) {
+    // TopLevel restores a stored session asynchronously, so don't bounce users who have a token
+    if (loginBlocked && !localStorage.getItem('userToken')) {
       router.push('/login'); // Redirect to the login page
     }
-  }, [theme.requireLogin, router]);
+  }, [loginBlocked, router]);
 
   const normalizeFilterValue = (value, isDate = false) => {
     if (!value) return null;
@@ -241,7 +243,8 @@ export default function StandardSearch() {
   const { newCount, isCountLoading, isCountError } = useSearchCount(
     countQuery,
     token,
-    dispatch
+    dispatch,
+    loginBlocked
   );
 
   // update search count display, keeping the last known count visible
@@ -262,7 +265,8 @@ export default function StandardSearch() {
     limit,
     token,
     dispatch,
-    sbhVersion
+    sbhVersion,
+    loginBlocked
   );
 
   if (!isLoading && !isError) {
@@ -280,6 +284,11 @@ export default function StandardSearch() {
       setDisplayResults(results);
     }
   }, [results, isLoading, isError]);
+
+  // also keeps Options from mounting, which would fire its own facet queries
+  if (loginBlocked) {
+    return null;
+  }
 
   let resultsContent;
   if (isError) {
@@ -389,7 +398,7 @@ export default function StandardSearch() {
     </div>
   );
 }
-const useSearchResults = (query, filterString, offset, limit, token, dispatch, sbhVersion) => {
+const useSearchResults = (query, filterString, offset, limit, token, dispatch, sbhVersion, loginBlocked) => {
   let requestUrl;
   if (sbhVersion === 3) {
     const params = new URLSearchParams(filterString);
@@ -404,7 +413,7 @@ const useSearchResults = (query, filterString, offset, limit, token, dispatch, s
   }
 
   const { data, error } = useSWR(
-    [requestUrl, token, dispatch],
+    loginBlocked ? null : [requestUrl, token, dispatch],
     fetcher
   );
   return {
@@ -414,12 +423,15 @@ const useSearchResults = (query, filterString, offset, limit, token, dispatch, s
   };
 };
 
-const useSearchCount = (countQuery, token, dispatch) => {
+const useSearchCount = (countQuery, token, dispatch, loginBlocked) => {
   const requestUrl = `${
     publicRuntimeConfig.backend
   }/sparql?query=${encodeURIComponent(countQuery)}`;
 
-  const { data, error } = useSWR([requestUrl, token, dispatch], countFetcher);
+  const { data, error } = useSWR(
+    loginBlocked ? null : [requestUrl, token, dispatch],
+    countFetcher
+  );
   return {
     newCount: data,
     isCountLoading: !error && data === undefined,
