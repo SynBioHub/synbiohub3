@@ -449,6 +449,19 @@ public class UserService {
         return flag.asBoolean(false) ? 3 : 1;
     }
 
+    /**
+     * Usernames and display names of all users, safe to show to any logged-in user (e.g. the owner picker).
+     */
+    public List<Map<String, String>> getUserDirectory() {
+        return userRepository.findAll().stream()
+                .filter(user -> user.getUsername() != null)
+                .sorted(Comparator.comparing(User::getUsername, String.CASE_INSENSITIVE_ORDER))
+                .map(user -> Map.of(
+                        "username", user.getUsername(),
+                        "name", user.getName() == null ? "" : user.getName()))
+                .collect(Collectors.toList());
+    }
+
     public User getUserByUsername(String username) {
         return userRepository.findByUsername(username).orElse(null);
     }
