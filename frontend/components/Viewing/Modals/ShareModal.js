@@ -88,7 +88,7 @@ export default function ShareModal(properties) {
 
   useEffect(() => {
     const fetchUserList = async () => {
-      const url = `${publicRuntimeConfig.backend}/users`;
+      const url = `${publicRuntimeConfig.backend}/admin/users`;
       const headers = {
         Accept: "application/json",
         "X-authorization": token

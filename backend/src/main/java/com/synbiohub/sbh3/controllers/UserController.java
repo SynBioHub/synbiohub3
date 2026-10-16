@@ -135,17 +135,6 @@ public class UserController {
         return ResponseEntity.ok(mapper.writeValueAsString(user));
     }
 
-    @Operation(summary = "List users", description = "Returns the username and display name of every user, for choosing someone to share an object with. Available to any logged-in user.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "JSON object with a 'users' array of {username, name}"),
-            @ApiResponse(responseCode = "401", description = "User is not authenticated")
-    })
-    @PreAuthorize("hasAnyAuthority('USER', 'CURATOR', 'ADMIN')")
-    @GetMapping(value = "/users", produces = "application/json")
-    public Map<String, Object> getUsers() {
-        return Map.of("users", userService.getUserDirectory());
-    }
-
     /**
      * Changes user's profile fields.
      * Only updates the fields name, email, and affiliation currently
