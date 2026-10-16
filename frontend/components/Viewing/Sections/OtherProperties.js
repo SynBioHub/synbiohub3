@@ -115,7 +115,6 @@ export default function OtherProperties(properties) {
   };
 
   const confirmDeletion = (key, name, value) => {
-    handleRemoveOwner(name, value);
     const confirmDelete = window.confirm("Are you sure you want to delete this annotation?");
     if (confirmDelete) {
       handleRemoveItem(key, name, value);

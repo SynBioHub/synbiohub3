@@ -90,7 +90,7 @@ export default function ShareModal(properties) {
     const fetchUserList = async () => {
       const url = `${publicRuntimeConfig.backend}/admin/users`;
       const headers = {
-        Accept: "text/plain; charset=UTF-8",
+        Accept: "application/json",
         "X-authorization": token
       };
 
@@ -131,20 +131,15 @@ export default function ShareModal(properties) {
     parameters.append("user", `${theme.uriPrefix}user/${owner}`);
     parameters.append("uri", fullUri);
 
-    let response;
-
     try {
-      response = await axios.post(url, parameters, { headers });
-    } catch (error) {
-      if (error.response) {
-        console.error('Error:', error.message);
-      }
-    }
-
-    if (response && response.status !== 200) {
-      errorToast("Something went wrong with adding an owner.");
-    } else {
+      await axios.post(url, parameters, { headers });
       window.location.reload();
+    } catch (error) {
+      console.error('Error:', error.message);
+      const message = typeof error.response?.data === 'string' && error.response.data
+        ? error.response.data
+        : "Something went wrong with adding an owner.";
+      errorToast(message);
     }
   }
 
