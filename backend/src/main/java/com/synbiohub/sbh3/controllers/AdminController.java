@@ -570,7 +570,8 @@ public class AdminController {
         }
     }
 
-    @Operation(summary = "Get all users", description = "Returns a JSON list of all registered users.")
+    @Operation(summary = "Get all users", description = "Returns a JSON list of all registered users. Available to any logged-in user (SBH1 parity); used by the Share modal owner picker. Writes remain admin-only via POST.")
+    @PreAuthorize("hasAnyAuthority('USER', 'CURATOR', 'ADMIN')")
     @GetMapping(value = "/admin/users")
     @ResponseBody
     public Map<String, Object> getUsers(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
