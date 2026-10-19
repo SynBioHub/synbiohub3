@@ -26,7 +26,8 @@ export default function Options(properties) {
   const [predicates, setPredicates] = useState('loading');
   const dispatch = useDispatch();
   const token = useSelector(state => state.user.token);
-  const searchQuery = useSelector(state => state.search.query);
+  const inputQuery = useSelector(state => state.search.query);
+  const searchQuery = properties.searchQuery ?? inputQuery;
   const username = useSelector(state => state.user.username);
   const privateGraphUri = useSelector(state => state.user.graphUri);
   const theme = JSON.parse(localStorage.getItem('theme')) || {};
@@ -69,17 +70,34 @@ export default function Options(properties) {
     );
   });
 
+  const uriLabel = uri => {
+    if (uri === 'http://sbols.org/v2#ComponentDefinition') return 'Component';
+    if (uri === 'http://sbols.org/v2#ModuleDefinition') return 'Module';
+    return shortName(uri);
+  };
+
   const addCountToResultName = result => {
     const uri = result.object.value;
-    let label = shortName(uri);
-    if (uri === 'http://sbols.org/v2#ComponentDefinition') label = 'Component';
-    else if (uri === 'http://sbols.org/v2#ModuleDefinition') label = 'Module';
     return {
       value: uri,
-      label,
+      label: uriLabel(uri),
       count: result.count ? Number(result.count.value) : 0
     };
   };
+
+  // Ready-made options from SBOLExplorer's /facets (see useExplorerFacets),
+  // or undefined so the card falls back to its own SPARQL query. URI-valued
+  // facets keep the same labels as the SPARQL path.
+  const explorer = properties.explorerFacets;
+  const explorerOptions = (name, labelFromUri) => {
+    if (!explorer || !explorer.available) return undefined;
+    return (explorer.facets[name] || []).map(option => ({
+      value: option.value,
+      label: labelFromUri ? uriLabel(option.value) : option.label,
+      count: option.count
+    }));
+  };
+  const explorerLoading = Boolean(explorer && explorer.loading);
 
   return (
     <div>
@@ -88,6 +106,8 @@ export default function Options(properties) {
         subtitle="sbol2:type"
         description={facetDefinitions['Part Type']}
         sparql={facetQuery(getSBOLTypes, 'sbolType')}
+        options={explorerOptions('sboltype', true)}
+        optionsLoading={explorerLoading}
         value={properties.sbolType}
         parseResult={addCountToResultName}
         onChange={option => properties.setSbolType(option ? option.value : '')}
@@ -98,6 +118,8 @@ export default function Options(properties) {
         subtitle="sbol2:role"
         description={facetDefinitions['Part Role']}
         sparql={facetQuery(getRoles, 'role')}
+        options={explorerOptions('role', true)}
+        optionsLoading={explorerLoading}
         value={properties.role}
         parseResult={addCountToResultName}
         onChange={option => properties.setRole(option ? option.value : '')}
@@ -108,6 +130,8 @@ export default function Options(properties) {
         subtitle="rdf:type"
         description={facetDefinitions['Object Type']}
         sparql={facetQuery(getTypes, 'objectType')}
+        options={explorerOptions('type', true)}
+        optionsLoading={explorerLoading}
         value={properties.objectType}
         parseResult={addCountToResultName}
         onChange={option =>
@@ -120,6 +144,8 @@ export default function Options(properties) {
         subtitle="sbol2:member"
         description={facetDefinitions.Collections}
         sparql={facetQuery(getCollections, 'collections')}
+        options={explorerOptions('collections', false)}
+        optionsLoading={explorerLoading}
         value={properties.collections}
         isMulti={true}
         parseResult={result => {
@@ -140,6 +166,8 @@ export default function Options(properties) {
         subtitle="dc:creator"
         description={facetDefinitions.Creator}
         sparql={facetQuery(getCreators, 'creator')}
+        options={explorerOptions('creator', false)}
+        optionsLoading={explorerLoading}
         value={properties.creator}
         parseResult={result => ({
           value: result.object.value,
