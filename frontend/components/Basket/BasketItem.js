@@ -48,7 +48,7 @@ export default function BasketItem(properties) {
         />
       </td>
       <td>
-        <code>{properties.item.name}</code>
+        <code className={styles.itemname}>{properties.item.name}</code>
       </td>
       <td>{properties.item.type}</td>
       <td>{properties.item.version}</td>

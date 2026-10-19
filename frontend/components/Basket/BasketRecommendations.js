@@ -86,6 +86,17 @@ export default function BasketRecommendations(properties) {
             <code className={styles.recommendationname}>
               {recommendation.name || recommendation.displayId}
             </code>
+            {recommendation.displayId &&
+              recommendation.displayId !== recommendation.name && (
+                <span className={styles.recommendationid}>
+                  {recommendation.displayId}
+                </span>
+              )}
+            {recommendation.description && (
+              <span className={styles.recommendationdescription}>
+                {recommendation.description}
+              </span>
+            )}
             <span className={styles.recommendationdetail}>
               {detail(recommendation)}
             </span>
@@ -167,18 +178,14 @@ const subtitle = (data, selectedCount, isLoading, error) => {
 };
 
 const detail = recommendation => {
-  const parts = [];
-  if (recommendation.count) {
-    parts.push(
-      `Used together in ${recommendation.count} design${
-        recommendation.count === 1 ? '' : 's'
-      }`
-    );
-  }
-  if (recommendation.confidence) {
-    parts.push(`${Math.round(recommendation.confidence * 100)}% of the time`);
-  }
-  return parts.join(' · ');
+  if (!recommendation.count) return '';
+  const designs = `${recommendation.count} design${
+    recommendation.count === 1 ? '' : 's'
+  }`;
+  const percent = recommendation.confidence
+    ? ` (${Math.round(recommendation.confidence * 100)}% of matches)`
+    : '';
+  return `Appears with your parts in ${designs}${percent}`;
 };
 
 /** Same mapping the search results use, so added rows read the same as the rest of the basket. */

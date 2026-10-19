@@ -135,6 +135,24 @@
 }
 
 .recommendationname {
+   background-color: transparent;
+   padding: 0;
+   overflow: hidden;
+   text-overflow: ellipsis;
+   white-space: nowrap;
+}
+
+.recommendationid {
+   font-size: 0.7rem;
+   color: #999;
+   overflow: hidden;
+   text-overflow: ellipsis;
+   white-space: nowrap;
+}
+
+.recommendationdescription {
+   font-size: 0.75rem;
+   color: #555;
    overflow: hidden;
    text-overflow: ellipsis;
    white-space: nowrap;
