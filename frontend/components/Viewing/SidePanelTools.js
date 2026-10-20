@@ -12,7 +12,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from 'next/link';
 
 import DeleteModal from "./Modals/DeleteModal";
@@ -23,6 +23,8 @@ import CollectionIconModal from "./Modals/CollectionIconModal";
 import ReactDOM from 'react-dom';
 import PublishModal from '../Submission/PublishModal';
 import { isUriOwner } from './Shell';
+import getOwner from '../../sparql/getOwner';
+import getQueryResponse from '../../sparql/tools/getQueryResponse';
 import { useSelector, useDispatch } from 'react-redux';
 
 import styles from '../../styles/view.module.css';
@@ -45,6 +47,9 @@ export default function SidePanelTools(properties) {
 
   const username = useSelector(state => state.user.username);
   const loggedIn = useSelector(state => state.user.loggedIn);
+  const token = useSelector(state => state.user.token);
+  const graphUri = useSelector(state => state.user.graphUri);
+  const [verifiedOwner, setVerifiedOwner] = useState(false);
 
   const handleDeletionComplete = () => {
     dispatch(restoreBasket());
@@ -53,6 +58,22 @@ export default function SidePanelTools(properties) {
   const publicPrefix = theme.uriPrefix + 'public/';
 
   const isPublic = properties.uri.includes(publicPrefix);
+  // Opened through a share link: view-only for visitors, but a logged-in owner
+  // (including co-owners granted via addOwner) keeps the normal owner tools.
+  const isShareView = properties.uri && properties.uri.endsWith('/share');
+
+  useEffect(() => {
+    if (!isShareView || !loggedIn || !graphUri) return;
+    // Strip the /<hash>/share suffix to get the object URI.
+    const objectUri = properties.uri.split('/').slice(0, -2).join('/');
+    getQueryResponse(dispatch, getOwner, { uri: objectUri }, token).then(owner => {
+      if (owner?.some(res => res.ownedBy === graphUri)) {
+        setVerifiedOwner(true);
+      }
+    });
+  }, [isShareView, loggedIn, graphUri, properties.uri, token, dispatch]);
+
+  const showOwnerTools = !isShareView || verifiedOwner;
   const isCollection = properties.type && properties.type.toLowerCase().includes('collection');
 
   const publishInfo = {
@@ -177,17 +198,19 @@ export default function SidePanelTools(properties) {
         </Link>
       </div>
       <div className={styles.actionicons}>
-        <div
-          role="button"
-          className={styles.actionicon}
-          onClick={() => {
-            setModal("Share");
-          }}
-          title="Share this item's link"
-        >
-          <FontAwesomeIcon icon={faShare} size="1x" />
-          <span className={styles.actioniconlabel}>Share</span>
-        </div>
+        {showOwnerTools && (
+          <div
+            role="button"
+            className={styles.actionicon}
+            onClick={() => {
+              setModal("Share");
+            }}
+            title="Share this item's link"
+          >
+            <FontAwesomeIcon icon={faShare} size="1x" />
+            <span className={styles.actioniconlabel}>Share</span>
+          </div>
+        )}
         <div
           role="button"
           className={styles.actionicon}
@@ -211,7 +234,7 @@ export default function SidePanelTools(properties) {
           <FontAwesomeIcon icon={faQuoteRight} size="1x" />
           <span className={styles.actioniconlabel}>Cite</span>
         </div>
-        {!isPublic && (
+        {!isPublic && showOwnerTools && (
           <div
             role="button"
             className={styles.actionicon}

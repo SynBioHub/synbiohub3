@@ -1,0 +1,8 @@
+PREFIX sbh: <http://wiki.synbiohub.org/wiki/Terms/synbiohub#>
+
+SELECT DISTINCT ?viewer
+WHERE {
+    GRAPH ?g {
+        ?viewer sbh:canView <$uri> .
+    }
+}

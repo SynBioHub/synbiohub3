@@ -6,6 +6,7 @@ import com.synbiohub.sbh3.dao.SparqlService;
 import com.synbiohub.sbh3.security.customsecurity.ServletPathUtil;
 import com.synbiohub.sbh3.security.model.User;
 import com.synbiohub.sbh3.services.SearchService;
+import com.synbiohub.sbh3.services.SparqlAccessService;
 import com.synbiohub.sbh3.services.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +39,8 @@ public class SearchController {
 
     private final SparqlService sparqlService;
     private final UserService userService;
+
+    private final SparqlAccessService sparqlAccessService;
 
     /**
      * Returns the metadata for the object from the specified search query.
@@ -461,15 +464,39 @@ public class SearchController {
      * @param
      * @return JSON containing parts
      */
-    @Operation(summary = "Execute SPARQL query", description = "Executes a raw SPARQL query against the triplestore and returns results as JSON. Routes through SBOLExplorer if enabled, otherwise queries Virtuoso directly.")
+    @Operation(summary = "Execute SPARQL query", description = "Executes a raw SPARQL query against the triplestore and returns results as JSON. The default-graph-uri must be the public graph, the caller's own graph, a graph shared with the caller, or a verified share-link graph; admins may query any graph.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "SPARQL query results as JSON"),
+            @ApiResponse(responseCode = "403", description = "Requested graph is not accessible to the caller"),
             @ApiResponse(responseCode = "500", description = "SPARQL syntax error or database error")
     })
     @GetMapping(value = "/sparql", headers = "Accept=application/json")
     @ResponseBody
-    public String getSPARQL(@Parameter(description = "Query parameters: 'query' (SPARQL query string) and optional 'default-graph-uri'") @RequestParam Map<String, String> params) throws IOException {
-        return sparqlService.read(sparqlService.getExplorerUrl(), params.get("default-graph-uri"), params.get("query"));
+    public org.springframework.http.ResponseEntity<String> getSPARQL(@Parameter(description = "Query parameters: 'query' (SPARQL query string) and optional 'default-graph-uri'") @RequestParam Map<String, String> params, HttpServletRequest request) throws IOException {
+        String shareGraph = (String) request.getAttribute(SparqlAccessService.SHARE_GRAPH_ATTR);
+        String graph;
+        try {
+            graph = sparqlAccessService.resolveGraph(userService.getUserProfile(), shareGraph,
+                    params.get("default-graph-uri"));
+        } catch (org.springframework.web.server.ResponseStatusException e) {
+            return org.springframework.http.ResponseEntity.status(e.getStatusCode()).body(e.getReason());
+        }
+        return org.springframework.http.ResponseEntity.ok(
+                sparqlService.read(sparqlService.getExplorerUrl(), graph, params.get("query")));
+    }
+
+    /**
+     * SPARQL for a share-link page: ShareLinkFilter strips {@code /{hash}/share} and pins
+     * {@code sbh.share.graph}, so this is the same guarded query as {@code /sparql}.
+     */
+    @Operation(summary = "Execute SPARQL query for a shared object", description = "Share-link variant of /sparql; the query is pinned to the verified share graph.")
+    @GetMapping(value = {
+            "/user/{userId}/{collectionId}/{displayId}/{version}/sparql",
+            "/user/{userId}/{collectionId}/{displayId}/{version}/**/sparql"
+    }, headers = "Accept=application/json")
+    @ResponseBody
+    public org.springframework.http.ResponseEntity<String> getShareSPARQL(@RequestParam Map<String, String> params, HttpServletRequest request) throws IOException {
+        return getSPARQL(params, request);
     }
 
     // @GetMapping(value = "/search/**")
