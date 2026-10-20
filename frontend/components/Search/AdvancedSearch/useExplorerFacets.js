@@ -14,6 +14,12 @@ const FACET_PARAMS = {
   collections: 'collections'
 };
 
+// Ask for every value of every facet, like the SPARQL facet queries did:
+// SynBioHub puts dc:creator on a submission's collection only, so a private
+// collection's creator has a count of 1 and is missing from any top-N list.
+// SBOLExplorer caps this at 10,000 per facet.
+const FACET_SIZE = 10000;
+
 const fetcher = (url, token) =>
   axios
     .get(url, {
@@ -43,6 +49,7 @@ export default function useExplorerFacets(query, selections, enabled = true) {
 
   const params = new URLSearchParams();
   if (query) params.set('query', query);
+  params.set('size', String(FACET_SIZE));
   for (const [name, param] of Object.entries(FACET_PARAMS)) {
     const value = selections[name];
     if (name === 'collections') {
