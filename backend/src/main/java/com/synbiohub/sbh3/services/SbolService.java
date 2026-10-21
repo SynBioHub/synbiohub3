@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.synbiohub.sbh3.submit.SubmitPayload;
 import com.synbiohub.sbh3.utils.ConfigUtil;
 import com.synbiohub.sbh3.utils.FileUtil;
+import com.synbiohub.sbh3.utils.ShareLinkUtil;
 import com.synbiohub.sbh3.utils.StringUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -494,10 +495,10 @@ public class SbolService {
         }
     }
 
-    /** Share token for fetching private user objects from remote registries during merge. */
+    /** Edit-variant share URI for fetching private user objects from remote registries during merge. */
     private String registryFetchUri(String identity, String registry, String shareLinkSalt) {
         if (identity.startsWith(registry + "/user/")) {
-            return identity + "/" + privateShareToken(identity, shareLinkSalt) + "/share";
+            return identity + "/" + ShareLinkUtil.token(identity + "/edit", shareLinkSalt) + "/share";
         }
         return identity;
     }
@@ -518,18 +519,6 @@ public class SbolService {
         } catch (SBOLValidationException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "Failed to rewrite mutable annotation: " + e.getMessage());
-        }
-    }
-
-    private String privateShareToken(String identity, String shareLinkSalt) {
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA-1");
-            String innerHex = sha1Hex(md.digest((identity + "/edit").getBytes(StandardCharsets.UTF_8)));
-            md.reset();
-            String payload = "synbiohub_" + innerHex + (shareLinkSalt == null ? "" : shareLinkSalt);
-            return sha1Hex(md.digest(payload.getBytes(StandardCharsets.UTF_8)));
-        } catch (NoSuchAlgorithmException e) {
-            throw new IllegalStateException("SHA-1 not available", e);
         }
     }
 
