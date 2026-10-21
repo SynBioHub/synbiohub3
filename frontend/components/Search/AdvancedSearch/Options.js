@@ -191,7 +191,7 @@ export default function Options(properties) {
         <div className={styles.addfiltericon}>
           <FontAwesomeIcon icon={faPlus} size="1x" />
         </div>
-        Add Filter
+        Additional Filters
       </div>
     </div>
   );
