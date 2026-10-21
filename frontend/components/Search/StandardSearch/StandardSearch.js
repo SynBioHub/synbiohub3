@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Loader from 'react-loader-spinner';
 import { useDispatch, useSelector } from 'react-redux';
 import { setOffset, addError } from '../../../redux/actions'
@@ -71,6 +71,9 @@ export default function StandardSearch() {
   const [sbolType, setSbolType] = useState('');
   const [collections, setCollections] = useState([]);
   const [extraFilters, setExtraFilters] = useState([]);
+  // Search by meaning (SBOLExplorer's /vector_search): ranks by closeness in
+  // meaning, so it ignores the sidebar filters and has no paging
+  const [byMeaning, setByMeaning] = useState(false);
 
   const [url, setUrl] = useState(''); // v1: path filter blob
   const [searchParams, setSearchParams] = useState(''); // v3: query string without '?'
@@ -247,13 +250,13 @@ export default function StandardSearch() {
   // sidebar and the count fall back to SPARQL.
   const explorerFacets = useExplorerFacets(query, {
     creator, objectType, role, sbolType, collections, extraFilters
-  });
+  }, !byMeaning);
 
   const { newCount, isCountLoading, isCountError } = useSearchCount(
     countQuery,
     token,
     dispatch,
-    loginBlocked || explorerFacets.available
+    loginBlocked || byMeaning || explorerFacets.available
   );
 
   // update search count display, keeping the last known count visible
@@ -278,8 +281,14 @@ export default function StandardSearch() {
     token,
     dispatch,
     sbhVersion,
-    loginBlocked
+    loginBlocked,
+    byMeaning
   );
+
+  // by meaning, the total is the number of hits returned
+  useEffect(() => {
+    if (byMeaning && results) setCount(results.length);
+  }, [byMeaning, results]);
 
   if (!isLoading && !isError) {
     for (const result of results) {
@@ -407,14 +416,47 @@ export default function StandardSearch() {
       </div>
       <div className={viewStyles.searchContent}>
         <SearchHeader selected="Standard Search" />
+        <label style={{ display: 'block', margin: '0.5rem 0' }}>
+          <input
+            type="checkbox"
+            checked={byMeaning}
+            onChange={event => setByMeaning(event.target.checked)}
+          />{' '}
+          Search by meaning (finds parts whose wording differs from your query;
+          sidebar filters do not apply)
+        </label>
         {resultsContent}
       </div>
     </div>
   );
 }
-const useSearchResults = (query, filterString, offset, limit, token, dispatch, sbhVersion, loginBlocked) => {
+// /vector_search returns at most this many hits
+const MEANING_MAX_SIZE = 100;
+
+// Maps a /vector_search hit onto the row shape that /search returns
+const meaningHitToRow = hit => {
+  const part = hit._source;
+  return {
+    uri: part.subject,
+    displayId: part.displayId,
+    name: part.name,
+    description: part.description,
+    version: part.version,
+    type: String(part.type || ''),
+    sbolType: part.sboltype,
+    role: part.role
+  };
+};
+
+const useSearchResults = (query, filterString, offset, limit, token, dispatch, sbhVersion, loginBlocked, byMeaning) => {
   let requestUrl;
-  if (sbhVersion === 3) {
+  if (byMeaning) {
+    const params = new URLSearchParams({
+      query,
+      size: String(Math.min(limit, MEANING_MAX_SIZE))
+    });
+    requestUrl = `${publicRuntimeConfig.backend}/vector_search?${params.toString()}`;
+  } else if (sbhVersion === 3) {
     const params = new URLSearchParams(filterString);
     if (query) params.set('keyword', query);
     params.set('offset', String(offset));
@@ -426,13 +468,22 @@ const useSearchResults = (query, filterString, offset, limit, token, dispatch, s
     )}?offset=${offset}&limit=${limit}`;
   }
 
+  // Nothing to search for by meaning until the user types a query
+  const skip = loginBlocked || (byMeaning && !query);
   const { data, error } = useSWR(
-    loginBlocked ? null : [requestUrl, token, dispatch],
+    skip ? null : [requestUrl, token, dispatch],
     fetcher
   );
+  const meaningResults = useMemo(
+    () => (byMeaning && data ? data.hits.map(meaningHitToRow) : undefined),
+    [byMeaning, data]
+  );
+  if (byMeaning && !query) {
+    return { results: [], isLoading: false, isError: false };
+  }
   return {
-    results: data,
-    isLoading: !error && !data,
+    results: byMeaning ? meaningResults : data,
+    isLoading: !error && !(byMeaning ? meaningResults : data),
     isError: error
   };
 };
