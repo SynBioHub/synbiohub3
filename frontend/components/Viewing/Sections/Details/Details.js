@@ -66,6 +66,18 @@ export default function Details(properties) {
   
 
 
+  useEffect(() => {
+    if (details && properties.onContentChange) {
+      const hasAnyDetail = Boolean(
+        details.mutableDescription ||
+        details.mutableNotes ||
+        details.mutableProvenance ||
+        references
+      );
+      properties.onContentChange(hasAnyDetail || isOwner);
+    }
+  }, [details, references, isOwner, properties.onContentChange]);
+
   if (!details) return <Loading />;
 
   /**

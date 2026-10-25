@@ -25,7 +25,7 @@ sections will be minimizable and some won't be.
  * @returns A minimized/expanded section.
  */
 export default function Section(properties) {
-  const { translation = 0 } = properties;
+  const { translation = 0, hidden = false } = properties;
   const dispatch = useDispatch();
 
   const id = properties.pluginID || (properties.id || properties.title);
@@ -63,6 +63,10 @@ export default function Section(properties) {
 
     dispatch(updateMinimizedSections(minimizedSectionsCopy, contentType));
   }, [isMinimized]);
+
+  if (hidden) {
+    return null;
+  }
 
   return (
     <div className={translation === 0 ? styles.sectionexpanded : styles.sectioncollapsed} id={properties.title}>

@@ -86,6 +86,12 @@ export default function Attachments(properties) {
     }
   }, [refreshMembers, dispatch, properties.uri]);
 
+  useEffect(() => {
+    if (owner && properties.onContentChange) {
+      properties.onContentChange(attachments.length > 0 || isOwner);
+    }
+  }, [owner, isOwner, attachments, properties.onContentChange]);
+
   if (!owner) return <Loading />;
 
   return (
