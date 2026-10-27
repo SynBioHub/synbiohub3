@@ -12,6 +12,10 @@ import { addError } from '../redux/actions';
 import { isValidURI } from '../components/Viewing/Shell';
 import axios from 'axios';
 import getConfig from 'next/config';
+import {
+  setFrontPageMarkdown,
+  toFrontPageHtml
+} from '../lib/frontPageText';
 const { publicRuntimeConfig } = getConfig();
 
 export default function Setup({ setInSetupMode }) {
@@ -107,6 +111,15 @@ export default function Setup({ setInSetupMode }) {
                     onChange={event => setFrontPageText(event.target.value)}
                     customInput="textarea"
                     style={secondaryTitleStyle}
+                  />
+                  <div className={styles.previewLabel} style={secondaryTitleStyle}>
+                    Preview
+                  </div>
+                  <div
+                    className={styles.preview}
+                    dangerouslySetInnerHTML={{
+                      __html: toFrontPageHtml(frontPageText)
+                    }}
                   />
 
                   <InputField
@@ -360,7 +373,7 @@ export default function Setup({ setInSetupMode }) {
                   color,
                   userPassword,
                   userPasswordConfirm,
-                  frontPageText,
+                  frontPageText: toFrontPageHtml(frontPageText),
                   virtuosoINI: '/etc/virtuoso-opensource-7/virtuoso.ini',
                   virtuosoDB: '/var/lib/virtuoso-opensource-7/db',
                   allowPublicSignup,
@@ -373,6 +386,7 @@ export default function Setup({ setInSetupMode }) {
                   headers
                 }
               );
+              setFrontPageMarkdown(frontPageText);
               localStorage.removeItem('theme');
               localStorage.removeItem('registries');
               localStorage.removeItem('sbh_logo');

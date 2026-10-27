@@ -45,6 +45,26 @@
    margin-bottom: 1rem;
 }
 
+.previewLabel {
+   margin: 0 0 0.4rem 0;
+   font-size: 0.95rem;
+   font-weight: 600;
+   color: #4d4d4d;
+}
+
+.preview {
+   margin: 0 0 1rem 0;
+   padding: 0.75rem 1rem;
+   border: 1px solid #e0e0e0;
+   border-radius: 0.4rem;
+   background: #fafafa;
+   min-height: 2.5rem;
+}
+
+.preview * {
+   margin-top: 0;
+}
+
 .advancedbutton {
    background-color: #9c9c9c;
    color: white;

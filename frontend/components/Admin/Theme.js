@@ -9,8 +9,11 @@ import { useState, useEffect } from 'react';
 import { isValidURI } from '../Viewing/Shell';
 const { publicRuntimeConfig } = getConfig();
 
-import showdown from "showdown"
-const sdconverter = new showdown.Converter()
+import {
+  getFrontPageMarkdown,
+  setFrontPageMarkdown,
+  toFrontPageHtml
+} from '../../lib/frontPageText';
 
 /** Must match Spring multipart max-file-size (default 1 MB in many setups). */
 const MAX_LOGO_BYTES = 1048576
@@ -69,7 +72,12 @@ export default function Theme() {
 
     setTheme(themeData);
     setInstanceName(themeData.instanceName || '');
-    setFrontPageText(themeData.frontPageText || '');
+    const savedMarkdown = getFrontPageMarkdown();
+    setFrontPageText(
+      savedMarkdown !== null && savedMarkdown !== undefined
+        ? savedMarkdown
+        : themeData.frontPageText || ''
+    );
     setAltHome(themeData.altHome || '');
     setBaseColor(parsedThemeParameters?.[0]?.value || '');
     setShowModuleInteractions(themeData.showModuleInteractions === 'true' || themeData.showModuleInteractions === true);
@@ -105,9 +113,10 @@ export default function Theme() {
   const handleSave = async () => {
 
     setLoading(true);
+    const frontPageTextHtml = toFrontPageHtml(frontPageText);
     const themeData = new URLSearchParams();
     themeData.append('instanceName', instanceName);
-    themeData.append('frontPageText', frontPageText);
+    themeData.append('frontPageText', frontPageTextHtml);
     themeData.append('altHome', altHome);
     themeData.append('themeParameters', JSON.stringify([{ value: baseColor }]));
     themeData.append('removePublicEnabled', String(removePublicEnabled));
@@ -164,11 +173,12 @@ export default function Theme() {
       });
 
       if (response.ok) {
-        // Create updated theme object (without logoUrl to force fresh fetch)
+        setFrontPageMarkdown(frontPageText);
+        // Store HTML in theme.frontPageText so homepage matches backend/SBH1.
         const updatedTheme = {
           ...theme,
           instanceName,
-          frontPageText,
+          frontPageText: frontPageTextHtml,
           altHome,
           themeParameters: [{ value: baseColor }],
           showModuleInteractions,
@@ -187,7 +197,7 @@ export default function Theme() {
           // ignore storage errors
         }
 
-        // Update component state
+        // Update component state (editor reloads markdown from sidecar)
         updateThemeState(updatedTheme);
         
         alert('Theme saved successfully!');
@@ -235,9 +245,12 @@ export default function Theme() {
 
           <h2 className={styles.themeFont}>Front Page Description</h2>
           <h3><b>Preview:</b></h3>
-          <p className={styles.description} dangerouslySetInnerHTML={{ __html: sdconverter.makeHtml(frontPageText.replace(/\\n/g, '\n')) }} />
+          <p
+            className={styles.description}
+            dangerouslySetInnerHTML={{ __html: toFrontPageHtml(frontPageText) }}
+          />
 
-          <h3><b>Edit:</b></h3>
+          <h3><b>Edit (Markdown):</b></h3>
           <textarea
             className={styles.wfull}
             value={frontPageText}
