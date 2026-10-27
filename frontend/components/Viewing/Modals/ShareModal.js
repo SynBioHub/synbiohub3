@@ -22,11 +22,15 @@ import axios from "axios";
  * @param {Any} properties Information passed in from the parent component.
  */
 export default function ShareModal(properties) {
+  // When opened from a share-link page the url ends in /<hash>/share; the
+  // backend endpoints and uri params expect the plain object url.
+  const objectUrl = (properties.url || '').replace(/\/[0-9a-fA-F]{40}\/share$/, '');
   const [copyText, setCopyText] = useState("Copy");
   const [selectedOption, setSelectedOption] = useState("Select user...");
   const [submitted, setSubmitted] = useState(false);
   const [submittable, setSubmittable] = useState(false);
-  const [shareLink, setShareLink] = useState(`${publicRuntimeConfig.backend}${properties.url}`);
+  const [accessType, setAccessType] = useState("viewer");
+  const [shareLink, setShareLink] = useState(`${publicRuntimeConfig.backend}${objectUrl}`);
   const [userList, setUserList] = useState([]);
   const token = useSelector(state => state.user.token);
   const currentUser = useSelector(state => state.user.username);
@@ -44,16 +48,20 @@ export default function ShareModal(properties) {
     className: styles.modaltoast
   });
 
-  //Checks if the submit button has been clicked and adds to owner and then hides the modal.
+  //Checks if the submit button has been clicked and grants access, then hides the modal.
   useEffect(() => {
     if (submitted) {
-      addOwner(theme, selectedOption.value);
+      if (accessType === "owner") {
+        addOwner(theme, selectedOption.value);
+      } else {
+        addViewer(theme, selectedOption.value);
+      }
     }
   }, [submitted]);
 
   useEffect(() => {
     const fetchShareLink = async () => {
-      const url = `${publicRuntimeConfig.backend}${properties.url}/shareLink`;
+      const url = `${publicRuntimeConfig.backend}${objectUrl}/shareLink`;
       const headers = {
         Accept: "text/plain; charset=UTF-8",
         "X-authorization": token
@@ -65,9 +73,10 @@ export default function ShareModal(properties) {
           const originalUrl = response.data;
           const urlObj = new URL(originalUrl);
 
-          const base = theme.frontendURL.endsWith('/')
-            ? theme.frontendURL.slice(0, -1)
-            : theme.frontendURL;
+          const frontendBase = theme.frontendURL || window.location.origin;
+          const base = frontendBase.endsWith('/')
+            ? frontendBase.slice(0, -1)
+            : frontendBase;
 
           const path = urlObj.pathname.startsWith('/')
             ? urlObj.pathname
@@ -121,12 +130,12 @@ export default function ShareModal(properties) {
    * @param {String} owner The owner to add.
    */
   const addOwner = async (theme, owner) => {
-    const url = `${publicRuntimeConfig.backend}${properties.url}/addOwner`;
+    const url = `${publicRuntimeConfig.backend}${objectUrl}/addOwner`;
     var headers = {
       Accept: "text/plain; charset=UTF-8",
       "X-authorization": token
     };
-    const fullUri = theme.uriPrefix.replace(/\/$/, '') + properties.url;
+    const fullUri = theme.uriPrefix.replace(/\/$/, '') + objectUrl;
     const parameters = new URLSearchParams();
     parameters.append("user", `${theme.uriPrefix}user/${owner}`);
     parameters.append("uri", fullUri);
@@ -139,6 +148,34 @@ export default function ShareModal(properties) {
       const message = typeof error.response?.data === 'string' && error.response.data
         ? error.response.data
         : "Something went wrong with adding an owner.";
+      errorToast(message);
+    }
+  }
+
+  /**
+   * Posts the new viewer (view-only access, no ownership).
+   *
+   * @param {String} viewer The user to grant view access to.
+   */
+  const addViewer = async (theme, viewer) => {
+    const url = `${publicRuntimeConfig.backend}${objectUrl}/addViewer`;
+    var headers = {
+      Accept: "text/plain; charset=UTF-8",
+      "X-authorization": token
+    };
+    const fullUri = theme.uriPrefix.replace(/\/$/, '') + objectUrl;
+    const parameters = new URLSearchParams();
+    parameters.append("user", `${theme.uriPrefix}user/${viewer}`);
+    parameters.append("uri", fullUri);
+
+    try {
+      await axios.post(url, parameters, { headers });
+      window.location.reload();
+    } catch (error) {
+      console.error('Error:', error.message);
+      const message = typeof error.response?.data === 'string' && error.response.data
+        ? error.response.data
+        : "Something went wrong with adding a viewer.";
       errorToast(message);
     }
   }
@@ -157,11 +194,11 @@ export default function ShareModal(properties) {
 
   return (
     <CustomModal
-      buttonText={["Cancel", "Grant Ownership"]}
+      buttonText={["Cancel", accessType === "owner" ? "Grant Ownership" : "Grant View Access"]}
       setModal={properties.setModal}
       setSubmitted={setSubmitted}
       submittable={submittable}
-      error={"You must choose a user to grant ownership to."}
+      error={"You must choose a user to share with."}
       header={
         <React.Fragment>
           <FontAwesomeIcon
@@ -174,13 +211,19 @@ export default function ShareModal(properties) {
       }
       content={
         <React.Fragment>
-          <div className={styles.modalwarning}>
-            <FontAwesomeIcon
-              icon={faExclamationTriangle}
-              size="1x"
-            />
-            {" "}Warning: this will give another user complete control over this object.
-          </div>
+          {accessType === "owner" ? (
+            <div className={styles.modalwarning}>
+              <FontAwesomeIcon
+                icon={faExclamationTriangle}
+                size="1x"
+              />
+              {" "}Warning: this will give another user complete control over this object.
+            </div>
+          ) : (
+            <div className={styles.modalwarning}>
+              {" "}The selected user will be able to view this object, but not edit it.
+            </div>
+          )}
           <div className={styles.copylinkcontainer}>
             <label
               className={styles.copylinkicon}
@@ -198,6 +241,29 @@ export default function ShareModal(properties) {
               }}
             >
               {copyText}
+            </label>
+          </div>
+          <div className={styles.ownerselectcontainer}>
+            <h5>Access level</h5>
+            <label>
+              <input
+                type="radio"
+                name="accessType"
+                value="viewer"
+                checked={accessType === "viewer"}
+                onChange={() => setAccessType("viewer")}
+              />
+              {" "}Viewer (read only)
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="accessType"
+                value="owner"
+                checked={accessType === "owner"}
+                onChange={() => setAccessType("owner")}
+              />
+              {" "}Owner (full control)
             </label>
           </div>
           <div className={styles.ownerselectcontainer}>

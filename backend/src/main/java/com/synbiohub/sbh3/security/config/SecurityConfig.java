@@ -1,6 +1,7 @@
 package com.synbiohub.sbh3.security.config;
 
 import com.synbiohub.sbh3.security.customsecurity.AuthCodeAuthenticationFilter;
+import com.synbiohub.sbh3.services.SparqlAccessService;
 import com.synbiohub.sbh3.security.customsecurity.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -40,6 +41,7 @@ public class SecurityConfig {
                 .cors()
                 .and()
                 .authorizeHttpRequests()
+                .requestMatchers(request -> request.getAttribute(SparqlAccessService.SHARE_GRAPH_ATTR) != null).permitAll()
                 .requestMatchers(
                         "/setup", "/login", "/register", "/resetPassword", "/setNewPassword",
                         "/search", "/search/**", "/searchCount", "/searchCount/**",

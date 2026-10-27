@@ -9,6 +9,7 @@ import com.synbiohub.sbh3.controllers.SearchController;
 import com.synbiohub.sbh3.dao.SparqlService;
 import com.synbiohub.sbh3.security.model.User;
 import com.synbiohub.sbh3.utils.ConfigUtil;
+import com.synbiohub.sbh3.utils.ShareLinkUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
@@ -18,9 +19,6 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 /**
@@ -464,8 +462,7 @@ public class SearchService {
         String userResourceUri = sparqlService.userSynbiohubMemberUri(user.getUsername());
         String userGraphUri = resolveUserNamedGraphUri(user);
 
-        JsonNode saltNode = ConfigUtil.get("shareLinkSalt");
-        String shareLinkSalt = (saltNode == null || saltNode.isNull()) ? "" : saltNode.asText();
+        String shareLinkSalt = ShareLinkUtil.salt();
 
         String canViewRaw = sparqlService.read(sparqlService.sparqlQueryUrl(), userGraphUri, sparqlService.getSharedCanViewSPARQL(userResourceUri));
         JsonNode bindings = sparqlBindingsArray(mapper, canViewRaw);
@@ -503,6 +500,29 @@ public class SearchService {
         }
 
         return out;
+    }
+
+    /** Distinct graphs holding objects shared with {@code user} via {@code sbh:canView}. */
+    public List<String> getSharedWithMeGraphUris(User user) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        String userResourceUri = sparqlService.userSynbiohubMemberUri(user.getUsername());
+        String userGraphUri = resolveUserNamedGraphUri(user);
+        String canViewRaw = sparqlService.read(sparqlService.sparqlQueryUrl(), userGraphUri,
+                sparqlService.getSharedCanViewSPARQL(userResourceUri));
+        JsonNode bindings = sparqlBindingsArray(mapper, canViewRaw);
+        List<String> graphs = new ArrayList<>();
+        if (bindings.isArray()) {
+            for (JsonNode b : bindings) {
+                String sharedUri = b.path("object").path("value").asText("");
+                if (!sharedUri.isEmpty()) {
+                    String graph = graphUriFromSharedTopLevelUri(sharedUri, user);
+                    if (!graphs.contains(graph)) {
+                        graphs.add(graph);
+                    }
+                }
+            }
+        }
+        return graphs;
     }
 
     public ArrayNode mergeManageResults(String publicRawJSON, String privateRawJSON) throws JsonProcessingException {
@@ -569,36 +589,7 @@ public class SearchService {
      */
     private static String computeSharedListingBrowserPath(String databasePrefix, String versionedUri,
                                                            String shareLinkSalt) {
-        String rel = versionedUri;
-        if (!databasePrefix.isEmpty() && rel.startsWith(databasePrefix)) {
-            rel = rel.substring(databasePrefix.length());
-        }
-        while (rel.startsWith("/")) {
-            rel = rel.substring(1);
-        }
-        String token = shareLinkTokenSynbiohubHex(versionedUri, shareLinkSalt);
-        return "/" + rel + "/" + token + "/share";
-    }
-
-    /** {@code SHA1_HEX('synbiohub_' + SHA1_HEX(versioned_uri_utf8) + shareLinkSalt)} per legacy Node hashes. */
-    private static String shareLinkTokenSynbiohubHex(String versionedUri, String shareLinkSalt) {
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA-1");
-            String innerHex = bytesToSha1HexLower(md.digest(versionedUri.getBytes(StandardCharsets.UTF_8)));
-            md.reset();
-            String outerPayload = "synbiohub_" + innerHex + (shareLinkSalt == null ? "" : shareLinkSalt);
-            return bytesToSha1HexLower(md.digest(outerPayload.getBytes(StandardCharsets.UTF_8)));
-        } catch (NoSuchAlgorithmException e) {
-            throw new IllegalStateException("SHA-1 not available", e);
-        }
-    }
-
-    private static String bytesToSha1HexLower(byte[] digest) {
-        StringBuilder sb = new StringBuilder(digest.length * 2);
-        for (byte b : digest) {
-            sb.append(String.format(Locale.US, "%02x", b & 0xff));
-        }
-        return sb.toString();
+        return ShareLinkUtil.sharePath(databasePrefix, versionedUri, shareLinkSalt);
     }
 
 }

@@ -97,6 +97,22 @@ public class DownloadService {
     }
 
     /**
+     * Metadata lookup key for {@code GET /user/…/metadata}: the object URI without the {@code /metadata} suffix.
+     */
+    public String userMetadataSplitUriFromServletPath(String pathWithinApplication) throws IOException {
+        if (!pathWithinApplication.startsWith("/user/") || !pathWithinApplication.endsWith("/metadata")) {
+            throw new IllegalArgumentException("Expected /user/…/metadata, got: " + pathWithinApplication);
+        }
+        String core = pathWithinApplication.substring(
+                "/user/".length(),
+                pathWithinApplication.length() - "/metadata".length());
+        if (core.endsWith("/")) {
+            core = core.substring(0, core.length() - 1);
+        }
+        return ConfigUtil.get("databasePrefix").asText() + "user/" + core;
+    }
+
+    /**
      * User-namespace object URI: {@code graphPrefix + "user/" + username + "/" + db + "/" + id + "/" + ver}.
      */
     public String userVersionedObjectUri(String username, String db, String id, String ver) throws IOException {
@@ -332,7 +348,7 @@ public class DownloadService {
         args.put("uri", uriClass.toString());
         args.put("offset", "0");
         String query = metadataQuery.loadTemplate(args);
-        String results = sparqlService.read(sparqlService.getExplorerUrl(), sparqlService.resolveGraphUri(""),query);
+        String results = sparqlService.read(sparqlService.getExplorerUrl(), sparqlService.resolveGraphUriForTopLevel(uriClass.toString()), query);
         try {
             results = searchService.rawJSONToOutput(results);
         } catch (Exception e) {}

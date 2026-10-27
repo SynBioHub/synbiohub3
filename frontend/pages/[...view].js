@@ -25,7 +25,13 @@ export default function View({ data, error }) {
   const token = useSelector(state => state.user.token);
   const url = view ? view.join('/') : '';
   const [metadata, setMetadata] = useState();
-  const theme = JSON.parse(localStorage.getItem('theme')) || {};
+  const [uriPrefix, setUriPrefix] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem('theme') || '{}').uriPrefix || null;
+    } catch {
+      return null;
+    }
+  });
   const currentURL = window.location.href;
   const parts = currentURL.split('/');
   const [isOwner, setIsOwner] = useState(false);
@@ -79,25 +85,45 @@ export default function View({ data, error }) {
     marginTop: '-10vh',
   };
 
-  let uri;
-  // let uri = `https://dan.org/${url}`;
-  if (theme) {
-    uri = `${theme.uriPrefix}${url}`;
-  }
+  // On a cold first visit (e.g. a share link pasted into incognito) the theme
+  // is not in localStorage yet. TopLevel fetches it asynchronously, but this
+  // page is TopLevel's parent, so that write never re-renders us: fetch the
+  // theme here instead. Until uriPrefix is known, uri stays null so the
+  // metadata fetch below waits instead of querying for the literal URI
+  // "undefined/<path>", which returns no metadata.
+  useEffect(() => {
+    if (uriPrefix) return;
+    axios
+      .get(`${publicRuntimeConfig.backend}/admin/theme`, {
+        headers: { Accept: 'application/json' }
+      })
+      .then(response => {
+        if (response.data && response.data.uriPrefix) {
+          localStorage.setItem('theme', JSON.stringify(response.data));
+          setUriPrefix(response.data.uriPrefix);
+        }
+      })
+      .catch(() => {});
+  }, [uriPrefix]);
+
+  const uri = uriPrefix ? `${uriPrefix}${url}` : null;
 
   useEffect(() => {
     if (!metadata && uri) {
       const uriParts = uri.split('/');
+      // Share links end in /<hash>/share; the hash is not part of the object URI
+      // and can start with a digit, which would fool the version scan below.
+      const objectParts = uri.endsWith('/share') ? uriParts.slice(0, -2) : uriParts;
       // Find the last index that looks like a version number (contains digits)
       let lastIndex = -1;
-      for (let i = uriParts.length - 1; i >= 0; i--) {
-        if (uriParts[i] && /^\d/.test(uriParts[i])) {
+      for (let i = objectParts.length - 1; i >= 0; i--) {
+        if (objectParts[i] && /^\d/.test(objectParts[i])) {
           lastIndex = i;
           break;
         }
       }
       const firstHalf =
-        lastIndex >= 0 ? uriParts.slice(0, lastIndex + 1).join('/') : uri;
+        lastIndex >= 0 ? objectParts.slice(0, lastIndex + 1).join('/') : uri;
       getQueryResponse(dispatch, getMetadata, { uri: firstHalf }, token).then(
         result => setMetadata(result)
       );
@@ -119,7 +145,8 @@ export default function View({ data, error }) {
         </div>
       </TopLevel>
     );
-  } else if (!metadata) {
+  } else if (!uri || !metadata) {
+    // Still loading the instance theme (uri unknown) or the object metadata.
     return (
       <TopLevel publicPage={true}>
         <Loading />
