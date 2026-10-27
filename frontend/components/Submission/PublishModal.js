@@ -66,8 +66,17 @@ export default function PublishModal(properties) {
     );
 
     if (properties.inCollectionPage) {
-      const redirect = `${selectedCollection.uri}`;
-      window.location.href = redirect;
+      // selectedCollection.uri is an RDF URI under theme.uriPrefix; navigate
+      // with a relative path so we stay on this frontend host.
+      const theme = JSON.parse(localStorage.getItem('theme')) || {};
+      const prefix = theme.uriPrefix || '';
+      let path = prefix && selectedCollection.uri.startsWith(prefix)
+        ? selectedCollection.uri.slice(prefix.length)
+        : selectedCollection.uri;
+      if (!path.startsWith('/')) {
+        path = `/${path}`;
+      }
+      window.location.href = path;
     } else {
       window.location.reload();
     }
