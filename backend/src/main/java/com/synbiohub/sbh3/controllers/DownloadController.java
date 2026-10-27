@@ -37,6 +37,7 @@ public class DownloadController extends AntPathMatcher {
 
     private static final MediaType SBOL_RDF_XML = MediaType.parseMediaType("application/rdf+xml");
     private static final String USER_AUTH = "hasAnyAuthority('USER', 'CURATOR', 'ADMIN')";
+    private static final String USER_AUTH_OR_SHARE = USER_AUTH + " or @shareAccess.isShareRequest()";
 
     /**
      * Longest first so {@code similarCount} wins over {@code similar}, {@code usesCount} over {@code uses}.
@@ -59,7 +60,7 @@ public class DownloadController extends AntPathMatcher {
 
     @Operation(summary = "Download SBOL (Versioned, user)", description = "Downloads the recursive SBOL2 RDF/XML for a specific version.")
     @ApiResponse(responseCode = "200", description = "SBOL2 RDF/XML file")
-    @PreAuthorize(USER_AUTH)
+    @PreAuthorize(USER_AUTH_OR_SHARE)
     @GetMapping("/user/{username}/{db}/{id}/{ver}/sbol")
     public ResponseEntity<?> getUserSbolVersioned(
             @PathVariable String username,
@@ -81,7 +82,7 @@ public class DownloadController extends AntPathMatcher {
     @Operation(summary = "Download SBOL (Latest, user)", description = "Resolves latest version via SPARQL and downloads the recursive SBOL2 RDF/XML.")
     @ApiResponse(responseCode = "200", description = "SBOL2 RDF/XML file")
     @ApiResponse(responseCode = "404", description = "URI not found")
-    @PreAuthorize(USER_AUTH)
+    @PreAuthorize(USER_AUTH_OR_SHARE)
     @GetMapping("/user/{username}/{db}/{id}/sbol")
     public ResponseEntity<?> getUserSbolPersistentIdentity(
             @PathVariable String username, @PathVariable String db, @PathVariable String id) throws IOException {
@@ -106,7 +107,7 @@ public class DownloadController extends AntPathMatcher {
 
     @Operation(summary = "Download SBOL (Alternate, user)", description = "Same SBOL document as /sbol but without the path suffix.")
     @ApiResponse(responseCode = "200", description = "SBOL2 RDF/XML file")
-    @PreAuthorize(USER_AUTH)
+    @PreAuthorize(USER_AUTH_OR_SHARE)
     @GetMapping("/user/{username}/{db}/{id}/**/{ver}")
     public ResponseEntity<?> getUserSbolRecursiveRDF(
             @PathVariable String username,
@@ -240,7 +241,7 @@ public class DownloadController extends AntPathMatcher {
 
     @Operation(summary = "Download non-recursive SBOL (user)", description = "Downloads the non-recursive SBOL2 RDF/XML for a specific version.")
     @ApiResponse(responseCode = "200", description = "SBOL2 RDF/XML file")
-    @PreAuthorize(USER_AUTH)
+    @PreAuthorize(USER_AUTH_OR_SHARE)
     @GetMapping("/user/{username}/{db}/{id}/{ver}/sbolnr")
     public ResponseEntity<?> getUserSBOLNonRecursive(
             @PathVariable String username,
@@ -279,6 +280,28 @@ public class DownloadController extends AntPathMatcher {
                 .body(new InputStreamResource(new ByteArrayInputStream(buf)));
     }
 
+    @Operation(summary = "Download metadata (user)", description = "Downloads the JSON metadata for a specific user object.")
+    @ApiResponse(responseCode = "200", description = "JSON metadata file")
+    @PreAuthorize(USER_AUTH_OR_SHARE)
+    @GetMapping("/user/{username}/{db}/{id}/**/{ver}/metadata")
+    public ResponseEntity<?> getUserMetadata(
+            @PathVariable String username,
+            @PathVariable String db,
+            @PathVariable String id,
+            @PathVariable String ver,
+            HttpServletRequest request) throws IOException {
+        String path = ServletPathUtil.getPathWithinApplication(request);
+        String splitUri = downloadService.userMetadataSplitUriFromServletPath(path);
+        String results = downloadService.getMetadata(splitUri);
+        byte[] buf = mapper.writeValueAsBytes(mapper.readTree(results));
+
+        return ResponseEntity.ok()
+                .contentLength(buf.length)
+                .contentType(MediaType.parseMediaType("application/octet-stream"))
+                .header("Content-Disposition", "attachment; filename=\"" + id + ".json\"")
+                .body(new InputStreamResource(new ByteArrayInputStream(buf)));
+    }
+
     @Operation(summary = "Download GenBank (public)", description = "Downloads the GenBank format export of the specified object.")
     @ApiResponse(responseCode = "200", description = "GenBank (.gb) file")
     @GetMapping("/public/{db}/{id}/{ver}/gb")
@@ -289,7 +312,7 @@ public class DownloadController extends AntPathMatcher {
 
     @Operation(summary = "Download GenBank (user)", description = "Downloads the GenBank format export of the specified object.")
     @ApiResponse(responseCode = "200", description = "GenBank (.gb) file")
-    @PreAuthorize(USER_AUTH)
+    @PreAuthorize(USER_AUTH_OR_SHARE)
     @GetMapping("/user/{username}/{db}/{id}/{ver}/gb")
     public ResponseEntity<?> getUserGenbank(
             @PathVariable String username,
@@ -326,7 +349,7 @@ public class DownloadController extends AntPathMatcher {
     @Operation(summary = "Download FASTA (user)", description = "Downloads the FASTA format export of the specified object.")
     @ApiResponse(responseCode = "200", description = "FASTA file")
     @ApiResponse(responseCode = "404", description = "No sequences found")
-    @PreAuthorize(USER_AUTH)
+    @PreAuthorize(USER_AUTH_OR_SHARE)
     @GetMapping("/user/{username}/{db}/{id}/{ver}/fasta")
     public ResponseEntity<?> getUserFasta(
             @PathVariable String username,
@@ -361,7 +384,7 @@ public class DownloadController extends AntPathMatcher {
 
     @Operation(summary = "Download GFF3 (user)", description = "Downloads the GFF3 format export of the specified object.")
     @ApiResponse(responseCode = "200", description = "GFF3 file")
-    @PreAuthorize(USER_AUTH)
+    @PreAuthorize(USER_AUTH_OR_SHARE)
     @GetMapping("/user/{username}/{db}/{id}/{ver}/gff")
     public ResponseEntity<?> getUserGff3(
             @PathVariable String username,

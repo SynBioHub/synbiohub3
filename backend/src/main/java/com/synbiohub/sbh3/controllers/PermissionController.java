@@ -27,7 +27,7 @@ public class PermissionController {
     @Operation(summary = "Add owner", description = "Adds an sbh:ownedBy owner to a private object and all of its child objects, and adds it to the new owner's shared list (sbh:canView). Form: user (username, email, or user URI), uri (object URI).")
     @ApiResponse(responseCode = "200", description = "Owner added successfully")
     @ApiResponse(responseCode = "400", description = "Missing user or uri, or user not recognized")
-    @ApiResponse(responseCode = "401", description = "Unauthorized or not the object owner")
+    @ApiResponse(responseCode = "403", description = "Forbidden: caller is not the object owner")
     @PreAuthorize(USER_AUTH)
     @PostMapping(value = "/user/{userId}/{collectionId}/{displayId}/{version}/addOwner", produces = "text/plain;charset=UTF-8")
     public ResponseEntity<String> addUserOwner(
@@ -44,7 +44,7 @@ public class PermissionController {
     @Operation(summary = "Remove owner", description = "Removes an sbh:ownedBy owner from a private object and all of its child objects, and removes it from that user's shared list (sbh:canView). Path username and/or userUri (form or JSON).")
     @ApiResponse(responseCode = "200", description = "Owner removed successfully")
     @ApiResponse(responseCode = "400", description = "Missing username / userUri")
-    @ApiResponse(responseCode = "401", description = "Unauthorized or not the object owner")
+    @ApiResponse(responseCode = "403", description = "Forbidden: caller is not the object owner")
     @PreAuthorize(USER_AUTH)
     @PostMapping(value = "/user/{userId}/{collectionId}/{displayId}/{version}/removeOwner/{username}", produces = "text/plain;charset=UTF-8")
     public ResponseEntity<String> removeUserOwner(
@@ -63,7 +63,7 @@ public class PermissionController {
     @Operation(summary = "Add owner (public)", description = "Adds an sbh:ownedBy owner to a public object. Caller must already own the object.")
     @ApiResponse(responseCode = "200", description = "Owner added successfully")
     @ApiResponse(responseCode = "400", description = "Missing user or uri")
-    @ApiResponse(responseCode = "401", description = "Unauthorized or not the object owner")
+    @ApiResponse(responseCode = "403", description = "Forbidden: caller is not the object owner")
     @PreAuthorize(USER_AUTH)
     @PostMapping(value = "/public/{collectionId}/{displayId}/{version}/addOwner", produces = "text/plain;charset=UTF-8")
     public ResponseEntity<String> addPublicOwner(
@@ -79,7 +79,7 @@ public class PermissionController {
     @Operation(summary = "Remove owner (public)", description = "Removes an sbh:ownedBy owner from a public object. Caller must already own the object.")
     @ApiResponse(responseCode = "200", description = "Owner removed successfully")
     @ApiResponse(responseCode = "400", description = "Missing username / userUri")
-    @ApiResponse(responseCode = "401", description = "Unauthorized or not the object owner")
+    @ApiResponse(responseCode = "403", description = "Forbidden: caller is not the object owner")
     @PreAuthorize(USER_AUTH)
     @PostMapping(value = "/public/{collectionId}/{displayId}/{version}/removeOwner/{username}", produces = "text/plain;charset=UTF-8")
     public ResponseEntity<String> removePublicOwner(
@@ -94,10 +94,124 @@ public class PermissionController {
         return permissionService.removeOwner(subjectUri, username, userUriFrom(allParams, body));
     }
 
+    @Operation(summary = "Add viewer", description = "Grants view-only access (sbh:canView) to a private object. Caller must own the object. Form: user (username, email, or user URI).")
+    @ApiResponse(responseCode = "200", description = "Viewer added successfully")
+    @ApiResponse(responseCode = "400", description = "Missing user, or user not recognized")
+    @ApiResponse(responseCode = "403", description = "Forbidden: caller is not the object owner")
+    @PreAuthorize(USER_AUTH)
+    @PostMapping(value = "/user/{userId}/{collectionId}/{displayId}/{version}/addViewer", produces = "text/plain;charset=UTF-8")
+    public ResponseEntity<String> addUserViewer(
+            @PathVariable String userId,
+            @PathVariable String collectionId,
+            @PathVariable String displayId,
+            @PathVariable String version,
+            @RequestParam Map<String, String> allParams)
+            throws IOException {
+        String subjectUri = permissionService.buildSubjectUri(false, userId, collectionId, displayId, version);
+        return permissionService.addViewer(subjectUri, allParams.get("user"));
+    }
+
+    @Operation(summary = "Remove viewer", description = "Removes view-only access (sbh:canView) from a private object. Owners only; owners must be removed with removeOwner.")
+    @ApiResponse(responseCode = "200", description = "Viewer removed successfully")
+    @ApiResponse(responseCode = "400", description = "Missing username / userUri, or user is an owner")
+    @ApiResponse(responseCode = "403", description = "Forbidden: caller is not the object owner")
+    @PreAuthorize(USER_AUTH)
+    @PostMapping(value = "/user/{userId}/{collectionId}/{displayId}/{version}/removeViewer/{username}", produces = "text/plain;charset=UTF-8")
+    public ResponseEntity<String> removeUserViewer(
+            @PathVariable String userId,
+            @PathVariable String collectionId,
+            @PathVariable String displayId,
+            @PathVariable String version,
+            @PathVariable String username,
+            @RequestParam(required = false) Map<String, String> allParams,
+            @RequestBody(required = false) Map<String, String> body)
+            throws IOException {
+        String subjectUri = permissionService.buildSubjectUri(false, userId, collectionId, displayId, version);
+        return permissionService.removeViewer(subjectUri, username, userUriFrom(allParams, body));
+    }
+
+    @Operation(summary = "List viewers", description = "Lists users with view-only access (sbh:canView) to a private object, excluding owners. Visible to users with access (owners and viewers).")
+    @ApiResponse(responseCode = "200", description = "JSON array of {username, name, userUri}")
+    @ApiResponse(responseCode = "403", description = "Forbidden: caller has no access to the object")
+    @PreAuthorize(USER_AUTH)
+    @GetMapping(value = "/user/{userId}/{collectionId}/{displayId}/{version}/viewers", produces = "application/json")
+    public ResponseEntity<?> getUserViewers(
+            @PathVariable String userId,
+            @PathVariable String collectionId,
+            @PathVariable String displayId,
+            @PathVariable String version)
+            throws IOException {
+        String subjectUri = permissionService.buildSubjectUri(false, userId, collectionId, displayId, version);
+        return permissionService.getViewers(subjectUri);
+    }
+
+    @Operation(summary = "Get share link", description = "Returns the salted share URL for a private object as plain text. Owners only.")
+    @ApiResponse(responseCode = "200", description = "Share URL")
+    @ApiResponse(responseCode = "403", description = "Forbidden: caller is not the object owner")
+    @PreAuthorize(USER_AUTH)
+    @GetMapping(value = "/user/{userId}/{collectionId}/{displayId}/{version}/shareLink", produces = "text/plain;charset=UTF-8")
+    public ResponseEntity<String> getUserShareLink(
+            @PathVariable String userId,
+            @PathVariable String collectionId,
+            @PathVariable String displayId,
+            @PathVariable String version)
+            throws IOException {
+        String subjectUri = permissionService.buildSubjectUri(false, userId, collectionId, displayId, version);
+        return permissionService.getShareLink(subjectUri);
+    }
+
+    @Operation(summary = "Add viewer (public)", description = "Grants view-only access (sbh:canView) to a public object. Caller must own the object.")
+    @ApiResponse(responseCode = "200", description = "Viewer added successfully")
+    @ApiResponse(responseCode = "400", description = "Missing user, or user not recognized")
+    @ApiResponse(responseCode = "403", description = "Forbidden: caller is not the object owner")
+    @PreAuthorize(USER_AUTH)
+    @PostMapping(value = "/public/{collectionId}/{displayId}/{version}/addViewer", produces = "text/plain;charset=UTF-8")
+    public ResponseEntity<String> addPublicViewer(
+            @PathVariable String collectionId,
+            @PathVariable String displayId,
+            @PathVariable String version,
+            @RequestParam Map<String, String> allParams)
+            throws IOException {
+        String subjectUri = permissionService.buildSubjectUri(true, null, collectionId, displayId, version);
+        return permissionService.addViewer(subjectUri, allParams.get("user"));
+    }
+
+    @Operation(summary = "Remove viewer (public)", description = "Removes view-only access (sbh:canView) from a public object. Owners only.")
+    @ApiResponse(responseCode = "200", description = "Viewer removed successfully")
+    @ApiResponse(responseCode = "400", description = "Missing username / userUri, or user is an owner")
+    @ApiResponse(responseCode = "403", description = "Forbidden: caller is not the object owner")
+    @PreAuthorize(USER_AUTH)
+    @PostMapping(value = "/public/{collectionId}/{displayId}/{version}/removeViewer/{username}", produces = "text/plain;charset=UTF-8")
+    public ResponseEntity<String> removePublicViewer(
+            @PathVariable String collectionId,
+            @PathVariable String displayId,
+            @PathVariable String version,
+            @PathVariable String username,
+            @RequestParam(required = false) Map<String, String> allParams,
+            @RequestBody(required = false) Map<String, String> body)
+            throws IOException {
+        String subjectUri = permissionService.buildSubjectUri(true, null, collectionId, displayId, version);
+        return permissionService.removeViewer(subjectUri, username, userUriFrom(allParams, body));
+    }
+
+    @Operation(summary = "List viewers (public)", description = "Lists users with view-only access (sbh:canView) to a public object, excluding owners. Visible to users with access (owners and viewers).")
+    @ApiResponse(responseCode = "200", description = "JSON array of {username, name, userUri}")
+    @ApiResponse(responseCode = "403", description = "Forbidden: caller has no access to the object")
+    @PreAuthorize(USER_AUTH)
+    @GetMapping(value = "/public/{collectionId}/{displayId}/{version}/viewers", produces = "application/json")
+    public ResponseEntity<?> getPublicViewers(
+            @PathVariable String collectionId,
+            @PathVariable String displayId,
+            @PathVariable String version)
+            throws IOException {
+        String subjectUri = permissionService.buildSubjectUri(true, null, collectionId, displayId, version);
+        return permissionService.getViewers(subjectUri);
+    }
+
     @Operation(summary = "Add owner (flat)", description = "Wiki-compatible flat alias. Form: user (username or user URI), uri (object URI).")
     @ApiResponse(responseCode = "200", description = "Owner added successfully")
     @ApiResponse(responseCode = "400", description = "Missing user or uri")
-    @ApiResponse(responseCode = "401", description = "Unauthorized or not the object owner")
+    @ApiResponse(responseCode = "403", description = "Forbidden: caller is not the object owner")
     @PreAuthorize(USER_AUTH)
     @PostMapping(value = "/addOwner", produces = "text/plain;charset=UTF-8")
     public ResponseEntity<String> addOwner(
