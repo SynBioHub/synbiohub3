@@ -16,15 +16,19 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 
+const TAB_LINK = "link";
+const TAB_PEOPLE = "people";
+
 /**
- * A modal class that handles the user wanting to share an object.
- * 
+ * Share / collaborate modal: copy a shareable link, or add a viewer/owner.
+ *
  * @param {Any} properties Information passed in from the parent component.
  */
 export default function ShareModal(properties) {
   // When opened from a share-link page the url ends in /<hash>/share; the
   // backend endpoints and uri params expect the plain object url.
   const objectUrl = (properties.url || '').replace(/\/[0-9a-fA-F]{40}\/share$/, '');
+  const [activeTab, setActiveTab] = useState(TAB_LINK);
   const [copyText, setCopyText] = useState("Copy");
   const [selectedOption, setSelectedOption] = useState("Select user...");
   const [submitted, setSubmitted] = useState(false);
@@ -36,7 +40,6 @@ export default function ShareModal(properties) {
   const currentUser = useSelector(state => state.user.username);
   const theme = JSON.parse(localStorage.getItem('theme')) || {};
 
-  //Properties for the error toast.
   const errorToast = (message) => toast.error(message, {
     position: "top-right",
     autoClose: 5000,
@@ -48,14 +51,14 @@ export default function ShareModal(properties) {
     className: styles.modaltoast
   });
 
-  //Checks if the submit button has been clicked and grants access, then hides the modal.
   useEffect(() => {
-    if (submitted) {
-      if (accessType === "owner") {
-        addOwner(theme, selectedOption.value);
-      } else {
-        addViewer(theme, selectedOption.value);
-      }
+    if (!submitted || activeTab !== TAB_PEOPLE) {
+      return;
+    }
+    if (accessType === "owner") {
+      addOwner(theme, selectedOption.value);
+    } else {
+      addViewer(theme, selectedOption.value);
     }
   }, [submitted]);
 
@@ -106,9 +109,8 @@ export default function ShareModal(properties) {
       try {
         const response = await axios.get(url, { headers });
         if (response.status === 200 && response.data && response.data.users) {
-          // Extract only the usernames
           const usernames = response.data.users
-            .filter(user => user.username !== currentUser)  // Exclude current user
+            .filter(user => user.username !== currentUser)
             .map(user => ({
               value: user.username,
               label: user.username
@@ -124,11 +126,6 @@ export default function ShareModal(properties) {
     fetchUserList();
   }, [properties.url, token]);
 
-  /**
-   * Posts the new owner.
-   * 
-   * @param {String} owner The owner to add.
-   */
   const addOwner = async (theme, owner) => {
     const url = `${publicRuntimeConfig.backend}${objectUrl}/addOwner`;
     var headers = {
@@ -152,11 +149,6 @@ export default function ShareModal(properties) {
     }
   }
 
-  /**
-   * Posts the new viewer (view-only access, no ownership).
-   *
-   * @param {String} viewer The user to grant view access to.
-   */
   const addViewer = async (theme, viewer) => {
     const url = `${publicRuntimeConfig.backend}${objectUrl}/addViewer`;
     var headers = {
@@ -180,9 +172,6 @@ export default function ShareModal(properties) {
     }
   }
 
-  /**
-   * Copies the link to the users clipboard.
-   */
   const copyToClipboard = () => {
     navigator.clipboard.writeText(`${shareLink}`).then(() => {
       setTimeout(() => {
@@ -192,9 +181,26 @@ export default function ShareModal(properties) {
     });
   }
 
+  const selectTab = (tab) => {
+    setActiveTab(tab);
+    setSubmitted(false);
+    if (tab === TAB_LINK) {
+      setSubmittable(false);
+    } else if (selectedOption && selectedOption.value) {
+      setSubmittable(true);
+    }
+  };
+
+  const peopleSubmitLabel =
+    accessType === "owner" ? "Grant Ownership" : "Grant View Access";
+
   return (
     <CustomModal
-      buttonText={["Cancel", accessType === "owner" ? "Grant Ownership" : "Grant View Access"]}
+      buttonText={
+        activeTab === TAB_LINK
+          ? ["Close"]
+          : ["Cancel", peopleSubmitLabel]
+      }
       setModal={properties.setModal}
       setSubmitted={setSubmitted}
       submittable={submittable}
@@ -206,84 +212,121 @@ export default function ShareModal(properties) {
             size="1x"
             className={styles.modalicon}
           />
-          <h1>Share</h1>
+          <h1>Share / Collaborate</h1>
         </React.Fragment>
       }
       content={
         <React.Fragment>
-          {accessType === "owner" ? (
-            <div className={styles.modalwarning}>
-              <FontAwesomeIcon
-                icon={faExclamationTriangle}
-                size="1x"
-              />
-              {" "}Warning: this will give another user complete control over this object.
+          <div className={styles.shareTabs} role="tablist">
+            <button
+              type="button"
+              role="tab"
+              aria-selected={activeTab === TAB_LINK}
+              className={
+                activeTab === TAB_LINK
+                  ? `${styles.shareTab} ${styles.shareTabActive}`
+                  : styles.shareTab
+              }
+              onClick={() => selectTab(TAB_LINK)}
+            >
+              Get link
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={activeTab === TAB_PEOPLE}
+              className={
+                activeTab === TAB_PEOPLE
+                  ? `${styles.shareTab} ${styles.shareTabActive}`
+                  : styles.shareTab
+              }
+              onClick={() => selectTab(TAB_PEOPLE)}
+            >
+              Add people
+            </button>
+          </div>
+
+          {activeTab === TAB_LINK ? (
+            <div className={styles.shareTabPanel} role="tabpanel">
+              <p className={styles.shareTabHelp}>
+                Copy a shareable link to this object. Anyone with the link can view it.
+              </p>
+              <div className={styles.copylinkcontainer}>
+                <label className={styles.copylinkicon}>
+                  <FontAwesomeIcon icon={faCopy} size="1x" />
+                </label>
+                <input
+                  placeholder={`${shareLink}`}
+                  className={styles.copylinktext}
+                  type="text"
+                  readOnly={true}
+                  value={shareLink}
+                />
+                <label
+                  className={styles.copylinkbutton}
+                  onClick={() => {
+                    copyToClipboard();
+                  }}
+                >
+                  {copyText}
+                </label>
+              </div>
             </div>
           ) : (
-            <div className={styles.modalwarning}>
-              {" "}The selected user will be able to view this object, but not edit it.
+            <div className={styles.shareTabPanel} role="tabpanel">
+              {accessType === "owner" ? (
+                <div className={styles.modalwarning}>
+                  <FontAwesomeIcon icon={faExclamationTriangle} size="1x" />
+                  {" "}Warning: this will give another user complete control over this object.
+                </div>
+              ) : (
+                <div className={styles.modalwarning}>
+                  {" "}The selected user will be able to view this object, but not edit it.
+                </div>
+              )}
+              <div className={styles.ownerselectcontainer}>
+                <h5>Access level</h5>
+                <label>
+                  <input
+                    type="radio"
+                    name="accessType"
+                    value="viewer"
+                    checked={accessType === "viewer"}
+                    onChange={() => setAccessType("viewer")}
+                  />
+                  {" "}Viewer (read only)
+                </label>
+                <label>
+                  <input
+                    type="radio"
+                    name="accessType"
+                    value="owner"
+                    checked={accessType === "owner"}
+                    onChange={() => setAccessType("owner")}
+                  />
+                  {" "}Owner (full control)
+                </label>
+              </div>
+              <div className={styles.ownerselectcontainer}>
+                <h5>Select a user to add</h5>
+                <Select
+                  className={styles.ownercustomselect}
+                  value={selectedOption}
+                  onChange={(e) => {
+                    if (e.value !== undefined) {
+                      setSelectedOption({ value: e.value, label: e.label });
+                      setSubmittable(true);
+                    }
+                  }}
+                  options={userList}
+                  menuPortalTarget={document.body}
+                  placeholder={selectedOption}
+                  isSearchable={true}
+                  styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+                />
+              </div>
             </div>
           )}
-          <div className={styles.copylinkcontainer}>
-            <label
-              className={styles.copylinkicon}
-            >
-              <FontAwesomeIcon
-                icon={faCopy}
-                size="1x"
-              />
-            </label>
-            <input placeholder={`${shareLink}`} className={styles.copylinktext} type="text" readOnly={true} />
-            <label
-              className={styles.copylinkbutton}
-              onClick={() => {
-                copyToClipboard();
-              }}
-            >
-              {copyText}
-            </label>
-          </div>
-          <div className={styles.ownerselectcontainer}>
-            <h5>Access level</h5>
-            <label>
-              <input
-                type="radio"
-                name="accessType"
-                value="viewer"
-                checked={accessType === "viewer"}
-                onChange={() => setAccessType("viewer")}
-              />
-              {" "}Viewer (read only)
-            </label>
-            <label>
-              <input
-                type="radio"
-                name="accessType"
-                value="owner"
-                checked={accessType === "owner"}
-                onChange={() => setAccessType("owner")}
-              />
-              {" "}Owner (full control)
-            </label>
-          </div>
-          <div className={styles.ownerselectcontainer}>
-            <h5>Select a user to add</h5>
-            <Select
-              className={styles.ownercustomselect}
-              value={selectedOption}
-              onChange={(e) => {
-                if (e.value !== undefined) {
-                  setSelectedOption({ value: e.value, label: e.label });
-                  setSubmittable(true);
-                }
-              }}
-              options={userList}
-              menuPortalTarget={document.body}
-              placeholder={selectedOption}
-              isSearchable={true}
-              styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-            />
-          </div>
         </React.Fragment>
       }
     />

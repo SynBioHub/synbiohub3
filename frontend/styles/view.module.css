@@ -1380,10 +1380,54 @@
   padding: 4rem 0 4rem 0;
 }
 
+.shareTabs {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: 0.5rem 0 1rem 0;
+}
+
+.shareTab {
+  border: 1px solid #bfbfbf;
+  background: #f5f5f5;
+  color: #2C3E50;
+  padding: 0.45rem 1rem;
+  border-radius: 0.4rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.shareTab:hover {
+  background: #eaeaea;
+}
+
+.shareTabActive {
+  background: #D25627;
+  border-color: #D25627;
+  color: #fff;
+}
+
+.shareTabActive:hover {
+  background: #973d1c;
+  border-color: #973d1c;
+}
+
+.shareTabPanel {
+  margin-bottom: 0.5rem;
+}
+
+.shareTabHelp {
+  color: #4d4d4d;
+  font-size: 0.95rem;
+  margin: 0 0 1rem 0;
+}
+
 .copylinkcontainer {
   display: table;
   line-height: 0 !important;
   margin-top: 5%;
+  width: 100%;
 }
 
 .copylinktext {
