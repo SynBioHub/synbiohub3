@@ -18,8 +18,9 @@ import { setAttachments } from '../../../../redux/actions';
  */
 export default function Attachments(properties) {
   //handle hiding table header and resetting attachments on each different page.
-  const [owner, setOwner] = useState();
   const [isOwner, setIsOwner] = useState(false);
+  const [ownerChecked, setOwnerChecked] = useState(false);
+  const [attachmentsChecked, setAttachmentsChecked] = useState(false);
   const dispatch = useDispatch();
   const graphUri = useSelector(state => state.user.graphUri);
   const attachments = useSelector(state => state.attachments.attachments);
@@ -47,24 +48,24 @@ export default function Attachments(properties) {
   
     // Fetch owner
     getQueryResponse(dispatch, getOwner, { uri: properties.uri }, token).then(owner => {
-      if (owner.length > 0) setOwner(owner);
-  
       const owned = owner.some(res => res.ownedBy === graphUri);
       const isShare = properties.uri && properties.uri.endsWith('/share');
-  
+
       if (owned || isShare) {
         setIsOwner(true);
       } else {
         setIsOwner(false); // Optional: explicitly reset
       }
+      setOwnerChecked(true);
     });
-  
+
     // Fetch attachments
     getQueryResponse(dispatch, getAttachments, { uri: properties.uri }, token).then(
       attachments => {
         if (attachments.length > 0) {
           dispatch(setAttachments(attachments));
         }
+        setAttachmentsChecked(true);
       }
     );
   }, [dispatch, properties.uri, token, graphUri]);
@@ -87,12 +88,12 @@ export default function Attachments(properties) {
   }, [refreshMembers, dispatch, properties.uri]);
 
   useEffect(() => {
-    if (owner && properties.onContentChange) {
+    if (ownerChecked && attachmentsChecked && properties.onContentChange) {
       properties.onContentChange(attachments.length > 0 || isOwner);
     }
-  }, [owner, isOwner, attachments, properties.onContentChange]);
+  }, [ownerChecked, attachmentsChecked, isOwner, attachments, properties.onContentChange]);
 
-  if (!owner) return <Loading />;
+  if (!ownerChecked) return <Loading />;
 
   return (
     <AttachmentsTable
