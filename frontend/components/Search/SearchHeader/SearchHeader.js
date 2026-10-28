@@ -23,6 +23,13 @@ export default function SearchHeader(properties) {
         />
 
         <SearchTypeButton
+          name="Semantic Search"
+          route="semantic-search"
+          selected={properties.selected}
+          icon={faHatWizard}
+        />
+
+        <SearchTypeButton
           name="Browse Collections"
           route="root-collections"
           selected={properties.selected}

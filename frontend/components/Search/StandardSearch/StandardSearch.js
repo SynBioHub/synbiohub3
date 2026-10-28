@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Loader from 'react-loader-spinner';
 import { useDispatch, useSelector } from 'react-redux';
 import { setOffset, addError } from '../../../redux/actions'
@@ -25,8 +25,7 @@ import getSearchResultCount from '../../../sparql/getSearchResultCount';
 import {
   standarderror,
   standardresultsloading,
-  standardcontainer,
-  standardhint
+  standardcontainer
 } from '../../../styles/standardsearch.module.css';
 
 import viewStyles from '../../../styles/view.module.css';
@@ -72,11 +71,6 @@ export default function StandardSearch() {
   const [sbolType, setSbolType] = useState('');
   const [collections, setCollections] = useState([]);
   const [extraFilters, setExtraFilters] = useState([]);
-  // Search by meaning (SBOLExplorer's /vector_search): ranks by closeness in
-  // meaning, so it ignores the sidebar filters and has no paging
-  const [byMeaning, setByMeaning] = useState(false);
-  // Set once SynBioHub reports that search by meaning is off; stays off until reload
-  const [meaningOff, setMeaningOff] = useState(false);
 
   const [url, setUrl] = useState(''); // v1: path filter blob
   const [searchParams, setSearchParams] = useState(''); // v3: query string without '?'
@@ -249,48 +243,17 @@ export default function StandardSearch() {
     )
   });
 
-  // get search results
-  const { results, isLoading, isError, meaningFacets, meaningUnavailable } = useSearchResults(
-    query,
-    filterString,
-    offset,
-    limit,
-    token,
-    dispatch,
-    sbhVersion,
-    loginBlocked,
-    byMeaning,
-    { role, sbolType, objectType, creator, collections }
-  );
-
-  // Turn meaning search off and fall back to keyword search when SBOLExplorer is off
-  useEffect(() => {
-    if (meaningUnavailable) {
-      setMeaningOff(true);
-      setByMeaning(false);
-    }
-  }, [meaningUnavailable]);
-
   // Facet counts and total from SBOLExplorer when available; otherwise the
-  // sidebar and the count fall back to SPARQL. By meaning, the counts come
-  // with the hits, over those hits only.
-  const keywordFacets = useExplorerFacets(query, {
+  // sidebar and the count fall back to SPARQL.
+  const explorerFacets = useExplorerFacets(query, {
     creator, objectType, role, sbolType, collections, extraFilters
-  }, !byMeaning);
-  const explorerFacets = byMeaning
-    ? {
-      available: true,
-      loading: meaningFacets === undefined && !isError,
-      found: (results || []).length,
-      facets: meaningFacets || {}
-    }
-    : keywordFacets;
+  });
 
   const { newCount, isCountLoading, isCountError } = useSearchCount(
     countQuery,
     token,
     dispatch,
-    loginBlocked || byMeaning || explorerFacets.available
+    loginBlocked || explorerFacets.available
   );
 
   // update search count display, keeping the last known count visible
@@ -306,9 +269,20 @@ export default function StandardSearch() {
   }, [isCountLoading, isCountError, newCount, query, extraFilters,
     explorerFacets.available, explorerFacets.loading, explorerFacets.found]);
 
+  // get search results
+  const { results, isLoading, isError } = useSearchResults(
+    query,
+    filterString,
+    offset,
+    limit,
+    token,
+    dispatch,
+    sbhVersion,
+    loginBlocked
+  );
+
   if (!isLoading && !isError) {
-    // results is undefined while search by meaning is unavailable
-    for (const result of results || []) {
+    for (const result of results) {
       getTypeAndUrl(result, registries);
     }
   }
@@ -329,13 +303,7 @@ export default function StandardSearch() {
   }
 
   let resultsContent;
-  if (byMeaning && !query) {
-    resultsContent = (
-      <div className={standardhint}>
-        Type a query to search by meaning
-      </div>
-    );
-  } else if (isError) {
+  if (isError) {
     resultsContent = (
       <div className={standarderror}>
         Errors were encountered while fetching the data
@@ -408,7 +376,6 @@ export default function StandardSearch() {
               <Options
                 searchQuery={query}
                 explorerFacets={explorerFacets}
-                additionalFiltersDisabled={byMeaning}
                 creator={creator}
                 setCreator={setCreator}
 
@@ -440,71 +407,14 @@ export default function StandardSearch() {
       </div>
       <div className={viewStyles.searchContent}>
         <SearchHeader selected="Standard Search" />
-        <label style={{ display: 'block', margin: '0.5rem 0' }}>
-          <input
-            type="checkbox"
-            checked={byMeaning}
-            disabled={meaningOff}
-            onChange={event => setByMeaning(event.target.checked)}
-          />{' '}
-          Search by meaning (finds parts whose wording differs from your query;
-          the facets filter these results and count the results shown)
-          {meaningOff && (
-            <span> Unavailable: SBOLExplorer is not enabled on this SynBioHub.</span>
-          )}
-        </label>
         {resultsContent}
       </div>
     </div>
   );
 }
-// /vector_search returns at most this many hits
-const MEANING_MAX_SIZE = 100;
-// Facets /vector_search counts over those hits (its names, as /facets)
-const MEANING_FACETS = 'role,sboltype,type,creator,collections';
-
-// Maps a /vector_search hit onto the row shape that /search returns
-const meaningHitToRow = hit => {
-  const part = hit._source;
-  return {
-    uri: part.subject,
-    displayId: part.displayId,
-    name: part.name,
-    description: part.description,
-    version: part.version,
-    type: String(part.type || ''),
-    sbolType: part.sboltype,
-    role: part.role
-  };
-};
-
-// The sidebar selections, as /vector_search takes them (its names, as /facets)
-const MEANING_SELECTIONS = {
-  role: 'role',
-  sbolType: 'sboltype',
-  objectType: 'type',
-  creator: 'creator',
-  collections: 'collections'
-};
-
-const useSearchResults = (query, filterString, offset, limit, token, dispatch, sbhVersion, loginBlocked, byMeaning, selections) => {
+const useSearchResults = (query, filterString, offset, limit, token, dispatch, sbhVersion, loginBlocked) => {
   let requestUrl;
-  if (byMeaning) {
-    const params = new URLSearchParams({
-      query,
-      size: String(Math.min(limit, MEANING_MAX_SIZE)),
-      facet_by: MEANING_FACETS
-    });
-    for (const [name, param] of Object.entries(MEANING_SELECTIONS)) {
-      const value = selections[name];
-      if (name === 'collections') {
-        for (const collection of value || []) params.append(param, collection.value);
-      } else if (value) {
-        params.set(param, value);
-      }
-    }
-    requestUrl = `${publicRuntimeConfig.backend}/vector_search?${params.toString()}`;
-  } else if (sbhVersion === 3) {
+  if (sbhVersion === 3) {
     const params = new URLSearchParams(filterString);
     if (query) params.set('keyword', query);
     params.set('offset', String(offset));
@@ -516,27 +426,14 @@ const useSearchResults = (query, filterString, offset, limit, token, dispatch, s
     )}?offset=${offset}&limit=${limit}`;
   }
 
-  // Nothing to search for by meaning until the user types a query
-  const skip = loginBlocked || (byMeaning && !query);
   const { data, error } = useSWR(
-    skip ? null : [requestUrl, token, dispatch],
-    byMeaning ? meaningFetcher : fetcher
+    loginBlocked ? null : [requestUrl, token, dispatch],
+    fetcher
   );
-  const meaningUnavailable = byMeaning && Boolean(data?.unavailable);
-  const hasMeaningData = byMeaning && Boolean(data) && !data.unavailable;
-  const meaningResults = useMemo(
-    () => (hasMeaningData ? data.hits.map(meaningHitToRow) : undefined),
-    [hasMeaningData, data]
-  );
-  if (byMeaning && !query) {
-    return { results: [], isLoading: false, isError: false, meaningFacets: {}, meaningUnavailable: false };
-  }
   return {
-    results: byMeaning ? meaningResults : data,
-    isLoading: !error && !meaningUnavailable && !(byMeaning ? meaningResults : data),
-    isError: error,
-    meaningFacets: hasMeaningData ? data.facets : undefined,
-    meaningUnavailable
+    results: data,
+    isLoading: !error && !data,
+    isError: error
   };
 };
 
@@ -575,7 +472,7 @@ function getType(member) {
 }
 
 
-const getTypeAndUrl = async (result, registries) => {
+export const getTypeAndUrl = async (result, registries) => {
   let type = '';
   const potentialType = result.type.toLowerCase();
 
@@ -636,28 +533,6 @@ const fetcher = (url, token, dispatch) =>
     })
     .then(response => response.data)
     .catch(error => {
-      error.customMessage =
-        'Request failed while fetching search result-related data';
-      error.fullUrl = url;
-      dispatch(addError(error));
-    });
-
-// Search by meaning is off when SBOLExplorer is disabled (SynBioHub answers
-// 501) or its vector search is off (503). That is a state to show, not an error.
-const meaningFetcher = (url, token, dispatch) =>
-  axios
-    .get(url, {
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-        'X-authorization': token
-      }
-    })
-    .then(response => response.data)
-    .catch(error => {
-      if (error.response && [501, 503].includes(error.response.status)) {
-        return { unavailable: true };
-      }
       error.customMessage =
         'Request failed while fetching search result-related data';
       error.fullUrl = url;
