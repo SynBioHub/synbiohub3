@@ -1,0 +1,9 @@
+PREFIX sbol2: <http://sbols.org/v2#>
+PREFIX sbol3: <http://sbols.org/v3#>
+
+SELECT DISTINCT ?coll
+WHERE {
+    { ?coll sbol2:member <$uri> . }
+    UNION
+    { ?coll sbol3:member <$uri> . }
+}
