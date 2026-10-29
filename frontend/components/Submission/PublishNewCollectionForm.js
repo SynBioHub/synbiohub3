@@ -27,8 +27,6 @@ export default function NewCollectionForm(properties) {
 
   const dispatch = useDispatch();
 
-  const theme = JSON.parse(localStorage.getItem('theme')) || {};
-
   const publishNewCollection = (
     displayId,
     version,
@@ -56,8 +54,9 @@ export default function NewCollectionForm(properties) {
       )
     );
     if (properties.inCollectionPage) {
-      const redirect = `${theme.uriPrefix}public/${displayId}/${displayId}_collection/${version}`
-      window.location.href = redirect;
+      // Relative path so we stay on this frontend host (uriPrefix is an RDF
+      // identity prefix, e.g. https://synbiohub.org/, not a browser base URL).
+      window.location.href = `/public/${displayId}/${displayId}_collection/${version}`;
     }
     else {
       window.location.reload();
