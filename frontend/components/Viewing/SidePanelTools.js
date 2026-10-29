@@ -205,10 +205,10 @@ export default function SidePanelTools(properties) {
             onClick={() => {
               setModal("Share");
             }}
-            title="Share this item's link"
+            title="Share a link or add collaborators"
           >
             <FontAwesomeIcon icon={faShare} size="1x" />
-            <span className={styles.actioniconlabel}>Share</span>
+            <span className={styles.actioniconlabel}>Share / Collaborate</span>
           </div>
         )}
         <div
