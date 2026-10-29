@@ -25,7 +25,7 @@ const { publicRuntimeConfig } = getConfig();
  * @param {*} param
  * @returns
  */
-export default function TableBuilder({ uri, prefixes, table, metadata }) {
+export default function TableBuilder({ uri, prefixes, table, metadata, onContentChange }) {
   prefixes = prefixes.join('\n');
   const objectUriParts = getAfterThirdSlash(uri);
   const username = useSelector(state => state.user.username);
@@ -42,16 +42,18 @@ export default function TableBuilder({ uri, prefixes, table, metadata }) {
         table={table}
         metadata={metadata}
         owner={isOwner}
+        onContentChange={onContentChange}
       />
     </div>
   );
 }
 
-function TableRenderer({ uri, prefixes, table, metadata, owner }) {
+function TableRenderer({ uri, prefixes, table, metadata, owner, onContentChange }) {
   const token = useSelector(state => state.user.token);
   const [content, setContent] = useState(null);
+  const [loaded, setLoaded] = useState(false);
   const dispatch = useDispatch();
-  
+
   useEffect(() => {
     let cleanedUri = uri;
     if (uri.endsWith('/share')) {
@@ -62,8 +64,15 @@ function TableRenderer({ uri, prefixes, table, metadata, owner }) {
     }
     executeQueryFromTableJSON(dispatch, cleanedUri, prefixes, token, table).then(response => {
       setContent(parseQueryResult(table, response, prefixes));
+      setLoaded(true);
     });
   }, [uri, prefixes, table]);
+
+  useEffect(() => {
+    if (!metadata && onContentChange && loaded) {
+      onContentChange(checkContentExist(content));
+    }
+  }, [content, metadata, loaded, onContentChange]);
 
   const plainSequence =
     !metadata && table.title === 'Sequence' ? getPlainSequence(content) : null;
@@ -75,7 +84,7 @@ function TableRenderer({ uri, prefixes, table, metadata, owner }) {
   const isEditable = metadata && metadata.editable && owner;
 
   if (!checkContentExist(content) && !metadata) {
-    return "No content to display for " + table.title;
+    return null;
   }
 
   if (metadata) {

@@ -2,7 +2,7 @@ import Section from '../../Sections/Section';
 import Plugin from '../../Sections/Plugin.js';
 
 import { useSelector } from 'react-redux';
-import { Fragment } from 'react';
+import { Fragment, useState } from 'react';
 import TableBuilder from './TableBuilder';
 
 import CustomComponents from '../CustomComponents.js';
@@ -38,9 +38,14 @@ export default function GenericContent({ json, uri, metadata, plugins, type, tra
         return null;
       }
       return (
-        <Section id={page} title={table.title} key={page} translation={translation}>
-          <TableBuilder uri={uri} prefixes={json.prefixes} table={table} />
-        </Section>
+        <TableSection
+          uri={uri}
+          json={json}
+          table={table}
+          page={page}
+          key={`${page}-${uri}`}
+          translation={translation}
+        />
       );
     }
     if (page.startsWith('PLUGIN: ')) {
@@ -49,26 +54,58 @@ export default function GenericContent({ json, uri, metadata, plugins, type, tra
       return (
         <Plugin plugin={plugin} type={type} uri={uri} title={title} key={page} pluginKey={page} pluginID={page} />
       );
-        
+
     }
 
     if (page === 'Visualization') {
       return (
-        <Visualization uri={uri} key={page} />
+        <Visualization uri={uri} key={`${page}-${uri}`} />
       )
     }
 
     const ComponentToRender = CustomComponents[page];
     if (ComponentToRender) {
       return (
-        <Section title={page} key={page} translation={translation}>
-          <ComponentToRender uri={uri} />
-        </Section>
+        <CustomComponentSection
+          Component={ComponentToRender}
+          uri={uri}
+          page={page}
+          key={`${page}-${uri}`}
+          translation={translation}
+        />
       );
     }
 
   });
 
   return <Fragment>{content}</Fragment>;
+}
+
+function TableSection({ uri, json, table, page, translation }) {
+  const [hasContent, setHasContent] = useState(true);
+  return (
+    <Section
+      id={page}
+      title={table.title}
+      translation={translation}
+      hidden={!hasContent}
+    >
+      <TableBuilder
+        uri={uri}
+        prefixes={json.prefixes}
+        table={table}
+        onContentChange={setHasContent}
+      />
+    </Section>
+  );
+}
+
+function CustomComponentSection({ Component, uri, page, translation }) {
+  const [hasContent, setHasContent] = useState(true);
+  return (
+    <Section id={page} title={page} translation={translation} hidden={!hasContent}>
+      <Component uri={uri} onContentChange={setHasContent} />
+    </Section>
+  );
 }
 
