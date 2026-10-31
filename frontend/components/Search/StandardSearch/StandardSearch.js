@@ -472,7 +472,7 @@ function getType(member) {
 }
 
 
-const getTypeAndUrl = async (result, registries) => {
+export const getTypeAndUrl = async (result, registries) => {
   let type = '';
   const potentialType = result.type.toLowerCase();
 
