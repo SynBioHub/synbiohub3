@@ -97,6 +97,17 @@ export default async function getQueryResponse(
       return;
     }
 
+    // Expected when viewing private data without a valid session: do not raise
+    // the SPARQL error toast; callers treat an empty result as not found.
+    const status = error.response?.status;
+    const loginRequired =
+      status === 401 ||
+      status === 403 ||
+      /login required/i.test(errorMessage);
+    if (loginRequired) {
+      return [];
+    }
+
     error.customMessage = `Request and/or processing failed for SPARQL query`;
     error.fullUrl = `===QUERY===\n\n${query}\n\n===URL===\n\n${url}`;
     dispatch(addError(error));
