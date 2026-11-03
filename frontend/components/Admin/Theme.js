@@ -15,7 +15,7 @@ import {
   toFrontPageHtml
 } from '../../lib/frontPageText';
 
-/** Must match Spring multipart max-file-size (default 1 MB in many setups). */
+/** Client-side logo size cap (1 MB). */
 const MAX_LOGO_BYTES = 1048576
 
 export default function Theme() {
@@ -110,14 +110,14 @@ export default function Theme() {
     setLogoFileError('');
   };
 
-  const handleSave = async () => {
-
-    setLoading(true);
+  const buildThemeFormData = (logoOverride) => {
     const frontPageTextHtml = toFrontPageHtml(frontPageText);
-    const themeData = new URLSearchParams();
+    // Both SBH1 and SBH3 accept optional multipart `logo` on POST /admin/theme.
+    const themeData = new FormData();
     themeData.append('instanceName', instanceName);
     themeData.append('frontPageText', frontPageTextHtml);
     themeData.append('altHome', altHome);
+    themeData.append('baseColor', baseColor);
     themeData.append('themeParameters', JSON.stringify([{ value: baseColor }]));
     themeData.append('removePublicEnabled', String(removePublicEnabled));
     themeData.append('showModuleInteractions', String(showModuleInteractions));
@@ -127,42 +127,57 @@ export default function Theme() {
     themeData.append('suppressWarningLogs', String(suppressWarningLogs));
     themeData.append('suppressErrorLogs', String(suppressErrorLogs));
 
-    try {
-      if (logoFile instanceof File) {
-        if (logoFile.size > MAX_LOGO_BYTES) {
-          alert(
-            `The logo file is too large. Maximum size is ${MAX_LOGO_BYTES / 1024} KB (1 MB). Choose a smaller image or compress it.`
-          );
-          setLoading(false);
-          return;
-        }
-        const logoData = new FormData();
-        logoData.append('logo', logoFile);
-        const logoResponse = await fetch(`${publicRuntimeConfig.backend}/admin/logo`, {
-          method: 'POST',
-          headers: {
-            Accept: 'text/plain',
-            'X-authorization': token
-          },
-          body: logoData
-        });
-        if (!logoResponse.ok) {
-          const errText = await logoResponse.text().catch(() => '');
-          const isTooLarge =
-            logoResponse.status === 413 ||
-            /FileSizeLimitExceededException|maximum permitted size|1048576/i.test(errText);
-          if (isTooLarge) {
-            alert(
-              `The logo file is too large for the server (maximum ${MAX_LOGO_BYTES / 1024} KB). Choose a smaller image or compress it.`
-            );
-          } else {
-            alert(errText || 'Failed to upload logo.');
-          }
-          setLoading(false);
-          return;
-        }
-      }
+    const logoToUpload =
+      logoOverride instanceof File
+        ? logoOverride
+        : logoFile instanceof File
+          ? logoFile
+          : null;
+    if (logoToUpload) {
+      themeData.append('logo', logoToUpload);
+    }
 
+    return { themeData, frontPageTextHtml };
+  };
+
+  const persistThemeSuccess = (frontPageTextHtml, successMessage) => {
+    setFrontPageMarkdown(frontPageText);
+    const updatedTheme = {
+      ...theme,
+      instanceName,
+      frontPageText: frontPageTextHtml,
+      altHome,
+      themeParameters: [{ value: baseColor }],
+      showModuleInteractions,
+      removePublicEnabled,
+      requireLogin
+    };
+    delete updatedTheme.logoUrl;
+
+    try {
+      localStorage.removeItem('sbh_logo');
+      localStorage.setItem('theme', JSON.stringify(updatedTheme));
+    } catch (e) {
+      // ignore storage errors
+    }
+
+    updateThemeState(updatedTheme);
+    alert(successMessage);
+    window.location.reload();
+  };
+
+  const handleSave = async () => {
+    if (logoFile instanceof File && logoFile.size > MAX_LOGO_BYTES) {
+      alert(
+        `The logo file is too large. Maximum size is ${MAX_LOGO_BYTES / 1024} KB (1 MB). Choose a smaller image or compress it.`
+      );
+      return;
+    }
+
+    setLoading(true);
+    const { themeData, frontPageTextHtml } = buildThemeFormData();
+
+    try {
       const response = await fetch(`${publicRuntimeConfig.backend}/admin/theme`, {
         method: 'POST',
         headers: {
@@ -173,42 +188,71 @@ export default function Theme() {
       });
 
       if (response.ok) {
-        setFrontPageMarkdown(frontPageText);
-        // Store HTML in theme.frontPageText so homepage matches backend/SBH1.
-        const updatedTheme = {
-          ...theme,
-          instanceName,
-          frontPageText: frontPageTextHtml,
-          altHome,
-          themeParameters: [{ value: baseColor }],
-          showModuleInteractions,
-          removePublicEnabled,
-          requireLogin
-        };
-        // Remove logoUrl if it exists to force Navbar to fetch fresh logo from server
-        delete updatedTheme.logoUrl;
-
-        // Clear cached logo from localStorage so Navbar will fetch fresh logo from server
-        // This ensures the new logo is displayed after reload
-        try {
-          localStorage.removeItem('sbh_logo');
-          localStorage.setItem('theme', JSON.stringify(updatedTheme));
-        } catch (e) {
-          // ignore storage errors
-        }
-
-        // Update component state (editor reloads markdown from sidecar)
-        updateThemeState(updatedTheme);
-        
-        alert('Theme saved successfully!');
-        window.location.reload();
+        persistThemeSuccess(frontPageTextHtml, 'Theme saved successfully!');
       } else {
-        throw new Error('Failed to save theme');
+        const errText = await response.text().catch(() => '');
+        const isTooLarge =
+          response.status === 413 ||
+          /FileSizeLimitExceededException|maximum permitted size|1048576/i.test(errText);
+        if (isTooLarge) {
+          alert(
+            `The logo file is too large for the server (maximum ${MAX_LOGO_BYTES / 1024} KB). Choose a smaller image or compress it.`
+          );
+        } else {
+          throw new Error(errText || 'Failed to save theme');
+        }
       }
     } catch (error) {
       console.error('Error saving theme:', error);
-      alert('Error saving theme');
+      alert(error.message || 'Error saving theme');
     } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResetLogo = async () => {
+    if (
+      !window.confirm(
+        'Reset the instance logo to the default SynBioHub logo? This will save immediately.'
+      )
+    ) {
+      return;
+    }
+
+    setLoading(true);
+    setLogoFileError('');
+
+    try {
+      const defaultLogoResponse = await fetch('/images/logo.svg', { cache: 'no-store' });
+      if (!defaultLogoResponse.ok) {
+        throw new Error('Could not load the default logo.');
+      }
+
+      const blob = await defaultLogoResponse.blob();
+      const defaultLogoFile = new File([blob], 'logo.svg', {
+        type: blob.type || 'image/svg+xml'
+      });
+
+      const { themeData, frontPageTextHtml } = buildThemeFormData(defaultLogoFile);
+      const response = await fetch(`${publicRuntimeConfig.backend}/admin/theme`, {
+        method: 'POST',
+        headers: {
+          Accept: 'text/plain',
+          'X-authorization': token
+        },
+        body: themeData
+      });
+
+      if (!response.ok) {
+        const errText = await response.text().catch(() => '');
+        throw new Error(errText || 'Failed to reset logo');
+      }
+
+      setLogoFile(null);
+      persistThemeSuccess(frontPageTextHtml, 'Logo reset to default.');
+    } catch (error) {
+      console.error('Error resetting logo:', error);
+      alert(error.message || 'Error resetting logo');
       setLoading(false);
     }
   };
@@ -229,12 +273,21 @@ export default function Theme() {
               {logoFileError}
             </p>
           ) : null}
-          <input
-            className={styles.newLogoFilePicker}
-            type="file"
-            onChange={handleLogoFileChange}
-            accept="image/*"
-          />
+          <div className={styles.logoActions}>
+            <input
+              className={styles.newLogoFilePicker}
+              type="file"
+              onChange={handleLogoFileChange}
+              accept="image/*"
+            />
+            <button
+              type="button"
+              onClick={handleResetLogo}
+              className={styles.resetLogoButton}
+            >
+              Reset to Default Logo
+            </button>
+          </div>
           <h2 className={styles.themeFont}>Instance Name</h2>
           <input
             type="text"

@@ -477,28 +477,25 @@ public class AdminController {
         return adminService.getTheme();
     }
 
-    @Operation(summary = "Update theme", description = "Updates the UI theme parameters.")
+    @Operation(
+            summary = "Update theme",
+            description = "Updates the UI theme parameters. Optionally accepts a multipart `logo` file (same pattern as SBH1)."
+    )
     @PostMapping(value = "/admin/theme")
     @ResponseBody
-    public String updateTheme(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
+    public ResponseEntity<String> updateTheme(
+            @RequestParam Map<String, String> allParams,
+            @RequestParam(value = "logo", required = false) MultipartFile logo) {
         try {
-            return adminService.updateTheme(allParams);
-        } catch (IOException e) {
-            return "Unable to update theme";
-        }
-    }
-
-    @Operation(summary = "Update instance logo", description = "Uploads a new logo for the SynBioHub instance.")
-    @PostMapping(value = "/admin/logo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @ResponseBody
-    public ResponseEntity<String> updateLogo(@RequestPart("logo") MultipartFile logo) {
-        try {
-            adminService.updateLogo(logo);
-            return ResponseEntity.ok("Logo updated successfully.");
+            String result = adminService.updateTheme(allParams);
+            if (logo != null && !logo.isEmpty()) {
+                adminService.updateLogo(logo);
+            }
+            return ResponseEntity.ok(result);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unable to update logo");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unable to update theme");
         }
     }
 
