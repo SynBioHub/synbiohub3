@@ -30,8 +30,14 @@ export default function MemberOfCollections(properties) {
           setOtherProps(Array.isArray(props) ? props : []);
         });
   }, [otherProps]);
+
+  useEffect(() => {
+    if (otherProps !== undefined && properties.onContentChange) {
+      properties.onContentChange(otherProps.length > 0);
+    }
+  }, [otherProps, properties.onContentChange]);
+
   if (otherProps == undefined) return <Loading />;
-  if (otherProps.length === 0) return null;
 
   return (
     <div>

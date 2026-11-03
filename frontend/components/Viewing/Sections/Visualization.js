@@ -107,11 +107,12 @@ export default function Visualization(properties) {
         />
       </Section>
     }
-    else {
-      return <Section title="Visualization">
-        <div><p>Visualization Loading...</p></div>
-      </Section>
+    if (status === false) {
+      return null;
     }
+    return <Section title="Visualization">
+      <div><p>Visualization Loading...</p></div>
+    </Section>
 }
 
 

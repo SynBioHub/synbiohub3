@@ -18,8 +18,9 @@ import { setAttachments } from '../../../../redux/actions';
  */
 export default function Attachments(properties) {
   //handle hiding table header and resetting attachments on each different page.
-  const [owner, setOwner] = useState();
   const [isOwner, setIsOwner] = useState(false);
+  const [ownerChecked, setOwnerChecked] = useState(false);
+  const [attachmentsChecked, setAttachmentsChecked] = useState(false);
   const dispatch = useDispatch();
   const graphUri = useSelector(state => state.user.graphUri);
   const attachments = useSelector(state => state.attachments.attachments);
@@ -44,27 +45,28 @@ export default function Attachments(properties) {
   useEffect(() => {
     // Always reset attachments on new URI
     dispatch(setAttachments([]));
-    setOwner(undefined);
+    setOwnerChecked(false);
+    setAttachmentsChecked(false);
   
     // Fetch owner
     getQueryResponse(dispatch, getOwner, { uri: properties.uri }, token).then(ownerResult => {
       const owners = Array.isArray(ownerResult) ? ownerResult : [];
-      setOwner(owners);
-  
       const owned = owners.some(res => res.ownedBy === graphUri);
       const isShare = properties.uri && properties.uri.endsWith('/share');
-  
+
       if (owned || isShare) {
         setIsOwner(true);
       } else {
         setIsOwner(false); // Optional: explicitly reset
       }
+      setOwnerChecked(true);
     });
-  
+
     // Fetch attachments
     getQueryResponse(dispatch, getAttachments, { uri: properties.uri }, token).then(
       attachmentsResult => {
         dispatch(setAttachments(Array.isArray(attachmentsResult) ? attachmentsResult : []));
+        setAttachmentsChecked(true);
       }
     );
   }, [dispatch, properties.uri, token, graphUri]);
@@ -84,10 +86,13 @@ export default function Attachments(properties) {
     }
   }, [refreshMembers, dispatch, properties.uri]);
 
-  if (owner === undefined) return <Loading />;
+  useEffect(() => {
+    if (ownerChecked && attachmentsChecked && properties.onContentChange) {
+      properties.onContentChange(attachments.length > 0 || isOwner);
+    }
+  }, [ownerChecked, attachmentsChecked, isOwner, attachments, properties.onContentChange]);
 
-  // Nothing to show for non-owners with no attachments — hide the section.
-  if ((!attachments || attachments.length === 0) && !isOwner) return null;
+  if (!ownerChecked) return <Loading />;
 
   return (
     <AttachmentsTable

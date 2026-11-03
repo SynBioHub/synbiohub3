@@ -25,7 +25,7 @@ sections will be minimizable and some won't be.
  * @returns A minimized/expanded section.
  */
 export default function Section(properties) {
-  const { translation = 0 } = properties;
+  const { translation = 0, hidden = false } = properties;
   const dispatch = useDispatch();
 
   const id = properties.pluginID || (properties.id || properties.title);
@@ -64,9 +64,7 @@ export default function Section(properties) {
     dispatch(updateMinimizedSections(minimizedSectionsCopy, contentType));
   }, [isMinimized]);
 
-  // Custom sections (Details, Attachments, …) return null when empty; hide the
-  // whole section chrome instead of leaving a blank titled box.
-  if (properties.children == null || properties.children === false) {
+  if (hidden) {
     return null;
   }
 

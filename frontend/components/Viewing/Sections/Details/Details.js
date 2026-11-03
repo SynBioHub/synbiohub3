@@ -21,6 +21,7 @@ export default function Details(properties) {
   const [references, setReferences] = useState();
   const [showEdit, setShowEdit] = useState([]);
   const [isOwner, setIsOwner] = useState(false);
+  const [ownerChecked, setOwnerChecked] = useState(false);
   const user = useSelector(state => state.user);
   const token = useSelector(state => state.user.token);
 
@@ -37,12 +38,15 @@ export default function Details(properties) {
     });
   
     getQueryResponse(dispatch, getOwner, { uri: properties.uri }, token).then(owner => {
-      if (isMounted && (
+      if (!isMounted) return;
+
+      if (
         owner?.some(res => res.ownedBy === user.graphUri) ||
         properties.uri.endsWith('/share')
-      )) {
+      ) {
         setIsOwner(true);
       }
+      setOwnerChecked(true);
     });
   
     getQueryResponse(dispatch, getCitations, { uri: properties.uri }, token).then(citations => {
@@ -64,6 +68,18 @@ export default function Details(properties) {
   }, [dispatch, properties.uri, token, user.graphUri]);
   
 
+
+  useEffect(() => {
+    if (details && ownerChecked && properties.onContentChange) {
+      const hasAnyDetail = Boolean(
+        details.mutableDescription ||
+        details.mutableNotes ||
+        details.mutableProvenance ||
+        references
+      );
+      properties.onContentChange(hasAnyDetail || isOwner);
+    }
+  }, [details, references, isOwner, ownerChecked, properties.onContentChange]);
 
   if (!details) return <Loading />;
 
@@ -118,23 +134,13 @@ export default function Details(properties) {
     }
   };
 
-  const descriptionSection = getDetailsSection(details.mutableDescription, 'Description');
-  const notesSection = getDetailsSection(details.mutableNotes, 'Notes');
-  const sourceSection = getDetailsSection(details.mutableProvenance, 'Source');
-  const referencesSection = getDetailsSection(references, 'References');
-  const hasVisibleContent =
-    descriptionSection || notesSection || sourceSection || referencesSection;
-
-  // Hide the whole Details page section when there is nothing to show.
-  if (!hasVisibleContent) return null;
-
   return (
     <div>
       <div>
-        {descriptionSection}
-        {notesSection}
-        {sourceSection}
-        {referencesSection}
+        {getDetailsSection(details.mutableDescription, 'Description')}
+        {getDetailsSection(details.mutableNotes, 'Notes')}
+        {getDetailsSection(details.mutableProvenance, 'Source')}
+        {getDetailsSection(references, 'References')}
       </div>
     </div>
   );
