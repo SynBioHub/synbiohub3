@@ -20,6 +20,9 @@ export default function Shell(properties) {
 
   const json = MasterJSON[properties.metadata.types];
 
+  if (metadata && !metadata.displayId) {
+    metadata.displayId = displayIdFromUri(properties.uri);
+  }
   if (metadata && !metadata.name && metadata.displayId)
     metadata.name = metadata.displayId;
 
@@ -104,6 +107,25 @@ export default function Shell(properties) {
     </div>
     </>
   );
+}
+
+/** Last path segment of a URI, skipping a trailing version-like segment when present. */
+export function displayIdFromUri(uri) {
+  if (!uri || typeof uri !== 'string') return '';
+  try {
+    const path = new URL(uri).pathname.replace(/\/+$/, '');
+    const parts = path.split('/').filter(Boolean);
+    if (parts.length === 0) return '';
+    const last = parts[parts.length - 1];
+    if (/^\d/.test(last) && parts.length >= 2) return parts[parts.length - 2];
+    return last;
+  } catch {
+    const parts = uri.split('/').filter(Boolean);
+    if (parts.length === 0) return '';
+    const last = parts[parts.length - 1];
+    if (/^\d/.test(last) && parts.length >= 2) return parts[parts.length - 2];
+    return last;
+  }
 }
 
 export function isUriOwner(uri, currentUserUsername) {

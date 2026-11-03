@@ -32,9 +32,8 @@ export default function Details(properties) {
     if (!properties.uri) return;
   
     getQueryResponse(dispatch, getDetails, { uri: properties.uri }, token).then(details => {
-      if (isMounted && details?.length > 0) {
-        setDetails(details[0]);
-      }
+      if (!isMounted) return;
+      setDetails(details?.length > 0 ? details[0] : {});
     });
   
     getQueryResponse(dispatch, getOwner, { uri: properties.uri }, token).then(owner => {
@@ -119,13 +118,23 @@ export default function Details(properties) {
     }
   };
 
+  const descriptionSection = getDetailsSection(details.mutableDescription, 'Description');
+  const notesSection = getDetailsSection(details.mutableNotes, 'Notes');
+  const sourceSection = getDetailsSection(details.mutableProvenance, 'Source');
+  const referencesSection = getDetailsSection(references, 'References');
+  const hasVisibleContent =
+    descriptionSection || notesSection || sourceSection || referencesSection;
+
+  // Hide the whole Details page section when there is nothing to show.
+  if (!hasVisibleContent) return null;
+
   return (
     <div>
       <div>
-        {getDetailsSection(details.mutableDescription, 'Description')}
-        {getDetailsSection(details.mutableNotes, 'Notes')}
-        {getDetailsSection(details.mutableProvenance, 'Source')}
-        {getDetailsSection(references, 'References')}
+        {descriptionSection}
+        {notesSection}
+        {sourceSection}
+        {referencesSection}
       </div>
     </div>
   );

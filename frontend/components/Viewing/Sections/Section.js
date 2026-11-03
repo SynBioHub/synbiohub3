@@ -64,6 +64,12 @@ export default function Section(properties) {
     dispatch(updateMinimizedSections(minimizedSectionsCopy, contentType));
   }, [isMinimized]);
 
+  // Custom sections (Details, Attachments, …) return null when empty; hide the
+  // whole section chrome instead of leaving a blank titled box.
+  if (properties.children == null || properties.children === false) {
+    return null;
+  }
+
   return (
     <div className={translation === 0 ? styles.sectionexpanded : styles.sectioncollapsed} id={properties.title}>
       <div className={styles.sectiontitle}>{properties.title}</div>

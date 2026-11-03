@@ -52,6 +52,8 @@ import Constraint3 from './Types/Constraint3.json';
 import Interface3  from './Types/Interface3.json';
 import Measure from './Types/Measure.json';
 import Layout from './Types/Layout.json';
+import NodeGlyph from './Types/NodeGlyph.json';
+import EdgeGlyph from './Types/EdgeGlyph.json';
 
 const TypeToJson = {
   'http://sbols.org/v2#ComponentDefinition': ComponentDefinition,
@@ -107,7 +109,9 @@ const TypeToJson = {
   'http://sbols.org/v3#Constraint': Constraint3,
   'http://sbols.org/v3#Interface': Interface3,
   'http://www.ontology-of-units-of-measure.org/resource/om-2/Measure': Measure,
-  'https://sbolcanvas.org/Layout': Layout
+  'https://sbolcanvas.org/Layout': Layout,
+  'https://sbolcanvas.org/NodeGlyph': NodeGlyph,
+  'https://sbolcanvas.org/EdgeGlyph': EdgeGlyph
 };
 
 export default TypeToJson;

@@ -5,6 +5,7 @@ PREFIX synbiohub: <http://synbiohub.org#>
 PREFIX dc: <http://purl.org/dc/elements/1.1/>
 PREFIX prov: <http://www.w3.org/ns/prov#>
 PREFIX sbh: <http://wiki.synbiohub.org/wiki/Terms/synbiohub#>
+PREFIX sbolcanvas: <https://sbolcanvas.org/>
 
 SELECT DISTINCT
        ?persistentIdentity
@@ -22,11 +23,12 @@ SELECT DISTINCT
 WHERE { 
       <$uri> a ?type .
       OPTIONAL { <$uri> sbol2:persistentIdentity ?persistentIdentity . }
-      OPTIONAL { <$uri> sbol2:displayId ?displayId . }
+      OPTIONAL { <$uri> sbol2:displayId ?sbol2DisplayId . }
       OPTIONAL { <$uri> sbol2:version ?version . }
       OPTIONAL { <$uri> sbol3:persistentIdentity ?persistentIdentity . }
-      OPTIONAL { <$uri> sbol3:displayId ?displayId . }
+      OPTIONAL { <$uri> sbol3:displayId ?sbol3DisplayId . }
       OPTIONAL { <$uri> sbol3:version ?version . }
+      OPTIONAL { <$uri> sbolcanvas:displayId ?sbolcanvasDisplayId . }
       OPTIONAL { <$uri> dcterms:title ?name . }
       OPTIONAL { <$uri> dcterms:description ?description . }
       OPTIONAL { <$uri> dc:creator ?creator . }
@@ -35,6 +37,7 @@ WHERE {
       OPTIONAL { <$uri> synbiohub:uploadedBy ?uploadedBy . }
       OPTIONAL { <$uri> prov:wasDerivedFrom ?wasDerivedFrom . }
       OPTIONAL { <$uri> prov:wasGeneratedBy ?wasGeneratedBy . }
+      BIND(COALESCE(?sbol2DisplayId, ?sbol3DisplayId, ?sbolcanvasDisplayId) AS ?displayId)
 }
 GROUP BY ?persistentIdentity ?displayId ?version ?name ?description`;
 

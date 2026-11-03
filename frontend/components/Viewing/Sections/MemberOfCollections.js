@@ -27,10 +27,11 @@ export default function MemberOfCollections(properties) {
       getQueryResponse(dispatch, getOtherProperties, {
         uri: properties.uri
       }, token).then(props => {
-          if (props.length > 0) setOtherProps(props);
+          setOtherProps(Array.isArray(props) ? props : []);
         });
   }, [otherProps]);
-  if (!otherProps) return <Loading />;
+  if (otherProps == undefined) return <Loading />;
+  if (otherProps.length === 0) return null;
 
   return (
     <div>

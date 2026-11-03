@@ -44,12 +44,14 @@ export default function Attachments(properties) {
   useEffect(() => {
     // Always reset attachments on new URI
     dispatch(setAttachments([]));
+    setOwner(undefined);
   
     // Fetch owner
-    getQueryResponse(dispatch, getOwner, { uri: properties.uri }, token).then(owner => {
-      if (owner.length > 0) setOwner(owner);
+    getQueryResponse(dispatch, getOwner, { uri: properties.uri }, token).then(ownerResult => {
+      const owners = Array.isArray(ownerResult) ? ownerResult : [];
+      setOwner(owners);
   
-      const owned = owner.some(res => res.ownedBy === graphUri);
+      const owned = owners.some(res => res.ownedBy === graphUri);
       const isShare = properties.uri && properties.uri.endsWith('/share');
   
       if (owned || isShare) {
@@ -61,10 +63,8 @@ export default function Attachments(properties) {
   
     // Fetch attachments
     getQueryResponse(dispatch, getAttachments, { uri: properties.uri }, token).then(
-      attachments => {
-        if (attachments.length > 0) {
-          dispatch(setAttachments(attachments));
-        }
+      attachmentsResult => {
+        dispatch(setAttachments(Array.isArray(attachmentsResult) ? attachmentsResult : []));
       }
     );
   }, [dispatch, properties.uri, token, graphUri]);
@@ -74,10 +74,8 @@ export default function Attachments(properties) {
     if (refreshMembers) {
       // Fetch attachments again and update the state
       getQueryResponse(dispatch, getAttachments, { uri: properties.uri }, token).then(
-        attachments => {
-          if (attachments.length > 0) {
-            dispatch(setAttachments(attachments));
-          }
+        attachmentsResult => {
+          dispatch(setAttachments(Array.isArray(attachmentsResult) ? attachmentsResult : []));
           // Reset refreshMembers to false after refreshing
           setRefreshMembers(false);
         }
@@ -86,7 +84,10 @@ export default function Attachments(properties) {
     }
   }, [refreshMembers, dispatch, properties.uri]);
 
-  if (!owner) return <Loading />;
+  if (owner === undefined) return <Loading />;
+
+  // Nothing to show for non-owners with no attachments — hide the section.
+  if ((!attachments || attachments.length === 0) && !isOwner) return null;
 
   return (
     <AttachmentsTable
