@@ -105,6 +105,8 @@
 .navoptionicon {
    display: flex;
    height: 1.4rem;
+   width: 1.4rem;
+   font-size: 1.4rem;
    margin-right: 0.2rem;
    transition: transform .2s;
 }
@@ -140,6 +142,8 @@
 
 .searchicon {
    height: 1.4rem;
+   width: 1.4rem;
+   font-size: 1.4rem;
    display: inline-block;
    vertical-align: middle;
    transition: transform .1s;
@@ -154,6 +158,8 @@
 
 .searchiconactive {
    height: 1.4rem;
+   width: 1.4rem;
+   font-size: 1.4rem;
    padding-right: 0.4rem;
 }
 
@@ -200,7 +206,15 @@
 .cancelsearch {
    margin-left: 0.3rem;
    height: 1.9rem;
+   width: 1.9rem;
+   font-size: 1.9rem;
    transition: transform .2s;
+}
+
+.iconheight {
+   height: 1.4rem;
+   width: 1.4rem;
+   font-size: 1.4rem;
 }
 
 .cancelsearchcontainer {
@@ -328,6 +342,8 @@
  
     .navoptionicon {
        height: 1rem;
+       width: 1rem;
+       font-size: 1rem;
     }
  
     .borderCircle {
