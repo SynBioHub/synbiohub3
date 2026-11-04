@@ -123,7 +123,6 @@ export default function Navbar() {
           <a>
             <FontAwesomeIcon
               icon={faSearch}
-              size="2x"
               alt="Search SynBioHub"
               className={styles.searchicon}
             />

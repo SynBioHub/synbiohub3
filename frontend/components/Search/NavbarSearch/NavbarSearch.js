@@ -89,7 +89,6 @@ export default function NavbarSearch(properties) {
           icon={faSearch}
           className={styles.searchiconactive}
           color="#fff"
-          size="2x"
         />
 
         <SearchBar
@@ -101,7 +100,6 @@ export default function NavbarSearch(properties) {
         <div className={styles.cancelsearchcontainer}>
           <FontAwesomeIcon
             icon={faBackward}
-            size="2x"
             color="#F2E86D"
             className={styles.cancelsearch}
             onClick={() => {

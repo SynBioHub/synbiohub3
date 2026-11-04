@@ -50,7 +50,6 @@ export default function Selector(properties) {
             className={iconClass}
             icon={properties.icon}
             alt="home"
-            size="2x"
             color="#F2E86D"
           />
           {properties.logoUrl ? (
