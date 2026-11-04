@@ -33,9 +33,8 @@ export default function Details(properties) {
     if (!properties.uri) return;
   
     getQueryResponse(dispatch, getDetails, { uri: properties.uri }, token).then(details => {
-      if (isMounted && details?.length > 0) {
-        setDetails(details[0]);
-      }
+      if (!isMounted) return;
+      setDetails(details?.length > 0 ? details[0] : {});
     });
   
     getQueryResponse(dispatch, getOwner, { uri: properties.uri }, token).then(owner => {

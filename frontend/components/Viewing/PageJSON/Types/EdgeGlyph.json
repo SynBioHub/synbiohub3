@@ -1,0 +1,137 @@
+{
+  "type": "https://sbolcanvas.org/EdgeGlyph",
+  "prefixes": [
+    "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>",
+    "PREFIX dcterms: <http://purl.org/dc/terms/>",
+    "PREFIX dc: <http://purl.org/dc/elements/1.1/>",
+    "PREFIX sbh: <http://wiki.synbiohub.org/wiki/Terms/synbiohub#>",
+    "PREFIX prov: <http://www.w3.org/ns/prov#>",
+    "PREFIX sbol: <http://sbols.org/v2#>",
+    "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>",
+    "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>",
+    "PREFIX purl: <http://purl.obolibrary.org/obo/>",
+    "PREFIX biopax: <http://www.biopax.org/release/biopax-level3.owl#>",
+    "PREFIX so: <http://identifiers.org/so/>",
+    "PREFIX bench: <http://wiki.synbiohub.org/wiki/Terms/benchling#>",
+    "PREFIX genbank: <http://www.ncbi.nlm.nih.gov/genbank#>",
+    "PREFIX sbolcanvas: <https://sbolcanvas.org/>"
+  ],
+  "metadata": [
+    {
+      "title": "Target Point",
+      "icon": "faMapMarkerAlt",
+      "rootPredicate": "sbolcanvas:targetPoint",
+      "sections": [
+        {
+          "title": "target",
+          "predicates": ["sbolcanvas:displayId"],
+          "link": "$<targetLink>"
+        },
+        {
+          "title": "target",
+          "text": "($<targetX>, $<targetY>)",
+          "predicates": [],
+          "link": "$<targetLink>"
+        },
+        {
+          "title": "targetX",
+          "predicates": ["sbolcanvas:x"],
+          "hide": true
+        },
+        {
+          "title": "targetY",
+          "predicates": ["sbolcanvas:y"],
+          "hide": true
+        },
+        {
+          "title": "targetLink",
+          "predicates": [],
+          "hide": true
+        }
+      ]
+    },
+    {
+      "title": "Source Point",
+      "icon": "faMapMarkerAlt",
+      "rootPredicate": "sbolcanvas:sourcePoint",
+      "sections": [
+        {
+          "title": "source",
+          "predicates": ["sbolcanvas:displayId"],
+          "link": "$<sourceLink>"
+        },
+        {
+          "title": "source",
+          "text": "($<sourceX>, $<sourceY>)",
+          "predicates": [],
+          "link": "$<sourceLink>"
+        },
+        {
+          "title": "sourceX",
+          "predicates": ["sbolcanvas:x"],
+          "hide": true
+        },
+        {
+          "title": "sourceY",
+          "predicates": ["sbolcanvas:y"],
+          "hide": true
+        },
+        {
+          "title": "sourceLink",
+          "predicates": [],
+          "hide": true
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "title": "Points",
+      "rootPredicate": "sbolcanvas:point",
+      "icon": "faMapPin",
+      "sections": [
+        {
+          "title": "Point",
+          "predicates": ["sbolcanvas:displayId"],
+          "link": "$<pointLink>"
+        },
+        {
+          "title": "Point",
+          "text": "($<pointX>, $<pointY>)",
+          "predicates": [],
+          "link": "$<pointLink>"
+        },
+        {
+          "title": "pointLink",
+          "predicates": [],
+          "hide": true
+        },
+        {
+          "title": "X",
+          "predicates": ["sbolcanvas:x"]
+        },
+        {
+          "title": "Y",
+          "predicates": ["sbolcanvas:y"]
+        },
+        {
+          "title": "pointX",
+          "predicates": ["sbolcanvas:x"],
+          "hide": true
+        },
+        {
+          "title": "pointY",
+          "predicates": ["sbolcanvas:y"],
+          "hide": true
+        }
+      ]
+    }
+  ],
+  "pages": [
+    "$TABLES[Points]",
+    "Details",
+    "Other Properties",
+    "Member of these Collections",
+    "Attachments"
+  ]
+}

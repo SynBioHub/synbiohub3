@@ -14,6 +14,7 @@ import getMetadata from '../sparql/getMetadata';
 import getQueryResponse from '../sparql/tools/getQueryResponse';
 import { addError } from '../redux/actions';
 import LinkedSearch from '../components/Search/StandardSearch/LinkedSearch';
+import loginStyles from '../styles/login.module.css';
 
 const centerStyle = {
   display: 'flex',
@@ -51,7 +52,7 @@ function PageNotFound({ url, showLoginLink }) {
             <p>
               You may need to sign in to view this page.{' '}
               <Link href={`/login?next=${next}`}>
-                <a>Log in</a>
+                <a className={loginStyles.blue}>Log in</a>
               </Link>
             </p>
           ) : null}

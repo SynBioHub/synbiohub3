@@ -45,10 +45,13 @@ export default function Attachments(properties) {
   useEffect(() => {
     // Always reset attachments on new URI
     dispatch(setAttachments([]));
+    setOwnerChecked(false);
+    setAttachmentsChecked(false);
   
     // Fetch owner
-    getQueryResponse(dispatch, getOwner, { uri: properties.uri }, token).then(owner => {
-      const owned = owner.some(res => res.ownedBy === graphUri);
+    getQueryResponse(dispatch, getOwner, { uri: properties.uri }, token).then(ownerResult => {
+      const owners = Array.isArray(ownerResult) ? ownerResult : [];
+      const owned = owners.some(res => res.ownedBy === graphUri);
       const isShare = properties.uri && properties.uri.endsWith('/share');
 
       if (owned || isShare) {
@@ -61,10 +64,8 @@ export default function Attachments(properties) {
 
     // Fetch attachments
     getQueryResponse(dispatch, getAttachments, { uri: properties.uri }, token).then(
-      attachments => {
-        if (attachments.length > 0) {
-          dispatch(setAttachments(attachments));
-        }
+      attachmentsResult => {
+        dispatch(setAttachments(Array.isArray(attachmentsResult) ? attachmentsResult : []));
         setAttachmentsChecked(true);
       }
     );
@@ -75,10 +76,8 @@ export default function Attachments(properties) {
     if (refreshMembers) {
       // Fetch attachments again and update the state
       getQueryResponse(dispatch, getAttachments, { uri: properties.uri }, token).then(
-        attachments => {
-          if (attachments.length > 0) {
-            dispatch(setAttachments(attachments));
-          }
+        attachmentsResult => {
+          dispatch(setAttachments(Array.isArray(attachmentsResult) ? attachmentsResult : []));
           // Reset refreshMembers to false after refreshing
           setRefreshMembers(false);
         }
