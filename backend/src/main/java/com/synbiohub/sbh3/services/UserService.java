@@ -27,6 +27,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import java.util.stream.Collectors;
 
 import com.synbiohub.sbh3.dto.UserDto;
@@ -252,6 +253,10 @@ public class UserService {
     }
 
     public String setupInstance(Map<String, Object> allParams) {
+        return setupInstance(allParams, null);
+    }
+
+    public String setupInstance(Map<String, Object> allParams, MultipartFile logo) {
         String fileName = "config.local.json";
         String workingDirectory = System.getProperty("user.dir") + "/data";
         File file = new File(workingDirectory + File.separator + fileName);
@@ -305,6 +310,9 @@ public class UserService {
                 bw.write(json);
                 bw.close();
                 ConfigUtil.refreshLocalJson();
+                if (logo != null && !logo.isEmpty()) {
+                    saveInstanceLogo(logo);
+                }
                 log.info("Setup successful!");
                 return "Setup Successful";
             } else {
@@ -315,6 +323,22 @@ public class UserService {
             log.error("Setup failed.");
             return "Failed to create file!";
         }
+    }
+
+    private void saveInstanceLogo(MultipartFile logo) throws IOException {
+        if (logo == null || logo.isEmpty()) {
+            throw new IllegalArgumentException("Logo file is required.");
+        }
+
+        String contentType = logo.getContentType();
+        if (contentType == null || !contentType.startsWith("image/")) {
+            throw new IllegalArgumentException("Logo must be an image file.");
+        }
+
+        String encodedLogo = Base64.getEncoder().encodeToString(logo.getBytes());
+        String dataUri = "data:" + contentType + ";base64," + encodedLogo;
+        ConfigUtil.set(ConfigUtil.getLocaljson(), "instanceLogo", dataUri);
+        ConfigUtil.refreshLocalJson();
     }
 
     private String generateJwtSecret() {
