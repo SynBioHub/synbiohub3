@@ -3,7 +3,7 @@ import SidePanel from './SidePanel';
 import ViewHeader from './ViewHeader';
 
 import GenericContent from './PageJSON/Rendering/GenericContent';
-import MasterJSON from './PageJSON/MasterJSON';
+import { resolvePageJson } from './PageJSON/MasterJSON';
 
 import sequenceOntology from '../../namespace/sequence-ontology';
 import systemsBiologyOntology from '../../namespace/systems-biology-ontology';
@@ -18,53 +18,20 @@ export default function Shell(properties) {
   const plugins = properties.plugins;
   const metadata = properties.metadata;
 
-  const json = MasterJSON[properties.metadata.types];
+  const json = resolvePageJson(metadata?.types);
 
+  if (metadata && !metadata.displayId) {
+    metadata.displayId = displayIdFromUri(properties.uri);
+  }
   if (metadata && !metadata.name && metadata.displayId)
     metadata.name = metadata.displayId;
 
   let getSearchData = getSearch(formatMultipleTitles(metadata.types)[0]);
   metadata.search = getSearchData;
 
-  if (!json) {
-    return (
-      <>
-        <div
-          className={styles.panelbutton}
-          role="button"
-          onClick={() => {
-            translation == 18 ? setTranslation(0) : setTranslation(18);
-          }}
-        >
-          <FontAwesomeIcon icon={faBars} size="1x" />
-        </div>
-        <div className={styles.container}>
-          <SidePanel
-            metadata={metadata}
-            type={properties.type}
-            uri={properties.uri}
-            translation={translation}
-            setTranslation={setTranslation}
-          />
-          <div className={styles.content}>
-          <ViewHeader
-            name={metadata.name}
-            displayId={metadata.displayId}
-            description={metadata.description}
-            type={metadata.types}
-            uri={metadata.persistentIdentity}
-          />
-          <div className={styles.sections}>
-            <div>
-              No structure defined for type "{properties.metadata.types}"
-            </div>
-          </div>
-        </div>
-        <div></div>
-      </div>
-      </>
-    );
-  }
+  const headerUri = metadata.version
+    ? `${metadata.persistentIdentity}/${metadata.version}`
+    : (metadata.persistentIdentity || properties.uri);
 
   return (
     <>
@@ -93,7 +60,7 @@ export default function Shell(properties) {
           displayId={metadata.displayId}
           description={metadata.description}
           type={metadata.types}
-          uri={`${metadata.persistentIdentity}/${metadata.version}`}
+          uri={headerUri}
           search={metadata.search}
         />
         <div className={styles.sections}>
@@ -104,6 +71,24 @@ export default function Shell(properties) {
     </div>
     </>
   );
+}
+
+export function displayIdFromUri(uri) {
+  if (!uri || typeof uri !== 'string') return '';
+  try {
+    const path = new URL(uri).pathname.replace(/\/+$/, '');
+    const parts = path.split('/').filter(Boolean);
+    if (parts.length === 0) return '';
+    const last = parts[parts.length - 1];
+    if (/^\d/.test(last) && parts.length >= 2) return parts[parts.length - 2];
+    return last;
+  } catch {
+    const parts = uri.split('/').filter(Boolean);
+    if (parts.length === 0) return '';
+    const last = parts[parts.length - 1];
+    if (/^\d/.test(last) && parts.length >= 2) return parts[parts.length - 2];
+    return last;
+  }
 }
 
 export function isUriOwner(uri, currentUserUsername) {
