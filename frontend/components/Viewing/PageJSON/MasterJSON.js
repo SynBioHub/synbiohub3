@@ -51,6 +51,7 @@ import Interaction3 from './Types/Interaction3.json';
 import Constraint3 from './Types/Constraint3.json';
 import Interface3  from './Types/Interface3.json';
 import Measure from './Types/Measure.json';
+import Generic from './Types/Generic.json';
 
 const TypeToJson = {
   'http://sbols.org/v2#ComponentDefinition': ComponentDefinition,
@@ -107,5 +108,27 @@ const TypeToJson = {
   'http://sbols.org/v3#Interface': Interface3,
   'http://www.ontology-of-units-of-measure.org/resource/om-2/Measure': Measure
 };
+
+/**
+ * Resolve PageJSON for an object's rdf:type string.
+ * Tries the exact types string, then each comma-separated URI, then Generic.
+ */
+export function resolvePageJson(types) {
+  if (types && TypeToJson[types]) {
+    return TypeToJson[types];
+  }
+  if (types) {
+    const typeUris = String(types)
+      .split(',')
+      .map(t => t.trim())
+      .filter(Boolean);
+    for (const uri of typeUris) {
+      if (TypeToJson[uri]) {
+        return TypeToJson[uri];
+      }
+    }
+  }
+  return Generic;
+}
 
 export default TypeToJson;

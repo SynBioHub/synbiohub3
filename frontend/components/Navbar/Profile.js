@@ -10,8 +10,8 @@ export default function Profile() {
   const [icon, setIcon] = useState(
     <FontAwesomeIcon
       icon={faUser}
-      size="2x"
       color="#fff"
+      className={styles.iconheight}
       onClick={() => setShowMenu(true)}
     />
   );
@@ -21,7 +21,6 @@ export default function Profile() {
       setIcon(
         <FontAwesomeIcon
           icon={faTimesCircle}
-          size="2x"
           color="#7cc2fc"
           className={styles.iconheight}
           spin
@@ -32,7 +31,6 @@ export default function Profile() {
       setIcon(
         <FontAwesomeIcon
           icon={faUser}
-          size="2x"
           color="#fff"
           className={styles.iconheight}
           onClick={() => setShowMenu(true)}

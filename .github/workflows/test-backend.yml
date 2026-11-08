@@ -48,7 +48,7 @@ jobs:
       - uses: actions/setup-python@v4
         name: Install Python
         with:
-          python-version: '3.9'
+          python-version: '3.12'
       - name: Install test dependencies
         run: |
           pip install -r tests/test_requirements.txt
@@ -83,7 +83,7 @@ jobs:
       - uses: actions/setup-python@v4
         name: Install Python
         with:
-          python-version: '3.9'
+          python-version: '3.12'
       - name: Install test dependencies
         run: |
           pip install -r tests/test_requirements.txt

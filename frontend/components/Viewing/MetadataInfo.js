@@ -362,13 +362,17 @@ export default function MetadataInfo({ title, link, label, icon, specific, uri }
                     </div>
                   ) : (
                     <>
-                      <a
-                        href={correspondingLink ? correspondingLink : `/${processedSource}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        {processedSource}
-                      </a>
+                      {correspondingLink ? (
+                        <a
+                          href={correspondingLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {processedSource}
+                        </a>
+                      ) : (
+                        <span>{processedSource}</span>
+                      )}
                       {(label === "Source" || label === "Type" || label === "Role") && data && isOwner && (
                         <span className={styles.metarowactions}>
                           <FontAwesomeIcon icon={faPencilAlt} title="Edit metadata" onClick={() => handleEditMetadata(index, data, label)} />
