@@ -9,6 +9,7 @@ import { isValidURI } from '../Shell';
 import Loading from '../../Reusable/Loading';
 import Link from 'next/link';
 import lookupRole from '../../../namespace/lookupRole';
+import { processUrl } from '../../Admin/Registries';
 
 import styles from '../../../styles/view.module.css';
 import { useDispatch, useSelector } from 'react-redux';
@@ -18,6 +19,64 @@ import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
 
 const CAN_VIEW_PREDICATE = 'http://wiki.synbiohub.org/wiki/Terms/synbiohub#canView';
+
+/** Predicates under these namespaces keep a search icon; others (e.g. sbh:bookmark) do not. */
+const MAIN_SBOL_PREDICATE_NS = [
+  'http://sbols.org/v2#',
+  'http://sbols.org/v1#'
+];
+
+function isMainSbolPredicate(predicateUri) {
+  return (
+    typeof predicateUri === 'string' &&
+    MAIN_SBOL_PREDICATE_NS.some(ns => predicateUri.startsWith(ns))
+  );
+}
+
+/** True for sbh:ownedBy / user graph URIs like https://host/user/alice (no object path). */
+function isUserProfileUri(uri) {
+  if (!uri || typeof uri !== 'string') return false;
+  try {
+    const path = new URL(uri).pathname.replace(/\/+$/, '');
+    return /^\/user\/[^/]+$/.test(path);
+  } catch {
+    const cleaned = uri.replace(/\/+$/, '');
+    return /\/user\/[^/]+$/.test(cleaned) && !/\/user\/[^/]+\/.+/.test(cleaned);
+  }
+}
+
+function isHttpUri(value) {
+  return typeof value === 'string' && /^https?:\/\//i.test(value.trim());
+}
+
+function parseValue(text) {
+  if (!text || typeof text !== 'string') return text;
+  const parts = text.split('/');
+  if (parts.length >= 2) {
+    const lastPart = parts[parts.length - 1];
+
+    if (/^1(\.0+)*$/.test(lastPart)) {
+      text = parts[parts.length - 2];
+    } else {
+      const delimiters = ['#', '%', '/'];
+      const lastPartSegments = lastPart.split(new RegExp(`[${delimiters.join('')}]`));
+
+      text = lastPartSegments.pop();
+    }
+  }
+  return text;
+}
+
+/** SBH1-style path filter search for an Other Properties predicate/value pair. */
+function valueSearchHref(name, value) {
+  if (!name || value == null || value === '') return '/search';
+  if (isHttpUri(value)) {
+    return `/search/<${encodeURIComponent(name)}>=<${encodeURIComponent(value)}>&`;
+  }
+  return `/search/<${encodeURIComponent(name)}>='${encodeURIComponent(
+    String(value).replace("'", "\\'")
+  )}'&`;
+}
 
 export default function OtherProperties(properties) {
   const [otherProps, setOtherProps] = useState();
@@ -272,29 +331,33 @@ export default function OtherProperties(properties) {
   );
 
   function generateRows() {
-    return otherProps.map((obj, key) => {
-      return getRow(key, obj.p, obj.o);
-    });
+    return otherProps.map((obj, key) => (
+      <PropertyRow
+        key={key}
+        rowKey={key}
+        name={obj.p}
+        value={obj.o}
+        isOwner={isOwner}
+        editingKey={editingKey}
+        editedValue={editedValue}
+        setEditedValue={setEditedValue}
+        onEditClick={handleEditClick}
+        onSaveEdit={handleSaveEdit}
+        onConfirmDeletion={confirmDeletion}
+      />
+    ));
   }
 
   function generateViewerRows() {
     // Visible to everyone with access (the fetch is authorized by the backend);
-    // only owners get the remove control.
+    // only owners get the remove control. No profile / info link for viewers.
     return viewers.map((viewer) => {
       return (
         <tr key={`viewer-${viewer.userUri}`}>
           <td>
-            {lookupRole(CAN_VIEW_PREDICATE).term || CAN_VIEW_PREDICATE}
-            <Link href={CAN_VIEW_PREDICATE}>
-              <a>
-                <FontAwesomeIcon
-                  icon={faInfoCircle}
-                  size="1x"
-                  color="#465875"
-                  className={styles.searchicon}
-                />
-              </a>
-            </Link>
+            <span title={CAN_VIEW_PREDICATE}>
+              {lookupRole(CAN_VIEW_PREDICATE).term || CAN_VIEW_PREDICATE}
+            </span>
           </td>
           <td>
             <span>{viewer.username}</span>
@@ -312,85 +375,104 @@ export default function OtherProperties(properties) {
       );
     });
   }
+}
 
-  function getRow(key, name, value) {
-    const isUri = value.includes('http');
-    const valueSearch = isUri
-      ? `/search/<${encodeURIComponent(name)}>=<${encodeURIComponent(value)}>&`
-      : `/search/<${encodeURIComponent(name)}>='${encodeURIComponent(
-        value.replace("'", "\\'")
-      )}'&`;
-    // const parsedValue = value
-    //   .replace(name + '/', '')
-    //   .slice(
-    //     value.slice(0, value.lastIndexOf('/')).lastIndexOf('/') + 1,
-    //     value.length
-    //   );
-    const parsedValue = parseValue(value);
-    return (
-      <tr key={key}>
-        <td>
-          {lookupRole(name).term || name}
-          <Link href={name}>
-            <a>
-              <FontAwesomeIcon
-                icon={faInfoCircle}
-                size="1x"
-                color="#465875"
-                className={styles.searchicon}
-              />
-            </a>
-          </Link>
-        </td>
-        <td>
-          {editingKey === key ? (
-            <>
-              <input
-                type="text"
-                value={editedValue}
-                onChange={(e) => setEditedValue(e.target.value)}
-              />
-              <button onClick={() => handleSaveEdit(key)}>Save</button>
-            </>
-          ) : (
-            <>
-              <span>{parsedValue}</span>
-              {isOwner && (
-                <>
-                  {
-                    <FontAwesomeIcon
-                      icon={faPencilAlt}
-                      size="1x"
-                      onClick={() => handleEditClick(key, name, value)}
-                      className={styles.editIcon}
-                      title="Edit this annotation"
-                    />
-                  }
-                  {
-                    <FontAwesomeIcon
-                      icon={faTrash}
-                      size="1x"
-                      className={styles.editIcon}
-                      onClick={() => confirmDeletion(key, name, value)}
-                      title="Remove this annotation"
-                    />
-                  }
-                </>
-              )}
-              {isUri && (
-                <Link href={value}>
-                  <a>
-                    <FontAwesomeIcon
-                      icon={faInfoCircle}
-                      size="1x"
-                      color="#465875"
-                      className={styles.searchicon}
-                    />
-                  </a>
-                </Link>
-              )}
-              <Link href={valueSearch}>
-                <a>
+function PropertyRow({
+  rowKey,
+  name,
+  value,
+  isOwner,
+  editingKey,
+  editedValue,
+  setEditedValue,
+  onEditClick,
+  onSaveEdit,
+  onConfirmDeletion
+}) {
+  const [valueHref, setValueHref] = useState(null);
+  const registries = JSON.parse(localStorage.getItem('registries') || '{}') || {};
+  const valueIsUri = isHttpUri(value);
+  const valueIsUser = valueIsUri && isUserProfileUri(value);
+  const showValueInfo = valueIsUri && !valueIsUser;
+
+  useEffect(() => {
+    let cancelled = false;
+    async function resolveValueLink() {
+      if (!showValueInfo) {
+        setValueHref(null);
+        return;
+      }
+      const processed = await processUrl(value, registries);
+      if (cancelled) return;
+      if (processed.urlRemovedForLink) {
+        setValueHref(processed.urlRemovedForLink);
+      } else if (processed.urlReplacedForBackend) {
+        setValueHref(processed.urlReplacedForBackend);
+      } else {
+        // External / unregistered URI — open as-is (new tab).
+        setValueHref(value);
+      }
+    }
+    resolveValueLink();
+    return () => { cancelled = true; };
+  }, [value, showValueInfo]);
+
+  const parsedValue = parseValue(value);
+  const showSearch = isMainSbolPredicate(name);
+  const searchHref = showSearch ? valueSearchHref(name, value) : null;
+  const predicateLabel = lookupRole(name).term || name;
+
+  return (
+    <tr>
+      <td>
+        <span title={name}>{predicateLabel}</span>
+      </td>
+      <td>
+        {editingKey === rowKey ? (
+          <>
+            <input
+              type="text"
+              value={editedValue}
+              onChange={(e) => setEditedValue(e.target.value)}
+            />
+            <button onClick={() => onSaveEdit(rowKey)}>Save</button>
+          </>
+        ) : (
+          <>
+            <span>{parsedValue}</span>
+            {isOwner && (
+              <>
+                <FontAwesomeIcon
+                  icon={faPencilAlt}
+                  size="1x"
+                  onClick={() => onEditClick(rowKey, name, value)}
+                  className={styles.editIcon}
+                  title="Edit this annotation"
+                />
+                <FontAwesomeIcon
+                  icon={faTrash}
+                  size="1x"
+                  className={styles.editIcon}
+                  onClick={() => onConfirmDeletion(rowKey, name, value)}
+                  title="Remove this annotation"
+                />
+              </>
+            )}
+            {showValueInfo && valueHref && (
+              <Link href={valueHref}>
+                <a title={value}>
+                  <FontAwesomeIcon
+                    icon={faInfoCircle}
+                    size="1x"
+                    color="#465875"
+                    className={styles.searchicon}
+                  />
+                </a>
+              </Link>
+            )}
+            {showSearch && searchHref && (
+              <Link href={searchHref}>
+                <a title={`Search for ${parsedValue || value}`}>
                   <FontAwesomeIcon
                     icon={faSearch}
                     size="1x"
@@ -399,27 +481,10 @@ export default function OtherProperties(properties) {
                   />
                 </a>
               </Link>
-            </>
-          )}
-        </td>
-      </tr>
-    );
-  }
-
-  function parseValue(text) {
-    const parts = text.split('/');
-    if (parts.length >= 2) {
-      const lastPart = parts[parts.length - 1];
-
-      if (/^1(\.0+)*$/.test(lastPart)) {
-        text = parts[parts.length - 2];
-      } else {
-        const delimiters = ['#', '%', '/'];
-        const lastPartSegments = lastPart.split(new RegExp(`[${delimiters.join('')}]`));
-
-        text = lastPartSegments.pop();
-      }
-    }
-    return text;
-  }
+            )}
+          </>
+        )}
+      </td>
+    </tr>
+  );
 }
