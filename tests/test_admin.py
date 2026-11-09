@@ -257,7 +257,8 @@ class TestAdmin(TestCase):
             'showModuleInteractions' : 'ok',
         }
         files={
-            'logo' : (logo, open('./logo.jpg', 'rb')),
+            # Explicit MIME type matches browser uploads; SBH3 requires image/*.
+            'logo' : (logo, open('./logo.jpg', 'rb'), 'image/jpeg'),
         }
         compare_post_request("/admin/theme", data, headers = {"Accept": "text/plain"}, files = files, test_name = "admin_setAdministratorEmail", test_type = test_type)
         test_print("test_admin_updateTheme completed")
