@@ -27,12 +27,14 @@ function normalizeMailResponse(data) {
     return { apiKey: '', fromAddress: '' };
   }
   return {
+    // Include apiKey so a second normalize (SWR data already shaped) still works.
     apiKey:
-      raw.resendApiKey ??
-      raw.sendgridApiKey ??
-      raw.sendGridApiKey ??
+      raw.resendApiKey ||
+      raw.sendgridApiKey ||
+      raw.sendGridApiKey ||
+      raw.apiKey ||
       '',
-    fromAddress: raw.fromAddress ?? raw.sendGridFromEmail ?? ''
+    fromAddress: raw.fromAddress || raw.sendGridFromEmail || ''
   };
 }
 
@@ -183,10 +185,18 @@ const updateEmail = async (
     'X-authorization': token
   };
 
-  // Same param names as classic SBH; SBH3 maps key → resendApiKey.
+  const trimmedKey = (apiKey || '').trim();
+  const trimmedFrom = (address || '').trim();
+  if (!trimmedKey && !trimmedFrom) {
+    alert('Enter a new API key and/or from address to save.');
+    return;
+  }
+
+  // Same param names as classic SBH; SBH3 maps key → resendApiKey and
+  // treats blank fields as "leave unchanged".
   const parameters = new URLSearchParams();
-  parameters.append('key', apiKey);
-  parameters.append('fromEmail', address);
+  if (trimmedKey) parameters.append('key', trimmedKey);
+  if (trimmedFrom) parameters.append('fromEmail', trimmedFrom);
 
   let response;
 
@@ -216,10 +226,17 @@ const updateEmail = async (
     return;
   }
 
-  setError('');
-  const successMessage =
+  const responseMessage =
     typeof response.data === 'string' ? response.data : 'Mail settings updated.';
-  alert(successMessage);
+  // Backend may return a soft validation message with HTTP 200.
+  if (!/updated/i.test(responseMessage)) {
+    setError(responseMessage);
+    alert(responseMessage);
+    return;
+  }
+
+  setError('');
+  alert(responseMessage);
   setApiKey('');
   setFromEmail('');
   mutate([`${publicRuntimeConfig.backend}/admin/mail`, token, dispatch]);

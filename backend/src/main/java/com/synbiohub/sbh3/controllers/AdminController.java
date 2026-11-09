@@ -157,23 +157,47 @@ public class AdminController {
     /**
      * Persists Resend settings to {@code data/config.local.json} (overrides bundled {@code config.json}).
      * Params: {@code key} / {@code resendApiKey} (API key) and {@code fromEmail} / {@code fromAddress}.
+     * Blank values keep the currently saved setting (partial update).
      */
     @Operation(summary = "Update mail settings", description = "Persists Resend settings to config.local.json.")
     @PostMapping(value = "/admin/mail")
     @ResponseBody
     public String updateMailSettings(@RequestParam Map<String, String> allParams, HttpServletRequest request)
             throws IOException {
-        String resendApiKey;
+        String submittedKey;
         if (allParams.containsKey("key")) {
-            resendApiKey = allParams.get("key") != null ? allParams.get("key") : "";
+            submittedKey = allParams.get("key") != null ? allParams.get("key") : "";
         } else if (allParams.containsKey("resendApiKey")) {
-            resendApiKey = allParams.get("resendApiKey") != null ? allParams.get("resendApiKey") : "";
+            submittedKey = allParams.get("resendApiKey") != null ? allParams.get("resendApiKey") : "";
         } else {
-            resendApiKey = allParams.getOrDefault("sendgridApiKey", "");
+            submittedKey = allParams.getOrDefault("sendgridApiKey", "");
         }
-        String fromAddress = allParams.containsKey("fromEmail")
+        submittedKey = submittedKey.trim();
+
+        String submittedFrom = allParams.containsKey("fromEmail")
                 ? (allParams.get("fromEmail") != null ? allParams.get("fromEmail") : "")
                 : allParams.getOrDefault("fromAddress", "");
+        submittedFrom = submittedFrom.trim();
+
+        JsonNode existing = ConfigUtil.get("mail");
+        String existingKey = "";
+        String existingFrom = "";
+        if (existing != null && !existing.isNull()) {
+            existingKey = existing.path("resendApiKey").asText("").trim();
+            if (existingKey.isEmpty()) {
+                existingKey = existing.path("sendgridApiKey").asText("").trim();
+            }
+            existingFrom = existing.path("fromAddress").asText("").trim();
+        }
+
+        // Empty form fields mean "leave unchanged".
+        String resendApiKey = !submittedKey.isEmpty() ? submittedKey : existingKey;
+        String fromAddress = !submittedFrom.isEmpty() ? submittedFrom : existingFrom;
+
+        if (resendApiKey.isEmpty() && fromAddress.isEmpty()) {
+            return "Please enter a Resend API key and/or from address.";
+        }
+
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode mail = mapper.createObjectNode();
         mail.put("resendApiKey", resendApiKey);
