@@ -226,17 +226,15 @@ public class UserService {
         }
     }
 
-    /** @return [apiKey, fromAddress] */
+    /** @return [apiKey, fromAddress] for Resend */
     private String[] resolveMailCredentials() throws IOException {
         JsonNode mailConfig = ConfigUtil.get("mail");
-        String configuredApiKey = mailConfig != null ? mailConfig.path("sendgridApiKey").asText("").trim() : "";
         String resendConfigApiKey = mailConfig != null ? mailConfig.path("resendApiKey").asText("").trim() : "";
+        // Legacy SendGrid-named field still accepted if present in older local configs.
+        String legacyApiKey = mailConfig != null ? mailConfig.path("sendgridApiKey").asText("").trim() : "";
         String mailApiKey = System.getenv("RESEND_API_KEY");
         if (mailApiKey == null || mailApiKey.isBlank()) {
-            mailApiKey = System.getenv("SENDGRID_API_KEY");
-        }
-        if (mailApiKey == null || mailApiKey.isBlank()) {
-            mailApiKey = !resendConfigApiKey.isEmpty() ? resendConfigApiKey : configuredApiKey;
+            mailApiKey = !resendConfigApiKey.isEmpty() ? resendConfigApiKey : legacyApiKey;
         }
         String fromAddress = mailConfig != null ? mailConfig.path("fromAddress").asText("").trim() : "";
         if (mailApiKey.isEmpty() || fromAddress.isEmpty()) {

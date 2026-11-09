@@ -123,13 +123,15 @@ public class AdminController {
     }
 
     /**
-     * SendGrid settings from merged config ({@code data/config.local.json} overrides
+     * Resend mail settings from merged config ({@code data/config.local.json} overrides
      * {@code src/main/resources/config.json} via {@link ConfigUtil#get(String)}).
      * <p>
      * Body is JSON serialized as {@code text/plain} so clients that send {@code Accept: text/plain}
      * still match; parse the string as JSON on the client if needed.
+     * Returns {@code resendApiKey} (falling back to legacy {@code sendgridApiKey}) and
+     * {@code fromAddress}.
      */
-    @Operation(summary = "Get mail settings", description = "Returns SendGrid settings from merged config.")
+    @Operation(summary = "Get mail settings", description = "Returns Resend settings from merged config.")
     @GetMapping(value = "/admin/mail", produces = {MediaType.TEXT_PLAIN_VALUE, MediaType.APPLICATION_JSON_VALUE})
     @ResponseBody
     public String getMailSettings(@RequestParam Map<String, String> allParams, HttpServletRequest request)
@@ -138,34 +140,43 @@ public class AdminController {
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode out = mapper.createObjectNode();
         if (mail != null && !mail.isNull()) {
-            out.put("sendgridApiKey", mail.path("sendgridApiKey").asText(""));
+            String resendKey = mail.path("resendApiKey").asText("").trim();
+            if (resendKey.isEmpty()) {
+                // Legacy field from earlier SendGrid-named config.
+                resendKey = mail.path("sendgridApiKey").asText("");
+            }
+            out.put("resendApiKey", resendKey);
             out.put("fromAddress", mail.path("fromAddress").asText(""));
         } else {
-            out.put("sendgridApiKey", "");
+            out.put("resendApiKey", "");
             out.put("fromAddress", "");
         }
         return mapper.writeValueAsString(out);
     }
 
     /**
-     * Persists SendGrid settings to {@code data/config.local.json} (overrides bundled {@code config.json}).
-     * Params: {@code key} and {@code fromEmail} (as used by the admin UI), or {@code sendgridApiKey} and
-     * {@code fromAddress}.
+     * Persists Resend settings to {@code data/config.local.json} (overrides bundled {@code config.json}).
+     * Params: {@code key} / {@code resendApiKey} (API key) and {@code fromEmail} / {@code fromAddress}.
      */
-    @Operation(summary = "Update mail settings", description = "Persists SendGrid settings to config.local.json.")
+    @Operation(summary = "Update mail settings", description = "Persists Resend settings to config.local.json.")
     @PostMapping(value = "/admin/mail")
     @ResponseBody
     public String updateMailSettings(@RequestParam Map<String, String> allParams, HttpServletRequest request)
             throws IOException {
-        String sendgridApiKey = allParams.containsKey("key")
-                ? (allParams.get("key") != null ? allParams.get("key") : "")
-                : allParams.getOrDefault("sendgridApiKey", "");
+        String resendApiKey;
+        if (allParams.containsKey("key")) {
+            resendApiKey = allParams.get("key") != null ? allParams.get("key") : "";
+        } else if (allParams.containsKey("resendApiKey")) {
+            resendApiKey = allParams.get("resendApiKey") != null ? allParams.get("resendApiKey") : "";
+        } else {
+            resendApiKey = allParams.getOrDefault("sendgridApiKey", "");
+        }
         String fromAddress = allParams.containsKey("fromEmail")
                 ? (allParams.get("fromEmail") != null ? allParams.get("fromEmail") : "")
                 : allParams.getOrDefault("fromAddress", "");
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode mail = mapper.createObjectNode();
-        mail.put("sendgridApiKey", sendgridApiKey);
+        mail.put("resendApiKey", resendApiKey);
         mail.put("fromAddress", fromAddress);
         ConfigUtil.set(ConfigUtil.getLocaljson(), "mail", mail);
         ConfigUtil.refreshLocalJson();

@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class MailEntity {
-    private String sendgridApiKey;
+    private String resendApiKey;
     private String fromAddress;
 }
