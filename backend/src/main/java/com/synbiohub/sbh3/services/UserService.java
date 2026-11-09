@@ -79,6 +79,7 @@ public class UserService {
             throw new RegistrationFailedException("Passwords do not match.");
         }
         // TODO: check for username and email uniqueness
+        Role role = userRegistrationDTO.getRole() != null ? userRegistrationDTO.getRole() : Role.USER;
         var user = User
                 .builder()
                 .username(userRegistrationDTO.getUsername())
@@ -86,11 +87,27 @@ public class UserService {
                 .email(userRegistrationDTO.getEmail())
                 .affiliation(userRegistrationDTO.getAffiliation())
                 .password(passwordEncoder.encode(userRegistrationDTO.getPassword1()))
-                .role(userRegistrationDTO.getRole())
+                .role(role)
                 .build();
+        applyRoleFlags(user, role);
         user.setGraphUri("https://synbiohub.org/user/" + user.getUsername());
         userRepository.save(user);
         return "User registered successfully";
+    }
+
+    /**
+     * Keep {@code isAdmin}/{@code isCurator}/{@code isMember} in sync with the
+     * single {@link Role} enum (UI checkboxes are mutually exclusive).
+     */
+    public static void applyRoleFlags(User user, Role role) {
+        if (user == null) {
+            return;
+        }
+        Role effective = role != null ? role : Role.USER;
+        user.setRole(effective);
+        user.setIsAdmin(effective == Role.ADMIN);
+        user.setIsCurator(effective == Role.CURATOR);
+        user.setIsMember(effective == Role.USER);
     }
 
     /**
@@ -150,6 +167,67 @@ public class UserService {
             return genericMessage;
         }
 
+        String resetLink = buildResetPasswordLink(token);
+        sendTransactionalEmail(
+                normalizedEmail,
+                "SynBioHub password reset",
+                "A request was made to reset your SynBioHub password.\n\n"
+                        + "Use the following link to set a new password:\n"
+                        + resetLink + "\n\n"
+                        + "If you did not request this change, you can ignore this email.");
+        return genericMessage;
+    }
+
+    /**
+     * Emails an admin-created user a link to set their password.
+     * Throws if mail is not configured or the provider rejects the send.
+     */
+    public void sendAccountInviteEmail(String username, String email) throws IOException {
+        if (username == null || username.isBlank()) {
+            throw new IllegalArgumentException("Username is required.");
+        }
+        if (email == null || email.isBlank() || !isValidEmail(email.trim())) {
+            throw new IllegalArgumentException("Please enter a valid email address.");
+        }
+        String token = generatePasswordResetTokenForUsername(username.trim());
+        if (token == null || token.isBlank()) {
+            throw new IOException("Unable to issue password setup token.");
+        }
+        String setupLink = buildResetPasswordLink(token);
+        sendTransactionalEmail(
+                email.trim(),
+                "Set your SynBioHub password",
+                "An administrator created a SynBioHub account for you.\n\n"
+                        + "Use the following link to set your password:\n"
+                        + setupLink + "\n\n"
+                        + "If you did not expect this email, you can ignore it.");
+    }
+
+    private void sendTransactionalEmail(String toAddress, String subject, String body) throws IOException {
+        String[] mailCreds = resolveMailCredentials();
+        String apiKey = mailCreds[0];
+        String fromAddress = mailCreds[1];
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setBearerAuth(apiKey);
+
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("from", fromAddress);
+        payload.put("to", List.of(toAddress));
+        payload.put("subject", subject);
+        payload.put("text", body);
+
+        ResponseEntity<String> response = sparqlRepository.postJson(
+                "https://api.resend.com/emails", payload, String.class, headers);
+        if (!response.getStatusCode().is2xxSuccessful()) {
+            throw new IOException("Resend rejected email with status "
+                    + response.getStatusCode().value());
+        }
+    }
+
+    /** @return [apiKey, fromAddress] */
+    private String[] resolveMailCredentials() throws IOException {
         JsonNode mailConfig = ConfigUtil.get("mail");
         String configuredApiKey = mailConfig != null ? mailConfig.path("sendgridApiKey").asText("").trim() : "";
         String resendConfigApiKey = mailConfig != null ? mailConfig.path("resendApiKey").asText("").trim() : "";
@@ -164,47 +242,31 @@ public class UserService {
         if (mailApiKey.isEmpty() || fromAddress.isEmpty()) {
             throw new IOException("Mail settings are not configured.");
         }
-
-        sendPasswordResetEmail(mailApiKey, fromAddress, normalizedEmail, token);
-        return genericMessage;
-    }
-
-    private void sendPasswordResetEmail(String apiKey, String fromAddress, String toAddress, String token)
-            throws IOException {
-        String resetLink = buildResetPasswordLink(token);
-        String body = "A request was made to reset your SynBioHub password.\n\n"
-                + "Use the following link to set a new password:\n"
-                + resetLink + "\n\n"
-                + "If you did not request this change, you can ignore this email.";
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setBearerAuth(apiKey);
-
-        Map<String, Object> payload = new HashMap<>();
-        payload.put("from", fromAddress);
-        payload.put("to", List.of(toAddress));
-        payload.put("subject", "SynBioHub password reset");
-        payload.put("text", body);
-
-        ResponseEntity<String> response = sparqlRepository.postJson(
-                "https://api.resend.com/emails", payload, String.class, headers);
-        if (!response.getStatusCode().is2xxSuccessful()) {
-            throw new IOException("Resend rejected password reset email with status "
-                    + response.getStatusCode().value());
-        }
+        return new String[] { mailApiKey, fromAddress };
     }
 
     private String buildResetPasswordLink(String token) throws IOException {
-        String instanceUrl = ConfigUtil.get("instanceUrl").asText("").trim();
-        if (instanceUrl.endsWith("/")) {
-            instanceUrl = instanceUrl.substring(0, instanceUrl.length() - 1);
+        // Prefer the Next.js UI base so /change-password opens in the frontend;
+        // instanceUrl is often the API host in split local/deploy setups.
+        String base = textOrEmpty(ConfigUtil.get("frontendURL"));
+        if (base.isEmpty()) {
+            base = textOrEmpty(ConfigUtil.get("instanceUrl"));
         }
-        if (instanceUrl.isEmpty()) {
-            instanceUrl = "http://localhost:3000";
+        if (base.endsWith("/")) {
+            base = base.substring(0, base.length() - 1);
         }
-        return instanceUrl + "/change-password?token="
+        if (base.isEmpty()) {
+            base = "http://localhost:3000";
+        }
+        return base + "/change-password?token="
                 + URLEncoder.encode(token, StandardCharsets.UTF_8);
+    }
+
+    private static String textOrEmpty(JsonNode node) {
+        if (node == null || node.isNull()) {
+            return "";
+        }
+        return node.asText("").trim();
     }
 
     /**
@@ -232,7 +294,13 @@ public class UserService {
             if (auth.getPrincipal() instanceof User) {
                 User user = (User) auth.getPrincipal();
                 // reload from DB to ensure it's fresh
-                return userRepository.findByUsername(user.getUsername()).orElse(null);
+                User fresh = userRepository.findByUsername(user.getUsername()).orElse(null);
+                if (fresh != null) {
+                    // Derive checkbox flags from role so /profile matches admin UI gating
+                    // even for users created before isAdmin/isCurator/isMember were synced.
+                    applyRoleFlags(fresh, fresh.getRole());
+                }
+                return fresh;
             }
         }
         return null;

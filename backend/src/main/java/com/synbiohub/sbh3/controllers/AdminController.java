@@ -595,14 +595,19 @@ public class AdminController {
         }
     }
 
-    @Operation(summary = "Create new user (Admin)", description = "Allows an admin to manually create a new user.")
+    @Operation(summary = "Create new user (Admin)", description = "Creates a user and emails them a password setup link. Fails (no user kept) if the invite email cannot be sent.")
     @PostMapping(value = "/admin/newUser")
     @ResponseBody
-    public String createNewUser(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
+    public ResponseEntity<String> createNewUser(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
         try {
-            return adminService.createNewUser(allParams);
+            String result = adminService.createNewUser(allParams);
+            if (result != null && result.toLowerCase().startsWith("user created successfully")) {
+                return ResponseEntity.ok(result);
+            }
+            // Validation / invite-mail failures: surface message to the admin UI.
+            return ResponseEntity.badRequest().body(result != null ? result : "Error creating new user.");
         } catch (IOException e) {
-            return "Error creating new user.";
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating new user.");
         }
     }
 

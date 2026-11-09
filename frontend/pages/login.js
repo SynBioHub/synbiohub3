@@ -10,6 +10,7 @@ import InputField from '../components/Login/InputField';
 import TopLevel from '../components/TopLevel';
 import { login } from '../redux/actions';
 import styles from '../styles/login.module.css';
+import useSynBioHubVersion from '../utilities/useSynBioHubVersion';
 
 /**
  * This page renders the login page for sbh
@@ -25,6 +26,8 @@ function Login() {
 
   const theme = JSON.parse(localStorage.getItem('theme')) || {};
   const allowPublicSignup = theme.allowPublicSignup;
+  const sbhVersion = useSynBioHubVersion();
+  const showForgotPassword = sbhVersion === 3;
 
   const next = router.query.next;
 
@@ -99,9 +102,13 @@ function Login() {
           Sign in
         </div>
         <div className={styles.infocontainer}>
-          <div className={styles.info}>
-            <span className={styles.blue}>Forgot password?</span>
-          </div>
+          {showForgotPassword && (
+            <div className={styles.info}>
+              <Link href="/forgot-password">
+                <a className={styles.blue}>Forgot password?</a>
+              </Link>
+            </div>
+          )}
           {allowPublicSignup && (
             <div className={styles.info}>
               New to SynBioHub?{' '}
