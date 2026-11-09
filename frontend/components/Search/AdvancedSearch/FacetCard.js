@@ -58,6 +58,8 @@ export default function FacetCard(properties) {
         {hasSelection && (
           <span
             role="button"
+            title="Clear value"
+            aria-label="Clear value"
             className={styles.facetclear}
             onClick={() => onChange(isMulti ? [] : null)}
           >
