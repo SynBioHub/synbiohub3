@@ -1,6 +1,7 @@
 import styles from '../../styles/view.module.css';
 import SidePanel from './SidePanel';
 import ViewHeader from './ViewHeader';
+import LocalStorageDebug from './LocalStorageDebug';
 
 import GenericContent from './PageJSON/Rendering/GenericContent';
 import { resolvePageJson } from './PageJSON/MasterJSON';
@@ -66,6 +67,7 @@ export default function Shell(properties) {
         <div className={styles.sections}>
           <GenericContent json={json} uri={properties.uri} metadata={false} plugins={plugins} type={properties.type} translation={translation} />
         </div>
+        <LocalStorageDebug />
       </div>
       <div></div>
     </div>

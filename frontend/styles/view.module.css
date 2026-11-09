@@ -1522,4 +1522,44 @@
   height: '100vh';
 };
 
+.localStorageDebug {
+  margin: 1.5rem 1rem 2rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #ccc;
+  background-color: #fafafa;
+  font-size: 0.85rem;
+}
+
+.localStorageDebugSummary {
+  cursor: pointer;
+  font-weight: 600;
+  color: #555;
+}
+
+.localStorageDebugBody {
+  margin-top: 0.5rem;
+}
+
+.localStorageDebugRefresh {
+  margin-bottom: 0.5rem;
+  cursor: pointer;
+}
+
+.localStorageDebugEmpty {
+  margin: 0.25rem 0;
+  color: #666;
+}
+
+.localStorageDebugPre {
+  margin: 0;
+  padding: 0.5rem;
+  max-height: 20rem;
+  overflow: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  font-family: monospace;
+  font-size: 0.8rem;
+}
 
