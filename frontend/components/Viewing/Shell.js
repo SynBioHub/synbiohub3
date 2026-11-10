@@ -1,6 +1,7 @@
 import styles from '../../styles/view.module.css';
 import SidePanel from './SidePanel';
 import ViewHeader from './ViewHeader';
+import AttachmentPreview from './Sections/Attachments/AttachmentPreview';
 
 import GenericContent from './PageJSON/Rendering/GenericContent';
 import { resolvePageJson } from './PageJSON/MasterJSON';
@@ -64,6 +65,14 @@ export default function Shell(properties) {
           search={metadata.search}
         />
         <div className={styles.sections}>
+          {json?.type === 'http://sbols.org/v2#Attachment' && (
+            <AttachmentPreview
+              key={properties.uri}
+              uri={properties.uri}
+              name={metadata.name}
+              translation={translation}
+            />
+          )}
           <GenericContent json={json} uri={properties.uri} metadata={false} plugins={plugins} type={properties.type} translation={translation} />
         </div>
       </div>

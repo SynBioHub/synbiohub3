@@ -272,7 +272,8 @@ export const submit =
     overwriteIncrement = 0,
     addingToCollection = false,
     pluginMapping = null,
-    resubmit = false
+    resubmit = false,
+    attachmentsOnly = false
   ) =>
     async (dispatch, getState) => {
       if (!resubmit) {
@@ -320,7 +321,8 @@ export const submit =
         files,
         overwriteIncrement,
         addingToCollection,
-        pluginMapping
+        pluginMapping,
+        attachmentsOnly
       );
 
       dispatch({
@@ -344,7 +346,8 @@ async function uploadFiles(
   files,
   overwriteIncrement = 0,
   addingToCollection = false,
-  pluginMapping = null
+  pluginMapping = null,
+  attachmentsOnly = false
 ) {
   files = Array.isArray(files) ? files : files ? [files] : [];
   const filesUploading = getState().submit.filesUploading;
@@ -462,6 +465,7 @@ async function uploadFiles(
       form.append('rootCollections', uri);
       form.append('file', filesUploading[fileIndex].file);
       form.append('overwrite_merge', 2 + overwriteIncrement);
+      if (attachmentsOnly) form.append('attachmentsOnly', 'true');
     } else {
       form = new URLSearchParams();
       form.append('collections', uri);
@@ -473,14 +477,15 @@ async function uploadFiles(
     try {
       response = await axios.post(url, form, { headers });
     } catch (error) {
-      if (error.response) {
-        console.error('Error:', error.message);
-        var fileErrorMessages = error.response.data;
-        fileErrorMessages =
-          fileErrorMessages.charAt(0) !== '['
-            ? [fileErrorMessages]
-            : JSON.parse(fileErrorMessages);
-      }
+      console.error('Error:', error.message);
+      const errorBody = error.response && error.response.data;
+      const errorMessage =
+        typeof errorBody === 'string' && errorBody
+          ? errorBody
+          : error.message || 'Upload failed';
+      var fileErrorMessages = errorMessage.charAt(0) === '['
+        ? JSON.parse(errorMessage)
+        : [errorMessage];
     }
 
     if (response && response.status === 200) {
@@ -590,6 +595,9 @@ export const addAttachments = (files, uri) => async (dispatch, getState) => {
     zip.file(file.file.name, file.file);
   }
   const zipped = await zip.generateAsync({ type: 'blob' });
+  const attachmentArchive = new File([zipped], 'attachments.zip', {
+    type: 'application/zip'
+  });
 
   // const token = getState().user.token;
 
@@ -602,10 +610,12 @@ export const addAttachments = (files, uri) => async (dispatch, getState) => {
   dispatch(
     submit(
       uri,
-      zipped,
+      attachmentArchive,
       1,
       false,
-      null
+      null,
+      false,
+      true
     )
   );
 
@@ -693,8 +703,16 @@ export const createCollection =
           response = await axios.post(url, form, { headers });
         } catch (error) {
           if (error.response) {
-            console.error('Error:', error.message);
+            const errorBody = error.response.data;
+            const message =
+              typeof errorBody === 'string' && errorBody
+                ? errorBody
+                : error.message;
+            dispatch({ type: types.CREATINGCOLLECTIONERRORS, payload: [message] });
+            dispatch({ type: types.CREATINGCOLLECTION, payload: false });
+            return;
           }
+          throw error;
         }
 
         if (response.status !== 200) {
@@ -900,7 +918,18 @@ export const downloadFiles =
         );
       });
 
-      Promise.allSettled(zippedFilePromises).then(results => {
+      return Promise.allSettled(zippedFilePromises).then(results => {
+        const successful = results.filter(result => result.status === 'fulfilled');
+        if (successful.length === 0) {
+          dispatch({ type: types.DOWNLOADSTATUS, payload: 'Failed' });
+          return;
+        }
+        if (files.length === 1 && files[0].isAttachment) {
+          saveAs(successful[0].value.response.data, successful[0].value.file.name);
+          dispatch({ type: types.DOWNLOADSTATUS, payload: 'Downloaded' });
+          dispatch({ type: types.SHOWDOWNLOAD, payload: false });
+          return;
+        }
         dispatch({ type: types.DOWNLOADSTATUS, payload: 'Zipping' });
         for (const result of results) {
           if (result.status === 'fulfilled') {
@@ -910,8 +939,9 @@ export const downloadFiles =
             zip.file(filename, result.value.response.data);
           }
         }
-        zip.generateAsync({ type: 'blob' }).then(function (content) {
-          dispatch({ type: types.SHOWDOWNLOAD, payload: false });
+        return zip.generateAsync({ type: 'blob' }).then(function (content) {
+          dispatch({ type: types.SHOWDOWNLOAD, payload: successful.length !== files.length });
+          dispatch({ type: types.DOWNLOADSTATUS, payload: successful.length === files.length ? 'Downloaded' : 'Some downloads failed' });
           saveAs(content, zipFilename);
         });
       });
@@ -970,7 +1000,7 @@ const zippedFilePromise = (
 
           // Fallback: if header not present, construct filename from file.name and file.type
           if (!filename) {
-            filename = `${file.name}.${file.type || 'xml'}`;
+            filename = file.isAttachment ? file.name : `${file.name}.${file.type || 'xml'}`;
           }
 
           file.name = filename;
@@ -987,7 +1017,7 @@ const zippedFilePromise = (
       })
       .catch(error => {
         files[index].status = 'failed';
-        files[index].errors = error;
+        files[index].errors = error.message || 'This file could not be downloaded.';
         reject(error);
         dispatch({ type: types.DOWNLOADLIST, payload: [...files] });
       });

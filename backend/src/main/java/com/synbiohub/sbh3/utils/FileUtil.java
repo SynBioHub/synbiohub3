@@ -54,10 +54,14 @@ public interface FileUtil {
                 try (InputStream in = zip.getInputStream(entry)) {
                     Files.copy(in, out);
                 }
-                classifySubmitFile(out, payload);
+                if (payload.isAttachmentsOnly()) {
+                    payload.getAttachmentFiles().add(out);
+                } else {
+                    classifySubmitFile(out, payload);
+                }
             }
         }
-        if (combine && payload.getSbolFiles().isEmpty()) {
+        if (combine && !payload.isAttachmentsOnly() && payload.getSbolFiles().isEmpty()) {
             payload.getSbolFiles().add(archive);
         }
     }

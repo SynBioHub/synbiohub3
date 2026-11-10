@@ -36,19 +36,23 @@ export default function Attachments(properties) {
   //   }
   // }
   // console.log(uri);
-  const [refreshMembers, setRefreshMembers] = useState(false);
+  const [refreshMembers, setRefreshMembers] = useState(0);
 
   const handleSetRefreshMembers = (value) => {
-    setRefreshMembers(value);
+    if (value) setRefreshMembers(count => count + 1);
   };
 
   useEffect(() => {
+    let active = true;
     // Always reset attachments on new URI
     dispatch(setAttachments([]));
+    setOwnerChecked(false);
+    setIsOwner(false);
   
     // Fetch owner
     getQueryResponse(dispatch, getOwner, { uri: properties.uri }, token).then(owner => {
-      const owned = owner.some(res => res.ownedBy === graphUri);
+      if (!active) return;
+      const owned = (owner || []).some(res => res.ownedBy === graphUri);
       const isShare = properties.uri && properties.uri.endsWith('/share');
 
       if (owned || isShare) {
@@ -59,33 +63,22 @@ export default function Attachments(properties) {
       setOwnerChecked(true);
     });
 
-    // Fetch attachments
-    getQueryResponse(dispatch, getAttachments, { uri: properties.uri }, token).then(
-      attachments => {
-        if (attachments.length > 0) {
-          dispatch(setAttachments(attachments));
-        }
-        setAttachmentsChecked(true);
-      }
-    );
+    return () => { active = false; };
   }, [dispatch, properties.uri, token, graphUri]);
   
 
   useEffect(() => {
-    if (refreshMembers) {
-      // Fetch attachments again and update the state
-      getQueryResponse(dispatch, getAttachments, { uri: properties.uri }, token).then(
-        attachments => {
-          if (attachments.length > 0) {
-            dispatch(setAttachments(attachments));
-          }
-          // Reset refreshMembers to false after refreshing
-          setRefreshMembers(false);
-        }
-      );
-      window.location.reload();
-    }
-  }, [refreshMembers, dispatch, properties.uri]);
+    let active = true;
+    setAttachmentsChecked(false);
+    getQueryResponse(dispatch, getAttachments, { uri: properties.uri }, token).then(
+      attachments => {
+        if (!active) return;
+        dispatch(setAttachments(attachments || []));
+        setAttachmentsChecked(true);
+      }
+    );
+    return () => { active = false; };
+  }, [refreshMembers, dispatch, properties.uri, token, graphUri]);
 
   useEffect(() => {
     if (ownerChecked && attachmentsChecked && properties.onContentChange) {

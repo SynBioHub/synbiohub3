@@ -385,6 +385,8 @@ const initialAttachments = {
  */
 const attachmentsReducer = (state = initialAttachments, { type, payload }) => {
   switch (type) {
+    case types.LOGOUT:
+      return initialAttachments;
     case types.SETATTACHMENTS:
       return {
         ...state,
