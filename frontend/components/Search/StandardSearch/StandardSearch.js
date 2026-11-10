@@ -11,6 +11,7 @@ import Options from '../AdvancedSearch/Options';
 import useExplorerFacets from '../AdvancedSearch/useExplorerFacets';
 import useDebouncedValue from '../../../utilities/useDebouncedValue';
 import SelectedFilters from './SelectedFilters';
+import useSearchUrlSync from './useSearchUrlSync';
 import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
 import SearchHeader from '../SearchHeader/SearchHeader';
@@ -180,6 +181,26 @@ export default function StandardSearch() {
     created,
     modifed
   ]);
+
+  // Restore query + filters from the URL once on mount, and keep the URL in
+  // sync with them afterwards
+  useSearchUrlSync({
+    dispatch,
+    router,
+    query,
+    offset,
+    limit,
+    stringFilters: {
+      creator: [creator, setCreator],
+      role: [role, setRole],
+      objectType: [objectType, setObjectType],
+      sbolType: [sbolType, setSbolType]
+    },
+    collections,
+    setCollections,
+    extraFilters,
+    setExtraFilters
+  });
 
   const handleDelete = (delFilterIndex) => {
     setExtraFilters(prevFilters => {
