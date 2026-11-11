@@ -16,11 +16,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -161,13 +165,35 @@ public class UserController {
         return ResponseEntity.ok("Profile updated successfully");
     }
 
-    @Operation(summary = "Setup instance", description = "First time setup of the SynBioHub instance. Creates initial admin user and configuration.")
+    @Operation(
+            summary = "Setup instance",
+            description = "First time setup of the SynBioHub instance. Creates initial admin user and configuration. Accepts multipart form data with an optional logo file (SBH1-compatible)."
+    )
     @ApiResponse(responseCode = "200", description = "Instance setup complete")
-    @PostMapping(value = "/setup")
-    public ResponseEntity<String> setup(
+    @PostMapping(value = "/setup", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> setupMultipart(
+            @Parameter(description = "Instance configuration properties") @RequestParam Map<String, String> allParams,
+            @RequestParam(value = "logo", required = false) MultipartFile logo) {
+        return ResponseEntity.ok(userService.setupInstance(toSetupParams(allParams), logo));
+    }
+
+    @Operation(summary = "Setup instance (JSON)", description = "JSON variant of first-time setup without a logo file.")
+    @ApiResponse(responseCode = "200", description = "Instance setup complete")
+    @PostMapping(value = "/setup", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> setupJson(
             @Parameter(description = "Instance configuration properties") @RequestBody Map<String, Object> allParams) {
         log.info(String.valueOf(allParams));
-        return ResponseEntity.ok(userService.setupInstance(allParams));
+        return ResponseEntity.ok(userService.setupInstance(allParams, null));
+    }
+
+    private static Map<String, Object> toSetupParams(Map<String, String> allParams) {
+        Map<String, Object> params = new HashMap<>(allParams);
+        for (String key : List.of("allowPublicSignup", "requireLogin", "pluginsUseLocalCompose")) {
+            if (params.containsKey(key)) {
+                params.put(key, Boolean.parseBoolean(String.valueOf(params.get(key))));
+            }
+        }
+        return params;
     }
 
     @GetMapping("/getSynBioHubVersion")

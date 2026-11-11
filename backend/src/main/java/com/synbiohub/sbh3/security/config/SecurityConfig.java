@@ -50,7 +50,7 @@ public class SecurityConfig {
                         "/public/**/sbol", "/public/**/sbolnr", "/public/**/gb", "/public/**/gff", "/public/**/fasta", "/public/**/metadata",
                         "/sparql", "/**/count", "/count",
                         "/logo",
-                        "/admin/theme", "/admin/registries", "/admin/logo", "/admin/plugins",
+                        "/admin/theme", "/admin/registries", "/admin/plugins",
                         "/v3/api-docs", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/openapi.yaml",
                         "/error",
                         "/browse", "/rootCollections", "/root-collections", "/callPlugin", "/expose/**", "/getSynBioHubVersion",
