@@ -116,12 +116,27 @@ export default function AdditionalFilter(properties) {
         <span className={styles.facettitle}>
           {hasPredicate ? shortName(currentFilter.filter) : 'Add Filter'}
         </span>
-        <span
-          role="button"
-          className={styles.facetclear}
-          onClick={() => properties.handleDelete(properties.index)}
-        >
-          &times;
+        <span className={styles.facetheaderactions}>
+          {hasPredicate && selectedValue && (
+            <span
+              role="button"
+              title="Clear value"
+              aria-label="Clear value"
+              className={styles.facetclear}
+              onClick={() => setSelectedValue('')}
+            >
+              &times;
+            </span>
+          )}
+          <span
+            role="button"
+            title="Remove filter"
+            aria-label="Remove filter"
+            className={styles.facetclear}
+            onClick={() => properties.handleDelete(properties.index)}
+          >
+            &minus;
+          </span>
         </span>
       </div>
 
