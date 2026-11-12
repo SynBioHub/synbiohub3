@@ -594,10 +594,10 @@ public class AdminService {
             return "Email already exists.";
         }
 
-        var role = Role.USER;
-        if ("1".equalsIgnoreCase(allParams.get("isAdmin"))) {
+        Role role = Role.USER;
+        if (parseBooleanParam(allParams.get("isAdmin"))) {
             role = Role.ADMIN;
-        } else if ("1".equalsIgnoreCase(allParams.get("isCurator"))) {
+        } else if (parseBooleanParam(allParams.get("isCurator"))) {
             role = Role.CURATOR;
         }
 
@@ -609,11 +609,24 @@ public class AdminService {
                 .email(email)
                 .affiliation(affiliation)
                 .password(passwordEncoder.encode(temporaryPassword))
-                .role(role)
                 .graphUri(graphPrefix + "user/" + username)
                 .build();
+        UserService.applyRoleFlags(newUser, role);
 
-        userService.createUser(newUser);
+        User savedUser = userService.createUser(newUser);
+        try {
+            userService.sendAccountInviteEmail(savedUser.getUsername(), savedUser.getEmail());
+        } catch (Exception e) {
+            // Do not leave an account that never received a setup link.
+            try {
+                userService.deleteUser(savedUser);
+            } catch (Exception deleteError) {
+                log.error("Failed to roll back user {} after invite email failure: {}",
+                        savedUser.getUsername(), deleteError.getMessage(), deleteError);
+            }
+            log.warn("Admin newUser invite email failed for {}: {}", email, e.getMessage());
+            return "Unable to create user: invalid or undeliverable email.";
+        }
         return "User created successfully.";
     }
 
@@ -685,10 +698,10 @@ public class AdminService {
             return "Email already exists.";
         }
 
-        var role = Role.USER;
-        if ("true".equalsIgnoreCase(allParams.get("isAdmin"))) {
+        Role role = Role.USER;
+        if (parseBooleanParam(allParams.get("isAdmin"))) {
             role = Role.ADMIN;
-        } else if ("true".equalsIgnoreCase(allParams.get("isCurator"))) {
+        } else if (parseBooleanParam(allParams.get("isCurator"))) {
             role = Role.CURATOR;
         }
 
@@ -702,7 +715,7 @@ public class AdminService {
         targetUser.setName(name);
         targetUser.setEmail(email);
         targetUser.setAffiliation(affiliation);
-        targetUser.setRole(role);
+        UserService.applyRoleFlags(targetUser, role);
 
         userService.createUser(targetUser);
         return "User updated successfully.";
