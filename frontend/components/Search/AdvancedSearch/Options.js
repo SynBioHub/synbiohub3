@@ -182,11 +182,14 @@ export default function Options(properties) {
       <div
         className={styles.newfilterbutton}
         role="button"
-        onClick={() =>
+        style={properties.additionalFiltersDisabled ? { opacity: 0.4, cursor: 'not-allowed' } : undefined}
+        title={properties.additionalFiltersDisabled ? 'Not available when searching by meaning' : undefined}
+        onClick={() => {
+          if (properties.additionalFiltersDisabled) return;
           properties.setExtraFilters(
             properties.addFilter(properties.extraFilters)
-          )
-        }
+          );
+        }}
       >
         <div className={styles.addfiltericon}>
           <FontAwesomeIcon icon={faPlus} size="1x" />
