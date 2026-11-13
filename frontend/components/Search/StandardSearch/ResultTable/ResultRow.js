@@ -22,13 +22,17 @@ export default function ResultRow(properties) {
 
   const token = useSelector(state => state.user.token);
   const dispatch = useDispatch();
-  const [processedUri, setProcessedUri] = useState(properties.uri);
+  const [processedUri, setProcessedUri] = useState(null);
   const registries = JSON.parse(localStorage.getItem("registries")) || {};
 
   useEffect(() => {
     async function processAndSetUri() {
       const result = await processUrl(properties.uri, registries);
-      setProcessedUri(result.urlRemovedForLink || result.urlReplacedForBackend);
+      setProcessedUri(
+        result.urlRemovedForLink ||
+          result.urlReplacedForBackend ||
+          result.original
+      );
     }
     
     processAndSetUri();
@@ -42,7 +46,7 @@ export default function ResultRow(properties) {
   return (
     <tr
       onClick={() => {
-        router.push(processedUri);
+        if (processedUri) router.push(processedUri);
       }}
     >
       <td>

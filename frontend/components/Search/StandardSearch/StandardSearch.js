@@ -11,6 +11,7 @@ import Options from '../AdvancedSearch/Options';
 import useExplorerFacets from '../AdvancedSearch/useExplorerFacets';
 import useDebouncedValue from '../../../utilities/useDebouncedValue';
 import SelectedFilters from './SelectedFilters';
+import useSearchUrlSync from './useSearchUrlSync';
 import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
 import SearchHeader from '../SearchHeader/SearchHeader';
@@ -77,7 +78,7 @@ export default function StandardSearch() {
   const [translation, setTranslation] = useState(0);
   const router = useRouter();
 
-  const [sbhVersion, setSbhVersion] = useState(1); // 1 or 3
+  const [sbhVersion, setSbhVersion] = useState(null); // null (detecting), 1, or 3
   useEffect(() => {
     axios
       .get(`${publicRuntimeConfig.backend}/getSynBioHubVersion`, {
@@ -166,11 +167,16 @@ export default function StandardSearch() {
   };
 
   // automatically re-run the search whenever a filter selection changes,
-  // so selecting a facet doesn't require clicking the Search button
+  // so selecting a facet doesn't require clicking the Search button.
+  // Also re-runs once sbhVersion resolves from "detecting" (null) to its
+  // real value, so a filter set before that resolves gets rebuilt in the
+  // correct (v1 vs v3) request format instead of staying stuck wrong.
   useEffect(() => {
+    if (sbhVersion == null) return;
     dispatch(setOffset(0));
     constructSearch();
   }, [
+    sbhVersion,
     creator,
     role,
     sbolType,
@@ -180,6 +186,26 @@ export default function StandardSearch() {
     created,
     modifed
   ]);
+
+  // Restore query + filters from the URL once on mount, and keep the URL in
+  // sync with them afterwards
+  useSearchUrlSync({
+    dispatch,
+    router,
+    query,
+    offset,
+    limit,
+    stringFilters: {
+      creator: [creator, setCreator],
+      role: [role, setRole],
+      objectType: [objectType, setObjectType],
+      sbolType: [sbolType, setSbolType]
+    },
+    collections,
+    setCollections,
+    extraFilters,
+    setExtraFilters
+  });
 
   const handleDelete = (delFilterIndex) => {
     setExtraFilters(prevFilters => {
@@ -427,7 +453,7 @@ const useSearchResults = (query, filterString, offset, limit, token, dispatch, s
   }
 
   const { data, error } = useSWR(
-    loginBlocked ? null : [requestUrl, token, dispatch],
+    loginBlocked || sbhVersion == null ? null : [requestUrl, token, dispatch],
     fetcher
   );
   return {
