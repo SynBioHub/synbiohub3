@@ -122,6 +122,14 @@ public class SbolService {
         }
 
         String ext = FileUtil.fileExtension(input);
+        if (payload.isAttachmentsOnly()) {
+            if ("zip".equals(ext) || "omex".equals(ext)) {
+                FileUtil.extractSubmitArchive(input, payload, false);
+            } else {
+                payload.getAttachmentFiles().add(input);
+            }
+            return;
+        }
         if (OFFICE_EXTENSIONS.contains(ext)) {
             payload.getSbolFiles().add(input);
             return;
@@ -253,6 +261,8 @@ public class SbolService {
         }
 
         String shareLinkSalt = ConfigUtil.get("shareLinkSalt").asText("");
+        String localRegistry = ConfigUtil.get("databasePrefix").asText().replaceAll("/+$", "");
+        String localGraphUri = collectionService.graphUriForCollection(rootCollectionIdentity, payload);
 
         for (TopLevel topLevel : new ArrayList<>(doc.getTopLevels())) {
             String identity = topLevel.getIdentity().toString();
@@ -269,6 +279,12 @@ public class SbolService {
                     continue;
                 }
 
+                // A new local object cannot be fetched yet. Only compare one that is already stored.
+                if (registry.equals(localRegistry)
+                        && !collectionService.topLevelExists(identity, localGraphUri)) {
+                    break;
+                }
+
                 String fetchUri = registryFetchUri(identity, registry, shareLinkSalt);
                 SynBioHubFrontend sbh = new SynBioHubFrontend(entry.getValue(), registry);
                 if (authToken != null) {
@@ -279,7 +295,9 @@ public class SbolService {
                 try {
                     remoteDoc = sbh.getSBOL(URI.create(fetchUri));
                 } catch (SynBioHubException e) {
-                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+                    log.warn("Failed to fetch existing registry object {}", identity, e);
+                    throw new ResponseStatusException(HttpStatus.BAD_GATEWAY,
+                            "Failed to fetch existing registry object: " + identity, e);
                 }
 
                 if (remoteDoc == null) {

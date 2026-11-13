@@ -5,6 +5,7 @@ import com.synbiohub.sbh3.submit.SubmitPayload;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLValidationException;
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.util.Map;
@@ -20,8 +22,21 @@ import java.util.Map;
 @Tag(name = "Submissions", description = "Endpoints for creating and submitting registry objects")
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 public class SubmitController {
     private final SubmitService submitService;
+
+    @ExceptionHandler(ResponseStatusException.class)
+    public ResponseEntity<String> handleSubmissionError(ResponseStatusException exception) {
+        String reason = exception.getReason();
+        if (reason == null || reason.isBlank()) {
+            reason = "Submission request failed.";
+        }
+        log.warn("Submission request rejected ({}): {}", exception.getStatusCode().value(), reason);
+        return ResponseEntity.status(exception.getStatusCode())
+                .contentType(MediaType.TEXT_PLAIN)
+                .body(reason);
+    }
 
     /**
      * Create a new collection or submit file contents into an existing collection.

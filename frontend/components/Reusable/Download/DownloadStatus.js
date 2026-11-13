@@ -17,7 +17,7 @@ export default function DownloadStatus() {
   const showDownloadStatus = useSelector(
     state => state.download.showDownloadStatus
   );
-  // const downloadStatus = useSelector(state => state.download.downloadStatus);
+  const currentStatus = useSelector(state => state.download.downloadStatus);
   const downloadList = useSelector(state => state.download.downloadList);
   const downloadOpen = useSelector(state => state.download.downloadOpen);
   const [filesDownloadingDisplay, setFilesDownloadingDisplay] = useState(
@@ -55,7 +55,7 @@ export default function DownloadStatus() {
             <FontAwesomeIcon icon={faCloudDownloadAlt} size="1x" />
             {downloadNumber !== 0
               ? ` Downloading ${downloadNumber} files...`
-              : ' Download finished, zipping'}
+              : ` ${currentStatus}`}
           </div>
           <div>
             <FontAwesomeIcon

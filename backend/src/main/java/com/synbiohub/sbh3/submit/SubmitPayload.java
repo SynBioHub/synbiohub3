@@ -39,6 +39,9 @@ public class SubmitPayload {
     /** Submit plugin id (e.g. {@code default}). */
     private String plugin;
 
+    /** Treat uploaded file content as attachments even when it looks like SBOL. */
+    private boolean attachmentsOnly;
+
     /**
      * Target root collection identity URI.
      * From {@code rootCollections} when submitting into an existing collection, or computed
