@@ -33,13 +33,14 @@ export default function InputField(properties) {
       <Input
         type={properties.customType || 'text'}
         name={properties.inputName}
-        value={properties.value}
-        checked={properties.value}
+        value={properties.customType === 'file' ? undefined : properties.value}
+        checked={properties.customType === 'checkbox' ? properties.value : undefined}
         onChange={event => properties.onChange(event)}
         className={`${styles.submitinput} ${properties.customStyling}`}
         placeholder={properties.placeholder}
         disabled={properties.disabled}
         style={properties.inputStyle}
+        accept={properties.accept}
       >
         {
           (properties.options) ?

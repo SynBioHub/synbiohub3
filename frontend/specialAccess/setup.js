@@ -26,7 +26,7 @@ export default function Setup({ setInSetupMode }) {
   const [frontPageText, setFrontPageText] = useState(
     `[SynBioHub](https://wiki2.synbiohub.org/) is a *design repository* for people designing biological constructs. It enables DNA and protein designs to be uploaded, then provides a shareable link to allow others to view them. SynBioHub also facilitates searching for information about existing useful parts and designs by combining data from a variety of sources.`
   );
-  const [logo, setLogo] = useState('');
+  const [logo, setLogo] = useState(null);
   const [allowPublicSignup, setAllowPublicSignup] = useState(true);
   const [requireLogin, setRequireLogin] = useState(false);
 
@@ -127,10 +127,10 @@ export default function Setup({ setInSetupMode }) {
                     inputName="Upload Photo"
                     containerStyling={styles.inputcontainer}
                     customType="file"
+                    accept="image/*"
                     style={secondaryTitleStyle}
-                    value={logo}
                     onChange={event => {
-                      setLogo(event.target.value);
+                      setLogo(event.target.files?.[0] || null);
                     }}
                   />
 
@@ -350,41 +350,38 @@ export default function Setup({ setInSetupMode }) {
           style={{ backgroundColor: color }}
           onClick={async () => {
             const headers = {
-              'Content-Type': 'application/json',
               Accept: 'text/plain'
             };
-            // if (altHome !== '' && !isValidURI(altHome)) {
-            //   setErrors(['Alternate Home Page must either be empty or contain a valid URL.']);
-            //   return; // Prevent the submission
-            // }
-            /** Move logo file into public folder */
+            // SBH1 and SBH3 both accept multipart POST /setup with optional `logo`.
             try {
+              const setupData = new FormData();
+              setupData.append('instanceName', instanceName);
+              setupData.append('frontendURL', frontendURL);
+              setupData.append('instanceUrl', instanceUrl);
+              setupData.append('uriPrefix', uriPrefix);
+              setupData.append('userName', userName);
+              setupData.append('affiliation', affiliation);
+              setupData.append('userFullName', userFullName);
+              setupData.append('userEmail', userEmail);
+              setupData.append('color', color);
+              setupData.append('userPassword', userPassword);
+              setupData.append('userPasswordConfirm', userPasswordConfirm);
+              setupData.append('frontPageText', toFrontPageHtml(frontPageText));
+              setupData.append('virtuosoINI', '/etc/virtuoso-opensource-7/virtuoso.ini');
+              setupData.append('virtuosoDB', '/var/lib/virtuoso-opensource-7/db');
+              setupData.append('allowPublicSignup', String(allowPublicSignup));
+              setupData.append('altHome', altHome);
+              setupData.append('requireLogin', String(requireLogin));
+              setupData.append('pluginsUseLocalCompose', String(pluginsUseLocalCompose));
+              setupData.append('pluginLocalComposePrefix', pluginLocalComposePrefix);
+              if (logo instanceof File) {
+                setupData.append('logo', logo);
+              }
+
               await axios.post(
                 `${publicRuntimeConfig.backend}/setup`,
-                {
-                  instanceName,
-                  frontendURL,
-                  instanceUrl,
-                  uriPrefix,
-                  userName,
-                  affiliation,
-                  userFullName,
-                  userEmail,
-                  color,
-                  userPassword,
-                  userPasswordConfirm,
-                  frontPageText: toFrontPageHtml(frontPageText),
-                  virtuosoINI: '/etc/virtuoso-opensource-7/virtuoso.ini',
-                  virtuosoDB: '/var/lib/virtuoso-opensource-7/db',
-                  allowPublicSignup,
-                  altHome,
-                  requireLogin,
-                  pluginsUseLocalCompose,
-                  pluginLocalComposePrefix
-                },
-                {
-                  headers
-                }
+                setupData,
+                { headers }
               );
               setFrontPageMarkdown(frontPageText);
               localStorage.removeItem('theme');
@@ -396,7 +393,12 @@ export default function Setup({ setInSetupMode }) {
 
               const themeResponse = await axios.get(
                 `${publicRuntimeConfig.backend}/admin/theme`,
-                { headers }
+                {
+                  headers: {
+                    'Content-Type': 'application/json',
+                    Accept: 'text/plain'
+                  }
+                }
               );
               localStorage.setItem('theme', JSON.stringify(themeResponse.data));
 

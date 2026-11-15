@@ -179,6 +179,12 @@
    visibility: visible;
 }
 
+.facetheaderactions {
+   display: flex;
+   align-items: center;
+   gap: 0.5rem;
+}
+
 .facetclear {
    cursor: pointer;
    color: #9aa1ab;

@@ -47,9 +47,17 @@
    height: fit-content;
 }
 
+.logoActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 1rem 0 2rem 0;
+}
+
 .newLogoFilePicker {
   display: block;
-  margin: 1rem 0 2rem 0;
+  margin: 0;
   padding: 0.7rem 1rem;
   border: 2px solid #D25627;
   border-radius: 8px;
@@ -65,6 +73,23 @@
 .newLogoFilePicker:hover, .newLogoFilePicker:focus {
   border-color: #00A1E4;
   box-shadow: 0 2px 12px rgba(0,161,228,0.12);
+}
+
+.resetLogoButton {
+  padding: 0.7rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #f1f1f1;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #333;
+  cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.resetLogoButton:hover, .resetLogoButton:focus {
+  background: #fff;
+  border-color: #00A1E4;
 }
 
 .logoHint {
