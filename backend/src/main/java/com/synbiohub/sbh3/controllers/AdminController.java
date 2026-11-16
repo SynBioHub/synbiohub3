@@ -123,13 +123,15 @@ public class AdminController {
     }
 
     /**
-     * SendGrid settings from merged config ({@code data/config.local.json} overrides
+     * Resend mail settings from merged config ({@code data/config.local.json} overrides
      * {@code src/main/resources/config.json} via {@link ConfigUtil#get(String)}).
      * <p>
      * Body is JSON serialized as {@code text/plain} so clients that send {@code Accept: text/plain}
      * still match; parse the string as JSON on the client if needed.
+     * Returns {@code resendApiKey} (falling back to legacy {@code sendgridApiKey}) and
+     * {@code fromAddress}.
      */
-    @Operation(summary = "Get mail settings", description = "Returns SendGrid settings from merged config.")
+    @Operation(summary = "Get mail settings", description = "Returns Resend settings from merged config.")
     @GetMapping(value = "/admin/mail", produces = {MediaType.TEXT_PLAIN_VALUE, MediaType.APPLICATION_JSON_VALUE})
     @ResponseBody
     public String getMailSettings(@RequestParam Map<String, String> allParams, HttpServletRequest request)
@@ -138,34 +140,67 @@ public class AdminController {
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode out = mapper.createObjectNode();
         if (mail != null && !mail.isNull()) {
-            out.put("sendgridApiKey", mail.path("sendgridApiKey").asText(""));
+            String resendKey = mail.path("resendApiKey").asText("").trim();
+            if (resendKey.isEmpty()) {
+                // Legacy field from earlier SendGrid-named config.
+                resendKey = mail.path("sendgridApiKey").asText("");
+            }
+            out.put("resendApiKey", resendKey);
             out.put("fromAddress", mail.path("fromAddress").asText(""));
         } else {
-            out.put("sendgridApiKey", "");
+            out.put("resendApiKey", "");
             out.put("fromAddress", "");
         }
         return mapper.writeValueAsString(out);
     }
 
     /**
-     * Persists SendGrid settings to {@code data/config.local.json} (overrides bundled {@code config.json}).
-     * Params: {@code key} and {@code fromEmail} (as used by the admin UI), or {@code sendgridApiKey} and
-     * {@code fromAddress}.
+     * Persists Resend settings to {@code data/config.local.json} (overrides bundled {@code config.json}).
+     * Params: {@code key} / {@code resendApiKey} (API key) and {@code fromEmail} / {@code fromAddress}.
+     * Blank values keep the currently saved setting (partial update).
      */
-    @Operation(summary = "Update mail settings", description = "Persists SendGrid settings to config.local.json.")
+    @Operation(summary = "Update mail settings", description = "Persists Resend settings to config.local.json.")
     @PostMapping(value = "/admin/mail")
     @ResponseBody
     public String updateMailSettings(@RequestParam Map<String, String> allParams, HttpServletRequest request)
             throws IOException {
-        String sendgridApiKey = allParams.containsKey("key")
-                ? (allParams.get("key") != null ? allParams.get("key") : "")
-                : allParams.getOrDefault("sendgridApiKey", "");
-        String fromAddress = allParams.containsKey("fromEmail")
+        String submittedKey;
+        if (allParams.containsKey("key")) {
+            submittedKey = allParams.get("key") != null ? allParams.get("key") : "";
+        } else if (allParams.containsKey("resendApiKey")) {
+            submittedKey = allParams.get("resendApiKey") != null ? allParams.get("resendApiKey") : "";
+        } else {
+            submittedKey = allParams.getOrDefault("sendgridApiKey", "");
+        }
+        submittedKey = submittedKey.trim();
+
+        String submittedFrom = allParams.containsKey("fromEmail")
                 ? (allParams.get("fromEmail") != null ? allParams.get("fromEmail") : "")
                 : allParams.getOrDefault("fromAddress", "");
+        submittedFrom = submittedFrom.trim();
+
+        JsonNode existing = ConfigUtil.get("mail");
+        String existingKey = "";
+        String existingFrom = "";
+        if (existing != null && !existing.isNull()) {
+            existingKey = existing.path("resendApiKey").asText("").trim();
+            if (existingKey.isEmpty()) {
+                existingKey = existing.path("sendgridApiKey").asText("").trim();
+            }
+            existingFrom = existing.path("fromAddress").asText("").trim();
+        }
+
+        // Empty form fields mean "leave unchanged".
+        String resendApiKey = !submittedKey.isEmpty() ? submittedKey : existingKey;
+        String fromAddress = !submittedFrom.isEmpty() ? submittedFrom : existingFrom;
+
+        if (resendApiKey.isEmpty() && fromAddress.isEmpty()) {
+            return "Please enter a Resend API key and/or from address.";
+        }
+
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode mail = mapper.createObjectNode();
-        mail.put("sendgridApiKey", sendgridApiKey);
+        mail.put("resendApiKey", resendApiKey);
         mail.put("fromAddress", fromAddress);
         ConfigUtil.set(ConfigUtil.getLocaljson(), "mail", mail);
         ConfigUtil.refreshLocalJson();
@@ -592,14 +627,19 @@ public class AdminController {
         }
     }
 
-    @Operation(summary = "Create new user (Admin)", description = "Allows an admin to manually create a new user.")
+    @Operation(summary = "Create new user (Admin)", description = "Creates a user and emails them a password setup link. Fails (no user kept) if the invite email cannot be sent.")
     @PostMapping(value = "/admin/newUser")
     @ResponseBody
-    public String createNewUser(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
+    public ResponseEntity<String> createNewUser(@RequestParam Map<String,String> allParams, HttpServletRequest request) {
         try {
-            return adminService.createNewUser(allParams);
+            String result = adminService.createNewUser(allParams);
+            if (result != null && result.toLowerCase().startsWith("user created successfully")) {
+                return ResponseEntity.ok(result);
+            }
+            // Validation / invite-mail failures: surface message to the admin UI.
+            return ResponseEntity.badRequest().body(result != null ? result : "Error creating new user.");
         } catch (IOException e) {
-            return "Error creating new user.";
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating new user.");
         }
     }
 
