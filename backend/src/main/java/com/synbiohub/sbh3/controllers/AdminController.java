@@ -45,16 +45,44 @@ public class AdminController {
     private final UserService userService;
     private final SparqlService sparqlService;
 
-    @Operation(summary = "Run Admin SPARQL Query", description = "Executes a SPARQL query with admin privileges.")
+    @Operation(summary = "Run Admin SPARQL Query", description = "Executes a SPARQL query or update with admin privileges. Optional default-graph-uri (or graph) selects the named graph; blank uses the public default graph. Updates (INSERT/DELETE/…) go to Virtuoso's authenticated update endpoint; reads use the normal query endpoint.")
     @ApiResponse(responseCode = "200", description = "JSON containing SPARQL results")
     @GetMapping(value = "/admin/sparql")
     @ResponseBody
-    public String runAdminSparqlQuery(@RequestParam String query, HttpServletRequest request) throws Exception {
+    public ResponseEntity<String> runAdminSparqlQueryGet(
+            @RequestParam String query,
+            @RequestParam(value = "default-graph-uri", required = false) String defaultGraphUri,
+            @RequestParam(value = "graph", required = false) String graph,
+            HttpServletRequest request) throws Exception {
+        return runAdminSparqlQuery(query, defaultGraphUri, graph);
+    }
+
+    @Operation(summary = "Run Admin SPARQL Query (POST)", description = "Same as GET /admin/sparql; preferred for large queries. Accepts default-graph-uri or graph.")
+    @PostMapping(value = "/admin/sparql")
+    @ResponseBody
+    public ResponseEntity<String> runAdminSparqlQueryPost(
+            @RequestParam String query,
+            @RequestParam(value = "default-graph-uri", required = false) String defaultGraphUri,
+            @RequestParam(value = "graph", required = false) String graph,
+            HttpServletRequest request) throws Exception {
+        return runAdminSparqlQuery(query, defaultGraphUri, graph);
+    }
+
+    private ResponseEntity<String> runAdminSparqlQuery(String query, String defaultGraphUri, String graph)
+            throws Exception {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth == null) {
-            return null;
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Not authenticated");
         }
-        return sparqlService.read(sparqlService.getExplorerUrl(), sparqlService.resolveGraphUri(""), query);
+        String graphUri = (defaultGraphUri != null && !defaultGraphUri.isBlank())
+                ? defaultGraphUri.trim()
+                : (graph != null ? graph.trim() : "");
+        // Match classic SBH1 admin API: updates (and SELECTs that need auth) via update endpoint.
+        if (SparqlService.isSparqlUpdate(query)) {
+            return ResponseEntity.ok(sparqlService.executeAdminQuery(query, graphUri));
+        }
+        return ResponseEntity.ok(
+                sparqlService.read(sparqlService.getExplorerUrl(), sparqlService.resolveGraphUri(graphUri), query));
     }
 
     @Operation(summary = "Get admin dashboard status", description = "Returns status of graphs, logs, plugins, users, and remotes.")

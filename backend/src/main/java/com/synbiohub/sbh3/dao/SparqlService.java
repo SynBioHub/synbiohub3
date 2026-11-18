@@ -53,6 +53,31 @@ public class SparqlService {
         sparqlRepository.update(query, graphUri, jsonResults);
     }
 
+    /**
+     * Admin SPARQL: run via the authenticated update endpoint (same as classic SBH1
+     * {@code updateQueryJson}), which accepts both queries and updates and returns
+     * SPARQL results JSON when requested.
+     */
+    public String executeAdminQuery(String query, String graphUri) throws IOException {
+        String resolved = resolveGraphUri(graphUri == null ? "" : graphUri);
+        return sparqlRepository.update(query, resolved, true);
+    }
+
+    /**
+     * True for SPARQL Update forms (INSERT/DELETE/LOAD/…). SELECT/ASK/CONSTRUCT/DESCRIBE are false.
+     */
+    public static boolean isSparqlUpdate(String query) {
+        if (query == null || query.isBlank()) {
+            return false;
+        }
+        // Strip PREFIX/BASE lines and comments so the verb is easy to find.
+        String stripped = query.replaceAll("(?m)^\\s*#.*$", "")
+                .replaceAll("(?i)(?m)^\\s*PREFIX\\s+[^\\s]+\\s*<[^>]+>\\s*", "")
+                .replaceAll("(?i)(?m)^\\s*BASE\\s*<[^>]+>\\s*", "")
+                .trim();
+        return stripped.matches("(?is)^(WITH\\b|INSERT\\b|DELETE\\b|LOAD\\b|CLEAR\\b|CREATE\\b|DROP\\b|COPY\\b|MOVE\\b|ADD\\b).*");
+    }
+
     private void deleteStaggered(String queryTemplate, Map<String, String> params, String graphUri) throws IOException {
         String query = new SPARQLQuery(queryTemplate).loadTemplate(params);
         while (true) {
