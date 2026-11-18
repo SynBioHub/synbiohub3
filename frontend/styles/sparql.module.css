@@ -25,7 +25,8 @@
 }
 
 .optionselect {
-   width: 150px;
+   min-width: 180px;
+   width: 220px;
 }
 
 .controls {
@@ -90,4 +91,101 @@
 
 .tablecontainer {
    margin: 0 1rem;
+}
+
+.selectedGraphUri {
+   font-size: 0.8rem;
+   color: #555;
+   margin: 0 0.5rem 0.75rem;
+   word-break: break-all;
+}
+
+.graphModal {
+   max-width: 40rem;
+   display: flex;
+   flex-direction: column;
+   max-height: calc(100vh - 6rem);
+}
+
+.graphModalClose {
+   background: none;
+   border: none;
+   cursor: pointer;
+   font-size: 1.1rem;
+   color: #666;
+}
+
+.graphModalHint {
+   font-size: 0.9rem;
+   color: #555;
+   margin-bottom: 0.75rem;
+}
+
+.graphModalSearch {
+   display: flex;
+   align-items: center;
+   border: 1px solid #ccc;
+   border-radius: 0.3rem;
+   padding: 0.4rem 0.6rem;
+   margin-bottom: 0.75rem;
+}
+
+.graphModalSearchIcon {
+   color: #888;
+   margin-right: 0.5rem;
+}
+
+.graphModalSearch input {
+   border: none;
+   outline: none;
+   flex: 1;
+   font-size: 0.95rem;
+}
+
+.graphModalStatus {
+   padding: 1rem;
+   color: #555;
+}
+
+.graphModalList {
+   list-style: none;
+   margin: 0;
+   padding: 0;
+   overflow: auto;
+   flex: 1;
+   border-top: 1px solid #eee;
+}
+
+.graphModalEmpty {
+   padding: 1rem;
+   color: #888;
+}
+
+.graphModalItem {
+   display: flex;
+   flex-direction: column;
+   align-items: flex-start;
+   width: 100%;
+   text-align: left;
+   background: none;
+   border: none;
+   border-bottom: 1px solid #f0f0f0;
+   padding: 0.65rem 0.4rem;
+   cursor: pointer;
+}
+
+.graphModalItem:hover {
+   background: #f7f7f7;
+}
+
+.graphModalUser {
+   font-weight: 600;
+   color: #D25627;
+   margin-bottom: 0.15rem;
+}
+
+.graphModalUri {
+   font-size: 0.8rem;
+   color: #444;
+   word-break: break-all;
 }
