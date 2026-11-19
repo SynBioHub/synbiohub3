@@ -1,5 +1,6 @@
 import {
   faBoxOpen,
+  faComments,
   faDatabase,
   faDna,
   faHatWizard,
@@ -27,6 +28,13 @@ export default function SearchHeader(properties) {
           route="semantic-search"
           selected={properties.selected}
           icon={faHatWizard}
+        />
+
+        <SearchTypeButton
+          name="Ask"
+          route="ask"
+          selected={properties.selected}
+          icon={faComments}
         />
 
         <SearchTypeButton
