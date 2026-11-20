@@ -1,17 +1,25 @@
 import { faDatabase } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
+import axios from 'axios';
 import dynamic from 'next/dynamic';
-import { useState } from 'react';
+import getConfig from 'next/config';
+import { useCallback, useMemo, useState } from 'react';
+import { useSelector } from 'react-redux';
 import Select from 'react-select';
-import feConfig from "../config.json"
 
 import Table from '../components/Reusable/Table/Table';
 import SearchHeader from '../components/Search/SearchHeader/SearchHeader';
+import {
+  isSparqlUpdate,
+  processSparqlResults,
+  REGULAR_GRAPH_OPTIONS,
+  resolveSelectedGraphUri,
+  SPARQL_PREFIXES
+} from '../components/Sparql/sparqlShared';
 import TopLevel from '../components/TopLevel';
 import styles from '../styles/sparql.module.css';
 
-import axios from 'axios';
+const { publicRuntimeConfig } = getConfig();
 
 const CodeMirror = dynamic(
   () => {
@@ -25,12 +33,41 @@ const CodeMirror = dynamic(
 /* eslint unicorn/prefer-module: "off" */
 
 export default function SPARQL() {
-  const [query, setQuery] = useState(startQuery);
-
+  const [query, setQuery] = useState(SPARQL_PREFIXES);
   const [results, setResults] = useState();
   const [headers, setHeaders] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState();
+  const [graphSelection, setGraphSelection] = useState(REGULAR_GRAPH_OPTIONS[0]);
+
+  const token = useSelector(state => state.user.token);
+  const loggedIn = useSelector(state => state.user.loggedIn);
+  const userGraphUri = useSelector(state => state.user.graphUri);
+  const theme = useMemo(() => {
+    try {
+      return JSON.parse(localStorage.getItem('theme')) || {};
+    } catch {
+      return {};
+    }
+  }, []);
+  const defaultGraph = theme.defaultGraph || '';
+
+  const selectedGraphUri = resolveSelectedGraphUri(graphSelection?.value, {
+    defaultGraph,
+    userGraphUri
+  });
+
+  const onGraphChange = useCallback(
+    option => {
+      if (option?.value === 'user' && !loggedIn) {
+        setError('Sign in to query My Submissions.');
+        return;
+      }
+      setGraphSelection(option);
+      setError();
+    },
+    [loggedIn]
+  );
 
   return (
     <TopLevel doNotTrack={true} hideFooter={true} publicPage={true}>
@@ -42,8 +79,9 @@ export default function SPARQL() {
             <div className={styles.graphselect}>
               <label>Graph</label>
               <Select
-                options={graphs}
-                defaultValue={graphs[0]}
+                options={REGULAR_GRAPH_OPTIONS}
+                value={graphSelection}
+                onChange={onGraphChange}
                 className={styles.optionselect}
                 placeholder="Graph"
                 id="graph-value-select"
@@ -58,7 +96,17 @@ export default function SPARQL() {
               className={styles.submitquery}
               role="button"
               onClick={() =>
-                submitQuery(query, setLoading, setResults, setHeaders, setError)
+                submitQuery({
+                  query,
+                  graphUri: selectedGraphUri,
+                  token,
+                  graphSelection: graphSelection?.value,
+                  loggedIn,
+                  setLoading,
+                  setResults,
+                  setHeaders,
+                  setError
+                })
               }
             >
               <FontAwesomeIcon
@@ -70,6 +118,9 @@ export default function SPARQL() {
               Submit Query
             </div>
           </div>
+          {graphSelection?.value === 'user' && selectedGraphUri && (
+            <div className={styles.selectedGraphUri}>{selectedGraphUri}</div>
+          )}
         </div>
         {error && <div className={styles.errormessage}>{error}</div>}
         {results && (
@@ -94,7 +145,7 @@ export default function SPARQL() {
 
 const createRowDisplay = (headers, result) => {
   const resultData = headers.map((header, index) => {
-    if (result[header].type === 'uri')
+    if (result[header] && result[header].type === 'uri')
       return (
         <td key={index}>
           <a href={result[header].value} className={styles.link}>
@@ -102,85 +153,78 @@ const createRowDisplay = (headers, result) => {
           </a>
         </td>
       );
-    return <td key={index}>{result[header].value}</td>;
+    return (
+      <td key={index}>
+        {result[header] ? result[header].value ?? result[header] : ''}
+      </td>
+    );
   });
   return <tr>{resultData}</tr>;
 };
 
-const submitQuery = async (
+const submitQuery = async ({
   query,
+  graphUri,
+  token,
+  graphSelection,
+  loggedIn,
   setLoading,
   setResults,
   setHeaders,
   setError
-) => {
+}) => {
   setError();
-  setLoading(true);
-  const url = `${feConfig.backend}/sparql?query=${encodeURIComponent(
-    query
-  )}`;
+  if (isSparqlUpdate(query)) {
+    setError(
+      'The public SPARQL endpoint is read-only. Use Admin → SPARQL for INSERT/DELETE/UPDATE.'
+    );
+    return;
+  }
+  if (graphSelection === 'user' && !loggedIn) {
+    setError('Sign in to query My Submissions.');
+    return;
+  }
+  if (graphSelection === 'user' && !graphUri) {
+    setError('Your user graph is not available yet. Try refreshing after sign-in.');
+    return;
+  }
 
+  setLoading(true);
+  const params = new URLSearchParams();
+  params.set('query', query);
+  if (graphUri) params.set('default-graph-uri', graphUri);
+
+  const url = `${publicRuntimeConfig.backend}/sparql?${params.toString()}`;
   const headers = {
-    // 'Content-Type': 'application/json',
     Accept: 'application/json'
   };
+  if (token) headers['X-authorization'] = token;
 
   let response;
-
   try {
     response = await axios.get(url, { headers });
   } catch (error) {
-    if (error.response) {
-      console.error('Error:', error.message);
-    }
+    const message =
+      (error.response &&
+        (typeof error.response.data === 'string'
+          ? error.response.data
+          : error.response.data?.message)) ||
+      error.message ||
+      'Unknown error';
+    setError(message);
+    setResults();
+    setLoading(false);
+    return;
   }
 
   if (response && response.status === 200) {
     setError();
-    const results = response.data;
-    setResults(processResults(results));
-    setHeaders(results.head.vars);
-} else {
-    const message = response ? response.data : 'Unknown error';
-    setError(message);
+    const body = response.data;
+    setResults(processSparqlResults(body));
+    setHeaders(body.head?.vars || []);
+  } else {
+    setError(response ? response.data : 'Unknown error');
     setResults();
-}
-
+  }
   setLoading(false);
 };
-
-const processResults = results => {
-  // if (!results.results || !results.results.bindings) {
-  //   return [];
-  // }
-  const headers = results.head.vars;
-  return results.results.bindings.map(result => {
-    const resultObject = {};
-    for (const header of headers) {
-      if (result[header]) resultObject[header] = result[header];
-      else resultObject[header] = '';
-    }
-    return resultObject;
-  });
-};
-
-const graphs = [
-  { value: 'Public', label: 'Public' },
-  { value: 'User', label: 'My Submissions' }
-];
-
-const startQuery = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX dcterms: <http://purl.org/dc/terms/>
-PREFIX dc: <http://purl.org/dc/elements/1.1/>
-PREFIX sbh: <http://wiki.synbiohub.org/wiki/Terms/synbiohub#>
-PREFIX prov: <http://www.w3.org/ns/prov#>
-PREFIX sbol: <http://sbols.org/v2#>
-PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
-PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-PREFIX purl: <http://purl.obolibrary.org/obo/>
-PREFIX biopax: <http://www.biopax.org/release/biopax-level3.owl#>
-PREFIX so: <http://identifiers.org/so/>
-PREFIX bench: <http://wiki.synbiohub.org/wiki/Terms/benchling#>
-PREFIX genbank: <http://www.ncbi.nlm.nih.gov/genbank#>
-
-`;
