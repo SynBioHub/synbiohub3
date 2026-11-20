@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import useSWR from 'swr';
 import axios from 'axios';
@@ -23,7 +23,7 @@ import lookupRole from '../../../namespace/lookupRole';
 import { getTypeColor } from '../../../utilities/typeColor';
 import { condenseLabel } from '../../../utilities/condenseLabel';
 import Link from 'next/link';
-import { addError, logoutUser } from '../../../redux/actions';
+import { addError, logoutUser, attachmentsChanged } from '../../../redux/actions';
 import { processUrl } from '../../Admin/Registries';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faUnlink } from '@fortawesome/free-solid-svg-icons';
@@ -47,6 +47,8 @@ const sdconverter = new showdown.Converter();
 
 export default function Members(properties) {
   const token = useSelector(state => state.user.token);
+  const attachmentRevision = useSelector(state => state.attachments.revision);
+  const lastAttachmentRevision = useRef(attachmentRevision);
   const privateGraph = useSelector(state => state.user.graphUri);
   const [search, setSearch] = useState('');
   const [offset, setOffset] = useState(0);
@@ -120,7 +122,7 @@ export default function Members(properties) {
     ? useMembers(query, parameters, dispatch, token)
     : useMembers(query, parameters, dispatch);
 
-  const { count: totalMemberCount } = isOwner
+  const { count: totalMemberCount, mutate: refreshTotalCount } = isOwner
     ? useCount(
       CountMembersTotal,
       { ...parameters, search: '' },
@@ -133,7 +135,7 @@ export default function Members(properties) {
       dispatch,
       token ? token : undefined);
 
-  const { count: currentMemberCount } = isOwner
+  const { count: currentMemberCount, mutate: refreshCurrentCount } = isOwner
     ? useCount(
       countQuery,
       parameters,
@@ -157,13 +159,30 @@ export default function Members(properties) {
   const publicPrefix =  theme.uriPrefix + 'public/';
 
 
-  const { filters } = useFilters(
+  const { filters, mutate: refreshFilters } = useFilters(
     getTypesRoles,
     { uri: properties.uri },
     dispatch,
     token ? token : undefined,
     !properties.uri.includes(publicPrefix) ? privateGraph : undefined
   );
+
+  const refreshMemberData = () => Promise.all([
+    mutate(), refreshTotalCount(), refreshCurrentCount(), refreshFilters()
+  ]);
+
+  useEffect(() => {
+    if (lastAttachmentRevision.current === attachmentRevision) return;
+    lastAttachmentRevision.current = attachmentRevision;
+    // A successful upload/removal in either section invalidates this list,
+    // its counts, and its type filters.
+    mutate();
+    refreshTotalCount();
+    refreshCurrentCount();
+    refreshFilters();
+  }, [attachmentRevision, mutate, refreshTotalCount, refreshCurrentCount, refreshFilters]);
+
+  const refreshAfterAttachmentRemoval = () => dispatch(attachmentsChanged());
 
   const outOfBoundsHandle = offset => {
     const newBounds = getNewBounds(offset, currentMemberCount);
@@ -195,20 +214,23 @@ export default function Members(properties) {
   const [processedMembers, setProcessedMembers] = useState([]);
 
   useEffect(() => {
+    let active = true;
     async function processMembers() {
       if (members) {
         const updatedMembers = await Promise.all(members.map(async member => {
           const processed = await processUrl(member.uri, registries);
           return {
             ...member,
+            originalUri: member.uri,
             uri: processed.urlRemovedForLink
           };
         }));
-        setProcessedMembers(updatedMembers);
+        if (active) setProcessedMembers(updatedMembers);
       }
     }
 
     processMembers();
+    return () => { active = false; };
   }, [members]);
 
   const additionalOffset = customBounds[0];
@@ -262,7 +284,8 @@ export default function Members(properties) {
         isPublicCollection={properties.uri.includes("/public/")}
         uri={properties.uri}
         processedUri={processedUri}
-        mutate={mutate}
+        mutate={refreshMemberData}
+        onAttachmentRemoved={refreshAfterAttachmentRemoval}
       />
 
       <MembersPagination
@@ -460,6 +483,12 @@ function MembersPagination(properties) {
 function MemberTable(properties) {
   const isPublicCollection = properties.isPublicCollection;
   const token = useSelector(state => state.user.token);
+  const [removing, setRemoving] = useState(false);
+  const [removeError, setRemoveError] = useState('');
+
+  useEffect(() => {
+    setRemoveError('');
+  }, [properties.uri]);
 
   if (properties.loading) {
     return (
@@ -474,17 +503,32 @@ function MemberTable(properties) {
   }
 
   const handleDelete = async member => {
+    if (removing) return;
     if (member.uri && window.confirm("Would you like to remove this item from the collection?")) {
+      setRemoving(true);
+      setRemoveError('');
       try {
-        await axios.get(`${publicRuntimeConfig.backend}${member.uri}/remove`, {
-          headers: {
-            "Accept": "text/plain; charset=UTF-8",
-            "X-authorization": token
-          }
-        });
-        properties.mutate();
+        if (member.type === 'http://sbols.org/v2#Attachment') {
+          await axios.delete(`${publicRuntimeConfig.backend.replace(/\/$/, '')}/attachments`, {
+            params: { uri: properties.uri, attachment: member.originalUri },
+            headers: { 'X-authorization': token }
+          });
+          await properties.onAttachmentRemoved();
+        } else {
+          await axios.get(`${publicRuntimeConfig.backend}${member.uri}/remove`, {
+            headers: {
+              "Accept": "text/plain; charset=UTF-8",
+              "X-authorization": token
+            }
+          });
+          await properties.mutate();
+        }
       } catch (error) {
-        console.error('Error removing item:', error);
+        setRemoveError(typeof error.response?.data === 'string' && error.response.data
+          ? error.response.data
+          : error.message || 'Could not remove this item. Please try again.');
+      } finally {
+        setRemoving(false);
       }
     }
   };
@@ -512,6 +556,8 @@ function MemberTable(properties) {
   const removeTrailingSlash = url => (url.endsWith('/') ? url.slice(0, -1) : url);
 
   return (
+    <>
+    {removeError && <p role="alert">{removeError}</p>}
     <table className={`${tableStyles.table} ${styles.memberstable}`}>
       <thead>
         <tr>
@@ -530,7 +576,8 @@ function MemberTable(properties) {
           const icon = compareUri(member.uri, `/${objectUriParts}`);
 
           const handleIconClick = () => {
-            if (icon === faTrash) {
+            if (removing) return;
+            if (member.type === 'http://sbols.org/v2#Attachment' || icon === faTrash) {
               handleDelete(member);
             } else if (icon === faUnlink) {
               handleUnlink(member, removeTrailingSlash(properties.processedUri));
@@ -578,6 +625,7 @@ function MemberTable(properties) {
                 <td
                   className={`${styles.memberactionicon} ${styles.memberremovecolumn}`}
                   onClick={handleIconClick}
+                  aria-disabled={removing}
                   title={icon === faTrash ? 'Delete Member' : 'Remove member from collection'}
                 >
                   <FontAwesomeIcon icon={icon} />
@@ -588,6 +636,7 @@ function MemberTable(properties) {
         })}
       </tbody>
     </table>
+    </>
   );
 }
 
@@ -656,9 +705,9 @@ const useCount = (query, options, dispatch, token=null) => {
     // Replace base (protocol + host + port) of `url` with that of current page
     finalUrl = `${publicRuntimeConfig.backend}${currentURLObj.pathname}${urlObj.pathname}${urlObj.search}`;
   }
-  let data, error;
+  let data, error, mutate;
 
-    ({ data, error } = useSWR([finalUrl, token, dispatch], fetcher));
+    ({ data, error, mutate } = useSWR([finalUrl, token, dispatch], fetcher));
 
   const [processedData, setProcessedData] = useState(undefined);
 
@@ -673,7 +722,8 @@ const useCount = (query, options, dispatch, token=null) => {
   }, [data]);
 
   return {
-    count: processedData
+    count: processedData,
+    mutate
   };
 };
 
@@ -696,13 +746,15 @@ const useMembers = (query, options, dispatch, token=null) => {
   const [processedData, setProcessedData] = useState(undefined);
 
   useEffect(() => {
+    let active = true;
     if (data) {
       processResults(data).then(result => {
-        setProcessedData(result);
+        if (active) setProcessedData(result);
       });
     } else {
       setProcessedData(undefined);
     }
+    return () => { active = false; };
   }, [data]);
 
   return {

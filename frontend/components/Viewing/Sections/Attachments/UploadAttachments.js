@@ -1,18 +1,16 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import styles from '../../../../styles/view.module.css';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { setAttachments, setUploadStatus } from '../../../../redux/actions';
-
-import getAttachments from '../../../../sparql/getAttachments';
-import getQueryResponse from '../../../../sparql/tools/getQueryResponse';
+import { setUploadStatus } from '../../../../redux/actions';
 import edam from './edam.json';
 
 import Select from 'react-select';
 import options from './SelectOptions';
 
-import { processUrl } from '../../../Admin/Registries';
+import getConfig from 'next/config';
+const { publicRuntimeConfig } = getConfig();
 
 import axios from 'axios';
 
@@ -24,10 +22,25 @@ export default function UploadAttachments(properties) {
   const [filledFieldsCount, setFilledFieldsCount] = useState([]);
   const [selectedOption, setSelectedOption] = useState('Attachment type...');
   const [selectedFiles, setSelectedFiles] = useState([]);
+  const [uploadError, setUploadError] = useState('');
+  const fileInput = useRef(null);
+  const uploadGeneration = useRef(0);
   const dispatch = useDispatch();
   const token = useSelector(state => state.user.token);
   const uploadStatus = useSelector(state => state.attachments.uploadStatus);
-  const registries = JSON.parse(localStorage.getItem("registries")) || {};
+  useEffect(() => {
+    uploadGeneration.current += 1;
+    setSelectedFiles([]);
+    setUploadError('');
+    dispatch(setUploadStatus(''));
+    if (fileInput.current) fileInput.current.value = '';
+    return () => { uploadGeneration.current += 1; };
+  }, [properties.uri, token, dispatch]);
+
+  const errorMessage = error =>
+    typeof error.response?.data === 'string' && error.response.data
+      ? error.response.data
+      : error.message || 'Attachment upload failed. Please try again.';
 
   /**
    * Handles a input value change and updates the filled inputs array.
@@ -62,7 +75,7 @@ export default function UploadAttachments(properties) {
    * @param {Object} attachment Contains information from the inputs about the attachment.
    */
   const attachFromURL = async attachment => {
-    const url = `${attachment.uri}/attachURL`;
+    const url = `${publicRuntimeConfig.backend.replace(/\/$/, '')}${new URL(attachment.uri).pathname}/attachURL`;
     var headers = {
       Accept: 'text/plain; charset=UTF-8',
       'X-authorization': token
@@ -73,18 +86,15 @@ export default function UploadAttachments(properties) {
     parameters.append('name', attachment.name);
     parameters.append('type', attachment.type);
 
-    let response;
-
+    setUploadError('');
     try {
-      response = await axios.post(url, parameters, { headers });
+      await axios.post(url, parameters, { headers });
+      properties.setRefreshMembers(true);
+      return true;
     } catch (error) {
-      if (error.response) {
-        console.error('Error:', error.message);
-      }
+      setUploadError(errorMessage(error));
+      return false;
     }
-
-    if (response.status !== 200) console.error(response.status);
-    else properties.setRefreshMembers(true);
   };
 
   /**
@@ -93,35 +103,40 @@ export default function UploadAttachments(properties) {
    * @param {String} uri The URI of the collection.
    */
   const attachFromFile = async (files, uri) => {
-    const url = `${uri}/attach`;
+    const url = `${publicRuntimeConfig.backend.replace(/\/$/, '')}${new URL(uri).pathname}/attach`;
     var headers = {
       Accept: 'text/plain; charset=UTF-8',
       'X-authorization': token
     };
 
     dispatch(setUploadStatus('Uploading'));
-
-    for (let fileIndex = 0; fileIndex < files.length; fileIndex++) {
-      const form = new FormData();
-      form.append('file', files[fileIndex].file);
-
-      let response;
-
-      try {
-        response = await axios.post(url, form, { headers });
-      } catch (error) {
-        if (error.response) {
-          console.error('Error:', error.message);
-        }
+    setUploadError('');
+    const generation = uploadGeneration.current;
+    const pendingFiles = [...files];
+    try {
+      for (const file of files) {
+        if (generation !== uploadGeneration.current) return;
+        const form = new FormData();
+        form.append('file', file.file);
+        await axios.post(url, form, { headers });
+        if (generation !== uploadGeneration.current) return;
+        pendingFiles.shift();
+        setSelectedFiles([...pendingFiles]);
+        properties.setRefreshMembers(true);
       }
-
-      if (response.status !== 200) console.error(response.status);
-      else properties.setRefreshMembers(true);
+    } catch (error) {
+      if (generation === uploadGeneration.current) setUploadError(errorMessage(error));
+    } finally {
+      if (generation === uploadGeneration.current) {
+        dispatch(setUploadStatus(''));
+        if (fileInput.current) fileInput.current.value = '';
+      }
     }
   };
 
   return (
     <React.Fragment>
+      {uploadError && <tr><td colSpan={6}><div role="alert">{uploadError}</div></td></tr>}
       <tr>
         <td>
           <strong>Upload Attachment</strong>
@@ -133,37 +148,20 @@ export default function UploadAttachments(properties) {
               className={styles.fileattached}
               type="text"
               readOnly={true}
+              value={selectedFiles.length > 1
+                ? `${selectedFiles.length} files selected`
+                : selectedFiles[0]?.file.name || ''}
             />
             <label className={styles.selectfile}>
               Select file(s)
               <input
                 type="file"
                 multiple
+                ref={fileInput}
+                disabled={uploadStatus !== ''}
                 onChange={e => {
-                  const files = e.target.files;
-
-                  //Handles if the user clicks the cancel button.
-                  if (files.length === 0) {
-                    document.getElementById('attached-file-input').value = '';
-                    setSelectedFiles([]);
-                  } else {
-                    if (files.length > 1)
-                      document.getElementById(
-                        'attached-file-input'
-                      ).value = `${files.length} files selected`;
-                    else
-                      document.getElementById('attached-file-input').value =
-                        e.target.files[0].name;
-
-                    const currentlySelectedFiles = [];
-                    for (const file of files) {
-                      currentlySelectedFiles.push({
-                        file: file
-                      });
-                    }
-
-                    setSelectedFiles(currentlySelectedFiles);
-                  }
+                  setSelectedFiles(Array.from(e.target.files || [], file => ({ file })));
+                  setUploadError('');
                 }}
               ></input>
             </label>
@@ -173,30 +171,14 @@ export default function UploadAttachments(properties) {
           <div
             type="button"
             className={
-              selectedFiles.length > 0
+              selectedFiles.length > 0 && uploadStatus === ''
                 ? styles.attachbutton
                 : styles.attachbuttondisabled
             }
             onClick={() => {
+              if (uploadStatus !== '') return;
               if (selectedFiles.length > 0) {
-                //Resets everything.
-                document.getElementById('attached-file-input').value = '';
-                setSelectedFiles([]);
-
-                processUrl(properties.uri, registries).then(processedUriData => {
-                  const uriToUse = processedUriData.urlReplacedForBackend || processedUriData.original;
-                  attachFromFile(selectedFiles, uriToUse).then(() => {
-                    dispatch(setUploadStatus(''));
-                    properties.setRefreshMembers(true);
-                  });
-
-                  //Query all the attachments so the store can be updated.
-                  getQueryResponse(dispatch, getAttachments, {
-                    uri: properties.uri
-                  }, token).then(allAttachments => {
-                    dispatch(setAttachments(allAttachments));
-                  });
-                });
+                attachFromFile(selectedFiles, properties.uri);
               } else {
                 alert('You need to select at least 1 file.');
               }
@@ -257,7 +239,7 @@ export default function UploadAttachments(properties) {
                 ? styles.attachbutton
                 : styles.attachbuttondisabled
             }
-            onClick={() => {
+            onClick={async () => {
               if (filledFieldsCount.length === 3) {
                 const nameInput = document
                   .getElementById('attach-url-name')
@@ -278,38 +260,10 @@ export default function UploadAttachments(properties) {
                 } else if (!urlInput.includes('http')) {
                   alert('The URL has to be a link');
                 } else {
-                  processUrl(uri, registries).then(processedUriData => {
-                      const uriToUse = processedUriData.urlReplacedForBackend || processedUriData.original;
-                      
-                      const attachment = {
-                          name: nameInput,
-                          url: urlInput,
-                          type: typeInput,
-                          uri: uriToUse
-                      };
-              
-                      attachFromURL(attachment).then(() => {
-                        properties.setRefreshMembers(true); // Ensure refresh after URL attachment
-                      });
+                  const uploaded = await attachFromURL({
+                    name: nameInput, url: urlInput, type: typeInput, uri
                   });
-
-                  const convertedUrl = uri.slice(
-                    0,
-                    uri.slice(0, uri.lastIndexOf('/')).lastIndexOf('/') + 1
-                  );
-                  const version = '1';
-                  const newAttachment = {
-                    format: typeInput,
-                    size: '',
-                    title: nameInput,
-                    topLevel: `${convertedUrl}${nameInput}/${version}`
-                  };
-
-                  //Updates the attachments in the store so AttachmentRows can reflex the new attachment.
-                  dispatch(
-                    setAttachments([...properties.attachments, newAttachment])
-                  );
-                  properties.setRefreshMembers(true);
+                  if (!uploaded) return;
 
                   //Resets all the values to their default.
                   setSelectedOption('Attachment type...');

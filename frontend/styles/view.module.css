@@ -507,6 +507,23 @@
   margin: 2rem 0;
 }
 
+.attachmentPreview {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 5rem;
+  padding: 1rem;
+}
+
+.attachmentPreview img {
+  display: block;
+  max-width: 100%;
+  max-height: 70vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+
 .section {
   width: calc(100vw - 25rem);
   border-radius: 0.4rem;
@@ -992,7 +1009,8 @@
 }
 
 .downloadbutton div,
-.removebutton div {
+.removebutton div,
+.removebutton button {
   font-weight: 500;
   padding: 0.5rem 1rem 0.5rem 1rem;
   border: 0;
@@ -1006,7 +1024,8 @@
   background-color: #D25627;
 }
 
-.removebutton div {
+.removebutton div,
+.removebutton button {
   background-color: #d9534f;
 }
 
@@ -1019,8 +1038,14 @@
   background-color: #973d1c;
 }
 
-.removebutton div:hover {
+.removebutton div:hover,
+.removebutton button:hover {
   background-color: #d1332e;
+}
+
+.removebutton button:disabled {
+  opacity: 0.6;
+  cursor: wait;
 }
 
 .downloadicon,

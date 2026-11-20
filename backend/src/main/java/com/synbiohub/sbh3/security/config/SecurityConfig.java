@@ -75,7 +75,7 @@ public class SecurityConfig {
         configuration.setAllowedOrigins(List.of("http://localhost:3333", "http://localhost:8080"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type", "X-authorization"));
-        configuration.setExposedHeaders(List.of("Authorization", "X-authorization"));
+        configuration.setExposedHeaders(List.of("Authorization", "X-authorization", "Content-Disposition"));
         configuration.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
