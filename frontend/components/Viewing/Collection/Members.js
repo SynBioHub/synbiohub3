@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import useSWR from 'swr';
 import axios from 'axios';
@@ -13,8 +13,6 @@ import CountMembersTotal from '../../../sparql/CountMembersSearch';
 import getCollectionMembers from '../../../sparql/getCollectionMembers';
 import getCollectionMembersSearch from '../../../sparql/getCollectionMembersSearch';
 import getTypesRoles from '../../../sparql/getTypesRoles';
-import getAttachments from '../../../sparql/getAttachments';
-import getQueryResponse from '../../../sparql/tools/getQueryResponse';
 import styles from '../../../styles/view.module.css';
 import tableStyles from '../../../styles/resulttable.module.css';
 import MiniLoading from '../../Reusable/MiniLoading';
@@ -25,7 +23,7 @@ import lookupRole from '../../../namespace/lookupRole';
 import { getTypeColor } from '../../../utilities/typeColor';
 import { condenseLabel } from '../../../utilities/condenseLabel';
 import Link from 'next/link';
-import { addError, logoutUser, setAttachments } from '../../../redux/actions';
+import { addError, logoutUser, attachmentsChanged } from '../../../redux/actions';
 import { processUrl } from '../../Admin/Registries';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faUnlink } from '@fortawesome/free-solid-svg-icons';
@@ -49,6 +47,8 @@ const sdconverter = new showdown.Converter();
 
 export default function Members(properties) {
   const token = useSelector(state => state.user.token);
+  const attachmentRevision = useSelector(state => state.attachments.revision);
+  const lastAttachmentRevision = useRef(attachmentRevision);
   const privateGraph = useSelector(state => state.user.graphUri);
   const [search, setSearch] = useState('');
   const [offset, setOffset] = useState(0);
@@ -171,14 +171,18 @@ export default function Members(properties) {
     mutate(), refreshTotalCount(), refreshCurrentCount(), refreshFilters()
   ]);
 
-  const refreshAfterAttachmentRemoval = async () => {
-    await Promise.all([
-      refreshMemberData(),
-      getQueryResponse(dispatch, getAttachments, { uri: properties.uri }, token).then(attachments => {
-        if (Array.isArray(attachments)) dispatch(setAttachments(attachments));
-      })
-    ]);
-  };
+  useEffect(() => {
+    if (lastAttachmentRevision.current === attachmentRevision) return;
+    lastAttachmentRevision.current = attachmentRevision;
+    // A successful upload/removal in either section invalidates this list,
+    // its counts, and its type filters.
+    mutate();
+    refreshTotalCount();
+    refreshCurrentCount();
+    refreshFilters();
+  }, [attachmentRevision, mutate, refreshTotalCount, refreshCurrentCount, refreshFilters]);
+
+  const refreshAfterAttachmentRemoval = () => dispatch(attachmentsChanged());
 
   const outOfBoundsHandle = offset => {
     const newBounds = getNewBounds(offset, currentMemberCount);
@@ -210,6 +214,7 @@ export default function Members(properties) {
   const [processedMembers, setProcessedMembers] = useState([]);
 
   useEffect(() => {
+    let active = true;
     async function processMembers() {
       if (members) {
         const updatedMembers = await Promise.all(members.map(async member => {
@@ -220,11 +225,12 @@ export default function Members(properties) {
             uri: processed.urlRemovedForLink
           };
         }));
-        setProcessedMembers(updatedMembers);
+        if (active) setProcessedMembers(updatedMembers);
       }
     }
 
     processMembers();
+    return () => { active = false; };
   }, [members]);
 
   const additionalOffset = customBounds[0];
@@ -740,13 +746,15 @@ const useMembers = (query, options, dispatch, token=null) => {
   const [processedData, setProcessedData] = useState(undefined);
 
   useEffect(() => {
+    let active = true;
     if (data) {
       processResults(data).then(result => {
-        setProcessedData(result);
+        if (active) setProcessedData(result);
       });
     } else {
       setProcessedData(undefined);
     }
+    return () => { active = false; };
   }, [data]);
 
   return {

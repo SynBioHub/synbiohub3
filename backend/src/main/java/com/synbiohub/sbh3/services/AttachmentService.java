@@ -65,7 +65,12 @@ public class AttachmentService {
         String graph = sparqlService.resolveGraphUriForTopLevel(targetUri);
         String prefixes = "PREFIX sbol: <http://sbols.org/v2#> "
                 + "PREFIX sbh: <http://wiki.synbiohub.org/wiki/Terms/synbiohub#> ";
-        String link = "<" + targetUri + "> sbol:attachment|sbh:attachment <" + attachmentUri + "> . ";
+        // Imported attachments and attachments added to a second collection may
+        // have only a member link. Require the Attachment type in that case so
+        // this endpoint cannot remove arbitrary collection members.
+        String link = "{ <" + targetUri + "> sbol:attachment|sbh:attachment <" + attachmentUri + "> . } UNION "
+                + "{ <" + targetUri + "> sbol:member <" + attachmentUri + "> . "
+                + "<" + attachmentUri + "> a sbol:Attachment . } ";
         String result = sparqlService.read(sparqlService.sparqlQueryUrl(), graph,
                 prefixes + "ASK { " + link + " }");
         if (!new ObjectMapper().readTree(result).path("boolean").asBoolean(false)) {
@@ -73,7 +78,7 @@ public class AttachmentService {
         }
         String triple = "<" + targetUri + "> ?relationship <" + attachmentUri + "> . ";
         sparqlService.update(prefixes + "DELETE { GRAPH <" + graph + "> { " + triple + "} } "
-                + "WHERE { GRAPH <" + graph + "> { " + link + triple
+                + "WHERE { GRAPH <" + graph + "> { { " + link + "} " + triple
                 + "VALUES ?relationship { sbol:attachment sbh:attachment sbol:member } } }", graph, false);
     }
 

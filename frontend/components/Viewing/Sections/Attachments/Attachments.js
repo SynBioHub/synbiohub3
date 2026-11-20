@@ -7,7 +7,7 @@ import getQueryResponse from '../../../../sparql/tools/getQueryResponse';
 
 import AttachmentsTable from './AttachmentsTable';
 import Loading from '../../../Reusable/Loading';
-import { setAttachments } from '../../../../redux/actions';
+import { attachmentsChanged, setAttachments } from '../../../../redux/actions';
 
 /**
  * If the user is the creator of the collection then the upload/lookup attachment section
@@ -36,10 +36,10 @@ export default function Attachments(properties) {
   //   }
   // }
   // console.log(uri);
-  const [refreshMembers, setRefreshMembers] = useState(0);
+  const refreshMembers = useSelector(state => state.attachments.revision);
 
   const handleSetRefreshMembers = (value) => {
-    if (value) setRefreshMembers(count => count + 1);
+    if (value) dispatch(attachmentsChanged());
   };
 
   useEffect(() => {

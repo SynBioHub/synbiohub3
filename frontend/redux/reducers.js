@@ -377,6 +377,7 @@ const pageSectionsReducer = (
 
 const initialAttachments = {
   attachments: [],
+  revision: 0,
   uploadStatus: ''
 };
 
@@ -387,6 +388,8 @@ const attachmentsReducer = (state = initialAttachments, { type, payload }) => {
   switch (type) {
     case types.LOGOUT:
       return initialAttachments;
+    case types.ATTACHMENTSCHANGED:
+      return { ...state, revision: (state.revision || 0) + 1 };
     case types.SETATTACHMENTS:
       return {
         ...state,

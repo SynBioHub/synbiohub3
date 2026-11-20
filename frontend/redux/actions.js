@@ -1233,6 +1233,9 @@ export const showPluginSection = pluginName => dispatch => {
 
 // ATTACHMENTS SECTION
 
+// Both the Members and Attachments sections must refetch after a change.
+export const attachmentsChanged = () => ({ type: types.ATTACHMENTSCHANGED });
+
 /**
  * This action sets the attachments.
  * @param {Array} attachments Nested array that contains all the information about the attachments.
