@@ -3,6 +3,7 @@ package com.synbiohub.sbh3.services;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.synbiohub.sbh3.dao.SparqlService;
 import com.synbiohub.sbh3.submit.SubmitPayload;
 import com.synbiohub.sbh3.utils.ConfigUtil;
 import com.synbiohub.sbh3.utils.FileUtil;
@@ -42,6 +43,7 @@ public class SbolService {
 
     private final CollectionService collectionService;
     private final UserService userService;
+    private final SparqlService sparqlService;
     private final ObjectMapper objectMapper;
 
     /**
@@ -201,7 +203,7 @@ public class SbolService {
             }
 
             // Registry URIs are removed from the document but remembered for collection membership.
-            stripRegistryTopLevels(individual, registryPrefixes, payload);
+            stripRegistryTopLevels(individual, registryPrefixes, payload, databasePrefix);
 
             try {
                 individual = rewriteIndividualUris(individual, uriPrefix, version, databasePrefix);
@@ -393,26 +395,82 @@ public class SbolService {
     /**
      * Removes top-levels that belong to a configured web-of-registries prefix.
      * Their URIs are recorded so they can be re-added as collection members later.
+     * <p>
+     * For URIs matching this instance's own {@code databasePrefix}, verifies they actually exist
+     * in the public or submitter graph before stripping; missing URIs are kept so they are
+     * imported as new objects instead of becoming dangling collection members.
      */
     private void stripRegistryTopLevels(SBOLDocument individual,
                                                List<String> registryPrefixes,
-                                               SubmitPayload payload) {
+                                               SubmitPayload payload,
+                                               String databasePrefix) throws IOException {
+        String normalizedLocalPrefix = stripTrailingSlash(databasePrefix);
+        List<TopLevel> localCandidates = new ArrayList<>();
+        List<TopLevel> remoteMatches = new ArrayList<>();
+
         for (TopLevel topLevel : new ArrayList<>(individual.getTopLevels())) {
             String identity = topLevel.getIdentity().toString();
             for (String registry : registryPrefixes) {
                 if (identity.startsWith(registry)) {
-                    log.debug("Found and removed registry object: {}", identity);
-                    payload.getUrisFoundInSynBioHub().add(identity);
-                    try {
-                        individual.removeTopLevel(topLevel);
-                    } catch (SBOLValidationException e) {
-                        throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                                "Failed to remove registry object: " + e.getMessage());
+                    if (!normalizedLocalPrefix.isEmpty()
+                            && stripTrailingSlash(registry).equals(normalizedLocalPrefix)) {
+                        localCandidates.add(topLevel);
+                    } else {
+                        remoteMatches.add(topLevel);
                     }
                     break;
                 }
             }
         }
+
+        for (TopLevel topLevel : remoteMatches) {
+            removeRegistryTopLevel(individual, topLevel, payload);
+        }
+
+        if (!localCandidates.isEmpty()) {
+            List<String> graphs = new ArrayList<>();
+            String defaultGraph = ConfigUtil.get("defaultGraph").asText("");
+            if (!defaultGraph.isBlank()) {
+                graphs.add(defaultGraph);
+            }
+            if (payload.getCreatedBy() != null) {
+                var user = userService.getUserByUsername(payload.getCreatedBy());
+                if (user != null && user.getGraphUri() != null && !user.getGraphUri().isBlank()) {
+                    graphs.add(user.getGraphUri());
+                }
+            }
+            List<String> candidateUris = localCandidates.stream()
+                    .map(t -> t.getIdentity().toString())
+                    .toList();
+            Set<String> existingUris = sparqlService.findExistingSubjects(candidateUris, graphs);
+            for (TopLevel topLevel : localCandidates) {
+                if (existingUris.contains(topLevel.getIdentity().toString())) {
+                    removeRegistryTopLevel(individual, topLevel, payload);
+                } else {
+                    log.debug("Local registry URI not found in store; importing as new object: {}",
+                            topLevel.getIdentity());
+                }
+            }
+        }
+    }
+
+    private void removeRegistryTopLevel(SBOLDocument individual, TopLevel topLevel, SubmitPayload payload) {
+        String identity = topLevel.getIdentity().toString();
+        log.debug("Found and removed registry object: {}", identity);
+        payload.getUrisFoundInSynBioHub().add(identity);
+        try {
+            individual.removeTopLevel(topLevel);
+        } catch (SBOLValidationException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Failed to remove registry object: " + e.getMessage());
+        }
+    }
+
+    private static String stripTrailingSlash(String value) {
+        if (value == null) {
+            return "";
+        }
+        return value.endsWith("/") ? value.substring(0, value.length() - 1) : value;
     }
 
     /** Assigns submission URI prefix/version and fixes attachment download sources after rewrite. */
