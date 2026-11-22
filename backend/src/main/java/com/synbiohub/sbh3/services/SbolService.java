@@ -397,8 +397,13 @@ public class SbolService {
     private void stripRegistryTopLevels(SBOLDocument individual,
                                                List<String> registryPrefixes,
                                                SubmitPayload payload) {
+        String sourceUriPrefix = payload.getSourceUriPrefix();
         for (TopLevel topLevel : new ArrayList<>(individual.getTopLevels())) {
             String identity = topLevel.getIdentity().toString();
+            // Do not strip objects belonging to the private collection being made public.
+            if (sourceUriPrefix != null && !sourceUriPrefix.isBlank() && identity.startsWith(sourceUriPrefix)) {
+                continue;
+            }
             for (String registry : registryPrefixes) {
                 if (identity.startsWith(registry)) {
                     log.debug("Found and removed registry object: {}", identity);
@@ -448,10 +453,10 @@ public class SbolService {
             }
             root.createAnnotation(DCTERMS_CREATED,
                     ZonedDateTime.now().format(DateTimeFormatter.ISO_INSTANT));
-            if (payload.getName() != null) {
+            if (payload.getName() != null && !payload.getName().isBlank()) {
                 root.setName(payload.getName());
             }
-            if (payload.getDescription() != null) {
+            if (payload.getDescription() != null && !payload.getDescription().isBlank()) {
                 root.setDescription(payload.getDescription());
             }
             new IdentifiedVisitor() {

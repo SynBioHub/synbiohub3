@@ -51,6 +51,15 @@ public class SubmitPayload {
 
     private String createdBy;
 
+    /** True when targeting the public graph (e.g. {@code makePublic}). */
+    private boolean targetPublic;
+
+    /**
+     * Source URI prefix when moving an existing private collection (e.g. {@code makePublic}),
+     * so its own objects are rewritten rather than stripped as external registry URIs.
+     */
+    private String sourceUriPrefix;
+
     // --- Sanitized / resolved ---
 
     /** Parsed PubMed citation ids (from the form {@code citations} field). */

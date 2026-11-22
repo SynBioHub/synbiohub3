@@ -838,36 +838,34 @@ export const makePublicCollection =
         };
 
         const parameters = new URLSearchParams();
-        parameters.append('id', displayId);
-        parameters.append('version', version);
-        parameters.append('name', name);
-        parameters.append('description', description);
-        parameters.append('citations', citations);
+        parameters.append('id', displayId || '');
+        parameters.append('version', version || '');
+        parameters.append('name', name || '');
+        parameters.append('description', description || '');
+        parameters.append('citations', citations || '');
         parameters.append('tabState', tabState);
         if (tabState === 'existing')
-          parameters.append('collections', collections);
+          parameters.append('collections', collections || '');
 
-        let response;
+        const response = await axios.post(url, parameters, { headers });
 
-        try {
-          response = await axios.post(url, parameters, { headers });
-        } catch (error) {
-          if (error.response) {
-            console.error('Error:', error.message);
-          }
-        }
-
-        if (response.status === 200) {
+        if (response && response.status === 200) {
           mutate([`${publicRuntimeConfig.backend}/shared`, token, dispatch]);
           mutate([`${publicRuntimeConfig.backend}/manage`, token, dispatch]);
+          return true;
         }
-
-        setProcessUnderway(false);
-        dispatch({ type: types.PUBLISHING, payload: false });
+        return false;
       } catch (error) {
+        if (error.response) {
+          console.error('Error:', error.message);
+        }
         error.customMessage = "Couldn't make collection public";
         error.fullUrl = url;
         dispatch(addError(error));
+        return false;
+      } finally {
+        setProcessUnderway(false);
+        dispatch({ type: types.PUBLISHING, payload: false });
       }
     };
 

@@ -40,6 +40,12 @@ public class SparqlService {
         deleteStaggered(sparqlRepository.REMOVE_SPARQL, params, graphUri);
     }
 
+    public void updateCollectionMembership(String modifiedIso) throws IOException {
+        String query = new SPARQLQuery(SparqlRepository.UPDATE_COLLECTION_MEMBERSHIP_SPARQL)
+                .loadTemplate(Map.of("modified", StringUtil.sparqlStringLiteral(modifiedIso)));
+        update(query, resolveGraphUri(""), false);
+    }
+
     public void uploadGraphStore(String graphUri, Path file) throws IOException {
         sparqlRepository.save(graphUri, file);
     }

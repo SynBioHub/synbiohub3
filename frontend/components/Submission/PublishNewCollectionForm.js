@@ -20,21 +20,21 @@ export default function NewCollectionForm(properties) {
     properties.filler ? properties.filler.version : '1'
   );
   const [citations, setCollectionCitations] = useState(
-    properties.filler ? properties.filler.citations : ''
+    (properties.filler && properties.filler.citations) || ''
   );
 
   const [needsVerification, setNeedsVerification] = useState('');
 
   const dispatch = useDispatch();
 
-  const publishNewCollection = (
+  const publishNewCollection = async (
     displayId,
     version,
     name,
     description,
     citations
   ) => {
-    dispatch(
+    const ok = await dispatch(
       makePublicCollection(
         properties.url,
         displayId,
@@ -47,6 +47,9 @@ export default function NewCollectionForm(properties) {
         properties.setProcessUnderway
       )
     );
+    if (!ok) {
+      return;
+    }
     properties.setCollectionIndex(0);
     properties.setToPublish(
       properties.toPublish.filter(
@@ -57,8 +60,7 @@ export default function NewCollectionForm(properties) {
       // Relative path so we stay on this frontend host (uriPrefix is an RDF
       // identity prefix, e.g. https://synbiohub.org/, not a browser base URL).
       window.location.href = `/public/${displayId}/${displayId}_collection/${version}`;
-    }
-    else {
+    } else {
       window.location.reload();
     }
   };
@@ -116,7 +118,7 @@ export default function NewCollectionForm(properties) {
         inputName="collection citations"
         placeholder="Pubmed IDs separated by commas, we'll do the rest!"
         value={citations}
-        onChange={event => setCollectionCitations(event.value)}
+        onChange={event => setCollectionCitations(event.target.value)}
       />
 
       <PublishCollectionButton
