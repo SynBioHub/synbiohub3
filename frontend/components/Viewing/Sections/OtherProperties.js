@@ -81,6 +81,7 @@ function valueSearchHref(name, value) {
 export default function OtherProperties(properties) {
   const [otherProps, setOtherProps] = useState();
   const [viewers, setViewers] = useState([]);
+  const [refreshKey, setRefreshKey] = useState(0);
   const [newPredicate, setNewPredicate] = useState('');
   const [newValue, setNewValue] = useState('');
 
@@ -97,6 +98,16 @@ export default function OtherProperties(properties) {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    const handlePermissionsUpdated = () => {
+      setRefreshKey(k => k + 1);
+    };
+    window.addEventListener('sbh:permissionsUpdated', handlePermissionsUpdated);
+    return () => {
+      window.removeEventListener('sbh:permissionsUpdated', handlePermissionsUpdated);
+    };
+  }, []);
+
+  useEffect(() => {
     getQueryResponse(dispatch, getOtherProperties, {
       uri: properties.uri
     }, token).then(props => {
@@ -107,7 +118,7 @@ export default function OtherProperties(properties) {
       }
     });
 
-  }, [dispatch, properties.uri, token]);
+  }, [dispatch, properties.uri, token, refreshKey]);
 
   // Viewers (sbh:canView) live in each viewer's own graph, so they are not part of
   // getOtherProperties; fetch them separately. The backend authorizes anyone with
@@ -126,7 +137,7 @@ export default function OtherProperties(properties) {
         if (Array.isArray(response.data)) setViewers(response.data);
       })
       .catch(() => setViewers([]));
-  }, [properties.uri, token]);
+  }, [properties.uri, token, refreshKey]);
 
 
   if (!otherProps) return <Loading />;
