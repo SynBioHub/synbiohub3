@@ -14,9 +14,8 @@ import java.util.Set;
 
 /**
  * Which named graphs a caller may use as {@code default-graph-uri} on /sparql: the public graph,
- * their own graph, graphs of objects shared with them via {@code sbh:canView}, a verified share-link
- * graph, or any graph for admins. Closes the previous behaviour where any caller could read any
- * user's private graph by naming it.
+ * their own graph, graphs of objects shared with them via {@code sbh:canView}, or a verified
+ * share-link graph. Admins should use {@code /admin/sparql} for cross-graph administrative queries.
  */
 @Service
 @RequiredArgsConstructor
@@ -41,9 +40,9 @@ public class SparqlAccessService {
         return allowed;
     }
 
-    /** Admins may query any graph; a blank requested graph keeps the explorer's default behaviour. */
-    static boolean isGraphAllowed(Set<String> allowed, boolean admin, String requestedGraph) {
-        if (requestedGraph == null || requestedGraph.isBlank() || admin) {
+    /** A blank requested graph keeps the explorer's default behaviour; otherwise the graph must be in allowed. */
+    static boolean isGraphAllowed(Set<String> allowed, String requestedGraph) {
+        if (requestedGraph == null || requestedGraph.isBlank()) {
             return true;
         }
         return allowed.contains(requestedGraph) || allowed.contains(stripTrailingSlash(requestedGraph));
@@ -57,23 +56,12 @@ public class SparqlAccessService {
         if (shareGraph != null && !shareGraph.isBlank()) {
             return shareGraph;
         }
-        if (!isGraphAllowed(allowedGraphs(user, null), isAdmin(user), requestedGraph)) {
+        if (!isGraphAllowed(allowedGraphs(user, null), requestedGraph)) {
             log.warn("SPARQL graph access denied: user={} graph={}",
                     user == null ? "anonymous" : user.getUsername(), requestedGraph);
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Cannot access other users' graphs.");
         }
         return requestedGraph;
-    }
-
-    static boolean isAdmin(User user) {
-        if (user == null) {
-            return false;
-        }
-        if (Boolean.TRUE.equals(user.getIsAdmin())) {
-            return true;
-        }
-        return user.getAuthorities() != null && user.getAuthorities().stream()
-                .anyMatch(a -> "ADMIN".equals(a.getAuthority()));
     }
 
     private static String stripTrailingSlash(String graph) {
