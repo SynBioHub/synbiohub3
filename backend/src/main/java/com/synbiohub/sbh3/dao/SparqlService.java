@@ -157,6 +157,50 @@ public class SparqlService {
     }
 
     /**
+     * Returns the subset of {@code uris} that appear as a subject in any of {@code graphUris}.
+     * Batched with {@code VALUES} to avoid one round-trip per URI.
+     */
+    public java.util.Set<String> findExistingSubjects(java.util.Collection<String> uris,
+                                                      java.util.Collection<String> graphUris) throws IOException {
+        java.util.Set<String> existing = new java.util.HashSet<>();
+        if (uris == null || uris.isEmpty()) {
+            return existing;
+        }
+        String fromClause = graphUris == null ? "" : graphUris.stream()
+                .filter(g -> g != null && !g.isBlank())
+                .distinct()
+                .map(g -> "FROM <" + g + ">")
+                .collect(Collectors.joining("\n"));
+        java.util.List<String> validUris = uris.stream()
+                .filter(u -> u != null && !u.isBlank() && !u.contains("<") && !u.contains(">") && !u.matches(".*\\s.*"))
+                .distinct()
+                .toList();
+
+        int batchSize = 50;
+        for (int i = 0; i < validUris.size(); i += batchSize) {
+            java.util.List<String> batch = validUris.subList(i, Math.min(i + batchSize, validUris.size()));
+            String values = batch.stream().map(u -> "<" + u + ">").collect(Collectors.joining(" "));
+            String query = "SELECT DISTINCT ?s\n"
+                    + fromClause + "\n"
+                    + "WHERE {\n"
+                    + "  VALUES ?s { " + values + " }\n"
+                    + "  ?s ?p ?o .\n"
+                    + "}";
+            String raw = read(sparqlQueryUrl(), "", query);
+            JsonNode bindings = objectMapper.readTree(raw).path("results").path("bindings");
+            if (bindings.isArray()) {
+                for (JsonNode row : bindings) {
+                    String s = row.path("s").path("value").asText(null);
+                    if (s != null) {
+                        existing.add(s);
+                    }
+                }
+            }
+        }
+        return existing;
+    }
+
+    /**
      * Returns the metadata for the object from the specified search query
      *
      * @param allParams Key/Value pairs of the query
