@@ -51,6 +51,18 @@ function MyApp({ Component, pageProps }) {
                 }
             })
             .then(response => {
+                if (response.data && typeof response.data === 'object') {
+                    try {
+                        const existingTheme = JSON.parse(localStorage.getItem('theme') || '{}');
+                        const mergedTheme = { ...response.data };
+                        if (existingTheme.logoUrl && !mergedTheme.logoUrl) {
+                            mergedTheme.logoUrl = existingTheme.logoUrl;
+                        }
+                        localStorage.setItem('theme', JSON.stringify(mergedTheme));
+                    } catch (e) {
+                        // ignore storage errors
+                    }
+                }
                 if (response.data.firstLaunch) {
                     setInSetupMode(true);
                 } else {
