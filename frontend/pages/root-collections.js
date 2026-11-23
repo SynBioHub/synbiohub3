@@ -26,15 +26,18 @@ export default function RootCollections() {
 
   const loggedIn = useSelector(state => state.user.loggedIn);
 
+  const requireLogin =
+    theme.requireLogin === true || theme.requireLogin === 'true';
+
   const router = useRouter();
   useEffect(() => {
-    if (theme.requireLogin && !loggedIn) {
-      router.push('/login'); // Redirect to the login page
+    if (requireLogin && !loggedIn) {
+      router.replace(`/login?next=${encodeURIComponent(router.asPath)}`);
     }
-  }, [theme.requireLogin, router]);
+  }, [requireLogin, loggedIn, router]);
 
   useEffect(() => {
-    if (theme.requireLogin && !loggedIn) {
+    if (requireLogin && !loggedIn) {
       return; // Skip fetching data if login is required and the user is not logged in
     }
     const fetchData = async () => {

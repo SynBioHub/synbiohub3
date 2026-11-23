@@ -11,6 +11,7 @@ import Loading from '../components/Reusable/Loading';
 import TopLevel from '../components/TopLevel';
 import Shell from '../components/Viewing/Shell';
 import getMetadata from '../sparql/getMetadata';
+import getOwner from '../sparql/getOwner';
 import getQueryResponse from '../sparql/tools/getQueryResponse';
 import { addError } from '../redux/actions';
 import LinkedSearch from '../components/Search/StandardSearch/LinkedSearch';
@@ -25,6 +26,54 @@ const centerStyle = {
 };
 
 function PageNotFound({ url, showLoginLink }) {
+  const defaultLogo = '/images/logo.svg';
+  const [logoUrl, setLogoUrl] = useState(() => {
+    try {
+      const theme = JSON.parse(localStorage.getItem('theme') || '{}');
+      return theme.logoUrl || localStorage.getItem('sbh_logo') || null;
+    } catch {
+      return null;
+    }
+  });
+
+  useEffect(() => {
+    if (logoUrl) return;
+    let isMounted = true;
+    fetch(`${publicRuntimeConfig.backend}/logo`, {
+      method: 'GET',
+      cache: 'no-store'
+    })
+      .then(res => {
+        if (!res.ok) throw new Error('No logo');
+        return res.blob();
+      })
+      .then(blob => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          if (!isMounted) return;
+          const dataUrl = reader.result;
+          try {
+            localStorage.setItem('sbh_logo', dataUrl);
+            const updatedTheme = JSON.parse(
+              localStorage.getItem('theme') || '{}'
+            );
+            updatedTheme.logoUrl = dataUrl;
+            localStorage.setItem('theme', JSON.stringify(updatedTheme));
+          } catch {
+            // ignore storage errors
+          }
+          setLogoUrl(dataUrl);
+        };
+        reader.readAsDataURL(blob);
+      })
+      .catch(() => {
+        if (isMounted) setLogoUrl(defaultLogo);
+      });
+    return () => {
+      isMounted = false;
+    };
+  }, [logoUrl]);
+
   const next = encodeURIComponent(
     typeof window !== 'undefined'
       ? `${window.location.pathname}${window.location.search || ''}`
@@ -37,9 +86,14 @@ function PageNotFound({ url, showLoginLink }) {
     <TopLevel publicPage={true}>
       <div style={centerStyle}>
         <img
-          src="/images/widevibe.gif"
+          src={logoUrl || defaultLogo}
           alt="Logo"
-          style={{ marginBottom: '20px' }}
+          style={{
+            maxWidth: '240px',
+            maxHeight: '120px',
+            objectFit: 'contain',
+            marginBottom: '20px'
+          }}
         />
         <div style={{ textAlign: 'center' }}>
           <h1>Page Not Found</h1>
@@ -70,6 +124,8 @@ export default function View({ data, error }) {
   const { view } = router.query;
   const token = useSelector(state => state.user.token);
   const loggedIn = useSelector(state => state.user.loggedIn);
+  const username = useSelector(state => state.user.username);
+  const userGraphUri = useSelector(state => state.user.graphUri);
   const url = view ? view.join('/') : '';
   const [metadata, setMetadata] = useState();
   const [uriPrefix, setUriPrefix] = useState(() => {
@@ -79,39 +135,63 @@ export default function View({ data, error }) {
       return null;
     }
   });
+  const [requireLogin, setRequireLogin] = useState(() => {
+    try {
+      const storedTheme = JSON.parse(localStorage.getItem('theme') || '{}');
+      return (
+        storedTheme.requireLogin === true ||
+        storedTheme.requireLogin === 'true'
+      );
+    } catch {
+      return false;
+    }
+  });
   const [accessChecked, setAccessChecked] = useState(false);
   const [allowFetch, setAllowFetch] = useState(false);
 
   const isLinkedSearch =
     url.endsWith('/twins') || url.endsWith('/uses') || url.endsWith('/similar');
+  const isSharePath = url.endsWith('/share');
+  const urlSegments = typeof url === 'string' ? url.split('/') : [];
+  const isPublicPath = urlSegments[0] === 'public';
+  const isPrivateUserPath = urlSegments[0] === 'user' && !isSharePath;
+  const urlUsername = isPrivateUserPath ? urlSegments[1] || '' : '';
+  const isUrlOwner = Boolean(
+    isPrivateUserPath && urlUsername && username && urlUsername === username
+  );
+  const requiresAuth = requireLogin || isPrivateUserPath;
+  const needsLoginRedirect = requiresAuth && (!loggedIn || !token);
 
   useEffect(() => {
-    if (isLinkedSearch) {
+    if (!router.isReady) return;
+    if (needsLoginRedirect) {
+      router.replace(`/login?next=${encodeURIComponent(router.asPath)}`);
+    }
+  }, [router, needsLoginRedirect]);
+
+  useEffect(() => {
+    if (isLinkedSearch || needsLoginRedirect) {
       setAccessChecked(true);
       setAllowFetch(false);
       return;
     }
 
-    const currentURL = window.location.href;
-    const parts = currentURL.split('/');
-    const urlUsername = parts[4];
-    let rootUser = '';
-    try {
-      const persistRoot = JSON.parse(localStorage.getItem('persist:root') || '{}');
-      rootUser = JSON.parse(persistRoot.username || '""');
-    } catch {
-      rootUser = '';
-    }
-
     const canFetch =
-      currentURL.endsWith('/share') ||
-      currentURL.includes('/public/') ||
-      (urlUsername && urlUsername === rootUser) ||
-      Boolean(token);
+      isSharePath ||
+      isPublicPath ||
+      (isPrivateUserPath && Boolean(loggedIn && token));
 
     setAllowFetch(Boolean(canFetch));
     setAccessChecked(true);
-  }, [token, url, isLinkedSearch]);
+  }, [
+    isSharePath,
+    isPublicPath,
+    isPrivateUserPath,
+    loggedIn,
+    token,
+    isLinkedSearch,
+    needsLoginRedirect
+  ]);
 
   // On a cold first visit (e.g. a share link pasted into incognito) the theme
   // is not in localStorage yet. TopLevel fetches it asynchronously, but this
@@ -129,6 +209,10 @@ export default function View({ data, error }) {
         if (response.data && response.data.uriPrefix) {
           localStorage.setItem('theme', JSON.stringify(response.data));
           setUriPrefix(response.data.uriPrefix);
+          setRequireLogin(
+            response.data.requireLogin === true ||
+              response.data.requireLogin === 'true'
+          );
         }
       })
       .catch(() => {});
@@ -137,9 +221,17 @@ export default function View({ data, error }) {
   const uri = uriPrefix ? `${uriPrefix}${url}` : null;
 
   useEffect(() => {
-    if (isLinkedSearch || !accessChecked || !allowFetch || metadata || !uri) {
+    if (
+      isLinkedSearch ||
+      needsLoginRedirect ||
+      !accessChecked ||
+      !allowFetch ||
+      metadata ||
+      !uri
+    ) {
       return;
     }
+    let isMounted = true;
     const uriParts = uri.split('/');
     // Share links end in /<hash>/share; the hash is not part of the object URI
     // and can start with a digit, which would fool the version scan below.
@@ -154,10 +246,59 @@ export default function View({ data, error }) {
     }
     const firstHalf =
       lastIndex >= 0 ? objectParts.slice(0, lastIndex + 1).join('/') : uri;
-    getQueryResponse(dispatch, getMetadata, { uri: firstHalf }, token).then(
-      result => setMetadata(Array.isArray(result) ? result : [])
+
+    const loadMetadata = async () => {
+      if (isPrivateUserPath && !isUrlOwner) {
+        const permitted = await hasPrivateViewAccess(
+          firstHalf,
+          token,
+          username,
+          userGraphUri,
+          dispatch
+        );
+        if (!permitted) {
+          if (isMounted) setMetadata([]);
+          return;
+        }
+      }
+      const result = await getQueryResponse(
+        dispatch,
+        getMetadata,
+        { uri: firstHalf },
+        token
+      );
+      if (isMounted) {
+        setMetadata(Array.isArray(result) ? result : []);
+      }
+    };
+
+    loadMetadata();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [
+    uri,
+    metadata,
+    token,
+    username,
+    userGraphUri,
+    isPrivateUserPath,
+    isUrlOwner,
+    dispatch,
+    accessChecked,
+    allowFetch,
+    isLinkedSearch,
+    needsLoginRedirect
+  ]);
+
+  if (needsLoginRedirect) {
+    return (
+      <TopLevel publicPage={false}>
+        <Loading />
+      </TopLevel>
     );
-  }, [uri, metadata, token, dispatch, accessChecked, allowFetch, isLinkedSearch]);
+  }
 
   if (url.endsWith('/twins')) {
     return (
@@ -184,10 +325,6 @@ export default function View({ data, error }) {
     );
   }
 
-  const showLoginLink = !loggedIn || !token;
-  const isPrivateUserPath =
-    typeof url === 'string' && url.split('/')[0] === 'user';
-
   if (!accessChecked) {
     return (
       <TopLevel publicPage={true}>
@@ -200,7 +337,7 @@ export default function View({ data, error }) {
     return (
       <PageNotFound
         url={url}
-        showLoginLink={showLoginLink || isPrivateUserPath}
+        showLoginLink={false}
       />
     );
   }
@@ -218,7 +355,7 @@ export default function View({ data, error }) {
     return (
       <PageNotFound
         url={url}
-        showLoginLink={showLoginLink || isPrivateUserPath}
+        showLoginLink={false}
       />
     );
   }
@@ -276,3 +413,64 @@ const getType = type => {
 
   return type;
 };
+
+function getCollectionPrefix(objectUri) {
+  if (typeof objectUri !== 'string') return '';
+  const match = objectUri.match(/^(.*\/user\/[^/]+\/[^/]+\/)/);
+  return match ? match[1] : '';
+}
+
+async function hasPrivateViewAccess(
+  firstHalf,
+  token,
+  username,
+  userGraphUri,
+  dispatch
+) {
+  try {
+    const sharedRes = await axios.get(`${publicRuntimeConfig.backend}/shared`, {
+      headers: {
+        Accept: 'text/plain',
+        'X-authorization': token
+      }
+    });
+    const sharedItems = Array.isArray(sharedRes.data) ? sharedRes.data : [];
+    const collectionPrefix = getCollectionPrefix(firstHalf);
+    const matchesShared = sharedItems.some(item => {
+      const itemUri = item && item.uri;
+      if (!itemUri) return false;
+      if (itemUri === firstHalf) return true;
+      return (
+        Boolean(collectionPrefix) &&
+        getCollectionPrefix(itemUri) === collectionPrefix
+      );
+    });
+    if (matchesShared) return true;
+  } catch {
+    // fall through to owner check
+  }
+
+  try {
+    const owners = await getQueryResponse(
+      dispatch,
+      getOwner,
+      { uri: firstHalf },
+      token
+    );
+    if (
+      Array.isArray(owners) &&
+      owners.some(
+        res =>
+          res.ownedBy &&
+          ((userGraphUri && res.ownedBy === userGraphUri) ||
+            (username && res.ownedBy.endsWith(`/user/${username}`)))
+      )
+    ) {
+      return true;
+    }
+  } catch {
+    // denied
+  }
+
+  return false;
+}
