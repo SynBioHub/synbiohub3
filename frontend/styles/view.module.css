@@ -622,6 +622,10 @@
   cursor: default;
 }
 
+.descriptiontext p {
+  margin: 0;
+}
+
 .detailsheader {
   margin: 1rem 0 0 0;
   font-size: 1rem;
@@ -723,6 +727,14 @@
 
 .detailstext {
   margin: 0.5rem 0 1.2rem 0;
+}
+
+.detailstext p:first-child {
+  margin-top: 0;
+}
+
+.detailstext p:last-child {
+  margin-bottom: 0;
 }
 
 .detailstext a {

@@ -14,20 +14,38 @@ const { publicRuntimeConfig } = getConfig();
 
 /* eslint sonarjs/cognitive-complexity: "off" */
 
+const AUTH_EXEMPT_ROUTES = new Set([
+  '/login',
+  '/register',
+  '/forgot-password',
+  '/change-password'
+]);
+
 /**
  * This is a 'wrapper component' which dictates the general structure
  * of sbh. It should be used as a wrapper for all sbh pages, except in
  * rare and special circumstances.
  */
 export default function TopLevel(properties) {
-  const protectRoute = properties.publicPage ? false : true;
   const dispatch = useDispatch();
   const router = useRouter();
   const loggedIn = useSelector(state => state.user.loggedIn);
   const pageVisited = useSelector(state => state.tracking.pageVisited);
   const [registries, setRegistries] = useState([]);
-  const [theme, setTheme] = useState([]);
+  const [theme, setTheme] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem('theme') || '{}') || {};
+    } catch {
+      return {};
+    }
+  });
   const [loading, setLoading] = useState(false);
+
+  const isAuthRoute = AUTH_EXEMPT_ROUTES.has(router.pathname);
+  const requireLogin =
+    theme?.requireLogin === true || theme?.requireLogin === 'true';
+  const protectRoute =
+    !isAuthRoute && (requireLogin || !properties.publicPage);
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -170,7 +188,7 @@ export default function TopLevel(properties) {
       if (username && token) {
         dispatch(restoreLogin(username, token));
       } else if (protectRoute) {
-        router.replace(`/login?next=${router.asPath}`);
+        router.replace(`/login?next=${encodeURIComponent(router.asPath)}`);
       }
     }
   }, [loggedIn, router, protectRoute, dispatch]);

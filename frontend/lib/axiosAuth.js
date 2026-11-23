@@ -41,6 +41,9 @@ function handleUnauthorized(store, error) {
   }
 
   const config = error.config || {};
+  if (config.skipAuthRedirect) {
+    return;
+  }
   const url = config.url || '';
   const method = (config.method || 'get').toLowerCase();
 
@@ -111,11 +114,11 @@ export async function validateStoredSession(store) {
       headers: {
         Accept: 'text/plain',
         'X-authorization': token
-      }
+      },
+      skipAuthRedirect: true
     });
   } catch (error) {
     if (error.response?.status === 401) {
-      // Interceptor also handles this; ensure state is cleared on /login too.
       clearClientAuthStorage();
       store.dispatch(logoutUser());
     }

@@ -35,8 +35,11 @@ function Login() {
 
   useEffect(() => {
     if (loggedIn) {
-      if (next) router.replace(next);
-      else router.push('/');
+      const safeNext =
+        typeof next === 'string' && next.startsWith('/') && !next.startsWith('//')
+          ? next
+          : '/';
+      router.replace(safeNext);
     }
   }, [loggedIn, router, next]);
 
