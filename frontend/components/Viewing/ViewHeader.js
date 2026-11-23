@@ -17,7 +17,9 @@ import getConfig from 'next/config';
 import { processUrl } from '../Admin/Registries';
 import getMemberOfCollections from '../../sparql/getMemberOfCollections';
 import getQueryResponse from '../../sparql/tools/getQueryResponse';
+import showdown from 'showdown';
 const { publicRuntimeConfig } = getConfig();
+const sdconverter = new showdown.Converter();
 
 function renderSplitTitle(title) {
   const maxLen = 30; // maximum length before splitting
@@ -381,7 +383,11 @@ export default function ViewHeader(properties) {
           </div>
         ) : (
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            <span style={{ marginRight: '10px' }}>{displayedDescription}</span>
+            <span
+              className={styles.descriptiontext}
+              style={{ marginRight: '10px' }}
+              dangerouslySetInnerHTML={{ __html: sdconverter.makeHtml(displayedDescription || '') }}
+            />
             {isOwner && (
               <>
                 <FontAwesomeIcon
