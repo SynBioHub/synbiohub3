@@ -44,8 +44,8 @@ export default function PublishModal(properties) {
     return null;
   }
 
-  const publishExistingCollection = collectionToPublish => {
-    dispatch(
+  const publishExistingCollection = async collectionToPublish => {
+    const ok = await dispatch(
       makePublicCollection(
         collectionToPublish.url,
         collectionToPublish.displayId,
@@ -58,6 +58,9 @@ export default function PublishModal(properties) {
         properties.setProcessUnderway
       )
     );
+    if (!ok) {
+      return;
+    }
     setCollectionIndex(0);
     setToPublish(
       toPublish.filter(
@@ -80,7 +83,6 @@ export default function PublishModal(properties) {
     } else {
       window.location.reload();
     }
-    
   };
 
   const collectionSelectors = toPublish.map((collection, index) => {

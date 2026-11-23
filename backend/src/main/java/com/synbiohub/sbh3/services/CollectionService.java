@@ -76,15 +76,18 @@ public class CollectionService {
     /**
      * Resolves {@link SubmitPayload#getCollectionUri()} for a new collection from {@code id} and {@code version}.
      */
-    private void resolveNewCollectionUri(SubmitPayload payload) {
+    private void resolveNewCollectionUri(SubmitPayload payload) throws IOException {
         if (!COLLECTION_ID_PATTERN.matcher(payload.getId()).matches()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "id must contain only alphanumeric characters and underscores.");
         }
-        if (payload.getVersion() == null) {
+        if (payload.getVersion() == null || payload.getVersion().isBlank() || "current".equals(payload.getVersion())) {
             payload.setVersion("1");
         }
-        payload.setCollectionUri(uriPrefix(payload) + payload.collectionDisplayId() + "/" + payload.getVersion());
+        String prefix = payload.isTargetPublic()
+                ? ConfigUtil.get("databasePrefix").asText() + "public/" + payload.getId() + "/"
+                : uriPrefix(payload);
+        payload.setCollectionUri(prefix + payload.collectionDisplayId() + "/" + payload.getVersion());
     }
 
     /**
@@ -145,7 +148,7 @@ public class CollectionService {
                 }
             }
             payload.setOverwriteMerge("0");
-            if (creatingNew) {
+            if (creatingNew && !payload.isTargetPublic()) {
                 requireNonBlank(payload.getName(), "name");
                 requireNonBlank(payload.getDescription(), "description");
             }
@@ -205,9 +208,13 @@ public class CollectionService {
 
     /**
      * URI prefix for new objects in this submission
-     * (e.g. {@code https://synbiohub.org/user/alice/myproject/}).
+     * (e.g. {@code https://synbiohub.org/user/alice/myproject/} or
+     * {@code https://synbiohub.org/public/myproject/} for {@code makePublic}).
      */
     public String uriPrefix(SubmitPayload payload) {
+        if (payload.isTargetPublic() && payload.getCollectionUri() != null) {
+            return uriPrefixFromCollectionUri(payload, payload.getCollectionUri());
+        }
         String graphUri = userService.getUserByUsername(payload.getCreatedBy()).getGraphUri();
         if (payload.getCreatedBy() == null || graphUri == null || payload.getId() == null) {
             if (payload.getCollectionUri() == null) {

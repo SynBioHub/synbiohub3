@@ -10,7 +10,10 @@ import com.synbiohub.sbh3.utils.ConfigUtil;
 import com.synbiohub.sbh3.utils.FileUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.sbolstandard.core2.SBOLConversionException;
+import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLValidationException;
+import org.sbolstandard.core2.SBOLWriter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +29,8 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -51,6 +56,7 @@ public class SubmitService {
     private final SparqlService sparqlService;
     private final AttachmentService attachmentService;
     private final UserService userService;
+    private final DownloadService downloadService;
 
     /**
      * Main submit entry point. Each step mutates {@code payload} in place.
@@ -65,6 +71,108 @@ public class SubmitService {
         prepare(payload);  // only runs for overwrite_merge == 1
         upload(payload);
         return successResponse();
+    }
+
+    /**
+     * Moves a private user collection into the public graph (as a new public collection or merged
+     * into an existing public collection), reusing the {@code submit} pipeline.
+     * Mirrors legacy SBH1 {@code lib/actions/makePublic.js}.
+     */
+    public ResponseEntity<String> makePublic(
+            String userId, String collectionId, String displayId, String version,
+            Map<String, String> allParams) throws IOException, SBOLValidationException {
+        String databasePrefix = ConfigUtil.get("databasePrefix").asText();
+        String sourceUri = databasePrefix + "user/" + userId + "/" + collectionId + "/" + displayId + "/" + version;
+
+        if (!userService.isOwnedBy(sourceUri)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+                    "Not authorized to make this submission public");
+        }
+
+        String tabState = allParams.getOrDefault("tabState", "existing").trim();
+        boolean creatingNew = "new".equals(tabState);
+
+        SubmitPayload payload = new SubmitPayload();
+        payload.setTargetPublic(true);
+        payload.setSourceUriPrefix(collectionService.uriPrefixFromCollectionUri(null, sourceUri));
+        payload.setCreatedBy(SecurityContextHolder.getContext().getAuthentication().getName());
+        String rawCitations = allParams.get("citations");
+        if (rawCitations != null && "undefined".equalsIgnoreCase(rawCitations.trim())) {
+            rawCitations = "";
+        }
+        payload.setCitations(rawCitations);
+        payload.setCitationPubmedIds(citationService.parseCitationPubmedIds(payload.getCitations()));
+
+        if (creatingNew) {
+            String targetId = allParams.getOrDefault("id", "").trim();
+            String targetVersion = allParams.getOrDefault("version", "").trim();
+            if (targetId.isEmpty()) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "Please enter an id for your submission");
+            }
+            if (targetVersion.isEmpty()) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "Please enter a version for your submission");
+            }
+            if ("current".equals(targetVersion)) {
+                targetVersion = "1";
+            }
+            payload.setOverwriteMerge("0");
+            payload.setId(targetId);
+            payload.setVersion(targetVersion);
+            payload.setName(allParams.getOrDefault("name", ""));
+            payload.setDescription(allParams.getOrDefault("description", ""));
+        } else {
+            String targetCollectionUri = allParams.getOrDefault("collections", "").trim();
+            if (targetCollectionUri.isEmpty()) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "Please select a collection to add to");
+            }
+            payload.setOverwriteMerge("2");
+            payload.setCollectionUri(targetCollectionUri);
+        }
+
+        SBOLDocument sourceDoc = downloadService.getSBOLRecursive(sourceUri);
+        if (sourceDoc == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Submission not found: " + sourceUri);
+        }
+
+        Path tempSbol = Files.createTempFile("sbh-makepublic-", ".xml");
+        try {
+            try {
+                SBOLWriter.write(sourceDoc, tempSbol.toFile());
+            } catch (SBOLConversionException e) {
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                        "Failed to serialize SBOL for publishing: " + e.getMessage());
+            }
+            payload.setUploadedFilePath(tempSbol.toAbsolutePath().toString());
+
+            collectionService.sanitize(payload);
+            sbolService.readSbol(payload, webOfRegistriesMap(),
+                    databasePrefix + "user/" + userId,
+                    resolveUserAuthToken(payload));
+            upload(payload);
+        } finally {
+            Files.deleteIfExists(tempSbol);
+        }
+
+        if (!"current".equals(version)) {
+            String sourceUriPrefix = collectionService.uriPrefixFromCollectionUri(null, sourceUri);
+            String sourceGraphUri = sparqlService.resolveGraphUriForTopLevel(sourceUri);
+            if (sourceUriPrefix != null) {
+                if (ConfigUtil.get("useSBOLExplorer").asBoolean(false)) {
+                    notifyExplorerRemoveCollection(sourceUri, sourceUriPrefix);
+                }
+                deleteCollectionTriples(sourceUri, sourceUriPrefix, sourceGraphUri);
+            }
+        }
+
+        String modified = Instant.now().truncatedTo(ChronoUnit.SECONDS).toString().replace("Z", "");
+        sparqlService.updateCollectionMembership(modified);
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType("text/plain; charset=UTF-8"))
+                .body("Success");
     }
 
     // -------------------------------------------------------------------------

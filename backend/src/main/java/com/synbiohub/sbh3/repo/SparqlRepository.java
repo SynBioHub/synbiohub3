@@ -44,6 +44,7 @@ public class SparqlRepository {
     public static final String SUBCOLLECTION_METADATA_SPARQL = "src/main/java/com/synbiohub/sbh3/sparql/SubCollectionMetadata.sparql";
     public static final String SHARED_VIEW_SPARQL = "src/main/java/com/synbiohub/sbh3/sparql/GetSharedCanView.sparql";
     public static final String TOPLEVEL_METADATA_SPARQL = "src/main/java/com/synbiohub/sbh3/sparql/GetTopLevelMetadata.sparql";
+    public static final String UPDATE_COLLECTION_MEMBERSHIP_SPARQL = "src/main/java/com/synbiohub/sbh3/sparql/UpdateCollectionMembership.sparql";
 
     private final RestClient restClient;
 

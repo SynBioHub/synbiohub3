@@ -40,11 +40,17 @@ public class SubmitController {
         return submitService.submit(allParams, file);
     }
 
-    @Operation(summary = "Make object public (Unimplemented)", description = "Currently an empty stub.", deprecated = true)
-    @PreAuthorize("hasAuthority('CURATOR')")
-    @PostMapping(value = "/makePublic")
-    public ResponseEntity<String> makePublic(@RequestParam Map<String, String> allParams) {
-        return new ResponseEntity<>(HttpStatus.OK);
+    @Operation(summary = "Make private collection public", description = "Publishes a private user collection as a new public collection (tabState=new) or merges it into an existing public collection (tabState=existing).")
+    @PostMapping(value = "/user/{userId}/{collectionId}/{displayId}/{version}/makePublic",
+            produces = "text/plain; charset=UTF-8")
+    @PreAuthorize("hasAnyAuthority('USER', 'CURATOR', 'ADMIN')")
+    public ResponseEntity<String> makePublic(
+            @PathVariable String userId,
+            @PathVariable String collectionId,
+            @PathVariable String displayId,
+            @PathVariable String version,
+            @RequestParam Map<String, String> allParams) throws IOException, SBOLValidationException {
+        return submitService.makePublic(userId, collectionId, displayId, version, allParams);
     }
 
     @GetMapping(value = "/user/{userId}/{collectionId}/{displayId}/{version}/removeCollection",
