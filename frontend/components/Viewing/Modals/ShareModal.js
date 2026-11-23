@@ -51,6 +51,17 @@ export default function ShareModal(properties) {
     className: styles.modaltoast
   });
 
+  const successToast = (message) => toast.success(message, {
+    position: "top-right",
+    autoClose: 5000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+    className: styles.modaltoast
+  });
+
   useEffect(() => {
     if (!submitted || activeTab !== TAB_PEOPLE) {
       return;
@@ -139,7 +150,8 @@ export default function ShareModal(properties) {
 
     try {
       await axios.post(url, parameters, { headers });
-      window.location.reload();
+      successToast(`Ownership granted to ${owner}.`);
+      window.dispatchEvent(new CustomEvent('sbh:permissionsUpdated'));
     } catch (error) {
       console.error('Error:', error.message);
       const message = typeof error.response?.data === 'string' && error.response.data
@@ -162,7 +174,8 @@ export default function ShareModal(properties) {
 
     try {
       await axios.post(url, parameters, { headers });
-      window.location.reload();
+      successToast(`View access granted to ${viewer}.`);
+      window.dispatchEvent(new CustomEvent('sbh:permissionsUpdated'));
     } catch (error) {
       console.error('Error:', error.message);
       const message = typeof error.response?.data === 'string' && error.response.data
@@ -174,15 +187,13 @@ export default function ShareModal(properties) {
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(`${shareLink}`).then(() => {
-      setTimeout(() => {
-        setCopyText("Copy");
-      }, 1000);
       setCopyText("Copied!");
     });
   }
 
   const selectTab = (tab) => {
     setActiveTab(tab);
+    setCopyText("Copy");
     setSubmitted(false);
     if (tab === TAB_LINK) {
       setSubmittable(false);
