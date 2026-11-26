@@ -105,6 +105,13 @@ public class CollectionService {
         return mapper.readTree(raw).path("boolean").asBoolean(false);
     }
 
+    /** Whether an object is already present in this collection's local graph. */
+    public boolean topLevelExists(String identityUri, String graphUri) throws IOException {
+        String query = "ASK { <" + identityUri + "> ?predicate ?object . }";
+        String raw = sparqlService.read(sparqlService.getExplorerUrl(), graphUri, query);
+        return mapper.readTree(raw).path("boolean").asBoolean(false);
+    }
+
     public SubmitRootCollectionMetadata loadExistingCollection(String collectionUri, String graphUri)
             throws IOException {
         String query = sparqlService.getTopLevelMetadataSPARQL(collectionUri);

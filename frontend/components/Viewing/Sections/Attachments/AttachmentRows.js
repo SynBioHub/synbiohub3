@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
+import axios from 'axios';
 
-import deleteAttachment from '../../../../sparql/deleteAttachment';
 import getSource from '../../../../sparql/getSource.js';
 
 import getQueryResponse from '../../../../sparql/tools/getQueryResponse';
@@ -27,17 +27,16 @@ import styles from '../../../../styles/view.module.css';
 export default function AttachmentRows(properties) {
   const dispatch = useDispatch();
   const token = useSelector(state => state.user.token);
-  const [attachmentInfo, setStateAttachments] = useState();
-
-  const [attachments, setAttachments] = useState((properties.attachments || []).map(attachment => ({
+  const [deleting, setDeleting] = useState(null);
+  const [deleteError, setDeleteError] = useState('');
+  useEffect(() => {
+    setDeleting(null);
+    setDeleteError('');
+  }, [properties.uri]);
+  const attachments = (properties.attachments || []).map(attachment => ({
     ...attachment,
-    processedTopLevel: attachment.topLevel // Initialize with topLevel
-  })));
-
-
-  //There are attachments from the parent but they haven't been added to the state yet.
-  if (attachmentInfo === undefined && properties.attachments && properties.attachments.length > 0)
-    setStateAttachments(properties.attachments);
+    processedTopLevel: attachment.topLevel
+  }));
 
   //There are no attachments to get.
   if (properties.attachments && properties.attachments.length === 0) return null;
@@ -77,7 +76,9 @@ export default function AttachmentRows(properties) {
    */
   const edamTypeConverter = type => edam[`${type}`];
 
-  return attachments.map((attachment, key) => {
+  return <>
+    {deleteError && <tr><td colSpan={5}><div role="alert">{deleteError}</div></td></tr>}
+    {attachments.map((attachment, key) => {
     if (attachment.processedTopLevel.startsWith("http")) {
       attachment.processedTopLevel = removeUrl(attachment.processedTopLevel);
     }
@@ -109,10 +110,8 @@ export default function AttachmentRows(properties) {
                 const item = {
                   url: `${publicRuntimeConfig.backend
                     }/${attachment.processedTopLevel}/download`,
-                  name: attachment.title.substring(
-                    0,
-                    attachment.title.lastIndexOf('.')
-                  ),
+                  name: attachment.title,
+                  isAttachment: true,
                   displayId: attachment.title.substring(
                     0,
                     attachment.title.lastIndexOf('.')
@@ -135,20 +134,26 @@ export default function AttachmentRows(properties) {
         </td>
         <td className={styles.removebutton}>
           {properties.owner && (
-            <div
+            <button
               type="button"
+              aria-label={`Remove ${attachment.title}`}
+              disabled={deleting !== null}
               onClick={async () => {
-                const copy = [...attachments];
-                const deletedAttachment = copy.splice(key, 1);
-                setAttachments(copy);
-                await getQueryResponse(
-                  dispatch,
-                  deleteAttachment,
-                  { uri: deletedAttachment[0].topLevel },
-                  token,
-                  true
-                );
-                window.location.reload();
+                setDeleting(attachment.topLevel);
+                setDeleteError('');
+                try {
+                  await axios.delete(`${publicRuntimeConfig.backend.replace(/\/$/, '')}/attachments`, {
+                    params: { uri: properties.uri, attachment: attachment.topLevel },
+                    headers: { 'X-authorization': token }
+                  });
+                  properties.setRefreshMembers(true);
+                } catch (error) {
+                  setDeleteError(typeof error.response?.data === 'string' && error.response.data
+                    ? error.response.data
+                    : error.message || 'Could not remove this attachment. Please try again.');
+                } finally {
+                  setDeleting(null);
+                }
               }}
             >
               <FontAwesomeIcon
@@ -157,10 +162,11 @@ export default function AttachmentRows(properties) {
                 color="#465875"
                 className={styles.deleteicon}
               />
-            </div>
+            </button>
           )}
         </td>
       </tr>
     );
-  });
+    })}
+  </>;
 }

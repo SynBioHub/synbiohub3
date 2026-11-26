@@ -1,8 +1,21 @@
 PREFIX sbh: <http://wiki.synbiohub.org/wiki/Terms/synbiohub#>
+PREFIX sbol2: <http://sbols.org/v2#>
 
 DELETE {
   ?s ?p ?o
 } WHERE {
-  ?s ?p ?o .
-  ?s sbh:topLevel <$uri>
+  {
+    ?s ?p ?o .
+    ?s sbh:topLevel <$uri>
+  }
+  UNION
+  {
+    # Deleting an attachment from its own page must also remove the parent
+    # links, otherwise collections retain a member pointing to a deleted item.
+    # Match before deleting its type, in the same update and selected graph.
+    <$uri> a sbol2:Attachment .
+    ?s ?p <$uri> .
+    VALUES ?p { sbol2:attachment sbh:attachment sbol2:member }
+    BIND(<$uri> AS ?o)
+  }
 }
